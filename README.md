@@ -23,3 +23,7 @@ Tools:
 Sprite / Tile / Map Resources:
   http://www.nesmaps.com/index.html
   https://www.spriters-resource.com/
+
+Current State of Affairs:
+  Implementing Mario characteristics. Currently at Big Mario. Next is Fire Mario.
+  Physics work - will need to refactor so lineSegs have direction (e.g. horizontal line can be either a floor or a ceiling - so use a bit to mark which).
