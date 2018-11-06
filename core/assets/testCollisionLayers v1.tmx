@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="48" height="13" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="21">
+ <tileset firstgid="1" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="924" columns="33">
+  <image source="tileset_gutter.png" width="594" height="504"/>
+ </tileset>
+ <layer id="1" name="background" width="48" height="13">
+  <data encoding="base64" compression="zlib">
+   eJzbycTAsHMUj+JRPIpH8SgexaN4FA8ZDAAs7sfg
+  </data>
+ </layer>
+ <layer id="2" name="collision" width="48" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYKA+YILioQZG3U0/wMQwON09WN01XAGhsMYmz4QDEzJjqMUpPd09VMOIWEBsWhksYKi4k1aAXn5npAGmhvmE9MMAAKmfAHY=
+  </data>
+ </layer>
+ <layer id="4" name="scenery" width="48" height="13">
+  <data encoding="base64" compression="zlib">
+   eJxjYBieYCoTA8M0JDydaaBdRBrYBnTvdiS8Y4i5f7gAPkYGBn4kLMA40C4iD2gMtAMoBKPuH1gw1N2PD8wClq2zgXjOIC5j8YX/bqC79wDx3iHq/lFAPgAAsM0L5w==
+  </data>
+ </layer>
+ <objectgroup id="3" name="breakable">
+  <properties>
+   <property name="linkedTilelayer" value="collision"/>
+  </properties>
+  <object id="2" x="96" y="160" width="16" height="16"/>
+  <object id="3" x="112" y="160" width="16" height="16"/>
+  <object id="5" x="160" y="144" width="16" height="16"/>
+  <object id="6" x="176" y="144" width="16" height="16"/>
+  <object id="7" x="192" y="144" width="16" height="16"/>
+  <object id="8" x="208" y="144" width="16" height="16"/>
+  <object id="10" x="208" y="96" width="16" height="16"/>
+  <object id="11" x="224" y="96" width="16" height="16"/>
+  <object id="12" x="240" y="96" width="16" height="16"/>
+  <object id="13" x="256" y="96" width="16" height="16"/>
+  <object id="14" x="272" y="96" width="16" height="16"/>
+  <object id="15" x="288" y="96" width="16" height="16"/>
+  <object id="16" x="240" y="48" width="16" height="16"/>
+  <object id="17" x="256" y="48" width="16" height="16"/>
+  <object id="18" x="288" y="32" width="16" height="16"/>
+  <object id="19" x="304" y="16" width="16" height="16"/>
+  <object id="20" x="272" y="32" width="16" height="16"/>
+ </objectgroup>
+</map>

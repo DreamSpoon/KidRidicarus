@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="440" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="180">
+ <tileset firstgid="1" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="924" columns="33">
+  <image source="tileset_gutter.png" width="594" height="504"/>
+ </tileset>
+ <tileset firstgid="925" name="metroid tileset v5" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="30" columns="6">
+  <image source="metroid tileset v5.png" width="108" height="90"/>
+ </tileset>
+ <layer id="13" name="background" width="440" height="15">
+  <data encoding="base64" compression="zlib">
+   eJzt1FsNAlEUwEAC/kUgY92hANhX0nOT+RgJ7fZ8PDZgnPcLuKJuGPiu/gOsrO4X+K1+BKyqbhf4r/4ErKjuFtinfgWspm4W2K/+Bayk7hU4pn4GrKJuFTiu/gasoO4UOKd+B0xXNwqcV/8DJqv7BK6pHwJT1W0C19UfgYnqLoF71C+BaeomgfvUP4FJ6h6Be9VPgSk+dtHF3g==
+  </data>
+ </layer>
+ <layer id="14" name="collision" width="440" height="15">
+  <data encoding="base64" compression="zlib">
+   eJztnMlyhCAQhplwyvYAc/WY7Y0zprKf5pQHjFak0jI0DYiCzv9Vdbm0jUh0/kCjSgEAauRZK/Wi/5bGYrYPlq+3V8v3bhndJ8WX9Pvq/k2MlgEAAKAOqA61Om2714O3YUnLpWZrCV2X4kv7XXU/6PF1mDIAAADUQavHv+Wx21P7LFJ8ab8vrs3UBgAAAPLDjTPSbXt8kvrn4IMpl9tfglaPDQAAQF2E5Nvs8UjqTz2Pjx/Gz+0vQc4+LAAu9qUrsBAXgnHHTmmf2FiuPsa3H8zl3xrNYGtAyq+5xiOpP/U8Psy8DWkfAACA5WjUuvStR8qvuTQwtt8S0/dzjX3OOR4KAADAT6PWqW89vnxbjvxbTN/P5Y/tLwIAAMiDrW1r07cerq+WI//WExrvmrNReh6HqbepuxkvPVoGQCx2Lsjkc+hyDi53Sl3t8h8bQo5r42K5PNk+YD2k/JhzGhpmXcLWkhRdofnKlPZ2aVtN+hZ7b0rjlSn5N1quFO/SvtrmcZhrOOr/9+Ggb6AmpOf+rvPdB/4uxBwLxrg0KkQfXFqytLZw2laTvqXcm9z7AqH5t09P32wL8w5NWxwsjQNgbkL/X5Wee+jb/Pg0yqcRnJZIsVP72TTep2016Nt1V8+bzm4Xujfp+2lU3+j+Jd6fWwIzXmqPUwIwN6FaA30rS4hGuXTCpyVS7NS/k4mXtC20/zknD109Hzt7Wuje7DXN6NqXPt0XW47LamErOg2ms4OdWI62QRvnbc9ztJTvcbnGKrnvJ9u+Lfoxr/O8Kf0M12g52gZtnLc9z9WoZtkaJuXfqJ/7fvKW/aXndYLy/AII3H8y
+  </data>
+ </layer>
+ <imagelayer id="16" name="metroi" visible="0" opacity="0.4" offsetx="3696" offsety="0">
+  <image source="MetroidTestPart1.png" width="1344" height="240"/>
+ </imagelayer>
+ <layer id="15" name="scenery" width="440" height="15">
+  <data encoding="base64" compression="zlib">
+   eJzt2F1Kw0AUBtCkfVVEXYcKahRcm9tQd6KuzGen0IExJE3zY0Km58CFQNu5H4HcS1oUAAAAnJq3TVG8h/rYjD9j7Dljessv/8/wnwIZ+gzz5CvUd8tcSWdP2/yJZxw6p48+M1N++aPXsn9+4HSls2eq+Xlszyl6yT+859ryv5R/e85xrwDgv8X9BgA5sd8AyJH9BkCOmvbbWVIAsEZN++081DbUxdxhgFGuVv5/jPzLyi1/fb/t3tlukvIOB+twGZ7l+1DXA2fU0rNN/mnz9JVj/vp+2+7rNrmOls4PNIvP9kOox44ZVYXPnpJ6Lg/Ptir53hhVraf88+bfiT3r6vn7mDN/m2Pvf9xpd8l1V34AAAAAuv0C4lRj8A==
+  </data>
+ </layer>
+ <objectgroup id="7" name="breakable">
+  <object id="155" x="256" y="144" width="16" height="16"/>
+  <object id="156" x="320" y="144" width="16" height="16"/>
+  <object id="157" x="336" y="144" width="16" height="16"/>
+  <object id="158" x="352" y="144" width="16" height="16"/>
+  <object id="159" x="368" y="144" width="16" height="16"/>
+  <object id="160" x="384" y="144" width="16" height="16"/>
+  <object id="161" x="352" y="80" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="17" name="goomba">
+  <object id="162" x="256" y="192" width="16" height="16"/>
+  <object id="163" x="512" y="192" width="16" height="16"/>
+  <object id="164" x="672" y="192" width="16" height="16"/>
+  <object id="165" x="784" y="192" width="16" height="16"/>
+  <object id="167" x="880" y="192" width="16" height="16"/>
+  <object id="169" x="1360" y="192" width="16" height="16"/>
+  <object id="170" x="1312" y="64" width="16" height="16"/>
+  <object id="171" x="1344" y="64" width="16" height="16"/>
+  <object id="173" x="1696" y="192" width="16" height="16"/>
+  <object id="174" x="1744" y="192" width="16" height="16"/>
+  <object id="175" x="1968" y="64" width="16" height="16"/>
+  <object id="176" x="2096" y="64" width="16" height="16"/>
+  <object id="177" x="2192" y="128" width="16" height="16"/>
+  <object id="179" x="2080" y="128" width="16" height="16"/>
+ </objectgroup>
+</map>

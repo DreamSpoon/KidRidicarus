@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="440" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="162">
+ <tileset firstgid="1" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="924" columns="33">
+  <image source="tileset_gutter.png" width="594" height="504"/>
+ </tileset>
+ <tileset firstgid="925" name="metroid tileset v5" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="30" columns="6">
+  <image source="metroid tileset v5.png" width="108" height="90"/>
+ </tileset>
+ <layer id="13" name="background" width="440" height="15">
+  <data encoding="base64" compression="zlib">
+   eJzt1FsNAlEUwEAC/kUgY92hANhX0nOT+RgJ7fZ8PDZgnPcLuKJuGPiu/gOsrO4X+K1+BKyqbhf4r/4ErKjuFtinfgWspm4W2K/+Bayk7hU4pn4GrKJuFTiu/gasoO4UOKd+B0xXNwqcV/8DJqv7BK6pHwJT1W0C19UfgYnqLoF71C+BaeomgfvUP4FJ6h6Be9VPgSk+dtHF3g==
+  </data>
+ </layer>
+ <layer id="14" name="collision" width="440" height="15">
+  <data encoding="base64" compression="zlib">
+   eJztnMtyhCAQRZmwyusDZjvLvP44Yyrv1ayyyd9FKkOlZWgaEAXNPVVdo7aNSNQbaFQpAECLPGqlnvTvr7WU9b3jM/bs+F4do9uk+Jr+UN0/idEyAAAAtAHVoU7nrRs9eDn+0nKpuVpCl6X42n5f3fd6eB62DAAAAG3Q6eGzPHV9bJ9Fiq/tD8V1hdoAAABAebhxRrrujk9S/xS8MeVy22vQ6aEBAABoi5h8mzseSf25xwnxxfi57TUo2YcFwMe2dgVm4kwwbt8x7ZMay9XH+rZH8/nXxu5oS0DKr/nGI6k/9zgh7LwNaRsAAID52Kll6ZtByq/5NDC135LS9/ONfU45HgoAACDMTi1T3wyhfFuJ/FtK38/nT+0vAgAAKIOrbUvTNwPXVyuRfzPExvvmbNSex2Hrbetux0sPjgGQipsLsvkc+jsF5xulLjbl942hxLlxsVyebBuxHFN+yjEtO2ZZwtWSHF2h+cqc9vZpW0v6lnptSuOVOfk3Wq4U79O+1uZx2HM46L/34aBvoCWk+/6m991GPhdS9gVDfBoVow8+LZlbWzhta0nfcq5N7n2B2Pzbe6BvtoZ5h7Yt9o7GATA1sf+vSvc99G16QhoV0ghOS6TYsf1sGh/Sthb07bKv51Vv1zNdm/T9NKpvdPsc78/NgR0vdccpAZiaWK2BvtUlRqN8OsFpyfeZHDv272TjJW2L7X9OyV1fz/veHma6No2mWV370KfbUsvxWSusRafBeDawEyvRNmjjYVsYfatdj6VZzve4fGOV3PeTXd8a/ZjX+b+pfQ+3aOZZPPZ5bMvAcx3tMMaoZrkaJuXfqJ/7fvKa/bXndYL6/AC5ZoXF
+  </data>
+ </layer>
+ <imagelayer id="16" name="metroi" visible="0" opacity="0.4" offsetx="3696" offsety="0">
+  <image source="MetroidTestPart1.png" width="1344" height="240"/>
+ </imagelayer>
+ <layer id="15" name="scenery" width="440" height="15">
+  <data encoding="base64" compression="zlib">
+   eJzt2F1Kw0AUBtCkfVVEXYcKahRcm9tQd6KuzGen0IExJE3zY0Km58CFQNu5H4HcS1oUAAAAnJq3TVG8h/rYjD9j7Dljessv/8/wnwIZ+gzz5CvUd8tcSWdP2/yJZxw6p48+M1N++aPXsn9+4HSls2eq+Xlszyl6yT+859ryv5R/e85xrwDgv8X9BgA5sd8AyJH9BkCOmvbbWVIAsEZN++081DbUxdxhgFGuVv5/jPzLyi1/fb/t3tlukvIOB+twGZ7l+1DXA2fU0rNN/mnz9JVj/vp+2+7rNrmOls4PNIvP9kOox44ZVYXPnpJ6Lg/Ptir53hhVraf88+bfiT3r6vn7mDN/m2Pvf9xpd8l1V34AAAAAuv0C4lRj8A==
+  </data>
+ </layer>
+ <objectgroup id="7" name="breakable">
+  <object id="155" x="256" y="144" width="16" height="16"/>
+  <object id="156" x="320" y="144" width="16" height="16"/>
+  <object id="157" x="336" y="144" width="16" height="16"/>
+  <object id="158" x="352" y="144" width="16" height="16"/>
+  <object id="159" x="368" y="144" width="16" height="16"/>
+  <object id="160" x="384" y="144" width="16" height="16"/>
+  <object id="161" x="352" y="80" width="16" height="16"/>
+ </objectgroup>
+</map>
