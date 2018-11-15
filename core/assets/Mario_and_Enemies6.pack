@@ -1,0 +1,89 @@
+
+Mario_and_Enemies6.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+big_mario
+  rotate: false
+  xy: 1, 29
+  size: 336, 32
+  orig: 336, 32
+  offset: 0, 0
+  index: -1
+fire_mario
+  rotate: false
+  xy: 339, 29
+  size: 336, 32
+  orig: 336, 32
+  offset: 0, 0
+  index: -1
+little_mario
+  rotate: false
+  xy: 1, 11
+  size: 224, 16
+  orig: 224, 16
+  offset: 0, 0
+  index: -1
+turtle
+  rotate: false
+  xy: 677, 37
+  size: 96, 24
+  orig: 96, 24
+  offset: 0, 0
+  index: -1
+coin_bounce
+  rotate: false
+  xy: 227, 11
+  size: 64, 16
+  orig: 64, 16
+  offset: 0, 0
+  index: -1
+fireflower
+  rotate: false
+  xy: 775, 45
+  size: 64, 16
+  orig: 64, 16
+  offset: 0, 0
+  index: -1
+star
+  rotate: false
+  xy: 293, 11
+  size: 64, 16
+  orig: 64, 16
+  offset: 0, 0
+  index: -1
+goomba
+  rotate: false
+  xy: 841, 45
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+fireball
+  rotate: false
+  xy: 1, 1
+  size: 32, 8
+  orig: 32, 8
+  offset: 0, 0
+  index: -1
+brick_pieces
+  rotate: false
+  xy: 359, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+fireball_explode
+  rotate: false
+  xy: 891, 13
+  size: 16, 48
+  orig: 16, 48
+  offset: 0, 0
+  index: -1
+mushroom
+  rotate: false
+  xy: 909, 45
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
