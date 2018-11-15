@@ -1,3 +1,7 @@
+/*
+ * By: David Loucks
+ * Approx. Date: 2018.11.08
+*/
 package com.ridicarus.kid.roles.robot;
 
 import com.badlogic.gdx.audio.Sound;
@@ -15,27 +19,26 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.MyKidRidicarus;
 import com.ridicarus.kid.collisionmap.LineSeg;
-import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
-import com.ridicarus.kid.screens.PlayScreen;
 import com.ridicarus.kid.sprites.GoombaSprite;
+import com.ridicarus.kid.tools.WorldRunner;
 
-/**
- * Created by brentaureli on 9/14/15.
- */
-// Edited by Dave after that
-public class Goomba extends RobotRole
+public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot
 {
-	public static final float GOOMBA_SQUISH_TIME = 1f;
+	private static final float BODY_WIDTH = GameInfo.P2M(14f);
+	private static final float BODY_HEIGHT = GameInfo.P2M(14f);
+	private static final float FOOT_WIDTH = GameInfo.P2M(12f);
+	private static final float FOOT_HEIGHT = GameInfo.P2M(4f);
+	private static final float GOOMBA_SQUISH_TIME = 2f;
+	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
+	private static final float GOOMBA_BUMP_UP_VEL = 2f;
+	private static final float GOOMBA_WALK_VEL = 0.4f;
 
-	// ***
-	public enum GoombaState { WALK, DEAD, FALL };
+	public enum GoombaState { WALK, FALL, DEAD_SQUISH, DEAD_BUMPED };
+
+	private WorldRunner runner;
 
 	private Body b2body;
-	private Vector2 velocity;
-
-	private PlayScreen screen;
-
 	private GoombaSprite goombaSprite;
 
 	private GoombaState prevState;
@@ -43,22 +46,21 @@ public class Goomba extends RobotRole
 
 	private int onGroundCount;
 	private boolean isOnGround;
-	private boolean isDead;
+	private boolean isSquished;
+	private boolean isBumped;
 
-	public Goomba(PlayScreen screen, MapObject object){
+	public Goomba(WorldRunner runner, MapObject object){
 		Rectangle bounds;
 
-		this.screen = screen;
+		this.runner = runner;
 
-		velocity = new Vector2(-0.4f, 0f);
+		velocity = new Vector2(-GOOMBA_WALK_VEL, 0f);
 
 		bounds = ((RectangleMapObject) object).getRectangle();
-		goombaSprite = new GoombaSprite(screen.getAtlas());
-		goombaSprite.setPosition(GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
+		goombaSprite = new GoombaSprite(runner.getAtlas(), GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
 				GameInfo.P2M(bounds.getY() + bounds.getHeight() / 2f));
-		goombaSprite.setBounds(goombaSprite.getX(), goombaSprite.getY(), GameInfo.P2M(16), GameInfo.P2M(16));
 
-		defineGoomba(GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
+		defineBody(GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
 				GameInfo.P2M(bounds.getY() + bounds.getHeight() / 2f));
 
 		prevState = GoombaState.WALK;
@@ -66,68 +68,66 @@ public class Goomba extends RobotRole
 
 		onGroundCount = 0;
 		isOnGround = false;
-		isDead = false;
-	}
-
-	public void reverseVelocity(boolean x, boolean y){
-		if(x)
-			velocity.x = -velocity.x;
-		if(y)
-			velocity.y = -velocity.y;
+		// the equivalent of isDead: bumped | squished
+		isBumped = false;
+		isSquished = false;
 	}
 
 	private GoombaState getState() {
-		if(isDead)
-			return GoombaState.DEAD;
+		if(isBumped)
+			return GoombaState.DEAD_BUMPED;
+		else if(isSquished)
+			return GoombaState.DEAD_SQUISH;
 		else if(isOnGround)
 			return GoombaState.WALK;
 		else
 			return GoombaState.FALL;
 	}
 
-	private void die() {
-		isDead = true;
-	}
-
 	public void update(float delta) {
 		GoombaState curState = getState();
-		// TODO: should the following two lines go at the end of this function?
-		if(curState != prevState)
-			stateTimer = 0f;
-
 		switch(curState) {
+			case DEAD_SQUISH:
+				// new squish?
+				if(curState != prevState)
+					startSquish();
+				// wait a short time and disappear, if dead
+				else if(stateTimer > GOOMBA_SQUISH_TIME)
+					runner.removeRobot(this);
+				break;
+			case DEAD_BUMPED:
+				// new bumper?
+				if(curState != prevState)
+					startBump();
+				// check the old bumper for timeout
+				else if(stateTimer > GOOMBA_BUMP_FALL_TIME)
+					runner.removeRobot(this);
+				break;
 			case WALK:
 				// move if walking
 				b2body.setLinearVelocity(velocity);
-				break;
-			case DEAD:
-				// wait a short time and disappear, if dead
-				if(stateTimer > 2f)
-					screen.getWorldRunner().removeRobot(this);
 				break;
 			case FALL:
 				break;	// do nothing if falling
 		}
 
 		// update sprite position and graphic
-		goombaSprite.setPosition(b2body.getPosition().x - goombaSprite.getWidth() / 2,
-				b2body.getPosition().y - goombaSprite.getHeight() / 2);
-		goombaSprite.update(delta, curState);
+		goombaSprite.update(delta, b2body.getPosition(), curState);
 
 		// increment state timer if state stayed the same, otherwise reset timer
-		stateTimer += delta;
+		stateTimer = curState == prevState ? stateTimer+delta : 0f;
 		prevState = curState;
 	}
 
-	private void defineGoomba(float x, float y) {
+	private void defineBody(float x, float y) {
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(x, y);
 		bdef.type = BodyDef.BodyType.DynamicBody;
-		b2body = screen.getWorld().createBody(bdef);
+		b2body = runner.getWorld().createBody(bdef);
 
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(GameInfo.P2M(7f),  GameInfo.P2M(7f));
+		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.filter.categoryBits = GameInfo.ROBOT_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT |
 				GameInfo.ROBOT_BIT |
@@ -138,7 +138,7 @@ public class Goomba extends RobotRole
 
 		PolygonShape footSensor;
 		footSensor = new PolygonShape();
-		footSensor.setAsBox(GameInfo.P2M(6f), GameInfo.P2M(2f), new Vector2(0f, GameInfo.P2M(-6)), 0f);
+		footSensor.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
 		fdef.filter.categoryBits = GameInfo.ROBOTFOOT_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
 		fdef.shape = footSensor;
@@ -149,32 +149,39 @@ public class Goomba extends RobotRole
 		b2body.setActive(false);
 	}
 
-	public void draw(Batch batch){
-		goombaSprite.draw(batch);
-	}
-
-	public void hitOnHead(PlayerRole role) {
-		MyKidRidicarus.manager.get("audio/sounds/stomp.wav", Sound.class).play();
-	}
-
-	@Override
-	public Body getBody() {
-		return b2body;
-	}
-
-	public void applySquish() {
-		Filter filter = new Filter();
-		filter.categoryBits = GameInfo.ROBOT_BIT;
-		filter.maskBits = GameInfo.BOUNDARY_BIT;
+	private void startSquish() {
+		Filter filter;
 
 		// stop dead
 		b2body.setLinearVelocity(0f, 0f);
 
-		// players and other robots can now pass through the body
+		// other robots can now pass through the body
+		filter = new Filter();
+		filter.categoryBits = GameInfo.ROBOT_BIT;
+		filter.maskBits = GameInfo.BOUNDARY_BIT;
 		for(Fixture fix : b2body.getFixtureList())
 			fix.setFilterData(filter);
 
-		die();
+		MyKidRidicarus.manager.get(GameInfo.SOUND_STOMP, Sound.class).play();
+	}
+
+	private void startBump() {
+		Filter filter;
+
+		// body can pass through everything, to fall off screen (don't destroy body because we need gravity calcs).
+		filter = new Filter();
+		filter.categoryBits = GameInfo.NOTHING_BIT;
+		filter.maskBits = GameInfo.NOTHING_BIT;
+		for(Fixture fix : b2body.getFixtureList())
+			fix.setFilterData(filter);
+
+		// keep x velocity, but redo the y velocity so goomba bounces up
+		b2body.setLinearVelocity(b2body.getLinearVelocity().x, GOOMBA_BUMP_UP_VEL);
+	}
+	
+	@Override
+	public void draw(Batch batch){
+		goombaSprite.draw(batch);
 	}
 
 	@Override
@@ -198,26 +205,52 @@ public class Goomba extends RobotRole
 	}
 
 	@Override
-	public void dispose() {
-		screen.getWorld().destroyBody(b2body);
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return new Rectangle(b2body.getPosition().x - goombaSprite.getWidth()/2,
-				b2body.getPosition().y - goombaSprite.getHeight()/2,
-				goombaSprite.getWidth(), goombaSprite.getHeight());
-	}
-
-	@Override
 	public void onInnerTouchBoundLine(LineSeg seg) {
 		// bounce off of vertical bounds
 		if(!seg.isHorizontal)
 			reverseVelocity(true,  false);
 	}
 
-	// needed for items, not for goombas
 	@Override
-	public void use(PlayerRole role) {
+	public void onHeadBounce(Vector2 fromPos) {
+		isSquished = true;
+	}
+	
+	/*
+	 * A goomba, bumped from below, should bounce up into the air a bit and drop off the screen upside down.
+	 * (non-Javadoc)
+	 * @see com.ridicarus.kid.roles.robot.BumpableBot#onBump(com.badlogic.gdx.math.Vector2)
+	 */
+	@Override
+	public void onBump(Vector2 fromCenter) {
+		isBumped = true;
+	}
+
+	// assume any amount of damage kills, for now...
+	@Override
+	public void onDamage(float amount, Vector2 fromCenter) {
+		isBumped = true;
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return new Rectangle(b2body.getPosition().x - BODY_WIDTH/2f,
+				b2body.getPosition().y - BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT);
+	}
+
+	@Override
+	public Body getBody() {
+		return b2body;
+	}
+
+	// touching goomba does damage to players
+	@Override
+	public boolean isTouchDamage() {
+		return true;
+	}
+
+	@Override
+	public void dispose() {
+		runner.getWorld().destroyBody(b2body);
 	}
 }

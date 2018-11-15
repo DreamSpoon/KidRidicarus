@@ -1,7 +1,10 @@
+/*
+ * By: David Loucks
+ * Approx. Date: 2018.11.08
+*/
 package com.ridicarus.kid.roles.robot;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -13,12 +16,17 @@ import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.roles.player.MarioRole;
+import com.ridicarus.kid.sprites.MushroomSprite;
 import com.ridicarus.kid.tools.WorldRunner;
 
-public class PowerMushroom extends RobotRole {
-	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
-	public static final float GOOMBA_VS_VERT_BOUND_EPSILON = 0.001f;
-	public static final float SPROUT_TIME = 1f;
+public class PowerMushroom extends ItemRobot implements BumpableBot {
+	private static final float BODY_WIDTH = GameInfo.P2M(14f);
+	private static final float BODY_HEIGHT = GameInfo.P2M(12f);
+	private static final float FOOT_WIDTH = GameInfo.P2M(12f);
+	private static final float FOOT_HEIGHT = GameInfo.P2M(4f);
+	private static final float SPROUT_TIME = 0.5f;
+	private static final float WALK_VEL = 0.6f;
+	private static final float BUMP_UPVEL = 1.5f;
 
 	private enum MushroomState { SPROUT, WALK, FALL };
 
@@ -33,20 +41,19 @@ public class PowerMushroom extends RobotRole {
 	private int onGroundCount;
 	private boolean isOnGround;
 	private boolean isSprouting;
+	private boolean isBumped;
+	private Vector2 bumpCenter;
 
-	private Sprite mushroomSprite;
+	private MushroomSprite mSprite;
 
 	public PowerMushroom(WorldRunner runner, float x, float y) {
 		this.runner = runner;
 
-		velocity = new Vector2(0.6f, 0f);
+		velocity = new Vector2(WALK_VEL, 0f);
 
-		mushroomSprite = new Sprite(runner.getAtlas().findRegion(GameInfo.TEXATLAS_MUSHROOM));
-		mushroomSprite.setPosition(x, y);
-		mushroomSprite.setBounds(mushroomSprite.getX(), mushroomSprite.getY(),
-				GameInfo.P2M(GameInfo.TILEPIX_X), GameInfo.P2M(GameInfo.TILEPIX_Y));
+		mSprite = new MushroomSprite(runner.getAtlas(), x, y);
 
-		defineMushroom(x, y);
+		defineBody(x, y);
 
 		prevState = MushroomState.WALK;
 		stateTimer = 0f;
@@ -54,13 +61,7 @@ public class PowerMushroom extends RobotRole {
 		onGroundCount = 0;
 		isOnGround = false;
 		isSprouting = true;
-	}
-
-	private void reverseVelocity(boolean x, boolean y){
-		if(x)
-			velocity.x = -velocity.x;
-		if(y)
-			velocity.y = -velocity.y;
+		isBumped = false;
 	}
 
 	private MushroomState getState() {
@@ -73,11 +74,23 @@ public class PowerMushroom extends RobotRole {
 	}
 
 	public void update(float delta) {
+		// process bumpings
+		if(isBumped) {
+			isBumped = false;
+			// If moving right and bumped from the right then reverse velocity,
+			// if moving left and bumped from the left then reverse velocity
+			if((velocity.x > 0 && bumpCenter.x > b2body.getPosition().x) ||
+					(velocity.x < 0 && bumpCenter.x < b2body.getPosition().x)) {
+				reverseVelocity(true, false);
+			}
+			b2body.applyLinearImpulse(new Vector2(0f, BUMP_UPVEL), b2body.getWorldCenter(), true);
+		}
+
 		MushroomState curState = getState();
 		switch(curState) {
 			case WALK:
 				// move if walking
-				b2body.setLinearVelocity(velocity);
+				b2body.setLinearVelocity(velocity.x, b2body.getLinearVelocity().y);
 				break;
 			case SPROUT:
 				// wait a short time to finish sprouting
@@ -88,34 +101,36 @@ public class PowerMushroom extends RobotRole {
 				break;	// do nothing if falling
 		}
 
-		// update sprite position graphic
-		mushroomSprite.setPosition(b2body.getPosition().x - mushroomSprite.getWidth() / 2,
-				b2body.getPosition().y - mushroomSprite.getHeight() / 2);
+		mSprite.update(delta, b2body.getPosition());
 
 		// increment state timer if state stayed the same, otherwise reset timer
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
 		prevState = curState;
 	}
 
-	private void defineMushroom(float x, float y) {
-		BodyDef bdef = new BodyDef();
+	private void defineBody(float x, float y) {
+		BodyDef bdef;
+		FixtureDef fdef;
+		PolygonShape shroomShape;
+
+		bdef = new BodyDef();
 		bdef.position.set(x, y);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		b2body = runner.getWorld().createBody(bdef);
 
-		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(GameInfo.P2M(7f),  GameInfo.P2M(6f));
+		fdef = new FixtureDef();
+		shroomShape = new PolygonShape();
+		shroomShape.setAsBox(BODY_WIDTH/2f,  BODY_HEIGHT/2f);
 		fdef.filter.categoryBits = GameInfo.ITEM_BIT;
 		// items can pass through goombas, turtles, etc.
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.MARIO_ROBOT_SENSOR_BIT;
 
-		fdef.shape = boxShape;
+		fdef.shape = shroomShape;
 		b2body.createFixture(fdef).setUserData(this);
 
 		PolygonShape footSensor;
 		footSensor = new PolygonShape();
-		footSensor.setAsBox(GameInfo.P2M(6f), GameInfo.P2M(2f), new Vector2(0f, GameInfo.P2M(-6)), 0f);
+		footSensor.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
 		fdef.filter.categoryBits = GameInfo.ROBOTFOOT_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
 		fdef.shape = footSensor;
@@ -125,17 +140,21 @@ public class PowerMushroom extends RobotRole {
 		b2body.setActive(true);
 	}
 
-	public void draw(Batch batch){
-		mushroomSprite.draw(batch);
+	private void reverseVelocity(boolean x, boolean y){
+		if(x)
+			velocity.x = -velocity.x;
+		if(y)
+			velocity.y = -velocity.y;
 	}
 
 	@Override
-	public Body getBody() {
-		return b2body;
+	public void draw(Batch batch){
+		mSprite.draw(batch);
 	}
 
+	@Override
 	protected void onInnerTouchBoundLine(LineSeg seg) {
-		// bounce off of vertical bounds
+		// bounce off of vertical bounds only
 		if(!seg.isHorizontal)
 			reverseVelocity(true,  false);
 	}
@@ -161,22 +180,32 @@ public class PowerMushroom extends RobotRole {
 	}
 
 	@Override
+	public void onBump(Vector2 fromCenter) {
+		isBumped = true;
+		bumpCenter = fromCenter.cpy(); 
+	}
+
+	@Override
+	public void use(PlayerRole role) {
+		if(role instanceof MarioRole) {
+			((MarioRole) role).applyPowerup(PowerupType.MUSHROOM);
+			runner.removeRobot(this);
+		}
+	}
+
+	@Override
 	public void dispose() {
 		runner.getWorld().destroyBody(b2body);
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return new Rectangle(b2body.getPosition().x - mushroomSprite.getWidth()/2,
-				b2body.getPosition().y - mushroomSprite.getHeight()/2,
-				mushroomSprite.getWidth(), mushroomSprite.getHeight());
+		return new Rectangle(b2body.getPosition().x - BODY_WIDTH/2f, b2body.getPosition().y - BODY_HEIGHT/2f,
+				BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override
-	public void use(PlayerRole role) {
-		if(role instanceof MarioRole) {
-			((MarioRole) role).grow();
-			runner.removeRobot(this);
-		}
+	public Body getBody() {
+		return b2body;
 	}
 }

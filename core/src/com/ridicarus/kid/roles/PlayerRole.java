@@ -1,3 +1,8 @@
+/*
+ * By: David Loucks
+ * Approx. Date: 2018.11.08
+*/
+
 package com.ridicarus.kid.roles;
 
 import com.badlogic.gdx.graphics.g2d.Batch;

@@ -1,3 +1,8 @@
+/*
+ * By: David Loucks
+ * Approx. Date: 2018.11.08
+*/
+
 package com.ridicarus.kid.roles;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -25,6 +30,7 @@ public abstract class RobotRole {
 		if(!seg.isHorizontal) {
 			// check for actual bound touch, not just close call...
 			// we want to know if this bound is blocking just a teensy bit or a large amount
+//System.out.println("vert line seg check: meIs=" + meBeginY + ", " + meEndY + ", lineIs=" + lineBeginY + ", " + lineEndY);
 			if(meBeginY + ROBOT_VS_VERT_BOUND_EPSILON < lineEndY &&
 					meEndY - ROBOT_VS_VERT_BOUND_EPSILON > lineBeginY) {
 				// bounce off of vertical bounds
@@ -36,8 +42,6 @@ public abstract class RobotRole {
 	public abstract void onTouchRobot(RobotRole robo);
 	public abstract void onTouchGround();
 	public abstract void onLeaveGround();
-
-	public abstract void use(PlayerRole role);
 
 	public abstract void dispose();
 }

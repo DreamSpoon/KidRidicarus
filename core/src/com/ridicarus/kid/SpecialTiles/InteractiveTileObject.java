@@ -1,3 +1,12 @@
+/*
+ * Originally created by brentaureli on 9/14/15.
+ * GitHub:
+ *     https://github.com/BrentAureli/SuperMario
+ * 
+ * Retrieved from GitHub on Oct 17, 2018
+ * Modified afterward by David Loucks.
+*/
+
 package com.ridicarus.kid.SpecialTiles;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -18,9 +27,6 @@ import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.tools.WorldRunner;
 
 public abstract class InteractiveTileObject {
-	protected static final float BOUNCE_TIME = 0.15f;
-	protected static final float BOUNCE_HEIGHT = GameInfo.P2M(3);	// 3 pixel bounce height
-
 	protected WorldRunner runner;
 
 	protected Rectangle bounds;
@@ -29,6 +35,8 @@ public abstract class InteractiveTileObject {
 	protected MapObject object;
 	protected boolean isHidden;
 	protected int myTileID;
+
+	protected float tileWidth, tileHeight;
 
 	public InteractiveTileObject(WorldRunner runner, MapObject object) {
 		this.runner = runner;
@@ -47,9 +55,13 @@ public abstract class InteractiveTileObject {
 
 		shape.setAsBox(GameInfo.P2M(bounds.getWidth()/2f), GameInfo.P2M(bounds.getHeight()/2f));
 		fdef.shape = shape;
+		fdef.isSensor = true;
 		fixture = body.createFixture(fdef);
 
 		myTileID = getMyTile().getId();
+
+		tileWidth = GameInfo.P2M(bounds.getWidth());
+		tileHeight = GameInfo.P2M(bounds.getHeight());
 	}
 
 	protected void setCategoryFilter(short filterBit) {
@@ -145,4 +157,6 @@ public abstract class InteractiveTileObject {
 			return;	// exit if cell doesn't exist
 		layer.getCell(x, y).setTile(tile);
 	}
+
+	public abstract void destroy();
 }

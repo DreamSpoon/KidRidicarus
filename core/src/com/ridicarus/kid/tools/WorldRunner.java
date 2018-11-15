@@ -1,9 +1,12 @@
+/*
+ * By: David Loucks
+ * Approx. Date: 2018.11.08
+*/
 package com.ridicarus.kid.tools;
 
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -12,23 +15,25 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ridicarus.kid.GameInfo;
-import com.ridicarus.kid.SpecialTiles.BrickTile;
-import com.ridicarus.kid.SpecialTiles.CoinTile;
 import com.ridicarus.kid.SpecialTiles.InteractiveTileObject;
+import com.ridicarus.kid.SpecialTiles.BumpableTile;
 import com.ridicarus.kid.collisionmap.TileCollisionMap;
 import com.ridicarus.kid.roles.Player;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.roles.robot.Goomba;
-import com.ridicarus.kid.screens.PlayScreen;
+import com.ridicarus.kid.roles.robot.Turtle;
 
 public class WorldRunner {
-	private PlayScreen screen;
+	private TextureAtlas atlas;
 	private Player player;
 	private TiledMap map;
 	private TileCollisionMap collisionMap;
+	private WorldContactListener contactListener;
+	private World world;
 
 	private class TileForQueue {
 		public int x;
@@ -46,23 +51,25 @@ public class WorldRunner {
 	private LinkedBlockingQueue<TileForQueue> tilesToUnhide;
 	private LinkedBlockingQueue<TileForQueue> tilesToChange;
 
-	private LinkedList<InteractiveTileObject> tilesToUpdate;
-	private LinkedBlockingQueue<InteractiveTileObject> tilesToAddToUpdate;
-	private LinkedBlockingQueue<InteractiveTileObject> tilesToRemoveFromUpdate;
+	private LinkedList<InteractiveTileObject> intTilesToUpdate;
+	private LinkedBlockingQueue<InteractiveTileObject> intTilesToAddToUpdate;
+	private LinkedBlockingQueue<InteractiveTileObject> intTilesToRemoveFromUpdate;
+	private LinkedBlockingQueue<InteractiveTileObject> intTilesToDestroy;
 
 	private LinkedList<RobotRole> robots;
 	private LinkedBlockingQueue<RobotRole> robotsToAdd;
 	private LinkedBlockingQueue<RobotRole> robotsToRemove;
 
-	public WorldRunner(PlayScreen screen) {
-		this.screen = screen;
+	public WorldRunner(TextureAtlas atlas) {
+		this.atlas = atlas;
 		player = null;
 
 		tilesToDestroy = new LinkedBlockingQueue<TileForQueue>();
 		tilesToCreate = new LinkedBlockingQueue<TileForQueue>();
-		tilesToUpdate = new LinkedList<InteractiveTileObject>();
-		tilesToAddToUpdate = new LinkedBlockingQueue<InteractiveTileObject>();
-		tilesToRemoveFromUpdate = new LinkedBlockingQueue<InteractiveTileObject>();
+		intTilesToUpdate = new LinkedList<InteractiveTileObject>();
+		intTilesToDestroy = new LinkedBlockingQueue<InteractiveTileObject>();
+		intTilesToAddToUpdate = new LinkedBlockingQueue<InteractiveTileObject>();
+		intTilesToRemoveFromUpdate = new LinkedBlockingQueue<InteractiveTileObject>();
 		tilesToHide = new LinkedBlockingQueue<TileForQueue>();
 		tilesToUnhide = new LinkedBlockingQueue<TileForQueue>();
 		tilesToChange = new LinkedBlockingQueue<TileForQueue>();
@@ -70,6 +77,10 @@ public class WorldRunner {
 		robots = new LinkedList<RobotRole>();
 		robotsToAdd = new LinkedBlockingQueue<RobotRole>();
 		robotsToRemove = new LinkedBlockingQueue<RobotRole>();
+
+		world = new World(new Vector2(0, -10f), true);
+		contactListener = new WorldContactListener();
+		world.setContactListener(contactListener);
 	}
 
 	public void setPlayer(Player player) {
@@ -89,28 +100,40 @@ public class WorldRunner {
 		tileHeight = (Integer) map.getProperties().get("tileheight");
 
 		// create collision map from a certain tiled layer
-		collisionMap = new TileCollisionMap(screen.getWorld(),
+		collisionMap = new TileCollisionMap(world,
 				(TiledMapTileLayer) map.getLayers().get(GameInfo.TILEMAP_COLLISION),
 				width, height, tileWidth, tileHeight);
 
 		layer = map.getLayers().get(GameInfo.TILEMAP_BRICK);
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
-			new BrickTile(this, object);
+//			new BrickTile(this, object);
+			new BumpableTile(this, object);
 		}
-		layer = map.getLayers().get(GameInfo.TILEMAP_COIN);
+		layer = map.getLayers().get(GameInfo.TILEMAP_COINBLOCK);
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
-			new CoinTile(this, object);
+//			new CoinTile(this, object);
+			new BumpableTile(this, object);
 		}
 
 		// load goomba robots layer
 		layer = map.getLayers().get(GameInfo.TILEMAP_GOOMBA);
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
-			robots.add(new Goomba(screen, object));
+			robots.add(new Goomba(this, object));
+		}
+		layer = map.getLayers().get(GameInfo.TILEMAP_TURTLE);
+		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
+			robots.add(new Turtle(this, object));
 		}
 	}
 
-	public void update(float delta, PlayerRole player) {
-		updateRobots(delta, player);
+	public void update(float delta) {
+		// update physics world
+		world.step(delta, 6, 2);
+
+		player.update(delta);
+
+		updateRobots(delta, player.getRole());
+
 		updateTileWorld(delta);
 	}
 
@@ -133,10 +156,6 @@ public class WorldRunner {
 		}
 
 		// during update of robots, some robots may have been added to list of robots to add/remove
-//		for(RobotRole robot : robotsToRemove)
-//			robot.dispose();
-//		robots.removeAll(robotsToRemove, false);	// DEBUG: should identity be true?
-//		robotsToRemove.clear();
 		while(!robotsToAdd.isEmpty()) {
 			RobotRole robo = robotsToAdd.poll();
 			robots.add(robo);
@@ -170,6 +189,9 @@ public class WorldRunner {
 
 	// tile creates and destroys
 	private void updateTileWorld(float delta) {
+		for(InteractiveTileObject tile : intTilesToUpdate)
+			tile.update(delta);
+
 		while(!tilesToDestroy.isEmpty()) {
 			TileForQueue ttd = tilesToDestroy.poll();
 			reallyDestroyTile(ttd.x, ttd.y);
@@ -179,19 +201,28 @@ public class WorldRunner {
 			reallyCreateTile(ttd.x, ttd.y, ttd.tile);
 		}
 
-		// updating tiles might add tiles to the hide or unhide queues
-		for(InteractiveTileObject tile : tilesToUpdate)
-			tile.update(delta);
-		while(!tilesToAddToUpdate.isEmpty()) {
-			InteractiveTileObject tile = tilesToAddToUpdate.poll();
-			tilesToUpdate.add(tile);
+		// updating interactive tiles might add tiles to the hide or unhide queues
+		while(!intTilesToAddToUpdate.isEmpty()) {
+			InteractiveTileObject tile = intTilesToAddToUpdate.poll();
+			intTilesToUpdate.add(tile);
 		}
-		while(!tilesToRemoveFromUpdate.isEmpty()) {
-			InteractiveTileObject tile = tilesToRemoveFromUpdate.poll();
-			tilesToUpdate.remove(tile);
+		while(!intTilesToRemoveFromUpdate.isEmpty()) {
+			InteractiveTileObject tile = intTilesToRemoveFromUpdate.poll();
+			intTilesToUpdate.remove(tile);
 		}
 
-		// check queues after tile updates finish
+		while(!intTilesToDestroy.isEmpty()) {
+			InteractiveTileObject tile = intTilesToDestroy.poll();
+
+			// remove tile from updates list if it's in there
+			if(intTilesToUpdate.contains(tile))
+				intTilesToUpdate.remove(tile);
+
+			tile.destroy();
+		}
+
+		// check queues after interactive tile updates finish
+		// TODO: verify that the order of the below 3 blocks is correct
 		while(!tilesToHide.isEmpty()) {
 			TileForQueue ttd = tilesToHide.poll();
 			reallyHideTile(ttd.x, ttd.y);
@@ -307,35 +338,26 @@ public class WorldRunner {
 		layer.getCell(x, y).setTile(tile);
 	}
 
-	public void startTileUpdates(InteractiveTileObject tile) {
-		if(tilesToUpdate.contains(tile))
-			throw new IllegalArgumentException("Cannot add tile more than once to tile update list.");
+	public void enableInteractiveTileUpdates(InteractiveTileObject tile) {
+		if(intTilesToUpdate.contains(tile))
+			return;
 
-		tilesToAddToUpdate.add(tile);
+		intTilesToAddToUpdate.add(tile);
 	}
 
-	public void stopTileUpdates(InteractiveTileObject tile) {
-		if(!tilesToUpdate.contains(tile))
-			throw new IllegalArgumentException("Cannot remove tile that is not in tile update list.");
+	public void disableInteractiveTileUpdates(InteractiveTileObject tile) {
+		if(!intTilesToUpdate.contains(tile))
+			return;
 
-		tilesToRemoveFromUpdate.add(tile);
+		intTilesToRemoveFromUpdate.add(tile);
 	}
 
-	public void draw(Batch batch) {
-		// draw interactive tiles first
-		for(InteractiveTileObject tile : tilesToUpdate)
-			tile.draw(batch);
-
-		// draw robots second
-		for(RobotRole roboRole : robots)
-			roboRole.draw(batch);
-
-		// draw mario third
-		player.getRole().draw(batch);
+	public void destroyInteractiveTile(InteractiveTileObject tile) {
+		intTilesToDestroy.add(tile);
 	}
 
 	public World getWorld() {
-		return screen.getWorld();
+		return world;
 	}
 
 	public TiledMap getMap() {
@@ -351,6 +373,18 @@ public class WorldRunner {
 	}
 
 	public TextureAtlas getAtlas() {
-		return screen.getAtlas();
+		return atlas;
+	}
+
+	public void dispose() {
+		world.dispose();
+	}
+
+	public LinkedList<InteractiveTileObject> getIntTilesToUpdate() {
+		return intTilesToUpdate;
+	}
+
+	public Player getPlayer() {
+		return player;
 	}
 }

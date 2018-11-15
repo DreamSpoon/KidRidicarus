@@ -1,3 +1,8 @@
+/*
+ * By: David Loucks
+ * Approx. Date: 2018.11.08
+*/
+
 package com.ridicarus.kid.roles.player;
 
 import com.badlogic.gdx.audio.Music;
@@ -17,20 +22,25 @@ import com.ridicarus.kid.SpecialTiles.InteractiveTileObject;
 import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
-import com.ridicarus.kid.roles.robot.Goomba;
-import com.ridicarus.kid.roles.robot.PowerMushroom;
+import com.ridicarus.kid.roles.robot.HeadBounceBot;
+import com.ridicarus.kid.roles.robot.ItemRobot;
+import com.ridicarus.kid.roles.robot.ItemRobot.PowerupType;
+import com.ridicarus.kid.roles.robot.MarioFireball;
+import com.ridicarus.kid.roles.robot.TouchDmgBot;
+import com.ridicarus.kid.roles.robot.Turtle;
+import com.ridicarus.kid.roles.robot.WalkingRobot;
 import com.ridicarus.kid.sprites.MarioSprite;
 import com.ridicarus.kid.tools.WorldRunner;
 
 public class MarioRole implements PlayerRole {
-	private static final float MARIO_WALKMOVE_XIMP = 0.042f;
+	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 	private static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
 	private static final float MARIO_RUNMOVE_XIMP = MARIO_WALKMOVE_XIMP * 1.5f;
-	private static final float MARIO_MAX_WALKVEL = MARIO_WALKMOVE_XIMP * 42f;
-	private static final float MARIO_MAX_RUNVEL = MARIO_MAX_WALKVEL * 1.65f;
 	private static final float DECEL_XIMP = MARIO_WALKMOVE_XIMP * 1.37f;
 	private static final float MARIO_BRAKE_XIMP = MARIO_WALKMOVE_XIMP * 2.75f;
 	private static final float MARIO_BRAKE_TIME = 0.2f;
+	private static final float MARIO_MAX_WALKVEL = MARIO_WALKMOVE_XIMP * 42f;
+	private static final float MARIO_MAX_RUNVEL = MARIO_MAX_WALKVEL * 1.65f;
 
 	private static final float MARIO_JUMP_IMPULSE = 1.75f;
 	private static final float MARIO_JUMP_FORCE = 14f;
@@ -39,82 +49,278 @@ public class MarioRole implements PlayerRole {
 	private static final float MARIO_MAX_RUNJUMPVEL = MARIO_MAX_RUNVEL;
 	private static final float MARIO_JUMP_GROUNDCHECK_DELAY = 0.05f;
 	private static final float MARIO_JUMPFORCE_TIME = 0.5f;
+	private static final float MARIO_HEADBOUNCE_VEL = 1.75f;	// up velocity
 
 	private static final float DMG_INVINCIBLE_TIME = 3f;
 
-	public enum MarioRoleState {
-		STAND, RUN, JUMP, FALL, BRAKE, DEAD
-	};
+	public enum MarioPowerState { SMALL, BIG, FIRE };
+	// the body may receive different impulses than the sprite receives texture regions
+	public enum MarioCharState { STAND, WALKRUN, BRAKE, JUMP, FALL, FIREBALL, DIE };
 
 	private WorldRunner runner;
 	private MarioSprite marioSprite;
 	private Body b2body;
 	private Fixture marioBodyFixture;	// for making mario invincible after damage
 
-	private MarioRoleState curState;
+	private MarioCharState curCharState;
 	private float stateTimer;
 
 	private boolean wantsToGoRight, wantsToGoLeft, wantsToJump, wantsToRun;
 
 	private boolean marioIsDead;
-	private boolean isBig;
 	private boolean isFacingRight;
 
 	private int onGroundCount;
 	private boolean isOnGround;
-	private boolean isJumpAllowed;
-	private boolean isJumpForceAllowed;
+	private boolean isNewJumpAllowed;
 
-	private boolean timeToDefineBigMario;
-	private boolean timeToDefineSmallMario;
 	private boolean isDmgInvincible;
 	private float dmgInvincibleTime;
 
 	private boolean canHeadBang;
 	private Array<InteractiveTileObject> headHits;
 
+	private MarioPowerState curPowerState;
+
+	private boolean isTakeDamage;
+	private boolean isHeadBouncing;
+	private PowerupType receivedPowerup;
+
+	private static final float TIME_PER_FIREBALL = 0.5f;
+	private float fireballTimer;
+	private boolean wantsToRunOnPrevUpdate;
+	private boolean isBrakeAvailable;
+	private float brakeTimer;
+	private float jumpGroundCheckTimer;
+	private boolean isJumping;
+	private float jumpForceTimer;
+
 	public MarioRole(WorldRunner runner, Vector2 position) {
 		this.runner = runner;
 
 		marioIsDead = false;
-		isBig = false;
 		isFacingRight = true;
 		onGroundCount = 0;
 		isOnGround = false;
-		isJumpAllowed = false;
-		isJumpForceAllowed = false;
-		timeToDefineBigMario = false;
-		timeToDefineSmallMario = false;
+		isNewJumpAllowed = false;
 		isDmgInvincible = false;
 		dmgInvincibleTime = 0f;
 		canHeadBang = true;
 		headHits = new Array<InteractiveTileObject>();
 
-		curState = MarioRoleState.STAND;
+		curCharState = MarioCharState.STAND;
 		stateTimer = 0f;
+		curPowerState = MarioPowerState.SMALL;
+
+		isTakeDamage = false;
+		isHeadBouncing = false;
+		receivedPowerup = PowerupType.NONE;
+
+		fireballTimer = TIME_PER_FIREBALL * 2f;
+		wantsToRunOnPrevUpdate = false;
+
+		isBrakeAvailable = true;
+		brakeTimer = 0f;
+		jumpGroundCheckTimer = 0f;
+		isJumping = false;
+		jumpForceTimer = 0f;
 
 		// graphic
-		marioSprite = new MarioSprite(runner.getAtlas(), curState, isBig, isFacingRight, false);
+		marioSprite = new MarioSprite(runner.getAtlas(), curCharState, curPowerState, isFacingRight);
 		// physic
-		defineBody(position, new Vector2(0f, 0f), isBig);
+		defineBody(position, new Vector2(0f, 0f), curPowerState);
 	}
 
-	public void grow() {
-		if(isBig)
-			return;
+	// Process the body and return a character state based on the findings.
+	private MarioCharState processBodyState(float delta) {
+		MarioCharState returnState;
+		boolean isVelocityLeft, isVelocityRight;
+		boolean doWalkRunMove;
+		boolean doDecelMove;
+		boolean doBrakeMove;
 
-		timeToDefineBigMario = true;
-		isBig = true;
-		MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_USE, Sound.class).play(GameInfo.SOUND_VOLUME);
+		if(marioIsDead) {
+			// make sure mario doesn't move left or right while dead
+			b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
+			return MarioCharState.DIE;
+		}
+
+		returnState = MarioCharState.STAND;
+		isVelocityRight = b2body.getLinearVelocity().x > MARIO_MIN_WALKSPEED;
+		isVelocityLeft = b2body.getLinearVelocity().x < -MARIO_MIN_WALKSPEED;
+
+		// multiple concurrent body impulses may be necessary
+		doWalkRunMove = false;
+		doDecelMove = false;
+		doBrakeMove = false;
+		// want to move left or right? (but not both! because they would cancel each other)
+		if((wantsToGoRight && !wantsToGoLeft) || (!wantsToGoRight && wantsToGoLeft)) {
+			doWalkRunMove = true;
+
+			// mario can change facing direction, but not while airborne
+			if(isOnGround) {
+				// brake becomes available again when facing direction changes
+				if(isFacingRight != wantsToGoRight) {
+					isBrakeAvailable = true;
+					brakeTimer = 0f;
+				}
+
+				// update facing direction
+				isFacingRight = wantsToGoRight;
+			}
+		}
+		// decelerate if on ground and not wanting to move left or right
+		else if(isOnGround && ((isFacingRight && isVelocityRight) || (!isFacingRight && isVelocityLeft)))
+			doDecelMove = true;
+
+		// check for brake application
+		if(isOnGround && isBrakeAvailable && ((isFacingRight && isVelocityLeft) || (!isFacingRight && isVelocityRight))) {
+			isBrakeAvailable = false;
+			brakeTimer = MARIO_BRAKE_TIME;
+		}
+		// this catches brake applications from this update() call and previous update() calls
+		if(brakeTimer > 0f) {
+			doBrakeMove = true;
+			brakeTimer -= delta;
+		}
+
+		// apply impulses if necessary
+		if(doWalkRunMove) {
+			moveBodyLeftRight(wantsToGoRight, wantsToRun, isOnGround);
+			returnState = MarioCharState.WALKRUN;
+		}
+		else if(doDecelMove) {	// cannot walk/run and decel at same time
+			decelLeftRight(isFacingRight);
+			returnState = MarioCharState.WALKRUN;
+		}
+		if(doBrakeMove) {
+			brakeLeftRight(isFacingRight);
+			// body brake overrides character's run animation
+			returnState = MarioCharState.BRAKE;
+		}
+
+		// Do not check mario's "on ground" status for a short time after mario jumps, because his foot sensor
+		// might still be touching the ground even after his body enters the air.
+		if(jumpGroundCheckTimer > delta)
+			jumpGroundCheckTimer -= delta;
+		else {
+			jumpGroundCheckTimer = 0f;
+			isNewJumpAllowed = false;
+			// The player can jump once per press of the jump key, so let them jump again when they release the
+			// button but, they need to be on the ground with the button released.
+			if(isOnGround) {
+				isJumping = false;
+				if(!wantsToJump)
+					isNewJumpAllowed = true;
+			}
+		}
+
+		// jump?
+		if(wantsToJump && isNewJumpAllowed) {	// do jump
+			isNewJumpAllowed = false;
+			isJumping = true;
+			// start a timer to delay checking for onGround status
+			jumpGroundCheckTimer = MARIO_JUMP_GROUNDCHECK_DELAY;
+			returnState = MarioCharState.JUMP;
+
+			// the faster mario is moving, the higher he jumps, up to a max
+			float mult = Math.abs(b2body.getLinearVelocity().x) / MARIO_MAX_RUNJUMPVEL;
+			// cap the multiplier
+			if(mult > 1f)
+				mult = 1f;
+
+			mult *= (float) MARIO_RUNJUMP_MULT;
+			mult += 1f;
+
+			// apply initial (and only) jump impulse
+			moveBodyY(MARIO_JUMP_IMPULSE * mult);
+			// the remainder of the jump up velocity is achieved through mid-air up-force
+			jumpForceTimer = MARIO_JUMPFORCE_TIME;
+		}
+		else if(isJumping) {	// jumped and is mid-air
+			returnState = MarioCharState.JUMP;
+			// jump force stops, and cannot be restarted, if the player releases the jump key
+			if(!wantsToJump)
+				jumpForceTimer = 0f;
+			// The longer the player holds the jump key, the higher they go,
+			// if mario is moving up (no jump force allowed while mario is moving down)
+			// TODO: what if mario is initally moving down because he jumped from an elevator?
+			else if(b2body.getLinearVelocity().y > 0f && jumpForceTimer > 0f) {
+				jumpForceTimer -= delta;
+				// the force was strong to begin and tapered off over time - some said it became irrelevant
+				useTheForceMario(MARIO_JUMP_FORCE * jumpForceTimer / MARIO_JUMPFORCE_TIME);
+			}
+		}
+		// finally, if mario is not on the ground (for reals) then he is falling since he is not jumping
+		else if(!isOnGround && jumpGroundCheckTimer <= 0f)
+			returnState = MarioCharState.FALL;
+
+		return returnState;
 	}
 
-	private void shrink() {
-		if(!isBig)
-			return;
+	@Override
+	public void update(float delta) {
+		MarioCharState nextState;
+		boolean threwFireball;
 
-		timeToDefineSmallMario = true;
-		isBig = false;
-		MyKidRidicarus.manager.get(GameInfo.SOUND_POWERDOWN, Sound.class).play(GameInfo.SOUND_VOLUME);
+		processHeadHits();	// hitting bricks with his head
+		processHeadBounces();	// bouncing on heads of goombas, turtles, etc.
+		threwFireball = processFireball(delta);
+		processPowerups();
+		processDamage(delta);
+
+		nextState = processBodyState(delta);
+		stateTimer = nextState == curCharState ? stateTimer + delta : 0f;
+		curCharState = nextState;
+
+		wantsToRunOnPrevUpdate = wantsToRun;
+
+		wantsToGoRight = false;
+		wantsToGoLeft = false;
+		wantsToRun = false;
+		wantsToJump = false;
+
+		if(threwFireball)
+			marioSprite.update(delta, b2body.getPosition(), MarioCharState.FIREBALL, curPowerState, isFacingRight, isDmgInvincible);
+		else
+			marioSprite.update(delta, b2body.getPosition(), nextState, curPowerState, isFacingRight, isDmgInvincible);
+	}
+
+	private void processHeadBounces() {
+		if(isHeadBouncing) {
+			isHeadBouncing = false;
+			b2body.setLinearVelocity(b2body.getLinearVelocity().x, 0f);
+			b2body.applyLinearImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL), b2body.getWorldCenter(), true);
+		}
+	}
+
+	// mario can shoot fireballs two at a time, but must wait if his "fireball timer" runs low
+	private boolean processFireball(float delta) {
+		fireballTimer += delta;
+		if(fireballTimer > TIME_PER_FIREBALL)
+			fireballTimer = TIME_PER_FIREBALL;
+
+		// fire a ball?
+		if(curPowerState == MarioPowerState.FIRE && wantsToRun && !wantsToRunOnPrevUpdate && fireballTimer > 0f) {
+System.out.println("release fireball!!!" + ((float) Math.floorMod(System.currentTimeMillis(), 100000) / 1000f));
+			fireballTimer -= TIME_PER_FIREBALL;
+			throwFireball();
+			return true;
+		}
+
+		return false;
+	}
+
+	private static final float FIREBALL_OFFSET = GameInfo.P2M(8f);
+	private void throwFireball() {
+		MarioFireball ball;
+
+		if(isFacingRight)
+			ball = new MarioFireball(runner, b2body.getPosition().cpy().add(FIREBALL_OFFSET, 0f), true);
+		else
+			ball = new MarioFireball(runner, b2body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f), false);
+
+		runner.addRobot(ball);
 	}
 
 	private void decelLeftRight(boolean right) {
@@ -156,191 +362,62 @@ public class MarioRole implements PlayerRole {
 		b2body.applyForce(new Vector2(0, notMyFather), b2body.getWorldCenter(), true);
 	}
 
-	private MarioRoleState getState() {
-		MarioRoleState state;
-		boolean wasFacingRight;
-		boolean changeFacingDir;
-		boolean isStartingJump;
-
-		if(marioIsDead)
-			return MarioRoleState.DEAD;
-
-		// Do not check mario's "on ground" status for a short time after mario jumps, because his foot sensor
-		// might still be touching the ground even after his body enters the air.
-		if(curState == MarioRoleState.JUMP && stateTimer < MARIO_JUMP_GROUNDCHECK_DELAY)
-			isStartingJump = true;
-		else
-			isStartingJump = false;
-
-		// assume default STAND state to begin with, and state may change later
-		state = MarioRoleState.STAND;
-		wasFacingRight = isFacingRight;
-		if(isOnGround && !isStartingJump) {
-			if(wantsToGoRight && !wantsToGoLeft) {
-				isFacingRight = true;
-				state = MarioRoleState.RUN;
-			}
-			else if(wantsToGoLeft && !wantsToGoRight) {
-				isFacingRight = false;
-				state = MarioRoleState.RUN;
-			}
-
-			if(wantsToJump && isJumpAllowed)
-				state = MarioRoleState.JUMP;
-			else {
-				// mario brakes when he changes direction while he has velocity
-				changeFacingDir = isFacingRight != wasFacingRight ? true : false;
-
-				// new direction right, old direction left, and velocity is still to the left?
-				if(isFacingRight && changeFacingDir && b2body.getLinearVelocity().x < -MARIO_MIN_WALKSPEED)
-					return MarioRoleState.BRAKE;
-				// new direction left, old direction right, and velocity is still to the right?
-				else if(!isFacingRight && changeFacingDir && b2body.getLinearVelocity().x > MARIO_MIN_WALKSPEED)
-					return MarioRoleState.BRAKE;
-				else {
-					// is mario still braking?
-					if(curState == MarioRoleState.BRAKE && stateTimer <= MARIO_BRAKE_TIME)
-						return MarioRoleState.BRAKE;
-					else {
-						if(isFacingRight && b2body.getLinearVelocity().x > MARIO_MIN_WALKSPEED)
-							return MarioRoleState.RUN;
-						else if(!isFacingRight && b2body.getLinearVelocity().x < -MARIO_MIN_WALKSPEED)
-							return MarioRoleState.RUN;
-						else
-							return MarioRoleState.STAND;
-					}
+	private void processPowerups() {
+		// apply powerup if received
+		switch(receivedPowerup) {
+			case MUSHROOM:
+				if(curPowerState == MarioPowerState.SMALL) {
+					curPowerState = MarioPowerState.BIG;
+					defineBody(b2body.getPosition().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity(), curPowerState);
+					MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_USE, Sound.class).play(GameInfo.SOUND_VOLUME);
 				}
-			}
-		}
-		else {
-			if(curState == MarioRoleState.JUMP)
-				return MarioRoleState.JUMP;
-			else	// if mario is not on the ground and he did not jump, then he fell
-				return MarioRoleState.FALL;
+				break;
+			case FIREFLOWER:
+				if(curPowerState == MarioPowerState.SMALL) {
+					curPowerState = MarioPowerState.BIG;
+					defineBody(b2body.getPosition().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity(), curPowerState);
+					MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_USE, Sound.class).play(GameInfo.SOUND_VOLUME);
+				}
+				else if(curPowerState == MarioPowerState.BIG) {
+					curPowerState = MarioPowerState.FIRE;
+					defineBody(b2body.getPosition(), b2body.getLinearVelocity(), curPowerState);
+					MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_USE, Sound.class).play(GameInfo.SOUND_VOLUME);
+				}
+				break;
+			case NONE:
+				break;
 		}
 
-		return state;
+		receivedPowerup = PowerupType.NONE;
 	}
 
-	@Override
-	public void update(float delta) {
-		MarioRoleState nextState;
-
-		processHeadHits();
-
-		// If mario grows and shrinks on the same frame, it means he got a mushroom and he hit an enemy at the
-		// same time. Since a big mario would have damage invulnerability after the hit, so will we (but no
-		// grow/shrink animation).
-		if(timeToDefineBigMario && timeToDefineSmallMario) {
-			startDmgInvincibility();
-		}
-		if(timeToDefineBigMario) {
-			defineBody(b2body.getPosition().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity(), true);
-			timeToDefineBigMario = false;
-		}
-		else if(timeToDefineSmallMario) {
-			defineBody(b2body.getPosition().sub(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity(), false);
-			timeToDefineSmallMario = false;
-
-			// assuming small mario because touched an enemy - so start limit invulnerability time
-			startDmgInvincibility();
-		}
-
-		// the player can jump once per press of the jump key, so let them jump again when they release the button
-		if(isOnGround && !wantsToJump)
-			isJumpAllowed = true;
-
-		nextState = getState();
-		switch(nextState) {
-			case DEAD:
-				// make sure mario doesn't move left or right while dead
-				b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
-				break;
-			case BRAKE:
-				if(isFacingRight && b2body.getLinearVelocity().x < 0f)
-					brakeLeftRight(true);
-				else if(!isFacingRight && b2body.getLinearVelocity().x > 0f)
-					brakeLeftRight(false);
-				break;
-			case RUN:
-				if(wantsToGoRight && !wantsToGoLeft)
-					moveBodyLeftRight(true, wantsToRun, true);
-				else if(wantsToGoLeft && !wantsToGoRight)
-					moveBodyLeftRight(false, wantsToRun, true);
-				else {
-					if(isFacingRight && b2body.getLinearVelocity().x > MARIO_MIN_WALKSPEED)
-						decelLeftRight(true);
-					else if(!isFacingRight && b2body.getLinearVelocity().x < -MARIO_MIN_WALKSPEED)
-						decelLeftRight(false);
-				}
-				break;
-			case STAND:
-				if(wantsToGoRight && !wantsToGoLeft)
-					moveBodyLeftRight(true, wantsToRun, true);
-				else if(wantsToGoLeft && !wantsToGoRight)
-					moveBodyLeftRight(false, wantsToRun, true);
-				break;
-			case JUMP:
-				// if first state of jump then move body like it's on ground
-				if(nextState != curState) {
-					// do left/right move (if needed) before jump
-					if(wantsToGoRight && !wantsToGoLeft)
-						moveBodyLeftRight(true, wantsToRun, true);
-					else if(wantsToGoLeft && !wantsToGoRight)
-						moveBodyLeftRight(false, wantsToRun, true);
-
-					if(isJumpAllowed) {
-						// the faster mario is moving, the higher he jumps, up to a max
-						float mult = Math.abs(b2body.getLinearVelocity().x) / MARIO_MAX_RUNJUMPVEL;
-						// cap the multiplier
-						if(mult > 1)
-							mult = 1;
-
-						mult *= MARIO_RUNJUMP_MULT;
-						mult += 1;
-
-						moveBodyY(MARIO_JUMP_IMPULSE * mult);
-						isJumpAllowed = false;
-						isJumpForceAllowed = true;
-					}
-				}
-				else {	// jumped and mid-air
-					if(wantsToGoRight && !wantsToGoLeft)
-						moveBodyLeftRight(true, wantsToRun, false);
-					else if(wantsToGoLeft && !wantsToGoRight)
-						moveBodyLeftRight(false, wantsToRun, false);
-
-					// The longer the player holds the jump key, the higher they go,
-					// if mario is moving up (no jump force allowed while mario is moving down)
-					// TODO: what if mario is moving down because he jumped from an elevator?
-					if(wantsToJump && isJumpForceAllowed && b2body.getLinearVelocity().y > 0f &&
-							stateTimer < MARIO_JUMPFORCE_TIME) {
-						useTheForceMario(MARIO_JUMP_FORCE * (MARIO_JUMPFORCE_TIME - stateTimer) / MARIO_JUMPFORCE_TIME);
-					}
-
-					// jump force stops, and cannot be restarted, if the player releases the jump key
-					if(!wantsToJump)
-						isJumpForceAllowed = false;
-				}
-				break;
-			case FALL:
-				break;
-		}
-
-		stateTimer = nextState == curState ? stateTimer + delta : 0f;
-		curState = nextState;
-
-		wantsToGoRight = false;
-		wantsToGoLeft = false;
-		wantsToRun = false;
-		wantsToJump = false;
-
+	private void processDamage(float delta) {
 		if(dmgInvincibleTime > 0f)
 			dmgInvincibleTime -= delta;
 		else if(isDmgInvincible)
 			endDmgInvincibility();
 
-		marioSprite.update(delta, b2body.getPosition(), curState, isBig, isFacingRight, isDmgInvincible);
+		// apply damage if received
+		if(isTakeDamage) {
+			isTakeDamage = false;
+			// fire mario loses fire
+			if(curPowerState == MarioPowerState.FIRE) {
+				curPowerState = MarioPowerState.BIG;
+				defineBody(b2body.getPosition(), b2body.getLinearVelocity(), curPowerState);
+				startDmgInvincibility();
+				MyKidRidicarus.manager.get(GameInfo.SOUND_POWERDOWN, Sound.class).play(GameInfo.SOUND_VOLUME);
+			}
+			// big mario gets smaller
+			else if(curPowerState == MarioPowerState.BIG) {
+				curPowerState = MarioPowerState.SMALL;
+				defineBody(b2body.getPosition().sub(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity(), curPowerState);
+				startDmgInvincibility();
+				MyKidRidicarus.manager.get(GameInfo.SOUND_POWERDOWN, Sound.class).play(GameInfo.SOUND_VOLUME);
+			}
+			// die if small and not invincible
+			else
+				die();
+		}
 	}
 
 	private void startDmgInvincibility() {
@@ -394,7 +471,7 @@ public class MarioRole implements PlayerRole {
 		}
 	}
 
-	private void defineBody(Vector2 position, Vector2 velocity, boolean isBig) {
+	private void defineBody(Vector2 position, Vector2 velocity, MarioPowerState subState ) {
 		BodyDef bdef;
 		FixtureDef fdef;
 		PolygonShape marioShape;
@@ -412,25 +489,25 @@ public class MarioRole implements PlayerRole {
 
 		fdef = new FixtureDef();
 		marioShape = new PolygonShape();
-		if(isBig)
-			marioShape.setAsBox(GameInfo.P2M(7f),  GameInfo.P2M(13f));
-		else
+		if(subState == MarioPowerState.SMALL)
 			marioShape.setAsBox(GameInfo.P2M(7f),  GameInfo.P2M(6f));
+		else
+			marioShape.setAsBox(GameInfo.P2M(7f),  GameInfo.P2M(13f));
 
 		fdef.filter.categoryBits = GameInfo.MARIO_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
 
 		fdef.shape = marioShape;
-		fdef.friction = 0.1f;	// slide a bit more (default is 0.2) 
+		fdef.friction = 0.01f;	// slide a bit more (default is 0.2)
 		marioBodyFixture = b2body.createFixture(fdef);
 		marioBodyFixture.setUserData(this);
 
 		// head sensor for detecting head banging behavior
 		headSensor = new PolygonShape();
-		if(isBig)
-			headSensor.setAsBox(GameInfo.P2M(2f), GameInfo.P2M(1f), new Vector2(GameInfo.P2M(0f), GameInfo.P2M(16f)), 0f);
-		else
+		if(subState == MarioPowerState.SMALL)
 			headSensor.setAsBox(GameInfo.P2M(2f), GameInfo.P2M(1f), new Vector2(GameInfo.P2M(0f), GameInfo.P2M(8f)), 0f);
+		else
+			headSensor.setAsBox(GameInfo.P2M(2f), GameInfo.P2M(1f), new Vector2(GameInfo.P2M(0f), GameInfo.P2M(16f)), 0f);
 
 		fdef.filter.categoryBits = GameInfo.MARIOHEAD_BIT;
 		fdef.filter.maskBits = GameInfo.BANGABLE_BIT;
@@ -439,10 +516,10 @@ public class MarioRole implements PlayerRole {
 		b2body.createFixture(fdef).setUserData(this);
 		// foot sensor for detecting onGround
 		footSensor = new PolygonShape();
-		if(isBig)
-			footSensor.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(2f), new Vector2(0f, GameInfo.P2M(-16)), 0f);
-		else
+		if(subState == MarioPowerState.SMALL)
 			footSensor.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(2f), new Vector2(0f, GameInfo.P2M(-6)), 0f);
+		else
+			footSensor.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(2f), new Vector2(0f, GameInfo.P2M(-16)), 0f);
 
 		fdef.filter.categoryBits = GameInfo.MARIOFOOT_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
@@ -457,6 +534,27 @@ public class MarioRole implements PlayerRole {
 		fdef.shape = marioShape;
 		fdef.isSensor = true;
 		b2body.createFixture(fdef).setUserData(this);
+	}
+
+	private void die() {
+		if(!marioIsDead) {
+			marioIsDead = true;
+			MyKidRidicarus.manager.get("audio/music/mario_music.ogg", Music.class).stop();
+			MyKidRidicarus.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
+
+			Filter filter = new Filter();
+			filter.maskBits = GameInfo.NOTHING_BIT;
+			for(Fixture fixture : b2body.getFixtureList())
+				fixture.setFilterData(filter);
+
+			b2body.setLinearVelocity(0f, 0f);
+			b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
+		}
+	}
+
+	public void applyPowerup(PowerupType powerup) {
+		// TODO: check if already received powerup, and check for rank
+		receivedPowerup = powerup;
 	}
 
 	@Override
@@ -518,33 +616,33 @@ public class MarioRole implements PlayerRole {
 
 	@Override
 	public void onTouchRobot(RobotRole robo) {
-System.out.println("touched robot");
 		// If the bottom of mario sprite is at least as high as the middle point of the robot sprite, then the robot
 		// takes damage. Otherwise mario takes damage.
 		float marioY = b2body.getPosition().y;
 		float robotY = robo.getBody().getPosition().y;
 		float marioHeight = marioSprite.getHeight();
 
-		if(robo instanceof Goomba) {
-System.out.println("touched goomba");
-			// test for step on head of goomba
-			if(marioY - (marioHeight/2f) >= robotY)
-				((Goomba) robo).applySquish();
-			// shrink if big
-			else if(isBig)
-				shrink();
-			// die if small and not invincible
-			else if(dmgInvincibleTime <= 0f)
-				die();
+		if(robo instanceof WalkingRobot) {
+			// test for bounce on head
+			if(robo instanceof HeadBounceBot && marioY - (marioHeight/2f) >= robotY) {
+				((HeadBounceBot) robo).onHeadBounce(b2body.getPosition());
+				isHeadBouncing = true;
+			}
+			// does the robot do touch damage? (from non-head bounce source)
+			else if(robo instanceof TouchDmgBot && ((TouchDmgBot) robo).isTouchDamage()) {
+				if(dmgInvincibleTime > 0)
+					return;
+				isTakeDamage = true;
+			}
+			else if(robo instanceof Turtle)
+				((Turtle) robo).onPlayerTouch(b2body.getPosition());	// push shell
 		}
 	}
 
 	@Override
 	public void onTouchItem(RobotRole robo) {
-System.out.println("touched item");
-		if(robo instanceof PowerMushroom) {
-System.out.println("touched powermush");
-			((PowerMushroom) robo).use(this);
+		if(robo instanceof ItemRobot) {
+			((ItemRobot) robo).use(this);
 		}
 	}
 
@@ -561,28 +659,12 @@ System.out.println("touched powermush");
 		}
 	}
 
-	public void die() {
-		if(!isDead()) {
-			MyKidRidicarus.manager.get("audio/music/mario_music.ogg", Music.class).stop();
-			MyKidRidicarus.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
-			marioIsDead = true;
-
-			Filter filter = new Filter();
-			filter.maskBits = GameInfo.NOTHING_BIT;
-			for (Fixture fixture : b2body.getFixtureList())
-				fixture.setFilterData(filter);
-
-			b2body.setLinearVelocity(0f, 0f);
-			b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
-		}
-	}
-
 	@Override
 	public float getStateTimer() {
 		return stateTimer;
 	}
 
 	public boolean isBig() {
-		return isBig;
+		return (curPowerState != MarioPowerState.SMALL);
 	}
 }

@@ -1,3 +1,12 @@
+/*
+ * Originally created by brentaureli on 9/14/15.
+ * GitHub:
+ *     https://github.com/BrentAureli/SuperMario
+ * 
+ * Retrieved from GitHub on Oct 17, 2018
+ * Modified afterward by David Loucks.
+*/
+
 package com.ridicarus.kid.tools;
 
 import com.badlogic.gdx.physics.box2d.Contact;
