@@ -10,9 +10,8 @@ Process:
 
 Coding Sources:
   Brent Aureli's YouTube series:
-    How to make Games: Flappy Bird
-      and
     Creating Super Mario Bros
+      https://www.youtube.com/watch?v=a8MPxzkwBwo&list=PLZm85UZQLd2SXQzsF-a0-pPF6IWDDdrXt
 
 Tools:
   TilEd
@@ -28,5 +27,5 @@ SMB Physics Doc:
   http://i276.photobucket.com/albums/kk21/jdaster64/smb_playerphysics.png.html
 
 Current State of Affairs:
-  Implementing Mario characteristics. Currently at Big Mario. Next is Fire Mario.
+  Fire Mario. Most mario characteristics are done, e.g. jumping, braking, falling.
   Physics work - will need to refactor so lineSegs have direction (e.g. horizontal line can be either a floor or a ceiling - so use a bit to mark which).
