@@ -1,8 +1,3 @@
-/*
- * By: David Loucks
- * Approx. Date: 2018.11.08
-*/
-
 package com.ridicarus.kid.roles.player;
 
 import com.badlogic.gdx.audio.Music;
@@ -185,18 +180,17 @@ public class MarioRole implements PlayerRole {
 		}
 
 		// apply impulses if necessary
-		if(doWalkRunMove) {
+		if(doBrakeMove) {
+			brakeLeftRight(isFacingRight);
+			returnState = MarioCharState.BRAKE;
+		}
+		else if(doWalkRunMove) {
 			moveBodyLeftRight(wantsToGoRight, wantsToRun, isOnGround);
 			returnState = MarioCharState.WALKRUN;
 		}
-		else if(doDecelMove) {	// cannot walk/run and decel at same time
+		else if(doDecelMove) {
 			decelLeftRight(isFacingRight);
 			returnState = MarioCharState.WALKRUN;
-		}
-		if(doBrakeMove) {
-			brakeLeftRight(isFacingRight);
-			// body brake overrides character's run animation
-			returnState = MarioCharState.BRAKE;
 		}
 
 		// Do not check mario's "on ground" status for a short time after mario jumps, because his foot sensor
@@ -205,7 +199,6 @@ public class MarioRole implements PlayerRole {
 			jumpGroundCheckTimer -= delta;
 		else {
 			jumpGroundCheckTimer = 0f;
-			isNewJumpAllowed = false;
 			// The player can jump once per press of the jump key, so let them jump again when they release the
 			// button but, they need to be on the ground with the button released.
 			if(isOnGround) {
@@ -252,8 +245,11 @@ public class MarioRole implements PlayerRole {
 			}
 		}
 		// finally, if mario is not on the ground (for reals) then he is falling since he is not jumping
-		else if(!isOnGround && jumpGroundCheckTimer <= 0f)
+		else if(!isOnGround && jumpGroundCheckTimer <= 0f) {
+			// cannot jump while falling
+			isNewJumpAllowed = false;
 			returnState = MarioCharState.FALL;
+		}
 
 		return returnState;
 	}
@@ -302,7 +298,6 @@ public class MarioRole implements PlayerRole {
 
 		// fire a ball?
 		if(curPowerState == MarioPowerState.FIRE && wantsToRun && !wantsToRunOnPrevUpdate && fireballTimer > 0f) {
-System.out.println("release fireball!!!" + ((float) Math.floorMod(System.currentTimeMillis(), 100000) / 1000f));
 			fireballTimer -= TIME_PER_FIREBALL;
 			throwFireball();
 			return true;
@@ -505,22 +500,21 @@ System.out.println("release fireball!!!" + ((float) Math.floorMod(System.current
 		// head sensor for detecting head banging behavior
 		headSensor = new PolygonShape();
 		if(subState == MarioPowerState.SMALL)
-			headSensor.setAsBox(GameInfo.P2M(2f), GameInfo.P2M(1f), new Vector2(GameInfo.P2M(0f), GameInfo.P2M(8f)), 0f);
+			headSensor.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(1f), new Vector2(GameInfo.P2M(0f), GameInfo.P2M(8f)), 0f);
 		else
-			headSensor.setAsBox(GameInfo.P2M(2f), GameInfo.P2M(1f), new Vector2(GameInfo.P2M(0f), GameInfo.P2M(16f)), 0f);
-
+			headSensor.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(1f), new Vector2(GameInfo.P2M(0f), GameInfo.P2M(16f)), 0f);
 		fdef.filter.categoryBits = GameInfo.MARIOHEAD_BIT;
 		fdef.filter.maskBits = GameInfo.BANGABLE_BIT;
 		fdef.shape = headSensor;
 		fdef.isSensor = true;
 		b2body.createFixture(fdef).setUserData(this);
+
 		// foot sensor for detecting onGround
 		footSensor = new PolygonShape();
 		if(subState == MarioPowerState.SMALL)
 			footSensor.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(2f), new Vector2(0f, GameInfo.P2M(-6)), 0f);
 		else
 			footSensor.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(2f), new Vector2(0f, GameInfo.P2M(-16)), 0f);
-
 		fdef.filter.categoryBits = GameInfo.MARIOFOOT_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
 		fdef.shape = footSensor;

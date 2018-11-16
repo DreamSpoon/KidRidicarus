@@ -16,11 +16,11 @@ import com.ridicarus.kid.TileIDs;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.roles.player.MarioRole;
+import com.ridicarus.kid.roles.robot.BounceCoin;
 import com.ridicarus.kid.roles.robot.BumpableBot;
 import com.ridicarus.kid.roles.robot.FireFlower;
 import com.ridicarus.kid.roles.robot.PowerMushroom;
 import com.ridicarus.kid.scenes.Hud;
-import com.ridicarus.kid.sprites.CoinSpinSprite;
 import com.ridicarus.kid.tools.WorldRunner;
 
 public class BumpableTile extends InteractiveTileObject {
@@ -36,13 +36,6 @@ public class BumpableTile extends InteractiveTileObject {
 	private static final float BLINK_FRAMETIME = 0.133f;
 	private static final int[] BLINK_FRAMES = { TileIDs.ANIMQ_BLINK1, TileIDs.ANIMQ_BLINK2, TileIDs.ANIMQ_BLINK3,
 			TileIDs.ANIMQ_BLINK2, TileIDs.ANIMQ_BLINK1, TileIDs.ANIMQ_BLINK1};
-
-	private static final float COIN_SPIN_TIME = 3.9f;
-	private static final float COIN_START_HEIGHT = GameInfo.P2M(16);
-	private static final float COIN_START_VEL = GameInfo.P2M(30f);
-	private static final float COIN_GRAVITY = GameInfo.P2M(-9.8f);
-	private static final float COIN_TIMEMULT = 11.75f;
-	private static final float COIN_SPIN_ANIM_SPEED = 1f / 30f;
 
 	public enum BrickState { STAND, BOUNCE, BROKEN, };
 	private BrickState curState;
@@ -61,10 +54,6 @@ public class BumpableTile extends InteractiveTileObject {
 	private BrickItem myItem;
 	private boolean isItemAvailable;
 
-	private boolean isCoinSpinning;
-	private float spinTimeLeft;
-	private CoinSpinSprite coinSprite;
-
 	public BumpableTile(WorldRunner runner, MapObject object) {
 		super(runner, object);
 
@@ -72,7 +61,6 @@ public class BumpableTile extends InteractiveTileObject {
 		isHitByBig = false;
 		bounceTimeLeft = 0f;
 		isBroken = false;
-		isCoinSpinning = false;
 		brickPieces = null;
 		curState = BrickState.STAND;
 		stateTimer = 0f;
@@ -94,11 +82,6 @@ public class BumpableTile extends InteractiveTileObject {
 		brickSprite = new Sprite(runner.getMap().getTileSets().getTile(myTileID).getTextureRegion());
 		brickSprite.setPosition(GameInfo.P2M(bounds.getX()), GameInfo.P2M(bounds.getY()));
 		brickSprite.setBounds(brickSprite.getX(), brickSprite.getY(), tileWidth, tileHeight);
-
-		coinSprite = new CoinSpinSprite(runner.getAtlas(), COIN_SPIN_ANIM_SPEED);
-		coinSprite.setPosition(GameInfo.P2M(bounds.getX()), GameInfo.P2M(bounds.getY()));
-		coinSprite.setBounds(coinSprite.getX(), coinSprite.getY(),
-				GameInfo.P2M(GameInfo.TILEPIX_X), GameInfo.P2M(GameInfo.TILEPIX_Y));
 
 		if(isQblock) {
 			// animated question mark block, so it needs updates
@@ -139,8 +122,7 @@ public class BumpableTile extends InteractiveTileObject {
 						MyKidRidicarus.manager.get(GameInfo.SOUND_COIN, Sound.class).play();
 						Hud.addScore(200);
 						isItemAvailable = false;
-						isCoinSpinning = true;
-						spinTimeLeft = COIN_SPIN_TIME;
+						spawnSpinningCoin();
 					}
 					else if(myItem == BrickItem.MUSHROOM) {
 						MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_SPAWN, Sound.class).play();
@@ -177,8 +159,6 @@ public class BumpableTile extends InteractiveTileObject {
 
 						runner.disableInteractiveTileUpdates(this);
 
-						spinTimeLeft = 0f;
-						isCoinSpinning = false;
 						stateTimer = 0f;
 						curState = BrickState.STAND;
 					}
@@ -217,23 +197,14 @@ public class BumpableTile extends InteractiveTileObject {
 				break;
 		}
 
-		if(isCoinSpinning) {
-			if(spinTimeLeft > 0f) {
-				coinSprite.setPosition(body.getPosition().x-coinSprite.getWidth()/2,
-						body.getPosition().y-coinSprite.getHeight()/2 + getCoinHeight());
-				coinSprite.update(delta);
-
-				spinTimeLeft -= delta;
-			}
-			else {
-				isCoinSpinning = false;
-				spinTimeLeft = 0f;
-			}
-		}
-
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
 		isHit = false;
 		isHitByBig = false;
+	}
+
+	private void spawnSpinningCoin() {
+		// spawn a coin one tile's height above the current tile position
+		runner.addRobot(new BounceCoin(runner, body.getPosition().cpy().add(0f, GameInfo.P2M(GameInfo.TILEPIX_Y))));
 	}
 
 	private void setBlinkFrame() {
@@ -285,6 +256,7 @@ public class BumpableTile extends InteractiveTileObject {
 
 		robotsOnMe = new ArrayList<RobotRole>();
 		// check for robots in an area slightly thinner than the tile, and only as tall as the tile bounces
+		// (shrink the box a bit so we don't get enemies on adjacent tiles - TODO: fix this bug!)
 		runner.getWorld().QueryAABB(
 				new QueryCallback() {
 					@Override
@@ -295,8 +267,8 @@ public class BumpableTile extends InteractiveTileObject {
 						}
 						return true;
 					}
-				}, body.getPosition().x - tileWidth/2f*0.8f, body.getPosition().y + tileHeight/2f,
-				body.getPosition().x + tileWidth/2f*0.8f,
+				}, body.getPosition().x - tileWidth/2f*0.25f, body.getPosition().y + tileHeight/2f,
+				body.getPosition().x + tileWidth/2f*0.25f,
 				body.getPosition().y + tileHeight/2f + tileHeight*BOUNCE_HEIGHT_FRAC);
 
 		// bop any goombas/turtles that are standing on the brick
@@ -306,11 +278,6 @@ public class BumpableTile extends InteractiveTileObject {
 			if(robot instanceof BumpableBot)
 				((BumpableBot) robot).onBump(body.getPosition());
 		}
-	}
-
-	private float getCoinHeight() {
-		float t = (COIN_SPIN_TIME - spinTimeLeft) * COIN_TIMEMULT;
-		return COIN_START_VEL * t + (0.5f * t * t * COIN_GRAVITY + COIN_START_HEIGHT);
 	}
 
 	@Override
@@ -324,9 +291,6 @@ public class BumpableTile extends InteractiveTileObject {
 		else {
 			if(curState == BrickState.BOUNCE)
 				brickSprite.draw(batch);
-
-			if(isCoinSpinning && spinTimeLeft > 0f)
-				coinSprite.draw(batch);
 		}
 	}
 

@@ -19,8 +19,8 @@ public class MarioFireball extends RobotRole {
 	private static final float BODY_WIDTH = GameInfo.P2M(7f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(7f);
 
-	private static final Vector2 MOVE_VEL = new Vector2(2.1f, -0.75f);
-	private static final float MAX_Y_VEL = 1.5f;
+	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
+	private static final float MAX_Y_VEL = 2.0f;
 
 	private WorldRunner runner;
 
@@ -52,6 +52,7 @@ public class MarioFireball extends RobotRole {
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(position);
 		bdef.linearVelocity.set(velocity);
+		bdef.gravityScale = 2f;
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		b2body = runner.getWorld().createBody(bdef);
 
@@ -80,7 +81,6 @@ public class MarioFireball extends RobotRole {
 		switch(curState) {
 			case EXPLODE:
 				if(curState != prevState) {
-System.out.println("start explode");
 					Filter filter = new Filter();
 					filter.categoryBits = GameInfo.NOTHING_BIT;
 					filter.maskBits = GameInfo.NOTHING_BIT;

@@ -19,11 +19,10 @@ public class FireFlower extends ItemRobot {
 	private static final float BODY_HEIGHT = GameInfo.P2M(12f);
 	private static final float SPROUT_TIME = 0.5f;
 
+	private WorldRunner runner;
 	private FireFlowerSprite flowerSprite;
 	private Body b2body;
 	private float stateTimer;
-
-	private WorldRunner runner;
 
 	public FireFlower(WorldRunner runner, float x, float y) {
 		this.runner = runner;
