@@ -4,19 +4,12 @@ public class GameInfo {
 	public static final float PlAYER_STARTX = 32;
 	public static final float PlAYER_STARTY = 64;
 
+	public static final float PPM = 100f;
 	public static final int V_WIDTH = 400;
-//	public static final int V_HEIGHT = 208;
 	public static final int V_HEIGHT = 240;
+	// DEBUG: used to quickly change size of screen on desktop without changing aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final float PPM = 100f;
-
-//	public static final int TURTLE_KICK_LEFT_SPEED = -2;
-//	public static final int TURTLE_KICK_RIGHT_SPEED = 2;
-//	public static final float TURTLE_FLYDIE_TIME = 5f;
-
-//	public static final String GAMEMAP_NAME = "level1-x v1.tmx";
-//	public static final String GAMEMAP_NAME = "testCollisionLayers v1.tmx";
 	public static final String GAMEMAP_NAME = "level xyz v6.tmx";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";
@@ -33,18 +26,6 @@ public class GameInfo {
 
 	public static final int TILEPIX_X = 16;
 	public static final int TILEPIX_Y = 16;
-
-	public static final short NOTHING_BIT		= 0;
-	public static final short BOUNDARY_BIT		= 2 << 0;
-	public static final short MARIO_BIT			= 2 << 1;
-	public static final short MARIOHEAD_BIT		= 2 << 2;
-	public static final short MARIOFOOT_BIT		= 2 << 3;
-	public static final short DESTROYED_BIT		= 2 << 4;
-	public static final short BANGABLE_BIT		= 2 << 6;
-	public static final short ROBOT_BIT			= 2 << 7;
-	public static final short ROBOTFOOT_BIT		= 2 << 8;
-	public static final short ITEM_BIT			= 2 << 9;
-	public static final short MARIO_ROBOT_SENSOR_BIT	= 2 << 10;
 
 	public static final String TEXATLAS_FILENAME = "Mario_and_Enemies6.pack";
 	public static final String TEXATLAS_GOOMBA = "goomba";
@@ -74,6 +55,18 @@ public class GameInfo {
 
 	public static final float MARIO_DEAD_TIME = 5f;
 	public static final float MAX_FLOAT_HACK = 1e38f;
+
+	public static final short NOTHING_BIT		= 0;
+	public static final short BOUNDARY_BIT		= 2 << 0;
+	public static final short MARIO_BIT			= 2 << 1;
+	public static final short MARIOHEAD_BIT		= 2 << 2;
+	public static final short MARIOFOOT_BIT		= 2 << 3;
+	public static final short DESTROYED_BIT		= 2 << 4;
+	public static final short BANGABLE_BIT		= 2 << 6;
+	public static final short ROBOT_BIT			= 2 << 7;
+	public static final short ROBOTFOOT_BIT		= 2 << 8;
+	public static final short ITEM_BIT			= 2 << 9;
+	public static final short MARIO_ROBOT_SENSOR_BIT	= 2 << 10;
 
 	public static float P2M(float p) {
 		return p / PPM;

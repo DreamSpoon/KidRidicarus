@@ -1,14 +1,12 @@
 package com.ridicarus.kid.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -104,11 +102,11 @@ public class PlayScreen implements Screen {
 		rePlayer.handleInput();
 
 		// DEBUG: If A is pressed then create a tile at the x position of the player, and y = 3
-		if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-			int BLANK_COIN = 28;
-			TiledMapTileSet tileSet = map.getTileSets().getTileSet(GameInfo.TILESET_GUTTER);
-			worldRunner.createTile((int) (GameInfo.M2P(gamecam.position.x) / GameInfo.TILEPIX_X),  3,  tileSet.getTile(BLANK_COIN));
-		}
+//		if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+//			int BLANK_COIN = 28;
+//			TiledMapTileSet tileSet = map.getTileSets().getTileSet(GameInfo.TILESET_GUTTER);
+//			worldRunner.createTile((int) (GameInfo.M2P(gamecam.position.x) / GameInfo.TILEPIX_X),  3,  tileSet.getTile(BLANK_COIN));
+//		}
 	}
 
 	private boolean gameOver() {

@@ -20,50 +20,56 @@ public class WorldContactListener implements ContactListener {
 		fixB = contact.getFixtureB();
 		cdef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 		switch(cdef) {
+			// mario hit his head on something
 			case (GameInfo.MARIOHEAD_BIT | GameInfo.BANGABLE_BIT):
-				// invoke the tile's head hit method
-				// TODO: invoke the player's hit method, because mario should only break one block at a time
-				//       (mario would in turn invoke the tile's onHeadHit method if deemed necessary)
+				// invoke mario's head hit method on the tile, so we can hit one tile at a time
 				if(fixA.getFilterData().categoryBits == GameInfo.MARIOHEAD_BIT)
 					((PlayerRole) fixA.getUserData()).onHeadHit((InteractiveTileObject) fixB.getUserData());
 				else
 					((PlayerRole) fixB.getUserData()).onHeadHit((InteractiveTileObject) fixA.getUserData());
 				break;
-			case (GameInfo.MARIOFOOT_BIT | GameInfo.BOUNDARY_BIT):	// mario's foot hit a horiz or vert bound
+			// mario's foot hit a horizontal or vertical bound
+			case (GameInfo.MARIOFOOT_BIT | GameInfo.BOUNDARY_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.MARIOFOOT_BIT)
 					((PlayerRole) fixA.getUserData()).onFootTouchBound((LineSeg) fixB.getUserData());
 				else
 					((PlayerRole) fixB.getUserData()).onFootTouchBound((LineSeg) fixA.getUserData());
 				break;
-			case (GameInfo.MARIO_ROBOT_SENSOR_BIT | GameInfo.ROBOT_BIT):	// mario touched robot
+			// mario touched a robot
+			case (GameInfo.MARIO_ROBOT_SENSOR_BIT | GameInfo.ROBOT_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.MARIO_ROBOT_SENSOR_BIT)
 					((PlayerRole) fixA.getUserData()).onTouchRobot((RobotRole) fixB.getUserData());
 				else
 					((PlayerRole) fixB.getUserData()).onTouchRobot((RobotRole) fixA.getUserData());
 				break;
-			case (GameInfo.ROBOT_BIT | GameInfo.BOUNDARY_BIT):	// robot touched horiz or vert bound
+			// robot touched horizontal or vertical bound
+			case (GameInfo.ROBOT_BIT | GameInfo.BOUNDARY_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.ROBOT_BIT)
 					((RobotRole) fixA.getUserData()).onTouchBoundLine((LineSeg) fixB.getUserData());
 				else
 					((RobotRole) fixB.getUserData()).onTouchBoundLine((LineSeg) fixA.getUserData());
 				break;
-			case (GameInfo.ROBOTFOOT_BIT | GameInfo.BOUNDARY_BIT):	// robot touched horiz or vert bound
+			// robot's foot touched horizontal or vertical bound
+			case (GameInfo.ROBOTFOOT_BIT | GameInfo.BOUNDARY_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.ROBOT_BIT)
 					((RobotRole) fixA.getUserData()).onTouchGround();
 				else
 					((RobotRole) fixB.getUserData()).onTouchGround();
 				break;
-			case (GameInfo.ROBOT_BIT):	// robot touched another robot
+			// robot touched another robot
+			case (GameInfo.ROBOT_BIT):
 				((RobotRole) fixA.getUserData()).onTouchRobot((RobotRole) fixB.getUserData());
 				((RobotRole) fixB.getUserData()).onTouchRobot((RobotRole) fixA.getUserData());
 				break;
-			case (GameInfo.ITEM_BIT | GameInfo.BOUNDARY_BIT):	// item touched horiz or vert bound
+			// item touched horizontal or vertical bound
+			case (GameInfo.ITEM_BIT | GameInfo.BOUNDARY_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.ITEM_BIT)
 					((RobotRole) fixA.getUserData()).onTouchBoundLine((LineSeg) fixB.getUserData());
 				else
 					((RobotRole) fixB.getUserData()).onTouchBoundLine((LineSeg) fixA.getUserData());
 				break;
-			case (GameInfo.MARIO_ROBOT_SENSOR_BIT | GameInfo.ITEM_BIT):	// item touched mario
+			// an item touched mario
+			case (GameInfo.MARIO_ROBOT_SENSOR_BIT | GameInfo.ITEM_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.MARIO_ROBOT_SENSOR_BIT)
 					((PlayerRole) fixA.getUserData()).onTouchItem((RobotRole) fixB.getUserData());
 				else

@@ -68,59 +68,22 @@ public abstract class InteractiveTileObject {
 		fixture.setFilterData(filter);
 	}
 
-	protected void destroyTile() {
-		runner.destroyTile((int) (GameInfo.M2P(body.getPosition().x) / GameInfo.TILEPIX_X),
-				(int) (GameInfo.M2P(body.getPosition().y) / GameInfo.TILEPIX_Y));
-	}
-
 	// the tile related to this object may be created and destroyed elsewhere, so always get the freshest ref
 	protected TiledMapTile getMyTile() {
-		int x =	getTileX();
+		int x = getTileX();
 		int y = getTileY();
 		TiledMapTileLayer layer = (TiledMapTileLayer) runner.getMap().getLayers().get(GameInfo.TILEMAP_COLLISION);
-		if(layer.getCell(x,  y) == null)
+		if(layer.getCell(x, y) == null)
 			return null;	// return null if cell doesn't exist
 		return layer.getCell(x, y).getTile();
 	}
 
-	protected void hideMyTile() {
-		int x, y;
-
-		if(isHidden)
-			return;
-
-		isHidden = true;
-
-		x =	getTileX();
-		y = getTileY();
-
-		runner.hideTile(x, y);
+	protected void setImageTile(TiledMapTile tile) {
+		runner.setImageTile(getTileX(), getTileY(), tile);
 	}
 
-	protected void unhideMyTile() {
-		TiledMapTileLayer layer;
-		int x, y;
-
-		if(!isHidden)
-			return;
-
-		isHidden = false;
-
-		x =	getTileX();
-		y = getTileY();
-
-		// check the graphics tile map to see if the tile exists
-		layer = (TiledMapTileLayer) runner.getMap().getLayers().get(GameInfo.TILEMAP_COLLISION);
-		if(layer.getCell(x,  y) != null && layer.getCell(x, y).getTile() != null)
-			throw new IllegalStateException("Cannot unhide tile");	// exception if cell already exists
-
-		runner.unhideTile(x, y,
-				runner.getMap().getTileSets().getTileSet(GameInfo.TILESET_GUTTER).getTile(myTileID));
-	}
-
-	protected void changeMyTile(TiledMapTile tile) {
-		isHidden = false;
-		runner.changeTile(getTileX(), getTileY(), tile);
+	protected void setPhysicTile(boolean solid) {
+		runner.setPhysicTile(getTileX(), getTileY(), solid);
 	}
 
 	public Vector2 getPosition() {

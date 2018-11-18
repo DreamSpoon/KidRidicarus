@@ -137,8 +137,8 @@ public class BumpableTile extends InteractiveTileObject {
 									body.getPosition().y + GameInfo.P2M(GameInfo.TILEPIX_Y)));
 						}
 					}
-						
-					hideMyTile();
+
+					setImageTile(null);
 					brickSprite.setPosition(body.getPosition().x - tileWidth/2, body.getPosition().y - tileHeight/2);
 					break;
 				}
@@ -147,15 +147,12 @@ public class BumpableTile extends InteractiveTileObject {
 					// is bounce finishing?
 					if(bounceTimeLeft <= 0f) {
 						bounceTimeLeft = 0f;
-						// if the brick contains items, but no more are available,...
-						if(!isItemAvailable && myItem != BrickItem.NONE) {
-							// then switch graphics to the "item used" block,...
-							changeMyTile(runner.getMap().getTileSets().getTileSet(GameInfo.TILESET_GUTTER).getTile(TileIDs.COIN_EMPTY));
-						}
-						else {
-							// otherwise return graphics to the original block
-							unhideMyTile();
-						}
+						// If the brick contains items, but no more are available, then switch image to the
+						// "item used" block
+						if(!isItemAvailable && myItem != BrickItem.NONE)
+							setImageTile(runner.getMap().getTileSets().getTileSet(GameInfo.TILESET_GUTTER).getTile(TileIDs.COIN_EMPTY));
+						else	// otherwise reset image to the original block graphic
+							setImageTile(runner.getMap().getTileSets().getTileSet(GameInfo.TILESET_GUTTER).getTile(myTileID));
 
 						runner.disableInteractiveTileUpdates(this);
 
@@ -222,8 +219,9 @@ public class BumpableTile extends InteractiveTileObject {
 
 		bopTopGoombas();
 
-		// remove the tile graphic from the tilemap
-		destroyTile();
+		setPhysicTile(false);
+		setImageTile(null);
+
 		// remove the physics body
 		position = body.getPosition();
 		runner.getWorld().destroyBody(body);
@@ -256,7 +254,8 @@ public class BumpableTile extends InteractiveTileObject {
 
 		robotsOnMe = new ArrayList<RobotRole>();
 		// check for robots in an area slightly thinner than the tile, and only as tall as the tile bounces
-		// (shrink the box a bit so we don't get enemies on adjacent tiles - TODO: fix this bug!)
+		// (shrink the box a bit so we don't get enemies on adjacent tiles -
+		// TODO: find a more accurate QueryAABB method)
 		runner.getWorld().QueryAABB(
 				new QueryCallback() {
 					@Override

@@ -180,7 +180,7 @@ public class MarioSprite extends Sprite {
 			setPosition(position.x - getWidth() / 2, position.y - getHeight() / 2);
 	}
 
-	// Sprite state includes growing and shrinking states, which are not in the mario char state.
+	// sprite state includes growing and shrinking states, which are not in the mario char state
 	private MarioSpriteState getState(MarioCharState marioState, MarioPowerState subState) {
 		MarioSpriteState stateOut = null;
 

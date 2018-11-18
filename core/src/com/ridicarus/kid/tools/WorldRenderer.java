@@ -26,7 +26,7 @@ public class WorldRenderer {
 
 	public void drawAll(SpriteBatch batch, OrthographicCamera gamecam) {
 		drawTileMap(gamecam);
-//		drawB2DebugRenderer(gamecam);
+		drawB2DebugRenderer(gamecam);
 
 		batch.setProjectionMatrix(gamecam.combined);
 		batch.begin();

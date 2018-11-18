@@ -6,22 +6,35 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.ridicarus.kid.GameInfo;
 
 public class LineSeg {
-	public int begin, end;	// in tile coordinates
+	// if begin = end, it means the LineSeg is one tile wide
+	public int begin, end;	// in tile coordinates, where begin <= end
 	public Body body;
 	public boolean isHorizontal;
 
-	public LineSeg(int begin, int end, boolean isHorizontal) {
+	// Conceptually, each LineSeg has a 2D normal vector. "Up" means +y or +x as the case may be.  
+	// Horizontal lines can be floors or ceilings. For horizontal lines:
+	//     If upNormal = true, this LineSeg is a floor, and the area below it is solid
+	//     If upNormal = false, this LineSeg is a ceiling, and the area above it is solid.
+	// Vertical lines can be left walls or right walls. For vertical lines:
+	//     If upNormal = true, this LineSeg is a left wall, and the area on its left is solid
+	//     If upNormal = false, this LineSeg is a right wall, and the area on its right is solid.
+	// Note: upNormal instead of rightNormal to prevent confusion by way of left walls with right normals.
+	//       Also, more word variety so more interesting.
+	public boolean upNormal;
+
+	public LineSeg(int begin, int end, boolean isHorizontal, boolean upNormal) {
 		if(begin > end)
-			throw new IllegalArgumentException("begin > end exception, begin = " + begin + ", end = " + end);
+			throw new IllegalArgumentException("Line segment begin > end exception, begin = " + begin + ", end = " + end);
 		this.begin = begin;
 		this.end = end;
 		this.isHorizontal = isHorizontal;
+		this.upNormal = upNormal;
 	}
 
 	public static class LineSegComparator implements Comparator<LineSeg> {
 		// If segA is completely to the left of segB, with no overlap, then return -1.
 		// If segA is completely to the right of segB, with no overlap, then return +1.
-		// Line segments are checked for overlap, inclusively. If overlap exists then return 0.
+		// If overlap exists then return 0.
 		//
 		// Overlap examples:
 		// -----------------
@@ -55,7 +68,9 @@ public class LineSeg {
 		// etc.
 		// Assumption is made that horizontal lines will be compared only with horizontal lines and vertical lines
 		// will be compared only with vertical lines. Horizontal lines should be in separate list(s) from vertical
-		// lines. 
+		// lines.
+		// Although horizontal and vertical line segments cannot be compared, segments with upNormal = true can be
+		// compared to segments with upNormal = false. 
 		@Override
 		public int compare(LineSeg segA, LineSeg segB) {
 			if((segA.isHorizontal && !segB.isHorizontal) ||
@@ -75,17 +90,24 @@ public class LineSeg {
 		return (String) "LineSeg: { begin=" + begin + ", end=" + end + ", isHorizontal= " + isHorizontal + "}";
 	}
 
-	public float getWorldBegin() {
+	// return the x/y coordinate of the beginning of this segment as a Box2D coordinate
+	public float getB2Begin() {
 		if(isHorizontal)
 			return GameInfo.P2M(begin * GameInfo.TILEPIX_X);
 		else
 			return GameInfo.P2M(begin * GameInfo.TILEPIX_Y);
 	}
 
-	public float getWorldEnd() {
+	// return the x/y coordinate of the end of this segment as a Box2D coordinate
+	public float getB2End() {
 		if(isHorizontal)
 			return GameInfo.P2M((end+1) * GameInfo.TILEPIX_X);
 		else
 			return GameInfo.P2M((end+1) * GameInfo.TILEPIX_Y);
+	}
+
+	public void dispose() {
+		if(body != null)
+			body.getWorld().destroyBody(body);
 	}
 }

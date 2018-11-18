@@ -31,21 +31,29 @@ public class WorldRunner {
 	private WorldContactListener contactListener;
 	private World world;
 
-	private class TileForQueue {
+	private class PhysicTileForQueue {
+		public int x;
+		public int y;
+		public boolean solid;
+		public PhysicTileForQueue(int x, int y, boolean solid) {
+			this.x = x;
+			this.y = y;
+			this.solid = solid;
+		}
+	}
+	private class ImageTileForQueue {
 		public int x;
 		public int y;
 		public TiledMapTile tile;
-		public TileForQueue(int x, int y, TiledMapTile tile) {
+		public ImageTileForQueue(int x, int y, TiledMapTile tile) {
 			this.x = x;
 			this.y = y;
 			this.tile = tile;
 		}
 	}
-    private LinkedBlockingQueue<TileForQueue> tilesToCreate;
-    private LinkedBlockingQueue<TileForQueue> tilesToDestroy;
-	private LinkedBlockingQueue<TileForQueue> tilesToHide;
-	private LinkedBlockingQueue<TileForQueue> tilesToUnhide;
-	private LinkedBlockingQueue<TileForQueue> tilesToChange;
+	
+	private LinkedBlockingQueue<PhysicTileForQueue> physicTilesToSet;
+	private LinkedBlockingQueue<ImageTileForQueue> imageTilesToSet;
 
 	private LinkedList<InteractiveTileObject> intTilesToUpdate;
 	private LinkedBlockingQueue<InteractiveTileObject> intTilesToAddToUpdate;
@@ -60,15 +68,12 @@ public class WorldRunner {
 		this.atlas = atlas;
 		player = null;
 
-		tilesToDestroy = new LinkedBlockingQueue<TileForQueue>();
-		tilesToCreate = new LinkedBlockingQueue<TileForQueue>();
 		intTilesToUpdate = new LinkedList<InteractiveTileObject>();
 		intTilesToDestroy = new LinkedBlockingQueue<InteractiveTileObject>();
 		intTilesToAddToUpdate = new LinkedBlockingQueue<InteractiveTileObject>();
 		intTilesToRemoveFromUpdate = new LinkedBlockingQueue<InteractiveTileObject>();
-		tilesToHide = new LinkedBlockingQueue<TileForQueue>();
-		tilesToUnhide = new LinkedBlockingQueue<TileForQueue>();
-		tilesToChange = new LinkedBlockingQueue<TileForQueue>();
+		physicTilesToSet = new LinkedBlockingQueue<PhysicTileForQueue>();
+		imageTilesToSet =  new LinkedBlockingQueue<ImageTileForQueue>();
 
 		robots = new LinkedList<RobotRole>();
 		robotsToAdd = new LinkedBlockingQueue<RobotRole>();
@@ -102,12 +107,10 @@ public class WorldRunner {
 
 		layer = map.getLayers().get(GameInfo.TILEMAP_BRICK);
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
-//			new BrickTile(this, object);
 			new BumpableTile(this, object);
 		}
 		layer = map.getLayers().get(GameInfo.TILEMAP_COINBLOCK);
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
-//			new CoinTile(this, object);
 			new BumpableTile(this, object);
 		}
 
@@ -163,39 +166,18 @@ public class WorldRunner {
 		}
 	}
 
-	public void destroyTile(int x, int y) {
-		tilesToDestroy.add(new TileForQueue(x, y, null));
+	public void setPhysicTile(int x, int y, boolean solid) {
+		physicTilesToSet.add(new PhysicTileForQueue(x, y, solid));
 	}
 
-	public void createTile(int x, int y, TiledMapTile tile) {
-		tilesToCreate.add(new TileForQueue(x, y, tile));
-	}
-
-	public void hideTile(int x, int y) {
-		tilesToHide.add(new TileForQueue(x, y, null));
-	}
-
-	public void unhideTile(int x, int y, TiledMapTile tile) {
-		tilesToUnhide.add(new TileForQueue(x, y, tile));
-	}
-
-	public void changeTile(int x, int y, TiledMapTile tile) {
-		tilesToChange.add(new TileForQueue(x, y, tile));
+	public void setImageTile(int x, int y, TiledMapTile tile) {
+		imageTilesToSet.add(new ImageTileForQueue(x, y, tile));
 	}
 
 	// tile creates and destroys
 	private void updateTileWorld(float delta) {
 		for(InteractiveTileObject tile : intTilesToUpdate)
 			tile.update(delta);
-
-		while(!tilesToDestroy.isEmpty()) {
-			TileForQueue ttd = tilesToDestroy.poll();
-			reallyDestroyTile(ttd.x, ttd.y);
-		}
-		while(!tilesToCreate.isEmpty()) {
-			TileForQueue ttd = tilesToCreate.poll();
-			reallyCreateTile(ttd.x, ttd.y, ttd.tile);
-		}
 
 		// updating interactive tiles might add tiles to the hide or unhide queues
 		while(!intTilesToAddToUpdate.isEmpty()) {
@@ -217,121 +199,24 @@ public class WorldRunner {
 			tile.destroy();
 		}
 
-		// check queues after interactive tile updates finish
-		// TODO: verify that the order of the below 3 blocks is correct
-		while(!tilesToHide.isEmpty()) {
-			TileForQueue ttd = tilesToHide.poll();
-			reallyHideTile(ttd.x, ttd.y);
+		while(!physicTilesToSet.isEmpty()) {
+			PhysicTileForQueue pTile = physicTilesToSet.poll();
+			if(pTile.solid == true)
+				collisionMap.addTile(pTile.x, pTile.y);
+			else
+				collisionMap.removeTile(pTile.x, pTile.y);
 		}
-		while(!tilesToUnhide.isEmpty()) {
-			TileForQueue ttd = tilesToUnhide.poll();
-			reallyUnhideTile(ttd.x, ttd.y, ttd.tile);
+		while(!imageTilesToSet.isEmpty()) {
+			ImageTileForQueue iTile = imageTilesToSet.poll();
+
+			TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(GameInfo.TILEMAP_COLLISION);
+			// create a cell for the tile if necessary
+			if(layer.getCell(iTile.x, iTile.y) == null)
+				layer.setCell(iTile.x, iTile.y, new Cell());
+
+			// create the tile on the graphics side
+			layer.getCell(iTile.x, iTile.y).setTile(iTile.tile);
 		}
-		while(!tilesToChange.isEmpty()) {
-			TileForQueue ttd = tilesToChange.poll();
-			reallyChangeTile(ttd.x, ttd.y, ttd.tile);
-		}
-	}
-
-	private void reallyCreateTile(int x, int y, TiledMapTile tile) {
-		TiledMapTileLayer layer;
-
-		if(tile == null)
-			throw new IllegalArgumentException("Cannot create tile from null! Argument 'tile' must not equal null.");
-
-		// check the graphics tile map to see if the tile has been destroyed
-		layer = (TiledMapTileLayer) map.getLayers().get(GameInfo.TILEMAP_COLLISION);
-		if(layer.getCell(x, y) != null) {
-			if(layer.getCell(x, y).getTile() != null)
-				return;	// exit if the tile already exists
-		}
-		else	// create the cell because we need to set it's tile 
-			layer.setCell(x, y, new Cell());
-
-		// create the tile on the graphics side
-		layer.getCell(x, y).setTile(tile);
-
-		// create the tile on the collision side
-		collisionMap.toggleTile(x, y);
-	}
-
-	private void reallyDestroyTile(int x, int y) {
-		TiledMapTileLayer layer;
-
-		// check the graphics tile map to see if the tile has been destroyed
-		layer = (TiledMapTileLayer) map.getLayers().get(GameInfo.TILEMAP_COLLISION);
-		if(layer.getCell(x,  y) == null)
-			return;	// exit if cell doesn't exist
-		if(layer.getCell(x, y).getTile() == null)
-			return;	// exit if tile doesn't exist
-
-		// destroy the tile on the graphics side
-		layer.getCell(x, y).setTile(null);
-
-		// destroy the tile on the collision side
-		collisionMap.toggleTile(x, y);
-	}
-
-	private void reallyHideTile(int x, int y) {
-		TiledMapTileLayer layer;
-
-		// check the graphics tile map to see if the tile exists
-		layer = (TiledMapTileLayer) map.getLayers().get(GameInfo.TILEMAP_COLLISION);
-		if(layer.getCell(x,  y) == null)
-			return;	// exit if cell doesn't exist
-		if(layer.getCell(x, y).getTile() == null)
-			return;	// exit if tile doesn't exist
-
-		// destroy the tile on the graphics side
-		layer.getCell(x, y).setTile(null);
-
-		// do not destroy the tile on the collision side
-	}
-
-	private void reallyUnhideTile(int x, int y, TiledMapTile tile) {
-		TiledMapTileLayer layer;
-
-		if(tile == null)
-			throw new IllegalArgumentException("Cannot unhide tile from null! Argument 'tile' must not equal null.");
-
-		// check the graphics tile map to see if the tile exists already
-		layer = (TiledMapTileLayer) map.getLayers().get(GameInfo.TILEMAP_COLLISION);
-		if(layer.getCell(x, y) != null) {
-			if(layer.getCell(x, y).getTile() != null)
-				return;	// exit if the tile already exists
-		}
-		else	// create the cell because we need to set it's tile 
-			layer.setCell(x, y, new Cell());
-
-		// create the tile on the graphics side
-		layer.getCell(x, y).setTile(tile);
-
-		// do not recreate the tile on the collision side, since hiding/unhiding does not destroy the tile
-	}
-
-	// assuming tile is hidden
-	private void reallyChangeTile(int x, int y, TiledMapTile tile) {
-		TiledMapTileLayer layer;
-		boolean isNew = false;
-
-		if(tile == null)
-			throw new IllegalArgumentException("Argument 'tile' must not equal null.");
-
-		layer = (TiledMapTileLayer) map.getLayers().get(GameInfo.TILEMAP_COLLISION);
-
-		// create the cell if necessary
-		if(layer.getCell(x, y) == null) {
-			layer.setCell(x, y, new Cell());
-			isNew = true;
-		}
-		else if (layer.getCell(x, y).getTile() == null)
-			isNew = true;
-
-		if(!isNew)
-			throw new IllegalStateException("Cannot change tile that was not already hidden.");
-
-		// create the tile on the graphics side
-		layer.getCell(x, y).setTile(tile);
 	}
 
 	public void enableInteractiveTileUpdates(InteractiveTileObject tile) {
@@ -373,6 +258,7 @@ public class WorldRunner {
 	}
 
 	public void dispose() {
+		collisionMap.dispose();
 		world.dispose();
 	}
 
