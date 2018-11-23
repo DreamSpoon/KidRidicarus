@@ -14,7 +14,7 @@ Using [Brent Aureli's SMB code](https://github.com/BrentAureli/SuperMario) (retr
 
 ###Coding Sources:
 
-Brent Aureli's YouTube series: [Creating Super Mario Bros](https://www.youtube.com/watch?v=a8MPxzkwBwo&list=PLZm85UZQLd2SXQzsF-a0-pPF6IWDDdrXt)
+Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.com/watch?v=a8MPxzkwBwo&list=PLZm85UZQLd2SXQzsF-a0-pPF6IWDDdrXt)
 
 ###Tools:
 
