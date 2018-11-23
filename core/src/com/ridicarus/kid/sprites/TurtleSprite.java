@@ -10,35 +10,44 @@ import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.roles.robot.Turtle.TurtleState;
 
 public class TurtleSprite extends Sprite {
-	private static final float WALK_ANIM_SPEED = 0.4f;
+	private static final float WALK_ANIM_SPEED = 0.25f;
 
-	private float stateTime;
+	private float stateTimer;
 	private Animation<TextureRegion> walkAnimation;
 	private TextureRegion insideShell;
+	private Animation<TextureRegion> wakeUpAnimation;
 
-	public TurtleSprite(TextureAtlas atlas, float x, float y) {
+	public TurtleSprite(TextureAtlas atlas, Vector2 position) {
 		super(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_TURTLE), 0, 0, 16, 24));
-		setPosition(x, y);
 		setBounds(getX(), getY(), GameInfo.P2M(16), GameInfo.P2M(24));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
 		Array<TextureRegion> frames = new Array<TextureRegion>();
 		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_TURTLE), 0, 0, 16, 24));
 		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_TURTLE), 16, 0, 16, 24));
 		walkAnimation = new Animation<TextureRegion>(WALK_ANIM_SPEED, frames);
 
+		frames.clear();
+		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_TURTLE), 5 * 16, 0, 16, 24));
+		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_TURTLE), 4 * 16, 0, 16, 24));
+		wakeUpAnimation = new Animation<TextureRegion>(WALK_ANIM_SPEED, frames);
+
 		insideShell = new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_TURTLE), 4 * 16, 0, 16, 24);
 
-		stateTime = 0;
+		stateTimer = 0;
 	}
 
 	public void update(float delta, Vector2 position, TurtleState curState, boolean facingRight) {
 		switch(curState) {
 			case WALK:
-				setRegion(walkAnimation.getKeyFrame(stateTime, true));
+				setRegion(walkAnimation.getKeyFrame(stateTimer, true));
 				break;
 			case HIDE:
 			case SLIDE:
 				setRegion(insideShell);
+				break;
+			case WAKE_UP:
+				setRegion(wakeUpAnimation.getKeyFrame(stateTimer, true));
 				break;
 			case DEAD:
 				setRegion(insideShell);
@@ -57,6 +66,6 @@ public class TurtleSprite extends Sprite {
 
 		setPosition(position.x - getWidth() / 2f, position.y - getHeight() * 0.375f);
 
-		stateTime += delta;
+		stateTimer += delta;
 	}
 }

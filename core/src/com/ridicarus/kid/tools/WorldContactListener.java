@@ -6,10 +6,10 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.ridicarus.kid.GameInfo;
-import com.ridicarus.kid.SpecialTiles.InteractiveTileObject;
 import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
+import com.ridicarus.kid.tiles.InteractiveTileObject;
 
 public class WorldContactListener implements ContactListener {
 	public void beginContact(Contact contact) {

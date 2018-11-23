@@ -14,6 +14,7 @@ import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.MyKidRidicarus;
 import com.ridicarus.kid.roles.Player;
 import com.ridicarus.kid.scenes.Hud;
+import com.ridicarus.kid.tools.QQ;
 import com.ridicarus.kid.tools.WorldRenderer;
 import com.ridicarus.kid.tools.WorldRunner;
 
@@ -74,6 +75,8 @@ public class PlayScreen implements Screen {
 		// draw the HUD last, so it's on top of everything else
 		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 		hud.stage.draw();
+
+		QQ.renderTo(game.sr, gamecam.combined);
 
 		// change to game over screen?
 		if(gameOver()) {

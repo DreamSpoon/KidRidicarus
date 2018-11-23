@@ -14,7 +14,9 @@ import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.sprites.MarioFireballSprite;
 import com.ridicarus.kid.tools.WorldRunner;
+import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
+// TODO: remove body when fireball explodes, this is not happening yet
 public class MarioFireball extends RobotRole {
 	private static final float BODY_WIDTH = GameInfo.P2M(7f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(7f);
@@ -46,6 +48,9 @@ public class MarioFireball extends RobotRole {
 		prevState = FireballState.FLY;
 		stateTimer = 0f;
 		isTouched = false;
+
+		runner.enableRobotUpdate(this);
+		runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {
@@ -149,5 +154,6 @@ public class MarioFireball extends RobotRole {
 
 	@Override
 	public void dispose() {
+		runner.getWorld().destroyBody(b2body);
 	}
 }

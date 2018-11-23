@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.ridicarus.kid.GameInfo;
 
 public class MushroomSprite extends Sprite {
-	public MushroomSprite(TextureAtlas atlas, float x, float y) {
+	public MushroomSprite(TextureAtlas atlas, Vector2 position) {
 		super(atlas.findRegion(GameInfo.TEXATLAS_MUSHROOM));
-		setPosition(x, y);
 		setBounds(getX(), getY(), GameInfo.P2M(GameInfo.TILEPIX_X), GameInfo.P2M(GameInfo.TILEPIX_Y));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position) {

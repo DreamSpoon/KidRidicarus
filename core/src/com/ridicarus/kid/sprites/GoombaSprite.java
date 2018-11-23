@@ -14,10 +14,10 @@ public class GoombaSprite extends Sprite {
 	private Animation<TextureRegion> walkAnimation;
 	private TextureRegion squish;
 
-	public GoombaSprite(TextureAtlas atlas, float x, float y) {
+	public GoombaSprite(TextureAtlas atlas, Vector2 position) {
 		super(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_GOOMBA), 0, 0, 16, 16));
-		setPosition(x, y);
 		setBounds(getX(), getY(), GameInfo.P2M(16), GameInfo.P2M(16));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
 		Array<TextureRegion> frames = new Array<TextureRegion>();
 		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_GOOMBA), 0, 0, 16, 16));

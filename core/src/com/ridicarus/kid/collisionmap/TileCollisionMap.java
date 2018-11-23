@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ridicarus.kid.GameInfo;
-import com.ridicarus.kid.tools.BooleanTileMap;
+import com.ridicarus.kid.tiles.BooleanTileMap;
 
 // Since full / empty tiles are technically not tracked, any destroy cell / add cell operations are fun!
 public class TileCollisionMap {
@@ -82,9 +82,9 @@ public class TileCollisionMap {
 		// Create horizontal lines.
 		// Note the less than or equal (<=) compare on the 'y' iterator only.
 		// In each iteration of the loop, the bottom of each tile is checked for line creation - but not the top.
+		// This method was chosen to simplify things and work on one line at a time.
 		// Therefore an extra iteration is needed to check the top line of the final tile (which is the bottom line
-		// of the tile above it).
-		// DEBUG: insert a picture here to explain, words are confusing...
+		// of the top row of tiles).
 		currentSeg = null;
 		for(int y = 0; y <= bTileMap.getHeight(); y++) {
 			for(int x = 0; x < bTileMap.getWidth(); x++) {

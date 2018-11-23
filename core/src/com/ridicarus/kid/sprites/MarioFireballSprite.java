@@ -27,13 +27,13 @@ public class MarioFireballSprite extends Sprite {
 		frames.clear();
 
 		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_FIREBALL_EXP), 0, 0, 16, 16));
-		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_FIREBALL_EXP), 0, 16, 16, 16));
-		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_FIREBALL_EXP), 0, 32, 16, 16));
+		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_FIREBALL_EXP), 16, 0, 16, 16));
+		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_FIREBALL_EXP), 32, 0, 16, 16));
 		explodeAnimation = new Animation<TextureRegion>(ANIM_SPEED_EXP, frames);
 
 		setRegion(ballAnimation.getKeyFrame(0f));
-		setPosition(position.x, position.y);
 		setBounds(getX(), getY(), GameInfo.P2M(8), GameInfo.P2M(8));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
 		stateTimer = 0f;
 		prevState = FireballState.FLY;

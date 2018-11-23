@@ -14,6 +14,7 @@ import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.roles.player.MarioRole;
 import com.ridicarus.kid.sprites.MushroomSprite;
 import com.ridicarus.kid.tools.WorldRunner;
+import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
 public class PowerMushroom extends ItemRobot implements BumpableBot {
 	private static final float BODY_WIDTH = GameInfo.P2M(14f);
@@ -23,11 +24,11 @@ public class PowerMushroom extends ItemRobot implements BumpableBot {
 	private static final float SPROUT_TIME = 0.5f;
 	private static final float WALK_VEL = 0.6f;
 	private static final float BUMP_UPVEL = 1.5f;
+	private static final float SPROUT_OFFSET = GameInfo.P2M(-13f);
 
 	private enum MushroomState { SPROUT, WALK, FALL };
 
 	private Body b2body;
-	private Vector2 velocity;
 
 	private WorldRunner runner;
 
@@ -42,14 +43,14 @@ public class PowerMushroom extends ItemRobot implements BumpableBot {
 
 	private MushroomSprite mSprite;
 
-	public PowerMushroom(WorldRunner runner, float x, float y) {
+	public PowerMushroom(WorldRunner runner, Vector2 position) {
 		this.runner = runner;
 
-		velocity = new Vector2(WALK_VEL, 0f);
+		maxVelocity = new Vector2(WALK_VEL, 0f);
 
-		mSprite = new MushroomSprite(runner.getAtlas(), x, y);
+		mSprite = new MushroomSprite(runner.getAtlas(), position.cpy().add(0f, SPROUT_OFFSET));
 
-		defineBody(x, y);
+		defineBody(position);
 
 		prevState = MushroomState.WALK;
 		stateTimer = 0f;
@@ -58,6 +59,9 @@ public class PowerMushroom extends ItemRobot implements BumpableBot {
 		isOnGround = false;
 		isSprouting = true;
 		isBumped = false;
+
+		runner.enableRobotUpdate(this);
+		runner.setRobotDrawLayer(this, RobotDrawLayers.BOTTOM);
 	}
 
 	private MushroomState getState() {
@@ -70,47 +74,55 @@ public class PowerMushroom extends ItemRobot implements BumpableBot {
 	}
 
 	public void update(float delta) {
+		MushroomState curState;
+		float yOffset;
+
 		// process bumpings
 		if(isBumped) {
 			isBumped = false;
 			// If moving right and bumped from the right then reverse velocity,
 			// if moving left and bumped from the left then reverse velocity
-			if((velocity.x > 0 && bumpCenter.x > b2body.getPosition().x) ||
-					(velocity.x < 0 && bumpCenter.x < b2body.getPosition().x)) {
+			if((maxVelocity.x > 0 && bumpCenter.x > b2body.getPosition().x) ||
+					(maxVelocity.x < 0 && bumpCenter.x < b2body.getPosition().x)) {
 				reverseVelocity(true, false);
 			}
 			b2body.applyLinearImpulse(new Vector2(0f, BUMP_UPVEL), b2body.getWorldCenter(), true);
 		}
 
-		MushroomState curState = getState();
+		yOffset = 0f;
+		curState = getState();
 		switch(curState) {
 			case WALK:
 				// move if walking
-				b2body.setLinearVelocity(velocity.x, b2body.getLinearVelocity().y);
+				b2body.setLinearVelocity(maxVelocity.x, b2body.getLinearVelocity().y);
 				break;
 			case SPROUT:
 				// wait a short time to finish sprouting
-				if(stateTimer > SPROUT_TIME)
+				if(stateTimer > SPROUT_TIME) {
 					isSprouting = false;
+					runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
+				}
+				else
+					yOffset = SPROUT_OFFSET * (SPROUT_TIME - stateTimer) / SPROUT_TIME;
 				break;
 			case FALL:
 				break;	// do nothing if falling
 		}
 
-		mSprite.update(delta, b2body.getPosition());
+		mSprite.update(delta, b2body.getPosition().cpy().add(0f, yOffset));
 
 		// increment state timer if state stayed the same, otherwise reset timer
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
 		prevState = curState;
 	}
 
-	private void defineBody(float x, float y) {
+	private void defineBody(Vector2 position) {
 		BodyDef bdef;
 		FixtureDef fdef;
 		PolygonShape shroomShape;
 
 		bdef = new BodyDef();
-		bdef.position.set(x, y);
+		bdef.position.set(position);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		b2body = runner.getWorld().createBody(bdef);
 
@@ -134,13 +146,6 @@ public class PowerMushroom extends ItemRobot implements BumpableBot {
 		b2body.createFixture(fdef).setUserData(this);
 
 		b2body.setActive(true);
-	}
-
-	private void reverseVelocity(boolean x, boolean y){
-		if(x)
-			velocity.x = -velocity.x;
-		if(y)
-			velocity.y = -velocity.y;
 	}
 
 	@Override
@@ -177,12 +182,18 @@ public class PowerMushroom extends ItemRobot implements BumpableBot {
 
 	@Override
 	public void onBump(Vector2 fromCenter) {
+		if(isSprouting)
+			return;
+
 		isBumped = true;
 		bumpCenter = fromCenter.cpy(); 
 	}
 
 	@Override
 	public void use(PlayerRole role) {
+		if(isSprouting)
+			return;
+
 		if(role instanceof MarioRole) {
 			((MarioRole) role).applyPowerup(PowerupType.MUSHROOM);
 			runner.removeRobot(this);

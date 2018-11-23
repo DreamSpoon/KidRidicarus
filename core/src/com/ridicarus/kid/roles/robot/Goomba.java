@@ -18,6 +18,7 @@ import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.sprites.GoombaSprite;
 import com.ridicarus.kid.tools.WorldRunner;
+import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
 public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot
 {
@@ -47,17 +48,18 @@ public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 
 	public Goomba(WorldRunner runner, MapObject object){
 		Rectangle bounds;
+		Vector2 position;
 
 		this.runner = runner;
 
 		velocity = new Vector2(-GOOMBA_WALK_VEL, 0f);
 
 		bounds = ((RectangleMapObject) object).getRectangle();
-		goombaSprite = new GoombaSprite(runner.getAtlas(), GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
+		position = new Vector2(GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
 				GameInfo.P2M(bounds.getY() + bounds.getHeight() / 2f));
 
-		defineBody(GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
-				GameInfo.P2M(bounds.getY() + bounds.getHeight() / 2f));
+		goombaSprite = new GoombaSprite(runner.getAtlas(), position);
+		defineBody(position);
 
 		prevState = GoombaState.WALK;
 		stateTimer = 0f;
@@ -67,6 +69,9 @@ public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		// the equivalent of isDead: bumped | squished
 		isBumped = false;
 		isSquished = false;
+
+		runner.enableRobotUpdate(this);
+		runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
 	}
 
 	private GoombaState getState() {
@@ -115,9 +120,9 @@ public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		prevState = curState;
 	}
 
-	private void defineBody(float x, float y) {
+	private void defineBody(Vector2 position) {
 		BodyDef bdef = new BodyDef();
-		bdef.position.set(x, y);
+		bdef.position.set(position);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		b2body = runner.getWorld().createBody(bdef);
 

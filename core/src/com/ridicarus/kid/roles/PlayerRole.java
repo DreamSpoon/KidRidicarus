@@ -2,8 +2,8 @@ package com.ridicarus.kid.roles;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.ridicarus.kid.SpecialTiles.InteractiveTileObject;
 import com.ridicarus.kid.collisionmap.LineSeg;
+import com.ridicarus.kid.tiles.InteractiveTileObject;
 
 public interface PlayerRole {
 	void update(float delta);
@@ -15,6 +15,7 @@ public interface PlayerRole {
 
 	void rightIt();
 	void leftIt();
+	void downIt();
 	void runIt();
 	void jumpIt();
 

@@ -5,10 +5,12 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.ridicarus.kid.screens.PlayScreen;
 
 public class MyKidRidicarus extends Game {
 	public SpriteBatch batch;
+	public ShapeRenderer sr;
 
 	// DEBUG: static context AssetManager is not advised, refactor this. so that AssetManager is passed to functions that
 	// need it.
@@ -17,6 +19,7 @@ public class MyKidRidicarus extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		sr = new ShapeRenderer();
 		manager = new AssetManager();
 		manager.load(GameInfo.MUSIC_MARIO, Music.class);
 		manager.load(GameInfo.SOUND_COIN, Sound.class);
@@ -41,6 +44,7 @@ public class MyKidRidicarus extends Game {
 	public void dispose () {
 		super.dispose();
 		batch.dispose();
+		sr.dispose();
 		manager.dispose();
 	}
 }

@@ -14,10 +14,10 @@ public class FireFlowerSprite extends Sprite {
 	private Animation<TextureRegion> flowerAnimation;
 	private float stateTimer;
 
-	public FireFlowerSprite(TextureAtlas atlas, float x, float y) {
+	public FireFlowerSprite(TextureAtlas atlas, Vector2 position) {
 		super(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_FIREFLOWER), 0, 0, 16, 16));
-		setPosition(x, y);
 		setBounds(getX(), getY(), GameInfo.P2M(GameInfo.TILEPIX_X), GameInfo.P2M(GameInfo.TILEPIX_Y));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
 		Array<TextureRegion> frames = new Array<TextureRegion>();
 		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_FIREFLOWER), 0, 0, 16, 16));

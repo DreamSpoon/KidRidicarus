@@ -5,31 +5,30 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.RobotRole;
-import com.ridicarus.kid.sprites.BounceCoinSprite;
+import com.ridicarus.kid.sprites.BrickPieceSprite;
 import com.ridicarus.kid.tools.WorldRunner;
 import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
-public class BounceCoin extends RobotRole {
-	private static final float BODY_WIDTH = GameInfo.P2M(7f);
-	private static final float BODY_HEIGHT = GameInfo.P2M(7f);
-	private static final float COIN_SPIN_TIME = 0.54f;
-	private static final Vector2 START_VELOCITY = new Vector2(0f, 3.1f);
+public class BrickPiece extends RobotRole {
+	private static final float BODY_WIDTH = GameInfo.P2M(8);
+	private static final float BODY_HEIGHT = GameInfo.P2M(8);
+	// bricks should be auto-removed when off screen, use this timeout for other cases
+	private static final float BRICK_DIE_TIME = 7f;
 
-	private WorldRunner runner;
+	private BrickPieceSprite bpSprite;
 	private Body b2body;
-	private BounceCoinSprite coinSprite;
+	private WorldRunner runner;
 	private float stateTimer;
 
-	public BounceCoin(WorldRunner runner, Vector2 position) {
+	public BrickPiece(WorldRunner runner, Vector2 position, Vector2 velocity, int startFrame) {
 		this.runner = runner;
-
-		coinSprite = new BounceCoinSprite(runner.getAtlas(), position);
-		defineBody(position, START_VELOCITY);
+		defineBody(position, velocity);
+		bpSprite = new BrickPieceSprite(runner.getAtlas(), position, BODY_WIDTH, startFrame);
 		stateTimer = 0f;
 
 		runner.enableRobotUpdate(this);
@@ -39,7 +38,7 @@ public class BounceCoin extends RobotRole {
 	private void defineBody(Vector2 position, Vector2 velocity) {
 		BodyDef bdef;
 		FixtureDef fdef;
-		PolygonShape coinShape;
+		CircleShape pieceShape;
 
 		bdef = new BodyDef();
 		bdef.position.set(position);
@@ -48,31 +47,33 @@ public class BounceCoin extends RobotRole {
 		b2body = runner.getWorld().createBody(bdef);
 
 		fdef = new FixtureDef();
-		coinShape = new PolygonShape();
-		coinShape.setAsBox(BODY_WIDTH/2f,  BODY_HEIGHT/2f);
-		// coin does not touch anything
+        pieceShape = new CircleShape();
+        pieceShape.setRadius(BODY_WIDTH / 2f);
+
+		// does not interact with anything
 		fdef.filter.categoryBits = GameInfo.NOTHING_BIT;
 		fdef.filter.maskBits = GameInfo.NOTHING_BIT;
 
-		fdef.shape = coinShape;
-		b2body.createFixture(fdef).setUserData(this);
-
-		b2body.setActive(true);
+		fdef.shape = pieceShape;
+		b2body.createFixture(fdef);
 	}
 
 	@Override
 	public void update(float delta) {
-		coinSprite.update(delta, b2body.getPosition());
-
-		stateTimer += delta;
-		if(stateTimer > COIN_SPIN_TIME)
+		bpSprite.update(b2body.getPosition(), delta);
+		if(b2body.getPosition().y < 0f || stateTimer > BRICK_DIE_TIME)
 			runner.removeRobot(this);
+		stateTimer += delta;
 	}
 
 	@Override
 	public void draw(Batch batch) {
-		coinSprite.draw(batch);
+		bpSprite.draw(batch);
 	}
+
+//	public Vector2 getPosition() {
+//		return body.getPosition();
+//	}
 
 	@Override
 	public Body getBody() {
@@ -87,21 +88,26 @@ public class BounceCoin extends RobotRole {
 
 	@Override
 	protected void onInnerTouchBoundLine(LineSeg seg) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onTouchRobot(RobotRole robo) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onTouchGround() {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onLeaveGround() {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void dispose() {
+		// TODO Auto-generated method stub
 	}
 }

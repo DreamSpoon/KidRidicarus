@@ -1,44 +1,60 @@
 package com.ridicarus.kid;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class GameInfo {
+	public static final Vector2 MARIO_START_POS = new Vector2(0f, 0f);
+
 	public static final float PlAYER_STARTX = 32;
 	public static final float PlAYER_STARTY = 64;
 
 	public static final float PPM = 100f;
 	public static final int V_WIDTH = 400;
 	public static final int V_HEIGHT = 240;
-	// DEBUG: used to quickly change size of screen on desktop without changing aspect ratio
+	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_NAME = "level xyz v6.tmx";
+	public static final String GAMEMAP_NAME = "level xyz v7.tmx";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";
-	public static final String TILEMAP_FOREGROUND = "foreground";
+	public static final String TILEMAP_BACKGROUND = "background";
+	public static final String TILEMAP_SCENERY = "scenery";
 	public static final String TILEMAP_COLLISION = "collision";
-	public static final String TILEMAP_BRICK = "brick";
+	public static final String TILEMAP_BUMPABLE = "bumpable";
 	public static final String TILEMAP_GOOMBA = "goomba";
-	public static final String TILEMAP_COINBLOCK = "coinblock";
 	public static final String TILEMAP_TURTLE = "turtle";
 
-	public static final String MUSHROOM_TILEKEY = "mushroom";
+	public static final String ANIM_QMARK_TILEKEY = "qblock";
 	public static final String COIN_TILEKEY = "coin";
-	public static final String ANIM_QMARK_TILEKEY = "anim_qmark";
+	public static final String COIN10_TILEKEY = "coin10";
+	public static final String MUSHROOM_TILEKEY = "mushroom";
+	public static final String STAR_TILEKEY = "powerstar";
 
 	public static final int TILEPIX_X = 16;
 	public static final int TILEPIX_Y = 16;
 
-	public static final String TEXATLAS_FILENAME = "Mario_and_Enemies6.pack";
+	public static final String TEXATLAS_FILENAME = "Mario_and_Enemies7.pack";
 	public static final String TEXATLAS_GOOMBA = "goomba";
 	public static final String TEXATLAS_MUSHROOM = "mushroom";
-	public static final String TEXATLAS_BIGMARIO = "big_mario";
-	public static final String TEXATLAS_LITTLEMARIO = "little_mario";
 	public static final String TEXATLAS_TURTLE = "turtle";
 	public static final String TEXATLAS_COIN_SPIN = "coin_bounce";
 	public static final String TEXATLAS_BRICKPIECES = "brick_pieces";
 	public static final String TEXATLAS_FIREFLOWER = "fireflower";
-	public static final String TEXATLAS_FIREMARIO = "fire_mario";
 	public static final String TEXATLAS_FIREBALL = "fireball";
 	public static final String TEXATLAS_FIREBALL_EXP = "fireball_explode";
+	public static final String TEXATLAS_POWERSTAR = "powerstar";
+
+	public static final String TEXATLAS_SMLMARIO_REG = "little_mario";
+	// TODO: little fire mario separate image?
+	public static final String TEXATLAS_SMLMARIO_FIRE = TEXATLAS_SMLMARIO_REG;
+	public static final String TEXATLAS_SMLMARIO_INV1 = "little_mario_invinc1";
+	public static final String TEXATLAS_SMLMARIO_INV2 = "little_mario_invinc2";
+	public static final String TEXATLAS_SMLMARIO_INV3 = "little_mario_invinc3";
+	public static final String TEXATLAS_BIGMARIO_REG = "big_mario";
+	public static final String TEXATLAS_BIGMARIO_FIRE = "fire_mario";
+	public static final String TEXATLAS_BIGMARIO_INV1 = "big_mario_invinc1";
+	public static final String TEXATLAS_BIGMARIO_INV2 = "big_mario_invinc2";
+	public static final String TEXATLAS_BIGMARIO_INV3 = "big_mario_invinc3";
 
 	public static final String MUSIC_MARIO = "audio/music/mario_music.ogg";
 	public static final String SOUND_BREAK = "audio/sounds/breakblock.wav";

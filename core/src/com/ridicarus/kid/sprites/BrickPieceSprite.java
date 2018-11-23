@@ -27,8 +27,8 @@ public class BrickPieceSprite extends Sprite {
 
 		stateTimer = (float) startFrame * ANIM_SPEED;
 
-		setPosition(position.x - size/2f, position.y - size/2f);
 		setBounds(getX(), getY(), size, size);
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(Vector2 position, float delta) {

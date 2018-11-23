@@ -1,4 +1,4 @@
-package com.ridicarus.kid.tools;
+package com.ridicarus.kid.tiles;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 

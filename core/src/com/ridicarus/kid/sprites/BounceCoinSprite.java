@@ -24,8 +24,8 @@ public class BounceCoinSprite extends Sprite {
 
 		stateTimer = 0;
 		setRegion(spinAnimation.getKeyFrame(stateTimer, true));
-		setPosition(position.x, position.y);
 		setBounds(getX(), getY(), GameInfo.P2M(16), GameInfo.P2M(16));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position) {

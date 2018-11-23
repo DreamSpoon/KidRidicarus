@@ -16,6 +16,7 @@ import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.sprites.TurtleSprite;
 import com.ridicarus.kid.tools.WorldRunner;
+import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
 /*
  * TODO:
@@ -28,14 +29,15 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 	private static final float BODY_HEIGHT = GameInfo.P2M(14f);
 	private static final float FOOT_WIDTH = GameInfo.P2M(12f);
 	private static final float FOOT_HEIGHT = GameInfo.P2M(4f);
-	private static final float TURTLE_WALK_VEL = 0.4f;
-	private static final float TURTLE_HIDE_TIME = 3f;
-	private static final float TURTLE_DIE_FALL_TIME = 6f;
-	private static final float TURTLE_BUMP_UP_VEL = 2f;
-	private static final float TURTLE_BUMP_SIDE_VEL = 1f;
-	private static final float TURTLE_SLIDE_VEL = 1.5f;
+	private static final float WALK_VEL = 0.4f;
+	private static final float BUMP_UP_VEL = 2f;
+	private static final float BUMP_SIDE_VEL = 1f;
+	private static final float SLIDE_VEL = 1.5f;
+	private static final float WAKING_TIME = 3f;
+	private static final float WAKE_UP_DELAY = 1.7f;
+	private static final float DIE_FALL_TIME = 6f;
 
-	public enum TurtleState { WALK, HIDE, SLIDE, DEAD };
+	public enum TurtleState { WALK, HIDE, WAKE_UP, SLIDE, DEAD };
 
 	private Body b2body;
 
@@ -50,24 +52,25 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 	private int onGroundCount;
 	private boolean isOnGround;
 	private boolean isHiding;	// after mario bounces on head, turtle hides in shell
+	private boolean isWaking;
 	private boolean isSliding;
 	private boolean isDead;
 	private boolean isDeadToRight;
 
 	public Turtle(WorldRunner runner, MapObject object) {
 		Rectangle bounds;
+		Vector2 position;
 
 		this.runner = runner;
 
 		facingRight = false;
-		velocity = new Vector2(-TURTLE_WALK_VEL, 0f);
+		velocity = new Vector2(-WALK_VEL, 0f);
 
 		bounds = ((RectangleMapObject) object).getRectangle();
-		turtleSprite = new TurtleSprite(runner.getAtlas(), GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
+		position = new Vector2(GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
 				GameInfo.P2M(bounds.getY() + bounds.getHeight() / 2f));
-
-		defineBody(GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
-				GameInfo.P2M(bounds.getY() + bounds.getHeight() / 2f));
+		turtleSprite = new TurtleSprite(runner.getAtlas(), position);
+		defineBody(position);
 
 		prevState = TurtleState.WALK;
 		stateTimer = 0f;
@@ -75,9 +78,13 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		onGroundCount = 0;
 		isOnGround = false;
 		isHiding = false;
+		isWaking = false;
 		isSliding = false;
 		isDead = false;
 		isDeadToRight = false;
+
+		runner.enableRobotUpdate(this);
+		runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
 	}
 
 	private TurtleState getState() {
@@ -85,8 +92,12 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 			return TurtleState.DEAD;
 		else if(isSliding)
 			return TurtleState.SLIDE;
-		else if(isHiding)
-			return TurtleState.HIDE;
+		else if(isHiding) {
+			if(isWaking)
+				return TurtleState.WAKE_UP;
+			else
+				return TurtleState.HIDE;
+		}
 		else
 			return TurtleState.WALK;
 	}
@@ -99,16 +110,26 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 				if(curState != prevState)
 					startDeath();
 				// check the old deceased for timeout
-				else if(stateTimer > TURTLE_DIE_FALL_TIME)
+				else if(stateTimer > DIE_FALL_TIME)
 					runner.removeRobot(this);
 				break;
 			case HIDE:
 				// TODO: turtle should poke it's feet out and pull them back in a few times before unhiding
 				// wait a short time and reappear
-				if(curState != prevState)
+				if(curState != prevState) {
+					isWaking = false;
 					startHideInShell();
-				else if(stateTimer > TURTLE_HIDE_TIME)
+				}
+				else if(stateTimer > WAKE_UP_DELAY)
+					isWaking = true;
+				break;
+			case WAKE_UP:
+				if(curState == prevState && stateTimer > WAKING_TIME) {
+					isWaking = false;
 					endHideInShell();
+					if(isOnGround)
+						b2body.setLinearVelocity(velocity);
+				}
 				break;
 			case SLIDE:
 			case WALK:
@@ -146,23 +167,23 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		b2body.setLinearVelocity(0f, 0f);
 		// die move to the right or die move to to the left?
 		if(isDeadToRight) {
-			b2body.applyLinearImpulse(new Vector2(TURTLE_BUMP_SIDE_VEL, TURTLE_BUMP_UP_VEL),
+			b2body.applyLinearImpulse(new Vector2(BUMP_SIDE_VEL, BUMP_UP_VEL),
 					b2body.getWorldCenter(), true);
 		}
 		else {
-			b2body.applyLinearImpulse(new Vector2(-TURTLE_BUMP_SIDE_VEL, TURTLE_BUMP_UP_VEL),
+			b2body.applyLinearImpulse(new Vector2(-BUMP_SIDE_VEL, BUMP_UP_VEL),
 					b2body.getWorldCenter(), true);
 		}
 	}
 
-	private void defineBody(float x, float y) {
+	private void defineBody(Vector2 position) {
 		BodyDef bdef;
 		FixtureDef fdef;
 		PolygonShape boxShape;
 		PolygonShape footSensor;
 
 		bdef = new BodyDef();
-		bdef.position.set(x, y);
+		bdef.position.set(position);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		b2body = runner.getWorld().createBody(bdef);
 
@@ -215,14 +236,17 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		isSliding = true;
 		facingRight = right;
 		if(right)
-			velocity.x = TURTLE_SLIDE_VEL;
+			velocity.x = SLIDE_VEL;
 		else
-			velocity.x = -TURTLE_SLIDE_VEL;
+			velocity.x = -SLIDE_VEL;
 	}
 
 	private void stopSlide() {
 		isSliding = false;
-		velocity.set(0f, 0f);
+		if(velocity.x > 0)
+			velocity.set(WALK_VEL, 0f);
+		else
+			velocity.set(-WALK_VEL, 0f);
 	}
 
 	@Override
