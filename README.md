@@ -28,6 +28,12 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.co
 
 [The Spriters Resource](www.spriters-resource.com)
 
+[GIMP Addon - Sprite Gutter Add/Remove tool](https://gimper.net/threads/add-remove-sprite-sheet-gutter-padding-and-spacing.14189/)
+
+* Great for preparing tilesets for use (read up on TilED and libGDX tile maps to know why).
+
+### Other:
+
 [SMB Physics Doc](http://i276.photobucket.com/albums/kk21/jdaster64/smb_playerphysics.png.html)
 
 ### Current State of Affairs:
