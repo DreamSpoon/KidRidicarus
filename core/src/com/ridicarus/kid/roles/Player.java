@@ -2,15 +2,14 @@ package com.ridicarus.kid.roles;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.roles.player.MarioRole;
 import com.ridicarus.kid.tools.WorldRunner;
 
 public class Player {
 	private PlayerRole role;
 
-	public Player(WorldRunner runner) {
-		role = new MarioRole(runner, new Vector2(GameInfo.P2M(GameInfo.PlAYER_STARTX), GameInfo.P2M(GameInfo.PlAYER_STARTY)));
+	public Player(WorldRunner runner, Vector2 position) {
+		role = new MarioRole(runner, position);
 	}
 
 	public void handleInput() {

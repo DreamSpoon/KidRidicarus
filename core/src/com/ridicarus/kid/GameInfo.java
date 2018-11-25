@@ -1,20 +1,13 @@
 package com.ridicarus.kid;
 
-import com.badlogic.gdx.math.Vector2;
-
 public class GameInfo {
-	public static final Vector2 MARIO_START_POS = new Vector2(0f, 0f);
-
-	public static final float PlAYER_STARTX = 32;
-	public static final float PlAYER_STARTY = 64;
-
 	public static final float PPM = 100f;
 	public static final int V_WIDTH = 400;
 	public static final int V_HEIGHT = 240;
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_NAME = "level xyz v7.tmx";
+	public static final String GAMEMAP_NAME = "level xyz v8.tmx";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";
 	public static final String TILEMAP_BACKGROUND = "background";
@@ -23,6 +16,8 @@ public class GameInfo {
 	public static final String TILEMAP_BUMPABLE = "bumpable";
 	public static final String TILEMAP_GOOMBA = "goomba";
 	public static final String TILEMAP_TURTLE = "turtle";
+	public static final String TILEMAP_SPAWNPOINT = "spawnpoint";
+	public static final String TILEMAP_FLAGPOLE = "flagpole";
 
 	public static final String ANIM_QMARK_TILEKEY = "qblock";
 	public static final String COIN_TILEKEY = "coin";
@@ -33,7 +28,7 @@ public class GameInfo {
 	public static final int TILEPIX_X = 16;
 	public static final int TILEPIX_Y = 16;
 
-	public static final String TEXATLAS_FILENAME = "Mario_and_Enemies7.pack";
+	public static final String TEXATLAS_FILENAME = "Mario_and_Enemies8.pack";
 	public static final String TEXATLAS_GOOMBA = "goomba";
 	public static final String TEXATLAS_MUSHROOM = "mushroom";
 	public static final String TEXATLAS_TURTLE = "turtle";
@@ -43,6 +38,7 @@ public class GameInfo {
 	public static final String TEXATLAS_FIREBALL = "fireball";
 	public static final String TEXATLAS_FIREBALL_EXP = "fireball_explode";
 	public static final String TEXATLAS_POWERSTAR = "powerstar";
+	public static final String TEXATLAS_FLAG = "flag";
 
 	public static final String TEXATLAS_SMLMARIO_REG = "little_mario";
 	// TODO: little fire mario separate image?
@@ -57,17 +53,24 @@ public class GameInfo {
 	public static final String TEXATLAS_BIGMARIO_INV3 = "big_mario_invinc3";
 
 	public static final String MUSIC_MARIO = "audio/music/mario_music.ogg";
-	public static final String SOUND_BREAK = "audio/sounds/breakblock.wav";
-	public static final String SOUND_BUMP = "audio/sounds/bump.wav";
-	public static final String SOUND_COIN = "audio/sounds/coin.wav";
-	public static final String SOUND_POWERUP_SPAWN = "audio/sounds/powerup_spawn.wav";
-	public static final String SOUND_POWERUP_USE = "audio/sounds/powerup.wav";
-	public static final String SOUND_POWERDOWN = "audio/sounds/powerdown.wav";
-	public static final String SOUND_STOMP = "audio/sounds/stomp.wav";
-	public static final String SOUND_MARIODIE = "audio/sounds/mariodie.wav";
+	public static final String MUSIC_STARPOWER = "audio/music/04_-_Super_Mario_Bros._-_NES_-_Invincible_BGM.ogg";
+	public static final String MUSIC_LEVELEND = "audio/music/02_-_Super_Mario_Bros._-_NES_-_Course_Clear_Fanfare.ogg";
+	public static final String SOUND_BREAK = "audio/sounds/SMB/Break.wav";
+	public static final String SOUND_BUMP = "audio/sounds/SMB/Bump.wav";
+	public static final String SOUND_COIN = "audio/sounds/SMB/Coin.wav";
+	public static final String SOUND_POWERUP_SPAWN = "audio/sounds/SMB/Item.wav";
+	public static final String SOUND_POWERUP_USE = "audio/sounds/SMB/Powerup.wav";
+	public static final String SOUND_POWERDOWN = "audio/sounds/SMB/Warp.wav";
+	public static final String SOUND_STOMP = "audio/sounds/SMB/Squish.wav";
+	public static final String SOUND_MARIODIE = "audio/sounds/SMB/Die.wav";
+	public static final String SOUND_MARIOSMLJUMP = "audio/sounds/SMB/Jump.wav";
+	public static final String SOUND_MARIOBIGJUMP = "audio/sounds/SMB/Big Jump2.ogg";
+	public static final String SOUND_KICK = "audio/sounds/SMB/Kick.wav";
+	public static final String SOUND_FIREBALL = "audio/sounds/SMB/Fire Ball.wav";
+	public static final String SOUND_FLAGPOLE = "audio/sounds/SMB/Flagpole.wav";
 
 	public static final float MUSIC_VOLUME = 0.1f;
-	public static final float SOUND_VOLUME = 0.15f;
+	public static final float SOUND_VOLUME = 0.25f;
 
 	public static final float MARIO_DEAD_TIME = 5f;
 	public static final float MAX_FLOAT_HACK = 1e38f;

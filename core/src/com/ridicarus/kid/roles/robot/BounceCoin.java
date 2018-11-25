@@ -94,14 +94,6 @@ public class BounceCoin extends RobotRole {
 	}
 
 	@Override
-	public void onTouchGround() {
-	}
-
-	@Override
-	public void onLeaveGround() {
-	}
-
-	@Override
 	public void dispose() {
 	}
 }

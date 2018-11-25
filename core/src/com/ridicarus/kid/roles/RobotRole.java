@@ -9,8 +9,6 @@ public abstract class RobotRole {
 	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
 	public static final float ROBOT_VS_VERT_BOUND_EPSILON = 0.001f;
 
-	public abstract void update(float delta);
-	public abstract void draw(Batch batch);
 	public abstract Body getBody();
 
 	public abstract Rectangle getBounds();
@@ -34,8 +32,8 @@ public abstract class RobotRole {
 	}
 
 	public abstract void onTouchRobot(RobotRole robo);
-	public abstract void onTouchGround();
-	public abstract void onLeaveGround();
 
+	public abstract void update(float delta);
+	public abstract void draw(Batch batch);
 	public abstract void dispose();
 }

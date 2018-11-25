@@ -97,16 +97,6 @@ public class BrickPiece extends RobotRole {
 	}
 
 	@Override
-	public void onTouchGround() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onLeaveGround() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 	}

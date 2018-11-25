@@ -17,10 +17,10 @@ public class MarioSprite extends Sprite {
 	private static final int NUM_STARPOWER_FRAMES = 4;
 	private static final float REG_ANIM_SPEED = 0.1f;
 
-	public enum MarioSpriteState { STAND, RUN, JUMP, BRAKE, FALL, SHRINK, GROW, DUCK, FIREBALL, DEAD };
+	public enum MarioSpriteState { STAND, RUN, JUMP, BRAKE, FALL, SHRINK, GROW, DUCK, FIREBALL, DEAD, END_SLIDE, END_SLIDE_DONE, END_SLIDE_FALL };
 	private MarioSpriteState curState;
 
-	private static final int NUM_POSES = 9;	// { STAND, RUN, JUMP, BRAKE, GROW, SHRINK, DUCK, FIREBALL, DEAD
+	private static final int NUM_POSES = 10;	// { STAND, RUN, JUMP, BRAKE, GROW, SHRINK, DUCK, FIREBALL, DEAD, FLAGPOLE
 	private static final int STAND_POSE = 0;
 	private static final int RUN_POSE = 1;
 	private static final int JUMP_POSE = 2;
@@ -30,6 +30,7 @@ public class MarioSprite extends Sprite {
 	private static final int DUCK_POSE = 6;
 	private static final int FIREB_POSE = 7;
 	private static final int DEAD_POSE = 8;
+	private static final int FLAG_POSE = 9;
 
 	private static final int NUM_SIZES = 2;
 	private static final int SML_SIZE = 0;
@@ -75,10 +76,6 @@ public class MarioSprite extends Sprite {
 		runShrinkAnimation = false;
 		runFireballAnimation = false;
 		starPowerFrameTimer = 0f;
-	
-		// DEBUG: why do update in constructor for this guy only? why not for turtle, fireball, etc.?
-		// TODO: delete the following call to update()
-//		update(0f, new Vector2(0f, 0f), stateIn, subState, facingRight, false, false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -204,6 +201,18 @@ public class MarioSprite extends Sprite {
 			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 16 * 16, 0, 16, 32));
 			anim[FIREB_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
+
+		for(i=0; i<NUM_GRPS; i++) {
+			frames.clear();
+			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 7 * 16, 0, 16, 16));
+			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 8 * 16, 0, 16, 16));
+			anim[FLAG_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
+
+			frames.clear();
+			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 7 * 16, 0, 16, 32));
+			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 8 * 16, 0, 16, 32));
+			anim[FLAG_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
+		}
 	}
 
 	public void update(float delta, Vector2 position, MarioCharState stateIn, MarioPowerState subState, boolean facingRight,
@@ -285,6 +294,22 @@ public class MarioSprite extends Sprite {
 		}
 
 		switch(marioState) {
+			case END1_SLIDE:
+				stateOut = MarioSpriteState.END_SLIDE;
+				break;
+			case END2_WAIT1:
+			case END3_WAIT2:
+				stateOut = MarioSpriteState.END_SLIDE_DONE;
+				break;
+			case END4_FALL:
+				stateOut = MarioSpriteState.END_SLIDE_FALL;
+				break;
+			case END5_BRAKE:
+				stateOut = MarioSpriteState.BRAKE;
+				break;
+			case END6_RUN:
+				stateOut = MarioSpriteState.RUN;
+				break;
 			case DUCK:
 				stateOut = MarioSpriteState.DUCK;
 				break;
@@ -337,6 +362,15 @@ public class MarioSprite extends Sprite {
 			grp = getStarFrameGrp(subState);
 
 		switch(curState) {
+			case END_SLIDE_FALL:
+				region = anim[RUN_POSE][size][grp].getKeyFrame(0f, false);
+				break;
+			case END_SLIDE_DONE:
+				region = anim[FLAG_POSE][size][grp].getKeyFrame(anim[FLAG_POSE][size][grp].getAnimationDuration(), false);
+				break;
+			case END_SLIDE:
+				region = anim[FLAG_POSE][size][grp].getKeyFrame(stateTimer, true);
+				break;
 			case DUCK:
 				region = anim[DUCK_POSE][BIG_SIZE][grp].getKeyFrame(stateTimer, false);
 				break;

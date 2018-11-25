@@ -62,8 +62,6 @@ public class WorldRenderer {
 	}
 
 	public void drawTileMapLayer(Batch batch, OrthographicCamera gamecam, String layerName) {
-//		tileRrr.setView(gamecam);
-//		tileRrr.render();
 		tileRrr.setView(gamecam);
 		tileRrr.render(new int[] { runner.getMap().getLayers().getIndex(layerName) });
 	}

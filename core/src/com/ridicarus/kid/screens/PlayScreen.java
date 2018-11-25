@@ -2,7 +2,6 @@ package com.ridicarus.kid.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -29,7 +28,6 @@ public class PlayScreen implements Screen {
 	private WorldRunner worldRunner;
 	private WorldRenderer worldRenderer;
 	private Player rePlayer;
-	private Music music;
 
 	public PlayScreen(MyKidRidicarus game) {
 		this.game = game;
@@ -45,22 +43,14 @@ public class PlayScreen implements Screen {
 		maploader = new TmxMapLoader();
 		map = maploader.load(GameInfo.GAMEMAP_NAME);
 
-		worldRunner = new WorldRunner(atlas);
+		worldRunner = new WorldRunner(game.manager, atlas);
 		worldRunner.loadMap(map);
 		// start renderer after loading map into runner, TODO: fix this
 		worldRenderer = new WorldRenderer(worldRunner);
 
-		rePlayer = new Player(worldRunner);
-		worldRunner.setPlayer(rePlayer);
-
-		startMusic();
-	}
-
-	private void startMusic() {
-		music = MyKidRidicarus.manager.get(GameInfo.MUSIC_MARIO, Music.class);
-		music.setLooping(true);
-		music.setVolume(GameInfo.MUSIC_VOLUME);
-		music.play();
+//		rePlayer = new Player(worldRunner);
+//		worldRunner.setPlayer(rePlayer);
+		rePlayer = worldRunner.createPlayer();
 	}
 
 	@Override

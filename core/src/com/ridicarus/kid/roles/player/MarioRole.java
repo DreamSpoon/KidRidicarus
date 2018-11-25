@@ -1,7 +1,5 @@
 package com.ridicarus.kid.roles.player;
 
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -12,11 +10,11 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.ridicarus.kid.GameInfo;
-import com.ridicarus.kid.MyKidRidicarus;
 import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.roles.robot.DamageableBot;
+import com.ridicarus.kid.roles.robot.Flagpole;
 import com.ridicarus.kid.roles.robot.HeadBounceBot;
 import com.ridicarus.kid.roles.robot.ItemRobot;
 import com.ridicarus.kid.roles.robot.ItemRobot.PowerupType;
@@ -27,6 +25,10 @@ import com.ridicarus.kid.sprites.MarioSprite;
 import com.ridicarus.kid.tiles.InteractiveTileObject;
 import com.ridicarus.kid.tools.WorldRunner;
 
+/*
+ * TODO:
+ * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
+ */
 public class MarioRole implements PlayerRole {
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 	private static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
@@ -50,10 +52,14 @@ public class MarioRole implements PlayerRole {
 	private static final float FIREBALL_OFFSET = GameInfo.P2M(8f);
 	private static final float TIME_PER_FIREBALL = 0.5f;
 	private static final float POWERSTAR_TIME = 15f;
+	private static final float FLAG_SLIDE_VELOCITY = -0.9f;
+	private static final float END_FLAGWAIT = 0.4f;
+	private static final float END_BRAKETIME = 0.02f;
+	private static final Vector2 FLAG_JUMPOFF_VEL = new Vector2(1.0f, 1.0f);
 
 	public enum MarioPowerState { SMALL, BIG, FIRE };
 	// the body may receive different impulses than the sprite receives texture regions
-	public enum MarioCharState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, FIREBALL, DEAD };
+	public enum MarioCharState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE, END6_RUN };
 
 	private WorldRunner runner;
 	private MarioSprite marioSprite;
@@ -97,6 +103,8 @@ public class MarioRole implements PlayerRole {
 	private float powerStarTimer;
 	private boolean isDucking;
 	private float bodyFakeHeight;
+	private Flagpole touchedFlagpole;
+	private boolean isLevelEnd;
 
 	public MarioRole(WorldRunner runner, Vector2 position) {
 		this.runner = runner;
@@ -129,11 +137,13 @@ public class MarioRole implements PlayerRole {
 		jumpForceTimer = 0f;
 		powerStarTimer = 0f;
 		isDucking = false;
+		touchedFlagpole = null;
+		isLevelEnd = false;
 
 		// graphic
-		marioSprite = new MarioSprite(runner.getAtlas(), GameInfo.MARIO_START_POS, curCharState, curPowerState, isFacingRight);
+		marioSprite = new MarioSprite(runner.getAtlas(), position, curCharState, curPowerState, isFacingRight);
 		// physic
-		defineBody(position, GameInfo.MARIO_START_POS);
+		defineBody(position, new Vector2(0f, 0f));
 	}
 
 	// Process the body and return a character state based on the findings.
@@ -148,6 +158,68 @@ public class MarioRole implements PlayerRole {
 			// make sure mario doesn't move left or right while dead
 			b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
 			return MarioCharState.DEAD;
+		}
+		// scripted level end sequence using curCharState and stateTimer
+		else if(isLevelEnd) {
+			switch(curCharState) {
+				case END1_SLIDE:
+					// switch sides if necessary when hit ground
+					if(isOnGround)
+						return MarioCharState.END2_WAIT1;
+					// sliding down
+					else {
+						b2body.setLinearVelocity(0f, FLAG_SLIDE_VELOCITY);
+						return MarioCharState.END1_SLIDE;
+					}
+				case END2_WAIT1:
+					if(touchedFlagpole.isAtBottom()) {
+						isFacingRight = false;
+						// if mario is on left side of flagpole, move him to right side
+						if(touchedFlagpole.getBody().getPosition().x > b2body.getPosition().x)
+							defineBody(b2body.getPosition().cpy().add(
+									2f * (touchedFlagpole.getBody().getPosition().x - b2body.getPosition().x), 0f),
+									new Vector2(0f, 0f));
+						return MarioCharState.END3_WAIT2;
+					}
+					else
+						return MarioCharState.END2_WAIT1;
+				case END3_WAIT2:
+					if(stateTimer > END_FLAGWAIT) {
+						// switch to first walk frame and push mario to right
+						b2body.setGravityScale(1f);
+						b2body.applyLinearImpulse(FLAG_JUMPOFF_VEL, b2body.getWorldCenter(), true);
+						return MarioCharState.END4_FALL;
+					}
+					else
+						return MarioCharState.END3_WAIT2;
+				case END4_FALL:
+					if(isOnGround)
+						return MarioCharState.END5_BRAKE;
+					else
+						return MarioCharState.END4_FALL;
+				case END5_BRAKE:
+					if(stateTimer > END_BRAKETIME) {
+						isFacingRight = true;
+						runner.startMusic(GameInfo.MUSIC_LEVELEND, false);
+						touchedFlagpole = null;
+						return MarioCharState.END6_RUN;
+					}
+					else
+						return MarioCharState.END5_BRAKE;
+				case END6_RUN:
+ 					moveBodyLeftRight(true, false);
+					return MarioCharState.END6_RUN;
+				// first level end state
+				default:
+					touchedFlagpole.startDrop();
+					b2body.setGravityScale(0f);
+					b2body.setLinearVelocity(0f, 0f);
+
+					runner.stopMusic();
+					runner.playSound(GameInfo.SOUND_FLAGPOLE);
+
+					return MarioCharState.END1_SLIDE;
+			}
 		}
 
 		returnState = MarioCharState.STAND;
@@ -221,7 +293,7 @@ public class MarioRole implements PlayerRole {
 			returnState = MarioCharState.BRAKE;
 		}
 		else if(doWalkRunMove) {
-			moveBodyLeftRight(wantsToGoRight);
+			moveBodyLeftRight(wantsToGoRight, wantsToRun);
 			returnState = MarioCharState.WALKRUN;
 		}
 		else if(doDecelMove) {
@@ -265,6 +337,10 @@ public class MarioRole implements PlayerRole {
 			moveBodyY(MARIO_JUMP_IMPULSE * mult);
 			// the remainder of the jump up velocity is achieved through mid-air up-force
 			jumpForceTimer = MARIO_JUMPFORCE_TIME;
+			if(curPowerState != MarioPowerState.SMALL)
+				runner.playSound(GameInfo.SOUND_MARIOBIGJUMP);
+			else
+				runner.playSound(GameInfo.SOUND_MARIOSMLJUMP);
 		}
 		else if(isJumping) {	// jumped and is mid-air
 			returnState = MarioCharState.JUMP;
@@ -321,6 +397,9 @@ public class MarioRole implements PlayerRole {
 		if(powerStarTimer > 0f) {
 			isStarPowered = true;
 			powerStarTimer -= delta;
+			// restart regular music when powerstar powerup finishes
+			if(powerStarTimer <= 0f)
+				runner.startMusic(GameInfo.MUSIC_MARIO, true);
 		}
 
 		if(threwFireball)
@@ -362,6 +441,7 @@ public class MarioRole implements PlayerRole {
 			ball = new MarioFireball(runner, b2body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f), false);
 
 		runner.addRobot(ball);
+		runner.playSound(GameInfo.SOUND_FIREBALL);
 	}
 
 	private void decelLeftRight(boolean right) {
@@ -379,16 +459,16 @@ public class MarioRole implements PlayerRole {
 			b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
 	}
 
-	private void moveBodyLeftRight(boolean right) {
+	private void moveBodyLeftRight(boolean right, boolean doRunRun) {
 		float speed, max;
 		if(isOnGround)
-			speed = wantsToRun ? MARIO_RUNMOVE_XIMP : MARIO_WALKMOVE_XIMP;
+			speed = doRunRun ? MARIO_RUNMOVE_XIMP : MARIO_WALKMOVE_XIMP;
 		else {
 			speed = MARIO_AIRMOVE_XIMP;
 			if(isDucking)
 				speed /= 2f;
 		}
-		if(wantsToRun)
+		if(doRunRun)
 			max = MARIO_MAX_RUNVEL;
 		else
 			max = MARIO_MAX_WALKVEL;
@@ -429,23 +509,25 @@ public class MarioRole implements PlayerRole {
 				if(curPowerState == MarioPowerState.SMALL) {
 					curPowerState = MarioPowerState.BIG;
 					defineBody(b2body.getPosition().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
-					MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_USE, Sound.class).play(GameInfo.SOUND_VOLUME);
+					runner.playSound(GameInfo.SOUND_POWERUP_USE);
 				}
 				break;
 			case FIREFLOWER:
 				if(curPowerState == MarioPowerState.SMALL) {
 					curPowerState = MarioPowerState.BIG;
 					defineBody(b2body.getPosition().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
-					MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_USE, Sound.class).play(GameInfo.SOUND_VOLUME);
+					runner.playSound(GameInfo.SOUND_POWERUP_USE);
 				}
 				else if(curPowerState == MarioPowerState.BIG) {
 					curPowerState = MarioPowerState.FIRE;
 					defineBody(b2body.getPosition(), b2body.getLinearVelocity());
-					MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_USE, Sound.class).play(GameInfo.SOUND_VOLUME);
+					runner.playSound(GameInfo.SOUND_POWERUP_USE);
 				}
 				break;
 			case POWERSTAR:
 				powerStarTimer = POWERSTAR_TIME;
+				runner.playSound(GameInfo.SOUND_POWERUP_USE);
+				runner.startMusic(GameInfo.MUSIC_STARPOWER, false);
 				break;
 			case NONE:
 				break;
@@ -475,7 +557,7 @@ public class MarioRole implements PlayerRole {
 					defineBody(b2body.getPosition().sub(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
 				
 				startDmgInvincibility();
-				MyKidRidicarus.manager.get(GameInfo.SOUND_POWERDOWN, Sound.class).play(GameInfo.SOUND_VOLUME);
+				runner.playSound(GameInfo.SOUND_POWERDOWN);
 			}
 			// die if small and not invincible
 			else
@@ -608,9 +690,9 @@ public class MarioRole implements PlayerRole {
 	private void die() {
 		if(!marioIsDead) {
 			marioIsDead = true;
-			MyKidRidicarus.manager.get("audio/music/mario_music.ogg", Music.class).stop();
-			MyKidRidicarus.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
-
+			runner.playSound(GameInfo.SOUND_MARIODIE);
+			runner.stopMusic();
+			
 			Filter filter = new Filter();
 			filter.maskBits = GameInfo.NOTHING_BIT;
 			for(Fixture fixture : b2body.getFixtureList())
@@ -709,9 +791,17 @@ public class MarioRole implements PlayerRole {
 		float robotY = robo.getBody().getPosition().y;
 		float marioHeight = getCurrentBodyHeight();
 
+		// touch end of level flagpole?
+		if(robo instanceof Flagpole) {
+			isLevelEnd = true;
+			touchedFlagpole = (Flagpole) robo;
+		}
 		// test for powerstar damage
-		if(robo instanceof DamageableBot && powerStarTimer > 0f)
+		else if(robo instanceof DamageableBot && powerStarTimer > 0f) {
+			// playSound should go in the processBody method, but... this is so much easier!
+			runner.playSound(GameInfo.SOUND_KICK);
 			((DamageableBot) robo).onDamage(1f, b2body.getPosition());
+		}
 		// test for bounce on head
 		else if(robo instanceof HeadBounceBot && marioY - (marioHeight/2f) >= robotY) {
 			((HeadBounceBot) robo).onHeadBounce(b2body.getPosition());

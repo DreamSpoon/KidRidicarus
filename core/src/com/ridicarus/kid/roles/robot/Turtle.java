@@ -23,7 +23,7 @@ import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
  *  Do sliding turtle shells break bricks when they strike them?
  *  I couldn't find any maps in SMB 1 that would clear up this matter.
  */
-public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot
+public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot, GroundCheckBot
 {
 	private static final float BODY_WIDTH = GameInfo.P2M(14f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(14f);
@@ -132,6 +132,8 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 				}
 				break;
 			case SLIDE:
+				if(curState != prevState)
+					runner.playSound(GameInfo.SOUND_KICK);
 			case WALK:
 				if(isOnGround)
 					b2body.setLinearVelocity(velocity);
@@ -149,6 +151,7 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 	private void startHideInShell() {
 		// stop moving
 		b2body.setLinearVelocity(0f, 0f);
+		runner.playSound(GameInfo.SOUND_STOMP);
 	}
 
 	private void endHideInShell() {
@@ -261,8 +264,10 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 				onDamage(1f, robo.getBody().getPosition());
 			}
 			// else if sliding and strikes a dmgable bot...
-			else if(robo instanceof DamageableBot)
+			else if(robo instanceof DamageableBot) {
 				((DamageableBot) robo).onDamage(1f, robo.getBody().getPosition());
+				runner.playSound(GameInfo.SOUND_KICK);
+			}
 		}
 	}
 
@@ -284,8 +289,11 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 	@Override
 	public void onInnerTouchBoundLine(LineSeg seg) {
 		// bounce off of vertical bounds
-		if(!seg.isHorizontal)
+		if(!seg.isHorizontal) {
 			reverseVelocity(true,  false);
+			if(isSliding)
+				runner.playSound(GameInfo.SOUND_BUMP);
+		}
 	}
 
 	@Override

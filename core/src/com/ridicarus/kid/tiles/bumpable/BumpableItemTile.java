@@ -1,10 +1,8 @@
 package com.ridicarus.kid.tiles.bumpable;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Vector2;
 import com.ridicarus.kid.GameInfo;
-import com.ridicarus.kid.MyKidRidicarus;
 import com.ridicarus.kid.roles.robot.BounceCoin;
 import com.ridicarus.kid.roles.robot.BrickPiece;
 import com.ridicarus.kid.roles.robot.FireFlower;
@@ -50,7 +48,7 @@ public class BumpableItemTile extends BumpableTile {
 		if(object.getProperties().containsKey(GameInfo.COIN_TILEKEY)) {
 			myItem = BrickItem.COIN;
 			// switch to empty block as soon as bump starts
-			setBumpImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
+			setBounceImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
 		}
 		else if(object.getProperties().containsKey(GameInfo.COIN10_TILEKEY)) {
 			myItem = BrickItem.COIN10;
@@ -62,12 +60,12 @@ public class BumpableItemTile extends BumpableTile {
 		else if(object.getProperties().containsKey(GameInfo.MUSHROOM_TILEKEY)) {
 			myItem = BrickItem.MUSHROOM;
 			// switch to empty block as soon as bump starts
-			setBumpImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
+			setBounceImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
 		}
 		else if(object.getProperties().containsKey(GameInfo.STAR_TILEKEY)) {
 			myItem = BrickItem.STAR;
 			// switch to empty block as soon as bump starts
-			setBumpImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
+			setBounceImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
 		}
 		else
 			myItem = BrickItem.NONE;
@@ -82,21 +80,26 @@ public class BumpableItemTile extends BumpableTile {
 	}
 
 	@Override
-	public void onBumpStart(boolean isHitByBig) {
+	public void onBump(boolean isBig) {
+		// the brick makes a bump sound unless it is breaking
+		if(!(isBig && myItem == BrickItem.NONE))
+			runner.playSound(GameInfo.SOUND_BUMP);
+	}
+
+	@Override
+	public void onBounceStart(boolean isHitByBig) {
 		if(!isItemAvailable) {
 			if(isHitByBig) {
-				MyKidRidicarus.manager.get(GameInfo.SOUND_BREAK, Sound.class).play();
+				runner.playSound(GameInfo.SOUND_BREAK);
 				Hud.addScore(200);
 				startBreakBrick();
 			}
-			else
-				MyKidRidicarus.manager.get(GameInfo.SOUND_BUMP, Sound.class).play();
 		}
 		else {
 			switch(myItem) {
 				case COIN:
 					isItemAvailable = false;
-					MyKidRidicarus.manager.get(GameInfo.SOUND_COIN, Sound.class).play();
+					runner.playSound(GameInfo.SOUND_COIN);
 					Hud.addScore(200);
 					spawnSpinningCoin();
 					break;
@@ -118,13 +121,13 @@ public class BumpableItemTile extends BumpableTile {
 					else
 						coin10BumpResetTimer = COIN_BUMP_RESET_TIME;
 
-					MyKidRidicarus.manager.get(GameInfo.SOUND_COIN, Sound.class).play();
+					runner.playSound(GameInfo.SOUND_COIN);
 					Hud.addScore(200);
 					spawnSpinningCoin();
 					break;
 				case MUSHROOM:
 					isItemAvailable = false;
-					MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_SPAWN, Sound.class).play();
+					runner.playSound(GameInfo.SOUND_POWERUP_SPAWN);
 					Hud.addScore(200);
 					// big mario pops a fireflower?
 					if(isHitByBig) {
@@ -136,7 +139,7 @@ public class BumpableItemTile extends BumpableTile {
 					break;
 				case STAR:
 					isItemAvailable = false;
-					MyKidRidicarus.manager.get(GameInfo.SOUND_POWERUP_SPAWN, Sound.class).play();
+					runner.playSound(GameInfo.SOUND_POWERUP_SPAWN);
 					Hud.addScore(200);
 					runner.addRobot(new PowerStar(runner, body.getPosition().cpy().add(0f, GameInfo.P2M(GameInfo.TILEPIX_Y))));
 					break;
@@ -148,11 +151,11 @@ public class BumpableItemTile extends BumpableTile {
 	}
 
 	@Override
-	public void onBumpEnd() {
+	public void onBounceEnd() {
 		// If the brick contains items, but no more are available, then switch image to the
 		// "item used" block and disable bumps
 		if(!isItemAvailable && myItem != BrickItem.NONE) {
-			setBumpEnabled(false);
+			setBounceEnabled(false);
 			setImageTile(runner.getMap().getTileSets().getTileSet(GameInfo.TILESET_GUTTER).getTile(TileIDs.COIN_EMPTY));
 		}
 	}
@@ -162,7 +165,7 @@ public class BumpableItemTile extends BumpableTile {
 		super.update(delta);
 
 		stateTimer += delta;
-		if(isMidBump())
+		if(isMidBounce())
 			return;
 
 		if(myItem == BrickItem.COIN10) {

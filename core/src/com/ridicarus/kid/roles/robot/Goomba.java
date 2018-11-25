@@ -1,6 +1,5 @@
 package com.ridicarus.kid.roles.robot;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -13,14 +12,13 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
-import com.ridicarus.kid.MyKidRidicarus;
 import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.sprites.GoombaSprite;
 import com.ridicarus.kid.tools.WorldRunner;
 import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
-public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot
+public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot, GroundCheckBot
 {
 	private static final float BODY_WIDTH = GameInfo.P2M(14f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(14f);
@@ -163,7 +161,7 @@ public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		for(Fixture fix : b2body.getFixtureList())
 			fix.setFilterData(filter);
 
-		MyKidRidicarus.manager.get(GameInfo.SOUND_STOMP, Sound.class).play();
+		runner.playSound(GameInfo.SOUND_STOMP);
 	}
 
 	private void startBump() {

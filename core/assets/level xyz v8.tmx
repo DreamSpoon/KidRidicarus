@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="440" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="20" nextobjectid="225">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="440" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="227">
  <tileset firstgid="1" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="924" columns="33">
   <image source="tileset_gutter.png" width="594" height="504"/>
  </tileset>
@@ -21,6 +21,12 @@
    eJzt2F1Kw0AUBtCkfVVEXYcKahRcm9tQd6KuzGen0IExJE3zY0Km58CFQNu5H4HcS1oUAAAAnJq3TVG8h/rYjD9j7Dljessv/8/wnwIZ+gzz5CvUd8tcSWdP2/yJZxw6p48+M1N++aPXsn9+4HSls2eq+Xlszyl6yT+859ryv5R/e85xrwDgv8X9BgA5sd8AyJH9BkCOmvbbWVIAsEZN++081DbUxdxhgFGuVv5/jPzLyi1/fb/t3tlukvIOB+twGZ7l+1DXA2fU0rNN/mnz9JVj/vp+2+7rNrmOls4PNIvP9kOox44ZVYXPnpJ6Lg/Ptir53hhVraf88+bfiT3r6vn7mDN/m2Pvf9xpd8l1V34AAAAAuv0C4lRj8A==
   </data>
  </layer>
+ <objectgroup id="20" name="spawnpoint">
+  <object id="225" x="32" y="176" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="21" name="flagpole">
+  <object id="226" x="3172" y="40" width="8" height="152"/>
+ </objectgroup>
  <objectgroup id="18" name="bumpable">
   <properties>
    <property name="mushroom" value=""/>

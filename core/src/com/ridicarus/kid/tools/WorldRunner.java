@@ -3,6 +3,9 @@ package com.ridicarus.kid.tools;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -18,6 +21,7 @@ import com.ridicarus.kid.collisionmap.TileCollisionMap;
 import com.ridicarus.kid.roles.Player;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
+import com.ridicarus.kid.roles.robot.Flagpole;
 import com.ridicarus.kid.roles.robot.Goomba;
 import com.ridicarus.kid.roles.robot.Turtle;
 import com.ridicarus.kid.tiles.InteractiveTileObject;
@@ -30,6 +34,8 @@ public class WorldRunner {
 	private TileCollisionMap collisionMap;
 	private WorldContactListener contactListener;
 	private World world;
+	private AssetManager manager;
+	private Music currentMusic;
 
 	private class PhysicTileForQueue {
 		public int x;
@@ -51,7 +57,6 @@ public class WorldRunner {
 			this.tile = tile;
 		}
 	}
-
 	private LinkedBlockingQueue<PhysicTileForQueue> physicTileChangeQ;
 	private LinkedBlockingQueue<ImageTileForQueue> imageTileChangeQ;
 
@@ -60,10 +65,12 @@ public class WorldRunner {
 	private LinkedBlockingQueue<InteractiveTileObject> intTileUpdateDisableQ;
 	private LinkedBlockingQueue<InteractiveTileObject> intTileDestroyQ;
 
+	// list of all robots
 	private LinkedList<RobotRole> robots;
 	private LinkedBlockingQueue<RobotRole> robotAddQ;
 	private LinkedBlockingQueue<RobotRole> robotRemoveQ;
 
+	// sub-list of robots, just robots receiving updates
 	private LinkedList<RobotRole> robotsToUpdate;
 	private LinkedBlockingQueue<RobotRole> robotEnableUpdateQ;
 	private LinkedBlockingQueue<RobotRole> robotDisableUpdateQ;
@@ -78,13 +85,20 @@ public class WorldRunner {
 			this.drawLayer = drawLayer;
 		}
 	}
+	// sub-list of robots, just robots being drawn
 	private LinkedList<RobotRole>[] robotsToDraw;
 	private LinkedBlockingQueue<RobotDrawForQueue> robotSetDrawLayerQ;
 
+	private Spawnpoint marioSpawnpoint;
+	private Flagpole flagpole;
+
 	@SuppressWarnings("unchecked")
-	public WorldRunner(TextureAtlas atlas) {
+	public WorldRunner(AssetManager manager, TextureAtlas atlas) {
+		this.manager = manager;
 		this.atlas = atlas;
 		player = null;
+		marioSpawnpoint = null;
+		flagpole = null;
 
 		intTilesToUpdate = new LinkedList<InteractiveTileObject>();
 		intTileDestroyQ = new LinkedBlockingQueue<InteractiveTileObject>();
@@ -109,10 +123,9 @@ public class WorldRunner {
 		world = new World(new Vector2(0, -10f), true);
 		contactListener = new WorldContactListener();
 		world.setContactListener(contactListener);
-	}
 
-	public void setPlayer(Player player) {
-		this.player = player;
+		currentMusic = null;
+		startMusic(GameInfo.MUSIC_MARIO, true);
 	}
 
 	public void loadMap(TiledMap map) {
@@ -145,6 +158,16 @@ public class WorldRunner {
 		layer = map.getLayers().get(GameInfo.TILEMAP_TURTLE);
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
 			robots.add(new Turtle(this, object));
+
+		// load spawnpoint (should be only one)
+		layer = map.getLayers().get(GameInfo.TILEMAP_SPAWNPOINT);
+		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
+			marioSpawnpoint = new Spawnpoint(object);
+
+		// load flagpole (should be only one)
+		layer = map.getLayers().get(GameInfo.TILEMAP_FLAGPOLE);
+		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
+			flagpole = new Flagpole(this, object);
 	}
 
 	public void update(float delta) {
@@ -324,9 +347,6 @@ public class WorldRunner {
 		return collisionMap;
 	}
 
-//	public LinkedList<RobotRole> getRobots() {
-//		return robots;
-//	}
 	public LinkedList<RobotRole>[] getRobotsToDraw() {
 		return robotsToDraw;
 	}
@@ -342,6 +362,37 @@ public class WorldRunner {
 
 	public LinkedList<InteractiveTileObject> getIntTilesToUpdate() {
 		return intTilesToUpdate;
+	}
+
+	public void playSound(String sound) {
+		manager.get(sound, Sound.class).play(GameInfo.SOUND_VOLUME);
+	}
+
+	public void startMusic(String musicName, boolean looping) {
+		stopMusic();
+
+		currentMusic = manager.get(musicName, Music.class);
+		currentMusic.setLooping(looping);
+		currentMusic.setVolume(GameInfo.MUSIC_VOLUME);
+		currentMusic.play();
+	}
+
+	public void stopMusic() {
+		if(currentMusic != null) {
+			currentMusic.stop();
+			currentMusic = null;
+		}
+	}
+
+	public Player createPlayer() {
+		if(player != null)
+			throw new IllegalStateException("Player already created. Cannot create again.");
+
+		if(marioSpawnpoint != null)
+			player = new Player(this, marioSpawnpoint.position);
+		else
+			player = new Player(this, new Vector2(0f, 0f));
+		return player;
 	}
 
 	public Player getPlayer() {

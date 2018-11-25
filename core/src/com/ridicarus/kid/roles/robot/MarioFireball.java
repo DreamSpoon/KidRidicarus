@@ -16,7 +16,6 @@ import com.ridicarus.kid.sprites.MarioFireballSprite;
 import com.ridicarus.kid.tools.WorldRunner;
 import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
-// TODO: remove body when fireball explodes, this is not happening yet
 public class MarioFireball extends RobotRole {
 	private static final float BODY_WIDTH = GameInfo.P2M(7f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(7f);
@@ -33,7 +32,8 @@ public class MarioFireball extends RobotRole {
 	private FireballState prevState;
 	private float stateTimer;
 
-	private boolean isTouched;
+	private enum TouchState { NONE, WALL, ROBOT };
+	private TouchState curTouchState;
 
 	public MarioFireball(WorldRunner runner, Vector2 position, boolean right){
 		this.runner = runner;
@@ -47,7 +47,7 @@ public class MarioFireball extends RobotRole {
 
 		prevState = FireballState.FLY;
 		stateTimer = 0f;
-		isTouched = false;
+		curTouchState = TouchState.NONE;
 
 		runner.enableRobotUpdate(this);
 		runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
@@ -77,7 +77,9 @@ public class MarioFireball extends RobotRole {
 	}
 
 	private FireballState getState() {
-		return isTouched ? FireballState.EXPLODE : FireballState.FLY;
+		if(curTouchState == TouchState.NONE)
+			return FireballState.FLY;
+		return FireballState.EXPLODE;
 	}
 
 	@Override
@@ -93,6 +95,10 @@ public class MarioFireball extends RobotRole {
 					b2body.setGravityScale(0f);
 					for(Fixture fix : b2body.getFixtureList())
 						fix.setFilterData(filter);
+					if(curTouchState == TouchState.ROBOT)
+						runner.playSound(GameInfo.SOUND_KICK);
+					else
+						runner.playSound(GameInfo.SOUND_BUMP);
 				}
 				if(fireballSprite.isExplodeFinished())
 					runner.removeRobot(this);
@@ -132,24 +138,14 @@ public class MarioFireball extends RobotRole {
 
 	@Override
 	protected void onInnerTouchBoundLine(LineSeg seg) {
-		// explode!!!
-		isTouched = true;
+		curTouchState = TouchState.WALL;
 	}
 
 	@Override
 	public void onTouchRobot(RobotRole robo) {
-		isTouched = true;
+		curTouchState = TouchState.ROBOT;
 		if(robo instanceof DamageableBot)
 			((DamageableBot) robo).onDamage(1f, b2body.getPosition());
-	}
-
-	// Restitution should take care of bouncing needed.
-	@Override
-	public void onTouchGround() {
-	}
-
-	@Override
-	public void onLeaveGround() {
 	}
 
 	@Override

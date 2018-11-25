@@ -17,45 +17,54 @@ import com.ridicarus.kid.roles.robot.BumpableBot;
 import com.ridicarus.kid.tiles.InteractiveTileObject;
 import com.ridicarus.kid.tools.WorldRunner;
 
-// this class is abstract because it cannot be destroyed by big mario TODO: change this situation?
+/*
+ * this class is abstract because it cannot be destroyed by big mario TODO: change this situation?
+ * 
+ * Bump vs Bounce:
+ *  bump - mario's head hit the bottom of the block
+ *  bounce - a bump occurred, and the block "bounced" upwards from the impact 
+ */
 public abstract class BumpableTile extends InteractiveTileObject {
 	private static final float BOUNCE_TIME = 0.175f;
 	private static final float BOUNCE_HEIGHT_FRAC = 0.225f;	// bounce up about 1/5 of tile height
 
 	private boolean isHit;
 	private boolean isHitByBig;
-	private boolean isBumpEnabled;
+	private boolean isBounceEnabled;
 	private float bounceTimeLeft;
-	private Sprite bumpSprite;
+	private Sprite bounceSprite;
 
 	public BumpableTile(WorldRunner runner, MapObject object) {
 		super(runner, object);
 
 		isHit = false;
 		isHitByBig = false;
-		isBumpEnabled = true;
+		isBounceEnabled = true;
 		bounceTimeLeft = 0f;
 
 		fixture.setUserData(this);
 		setCategoryAndMaskFilter(GameInfo.BANGABLE_BIT, GameInfo.MARIOHEAD_BIT);
 
-		// the default bump sprite is the original tile image 
-		bumpSprite = new Sprite(runner.getMap().getTileSets().getTile(myTileID).getTextureRegion());
-		bumpSprite.setPosition(GameInfo.P2M(bounds.getX()), GameInfo.P2M(bounds.getY()));
-		bumpSprite.setBounds(bumpSprite.getX(), bumpSprite.getY(), tileWidth, tileHeight);
+		// the default bounce sprite is the original tile image 
+		bounceSprite = new Sprite(runner.getMap().getTileSets().getTile(myTileID).getTextureRegion());
+		bounceSprite.setPosition(GameInfo.P2M(bounds.getX()), GameInfo.P2M(bounds.getY()));
+		bounceSprite.setBounds(bounceSprite.getX(), bounceSprite.getY(), tileWidth, tileHeight);
 	}
 
 	@Override
 	public void update(float delta) {
 		// first time bounce? (cannot be bounced again while already bouncing)
-		if(bounceTimeLeft == 0f && isHit && isBumpEnabled) {
-			bopTopGoombas();
-			bounceTimeLeft = BOUNCE_TIME;
-			onBumpStart(isHitByBig);
-
-			// replace the regular tile with the bump sprite
-			setImageTile(null);
-			bumpSprite.setPosition(body.getPosition().x - tileWidth/2, body.getPosition().y - tileHeight/2);
+		if(bounceTimeLeft == 0f && isHit) {
+			onBump(isHitByBig);
+			if(isBounceEnabled) {
+				bopTopGoombas();
+				bounceTimeLeft = BOUNCE_TIME;
+				onBounceStart(isHitByBig);
+	
+				// replace the regular tile with the bounce sprite
+				setImageTile(null);
+				bounceSprite.setPosition(body.getPosition().x - tileWidth/2, body.getPosition().y - tileHeight/2);
+			}
 		}
 		else if(bounceTimeLeft > 0f) {	// the bounce continues...
 			bounceTimeLeft -= delta;
@@ -66,8 +75,8 @@ public abstract class BumpableTile extends InteractiveTileObject {
 				// by default, reset image to the original block graphic
 				setImageTile(runner.getMap().getTileSets().getTileSet(GameInfo.TILESET_GUTTER).getTile(myTileID));
 
-				// onBumpEnd will need to decide whether or not to disable tile updates
-				onBumpEnd();
+				// onBounceEnd will need to decide whether or not to disable tile updates
+				onBounceEnd();
 			}
 			else {
 				// linear bounce up to max height at halftime, then return down to original height at endtime
@@ -78,7 +87,7 @@ public abstract class BumpableTile extends InteractiveTileObject {
 				else	// time to go down
 					bounceHeight = bounceTimeLeft / (BOUNCE_TIME/2) * BOUNCE_HEIGHT_FRAC * tileHeight;
 
-				bumpSprite.setPosition(body.getPosition().x - tileWidth/2,
+				bounceSprite.setPosition(body.getPosition().x - tileWidth/2,
 						body.getPosition().y - tileHeight/2 + bounceHeight);
 			}
 		}
@@ -120,7 +129,7 @@ public abstract class BumpableTile extends InteractiveTileObject {
 	@Override
 	public void draw(Batch batch) {
 		if(bounceTimeLeft > 0f)
-			bumpSprite.draw(batch);
+			bounceSprite.draw(batch);
 	}
 
 	@Override
@@ -135,21 +144,22 @@ public abstract class BumpableTile extends InteractiveTileObject {
 		}
 	}
 
-	protected void setBumpEnabled(boolean e) {
-		isBumpEnabled = e;
+	protected void setBounceEnabled(boolean e) {
+		isBounceEnabled = e;
 	}
-	protected boolean getBumpEnabled() {
-		return isBumpEnabled;
-	}
-
-	protected void setBumpImage(TextureRegion textureRegion) {
-		bumpSprite.setRegion(textureRegion);
+	protected boolean getBounceEnabled() {
+		return isBounceEnabled;
 	}
 
-	public abstract void onBumpStart(boolean isBig);
-	public abstract void onBumpEnd();
+	protected void setBounceImage(TextureRegion textureRegion) {
+		bounceSprite.setRegion(textureRegion);
+	}
 
-	public boolean isMidBump() {
+	public abstract void onBump(boolean isBig);
+	public abstract void onBounceStart(boolean isBig);
+	public abstract void onBounceEnd();
+
+	public boolean isMidBounce() {
 		return (bounceTimeLeft > 0f);
 	}
 

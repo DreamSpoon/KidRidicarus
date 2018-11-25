@@ -44,7 +44,7 @@ public class FireFlower extends ItemRobot {
 	private void defineBody(Vector2 position) {
 		BodyDef bdef;
 		FixtureDef fdef;
-		PolygonShape shroomShape;
+		PolygonShape boxShape;
 
 		bdef = new BodyDef();
 		bdef.position.set(position.x, position.y);
@@ -52,13 +52,13 @@ public class FireFlower extends ItemRobot {
 		b2body = runner.getWorld().createBody(bdef);
 
 		fdef = new FixtureDef();
-		shroomShape = new PolygonShape();
-		shroomShape.setAsBox(BODY_WIDTH/2f,  BODY_HEIGHT/2f);
+		boxShape = new PolygonShape();
+		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.filter.categoryBits = GameInfo.ITEM_BIT;
 		// items touch mario but can pass through goombas, turtles, etc.
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.MARIO_ROBOT_SENSOR_BIT;
 
-		fdef.shape = shroomShape;
+		fdef.shape = boxShape;
 		b2body.createFixture(fdef).setUserData(this);
 
 		b2body.setActive(true);
@@ -97,14 +97,6 @@ public class FireFlower extends ItemRobot {
 	
 	@Override
 	public void onTouchRobot(RobotRole robo) {
-	}
-
-	@Override
-	public void onTouchGround() {
-	}
-
-	@Override
-	public void onLeaveGround() {
 	}
 
 	@Override

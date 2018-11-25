@@ -9,13 +9,13 @@ import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.collisionmap.LineSeg;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
+import com.ridicarus.kid.roles.robot.GroundCheckBot;
 import com.ridicarus.kid.tiles.InteractiveTileObject;
 
 public class WorldContactListener implements ContactListener {
 	public void beginContact(Contact contact) {
 		Fixture fixA, fixB;
 		int cdef;
-
 		fixA = contact.getFixtureA();
 		fixB = contact.getFixtureB();
 		cdef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
@@ -49,12 +49,11 @@ public class WorldContactListener implements ContactListener {
 				else
 					((RobotRole) fixB.getUserData()).onTouchBoundLine((LineSeg) fixA.getUserData());
 				break;
-			// robot's foot touched horizontal or vertical bound
 			case (GameInfo.ROBOTFOOT_BIT | GameInfo.BOUNDARY_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.ROBOT_BIT)
-					((RobotRole) fixA.getUserData()).onTouchGround();
+					((GroundCheckBot) fixA.getUserData()).onTouchGround();
 				else
-					((RobotRole) fixB.getUserData()).onTouchGround();
+					((GroundCheckBot) fixB.getUserData()).onTouchGround();
 				break;
 			// robot touched another robot
 			case (GameInfo.ROBOT_BIT):
@@ -99,9 +98,9 @@ public class WorldContactListener implements ContactListener {
 			case (GameInfo.ROBOTFOOT_BIT | GameInfo.BOUNDARY_BIT):
 				// invoke robot 's foot hit method
 				if(fixA.getFilterData().categoryBits == GameInfo.MARIOFOOT_BIT)
-					((RobotRole) fixA.getUserData()).onLeaveGround();
+					((GroundCheckBot) fixA.getUserData()).onLeaveGround();
 				else
-					((RobotRole) fixB.getUserData()).onLeaveGround();
+					((GroundCheckBot) fixB.getUserData()).onLeaveGround();
 				break;
 			default:
 				break;

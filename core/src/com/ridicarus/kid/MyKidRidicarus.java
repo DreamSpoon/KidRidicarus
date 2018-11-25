@@ -14,7 +14,7 @@ public class MyKidRidicarus extends Game {
 
 	// DEBUG: static context AssetManager is not advised, refactor this. so that AssetManager is passed to functions that
 	// need it.
-	public static AssetManager manager;
+	public AssetManager manager;
 
 	@Override
 	public void create () {
@@ -22,6 +22,8 @@ public class MyKidRidicarus extends Game {
 		sr = new ShapeRenderer();
 		manager = new AssetManager();
 		manager.load(GameInfo.MUSIC_MARIO, Music.class);
+		manager.load(GameInfo.MUSIC_LEVELEND, Music.class);
+		manager.load(GameInfo.MUSIC_STARPOWER, Music.class);
 		manager.load(GameInfo.SOUND_COIN, Sound.class);
 		manager.load(GameInfo.SOUND_BUMP, Sound.class);
 		manager.load(GameInfo.SOUND_BREAK, Sound.class);
@@ -30,6 +32,12 @@ public class MyKidRidicarus extends Game {
 		manager.load(GameInfo.SOUND_POWERDOWN, Sound.class);
 		manager.load(GameInfo.SOUND_STOMP, Sound.class);
 		manager.load(GameInfo.SOUND_MARIODIE, Sound.class);
+		manager.load(GameInfo.SOUND_MARIOSMLJUMP, Sound.class);
+		manager.load(GameInfo.SOUND_MARIOBIGJUMP, Sound.class);
+		manager.load(GameInfo.SOUND_KICK, Sound.class);
+		manager.load(GameInfo.SOUND_FIREBALL, Sound.class);
+		manager.load(GameInfo.SOUND_FLAGPOLE, Sound.class);
+
 		manager.finishLoading();
 
 		setScreen(new PlayScreen(this));

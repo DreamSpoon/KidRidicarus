@@ -16,7 +16,7 @@ import com.ridicarus.kid.sprites.MushroomSprite;
 import com.ridicarus.kid.tools.WorldRunner;
 import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
-public class PowerMushroom extends ItemRobot implements BumpableBot {
+public class PowerMushroom extends ItemRobot implements BumpableBot, GroundCheckBot {
 	private static final float BODY_WIDTH = GameInfo.P2M(14f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(12f);
 	private static final float FOOT_WIDTH = GameInfo.P2M(12f);
@@ -119,7 +119,7 @@ public class PowerMushroom extends ItemRobot implements BumpableBot {
 	private void defineBody(Vector2 position) {
 		BodyDef bdef;
 		FixtureDef fdef;
-		PolygonShape shroomShape;
+		PolygonShape boxShape;
 
 		bdef = new BodyDef();
 		bdef.position.set(position);
@@ -127,13 +127,13 @@ public class PowerMushroom extends ItemRobot implements BumpableBot {
 		b2body = runner.getWorld().createBody(bdef);
 
 		fdef = new FixtureDef();
-		shroomShape = new PolygonShape();
-		shroomShape.setAsBox(BODY_WIDTH/2f,  BODY_HEIGHT/2f);
+		boxShape = new PolygonShape();
+		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.filter.categoryBits = GameInfo.ITEM_BIT;
 		// items can pass through goombas, turtles, etc.
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.MARIO_ROBOT_SENSOR_BIT;
 
-		fdef.shape = shroomShape;
+		fdef.shape = boxShape;
 		b2body.createFixture(fdef).setUserData(this);
 
 		PolygonShape footSensor;

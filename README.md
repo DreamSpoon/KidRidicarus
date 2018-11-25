@@ -32,6 +32,12 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.co
 
 * Great for preparing tilesets for use (read up on TilED and libGDX tile maps to know why).
 
+### Audio Resources
+
+[The Sounds Resource](www.sounds-resource.com)
+
+[Video Game Music Preservation Foundation](www.vgmpf.com)
+
 ### Other:
 
 [SMB Physics Doc](http://i276.photobucket.com/albums/kk21/jdaster64/smb_playerphysics.png.html)

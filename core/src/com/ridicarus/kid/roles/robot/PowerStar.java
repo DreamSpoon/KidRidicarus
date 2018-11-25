@@ -145,14 +145,6 @@ public class PowerStar extends ItemRobot implements BumpableBot {
 	}
 
 	@Override
-	public void onTouchGround() {
-	}
-
-	@Override
-	public void onLeaveGround() {
-	}
-
-	@Override
 	public void dispose() {
 		runner.getWorld().destroyBody(b2body);
 	}
