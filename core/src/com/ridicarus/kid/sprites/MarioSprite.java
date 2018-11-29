@@ -8,8 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ridicarus.kid.GameInfo;
-import com.ridicarus.kid.roles.player.MarioRole.MarioCharState;
+import com.ridicarus.kid.bodies.MarioBody.MarioBodyState;
 import com.ridicarus.kid.roles.player.MarioRole.MarioPowerState;
+import com.ridicarus.kid.roles.player.MarioRole.MarioRoleState;
 
 public class MarioSprite extends Sprite {
 	private static final float BLINK_DURATION = 0.05f;
@@ -55,7 +56,7 @@ public class MarioSprite extends Sprite {
 	private boolean runFireballAnimation;
 	private float starPowerFrameTimer;
 
-	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioCharState stateIn, MarioPowerState subState, boolean facingRight) {
+	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioBodyState stateIn, MarioPowerState subState, boolean facingRight) {
 		super(atlas.findRegion(GameInfo.TEXATLAS_SMLMARIO_REG));
 
 		isBlinking = false;
@@ -215,8 +216,9 @@ public class MarioSprite extends Sprite {
 		}
 	}
 
-	public void update(float delta, Vector2 position, MarioCharState stateIn, MarioPowerState subState, boolean facingRight,
-			boolean isDmgInvincible, boolean isStarPowered, float bodyFakeHeight) {
+	public void update(float delta, Vector2 position, MarioBodyState stateIn, MarioPowerState subState,
+			boolean facingRight, boolean isDmgInvincible, boolean isStarPowered, boolean isBigBody,
+			MarioRoleState curState2) {
 		MarioSpriteState prevState;
 
 		// switch from small to big?
@@ -251,7 +253,8 @@ public class MarioSprite extends Sprite {
 			runFireballAnimation = false;
 
 		prevState = curState;
-		curState = getState(stateIn, subState);
+		curState = getState(stateIn, subState, curState2);
+
 		if(prevState == MarioSpriteState.STAND && curState == MarioSpriteState.FALL)
 			fallStartStateTime = -1;
 		else if(prevState == MarioSpriteState.RUN && curState == MarioSpriteState.FALL)
@@ -271,72 +274,70 @@ public class MarioSprite extends Sprite {
 
 		setRegion(getFrame(subState, facingRight, isStarPowered));
 
-		// The sprite might be 32 pix tall while the body is 16 pix tall (e.g. ducking, shrinking), so some
-		// height offset may be necessary. For more info, the expanded formula for y is:
-		//     y = position.y - getHeight() / 2f + (getHeight() - bodyFakeHeight) / 2f;
-		// I've just reduced
-		setPosition(position.x - getWidth() / 2f, position.y - bodyFakeHeight / 2f);
+		// if mario's body is small, but his sprite is big (the shrink animation is a big sprite) then offset
+		if(!isBigBody && (subState != MarioPowerState.SMALL || runShrinkAnimation))
+			setPosition(position.x - getWidth() / 2f, position.y - getHeight() / 2f + getHeight() / 4f);
+		// otherwise center the sprite on mario's body
+		else
+			setPosition(position.x - getWidth() / 2f, position.y - getHeight() / 2f);
 	}
 
-	// sprite state includes growing and shrinking states, which are not in the mario char state
-	private MarioSpriteState getState(MarioCharState marioState, MarioPowerState subState) {
-		MarioSpriteState stateOut = null;
+	private MarioSpriteState getState(MarioBodyState marioState, MarioPowerState subState, MarioRoleState roleState) {
+		if(roleState != MarioRoleState.PLAY && roleState != MarioRoleState.FIREBALL) {
+			switch(roleState) {
+				case PIPE_ENTRY:
+				case PIPE_EXIT:
+					// should do walking animation if entering/exiting horizontal pipe
+					return MarioSpriteState.STAND;
+				case END1_SLIDE:
+					return MarioSpriteState.END_SLIDE;
+				case END2_WAIT1:
+				case END3_WAIT2:
+					return MarioSpriteState.END_SLIDE_DONE;
+				case END4_FALL:
+					return MarioSpriteState.END_SLIDE_FALL;
+				case END5_BRAKE:
+					return MarioSpriteState.BRAKE;
+				case END6_RUN:
+					return MarioSpriteState.RUN;
+				case END99:	// NOTE: mario sprite is not drawn in state END99
+				default:
+					return MarioSpriteState.STAND;
+			}
+		}
+		else {
+			// some animations override the current mario state, unless mario is dead
+			// (note: the animation might just be one frame, but displayed for a duration)
+			if(roleState != MarioRoleState.DEAD) {
+				if(roleState == MarioRoleState.FIREBALL)
+					runFireballAnimation = true;
 
-		// some animations override the current mario state, unless mario is dead
-		// (note: the animation might just be one frame, but displayed for a duration)
-		if(marioState != MarioCharState.DEAD) {
-			if(runGrowAnimation)
-				return MarioSpriteState.GROW;
-			else if(runShrinkAnimation)
-				return MarioSpriteState.SHRINK;
-			else if(runFireballAnimation)
-				return MarioSpriteState.FIREBALL;
+				if(runGrowAnimation)
+					return MarioSpriteState.GROW;
+				else if(runShrinkAnimation)
+					return MarioSpriteState.SHRINK;
+				else if(runFireballAnimation)
+					return MarioSpriteState.FIREBALL;
+			}
 		}
 
 		switch(marioState) {
-			case END1_SLIDE:
-				stateOut = MarioSpriteState.END_SLIDE;
-				break;
-			case END2_WAIT1:
-			case END3_WAIT2:
-				stateOut = MarioSpriteState.END_SLIDE_DONE;
-				break;
-			case END4_FALL:
-				stateOut = MarioSpriteState.END_SLIDE_FALL;
-				break;
-			case END5_BRAKE:
-				stateOut = MarioSpriteState.BRAKE;
-				break;
-			case END6_RUN:
-				stateOut = MarioSpriteState.RUN;
-				break;
 			case DUCK:
-				stateOut = MarioSpriteState.DUCK;
-				break;
-			case FIREBALL:
-				runFireballAnimation = true;
-				stateOut = MarioSpriteState.FIREBALL;
-				break;
+				return MarioSpriteState.DUCK;
 			case WALKRUN:
-				stateOut = MarioSpriteState.RUN;
-				break;
+				return MarioSpriteState.RUN;
 			case JUMP:
-				stateOut = MarioSpriteState.JUMP;
-				break;
+				return MarioSpriteState.JUMP;
 			case FALL:
-				stateOut = MarioSpriteState.FALL;
-				break;
+				return MarioSpriteState.FALL;
 			case BRAKE:
-				stateOut = MarioSpriteState.BRAKE;
-				break;
+				return MarioSpriteState.BRAKE;
 			case DEAD:
-				stateOut = MarioSpriteState.DEAD;
-				break;
+				return MarioSpriteState.DEAD;
 			case STAND:
-				stateOut = MarioSpriteState.STAND;
-				break;
+			default:
+				return MarioSpriteState.STAND;
 		}
-		return stateOut;
 	}
 
 	private TextureRegion getFrame(MarioPowerState subState, boolean facingRight, boolean isStarPowered) {

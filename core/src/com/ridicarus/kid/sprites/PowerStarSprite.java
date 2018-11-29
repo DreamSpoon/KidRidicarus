@@ -31,10 +31,7 @@ public class PowerStarSprite extends Sprite {
 
 	public void update(float delta, Vector2 position) {
 		setRegion(starAnimation.getKeyFrame(stateTimer, true));
-
-		// update sprite position
 		setPosition(position.x - getWidth()/2, position.y - getHeight()/2);
-
 		stateTimer += delta;
 	}
 }

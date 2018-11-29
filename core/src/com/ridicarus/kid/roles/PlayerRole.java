@@ -1,27 +1,21 @@
 package com.ridicarus.kid.roles;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.ridicarus.kid.collisionmap.LineSeg;
-import com.ridicarus.kid.tiles.InteractiveTileObject;
+import com.badlogic.gdx.math.Vector2;
+import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
+import com.ridicarus.kid.tools.BasicInputs;
+import com.ridicarus.kid.tools.Spawnpoint;
 
 public interface PlayerRole {
-	void update(float delta);
-	void draw(Batch batch);
+	public void update(float delta, BasicInputs bi);
+	public void draw(Batch batch);
+	public SpriteDrawOrder getDrawOrder();
 
-	Body getB2Body();
-	float getStateTimer();
-	boolean isDead();
+	public Vector2 getPosition(); 
+	public boolean isDead();
+	public float getStateTimer();
 
-	void rightIt();
-	void leftIt();
-	void downIt();
-	void runIt();
-	void jumpIt();
-
-	void onFootTouchBound(LineSeg seg);
-	void onFootLeaveBound(LineSeg seg);
-	void onTouchRobot(RobotRole robo);
-	void onHeadHit(InteractiveTileObject thing);
-	void onTouchItem(RobotRole robo);
+	public Spawnpoint getWarpSpawnpoint();
+	public void respawn(Spawnpoint sp);
+	public boolean isAtLevelEnd();
 }

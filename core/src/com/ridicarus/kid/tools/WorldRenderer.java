@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.ridicarus.kid.GameInfo;
+import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.tiles.InteractiveTileObject;
-import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
 public class WorldRenderer {
 	private WorldRunner runner;
@@ -28,37 +28,54 @@ public class WorldRenderer {
 
 	public void drawAll(SpriteBatch batch, OrthographicCamera gamecam) {
 		drawTileMapLayer(batch, gamecam, GameInfo.TILEMAP_BACKGROUND);
-		drawTileMapLayer(batch, gamecam, GameInfo.TILEMAP_SCENERY);
 
 		batch.setProjectionMatrix(gamecam.combined);
 
-		// draw bottom robots
 		batch.begin();
-		for(RobotRole roboRole : runner.getRobotsToDraw()[RobotDrawLayers.BOTTOM.ordinal()])
+
+		// draw bottom robots
+		for(RobotRole roboRole : runner.getRobotsToDraw()[SpriteDrawOrder.BOTTOM.ordinal()])
 			roboRole.draw(batch);
+
+		// draw mario on bottom?
+		if(runner.getPlayer().getRole().getDrawOrder() == SpriteDrawOrder.BOTTOM)
+			runner.getPlayer().getRole().draw(batch);
+
+		batch.end();
+
+		drawTileMapLayer(batch, gamecam, GameInfo.TILEMAP_SCENERY);
+
+		batch.begin();
+
+		// draw middle robots
+		for(RobotRole roboRole : runner.getRobotsToDraw()[SpriteDrawOrder.MIDDLE.ordinal()])
+			roboRole.draw(batch);
+
+		// draw mario in middle?
+		if(runner.getPlayer().getRole().getDrawOrder() == SpriteDrawOrder.MIDDLE)
+			runner.getPlayer().getRole().draw(batch);
+
 		batch.end();
 
 		drawTileMapLayer(batch, gamecam, GameInfo.TILEMAP_COLLISION);
 
 		batch.begin();
+
 		// draw interactive tiles
 		for(InteractiveTileObject tile : runner.getIntTilesToUpdate())
 			tile.draw(batch);
 
-		// draw middle robots
-		for(RobotRole roboRole : runner.getRobotsToDraw()[RobotDrawLayers.MIDDLE.ordinal()])
-			roboRole.draw(batch);
-
-		// draw mario
-		runner.getPlayer().getRole().draw(batch);
-
 		// draw top robots
-		for(RobotRole roboRole : runner.getRobotsToDraw()[RobotDrawLayers.TOP.ordinal()])
+		for(RobotRole roboRole : runner.getRobotsToDraw()[SpriteDrawOrder.TOP.ordinal()])
 			roboRole.draw(batch);
+
+		// draw mario on top?
+		if(runner.getPlayer().getRole().getDrawOrder() == SpriteDrawOrder.TOP)
+			runner.getPlayer().getRole().draw(batch);
 
 		batch.end();
 
-		drawB2DebugRenderer(gamecam);
+//		drawB2DebugRenderer(gamecam);
 	}
 
 	public void drawTileMapLayer(Batch batch, OrthographicCamera gamecam, String layerName) {

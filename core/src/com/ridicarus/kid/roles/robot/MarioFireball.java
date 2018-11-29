@@ -10,13 +10,14 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
+import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
 import com.ridicarus.kid.collisionmap.LineSeg;
+import com.ridicarus.kid.roles.MobileRobot;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.sprites.MarioFireballSprite;
 import com.ridicarus.kid.tools.WorldRunner;
-import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
-public class MarioFireball extends RobotRole {
+public class MarioFireball extends MobileRobot {
 	private static final float BODY_WIDTH = GameInfo.P2M(7f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(7f);
 
@@ -50,7 +51,7 @@ public class MarioFireball extends RobotRole {
 		curTouchState = TouchState.NONE;
 
 		runner.enableRobotUpdate(this);
-		runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
+		runner.setRobotDrawLayer(this, SpriteDrawOrder.MIDDLE);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {
@@ -126,8 +127,8 @@ public class MarioFireball extends RobotRole {
 	}
 
 	@Override
-	public Body getBody() {
-		return b2body;
+	public Vector2 getPosition() {
+		return b2body.getPosition();
 	}
 
 	@Override
@@ -151,5 +152,10 @@ public class MarioFireball extends RobotRole {
 	@Override
 	public void dispose() {
 		runner.getWorld().destroyBody(b2body);
+	}
+
+	@Override
+	public void setActive(boolean b) {
+		b2body.setActive(b);
 	}
 }

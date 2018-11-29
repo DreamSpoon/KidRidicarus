@@ -25,44 +25,43 @@ public class BumpableItemTile extends BumpableTile {
 	private static final float COIN_BUMP_RESET_TIME = 0.23f;
 	private static final float MAX_COIN_BUMP_TIME = 3f;
 
+	private enum BrickItem { NONE, COIN, COIN10, MUSHROOM, STAR };
+
+	private boolean isItemAvailable;
+	private BrickItem myItem;
 	private boolean isQblock;
 	private int curBlinkFrame;
-
-	// in a way, the Brick also has an item not included here: Explode Into Pieces - an animation without a powerup
-	private enum BrickItem { NONE, COIN, COIN10, MUSHROOM, STAR };
-	private BrickItem myItem;
-	private boolean isItemAvailable;
-
-	private float stateTimer;
-
 	private int coin10Coins;
 	private float coin10BumpResetTimer;
 	private float coin10EndTimer;
+	private boolean wasHitByBig;
+
+	private float stateTimer;
 
 	public BumpableItemTile(WorldRunner runner, MapObject object) {
 		super(runner, object);
 
-		isQblock = object.getProperties().containsKey(GameInfo.ANIM_QMARK_TILEKEY);
+		isQblock = object.getProperties().containsKey(GameInfo.OBJKEY_ANIM_QMARK);
 		curBlinkFrame = 0;
 
-		if(object.getProperties().containsKey(GameInfo.COIN_TILEKEY)) {
+		if(object.getProperties().containsKey(GameInfo.OBJKEY_COIN)) {
 			myItem = BrickItem.COIN;
 			// switch to empty block as soon as bump starts
 			setBounceImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
 		}
-		else if(object.getProperties().containsKey(GameInfo.COIN10_TILEKEY)) {
+		else if(object.getProperties().containsKey(GameInfo.OBJKEY_COIN10)) {
 			myItem = BrickItem.COIN10;
 			coin10Coins = 10;
 			coin10BumpResetTimer = 0f;
 			coin10EndTimer = 0f;
 			// do not switch to empty block as soon as bump starts, retain original image
 		}
-		else if(object.getProperties().containsKey(GameInfo.MUSHROOM_TILEKEY)) {
+		else if(object.getProperties().containsKey(GameInfo.OBJKEY_MUSHROOM)) {
 			myItem = BrickItem.MUSHROOM;
 			// switch to empty block as soon as bump starts
 			setBounceImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
 		}
-		else if(object.getProperties().containsKey(GameInfo.STAR_TILEKEY)) {
+		else if(object.getProperties().containsKey(GameInfo.OBJKEY_STAR)) {
 			myItem = BrickItem.STAR;
 			// switch to empty block as soon as bump starts
 			setBounceImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
@@ -77,12 +76,14 @@ public class BumpableItemTile extends BumpableTile {
 			runner.enableInteractiveTileUpdates(this);
 
 		stateTimer = 0f;
+		wasHitByBig = false;
 	}
 
 	@Override
-	public void onBump(boolean isBig) {
+	public void onBump(boolean isHitByBig) {
+		wasHitByBig = isHitByBig;
 		// the brick makes a bump sound unless it is breaking
-		if(!(isBig && myItem == BrickItem.NONE))
+		if(!(isHitByBig && myItem == BrickItem.NONE))
 			runner.playSound(GameInfo.SOUND_BUMP);
 	}
 
@@ -125,25 +126,6 @@ public class BumpableItemTile extends BumpableTile {
 					Hud.addScore(200);
 					spawnSpinningCoin();
 					break;
-				case MUSHROOM:
-					isItemAvailable = false;
-					runner.playSound(GameInfo.SOUND_POWERUP_SPAWN);
-					Hud.addScore(200);
-					// big mario pops a fireflower?
-					if(isHitByBig) {
-						runner.addRobot(new FireFlower(runner, body.getPosition().cpy().add(0f, GameInfo.P2M(GameInfo.TILEPIX_Y))));
-					}
-					else {
-						runner.addRobot(new PowerMushroom(runner, body.getPosition().cpy().add(0f, GameInfo.P2M(GameInfo.TILEPIX_Y))));
-					}
-					break;
-				case STAR:
-					isItemAvailable = false;
-					runner.playSound(GameInfo.SOUND_POWERUP_SPAWN);
-					Hud.addScore(200);
-					runner.addRobot(new PowerStar(runner, body.getPosition().cpy().add(0f, GameInfo.P2M(GameInfo.TILEPIX_Y))));
-					break;
-				// this _should_ be unnecessary since the item can't be NONE at this point
 				default:
 					break;
 			}
@@ -152,6 +134,29 @@ public class BumpableItemTile extends BumpableTile {
 
 	@Override
 	public void onBounceEnd() {
+		if(isItemAvailable && myItem != BrickItem.NONE) {
+			switch(myItem) {
+				case MUSHROOM:
+					isItemAvailable = false;
+					runner.playSound(GameInfo.SOUND_POWERUP_SPAWN);
+					Hud.addScore(200);
+					// big mario pops a fireflower?
+					if(wasHitByBig)
+						runner.addRobot(new FireFlower(runner, body.getPosition().cpy().add(0f, GameInfo.P2M(GameInfo.TILEPIX_Y))));
+					else
+						runner.addRobot(new PowerMushroom(runner, body.getPosition().cpy().add(0f, GameInfo.P2M(GameInfo.TILEPIX_Y))));
+					break;
+				case STAR:
+					isItemAvailable = false;
+					runner.playSound(GameInfo.SOUND_POWERUP_SPAWN);
+					Hud.addScore(200);
+					runner.addRobot(new PowerStar(runner, body.getPosition().cpy().add(0f, GameInfo.P2M(GameInfo.TILEPIX_Y))));
+					break;
+				default:
+					break;
+			}
+		}
+
 		// If the brick contains items, but no more are available, then switch image to the
 		// "item used" block and disable bumps
 		if(!isItemAvailable && myItem != BrickItem.NONE) {

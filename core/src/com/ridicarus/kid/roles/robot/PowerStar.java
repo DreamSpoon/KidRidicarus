@@ -8,21 +8,22 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
+import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
+import com.ridicarus.kid.InfoSMB.PowerupType;
 import com.ridicarus.kid.collisionmap.LineSeg;
+import com.ridicarus.kid.roles.MobileRobot;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.roles.player.MarioRole;
 import com.ridicarus.kid.sprites.PowerStarSprite;
 import com.ridicarus.kid.tools.WorldRunner;
-import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
 /*
  * TODO:
- * -switch direction when the brick below is bounced
  * -allow the star to spawn down-right out of bricks like on level 1-1
  * -test the star's onBump method - I could not bump it, needs precise timing - maybe loosen the timing? 
  */
-public class PowerStar extends ItemRobot implements BumpableBot {
+public class PowerStar extends MobileRobot implements ItemBot, BumpableBot {
 	private static final float BODY_WIDTH = GameInfo.P2M(14f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(12f);
 	private static final float SPROUT_TIME = 0.5f;
@@ -44,13 +45,13 @@ public class PowerStar extends ItemRobot implements BumpableBot {
 
 		defineBody(position);
 
-		maxVelocity = START_BOUNCE_VEL.cpy();
+		velocity = START_BOUNCE_VEL.cpy();
 
 		prevState = StarState.SPROUT;
 		stateTimer = 0f;
 
 		runner.enableRobotUpdate(this);
-		runner.setRobotDrawLayer(this, RobotDrawLayers.BOTTOM);
+		runner.setRobotDrawLayer(this, SpriteDrawOrder.BOTTOM);
 	}
 
 	private void defineBody(Vector2 position) {
@@ -67,7 +68,7 @@ public class PowerStar extends ItemRobot implements BumpableBot {
 		fdef = new FixtureDef();
 		fdef.filter.categoryBits = GameInfo.ITEM_BIT;
 		// items touch mario but can pass through goombas, turtles, etc.
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.MARIO_ROBOT_SENSOR_BIT;
+		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.MARIO_ROBOSENSOR_BIT;
 
 		// bouncy
 		fdef.restitution = 1f;
@@ -101,16 +102,16 @@ public class PowerStar extends ItemRobot implements BumpableBot {
 				}
 
 				// clamp y velocity and maintain steady x velocity
-				if(b2body.getLinearVelocity().y > maxVelocity.y)
-					b2body.setLinearVelocity(maxVelocity.x, maxVelocity.y);
-				else if(b2body.getLinearVelocity().y < -maxVelocity.y)
-					b2body.setLinearVelocity(maxVelocity.x, -maxVelocity.y);
+				if(b2body.getLinearVelocity().y > velocity.y)
+					b2body.setLinearVelocity(velocity.x, velocity.y);
+				else if(b2body.getLinearVelocity().y < -velocity.y)
+					b2body.setLinearVelocity(velocity.x, -velocity.y);
 				else
-					b2body.setLinearVelocity(maxVelocity.x, b2body.getLinearVelocity().y);
+					b2body.setLinearVelocity(velocity.x, b2body.getLinearVelocity().y);
 				break;
 			case SPROUT:
 				if(stateTimer > SPROUT_TIME)
-					runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
+					runner.setRobotDrawLayer(this, SpriteDrawOrder.MIDDLE);
 				else
 					yOffset = SPROUT_OFFSET * (SPROUT_TIME - stateTimer) / SPROUT_TIME;
 				break;
@@ -129,8 +130,8 @@ public class PowerStar extends ItemRobot implements BumpableBot {
 	}
 
 	@Override
-	public Body getBody() {
-		return b2body;
+	public Vector2 getPosition() {
+		return b2body.getPosition();
 	}
 
 	@Override
@@ -173,8 +174,13 @@ public class PowerStar extends ItemRobot implements BumpableBot {
 
 		// if bump came from left and star is moving left then reverse
 		if(fromCenter.x < b2body.getPosition().x && b2body.getLinearVelocity().x < 0f)
-			b2body.setLinearVelocity(maxVelocity.x, maxVelocity.y);
+			b2body.setLinearVelocity(velocity.x, velocity.y);
 		else
-			b2body.setLinearVelocity(-maxVelocity.x, maxVelocity.y);
+			b2body.setLinearVelocity(-velocity.x, velocity.y);
+	}
+
+	@Override
+	public void setActive(boolean b) {
+		b2body.setActive(b);
 	}
 }

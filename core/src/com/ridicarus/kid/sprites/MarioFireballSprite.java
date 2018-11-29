@@ -56,7 +56,6 @@ public class MarioFireballSprite extends Sprite {
 				break;
 		}
 
-		// update sprite position
 		setPosition(position.x - getWidth()/2, position.y - getHeight()/2);
 
 	}

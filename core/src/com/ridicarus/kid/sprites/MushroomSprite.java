@@ -13,7 +13,6 @@ public class MushroomSprite extends Sprite {
 	}
 
 	public void update(float delta, Vector2 position) {
-		// update sprite position
 		setPosition(position.x - getWidth()/2, position.y - getHeight()/2);
 	}
 }

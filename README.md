@@ -1,6 +1,6 @@
 # Kid Ridicarus
 
-## Mashup of Super Mario Bros. 1, Metroid, and Kid Icarus.
+## Mashup of Super Mario Bros., Metroid, and Kid Icarus
 
 ### Intent:
 
@@ -12,9 +12,9 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
 * Mario can do all the regular stuff, even ducking, but ducking under things and then squeezing by is not implemented.
 
-* Flagpole recently implemented. Full end of level stuff not done.
+* Flagpole implemented. Warp pipes implemented recently.
 
-* Next stuff to add is end level You Win! screen, dying when falling out of level, squeezing out of tight spaces when unducking, warping down pipes.
+* Next stuff to add is dying when falling out of level, squeezing out of tight spaces when unducking, coins, better HUD.
 
 ### Process:
 
@@ -22,7 +22,11 @@ Using [Brent Aureli's SMB code](https://github.com/BrentAureli/SuperMario) (retr
 
 ### Coding Sources:
 
+[LibGDX](libgdx.badlogicgames.com)
+
 Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.com/watch?v=a8MPxzkwBwo&list=PLZm85UZQLd2SXQzsF-a0-pPF6IWDDdrXt)
+
+[Eclipse IDE](www.eclipse.org)
 
 ### Tools:
 

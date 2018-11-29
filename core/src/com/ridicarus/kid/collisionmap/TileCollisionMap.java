@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.tiles.BooleanTileMap;
 
-// Since full / empty tiles are technically not tracked, any destroy cell / add cell operations are fun!
 public class TileCollisionMap {
 	private World world;
 	private BooleanTileMap bTileMap;
@@ -45,7 +44,7 @@ public class TileCollisionMap {
 		createBodies();
 	}
 
-	// Create a minimal line segment based boundary set based on the map input - for collision geometry
+	// Create a minimal line segment based boundary set based on the tile map input - for collision geometry
 	// creation/tracking/removal.
 	// Use one dimensional integer line segments.
 	// The goal: Each non-empty (non-null) tile in the map layer will be surrounded by bounding lines (a bounding

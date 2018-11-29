@@ -7,7 +7,10 @@ public class GameInfo {
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_NAME = "level xyz v8.tmx";
+	public static final int TILEPIX_X = 16;
+	public static final int TILEPIX_Y = 16;
+
+	public static final String GAMEMAP_NAME = "level xyz v11.tmx";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";
 	public static final String TILEMAP_BACKGROUND = "background";
@@ -18,15 +21,32 @@ public class GameInfo {
 	public static final String TILEMAP_TURTLE = "turtle";
 	public static final String TILEMAP_SPAWNPOINT = "spawnpoint";
 	public static final String TILEMAP_FLAGPOLE = "flagpole";
+	public static final String TILEMAP_LEVELEND = "levelend";
+	public static final String TILEMAP_PIPEWARP = "pipewarp";
+	public static final String TILEMAP_ROOMS = "rooms";
 
-	public static final String ANIM_QMARK_TILEKEY = "qblock";
-	public static final String COIN_TILEKEY = "coin";
-	public static final String COIN10_TILEKEY = "coin10";
-	public static final String MUSHROOM_TILEKEY = "mushroom";
-	public static final String STAR_TILEKEY = "powerstar";
+	public static final String OBJKEY_ANIM_QMARK = "qblock";
+	public static final String OBJKEY_COIN = "coin";
+	public static final String OBJKEY_COIN10 = "coin10";
+	public static final String OBJKEY_MUSHROOM = "mushroom";
+	public static final String OBJKEY_STAR = "powerstar";
+	public static final String OBJKEY_SPAWNMAIN = "spawnmain";
+	public static final String OBJKEY_SPAWNTYPE = "spawntype";
+	public static final String OBJVAL_PIPESPAWN = "pipewarp";
+	// spawnpoint needs a name
+	public static final String OBJKEY_NAME = "name";
+	// warp point needs a spawnpoint name for exit reasons
+	public static final String OBJKEY_EXITNAME = "exitname";
 
-	public static final int TILEPIX_X = 16;
-	public static final int TILEPIX_Y = 16;
+	public static final String OBJKEY_DIRECTION = "direction";
+	public static final String OBJVAL_LEFT = "left";
+	public static final String OBJVAL_RIGHT = "right";
+	public static final String OBJVAL_UP = "up";
+	public static final String OBJVAL_DOWN = "down";
+	
+	public static final String OBJKEY_ROOMTYPE = "roomtype";
+	public static final String OBJVAL_ROOMTYPE_CENTER = "center";
+	public static final String OBJVAL_ROOMTYPE_HSCROLL = "hscroll";
 
 	public static final String TEXATLAS_FILENAME = "Mario_and_Enemies8.pack";
 	public static final String TEXATLAS_GOOMBA = "goomba";
@@ -72,7 +92,6 @@ public class GameInfo {
 	public static final float MUSIC_VOLUME = 0.1f;
 	public static final float SOUND_VOLUME = 0.25f;
 
-	public static final float MARIO_DEAD_TIME = 5f;
 	public static final float MAX_FLOAT_HACK = 1e38f;
 
 	public static final short NOTHING_BIT		= 0;
@@ -80,12 +99,39 @@ public class GameInfo {
 	public static final short MARIO_BIT			= 2 << 1;
 	public static final short MARIOHEAD_BIT		= 2 << 2;
 	public static final short MARIOFOOT_BIT		= 2 << 3;
-	public static final short DESTROYED_BIT		= 2 << 4;
-	public static final short BANGABLE_BIT		= 2 << 6;
-	public static final short ROBOT_BIT			= 2 << 7;
-	public static final short ROBOTFOOT_BIT		= 2 << 8;
-	public static final short ITEM_BIT			= 2 << 9;
-	public static final short MARIO_ROBOT_SENSOR_BIT	= 2 << 10;
+	public static final short BANGABLE_BIT		= 2 << 4;
+	public static final short ROBOT_BIT			= 2 << 5;
+	public static final short ROBOTFOOT_BIT		= 2 << 6;
+	public static final short ITEM_BIT			= 2 << 7;
+	public static final short MARIO_ROBOSENSOR_BIT	= 2 << 8;
+	public static final short PIPE_BIT			= 2 << 9;
+	public static final short MARIOSIDE_BIT		= 2 << 10;
+
+	/*
+	 * Draw order explained:
+	 * 0) Screen is cleared
+	 * 1) Tile background (usually one color, e.g. black) is drawn.
+	 * 1) BOTTOM sprites are drawn.
+	 * 2) Background scenery tiles are drawn.
+	 * 3) MIDDLE sprites are drawn.
+	 * 4) Foreground scenery tiles are drawn.
+	 * 5) TOP sprites are drawn.
+	 * 
+	 * Usually, the player sprite is drawn TOP order, turtles and goombas are drawn MIDDLE order.
+	 */
+	public enum SpriteDrawOrder { NONE, BOTTOM, MIDDLE, TOP };	// if layer == NONE then don't draw
+
+	public enum Direction4 {
+		RIGHT, UP, LEFT, DOWN;
+
+		public boolean isHorizontal() {
+			return this.equals(RIGHT) || this.equals(LEFT);
+		}
+
+		public boolean isVertical() {
+			return this.equals(UP) || this.equals(DOWN);
+		}
+	};
 
 	public static float P2M(float p) {
 		return p / PPM;

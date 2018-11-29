@@ -12,8 +12,6 @@ public class MyKidRidicarus extends Game {
 	public SpriteBatch batch;
 	public ShapeRenderer sr;
 
-	// DEBUG: static context AssetManager is not advised, refactor this. so that AssetManager is passed to functions that
-	// need it.
 	public AssetManager manager;
 
 	@Override
@@ -37,9 +35,7 @@ public class MyKidRidicarus extends Game {
 		manager.load(GameInfo.SOUND_KICK, Sound.class);
 		manager.load(GameInfo.SOUND_FIREBALL, Sound.class);
 		manager.load(GameInfo.SOUND_FLAGPOLE, Sound.class);
-
 		manager.finishLoading();
-
 		setScreen(new PlayScreen(this));
 	}
 

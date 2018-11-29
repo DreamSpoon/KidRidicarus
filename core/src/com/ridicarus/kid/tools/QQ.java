@@ -61,4 +61,9 @@ public class QQ {
 		sr.end();
 		tempShowRects.clear();
 	}
+
+	// current time millis mod a big number, so we see the time without e notation
+	public static int hackTime() {
+		return Math.floorMod(System.currentTimeMillis(), 100000);
+	}
 }

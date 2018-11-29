@@ -14,7 +14,6 @@ public class FlagSprite extends Sprite {
 	}
 
 	public void update(Vector2 position) {
-		// update sprite position
 		setPosition(position.x - getWidth()/2, position.y - getHeight()/2);
 	}
 }

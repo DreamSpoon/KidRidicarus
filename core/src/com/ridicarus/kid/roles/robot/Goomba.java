@@ -12,13 +12,14 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
+import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
 import com.ridicarus.kid.collisionmap.LineSeg;
+import com.ridicarus.kid.roles.MobileRobot;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.sprites.GoombaSprite;
 import com.ridicarus.kid.tools.WorldRunner;
-import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
-public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot, GroundCheckBot
+public class Goomba extends MobileRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot, GroundCheckBot
 {
 	private static final float BODY_WIDTH = GameInfo.P2M(14f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(14f);
@@ -69,7 +70,7 @@ public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		isSquished = false;
 
 		runner.enableRobotUpdate(this);
-		runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
+		runner.setRobotDrawLayer(this, SpriteDrawOrder.MIDDLE);
 	}
 
 	private GoombaState getState() {
@@ -130,7 +131,7 @@ public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		fdef.filter.categoryBits = GameInfo.ROBOT_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT |
 				GameInfo.ROBOT_BIT |
-				GameInfo.MARIO_ROBOT_SENSOR_BIT;
+				GameInfo.MARIO_ROBOSENSOR_BIT;
 
 		fdef.shape = boxShape;
 		b2body.createFixture(fdef).setUserData(this);
@@ -215,11 +216,6 @@ public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		isSquished = true;
 	}
 	
-	/*
-	 * A goomba, bumped from below, should bounce up into the air a bit and drop off the screen upside down.
-	 * (non-Javadoc)
-	 * @see com.ridicarus.kid.roles.robot.BumpableBot#onBump(com.badlogic.gdx.math.Vector2)
-	 */
 	@Override
 	public void onBump(Vector2 fromCenter) {
 		isBumped = true;
@@ -238,8 +234,8 @@ public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 	}
 
 	@Override
-	public Body getBody() {
-		return b2body;
+	public Vector2 getPosition() {
+		return b2body.getPosition();
 	}
 
 	// touching goomba does damage to players
@@ -251,5 +247,10 @@ public class Goomba extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 	@Override
 	public void dispose() {
 		runner.getWorld().destroyBody(b2body);
+	}
+
+	@Override
+	public void setActive(boolean b) {
+		b2body.setActive(b);
 	}
 }

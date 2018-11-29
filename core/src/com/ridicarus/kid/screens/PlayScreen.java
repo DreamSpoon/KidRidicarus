@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ridicarus.kid.GameInfo;
+import com.ridicarus.kid.InfoSMB;
 import com.ridicarus.kid.MyKidRidicarus;
 import com.ridicarus.kid.roles.Player;
 import com.ridicarus.kid.scenes.Hud;
@@ -43,13 +44,11 @@ public class PlayScreen implements Screen {
 		maploader = new TmxMapLoader();
 		map = maploader.load(GameInfo.GAMEMAP_NAME);
 
-		worldRunner = new WorldRunner(game.manager, atlas);
+		worldRunner = new WorldRunner(game.manager, atlas, gamecam);
 		worldRunner.loadMap(map);
 		// start renderer after loading map into runner, TODO: fix this
 		worldRenderer = new WorldRenderer(worldRunner);
 
-//		rePlayer = new Player(worldRunner);
-//		worldRunner.setPlayer(rePlayer);
 		rePlayer = worldRunner.createPlayer();
 	}
 
@@ -69,8 +68,12 @@ public class PlayScreen implements Screen {
 		QQ.renderTo(game.sr, gamecam.combined);
 
 		// change to game over screen?
-		if(gameOver()) {
-			game.setScreen(new GameOverScreen(game));
+		if(gameWon()) {
+			game.setScreen(new GameOverScreen(game, true));
+			dispose();
+		}
+		else if(gameOver()) {
+			game.setScreen(new GameOverScreen(game, false));
 			dispose();
 		}
 	}
@@ -80,30 +83,23 @@ public class PlayScreen implements Screen {
 		handleInput(delta);
 
 		// robots are updated in the worldrunner update method
-		worldRunner.update(delta);//, rePlayer.getRole());
+		worldRunner.update(delta);
 
 		hud.update(delta);
-
-		// camera follows player horizontally, unless player is dead
-		if(!rePlayer.getRole().isDead())
-			gamecam.position.x = rePlayer.getRole().getB2Body().getPosition().x;
-
-		gamecam.update();
 	}
 
 	private void handleInput(float delta) {
 		rePlayer.handleInput();
-
-		// DEBUG: If A is pressed then create a tile at the x position of the player, and y = 3
-//		if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-//			int BLANK_COIN = 28;
-//			TiledMapTileSet tileSet = map.getTileSets().getTileSet(GameInfo.TILESET_GUTTER);
-//			worldRunner.createTile((int) (GameInfo.M2P(gamecam.position.x) / GameInfo.TILEPIX_X),  3,  tileSet.getTile(BLANK_COIN));
-//		}
 	}
 
 	private boolean gameOver() {
-		if(rePlayer.getRole().isDead() && rePlayer.getRole().getStateTimer() > GameInfo.MARIO_DEAD_TIME)
+		if(rePlayer.getRole().isDead() && rePlayer.getRole().getStateTimer() > InfoSMB.MARIO_DEAD_TIME)
+			return true;
+		return false;
+	}
+
+	private boolean gameWon() {
+		if(rePlayer.getRole().isAtLevelEnd() && rePlayer.getRole().getStateTimer() > InfoSMB.MARIO_LEVELEND_TIME)
 			return true;
 		return false;
 	}
@@ -122,21 +118,17 @@ public class PlayScreen implements Screen {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
 	}
 }

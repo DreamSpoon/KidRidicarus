@@ -12,18 +12,19 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
+import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
 import com.ridicarus.kid.collisionmap.LineSeg;
+import com.ridicarus.kid.roles.MobileRobot;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.sprites.TurtleSprite;
 import com.ridicarus.kid.tools.WorldRunner;
-import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
 /*
  * TODO:
  *  Do sliding turtle shells break bricks when they strike them?
  *  I couldn't find any maps in SMB 1 that would clear up this matter.
  */
-public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot, GroundCheckBot
+public class Turtle extends MobileRobot implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot, GroundCheckBot
 {
 	private static final float BODY_WIDTH = GameInfo.P2M(14f);
 	private static final float BODY_HEIGHT = GameInfo.P2M(14f);
@@ -84,7 +85,7 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		isDeadToRight = false;
 
 		runner.enableRobotUpdate(this);
-		runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
+		runner.setRobotDrawLayer(this, SpriteDrawOrder.MIDDLE);
 	}
 
 	private TurtleState getState() {
@@ -114,7 +115,6 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 					runner.removeRobot(this);
 				break;
 			case HIDE:
-				// TODO: turtle should poke it's feet out and pull them back in a few times before unhiding
 				// wait a short time and reappear
 				if(curState != prevState) {
 					isWaking = false;
@@ -196,7 +196,7 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 		fdef.filter.categoryBits = GameInfo.ROBOT_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT |
 				GameInfo.ROBOT_BIT |
-				GameInfo.MARIO_ROBOT_SENSOR_BIT;
+				GameInfo.MARIO_ROBOSENSOR_BIT;
 
 		fdef.shape = boxShape;
 		b2body.createFixture(fdef).setUserData(this);
@@ -261,18 +261,18 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 			// if hit another sliding turtle, then both die
 			if(robo instanceof Turtle && ((Turtle) robo).isSliding) {
 				((DamageableBot) robo).onDamage(1f, b2body.getPosition());
-				onDamage(1f, robo.getBody().getPosition());
+				onDamage(1f, robo.getPosition());
 			}
 			// else if sliding and strikes a dmgable bot...
 			else if(robo instanceof DamageableBot) {
-				((DamageableBot) robo).onDamage(1f, robo.getBody().getPosition());
+				((DamageableBot) robo).onDamage(1f, robo.getPosition());
 				runner.playSound(GameInfo.SOUND_KICK);
 			}
 		}
 	}
 
 	// Foot sensor might come into contact with multiple boundary lines, so increment for each contact start,
-	// and decrement for each contact end. If onGroundCount reaches zero then mario is not on the ground.
+	// and decrement for each contact end. If onGroundCount reaches zero then turtle is not on the ground.
 	@Override
 	public void onTouchGround() {
 		onGroundCount++;
@@ -328,9 +328,7 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 			isDeadToRight = false;
 	}
 
-	/*
-	 * The player can "kick" a turtle hiding in its shell.
-	 */
+	 // the player can "kick" a turtle hiding in its shell
 	public void onPlayerTouch(Vector2 position) {
 		if(isDead)
 			return;
@@ -352,12 +350,17 @@ public class Turtle extends WalkingRobot implements HeadBounceBot, TouchDmgBot, 
 	}
 
 	@Override
-	public Body getBody() {
-		return b2body;
+	public Vector2 getPosition() {
+		return b2body.getPosition();
 	}
 
 	@Override
 	public void dispose() {
 		runner.getWorld().destroyBody(b2body);
+	}
+
+	@Override
+	public void setActive(boolean b) {
+		b2body.setActive(b);
 	}
 }

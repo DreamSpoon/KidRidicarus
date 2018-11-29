@@ -90,11 +90,6 @@ public abstract class InteractiveTileObject {
 		return body.getPosition();
 	}
 
-	public abstract void update(float delta);
-	public abstract void draw(Batch batch);
-	// head sensor (e.g. for interacting with mario's breakable bricks).
-	public abstract void onHeadHit(PlayerRole player);
-
 	protected int getTileX() {
 		return (int) (GameInfo.M2P(body.getPosition().x) / GameInfo.TILEPIX_X);
 	}
@@ -103,5 +98,9 @@ public abstract class InteractiveTileObject {
 		return (int) (GameInfo.M2P(body.getPosition().y) / GameInfo.TILEPIX_Y);
 	}
 
+	public abstract void update(float delta);
+	public abstract void draw(Batch batch);
+	// head sensor (e.g. for interacting with mario's breakable bricks).
+	public abstract void onHeadHit(PlayerRole pr);
 	public abstract void destroy();
 }

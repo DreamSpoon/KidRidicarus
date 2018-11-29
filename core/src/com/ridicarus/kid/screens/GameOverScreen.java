@@ -21,7 +21,7 @@ public class GameOverScreen implements Screen {
 	private Stage stage;
 	private Game game;
 
-	public GameOverScreen(Game game) {
+	public GameOverScreen(Game game, boolean win) {
 		LabelStyle font;
 		Label gameOverLabel, playAgainLabel;
 		Table table;
@@ -35,7 +35,10 @@ public class GameOverScreen implements Screen {
 		table.center();
 		table.setFillParent(true);
 
-		gameOverLabel = new Label("GAME OVER", font);
+		if(win)
+			gameOverLabel = new Label("GAME WON!", font);
+		else
+			gameOverLabel = new Label("GAME OVER", font);
 		playAgainLabel = new Label("Click to Play Again", font);
 
 		table.add(gameOverLabel).expandX();

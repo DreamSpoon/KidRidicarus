@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -17,12 +18,15 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ridicarus.kid.GameInfo;
+import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
 import com.ridicarus.kid.collisionmap.TileCollisionMap;
 import com.ridicarus.kid.roles.Player;
 import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.roles.robot.Flagpole;
 import com.ridicarus.kid.roles.robot.Goomba;
+import com.ridicarus.kid.roles.robot.Levelend;
+import com.ridicarus.kid.roles.robot.PipeEntrance;
 import com.ridicarus.kid.roles.robot.Turtle;
 import com.ridicarus.kid.tiles.InteractiveTileObject;
 import com.ridicarus.kid.tiles.bumpable.BumpableItemTile;
@@ -36,6 +40,7 @@ public class WorldRunner {
 	private World world;
 	private AssetManager manager;
 	private Music currentMusic;
+	private LinkedList<Room> rooms;
 
 	private class PhysicTileForQueue {
 		public int x;
@@ -75,30 +80,29 @@ public class WorldRunner {
 	private LinkedBlockingQueue<RobotRole> robotEnableUpdateQ;
 	private LinkedBlockingQueue<RobotRole> robotDisableUpdateQ;
 
-//	public enum DrawLayers { BOTTOM, TILE_BACKGROUND, MIDTILE_BACK, TILE_MIDGROUND, MIDTILE_FORE, TILE_FOREGROUND, TOP };
-	public enum RobotDrawLayers { NONE, BOTTOM, MIDDLE, TOP };
 	private class RobotDrawForQueue {
 		public RobotRole robo;
-		public RobotDrawLayers drawLayer;
-		public RobotDrawForQueue(RobotRole robo, RobotDrawLayers drawLayer) {
+		public SpriteDrawOrder drawOrder;
+		public RobotDrawForQueue(RobotRole robo, SpriteDrawOrder drawOrder) {
 			this.robo = robo;
-			this.drawLayer = drawLayer;
+			this.drawOrder = drawOrder;
 		}
 	}
 	// sub-list of robots, just robots being drawn
 	private LinkedList<RobotRole>[] robotsToDraw;
 	private LinkedBlockingQueue<RobotDrawForQueue> robotSetDrawLayerQ;
 
-	private Spawnpoint marioSpawnpoint;
-	private Flagpole flagpole;
+	private LinkedList<Spawnpoint> spawnpoints;
+
+	private OrthographicCamera gamecam;
 
 	@SuppressWarnings("unchecked")
-	public WorldRunner(AssetManager manager, TextureAtlas atlas) {
+	public WorldRunner(AssetManager manager, TextureAtlas atlas, OrthographicCamera gamecam) {
 		this.manager = manager;
 		this.atlas = atlas;
+		this.gamecam = gamecam;
+
 		player = null;
-		marioSpawnpoint = null;
-		flagpole = null;
 
 		intTilesToUpdate = new LinkedList<InteractiveTileObject>();
 		intTileDestroyQ = new LinkedBlockingQueue<InteractiveTileObject>();
@@ -115,10 +119,12 @@ public class WorldRunner {
 		robotEnableUpdateQ = new LinkedBlockingQueue<RobotRole>();
 		robotDisableUpdateQ = new LinkedBlockingQueue<RobotRole>();
 
-		robotsToDraw = (LinkedList<RobotRole>[]) new LinkedList[RobotDrawLayers.values().length];
-		for(int i=0; i<RobotDrawLayers.values().length; i++)
+		robotsToDraw = (LinkedList<RobotRole>[]) new LinkedList[SpriteDrawOrder.values().length];
+		for(int i=0; i<SpriteDrawOrder.values().length; i++)
 			robotsToDraw[i] = new LinkedList<RobotRole>();
 		robotSetDrawLayerQ = new LinkedBlockingQueue<RobotDrawForQueue>();
+
+		rooms = new LinkedList<Room>();
 
 		world = new World(new Vector2(0, -10f), true);
 		contactListener = new WorldContactListener();
@@ -126,6 +132,8 @@ public class WorldRunner {
 
 		currentMusic = null;
 		startMusic(GameInfo.MUSIC_MARIO, true);
+
+		spawnpoints = new LinkedList<Spawnpoint>();
 	}
 
 	public void loadMap(TiledMap map) {
@@ -159,22 +167,72 @@ public class WorldRunner {
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
 			robots.add(new Turtle(this, object));
 
-		// load spawnpoint (should be only one)
-		layer = map.getLayers().get(GameInfo.TILEMAP_SPAWNPOINT);
-		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
-			marioSpawnpoint = new Spawnpoint(object);
-
 		// load flagpole (should be only one)
 		layer = map.getLayers().get(GameInfo.TILEMAP_FLAGPOLE);
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
-			flagpole = new Flagpole(this, object);
+			robots.add(new Flagpole(this, object));
+
+		// load level end (should be only one)
+		layer = map.getLayers().get(GameInfo.TILEMAP_LEVELEND);
+		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
+			robots.add(new Levelend(this, object));
+
+		// load spawnpoint
+		layer = map.getLayers().get(GameInfo.TILEMAP_SPAWNPOINT);
+		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
+			spawnpoints.add(new Spawnpoint(object));
+
+		// load pipe entrance(s) after loading spawnpoints, since pipe entrances need to get refs to spawnpoints
+		layer = map.getLayers().get(GameInfo.TILEMAP_PIPEWARP);
+		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
+			robots.add(new PipeEntrance(this, object, getSpawnpointFromObject(object)));
+
+		layer = map.getLayers().get(GameInfo.TILEMAP_ROOMS);
+		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
+			rooms.add(new Room(this, object));
+	}
+
+	// Note: Load spawnpoints before using this method.
+	private Spawnpoint getSpawnpointFromObject(MapObject object) {
+		if(!object.getProperties().containsKey(GameInfo.OBJKEY_EXITNAME))
+			return null;
+
+		Spawnpoint spReturn = null;
+		String spName = object.getProperties().get(GameInfo.OBJKEY_EXITNAME, String.class);
+		for(Spawnpoint sp : spawnpoints) {
+			if(sp.getName().equals(spName)) {
+				spReturn = sp;
+				break;
+			}
+		}
+
+		return spReturn;
 	}
 
 	public void update(float delta) {
+		// If player needs to warp, do it after the update finishes() and the draw() finishes, then apply warp
+		// just before the start of the next update() call, which would be right here.
+		Spawnpoint sp = player.getRole().getWarpSpawnpoint(); 
+		if(sp != null)
+			player.getRole().respawn(sp);
+
 		// update physics world
 		world.step(delta, 6, 2);
 
 		player.update(delta);
+		// if player is not dead then use their current room to determine the gamecam position
+		if(!player.getRole().isDead()) {
+			Room inRoom = null;
+			// TODO: what if player's bounds rectangle is in two or more rooms simultaneously?
+			for(Room r : rooms) {
+				if(r.isPlayerInRoom(player.getRole())) {
+					inRoom = r;
+					break;
+				}
+			}
+			if(inRoom != null)
+				inRoom.setGamecamPosition(gamecam, player.getRole());
+		}
 
 		updateRobots(delta, player.getRole());
 
@@ -197,16 +255,17 @@ public class WorldRunner {
 		robotDisableUpdateQ.add(robo);
 	}
 
-	public void setRobotDrawLayer(RobotRole robo, RobotDrawLayers layer) {
+	public void setRobotDrawLayer(RobotRole robo, SpriteDrawOrder layer) {
 		robotSetDrawLayerQ.add(new RobotDrawForQueue(robo, layer));
 	}
 
 	private void updateRobots(float delta, PlayerRole player) {
 		for(RobotRole robot : robotsToUpdate) {
-			// robots are inactive until they are within the player's screen's view (about 14 tiles distance)
-			if(robot.getBody().getPosition().x <
-					player.getB2Body().getPosition().x + GameInfo.P2M(14 * GameInfo.TILEPIX_X))
-				robot.getBody().setActive(true);
+			if(robot instanceof Goomba || robot instanceof Turtle) {
+				// robots are inactive until they are within the player's screen's view (about 14 tiles distance)
+				if(robot.getPosition().x < player.getPosition().x + GameInfo.P2M(14 * GameInfo.TILEPIX_X))
+					robot.setActive(true);
+			}
 
 			robot.update(delta);
 		}
@@ -235,7 +294,7 @@ public class WorldRunner {
 
 		if(robotsToUpdate.contains(robo))
 			robotsToUpdate.remove(robo);
-		for(int i=0; i<RobotDrawLayers.values().length; i++) {
+		for(int i=0; i<SpriteDrawOrder.values().length; i++) {
 			if(robotsToDraw[i].contains(robo))
 				robotsToDraw[i].remove(robo);
 		}
@@ -255,12 +314,12 @@ public class WorldRunner {
 
 	private void doSetDrawLayer(RobotDrawForQueue dRobo) {
 		// check all layers for robo and remove if necessary
-		for(int i=0; i<RobotDrawLayers.values().length; i++) {
+		for(int i=0; i<SpriteDrawOrder.values().length; i++) {
 			if(robotsToDraw[i].contains(dRobo.robo))
 				robotsToDraw[i].remove(dRobo.robo);
 		}
-		if(dRobo.drawLayer != RobotDrawLayers.NONE)
-			robotsToDraw[dRobo.drawLayer.ordinal()].add(dRobo.robo);
+		if(dRobo.drawOrder != SpriteDrawOrder.NONE)
+			robotsToDraw[dRobo.drawOrder.ordinal()].add(dRobo.robo);
 	}
 
 	public void setPhysicTile(int x, int y, boolean solid) {
@@ -347,6 +406,7 @@ public class WorldRunner {
 		return collisionMap;
 	}
 
+	// WorldRenderer will get and render the robots.
 	public LinkedList<RobotRole>[] getRobotsToDraw() {
 		return robotsToDraw;
 	}
@@ -388,9 +448,17 @@ public class WorldRunner {
 		if(player != null)
 			throw new IllegalStateException("Player already created. Cannot create again.");
 
-		if(marioSpawnpoint != null)
-			player = new Player(this, marioSpawnpoint.position);
-		else
+		// find the level's main spawnpoint and spawn the player there
+		boolean spawned = false;
+		for(Spawnpoint spawn : spawnpoints) {
+			if(spawn.isMainSpawn()) {
+				spawned = true;
+				player = new Player(this, spawn.getCenter());
+				break;
+			}
+		}
+		// if no main spawnpoint found then spawn player at (0, 0)
+		if(!spawned)
 			player = new Player(this, new Vector2(0f, 0f));
 		return player;
 	}

@@ -60,7 +60,7 @@ public abstract class BumpableTile extends InteractiveTileObject {
 				bopTopGoombas();
 				bounceTimeLeft = BOUNCE_TIME;
 				onBounceStart(isHitByBig);
-	
+
 				// replace the regular tile with the bounce sprite
 				setImageTile(null);
 				bounceSprite.setPosition(body.getPosition().x - tileWidth/2, body.getPosition().y - tileHeight/2);
@@ -155,10 +155,6 @@ public abstract class BumpableTile extends InteractiveTileObject {
 		bounceSprite.setRegion(textureRegion);
 	}
 
-	public abstract void onBump(boolean isBig);
-	public abstract void onBounceStart(boolean isBig);
-	public abstract void onBounceEnd();
-
 	public boolean isMidBounce() {
 		return (bounceTimeLeft > 0f);
 	}
@@ -169,4 +165,8 @@ public abstract class BumpableTile extends InteractiveTileObject {
 			runner.getWorld().destroyBody(body);
 		body = null;
 	}
+
+	public abstract void onBump(boolean isBig);
+	public abstract void onBounceStart(boolean isBig);
+	public abstract void onBounceEnd();
 }

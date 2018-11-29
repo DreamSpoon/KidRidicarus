@@ -7,7 +7,7 @@ import com.ridicarus.kid.GameInfo;
 
 public class LineSeg {
 	// if begin = end, it means the LineSeg is one tile wide
-	public int begin, end;	// in tile coordinates, where begin <= end
+	public int begin, end;	// in tile coordinates (not pixel coordinates), where begin <= end
 	public Body body;
 	public boolean isHorizontal;
 

@@ -8,13 +8,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.ridicarus.kid.GameInfo;
-import com.ridicarus.kid.collisionmap.LineSeg;
+import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.sprites.BrickPieceSprite;
 import com.ridicarus.kid.tools.WorldRunner;
-import com.ridicarus.kid.tools.WorldRunner.RobotDrawLayers;
 
-public class BrickPiece extends RobotRole {
+public class BrickPiece implements RobotRole {
 	private static final float BODY_WIDTH = GameInfo.P2M(8);
 	private static final float BODY_HEIGHT = GameInfo.P2M(8);
 	// bricks should be auto-removed when off screen, use this timeout for other cases
@@ -32,7 +31,7 @@ public class BrickPiece extends RobotRole {
 		stateTimer = 0f;
 
 		runner.enableRobotUpdate(this);
-		runner.setRobotDrawLayer(this, RobotDrawLayers.MIDDLE);
+		runner.setRobotDrawLayer(this, SpriteDrawOrder.MIDDLE);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {
@@ -71,13 +70,9 @@ public class BrickPiece extends RobotRole {
 		bpSprite.draw(batch);
 	}
 
-//	public Vector2 getPosition() {
-//		return body.getPosition();
-//	}
-
 	@Override
-	public Body getBody() {
-		return b2body;
+	public Vector2 getPosition() {
+		return b2body.getPosition();
 	}
 
 	@Override
@@ -87,17 +82,15 @@ public class BrickPiece extends RobotRole {
 	}
 
 	@Override
-	protected void onInnerTouchBoundLine(LineSeg seg) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public void onTouchRobot(RobotRole robo) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setActive(boolean b) {
+		b2body.setActive(b);
 	}
 }
