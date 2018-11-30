@@ -19,16 +19,16 @@ import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.roles.player.MarioRole;
 import com.ridicarus.kid.roles.player.MarioRole.MarioPowerState;
 import com.ridicarus.kid.roles.robot.DamageableBot;
-import com.ridicarus.kid.roles.robot.Flagpole;
 import com.ridicarus.kid.roles.robot.HeadBounceBot;
 import com.ridicarus.kid.roles.robot.ItemBot;
 import com.ridicarus.kid.roles.robot.Levelend;
-import com.ridicarus.kid.roles.robot.PipeEntrance;
 import com.ridicarus.kid.roles.robot.TouchDmgBot;
-import com.ridicarus.kid.roles.robot.Turtle;
+import com.ridicarus.kid.roles.robot.SMB.Flagpole;
+import com.ridicarus.kid.roles.robot.SMB.PipeEntrance;
+import com.ridicarus.kid.roles.robot.SMB.Turtle;
 import com.ridicarus.kid.tiles.InteractiveTileObject;
 import com.ridicarus.kid.tools.BasicInputs;
-import com.ridicarus.kid.tools.WorldRunner;
+import com.ridicarus.kid.worldrunner.WorldRunner;
 
 public class MarioBody implements PlayerBody {
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
@@ -374,7 +374,7 @@ public class MarioBody implements PlayerBody {
 		bodyShape.setAsBox(bs.x/2f, bs.y/2f);
 
 		fdef.filter.categoryBits = GameInfo.MARIO_BIT;
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
+		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
 		fdef.shape = bodyShape;
 		// mario should slide easily, but still have some friction to prevent sliding forever
 		fdef.friction = 0.01f;	// (default is 0.2f)
@@ -549,11 +549,11 @@ public class MarioBody implements PlayerBody {
 		else if(robo instanceof DamageableBot && role.isPowerStarOn()) {
 			// playSound should go in the processBody method, but... this is so much easier!
 			runner.playSound(GameInfo.SOUND_KICK);
-			((DamageableBot) robo).onDamage(1f, b2body.getPosition());
+			((DamageableBot) robo).onDamage(role, 1f, b2body.getPosition());
 		}
 		// test for bounce on head
 		else if(robo instanceof HeadBounceBot && marioY - (getB2BodySize().y/2f) >= robotY) {
-			((HeadBounceBot) robo).onHeadBounce(b2body.getPosition());
+			((HeadBounceBot) robo).onHeadBounce(role, b2body.getPosition());
 			isHeadBouncing = true;
 		}
 		// does the robot do touch damage? (from non-head bounce source)
@@ -563,7 +563,7 @@ public class MarioBody implements PlayerBody {
 			isTakeDamage = true;
 		}
 		else if(robo instanceof Turtle)
-			((Turtle) robo).onPlayerTouch(b2body.getPosition());	// push shell
+			((Turtle) robo).onPlayerTouch(role, b2body.getPosition());	// push shell
 	}
 
 	@Override
@@ -732,5 +732,10 @@ public class MarioBody implements PlayerBody {
 		boolean t = isTakeDamage;
 		isTakeDamage = false;
 		return t;
+	}
+
+	@Override
+	public void onTouchDespawn() {
+		role.die();
 	}
 }

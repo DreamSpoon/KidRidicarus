@@ -19,7 +19,7 @@ public class MyKidRidicarus extends Game {
 		batch = new SpriteBatch();
 		sr = new ShapeRenderer();
 		manager = new AssetManager();
-		manager.load(GameInfo.MUSIC_MARIO, Music.class);
+//		manager.load(GameInfo.MUSIC_MARIO, Music.class);
 		manager.load(GameInfo.MUSIC_LEVELEND, Music.class);
 		manager.load(GameInfo.MUSIC_STARPOWER, Music.class);
 		manager.load(GameInfo.SOUND_COIN, Sound.class);

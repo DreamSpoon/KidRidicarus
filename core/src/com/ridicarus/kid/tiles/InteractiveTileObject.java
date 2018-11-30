@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.roles.PlayerRole;
-import com.ridicarus.kid.tools.WorldRunner;
+import com.ridicarus.kid.worldrunner.WorldRunner;
 
 public abstract class InteractiveTileObject {
 	protected WorldRunner runner;

@@ -12,11 +12,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.InfoSMB;
 import com.ridicarus.kid.MyKidRidicarus;
-import com.ridicarus.kid.roles.Player;
 import com.ridicarus.kid.scenes.Hud;
 import com.ridicarus.kid.tools.QQ;
-import com.ridicarus.kid.tools.WorldRenderer;
-import com.ridicarus.kid.tools.WorldRunner;
+import com.ridicarus.kid.worldrunner.Player;
+import com.ridicarus.kid.worldrunner.WorldRenderer;
+import com.ridicarus.kid.worldrunner.WorldRunner;
 
 public class PlayScreen implements Screen {
 	private MyKidRidicarus game;
@@ -39,17 +39,18 @@ public class PlayScreen implements Screen {
 		gameport = new FitViewport(GameInfo.P2M(GameInfo.V_WIDTH), GameInfo.P2M(GameInfo.V_HEIGHT), gamecam);
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2, gameport.getWorldHeight()/2, 0);
-		hud = new Hud(game.batch);
 
 		maploader = new TmxMapLoader();
 		map = maploader.load(GameInfo.GAMEMAP_NAME);
 
 		worldRunner = new WorldRunner(game.manager, atlas, gamecam);
-		worldRunner.loadMap(map);
+		worldRunner.loadMap(map, game.manager);
 		// start renderer after loading map into runner, TODO: fix this
 		worldRenderer = new WorldRenderer(worldRunner);
 
 		rePlayer = worldRunner.createPlayer();
+
+		hud = new Hud(game.batch, rePlayer);
 	}
 
 	@Override

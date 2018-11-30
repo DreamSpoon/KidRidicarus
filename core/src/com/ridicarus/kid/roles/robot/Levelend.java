@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.roles.RobotRole;
-import com.ridicarus.kid.tools.WorldRunner;
+import com.ridicarus.kid.worldrunner.WorldRunner;
 
 public class Levelend implements RobotRole {
 	private WorldRunner runner;

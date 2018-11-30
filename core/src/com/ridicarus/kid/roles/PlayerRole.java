@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
 import com.ridicarus.kid.tools.BasicInputs;
-import com.ridicarus.kid.tools.Spawnpoint;
+import com.ridicarus.kid.worldrunner.Spawnpoint;
 
 public interface PlayerRole {
 	public void update(float delta, BasicInputs bi);
@@ -18,4 +18,5 @@ public interface PlayerRole {
 	public Spawnpoint getWarpSpawnpoint();
 	public void respawn(Spawnpoint sp);
 	public boolean isAtLevelEnd();
+	public boolean isOnGround();
 }

@@ -4,16 +4,17 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
+import com.ridicarus.kid.InfoSMB.PointsAmount;
 import com.ridicarus.kid.InfoSMB.PowerupType;
 import com.ridicarus.kid.bodies.MarioBody;
 import com.ridicarus.kid.bodies.MarioBody.MarioBodyState;
 import com.ridicarus.kid.roles.PlayerRole;
-import com.ridicarus.kid.roles.robot.MarioFireball;
-import com.ridicarus.kid.roles.robot.PipeEntrance;
-import com.ridicarus.kid.sprites.MarioSprite;
+import com.ridicarus.kid.roles.robot.SMB.MarioFireball;
+import com.ridicarus.kid.roles.robot.SMB.PipeEntrance;
+import com.ridicarus.kid.sprites.SMB.MarioSprite;
 import com.ridicarus.kid.tools.BasicInputs;
-import com.ridicarus.kid.tools.Spawnpoint;
-import com.ridicarus.kid.tools.WorldRunner;
+import com.ridicarus.kid.worldrunner.Spawnpoint;
+import com.ridicarus.kid.worldrunner.WorldRunner;
 
 /*
  * TODO:
@@ -21,8 +22,8 @@ import com.ridicarus.kid.tools.WorldRunner;
  * -if wants to go down pipe then do not process ducking code - check this
  */
 public class MarioRole implements PlayerRole {
-	public enum MarioRoleState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE, END6_RUN,
-		END99, PIPE_ENTRY, PIPE_EXIT };
+	public enum MarioRoleState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
+		END6_RUN, END99, PIPE_ENTRYH, PIPE_EXITH, PIPE_ENTRYV, PIPE_EXITV };
 
 	private static final float DMG_INVINCIBLE_TIME = 3f;
 	private static final float FIREBALL_OFFSET = GameInfo.P2M(8f);
@@ -35,7 +36,7 @@ public class MarioRole implements PlayerRole {
 
 	private static final float PIPE_WARPHEIGHT = GameInfo.P2M(32);
 	private static final float PIPE_WARPWIDTH = GameInfo.P2M(16);
-	private static final float PIPE_WARPTIME = 0.7f;
+	private static final float PIPE_WARPENTRYTIME = 0.7f;
 
 	public enum MarioPowerState { SMALL, BIG, FIRE };
 
@@ -58,6 +59,10 @@ public class MarioRole implements PlayerRole {
 	private MarioRoleState curState;
 	private float stateTimer;
 
+	private int coinTotal;
+	private int pointTotal;
+	private PointsAmount flyingPoints;
+
 	public MarioRole(WorldRunner runner, Vector2 position) {
 		this.runner = runner;
 
@@ -78,6 +83,9 @@ public class MarioRole implements PlayerRole {
 		curState = MarioRoleState.PLAY;
 		stateTimer = 0f;
 
+		coinTotal = pointTotal = 0;
+		flyingPoints = PointsAmount.ZERO;
+
 		// physic
 		mariobody = new MarioBody(this, runner, position, true, false);
 
@@ -96,9 +104,8 @@ public class MarioRole implements PlayerRole {
 		nextState = processRoleState(delta, bi);
 		// role states (e.g. end level script) override regular body states (e.g. mario use powerup) 
 		if(nextState == MarioRoleState.PLAY || nextState == MarioRoleState.FIREBALL) {
-			processPowerups();
 			processDamage(delta);
-
+			processPowerups();
 			bodyState = mariobody.update(delta, bi, curPowerState);
 		}
 
@@ -111,11 +118,11 @@ public class MarioRole implements PlayerRole {
 			powerStarTimer -= delta;
 			// restart regular music when powerstar powerup finishes
 			if(powerStarTimer <= 0f)
-				runner.startMusic(GameInfo.MUSIC_MARIO, true);
+				runner.startRoomMusic();
 		}
 
-		marioSprite.update(delta, mariobody.getPosition().cpy().add(marioSpriteOffset), bodyState,
-				curPowerState, mariobody.isFacingRight(), isDmgInvincible, isStarPowered, mariobody.isBigBody(), curState);
+		marioSprite.update(delta, mariobody.getPosition().cpy().add(marioSpriteOffset), curState, bodyState,
+				curPowerState, mariobody.isFacingRight(), isDmgInvincible, isStarPowered, mariobody.isBigBody());
 
 		wantsToRunOnPrevUpdate = bi.wantsToRun;
 	}
@@ -129,6 +136,15 @@ public class MarioRole implements PlayerRole {
 		}
 		// scripted dead sequence
 		else if(marioIsDead) {
+			if(curState != MarioRoleState.DEAD) {
+				runner.stopRoomMusic();
+				runner.playSound(GameInfo.SOUND_MARIODIE);
+
+				mariobody.disableContacts();
+
+				mariobody.setVelocity(0f, 0f);
+				mariobody.applyImpulse(new Vector2(0, 4f));
+			}
 			// make sure mario doesn't move left or right while dead
 			mariobody.zeroVelocity(true, false);
 			return MarioRoleState.DEAD;
@@ -177,7 +193,7 @@ public class MarioRole implements PlayerRole {
 				case END5_BRAKE:
 					if(stateTimer > END_BRAKETIME) {
 						mariobody.setFacingRight(true);
-						runner.startMusic(GameInfo.MUSIC_LEVELEND, false);
+						runner.startSinglePlayMusic(GameInfo.MUSIC_LEVELEND);
 						mariobody.resetFlagpoleTouched();
 						return MarioRoleState.END6_RUN;
 					}
@@ -192,7 +208,7 @@ public class MarioRole implements PlayerRole {
 					mariobody.disableGravity();
 					mariobody.zeroVelocity(true, true);
 
-					runner.stopMusic();
+					runner.stopRoomMusic();
 					runner.playSound(GameInfo.SOUND_FLAGPOLE);
 
 					return MarioRoleState.END1_SLIDE;
@@ -202,41 +218,48 @@ public class MarioRole implements PlayerRole {
 		else if(mariobody.getPipeToEnter() != null) {
 			switch(curState) {
 				// continuing pipe entry
-				case PIPE_ENTRY:
+				case PIPE_ENTRYH:
+				case PIPE_ENTRYV:
 					marioSpriteOffset.set(getPipeEntrySpriteEndOffset(mariobody.getPipeToEnter()));
-					if(stateTimer < PIPE_WARPTIME)
-						marioSpriteOffset.scl(stateTimer / PIPE_WARPTIME);
-					return MarioRoleState.PIPE_ENTRY;
+					if(stateTimer < PIPE_WARPENTRYTIME)
+						marioSpriteOffset.scl(stateTimer / PIPE_WARPENTRYTIME);
+					return curState;
 				// first frame of pipe entry
 				default:
-					runner.stopMusic();
 					runner.playSound(GameInfo.SOUND_POWERDOWN);
 
 					mariobody.disableContacts();
 
 					mariobody.disableGravity();
 					mariobody.zeroVelocity(true, true);
-					return MarioRoleState.PIPE_ENTRY;
+					if(mariobody.getPipeToEnter().getDirection().isHorizontal())
+						return MarioRoleState.PIPE_ENTRYH;
+					else
+						return MarioRoleState.PIPE_ENTRYV;
 			}
 		}
 		// scripted spawnpoint exit
 		else if(exitingSpawnpoint != null) {
 			switch(curState) {
 				// continuing pipe exit
-				case PIPE_EXIT:
+				case PIPE_EXITH:
+				case PIPE_EXITV:
 					marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
-					if(stateTimer > PIPE_WARPTIME) {
+					if(stateTimer > PIPE_WARPENTRYTIME) {
 						exitingSpawnpoint = null;
 						marioSpriteOffset.set(0f, 0f);
 						return MarioRoleState.PLAY;
 					}
 					else {
-						marioSpriteOffset.scl((PIPE_WARPTIME - stateTimer) / PIPE_WARPTIME);
-						return MarioRoleState.PIPE_EXIT;
+						marioSpriteOffset.scl((PIPE_WARPENTRYTIME - stateTimer) / PIPE_WARPENTRYTIME);
+						return curState;
 					}
 				// first frame of pipe exit
 				default:
-					return MarioRoleState.PIPE_EXIT;
+					if(exitingSpawnpoint.getDirection().isHorizontal())
+						return MarioRoleState.PIPE_EXITH;
+					else
+						return MarioRoleState.PIPE_EXITV;
 			}
 		}
 		// otherwise the player has control, because no script is runnning
@@ -271,9 +294,9 @@ public class MarioRole implements PlayerRole {
 		MarioFireball ball;
 
 		if(mariobody.isFacingRight())
-			ball = new MarioFireball(runner, mariobody.getPosition().cpy().add(FIREBALL_OFFSET, 0f), true);
+			ball = new MarioFireball(this, runner, mariobody.getPosition().cpy().add(FIREBALL_OFFSET, 0f), true);
 		else
-			ball = new MarioFireball(runner, mariobody.getPosition().cpy().add(-FIREBALL_OFFSET, 0f), false);
+			ball = new MarioFireball(this, runner, mariobody.getPosition().cpy().add(-FIREBALL_OFFSET, 0f), false);
 
 		runner.addRobot(ball);
 		runner.playSound(GameInfo.SOUND_FIREBALL);
@@ -285,25 +308,34 @@ public class MarioRole implements PlayerRole {
 			case MUSHROOM:
 				if(curPowerState == MarioPowerState.SMALL) {
 					curPowerState = MarioPowerState.BIG;
-					mariobody.setBodyPosVelAndSize(mariobody.getPosition().add(0f, GameInfo.P2M(8f)), mariobody.getVelocity(), true);
+					mariobody.setBodyPosVelAndSize(mariobody.getPosition().add(0f, GameInfo.P2M(8f)),
+							mariobody.getVelocity(), true);
 					runner.playSound(GameInfo.SOUND_POWERUP_USE);
 				}
+				runner.givePointsToPlayer(this, PointsAmount.P1000, true, mariobody.getPosition(), GameInfo.P2M(16),
+						false);
 				break;
 			case FIREFLOWER:
 				if(curPowerState == MarioPowerState.SMALL) {
 					curPowerState = MarioPowerState.BIG;
-					mariobody.setBodyPosVelAndSize(mariobody.getPosition().add(0f, GameInfo.P2M(8f)), mariobody.getVelocity(), true);
+					mariobody.setBodyPosVelAndSize(mariobody.getPosition().add(0f, GameInfo.P2M(8f)),
+							mariobody.getVelocity(), true);
 					runner.playSound(GameInfo.SOUND_POWERUP_USE);
 				}
 				else if(curPowerState == MarioPowerState.BIG) {
 					curPowerState = MarioPowerState.FIRE;
 					runner.playSound(GameInfo.SOUND_POWERUP_USE);
 				}
+				runner.givePointsToPlayer(this, PointsAmount.P1000, true, mariobody.getPosition(), GameInfo.P2M(16),
+						false);
 				break;
 			case POWERSTAR:
 				powerStarTimer = POWERSTAR_TIME;
+				runner.stopRoomMusic();
 				runner.playSound(GameInfo.SOUND_POWERUP_USE);
-				runner.startMusic(GameInfo.MUSIC_STARPOWER, false);
+				runner.startSinglePlayMusic(GameInfo.MUSIC_STARPOWER);
+				runner.givePointsToPlayer(this, PointsAmount.P1000, true, mariobody.getPosition(), GameInfo.P2M(16),
+						false);
 				break;
 			case NONE:
 				break;
@@ -336,7 +368,7 @@ public class MarioRole implements PlayerRole {
 			}
 			// die if small and not invincible
 			else
-				die();
+				marioIsDead = true;
 		}
 	}
 
@@ -354,27 +386,21 @@ public class MarioRole implements PlayerRole {
 		mariobody.enableRobotContact();
 	}
 
-	private void die() {
-		if(!marioIsDead) {
-			marioIsDead = true;
-			runner.stopMusic();
-			runner.playSound(GameInfo.SOUND_MARIODIE);
-
-			mariobody.disableContacts();
-
-			mariobody.setVelocity(0f, 0f);
-			mariobody.applyImpulse(new Vector2(0, 4f));
-		}
-	}
-
 	public void applyPowerup(PowerupType powerup) {
 		// TODO: check if already received powerup, and check for rank
 		receivedPowerup = powerup;
 	}
 
+	/*
+	 * Return true if marioIsDead flag is set and the update method has been called at least once while marioIsDead.
+	 * Return false otherwise.
+	 * This is done so the getStateTimer method returns the correct state time when mario is dead. 
+	 */
 	@Override
 	public boolean isDead() {
-		return marioIsDead;
+		if(marioIsDead && curState == MarioRoleState.DEAD)
+			return true;
+		return false;
 	}
 
 	@Override
@@ -395,8 +421,11 @@ public class MarioRole implements PlayerRole {
 	// return null unless mario needs to warp
 	@Override
 	public Spawnpoint getWarpSpawnpoint() {
-		if(mariobody.getPipeToEnter() != null && curState == MarioRoleState.PIPE_ENTRY && stateTimer > PIPE_WARPTIME)
+		if(mariobody.getPipeToEnter() != null &&
+				(curState == MarioRoleState.PIPE_ENTRYH || curState == MarioRoleState.PIPE_ENTRYV) &&
+				stateTimer > PIPE_WARPENTRYTIME) {
 			return mariobody.getPipeToEnter().getWarpExit();
+		}
 		return null;
 	}
 
@@ -470,5 +499,47 @@ public class MarioRole implements PlayerRole {
 	@Override
 	public float getStateTimer() {
 		return stateTimer;
+	}
+
+	public void giveCoin() {
+		runner.playSound(GameInfo.SOUND_COIN);
+		coinTotal++;
+	}
+
+	public void givePoints(PointsAmount amt) {
+		pointTotal += amt.getAmt();
+	}
+
+	public int getCoinTotal() {
+		return coinTotal;
+	}
+
+	public int getPointTotal() {
+		return pointTotal;
+	}
+
+	public void die() {
+		marioIsDead = true;
+	}
+
+	public void incrementFlyingPoints() {
+		flyingPoints = flyingPoints.increment();
+	}
+
+	public void resetFlyingPoints() {
+		flyingPoints = PointsAmount.ZERO;
+	}
+
+	public PointsAmount getFlyingPoints() {
+		return flyingPoints;
+	}
+
+	public void setFlyingPoints(PointsAmount amount) {
+		flyingPoints = amount;
+	}
+
+	@Override
+	public boolean isOnGround() {
+		return mariobody.isOnGround();
 	}
 }

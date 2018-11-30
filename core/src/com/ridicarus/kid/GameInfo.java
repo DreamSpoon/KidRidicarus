@@ -1,5 +1,8 @@
 package com.ridicarus.kid;
 
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+
 public class GameInfo {
 	public static final float PPM = 100f;
 	public static final int V_WIDTH = 400;
@@ -10,7 +13,7 @@ public class GameInfo {
 	public static final int TILEPIX_X = 16;
 	public static final int TILEPIX_Y = 16;
 
-	public static final String GAMEMAP_NAME = "level xyz v11.tmx";
+	public static final String GAMEMAP_NAME = "level xyz v12.tmx";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";
 	public static final String TILEMAP_BACKGROUND = "background";
@@ -19,17 +22,21 @@ public class GameInfo {
 	public static final String TILEMAP_BUMPABLE = "bumpable";
 	public static final String TILEMAP_GOOMBA = "goomba";
 	public static final String TILEMAP_TURTLE = "turtle";
+	public static final String TILEMAP_STATICCOIN = "staticcoin";
 	public static final String TILEMAP_SPAWNPOINT = "spawnpoint";
 	public static final String TILEMAP_FLAGPOLE = "flagpole";
 	public static final String TILEMAP_LEVELEND = "levelend";
 	public static final String TILEMAP_PIPEWARP = "pipewarp";
 	public static final String TILEMAP_ROOMS = "rooms";
+	public static final String TILEMAP_DESPAWN = "despawn";
 
 	public static final String OBJKEY_ANIM_QMARK = "qblock";
-	public static final String OBJKEY_COIN = "coin";
-	public static final String OBJKEY_COIN10 = "coin10";
-	public static final String OBJKEY_MUSHROOM = "mushroom";
-	public static final String OBJKEY_STAR = "powerstar";
+	public static final String OBJKEY_CONTAINS = "contains";
+	public static final String OBJVAL_COIN = "coin";
+	public static final String OBJVAL_COIN10 = "coin10";
+	public static final String OBJVAL_MUSHROOM = "mushroom";
+	public static final String OBJVAL_STAR = "powerstar";
+
 	public static final String OBJKEY_SPAWNMAIN = "spawnmain";
 	public static final String OBJKEY_SPAWNTYPE = "spawntype";
 	public static final String OBJVAL_PIPESPAWN = "pipewarp";
@@ -37,6 +44,8 @@ public class GameInfo {
 	public static final String OBJKEY_NAME = "name";
 	// warp point needs a spawnpoint name for exit reasons
 	public static final String OBJKEY_EXITNAME = "exitname";
+
+	public static final String OBJKEY_ROOMMUSIC = "roommusic";
 
 	public static final String OBJKEY_DIRECTION = "direction";
 	public static final String OBJVAL_LEFT = "left";
@@ -48,17 +57,19 @@ public class GameInfo {
 	public static final String OBJVAL_ROOMTYPE_CENTER = "center";
 	public static final String OBJVAL_ROOMTYPE_HSCROLL = "hscroll";
 
-	public static final String TEXATLAS_FILENAME = "Mario_and_Enemies8.pack";
-	public static final String TEXATLAS_GOOMBA = "goomba";
+	public static final String TEXATLAS_FILENAME = "Mario_and_Enemies9.pack";
 	public static final String TEXATLAS_MUSHROOM = "mushroom";
-	public static final String TEXATLAS_TURTLE = "turtle";
-	public static final String TEXATLAS_COIN_SPIN = "coin_bounce";
-	public static final String TEXATLAS_BRICKPIECES = "brick_pieces";
 	public static final String TEXATLAS_FIREFLOWER = "fireflower";
+	public static final String TEXATLAS_POWERSTAR = "powerstar";
 	public static final String TEXATLAS_FIREBALL = "fireball";
 	public static final String TEXATLAS_FIREBALL_EXP = "fireball_explode";
-	public static final String TEXATLAS_POWERSTAR = "powerstar";
+	public static final String TEXATLAS_COIN_SPIN = "coin_spin";
+	public static final String TEXATLAS_COIN_STATIC = "coin_static";
+	public static final String TEXATLAS_BRICKPIECES = "brick_pieces";
 	public static final String TEXATLAS_FLAG = "flag";
+	public static final String TEXATLAS_GOOMBA = "goomba";
+	public static final String TEXATLAS_TURTLE = "turtle";
+	public static final String TEXATLAS_POINTDIGITS = "pointdigits";
 
 	public static final String TEXATLAS_SMLMARIO_REG = "little_mario";
 	// TODO: little fire mario separate image?
@@ -72,9 +83,8 @@ public class GameInfo {
 	public static final String TEXATLAS_BIGMARIO_INV2 = "big_mario_invinc2";
 	public static final String TEXATLAS_BIGMARIO_INV3 = "big_mario_invinc3";
 
-	public static final String MUSIC_MARIO = "audio/music/mario_music.ogg";
-	public static final String MUSIC_STARPOWER = "audio/music/04_-_Super_Mario_Bros._-_NES_-_Invincible_BGM.ogg";
-	public static final String MUSIC_LEVELEND = "audio/music/02_-_Super_Mario_Bros._-_NES_-_Course_Clear_Fanfare.ogg";
+	public static final String MUSIC_STARPOWER = "audio/music/SMB/04_-_Super_Mario_Bros._-_NES_-_Invincible_BGM.ogg";
+	public static final String MUSIC_LEVELEND = "audio/music/SMB/02_-_Super_Mario_Bros._-_NES_-_Course_Clear_Fanfare.ogg";
 	public static final String SOUND_BREAK = "audio/sounds/SMB/Break.wav";
 	public static final String SOUND_BUMP = "audio/sounds/SMB/Bump.wav";
 	public static final String SOUND_COIN = "audio/sounds/SMB/Coin.wav";
@@ -106,6 +116,7 @@ public class GameInfo {
 	public static final short MARIO_ROBOSENSOR_BIT	= 2 << 8;
 	public static final short PIPE_BIT			= 2 << 9;
 	public static final short MARIOSIDE_BIT		= 2 << 10;
+	public static final short DESPAWN_BIT = 2 << 11;
 
 	/*
 	 * Draw order explained:
@@ -139,5 +150,17 @@ public class GameInfo {
 
 	public static float M2P(float x) {
 		return x * PPM;
+	}
+
+	public static Vector2 P2MVector(Vector2 vec) {
+		return new Vector2(P2M(vec.x), P2M(vec.y));
+	}
+
+	public static Vector2 P2MVector(float x, float y) {
+		return new Vector2(P2M(x), P2M(y));
+	}
+
+	public static Rectangle P2MRectangle(Rectangle rectangle) {
+		return new Rectangle(P2M(rectangle.x), P2M(rectangle.y), P2M(rectangle.width), P2M(rectangle.height));
 	}
 }

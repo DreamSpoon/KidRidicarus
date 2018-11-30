@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ridicarus.kid.GameInfo;
+import com.ridicarus.kid.worldrunner.Player;
 
 public class Hud implements Disposable {
 	public Stage stage;
@@ -18,20 +19,22 @@ public class Hud implements Disposable {
 
 	private int worldTimer;
 	private float timeCount;
-	private static Integer score;
 
 	private Label countdownLabel;
-	private static Label scoreLabel;
+	private Label scoreLabel;
 	private Label timeLabel;
 	private Label levelLabel;
 	private Label worldLabel;
 	private Label marioLabel;
 
-	public Hud (SpriteBatch sb) {
+	private Player rePlayer;
+
+	public Hud(SpriteBatch sb, Player rePlayer) {
+		this.rePlayer = rePlayer;
+
 		worldTimer	= 300;
 		timeCount = 0;
-		score = 0;
-	
+
 		viewport = new FitViewport(GameInfo.V_WIDTH, GameInfo.V_HEIGHT, new OrthographicCamera());
 		stage = new Stage(viewport, sb);
 	
@@ -40,7 +43,7 @@ public class Hud implements Disposable {
 		table.setFillParent(true);
 		
 		countdownLabel = new Label(String.format("%03d", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-		scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+		scoreLabel = new Label(String.format("%06d", 0), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 		timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 		levelLabel = new Label("1-1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 		worldLabel = new Label("WORLD", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
@@ -64,11 +67,8 @@ public class Hud implements Disposable {
 			countdownLabel.setText(String.format("%03d", worldTimer));
 			timeCount -= 1;
 		}
-	}
-
-	public static void addScore(int value) {
-		score += value;
-		scoreLabel.setText(String.format("%06d", score));
+		
+		scoreLabel.setText(String.format("%06d", rePlayer.getPointTotal()));
 	}
 
 	public void dispose() {

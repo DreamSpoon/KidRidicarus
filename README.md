@@ -12,9 +12,17 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
 * Mario can do all the regular stuff, even ducking, but ducking under things and then squeezing by is not implemented.
 
-* Flagpole implemented. Warp pipes implemented recently.
+* Powerups implemented (level 1 only of course).
 
-* Next stuff to add is dying when falling out of level, squeezing out of tight spaces when unducking, coins, better HUD.
+* Next stuff todo:
+
+- squeezing out of tight spaces when unducking
+
+- better HUD
+
+- invisible block with 1-UP mushroom
+
+- some minor fixes (e.g. sometimes mario stops using jump force too early, enemies tend to "stick" together when there are many close together)
 
 ### Process:
 
@@ -53,3 +61,5 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.co
 ### Other:
 
 [SMB Physics Doc](http://i276.photobucket.com/albums/kk21/jdaster64/smb_playerphysics.png.html)
+
+[MarioWiki](https://www.mariowiki.com/)
