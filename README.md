@@ -10,39 +10,75 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
 ### Current State of Affairs:
 
-* Mario can do all the regular stuff, even ducking, but ducking under things and then squeezing by is not implemented.
+* Super Mario Bros. 1 almost done, still needs:
 
-* Powerups implemented (level 1 only of course).
+  * Squeezing out of tight spaces when unducking
 
-* Next stuff todo:
+  * Better HUD
 
-- squeezing out of tight spaces when unducking
+  * Invisible block with 1-UP mushroom
 
-- better HUD
+  * End level castle flag
 
-- invisible block with 1-UP mushroom
+  * Some minor fixes (e.g. sometimes mario stops using jump force too early, enemies tend to "stick" together when there are many close together)
 
-- some minor fixes (e.g. sometimes mario stops using jump force too early, enemies tend to "stick" together when there are many close together)
+* Metroid is on the horizon
 
 ### Process:
 
-Using [Brent Aureli's SMB code](https://github.com/BrentAureli/SuperMario) (retrieved about Oct 17, 2018) as a starting point, modify as needed.
+* Coding
 
-### Coding Sources:
+  * Write code in Eclipse IDE
+
+  * libGDX for graphics, sound, input
+
+  * Using [Brent Aureli's SMB code](https://github.com/BrentAureli/SuperMario) (retrieved about Oct 17, 2018) as a starting point, modify as needed
+
+  * Check [Stack Overflow](www.stackoverflow.com) when stumped
+
+* Graphics
+
+  * Use sprites from Spriters Resource, NESMAPS.COM
+
+  * Process sprite images with GIMP (and Sprite Gutter Add/Remove tool)
+
+  * Pack sprite images with TexturePacker
+
+* Audio
+
+  * Use sounds from The Sounds Resource, and music from the Video Game Music Preservation Foundation
+
+  * Use Audacity for modifying/converting audio
+
+* Game
+
+  * FCEUX with the emulation speed turned down to 50%
+  
+  * Save AVI videos from FCEUX, watch videos with ShotCut to see the action frame by frame
+
+  * TilEd for creating maps
+
+### Coding Resources:
 
 [LibGDX](libgdx.badlogicgames.com)
 
 Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.com/watch?v=a8MPxzkwBwo&list=PLZm85UZQLd2SXQzsF-a0-pPF6IWDDdrXt)
 
+### Tools:
+
 [Eclipse IDE](www.eclipse.org)
 
-### Tools:
+[GIMP](www.gimp.org)
+
+[ShotCut](www.shotcut.org)
+
+[FCEUX](www.fceux.com)
+
+### Sprite / Tile / Map Resources:
 
 [TilEd](www.mapeditor.org)
 
 [TexturePacker](www.codeandweb.com/texturepacker)
-
-### Sprite / Tile / Map Resources:
 
 [NESMAPS.COM](www.nesmaps.com)
 
@@ -50,9 +86,11 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.co
 
 [GIMP Addon - Sprite Gutter Add/Remove tool](https://gimper.net/threads/add-remove-sprite-sheet-gutter-padding-and-spacing.14189/)
 
-* Great for preparing tilesets for use (read up on TilED and libGDX tile maps to know why).
+  * Great for preparing tilesets for use (read up on TilED and libGDX tile maps to know why - hint: padding).
 
 ### Audio Resources:
+
+[Audacity](www.audacityteam.org)
 
 [The Sounds Resource](www.sounds-resource.com)
 
@@ -63,3 +101,11 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.co
 [SMB Physics Doc](http://i276.photobucket.com/albums/kk21/jdaster64/smb_playerphysics.png.html)
 
 [MarioWiki](https://www.mariowiki.com/)
+
+### Further Credits:
+
+I'd like to thank my arms for staying by my side. I'd like to thank my legs for all their support. And I'd like to thanks my hands especially - I could always count on my hands.
+
+If there are any more unthanked or unacknowledged contributors, I thank and acknowledge you now: Thanks!
+
+This repo is maintained by David Loucks.
