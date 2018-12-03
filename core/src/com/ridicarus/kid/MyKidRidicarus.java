@@ -19,7 +19,7 @@ public class MyKidRidicarus extends Game {
 		batch = new SpriteBatch();
 		sr = new ShapeRenderer();
 		manager = new AssetManager();
-//		manager.load(GameInfo.MUSIC_MARIO, Music.class);
+		// other musics may be loaded when a level loads
 		manager.load(GameInfo.MUSIC_LEVELEND, Music.class);
 		manager.load(GameInfo.MUSIC_STARPOWER, Music.class);
 		manager.load(GameInfo.SOUND_COIN, Sound.class);
@@ -35,6 +35,7 @@ public class MyKidRidicarus extends Game {
 		manager.load(GameInfo.SOUND_KICK, Sound.class);
 		manager.load(GameInfo.SOUND_FIREBALL, Sound.class);
 		manager.load(GameInfo.SOUND_FLAGPOLE, Sound.class);
+		manager.load(GameInfo.SOUND_1UP, Sound.class);
 		manager.finishLoading();
 		setScreen(new PlayScreen(this));
 	}

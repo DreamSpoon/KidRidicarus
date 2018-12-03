@@ -47,8 +47,7 @@ public abstract class BumpableTile extends InteractiveTileObject {
 		fixture.setUserData(this);
 		setCategoryAndMaskFilter(GameInfo.BANGABLE_BIT, GameInfo.MARIOHEAD_BIT);
 
-		// the default bounce sprite is the original tile image 
-		bounceSprite = new Sprite(runner.getMap().getTileSets().getTile(myTileID).getTextureRegion());
+		bounceSprite = new Sprite();
 		bounceSprite.setPosition(GameInfo.P2M(bounds.getX()), GameInfo.P2M(bounds.getY()));
 		bounceSprite.setBounds(bounceSprite.getX(), bounceSprite.getY(), tileWidth, tileHeight);
 	}
@@ -75,7 +74,8 @@ public abstract class BumpableTile extends InteractiveTileObject {
 				bounceTimeLeft = 0f;
 
 				// by default, reset image to the original block graphic
-				setImageTile(runner.getMap().getTileSets().getTileSet(GameInfo.TILESET_GUTTER).getTile(myTileID));
+				if(myTileID != -1)
+					setImageTile(runner.getMap().getTileSets().getTileSet(GameInfo.TILESET_GUTTER).getTile(myTileID));
 
 				// onBounceEnd will need to decide whether or not to disable tile updates
 				onBounceEnd();
@@ -157,6 +157,14 @@ public abstract class BumpableTile extends InteractiveTileObject {
 
 	protected void setBounceImage(TextureRegion textureRegion) {
 		bounceSprite.setRegion(textureRegion);
+	}
+
+	protected void setBounceImageFromTileMap() {
+		if(myTileID == -1)
+			return;
+
+		// use the tile's image as the sprite's image 
+		bounceSprite.setRegion(runner.getMap().getTileSets().getTile(myTileID).getTextureRegion());
 	}
 
 	public boolean isMidBounce() {

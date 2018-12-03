@@ -20,6 +20,9 @@ import com.ridicarus.kid.worldrunner.WorldRunner;
  * TODO:
  * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
  * -if wants to go down pipe then do not process ducking code - check this
+ * -when big mario with powerstar dies, the dead sprite is stretched vertically and keeps the power star
+ *  animation - remove the animation and unstretch mario
+ * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe, fix this
  */
 public class MarioRole implements PlayerRole {
 	public enum MarioRoleState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
@@ -59,6 +62,7 @@ public class MarioRole implements PlayerRole {
 	private MarioRoleState curState;
 	private float stateTimer;
 
+	private int numLives;
 	private int coinTotal;
 	private int pointTotal;
 	private PointsAmount flyingPoints;
@@ -83,6 +87,7 @@ public class MarioRole implements PlayerRole {
 		curState = MarioRoleState.PLAY;
 		stateTimer = 0f;
 
+		numLives = 2;
 		coinTotal = pointTotal = 0;
 		flyingPoints = PointsAmount.ZERO;
 
@@ -107,6 +112,11 @@ public class MarioRole implements PlayerRole {
 			processDamage(delta);
 			processPowerups();
 			bodyState = mariobody.update(delta, bi, curPowerState);
+		}
+		else if(nextState == MarioRoleState.END99) {
+			// at this point the player has hit the end of level trigger, so raise the castle flag
+			if(nextState != curState)
+				runner.triggerCastleFlag();
 		}
 
 		stateTimer = nextState == curState ? stateTimer + delta : 0f;
@@ -305,6 +315,10 @@ public class MarioRole implements PlayerRole {
 	private void processPowerups() {
 		// apply powerup if received
 		switch(receivedPowerup) {
+			case MUSH1UP:
+				runner.givePointsToPlayer(this, PointsAmount.UP1, true, mariobody.getPosition(), GameInfo.P2M(16),
+						false);
+				break;
 			case MUSHROOM:
 				if(curPowerState == MarioPowerState.SMALL) {
 					curPowerState = MarioPowerState.BIG;
@@ -503,6 +517,7 @@ public class MarioRole implements PlayerRole {
 
 	public void giveCoin() {
 		runner.playSound(GameInfo.SOUND_COIN);
+		runner.givePointsToPlayer(this, PointsAmount.P200, false, null, 0, false);
 		coinTotal++;
 	}
 
@@ -541,5 +556,13 @@ public class MarioRole implements PlayerRole {
 	@Override
 	public boolean isOnGround() {
 		return mariobody.isOnGround();
+	}
+
+	public void give1UP() {
+		numLives++;
+	}
+
+	public int getNumLives() {
+		return numLives;
 	}
 }

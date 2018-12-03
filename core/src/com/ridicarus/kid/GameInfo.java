@@ -13,7 +13,7 @@ public class GameInfo {
 	public static final int TILEPIX_X = 16;
 	public static final int TILEPIX_Y = 16;
 
-	public static final String GAMEMAP_NAME = "level xyz v12.tmx";
+	public static final String GAMEMAP_NAME = "map/level xyz v13.tmx";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";
 	public static final String TILEMAP_BACKGROUND = "background";
@@ -29,13 +29,16 @@ public class GameInfo {
 	public static final String TILEMAP_PIPEWARP = "pipewarp";
 	public static final String TILEMAP_ROOMS = "rooms";
 	public static final String TILEMAP_DESPAWN = "despawn";
+	public static final String TILEMAP_CASTLEFLAG = "castleflag";
 
-	public static final String OBJKEY_ANIM_QMARK = "qblock";
+	public static final String OBJKEY_INVIS = "invisible";
+	public static final String OBJKEY_ANIM_QBLOCK = "qblock";
 	public static final String OBJKEY_CONTAINS = "contains";
 	public static final String OBJVAL_COIN = "coin";
 	public static final String OBJVAL_COIN10 = "coin10";
 	public static final String OBJVAL_MUSHROOM = "mushroom";
 	public static final String OBJVAL_STAR = "powerstar";
+	public static final String OBJVAL_MUSH1UP = "mushroom1up";
 
 	public static final String OBJKEY_SPAWNMAIN = "spawnmain";
 	public static final String OBJKEY_SPAWNTYPE = "spawntype";
@@ -57,19 +60,25 @@ public class GameInfo {
 	public static final String OBJVAL_ROOMTYPE_CENTER = "center";
 	public static final String OBJVAL_ROOMTYPE_HSCROLL = "hscroll";
 
-	public static final String TEXATLAS_FILENAME = "Mario_and_Enemies9.pack";
+	public static final String OBJKEY_VOFFSET = "v_offset";
+
+	public static final String TEXATLAS_FILENAME = "sprite/SMB9.pack";
 	public static final String TEXATLAS_MUSHROOM = "mushroom";
 	public static final String TEXATLAS_FIREFLOWER = "fireflower";
 	public static final String TEXATLAS_POWERSTAR = "powerstar";
+	public static final String TEXATLAS_MUSH1UP = "mush1up";
 	public static final String TEXATLAS_FIREBALL = "fireball";
 	public static final String TEXATLAS_FIREBALL_EXP = "fireball_explode";
 	public static final String TEXATLAS_COIN_SPIN = "coin_spin";
 	public static final String TEXATLAS_COIN_STATIC = "coin_static";
+	public static final String TEXATLAS_COIN_HUD = "coin_hud";
 	public static final String TEXATLAS_BRICKPIECES = "brick_pieces";
 	public static final String TEXATLAS_FLAG = "flag";
+	public static final String TEXATLAS_CASTLEFLAG = "castleflag";
 	public static final String TEXATLAS_GOOMBA = "goomba";
 	public static final String TEXATLAS_TURTLE = "turtle";
 	public static final String TEXATLAS_POINTDIGITS = "pointdigits";
+	public static final String TEXATLAS_1UPDIGITS = "1up";
 
 	public static final String TEXATLAS_SMLMARIO_REG = "little_mario";
 	// TODO: little fire mario separate image?
@@ -85,24 +94,25 @@ public class GameInfo {
 
 	public static final String MUSIC_STARPOWER = "audio/music/SMB/04_-_Super_Mario_Bros._-_NES_-_Invincible_BGM.ogg";
 	public static final String MUSIC_LEVELEND = "audio/music/SMB/02_-_Super_Mario_Bros._-_NES_-_Course_Clear_Fanfare.ogg";
-	public static final String SOUND_BREAK = "audio/sounds/SMB/Break.wav";
-	public static final String SOUND_BUMP = "audio/sounds/SMB/Bump.wav";
-	public static final String SOUND_COIN = "audio/sounds/SMB/Coin.wav";
-	public static final String SOUND_POWERUP_SPAWN = "audio/sounds/SMB/Item.wav";
-	public static final String SOUND_POWERUP_USE = "audio/sounds/SMB/Powerup.wav";
-	public static final String SOUND_POWERDOWN = "audio/sounds/SMB/Warp.wav";
-	public static final String SOUND_STOMP = "audio/sounds/SMB/Squish.wav";
-	public static final String SOUND_MARIODIE = "audio/sounds/SMB/Die.wav";
-	public static final String SOUND_MARIOSMLJUMP = "audio/sounds/SMB/Jump.wav";
-	public static final String SOUND_MARIOBIGJUMP = "audio/sounds/SMB/Big Jump2.ogg";
-	public static final String SOUND_KICK = "audio/sounds/SMB/Kick.wav";
-	public static final String SOUND_FIREBALL = "audio/sounds/SMB/Fire Ball.wav";
-	public static final String SOUND_FLAGPOLE = "audio/sounds/SMB/Flagpole.wav";
+	public static final String SOUND_BREAK = "audio/sound/SMB/Break.wav";
+	public static final String SOUND_BUMP = "audio/sound/SMB/Bump.wav";
+	public static final String SOUND_COIN = "audio/sound/SMB/Coin.wav";
+	public static final String SOUND_POWERUP_SPAWN = "audio/sound/SMB/Item.wav";
+	public static final String SOUND_POWERUP_USE = "audio/sound/SMB/Powerup.wav";
+	public static final String SOUND_POWERDOWN = "audio/sound/SMB/Warp.wav";
+	public static final String SOUND_STOMP = "audio/sound/SMB/Squish.wav";
+	public static final String SOUND_MARIODIE = "audio/sound/SMB/Die.wav";
+	public static final String SOUND_MARIOSMLJUMP = "audio/sound/SMB/Jump.wav";
+	public static final String SOUND_MARIOBIGJUMP = "audio/sound/SMB/Big Jump.ogg";
+	public static final String SOUND_KICK = "audio/sound/SMB/Kick.wav";
+	public static final String SOUND_FIREBALL = "audio/sound/SMB/Fire Ball.wav";
+	public static final String SOUND_FLAGPOLE = "audio/sound/SMB/Flagpole.wav";
+	public static final String SOUND_1UP = "audio/sound/SMB/1up.wav";
 
-	public static final float MUSIC_VOLUME = 0.1f;
+	public static final float MUSIC_VOLUME = 0.05f;
 	public static final float SOUND_VOLUME = 0.25f;
 
-	public static final float MAX_FLOAT_HACK = 1e38f;
+	public static final String SMB_FONT = "font/prstart v1.fnt";
 
 	public static final short NOTHING_BIT		= 0;
 	public static final short BOUNDARY_BIT		= 2 << 0;

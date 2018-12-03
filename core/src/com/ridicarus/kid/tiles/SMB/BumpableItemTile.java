@@ -8,6 +8,7 @@ import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.robot.SMB.BounceCoin;
 import com.ridicarus.kid.roles.robot.SMB.BrickPiece;
 import com.ridicarus.kid.roles.robot.SMB.FireFlower;
+import com.ridicarus.kid.roles.robot.SMB.Mush1UP;
 import com.ridicarus.kid.roles.robot.SMB.PowerMushroom;
 import com.ridicarus.kid.roles.robot.SMB.PowerStar;
 import com.ridicarus.kid.tiles.TileIDs;
@@ -26,7 +27,7 @@ public class BumpableItemTile extends BumpableTile {
 	private static final float COIN_BUMP_RESET_TIME = 0.23f;
 	private static final float MAX_COIN_BUMP_TIME = 3f;
 
-	private enum BrickItem { NONE, COIN, COIN10, MUSHROOM, STAR };
+	private enum BrickItem { NONE, COIN, COIN10, MUSHROOM, STAR, MUSH1UP };
 
 	private boolean isItemAvailable;
 	private BrickItem myItem;
@@ -36,14 +37,16 @@ public class BumpableItemTile extends BumpableTile {
 	private float coin10BumpResetTimer;
 	private float coin10EndTimer;
 	private boolean wasHitByBig;
+	private boolean isInvisible;
 
 	private float stateTimer;
 
 	public BumpableItemTile(WorldRunner runner, MapObject object) {
 		super(runner, object);
 
-		isQblock = object.getProperties().containsKey(GameInfo.OBJKEY_ANIM_QMARK);
+		isQblock = object.getProperties().containsKey(GameInfo.OBJKEY_ANIM_QBLOCK);
 		curBlinkFrame = 0;
+		isInvisible = object.getProperties().containsKey(GameInfo.OBJKEY_INVIS);
 
 		myItem = BrickItem.NONE;
 		if(object.getProperties().containsKey(GameInfo.OBJKEY_CONTAINS)) {
@@ -70,7 +73,16 @@ public class BumpableItemTile extends BumpableTile {
 				// switch to empty block as soon as bump starts
 				setBounceImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
 			}
+			else if(contents.equals(GameInfo.OBJVAL_MUSH1UP)) {
+				myItem = BrickItem.MUSH1UP;
+				// switch to empty block as soon as bump starts
+				setBounceImage(runner.getMap().getTileSets().getTile(TileIDs.COIN_EMPTY).getTextureRegion());
+			}
+			else
+				setBounceImageFromTileMap();
 		}
+		else
+			setBounceImageFromTileMap();
 
 		isItemAvailable = (myItem != BrickItem.NONE);
 		// animated question mark blocks need updates
@@ -87,6 +99,11 @@ public class BumpableItemTile extends BumpableTile {
 		// the brick makes a bump sound unless it is breaking
 		if(!(isHitByBig && myItem == BrickItem.NONE))
 			runner.playSound(GameInfo.SOUND_BUMP);
+
+		if(isInvisible) {
+			isInvisible = false;
+			setPhysicTile(true);
+		}
 	}
 
 	@Override
@@ -131,6 +148,11 @@ public class BumpableItemTile extends BumpableTile {
 	public void onBounceEnd() {
 		if(isItemAvailable && myItem != BrickItem.NONE) {
 			switch(myItem) {
+				case MUSH1UP:
+					isItemAvailable = false;
+					runner.playSound(GameInfo.SOUND_POWERUP_SPAWN);
+					runner.addRobot(new Mush1UP(runner, body.getPosition().cpy().add(0f, GameInfo.P2M(GameInfo.TILEPIX_Y))));
+					break;
 				case MUSHROOM:
 					isItemAvailable = false;
 					runner.playSound(GameInfo.SOUND_POWERUP_SPAWN);

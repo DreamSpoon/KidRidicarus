@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.GameInfo.SpriteDrawOrder;
 import com.ridicarus.kid.roles.RobotRole;
-import com.ridicarus.kid.sprites.SMB.FlagSprite;
+import com.ridicarus.kid.sprites.SMB.PoleFlagSprite;
 import com.ridicarus.kid.worldrunner.WorldRunner;
 
 public class Flagpole implements RobotRole {
@@ -23,7 +23,7 @@ public class Flagpole implements RobotRole {
 	private WorldRunner runner;
 	private Rectangle bounds;
 	private Body b2body;
-	private FlagSprite flagSprite;
+	private PoleFlagSprite flagSprite;
 	private Vector2 flagPos;
 	private Vector2 initFlagPos;
 	private boolean isAtBottom;
@@ -42,7 +42,7 @@ public class Flagpole implements RobotRole {
 
 		initFlagPos = FLAG_START_OFFSET.cpy().add(bounds.x, bounds.y+bounds.height);
 		flagPos = initFlagPos;
-		flagSprite = new FlagSprite(runner.getAtlas(), flagPos);
+		flagSprite = new PoleFlagSprite(runner.getAtlas(), flagPos);
 
 		runner.setRobotDrawLayer(this, SpriteDrawOrder.MIDDLE);
 		runner.enableRobotUpdate(this);

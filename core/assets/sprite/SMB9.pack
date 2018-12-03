@@ -1,5 +1,5 @@
 
-Mario_and_Enemies9.png
+SMB9.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -129,24 +129,52 @@ brick_pieces
   orig: 16, 16
   offset: 0, 0
   index: -1
-flag
+castleflag
   rotate: false
   xy: 953, 93
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-mushroom
+coin_hud
+  rotate: false
+  xy: 677, 65
+  size: 24, 8
+  orig: 24, 8
+  offset: 0, 0
+  index: -1
+flag
   rotate: false
   xy: 793, 75
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
+mush1up
+  rotate: false
+  xy: 649, 43
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mushroom
+  rotate: false
+  xy: 971, 93
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 pointdigits
   rotate: false
-  xy: 677, 65
+  xy: 373, 33
   size: 24, 8
   orig: 24, 8
+  offset: 0, 0
+  index: -1
+1up
+  rotate: false
+  xy: 703, 65
+  size: 16, 8
+  orig: 16, 8
   offset: 0, 0
   index: -1

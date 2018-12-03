@@ -10,6 +10,9 @@ import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.sprites.SMB.FloatingPointsSprite;
 import com.ridicarus.kid.worldrunner.WorldRunner;
 
+/*
+ * SMB floating points, and 1-up
+ */
 public class FloatingPoints implements RobotRole {
 	private static final float FLOAT_TIME = 1f;
 	private static final float FLOAT_HEIGHT = GameInfo.P2M(48);

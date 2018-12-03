@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.InfoSMB;
 import com.ridicarus.kid.MyKidRidicarus;
-import com.ridicarus.kid.scenes.Hud;
+import com.ridicarus.kid.hud.SMB_Hud;
 import com.ridicarus.kid.tools.QQ;
 import com.ridicarus.kid.worldrunner.Player;
 import com.ridicarus.kid.worldrunner.WorldRenderer;
@@ -25,7 +25,7 @@ public class PlayScreen implements Screen {
 	private TextureAtlas atlas;
 	private TmxMapLoader maploader;
 	private TiledMap map;
-	private Hud hud;
+	private SMB_Hud smbHud;
 	private WorldRunner worldRunner;
 	private WorldRenderer worldRenderer;
 	private Player rePlayer;
@@ -50,7 +50,7 @@ public class PlayScreen implements Screen {
 
 		rePlayer = worldRunner.createPlayer();
 
-		hud = new Hud(game.batch, rePlayer);
+		smbHud = new SMB_Hud(game.batch, worldRunner, rePlayer);
 	}
 
 	@Override
@@ -63,8 +63,7 @@ public class PlayScreen implements Screen {
 		worldRenderer.drawAll(game.batch, gamecam);
 
 		// draw the HUD last, so it's on top of everything else
-		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-		hud.stage.draw();
+		smbHud.draw();
 
 		QQ.renderTo(game.sr, gamecam.combined);
 
@@ -86,7 +85,7 @@ public class PlayScreen implements Screen {
 		// robots are updated in the worldrunner update method
 		worldRunner.update(delta);
 
-		hud.update(delta);
+		smbHud.update(delta);
 	}
 
 	private void handleInput(float delta) {
@@ -114,7 +113,7 @@ public class PlayScreen implements Screen {
 	public void dispose() {
 		map.dispose();
 		worldRunner.dispose();
-		hud.dispose();
+		smbHud.dispose();
 	}
 
 	@Override

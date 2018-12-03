@@ -25,6 +25,7 @@ import com.ridicarus.kid.roles.PlayerRole;
 import com.ridicarus.kid.roles.RobotRole;
 import com.ridicarus.kid.roles.player.MarioRole;
 import com.ridicarus.kid.roles.robot.Levelend;
+import com.ridicarus.kid.roles.robot.SMB.CastleFlag;
 import com.ridicarus.kid.roles.robot.SMB.Flagpole;
 import com.ridicarus.kid.roles.robot.SMB.FloatingPoints;
 import com.ridicarus.kid.roles.robot.SMB.Goomba;
@@ -35,6 +36,8 @@ import com.ridicarus.kid.tiles.InteractiveTileObject;
 import com.ridicarus.kid.tiles.SMB.BumpableItemTile;
 
 public class WorldRunner {
+	private static final float LEVEL_MAX_TIME = 300f;
+
 	private TextureAtlas atlas;
 	private Player player;
 	private TiledMap map;
@@ -45,6 +48,7 @@ public class WorldRunner {
 	private String currentRoomMusicName;
 	private Music currentRoomMusic;
 	private LinkedList<Room> rooms;
+	private float levelTimeRemaining;
 
 	private class PhysicTileForQueue {
 		public int x;
@@ -100,6 +104,8 @@ public class WorldRunner {
 
 	private OrthographicCamera gamecam;
 
+	private CastleFlag castleFlag;
+
 	@SuppressWarnings("unchecked")
 	public WorldRunner(AssetManager manager, TextureAtlas atlas, OrthographicCamera gamecam) {
 		this.manager = manager;
@@ -107,6 +113,7 @@ public class WorldRunner {
 		this.gamecam = gamecam;
 
 		player = null;
+		levelTimeRemaining = LEVEL_MAX_TIME;
 
 		intTilesToUpdate = new LinkedList<InteractiveTileObject>();
 		intTileDestroyQ = new LinkedBlockingQueue<InteractiveTileObject>();
@@ -138,6 +145,8 @@ public class WorldRunner {
 		currentRoomMusic = null;
 
 		spawnpoints = new LinkedList<Spawnpoint>();
+
+		castleFlag = null;
 	}
 
 	public void loadMap(TiledMap map, AssetManager manager) {
@@ -205,6 +214,11 @@ public class WorldRunner {
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
 			new DespawnBox(this, object);
 
+		// Note: there should be only one castle flag
+		layer = map.getLayers().get(GameInfo.TILEMAP_CASTLEFLAG);
+		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class))
+			castleFlag = new CastleFlag(this, object);
+
 		preloadRoomMusic();
 	}
 
@@ -267,6 +281,8 @@ public class WorldRunner {
 		updateRobots(delta, player.getRole());
 
 		updateTileWorld(delta);
+
+		levelTimeRemaining -= delta;
 	}
 
 	// get a room!
@@ -544,14 +560,28 @@ public class WorldRunner {
 			if(isHeadBounce) {
 				mario.incrementFlyingPoints();
 				// if the flying points are greater than the incoming points amount then use the flying points
-				if(mario.getFlyingPoints().compareTo(amount) > 0)
+				if(mario.getFlyingPoints().compareTo(amount) > 0 || mario.getFlyingPoints() == PointsAmount.UP1)
 					finalAmt = mario.getFlyingPoints();
 			}
-			mario.givePoints(finalAmt);
-		}
 
+			if(finalAmt == PointsAmount.UP1) {
+				playSound(GameInfo.SOUND_1UP);
+				mario.give1UP();
+			}
+			else
+				mario.givePoints(finalAmt);
+		}
 		// if visible then create floating points that despawn after a short time
-		if(visible)
+		if(visible && position != null)
 			addRobot(new FloatingPoints(this, finalAmt, position.cpy().add(0f, yOffset)));
+	}
+
+	public float getLevelTimeRemaining() {
+		return levelTimeRemaining;
+	}
+
+	public void triggerCastleFlag() {
+		if(castleFlag != null)
+			castleFlag.trigger();
 	}
 }

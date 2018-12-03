@@ -306,12 +306,7 @@ public class Turtle extends MobileRobotRole implements HeadBounceBot, TouchDmgBo
 				runner.playSound(GameInfo.SOUND_KICK);
 				if(perp != null) {
 					slidingTotal = slidingTotal.increment();
-					// when points overflow occurs, the player gets 1-UP
-					if(slidingTotal == PointsAmount.INFINITY) {
-						// TODO: give player 1-UP
-					}
-					else
-						runner.givePointsToPlayer(perp, slidingTotal, true, b2body.getPosition(), GameInfo.P2M(16), false);
+					runner.givePointsToPlayer(perp, slidingTotal, true, b2body.getPosition(), GameInfo.P2M(16), false);
 				}
 			}
 		}

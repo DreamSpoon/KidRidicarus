@@ -38,4 +38,10 @@ public class Player {
 			return ((MarioRole) role).getPointTotal();
 		return 0;
 	}
+
+	public int getCoinTotal() {
+		if(role instanceof MarioRole)
+			return ((MarioRole) role).getCoinTotal();
+		return 0;
+	}
 }

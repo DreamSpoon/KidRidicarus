@@ -49,7 +49,10 @@ public abstract class InteractiveTileObject {
 		fdef.isSensor = true;
 		fixture = body.createFixture(fdef);
 
-		myTileID = getMyTile().getId();
+		if(getMyTile() == null)
+			myTileID = -1;
+		else
+			myTileID = getMyTile().getId();
 
 		tileWidth = GameInfo.P2M(bounds.getWidth());
 		tileHeight = GameInfo.P2M(bounds.getHeight());

@@ -127,7 +127,7 @@ public class MarioBody implements PlayerBody {
 	// process the list of head hits for a head bang
 	private void processHeadHits() {
 		// check the list of tiles for the closest to mario
-		float closest = GameInfo.MAX_FLOAT_HACK;
+		float closest = 0;
 		InteractiveTileObject closestTile = null;
 		for(InteractiveTileObject thingHit : headHits) {
 			float dist = Math.abs(thingHit.getPosition().x - b2body.getPosition().x);

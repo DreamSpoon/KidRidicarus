@@ -13,6 +13,7 @@ public class Room {
 	private enum RoomType { CENTER, HSCROLL };
 	private RoomType roomtype;
 	private String roommusic;
+	private float vOffset;
 
 	public Room(WorldRunner worldRunner, MapObject object) {
 		Rectangle rect = ((RectangleMapObject) object).getRectangle();
@@ -27,9 +28,12 @@ public class Room {
 		}
 		// default to no music
 		roommusic = "";
-		if(p.containsKey(GameInfo.OBJKEY_ROOMMUSIC)) {
+		if(p.containsKey(GameInfo.OBJKEY_ROOMMUSIC))
 			roommusic = p.get(GameInfo.OBJKEY_ROOMMUSIC, String.class);
-		}
+
+		vOffset = 0f;
+		if(p.containsKey(GameInfo.OBJKEY_VOFFSET))
+			vOffset = GameInfo.P2M(Float.valueOf(p.get(GameInfo.OBJKEY_VOFFSET, String.class)));
 	}
 
 	// simple point form bounds check 
@@ -41,7 +45,7 @@ public class Room {
 		switch(roomtype) {
 			case HSCROLL:
 				gamecam.position.x = pr.getPosition().x;
-				gamecam.position.y = bounds.y + bounds.height/2f;
+				gamecam.position.y = bounds.y + bounds.height/2f + vOffset;
 				break;
 			case CENTER:
 			default:

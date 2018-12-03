@@ -14,9 +14,18 @@ public class FloatingPointsSprite {
 	private Vector2[] drawOffsets;
 	private PDigit[] drawDigits;
 	private Vector2 position;
+	private Sprite sprite1UP;
+	private boolean is1UP;
 
 	public FloatingPointsSprite(TextureAtlas atlas, Vector2 position, PointsAmount amount) {
 		this.position = position;
+		
+		if(amount == PointsAmount.UP1) {
+			sprite1UP = new Sprite(atlas.findRegion(GameInfo.TEXATLAS_1UPDIGITS), 0, 0, 16, 8);
+			sprite1UP.setBounds(sprite1UP.getX(), sprite1UP.getY(), GameInfo.P2M(16), GameInfo.P2M(8));
+			is1UP = true;
+			return;
+		}
 
 		dSprites = new Sprite[PDigit.values().length];
 		dSprites[PDigit.DIGIT_0.ordinal()] =
@@ -102,11 +111,17 @@ public class FloatingPointsSprite {
 	}
 
 	public void draw(Batch batch) {
-		if(drawDigits == null || drawOffsets == null)
-			return;
-		for(int i=0; i<drawDigits.length; i++) {
-			dSprites[drawDigits[i].ordinal()].setPosition(position.x + drawOffsets[i].x, position.y + drawOffsets[i].y);
-			dSprites[drawDigits[i].ordinal()].draw(batch);
+		if(is1UP) {
+			sprite1UP.setPosition(position.x, position.y);
+			sprite1UP.draw(batch);
+		}
+		else {
+			if(drawDigits == null || drawOffsets == null)
+				return;
+			for(int i=0; i<drawDigits.length; i++) {
+				dSprites[drawDigits[i].ordinal()].setPosition(position.x + drawOffsets[i].x, position.y + drawOffsets[i].y);
+				dSprites[drawDigits[i].ordinal()].draw(batch);
+			}
 		}
 	}
 }

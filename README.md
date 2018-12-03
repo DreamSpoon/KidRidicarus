@@ -14,11 +14,7 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
   * Squeezing out of tight spaces when unducking
 
-  * Better HUD
-
-  * Invisible block with 1-UP mushroom
-
-  * End level castle flag
+  * End of level part of game needs time to points conversion countdown
 
   * Some minor fixes (e.g. sometimes mario stops using jump force too early, enemies tend to "stick" together when there are many close together)
 
@@ -34,7 +30,7 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
   * Using [Brent Aureli's SMB code](https://github.com/BrentAureli/SuperMario) (retrieved about Oct 17, 2018) as a starting point, modify as needed
 
-  * Check [Stack Overflow](www.stackoverflow.com) when stumped
+  * When stumped, Google stuff and usually find things on [Stack Overflow](www.stackoverflow.com) or [BadLogicGames](www.badlogicgames.com).
 
 * Graphics
 
@@ -97,6 +93,10 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.co
 [Video Game Music Preservation Foundation](www.vgmpf.com)
 
 ### Other:
+
+[SMB Font: Press Start by codeman38 at FontSpace](https://www.fontspace.com/codeman38/press-start)
+
+[libGDX Hiero tool for bitmap font conversion](https://github.com/libgdx/libgdx/wiki/Hiero)
 
 [SMB Physics Doc](http://i276.photobucket.com/albums/kk21/jdaster64/smb_playerphysics.png.html)
 
