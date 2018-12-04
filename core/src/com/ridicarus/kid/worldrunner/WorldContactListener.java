@@ -22,6 +22,13 @@ public class WorldContactListener implements ContactListener {
 		fixB = contact.getFixtureB();
 		cdef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 		switch(cdef) {
+			// mario's head started touching an interactive tile
+			case (GameInfo.MARIOHEAD_BIT | GameInfo.BANGABLE_BIT):
+				if(fixA.getFilterData().categoryBits == GameInfo.MARIOHEAD_BIT)
+					((PlayerBody) fixA.getUserData()).onHeadTileContactStart((InteractiveTileObject) fixB.getUserData());
+				else
+					((PlayerBody) fixB.getUserData()).onHeadTileContactStart((InteractiveTileObject) fixA.getUserData());
+				break;
 			// mario touched a despawn box
 			case (GameInfo.MARIO_BIT | GameInfo.DESPAWN_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.MARIO_BIT)
@@ -49,14 +56,6 @@ public class WorldContactListener implements ContactListener {
 					((PlayerBody) fixA.getUserData()).onStartTouchPipe((PipeEntrance) fixB.getUserData());
 				else
 					((PlayerBody) fixB.getUserData()).onStartTouchPipe((PipeEntrance) fixA.getUserData());
-				break;
-			// mario hit his head on something
-			case (GameInfo.MARIOHEAD_BIT | GameInfo.BANGABLE_BIT):
-				// invoke mario's head hit method on the tile, so we can hit one tile at a time
-				if(fixA.getFilterData().categoryBits == GameInfo.MARIOHEAD_BIT)
-					((PlayerBody) fixA.getUserData()).onHeadHit((InteractiveTileObject) fixB.getUserData());
-				else
-					((PlayerBody) fixB.getUserData()).onHeadHit((InteractiveTileObject) fixA.getUserData());
 				break;
 			// mario's foot hit a horizontal or vertical bound
 			case (GameInfo.MARIOFOOT_BIT | GameInfo.BOUNDARY_BIT):
@@ -118,6 +117,13 @@ public class WorldContactListener implements ContactListener {
 		fixB = contact.getFixtureB();
 		cdef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 		switch(cdef) {
+			// mario's head stopped touching an interactive tile
+			case (GameInfo.MARIOHEAD_BIT | GameInfo.BANGABLE_BIT):
+				if(fixA.getFilterData().categoryBits == GameInfo.MARIOHEAD_BIT)
+					((PlayerBody) fixA.getUserData()).onHeadTileContactEnd((InteractiveTileObject) fixB.getUserData());
+				else
+					((PlayerBody) fixB.getUserData()).onHeadTileContactEnd((InteractiveTileObject) fixA.getUserData());
+				break;
 			// mario's side stopped touching a pipe
 			case (GameInfo.MARIOSIDE_BIT | GameInfo.PIPE_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.MARIOSIDE_BIT)

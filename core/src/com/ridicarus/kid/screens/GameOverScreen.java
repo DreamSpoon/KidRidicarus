@@ -2,6 +2,7 @@ package com.ridicarus.kid.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,6 +21,8 @@ public class GameOverScreen implements Screen {
 	private Viewport viewport;
 	private Stage stage;
 	private Game game;
+	private InputProcessor oldInPr;
+	private boolean didAnythingHappen;
 
 	public GameOverScreen(Game game, boolean win) {
 		LabelStyle font;
@@ -39,22 +42,53 @@ public class GameOverScreen implements Screen {
 			gameOverLabel = new Label("GAME WON!", font);
 		else
 			gameOverLabel = new Label("GAME OVER", font);
-		playAgainLabel = new Label("Click to Play Again", font);
+		playAgainLabel = new Label("Do Something to Play Again", font);
 
 		table.add(gameOverLabel).expandX();
 		table.row();
 		table.add(playAgainLabel).expandX().padTop(10f);
 
 		stage.addActor(table);
+
+		didAnythingHappen = false;
+		oldInPr = Gdx.input.getInputProcessor();
+		Gdx.input.setInputProcessor(new MyLittleInPr(this));
+	}
+
+	public class MyLittleInPr implements InputProcessor {
+		private GameOverScreen gos;
+		public MyLittleInPr(GameOverScreen gos) { this.gos = gos; }
+		private boolean a() { return gos.onSomethingHappen(); }
+		@Override
+		public boolean keyDown(int keycode) { return a(); }
+		@Override
+		public boolean keyUp(int keycode) { return a(); }
+		@Override
+		public boolean keyTyped(char character) { return a(); }
+		@Override
+		public boolean touchDown(int screenX, int screenY, int pointer, int button) { return a(); }
+		@Override
+		public boolean touchUp(int screenX, int screenY, int pointer, int button) { return a(); }
+		@Override
+		public boolean touchDragged(int screenX, int screenY, int pointer) { return a(); }
+		@Override
+		public boolean mouseMoved(int screenX, int screenY) { return a(); }
+		@Override
+		public boolean scrolled(int amount) { return a(); }
 	}
 
 	@Override
 	public void show() {
 	}
 
+	public boolean onSomethingHappen() {
+		return didAnythingHappen = true;
+	}
+
 	@Override
 	public void render(float delta) {
-		if(Gdx.input.justTouched()) {
+//		if(Gdx.input.justTouched()) {
+		if(didAnythingHappen) {
 			game.setScreen(new PlayScreen((MyKidRidicarus) game));
 			dispose();
 		}
@@ -82,6 +116,7 @@ public class GameOverScreen implements Screen {
 
 	@Override
 	public void dispose() {
+		Gdx.input.setInputProcessor(oldInPr);
 		stage.dispose();
 	}
 }

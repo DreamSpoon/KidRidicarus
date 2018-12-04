@@ -260,6 +260,9 @@ public class MarioSprite extends Sprite {
 		else if(prevState == MarioSpriteState.RUN && curState == MarioSpriteState.FALL)
 			fallStartStateTime = stateTimer;
 
+		if(curState == MarioSpriteState.DEAD && curState != prevState)
+			setBounds(getX(), getY(), GameInfo.P2M(GameInfo.TILEPIX_X), GameInfo.P2M(GameInfo.TILEPIX_Y));
+			
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
 		wasBig = (powerStateIn != MarioPowerState.SMALL);
 

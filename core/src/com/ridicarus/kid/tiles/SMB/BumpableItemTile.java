@@ -62,6 +62,7 @@ public class BumpableItemTile extends BumpableTile {
 				coin10BumpResetTimer = 0f;
 				coin10EndTimer = 0f;
 				// do not switch to empty block as soon as bump starts, retain original image
+				setBounceImageFromTileMap();
 			}
 			else if(contents.equals(GameInfo.OBJVAL_MUSHROOM)) {
 				myItem = BrickItem.MUSHROOM;

@@ -13,7 +13,8 @@ public class GameInfo {
 	public static final int TILEPIX_X = 16;
 	public static final int TILEPIX_Y = 16;
 
-	public static final String GAMEMAP_NAME = "map/level xyz v13.tmx";
+	public static final String GAMEMAP_FILENAME = "map/level xyz v14.tmx";
+	public static final String TEXATLAS_FILENAME = "sprite/SMB9.pack";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";
 	public static final String TILEMAP_BACKGROUND = "background";
@@ -60,9 +61,8 @@ public class GameInfo {
 	public static final String OBJVAL_ROOMTYPE_CENTER = "center";
 	public static final String OBJVAL_ROOMTYPE_HSCROLL = "hscroll";
 
-	public static final String OBJKEY_VOFFSET = "v_offset";
+	public static final String OBJKEY_VIEWOFFSET_Y = "viewoffset_y";
 
-	public static final String TEXATLAS_FILENAME = "sprite/SMB9.pack";
 	public static final String TEXATLAS_MUSHROOM = "mushroom";
 	public static final String TEXATLAS_FIREFLOWER = "fireflower";
 	public static final String TEXATLAS_POWERSTAR = "powerstar";

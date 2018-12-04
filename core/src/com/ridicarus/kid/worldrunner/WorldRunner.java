@@ -584,4 +584,28 @@ public class WorldRunner {
 		if(castleFlag != null)
 			castleFlag.trigger();
 	}
+
+	public Vector2 posToMapTileOffset(Vector2 position) {
+		return new Vector2((int) (GameInfo.M2P(position.x) / GameInfo.TILEPIX_X),
+				(int) (GameInfo.M2P(position.y) / GameInfo.TILEPIX_Y));
+	}
+
+	/*
+	 * Returns the sub-position within the tile for each axis, as a ratio of the tile size on the axis.
+	 * e.g. if TILEPIX_X = 16 and positionX = 19, then returnsX 3/16=0.1875
+	 * e.g. if TILEPIX_Y = 16 and positionY = 42, then returnsY 10/16=0.625
+	 */
+	public Vector2 posToMapTileSubOffset(Vector2 position) {
+		float tileW = GameInfo.P2M(GameInfo.TILEPIX_X);
+		float tileH = GameInfo.P2M(GameInfo.TILEPIX_Y);
+		// mod position coordinate with tile size
+		float x = (int) (position.x / tileW);
+		float y = (int) (position.y / tileH);
+		// subtract modded position and divide by tile size
+		return new Vector2((position.x - x * tileW) / tileW, (position.y - y * tileH) / tileH);
+	}
+
+	public boolean isMapTileSolid(Vector2 tilePos) {
+		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
+	}
 }

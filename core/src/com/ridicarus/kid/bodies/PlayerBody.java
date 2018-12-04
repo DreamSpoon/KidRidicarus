@@ -15,7 +15,8 @@ public interface PlayerBody {
 	public void onFootLeaveBound(LineSeg seg);
 	public void onTouchRobot(RobotRole robo);
 	public void onTouchItem(RobotRole robo);
-	public void onHeadHit(InteractiveTileObject thing);
+	public void onHeadTileContactStart(InteractiveTileObject thing);
+	public void onHeadTileContactEnd(InteractiveTileObject thing);
 	public float getStateTimer();
 	public void onStartTouchPipe(PipeEntrance pipeEnt);
 	public void onEndTouchPipe(PipeEntrance pipeEnt);

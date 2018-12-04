@@ -12,11 +12,11 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
 * Super Mario Bros. 1 almost done, still needs:
 
-  * Squeezing out of tight spaces when unducking
-
   * End of level part of game needs time to points conversion countdown
 
   * Some minor fixes (e.g. sometimes mario stops using jump force too early, enemies tend to "stick" together when there are many close together)
+  
+  * Refactor code to improve clarity and organization, and remove bugs
 
 * Metroid is on the horizon
 
@@ -34,15 +34,23 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
 * Graphics
 
-  * Use sprites from Spriters Resource, NESMAPS.COM
+  * Find sprites and tilesets at Spriters Resource, NESMAPS.COM
 
-  * Process sprite images with GIMP (and Sprite Gutter Add/Remove tool)
+  * For Sprites (e.g. the mario sprite)
 
-  * Pack sprite images with TexturePacker
+    * Process sprite images with GIMP (if necessary)
+
+    * Pack sprite images with TexturePacker
+ 
+  * For Tilesets (e.g. the background scenery in level 1-1)
+
+    * Process tile images with GIMP (if necessary)
+
+    * The images will be used in a tileset via TilEd so use the GIMP Gutter Add tool to add gutter to the tile images (if you don't add gutter to your tile images then you may see flickering black lines when running a map)
 
 * Audio
 
-  * Use sounds from The Sounds Resource, and music from the Video Game Music Preservation Foundation
+  * Find sounds at The Sounds Resource, and music at the Video Game Music Preservation Foundation
 
   * Use Audacity for modifying/converting audio
 
@@ -104,7 +112,7 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.co
 
 ### Further Credits:
 
-I'd like to thank my arms for staying by my side. I'd like to thank my legs for all their support. And I'd like to thanks my hands especially - I could always count on my hands.
+I'd like to thank my arms for staying by my side. I'd like to thank my legs for all their support. And I'd like to thank my hands especially - I could always count on my hands.
 
 If there are any more unthanked or unacknowledged contributors, I thank and acknowledge you now: Thanks!
 

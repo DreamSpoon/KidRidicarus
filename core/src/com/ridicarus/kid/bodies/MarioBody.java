@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.utils.Array;
 import com.ridicarus.kid.GameInfo;
 import com.ridicarus.kid.GameInfo.Direction4;
 import com.ridicarus.kid.collisionmap.LineSeg;
@@ -39,6 +38,8 @@ public class MarioBody implements PlayerBody {
 	private static final float MARIO_BRAKE_TIME = 0.2f;
 	private static final float MARIO_MAX_WALKVEL = MARIO_WALKMOVE_XIMP * 42f;
 	private static final float MARIO_MAX_RUNVEL = MARIO_MAX_WALKVEL * 1.65f;
+	private static final float MARIO_MAX_DUCKSLIDEVEL = MARIO_MAX_WALKVEL * 0.65f;
+	private static final float MARIO_DUCKSLIDE_XIMP = MARIO_WALKMOVE_XIMP * 1f;
 	private static final float MARIO_JUMP_IMPULSE = 1.75f;
 	private static final float MARIO_JUMP_FORCE = 14f;
 	private static final float MARIO_AIRMOVE_XIMP = 0.04f;
@@ -47,6 +48,7 @@ public class MarioBody implements PlayerBody {
 	private static final float MARIO_JUMP_GROUNDCHECK_DELAY = 0.05f;
 	private static final float MARIO_JUMPFORCE_TIME = 0.5f;
 	private static final float MARIO_HEADBOUNCE_VEL = 1.75f;	// up velocity
+	private static final float MIN_HEADBANG_VEL = 0.01f;	// TODO: test this with different values to the best
 
 	public enum MarioBodyState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, DEAD };
 
@@ -66,16 +68,25 @@ public class MarioBody implements PlayerBody {
 	private boolean isJumping;
 	private float jumpForceTimer;
 	private boolean isDucking;
+	private boolean isDuckSliding;
+	private boolean isLastVelocityRight;
+	private boolean isDuckSlideRight;
 	private boolean isHeadBouncing;
 	private boolean isTakeDamage;
 	private boolean canHeadBang;
-	private Array<InteractiveTileObject> headHits;
+	private Vector2 prevVelocity;
 
-	private LinkedBlockingQueue<PipeEntrance> adjacentPipeAddQ;
+	// tiles that mario's head sensor is contacting, for head bump processes
+	private LinkedBlockingQueue<InteractiveTileObject> headTileContactAddQ;
+	private LinkedBlockingQueue<InteractiveTileObject> headTileContactRemoveQ;
+	private LinkedList<InteractiveTileObject> headTileContact;
+
+	// adjacent warp pipes that mario might use
+	private LinkedBlockingQueue<PipeEntrance> adjPipeAddQ;
 	private LinkedBlockingQueue<PipeEntrance> adjacentPipeRemoveQ;
 	private LinkedList<PipeEntrance> adjacentPipes;
-	private PipeEntrance pipeToEnter;
 
+	private PipeEntrance pipeToEnter;
 	private Flagpole flagpoleTouched;
 	private Levelend levelendTouched;
 
@@ -97,13 +108,19 @@ public class MarioBody implements PlayerBody {
 		isJumping = false;
 		jumpForceTimer = 0f;
 		isDucking = false;
+		isLastVelocityRight = false;
+		isDuckSliding = false;
+		isDuckSlideRight = false;
 		isHeadBouncing = false;
 		isTakeDamage = false;
 		canHeadBang = true;
-		headHits = new Array<InteractiveTileObject>();
+
+		headTileContactAddQ = new LinkedBlockingQueue<InteractiveTileObject>();
+		headTileContactRemoveQ = new LinkedBlockingQueue<InteractiveTileObject>();
+		headTileContact = new LinkedList<InteractiveTileObject>();
 
 		adjacentPipes = new LinkedList<PipeEntrance>();
-		adjacentPipeAddQ = new LinkedBlockingQueue<PipeEntrance>();
+		adjPipeAddQ = new LinkedBlockingQueue<PipeEntrance>();
 		adjacentPipeRemoveQ = new LinkedBlockingQueue<PipeEntrance>();
 		pipeToEnter = null;
 		flagpoleTouched = null;
@@ -113,7 +130,8 @@ public class MarioBody implements PlayerBody {
 		stateTimer = 0f;
 
 		// physic
-		defineBody(position, new Vector2(0f, 0f));
+		prevVelocity = new Vector2(0f, 0f);
+		defineBody(position, prevVelocity);
 	}
 
 	private void processHeadBounces() {
@@ -124,24 +142,43 @@ public class MarioBody implements PlayerBody {
 		}
 	}
 
-	// process the list of head hits for a head bang
-	private void processHeadHits() {
-		// check the list of tiles for the closest to mario
-		float closest = 0;
-		InteractiveTileObject closestTile = null;
-		for(InteractiveTileObject thingHit : headHits) {
-			float dist = Math.abs(thingHit.getPosition().x - b2body.getPosition().x);
-			if(closestTile == null || dist < closest) {
-				closest = dist;
-				closestTile = thingHit;
-			}
+	/*
+	 * Process the head contact add and remove queues, then check the list of current contacts for a head bang.
+	 *
+	 * NOTE: After banging his head while moving up, mario cannot bang his head again until he has moved down a
+	 * sufficient amount. Also, mario can only break one block per head bang - but if his head touches multiple
+	 * blocks when he hits, then choose the block closest to mario on the x axis.
+	 */
+	private void processHeadContacts() {
+		while(!headTileContactAddQ.isEmpty()) {
+			InteractiveTileObject ito = headTileContactAddQ.poll();
+			if(!headTileContact.contains(ito))
+				headTileContact.add(ito);
 		}
-		headHits.clear();
+		while(!headTileContactRemoveQ.isEmpty()) {
+			InteractiveTileObject ito = headTileContactRemoveQ.poll();
+			if(headTileContact.contains(ito))
+				headTileContact.remove(ito);
+		}
 
-		// we have a weiner!
-		if(closestTile != null) {
-			canHeadBang = false;
-			closestTile.onHeadHit(role);
+		// if can head bang and is moving upwards fast enough then ...
+		if(canHeadBang && (b2body.getLinearVelocity().y > MIN_HEADBANG_VEL || prevVelocity.y > MIN_HEADBANG_VEL)) {
+			// check the list of tiles for the closest to mario
+			float closest = 0;
+			InteractiveTileObject closestTile = null;
+			for(InteractiveTileObject thingHit : headTileContact) {
+				float dist = Math.abs(thingHit.getPosition().x - b2body.getPosition().x);
+				if(closestTile == null || dist < closest) {
+					closest = dist;
+					closestTile = thingHit;
+				}
+			}
+
+			// we have a weiner!
+			if(closestTile != null && canHeadBang) {
+				canHeadBang = false;
+				closestTile.onHeadHit(role);
+			}
 		}
 		// mario can headbang once per up/down cycle of movement, so re-enable head bang when mario moves down
 		else if(b2body.getLinearVelocity().y < 0f)
@@ -150,8 +187,8 @@ public class MarioBody implements PlayerBody {
 
 	private void processPipes(BasicInputs bi) {
 		// process the add/remove queues
-		while(!adjacentPipeAddQ.isEmpty()) {
-			PipeEntrance adj = adjacentPipeAddQ.poll();
+		while(!adjPipeAddQ.isEmpty()) {
+			PipeEntrance adj = adjPipeAddQ.poll();
 			if(!adjacentPipes.contains(adj))
 				adjacentPipes.add(adj);
 		}
@@ -185,12 +222,13 @@ public class MarioBody implements PlayerBody {
 	public MarioBodyState update(float delta, BasicInputs bi, MarioPowerState curPowerState) {
 		MarioBodyState nextState;
 		boolean isVelocityLeft, isVelocityRight;
+		boolean doDuckSlideMove;
 		boolean doWalkRunMove;
 		boolean doDecelMove;
 		boolean doBrakeMove;
 
 		processPipes(bi);	// moving into warp pipes
-		processHeadHits();	// hitting bricks with his head
+		processHeadContacts();	// hitting bricks with his head
 		processHeadBounces();	// bouncing on heads of goombas, turtles, etc.
 
 		nextState = MarioBodyState.STAND;
@@ -198,27 +236,71 @@ public class MarioBody implements PlayerBody {
 		isVelocityLeft = b2body.getLinearVelocity().x < -MARIO_MIN_WALKSPEED;
 
 		// if mario's velocity is below min walking speed while on ground then set velocity to 0
-		if(isOnGround && !isVelocityRight && !isVelocityLeft && !bi.wantsToGoRight && !bi.wantsToGoLeft)
+		if(isOnGround && !isVelocityRight && !isVelocityLeft && !bi.wantsToGoRight && !bi.wantsToGoLeft && !isDuckSliding)
 			b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
 
 		// multiple concurrent body impulses may be necessary
+		doDuckSlideMove = false;
 		doWalkRunMove = false;
 		doDecelMove = false;
 		doBrakeMove = false;
 
+		// make a note of the last direction in which mario was moving, for duck sliding
+		if(isVelocityRight)
+			isLastVelocityRight = true;
+		else if(isVelocityLeft)
+			isLastVelocityRight = false;
+
 		// eligible for duck/unduck?
 		if(curPowerState != MarioPowerState.SMALL && isOnGround) {
+			Vector2 playerTilePos = runner.posToMapTileOffset(b2body.getPosition());
+
 			// first time duck check
 			if(bi.wantsToGoDown && !isDucking) {
 				// quack
 				isDucking = true;
-				defineBody(b2body.getPosition().cpy().sub(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
+				if(isDuckSliding)
+					isDuckSliding = false;
+				else
+					defineBody(b2body.getPosition().cpy().sub(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
 			}
 			// first time unduck check
 			else if(!bi.wantsToGoDown && isDucking) {
-				// kcauq
 				isDucking = false;
-				defineBody(b2body.getPosition().cpy().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
+
+				// Check the space above and around mario to test if mario can unduck normally, or if he is in a
+				// tight spot
+
+				// if the tile above ducking mario is solid ...
+				if(runner.isMapTileSolid(playerTilePos.cpy().add(0, 1))) {
+					Vector2 playerTileSubPos = runner.posToMapTileSubOffset(b2body.getPosition());
+					// If the player's last velocity direction was rightward, and their position is in the left half
+					// of the tile, and the tile above and to the left of them is solid, then the player should
+					// duckslide right.
+					if((isLastVelocityRight && playerTileSubPos.x <= 0.5f && runner.isMapTileSolid(playerTilePos.cpy().add(-1, 1))) ||
+							(playerTileSubPos.x > 0.5f && !runner.isMapTileSolid(playerTilePos.cpy().add(1, 1))) ||
+							(isLastVelocityRight && playerTileSubPos.x > 0.5f && runner.isMapTileSolid(playerTilePos.cpy().add(1, 1)))) {
+						isDuckSlideRight = true;
+					}
+					// the only other option is to duckslide left
+					else
+						isDuckSlideRight = false;
+
+					// tile above is solid so must be ducksliding
+					isDuckSliding = true;
+				}
+				else
+					defineBody(b2body.getPosition().cpy().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
+			}
+
+			if(isDuckSliding) {
+				// if the player was duck sliding but the space above them is now nonsolid then end duckslide
+				if(!runner.isMapTileSolid(playerTilePos.cpy().add(0, 1))) {
+					isDuckSliding = false;
+					defineBody(b2body.getPosition().cpy().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
+				}
+				else
+					doDuckSlideMove = true;
 			}
 		}
 
@@ -260,7 +342,10 @@ public class MarioBody implements PlayerBody {
 		}
 
 		// apply impulses if necessary
-		if(doBrakeMove) {
+		if(doDuckSlideMove) {
+			duckSlideLeftRight(isDuckSlideRight);
+		}
+		else if(doBrakeMove) {
 			brakeLeftRight(isFacingRight);
 			nextState = MarioBodyState.BRAKE;
 		}
@@ -340,6 +425,7 @@ public class MarioBody implements PlayerBody {
 
 		stateTimer = nextState == curState ? stateTimer + delta : 0f;
 		curState = nextState;
+		prevVelocity = b2body.getLinearVelocity().cpy();
 
 		return nextState;
 	}
@@ -502,6 +588,13 @@ public class MarioBody implements PlayerBody {
 			b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
 	}
 
+	private void duckSlideLeftRight(boolean right) {
+		if(right && b2body.getLinearVelocity().x <= MARIO_MAX_DUCKSLIDEVEL)
+			b2body.applyLinearImpulse(new Vector2(MARIO_DUCKSLIDE_XIMP, 0f), b2body.getWorldCenter(), true);
+		else if(!right && b2body.getLinearVelocity().x >= -MARIO_MAX_DUCKSLIDEVEL)
+			b2body.applyLinearImpulse(new Vector2(-MARIO_DUCKSLIDE_XIMP, 0f), b2body.getWorldCenter(), true);
+	}
+
 	private void moveBodyY(float value) {
 		b2body.applyLinearImpulse(new Vector2(0, value),
 				b2body.getWorldCenter(), true);
@@ -573,22 +666,19 @@ public class MarioBody implements PlayerBody {
 	}
 
 	@Override
-	public void onHeadHit(InteractiveTileObject thing) {
-		// After banging his head while moving up, mario cannot bang his head again until he has moved down a
-		// sufficient amount.
-		// Also, mario can only break one block per head bang - but if his head touches multiple blocks when
-		// he hits, then choose the block closest to mario on the x axis.
+	public void onHeadTileContactStart(InteractiveTileObject thing) {
+		headTileContactAddQ.add(thing);
+	}
 
-		// if can bang and is moving up, keep track of things that head hit - check the list once per update
-		if(canHeadBang && b2body.getLinearVelocity().y > 0f) {
-			headHits.add(thing);
-		}
+	@Override
+	public void onHeadTileContactEnd(InteractiveTileObject thing) {
+		headTileContactRemoveQ.add(thing);
 	}
 
 	@Override
 	public void onStartTouchPipe(PipeEntrance pipeEnt) {
-		if(!adjacentPipeAddQ.contains(pipeEnt))
-			adjacentPipeAddQ.add(pipeEnt);
+		if(!adjPipeAddQ.contains(pipeEnt))
+			adjPipeAddQ.add(pipeEnt);
 	}
 
 	@Override
@@ -714,18 +804,17 @@ public class MarioBody implements PlayerBody {
 	}
 
 	public boolean isBigBody() {
-		// not really "fake" height", rather it's the ideal height in pixels 
-		if(!isBig || isDucking)
+		if(!isBig || isDucking || isDuckSliding)
 			return false;
 		else
 			return true;
 	}
 
 	public Vector2 getB2BodySize() {
-		if(!isBig || isDucking)
-			return new Vector2(GameInfo.P2M(7f * 2), GameInfo.P2M(6f * 2));
-		else
+		if(isBigBody())
 			return new Vector2(GameInfo.P2M(7f * 2), GameInfo.P2M(13f * 2));
+		else
+			return new Vector2(GameInfo.P2M(7f * 2), GameInfo.P2M(6f * 2));
 	}
 
 	public boolean getAndResetTakeDamage() {

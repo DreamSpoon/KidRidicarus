@@ -234,7 +234,15 @@ public class TileCollisionMap {
 		return body;
 	}
 
+	/*
+	 * Returns true if:
+	 *   1) (x, y) is within the boundaries of the tile map, and
+	 *   2) tile exists at (x, y)
+	 * Returns false otherwise.
+	 */
 	public boolean isTileExist(int x, int y) {
+		if(x < 0 || x >= width || y < 0 || y > height)
+			return false;
 		return bTileMap.getCell(x, y);
 	}
 

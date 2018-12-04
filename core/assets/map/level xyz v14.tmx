@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="440" height="45" tilewidth="16" tileheight="16" infinite="0" nextlayerid="36" nextobjectid="294">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="336" height="46" tilewidth="16" tileheight="16" infinite="0" nextlayerid="49" nextobjectid="302">
  <tileset firstgid="1" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="924" columns="33">
   <image source="tileset_gutter.png" width="594" height="504"/>
  </tileset>
  <tileset firstgid="925" name="metroid tileset v5" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="30" columns="6">
   <image source="metroid tileset v5.png" width="108" height="90"/>
  </tileset>
- <layer id="32" name="background" width="440" height="45">
+ <layer id="46" name="background" width="336" height="46">
   <data encoding="base64" compression="zlib">
-   eJzt1YENwkAMBEEEBVEzZdAdFQBJ/qWzrRlpS/D5dgMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA/d53SRV7PSStlL5hSd9L74PUufT9SvpdeiOkrqVvV9L/0jshdSx9t5KOld4KqVvpm5V0vPReSJ1K36ukc6U3Q+pS+lYlnS+9G1KH0ncq6Vrp7ZCql75RSddL74dUufR9SlorvSFS1dK3KWm99I5IFUvfpaQ9pbdEqlb6JiXtK70nUqXS9yhpb+lNkarUyXMxAKjIfwNgIv8NgIn8NwAm8t8AmMh/A2Ai/w2Aifw3ACby3wCYyH8DYCL/DYCJ/DcAJvLfAJjIfwNgIv8NgKM+zvLx7g==
+   eJzt1LENwgAAA8EIBmJmxmA7ytSYwrFyJ/0Glo8DAAAAAAAAAAAAAAAAAAAAAADgXj4PSUu9n7pK7S1I+q32Z8h/Squ1P0P+U1qt/Rnyn9Jq7c+Q/5RWa3+G/Ke0Wvsz5D+l1dqfIf8prdb+DPlPabX2Z8h/Squ1P0P+U1qt/Rnyn9Jq7c+Q/5RWa3+G/Ke0Wvsz5D+l1dqfobMlrz8DuCv/CZDxnwAZ/wmQ8Z8AGf8JkPGfABn/CZDxnwAZ/wmQ8Z8AGf8JkPGfABn/CZDxnwAZ/wlcyRdyyviD
   </data>
  </layer>
- <layer id="33" name="collision" width="440" height="45">
+ <layer id="47" name="collision" width="336" height="46">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
- <layer id="34" name="scenery" width="440" height="45">
+ <layer id="48" name="scenery" width="336" height="46">
   <data encoding="base64" compression="zlib">
-   eJzt2FFKw0AQBuCkfVVEPYcKahQ8m9dQb6KezGe34MIakrbJxoSs3wcDgbY7P4HMkFYVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEC+l01VvYZ62+SfkXtOTm/55f8a/1OgQO9hnnyE+uyZK+ns6Zs/8Yx95wwxZGbKL3/0XA/PD/xf6eyZan4e23OKXvKP77m2/E/1755z3CsA+GtxvwFASew3AEpkvwFQoq79dpIUAKxR1347DbUNdTZ3GCDLxcr/j5F/WaXlb++33TvbVVLe4WAdzsOzfBvqcuSMWnq2yT9tnqFKzN/eb9ufuk6uo6XzA93is30X6v7AjGrCZw9JPdb7Z1uTfC9H0+op/7z5d2LPtnb+IebM3+fY+x932k1yfSg/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwjG+zf2Pw
+   eJzt11FKw0AQBuCkfVVEPYcKahQ8m9dQb6KezGe34MIakra7iYkJ3wcDgbaZnzA7pFUFAAAAAAAAAAAAAAAAAAAAAAAAAAAAsF4vm6p6DfW2GX6PofcZ0lt++b/KfwpF3sO8foT67JnbdLb75jveY999cuScSfnlj57r/Pzwl9LZHut8HttzjF7yl/dcWv6n+nfPKZ4VwBrE/QlAHvsToIz9CVCma3+eJAVAt679eRpqG+ps6jD8excL/78i/7zWlr+9P3fvnFdJeQclOg+zchvqsvAMzH125B83T6415m/vz+1PXSfX0dz5mU+cnbtQ9wfOQBM+e0jqsd5/dprke0M0rZ7yT5t/J/Zsa+fPMWX+Psc+/7gzb5LrQ/kBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIBl+AbcVGPw
   </data>
  </layer>
  <objectgroup id="20" name="spawnpoint">
@@ -27,7 +27,7 @@
     <property name="spawnmain" value=""/>
    </properties>
   </object>
-  <object id="232" x="720" y="544" width="16" height="16">
+  <object id="232" x="720" y="560" width="16" height="16">
    <properties>
     <property name="name" value="level1coins"/>
    </properties>
@@ -54,18 +54,19 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="29" name="rooms" visible="0">
-  <object id="238" x="0" y="0" width="5120" height="480">
+ <objectgroup id="29" name="rooms">
+  <object id="238" x="0" y="0" width="5376" height="480">
    <properties>
     <property name="roommusic" value="audio/music/SMB/01_-_Super_Mario_Bros._-_NES_-_Above_Ground_BGM.ogg"/>
     <property name="roomtype" value="hscroll"/>
-    <property name="v_offset" value="-120"/>
+    <property name="viewoffset_y" value="-112"/>
    </properties>
   </object>
-  <object id="239" x="688" y="480" width="256" height="240">
+  <object id="239" x="688" y="480" width="256" height="256">
    <properties>
     <property name="roommusic" value="audio/music/SMB/03_-_Super_Mario_Bros._-_NES_-_Underground_BGM.ogg"/>
     <property name="roomtype" value="center"/>
+    <property name="viewoffset_y" value="0"/>
    </properties>
   </object>
  </objectgroup>
@@ -79,7 +80,7 @@
     <property name="exitname" value="level1coins"/>
    </properties>
   </object>
-  <object id="233" x="896" y="656" width="16" height="32">
+  <object id="233" x="896" y="672" width="16" height="32">
    <properties>
     <property name="direction" value="right"/>
     <property name="exitname" value="level1coinsexit"/>
@@ -214,35 +215,43 @@
   <object id="286" x="832" y="368" width="16" height="16"/>
   <object id="287" x="848" y="368" width="16" height="16"/>
   <object id="288" x="864" y="368" width="16" height="16"/>
+  <object id="294" x="1296" y="400" width="16" height="16"/>
+  <object id="295" x="1312" y="400" width="16" height="16"/>
+  <object id="296" x="1328" y="400" width="16" height="16"/>
+  <object id="297" x="1344" y="400" width="16" height="16"/>
+  <object id="298" x="1296" y="416" width="16" height="16"/>
+  <object id="299" x="1312" y="416" width="16" height="16"/>
+  <object id="300" x="1328" y="416" width="16" height="16"/>
+  <object id="301" x="1344" y="416" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="30" name="staticcoin">
   <object id="244" x="992" y="272" width="16" height="16"/>
   <object id="245" x="992" y="304" width="16" height="16"/>
   <object id="246" x="960" y="416" width="16" height="16"/>
   <object id="247" x="1072" y="416" width="16" height="16"/>
-  <object id="248" x="752" y="624" width="16" height="16"/>
-  <object id="249" x="768" y="624" width="16" height="16"/>
-  <object id="250" x="784" y="624" width="16" height="16"/>
-  <object id="251" x="800" y="624" width="16" height="16"/>
-  <object id="252" x="816" y="624" width="16" height="16"/>
-  <object id="253" x="832" y="624" width="16" height="16"/>
-  <object id="254" x="848" y="624" width="16" height="16"/>
-  <object id="255" x="752" y="592" width="16" height="16"/>
-  <object id="256" x="768" y="592" width="16" height="16"/>
-  <object id="257" x="784" y="592" width="16" height="16"/>
-  <object id="258" x="800" y="592" width="16" height="16"/>
-  <object id="259" x="816" y="592" width="16" height="16"/>
-  <object id="260" x="832" y="592" width="16" height="16"/>
-  <object id="261" x="848" y="592" width="16" height="16"/>
-  <object id="263" x="768" y="560" width="16" height="16"/>
-  <object id="264" x="784" y="560" width="16" height="16"/>
-  <object id="265" x="800" y="560" width="16" height="16"/>
-  <object id="266" x="816" y="560" width="16" height="16"/>
-  <object id="267" x="832" y="560" width="16" height="16"/>
+  <object id="248" x="752" y="640" width="16" height="16"/>
+  <object id="249" x="768" y="640" width="16" height="16"/>
+  <object id="250" x="784" y="640" width="16" height="16"/>
+  <object id="251" x="800" y="640" width="16" height="16"/>
+  <object id="252" x="816" y="640" width="16" height="16"/>
+  <object id="253" x="832" y="640" width="16" height="16"/>
+  <object id="254" x="848" y="640" width="16" height="16"/>
+  <object id="255" x="752" y="608" width="16" height="16"/>
+  <object id="256" x="768" y="608" width="16" height="16"/>
+  <object id="257" x="784" y="608" width="16" height="16"/>
+  <object id="258" x="800" y="608" width="16" height="16"/>
+  <object id="259" x="816" y="608" width="16" height="16"/>
+  <object id="260" x="832" y="608" width="16" height="16"/>
+  <object id="261" x="848" y="608" width="16" height="16"/>
+  <object id="263" x="768" y="576" width="16" height="16"/>
+  <object id="264" x="784" y="576" width="16" height="16"/>
+  <object id="265" x="800" y="576" width="16" height="16"/>
+  <object id="266" x="816" y="576" width="16" height="16"/>
+  <object id="267" x="832" y="576" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="31" name="despawn">
   <object id="269" x="1040" y="480" width="1504" height="48"/>
-  <object id="289" x="4992" y="480" width="512" height="64"/>
+  <object id="289" x="4992" y="480" width="384" height="64"/>
  </objectgroup>
  <objectgroup id="17" name="goomba">
   <object id="163" x="512" y="432" width="16" height="16"/>

@@ -32,8 +32,8 @@ public class Room {
 			roommusic = p.get(GameInfo.OBJKEY_ROOMMUSIC, String.class);
 
 		vOffset = 0f;
-		if(p.containsKey(GameInfo.OBJKEY_VOFFSET))
-			vOffset = GameInfo.P2M(Float.valueOf(p.get(GameInfo.OBJKEY_VOFFSET, String.class)));
+		if(p.containsKey(GameInfo.OBJKEY_VIEWOFFSET_Y))
+			vOffset = GameInfo.P2M(Float.valueOf(p.get(GameInfo.OBJKEY_VIEWOFFSET_Y, String.class)));
 	}
 
 	// simple point form bounds check 
@@ -50,7 +50,7 @@ public class Room {
 			case CENTER:
 			default:
 				gamecam.position.x = bounds.x + bounds.width/2f;
-				gamecam.position.y = bounds.y + bounds.height/2f;
+				gamecam.position.y = bounds.y + bounds.height/2f + vOffset;
 				break;
 		}
 		gamecam.update();

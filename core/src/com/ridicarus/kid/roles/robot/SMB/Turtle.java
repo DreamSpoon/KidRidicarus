@@ -42,7 +42,7 @@ public class Turtle extends MobileRobotRole implements HeadBounceBot, TouchDmgBo
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 1f;
-	private static final float SLIDE_VEL = 1.5f;
+	private static final float SLIDE_VEL = 2f;
 	private static final float WAKING_TIME = 3f;
 	private static final float WAKE_UP_DELAY = 1.7f;
 	private static final float DIE_FALL_TIME = 6f;

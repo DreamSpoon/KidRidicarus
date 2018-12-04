@@ -75,6 +75,7 @@ public class WorldRenderer {
 
 		batch.end();
 
+		// DEBUG: draw outlines of Box2D fixtures
 //		drawB2DebugRenderer(gamecam);
 	}
 

@@ -41,7 +41,7 @@ public class PlayScreen implements Screen {
 		gamecam.position.set(gameport.getWorldWidth()/2, gameport.getWorldHeight()/2, 0);
 
 		maploader = new TmxMapLoader();
-		map = maploader.load(GameInfo.GAMEMAP_NAME);
+		map = maploader.load(GameInfo.GAMEMAP_FILENAME);
 
 		worldRunner = new WorldRunner(game.manager, atlas, gamecam);
 		worldRunner.loadMap(map, game.manager);
