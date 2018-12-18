@@ -1,14 +1,15 @@
 package kidridicarus.hud;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+
+import kidridicarus.tools.EncapTexAtlas;
 
 public class HudCoin extends Image {
 	private CoinHudDrawable drawable;
 
-	public HudCoin(TextureAtlas atlas) {
+	public HudCoin(EncapTexAtlas encapTexAtlas) {
 		super();
-		setDrawable(drawable = new CoinHudDrawable(atlas));
+		setDrawable(drawable = new CoinHudDrawable(encapTexAtlas));
 	}
 
 	@Override

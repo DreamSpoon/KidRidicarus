@@ -6,22 +6,24 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.GameInfo;
-import kidridicarus.bodies.B2DFactory;
 import kidridicarus.bodies.BotBumpableBody;
 import kidridicarus.bodies.BotGroundCheckBody;
 import kidridicarus.bodies.BotTouchBotBody;
+import kidridicarus.bodies.MobileRobotBody;
 import kidridicarus.bodies.RobotBody;
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.robot.SMB.enemy.GoombaRole;
+import kidridicarus.tools.B2DFactory;
 
-public class GoombaBody extends RobotBody implements BotGroundCheckBody, BotTouchBotBody, BotBumpableBody {
-	private static final float BODY_WIDTH = GameInfo.P2M(14f);
-	private static final float BODY_HEIGHT = GameInfo.P2M(14f);
-	private static final float FOOT_WIDTH = GameInfo.P2M(12f);
-	private static final float FOOT_HEIGHT = GameInfo.P2M(4f);
+public class GoombaBody extends MobileRobotBody implements BotGroundCheckBody, BotTouchBotBody, BotBumpableBody {
+	private static final float BODY_WIDTH = UInfo.P2M(14f);
+	private static final float BODY_HEIGHT = UInfo.P2M(14f);
+	private static final float FOOT_WIDTH = UInfo.P2M(12f);
+	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
 	private GoombaRole role;
 
@@ -35,8 +37,6 @@ public class GoombaBody extends RobotBody implements BotGroundCheckBody, BotTouc
 		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, GameInfo.ROBOT_BIT,
 				(short) (GameInfo.BOUNDARY_BIT | GameInfo.ROBOT_BIT | GameInfo.MARIO_ROBOSENSOR_BIT), position,
 				BODY_WIDTH, BODY_HEIGHT);
-		// start in the inactive state, becoming active when the player is close enough
-		b2body.setActive(false);
 		createBottomSensorFixture();
 	}
 
@@ -65,11 +65,11 @@ public class GoombaBody extends RobotBody implements BotGroundCheckBody, BotTouc
 
 	@Override
 	public void onTouchRobot(RobotBody robotBody) {
-		role.onTouchRobot(robotBody.getRole());
+		role.onTouchRobot(robotBody.getParent());
 	}
 
 	@Override
-	public RobotRole getRole() {
+	public RobotRole getParent() {
 		return role;
 	}
 }

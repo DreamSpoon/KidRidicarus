@@ -14,13 +14,13 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.GameInfo;
+import kidridicarus.info.GameInfo;
 import kidridicarus.worldrunner.Player;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.worldrunner.RoleWorld;
 
 public class SMB_Hud implements Disposable {
 	private SpriteBatch batch;
-	private WorldRunner runner;
+	private RoleWorld runner;
 	private Player rePlayer;
 	private Stage stage;
 	private Viewport viewport;
@@ -30,7 +30,7 @@ public class SMB_Hud implements Disposable {
 	private Label worldVarLabel;
 	private Label timeVarLabel;
 
-	public SMB_Hud(SpriteBatch batch, WorldRunner runner, Player rePlayer) {
+	public SMB_Hud(SpriteBatch batch, RoleWorld runner, Player rePlayer) {
 		this.batch = batch;
 		this.runner = runner;
 		this.rePlayer = rePlayer;
@@ -57,7 +57,7 @@ public class SMB_Hud implements Disposable {
 		table.add(timeLabel).align(Align.left).expandX().padTop(16);
 		table.row();
 		table.add(scoreVarLabel).align(Align.left).expandX().padLeft(24);
-		table.add(new HudCoin(runner.getAtlas())).align(Align.right);
+		table.add(new HudCoin(runner.getEncapTexAtlas())).align(Align.right);
 		table.add(coinVarLabel).align(Align.left).expandX();
 		table.add(worldVarLabel).align(Align.left).expandX();
 		table.add(timeVarLabel).align(Align.left).expandX();

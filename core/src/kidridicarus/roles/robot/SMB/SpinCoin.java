@@ -1,6 +1,7 @@
 package kidridicarus.roles.robot.SMB;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -8,28 +9,33 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.sprites.SMB.BounceCoinSprite;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
-public class BounceCoin implements RobotRole {
-	private static final float BODY_WIDTH = GameInfo.P2M(7f);
-	private static final float BODY_HEIGHT = GameInfo.P2M(7f);
+public class SpinCoin implements RobotRole {
+	private static final float BODY_WIDTH = UInfo.P2M(7f);
+	private static final float BODY_HEIGHT = UInfo.P2M(7f);
 	private static final float COIN_SPIN_TIME = 0.54f;
 	private static final Vector2 START_VELOCITY = new Vector2(0f, 3.1f);
 
-	private WorldRunner runner;
+	private MapProperties properties;
+	private RoleWorld runner;
 	private Body b2body;
 	private BounceCoinSprite coinSprite;
 	private float stateTimer;
 
-	public BounceCoin(WorldRunner runner, Vector2 position) {
+	public SpinCoin(RoleWorld runner, RobotRoleDef rdef) {
+		properties = rdef.properties;
 		this.runner = runner;
 
-		coinSprite = new BounceCoinSprite(runner.getAtlas(), position);
-		defineBody(position, START_VELOCITY);
+		Vector2 pos = rdef.bounds.getCenter(new Vector2());
+		coinSprite = new BounceCoinSprite(runner.getEncapTexAtlas(), pos);
+		defineBody(pos, START_VELOCITY);
 		stateTimer = 0f;
 
 		runner.enableRobotUpdate(this);
@@ -61,10 +67,9 @@ public class BounceCoin implements RobotRole {
 	@Override
 	public void update(float delta) {
 		coinSprite.update(delta, b2body.getPosition());
-
 		stateTimer += delta;
 		if(stateTimer > COIN_SPIN_TIME)
-			runner.removeRobot(this);
+			runner.destroyRobot(this);
 	}
 
 	@Override
@@ -84,11 +89,12 @@ public class BounceCoin implements RobotRole {
 	}
 
 	@Override
-	public void dispose() {
+	public MapProperties getProperties() {
+		return properties;
 	}
 
 	@Override
-	public void setActive(boolean active) {
-		b2body.setActive(active);
+	public void dispose() {
+		b2body.getWorld().destroyBody(b2body);
 	}
 }

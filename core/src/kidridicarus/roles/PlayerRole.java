@@ -4,9 +4,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.roles.robot.general.PlayerSpawner;
+import kidridicarus.roles.robot.general.Room;
 import kidridicarus.tools.BasicInputs;
-import kidridicarus.worldrunner.Spawnpoint;
 
 public interface PlayerRole extends Disposable {
 	public void update(float delta, BasicInputs bi);
@@ -17,8 +18,10 @@ public interface PlayerRole extends Disposable {
 	public boolean isDead();
 	public float getStateTimer();
 
-	public Spawnpoint getWarpSpawnpoint();
-	public void respawn(Spawnpoint sp);
+	public PlayerSpawner getWarpSpawnpoint();
+	public void respawn(PlayerSpawner sp);
 	public boolean isAtLevelEnd();
 	public boolean isOnGround();
+
+	public Room getCurrentRoom();
 }

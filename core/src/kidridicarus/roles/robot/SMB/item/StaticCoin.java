@@ -1,34 +1,31 @@
 package kidridicarus.roles.robot.SMB.item;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
 import kidridicarus.bodies.SMB.StaticCoinBody;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.player.MarioRole;
 import kidridicarus.roles.robot.ItemBot;
 import kidridicarus.sprites.SMB.StaticCoinSprite;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 public class StaticCoin implements RobotRole, ItemBot {
-	private WorldRunner runner;
+	private MapProperties properties;
+	private RoleWorld runner;
 	private StaticCoinSprite coinSprite;
 	private StaticCoinBody coinBody;
 
-	public StaticCoin(WorldRunner runner, MapObject object) {
+	public StaticCoin(RoleWorld runner, RobotRoleDef rdef) {
+		properties = rdef.properties;
 		this.runner = runner;
-
-		Rectangle bounds = ((RectangleMapObject) object).getRectangle();
-		Vector2 position = new Vector2(GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
-				GameInfo.P2M(bounds.getY() + bounds.getHeight() / 2f));
-		coinSprite = new StaticCoinSprite(runner.getAtlas(), position);
-		coinBody = new StaticCoinBody(this, runner.getWorld(), position);
+		coinSprite = new StaticCoinSprite(runner.getEncapTexAtlas(), rdef.bounds.getCenter(new Vector2()));
+		coinBody = new StaticCoinBody(this, runner.getWorld(), rdef.bounds.getCenter(new Vector2()));
 
 		runner.enableRobotUpdate(this);
 		runner.setRobotDrawLayer(this, SpriteDrawOrder.BOTTOM);
@@ -48,13 +45,8 @@ public class StaticCoin implements RobotRole, ItemBot {
 	public void use(PlayerRole role) {
 		if(role instanceof MarioRole) {
 			((MarioRole) role).giveCoin();
-			runner.removeRobot(this);
+			runner.destroyRobot(this);
 		}
-	}
-
-	@Override
-	public void setActive(boolean active) {
-		coinBody.setActive(active);
 	}
 
 	@Override
@@ -65,6 +57,11 @@ public class StaticCoin implements RobotRole, ItemBot {
 	@Override
 	public Rectangle getBounds() {
 		return coinBody.getBounds();
+	}
+
+	@Override
+	public MapProperties getProperties() {
+		return properties;
 	}
 
 	@Override

@@ -5,18 +5,19 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.GameInfo;
-import kidridicarus.bodies.B2DFactory;
 import kidridicarus.bodies.BotBumpableBody;
-import kidridicarus.bodies.RobotBody;
+import kidridicarus.bodies.MobileRobotBody;
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.robot.SMB.item.PowerStar;
+import kidridicarus.tools.B2DFactory;
 
-public class PowerStarBody extends RobotBody implements BotBumpableBody {
-	private static final float BODY_WIDTH = GameInfo.P2M(14f);
-	private static final float BODY_HEIGHT = GameInfo.P2M(12f);
+public class PowerStarBody extends MobileRobotBody implements BotBumpableBody {
+	private static final float BODY_WIDTH = UInfo.P2M(14f);
+	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 
 	private PowerStar role;
 
@@ -52,7 +53,7 @@ public class PowerStarBody extends RobotBody implements BotBumpableBody {
 	}
 
 	@Override
-	public RobotRole getRole() {
+	public RobotRole getParent() {
 		return role;
 	}
 }

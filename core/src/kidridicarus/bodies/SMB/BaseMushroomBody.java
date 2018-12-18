@@ -6,22 +6,24 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-import kidridicarus.GameInfo;
-import kidridicarus.bodies.B2DFactory;
 import kidridicarus.bodies.BotBumpableBody;
 import kidridicarus.bodies.BotGroundCheckBody;
 import kidridicarus.bodies.BotTouchBotBody;
+import kidridicarus.bodies.MobileRobotBody;
 import kidridicarus.bodies.RobotBody;
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.robot.SMB.item.BaseMushroom;
+import kidridicarus.tools.B2DFactory;
 
-public class BaseMushroomBody extends RobotBody implements BotGroundCheckBody, BotTouchBotBody, BotBumpableBody {
-	private static final float BODY_WIDTH = GameInfo.P2M(14f);
-	private static final float BODY_HEIGHT = GameInfo.P2M(12f);
-	private static final float FOOT_WIDTH = GameInfo.P2M(12f);
-	private static final float FOOT_HEIGHT = GameInfo.P2M(4f);
+public class BaseMushroomBody extends MobileRobotBody implements BotGroundCheckBody, BotTouchBotBody, BotBumpableBody {
+	private static final float BODY_WIDTH = UInfo.P2M(14f);
+	private static final float BODY_HEIGHT = UInfo.P2M(12f);
+	private static final float FOOT_WIDTH = UInfo.P2M(12f);
+	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
 	private BaseMushroom role;
 
@@ -55,7 +57,7 @@ public class BaseMushroomBody extends RobotBody implements BotGroundCheckBody, B
 	
 	@Override
 	public void onTouchRobot(RobotBody robo) {
-		role.onTouchRobot(robo.getRole());
+		role.onTouchRobot(robo.getParent());
 	}
 
 	@Override
@@ -64,7 +66,7 @@ public class BaseMushroomBody extends RobotBody implements BotGroundCheckBody, B
 	}
 
 	@Override
-	public RobotRole getRole() {
+	public RobotRole getParent() {
 		return role;
 	}
 }

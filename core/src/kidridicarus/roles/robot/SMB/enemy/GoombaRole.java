@@ -1,26 +1,29 @@
 package kidridicarus.roles.robot.SMB.enemy;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
-import kidridicarus.InfoSMB.PointAmount;
 import kidridicarus.bodies.SMB.GoombaBody;
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.AudioInfo;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.SMBInfo.PointAmount;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.SimpleWalkRobotRole;
+import kidridicarus.roles.player.MarioRole;
 import kidridicarus.roles.robot.BotTouchBot;
 import kidridicarus.roles.robot.BumpableBot;
 import kidridicarus.roles.robot.DamageableBot;
 import kidridicarus.roles.robot.HeadBounceBot;
 import kidridicarus.roles.robot.TouchDmgBot;
 import kidridicarus.sprites.SMB.GoombaSprite;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.tools.RRDefFactory;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot, BotTouchBot
 {
@@ -31,7 +34,8 @@ public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 
 	public enum GoombaRoleState { WALK, FALL, DEAD_SQUISH, DEAD_BUMPED };
 
-	private WorldRunner runner;
+	private MapProperties properties;
+	private RoleWorld runner;
 	private GoombaBody goomBody;
 	private GoombaSprite goombaSprite;
 	private GoombaRoleState prevState;
@@ -40,14 +44,14 @@ public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 	private boolean isBumped;
 	private PlayerRole perp;	// player perpetrator of squish, bump, and damage
 
-	public GoombaRole(WorldRunner runner, MapObject object) {
+	public GoombaRole(RoleWorld runner, RobotRoleDef rdef) {
+		properties = rdef.properties;
 		this.runner = runner;
 
 		setConstVelocity(-GOOMBA_WALK_VEL, 0f);
-
-		Vector2 position = GameInfo.P2MVector(((RectangleMapObject) object).getRectangle().getCenter(new Vector2()));
+		Vector2 position = rdef.bounds.getCenter(new Vector2());
 		goomBody = new GoombaBody(this, runner.getWorld(), position, getConstVelocity());
-		goombaSprite = new GoombaSprite(runner.getAtlas(), position);
+		goombaSprite = new GoombaSprite(runner.getEncapTexAtlas(), position);
 
 		// the equivalent of isDead: bumped | squished
 		isBumped = false;
@@ -56,7 +60,6 @@ public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 
 		prevState = GoombaRoleState.WALK;
 		stateTimer = 0f;
-
 		runner.enableRobotUpdate(this);
 		runner.setRobotDrawLayer(this, SpriteDrawOrder.MIDDLE);
 	}
@@ -81,7 +84,7 @@ public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 					startSquish();
 				// wait a short time and disappear, if dead
 				else if(stateTimer > GOOMBA_SQUISH_TIME)
-					runner.removeRobot(this);
+					runner.destroyRobot(this);
 				break;
 			case DEAD_BUMPED:
 				// new bumper?
@@ -89,7 +92,7 @@ public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 					startBump();
 				// check the old bumper for timeout
 				else if(stateTimer > GOOMBA_BUMP_FALL_TIME)
-					runner.removeRobot(this);
+					runner.destroyRobot(this);
 				break;
 			case WALK:
 				goomBody.setVelocity(getConstVelocity());
@@ -112,9 +115,12 @@ public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 
 		goomBody.makeUntouchable();
 
-		runner.playSound(GameInfo.SOUND_STOMP);
-		if(perp != null)
-			runner.givePlayerPoints(perp, PointAmount.P100, true, goomBody.getPosition(), GameInfo.P2M(16), true);
+		runner.playSound(AudioInfo.SOUND_STOMP);
+		if(perp != null) {
+			runner.createRobot(RRDefFactory.makeFloatingPointsDef(PointAmount.P100, true,
+					goomBody.getPosition(), UInfo.P2M(16), (MarioRole) perp));
+		}
+
 	}
 
 	private void startBump() {
@@ -122,8 +128,10 @@ public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 
 		// keep x velocity, but redo the y velocity so goomba bounces up
 		goomBody.setVelocity(goomBody.getVelocity().x, GOOMBA_BUMP_UP_VEL);
-		if(perp != null)
-			runner.givePlayerPoints(perp, PointAmount.P100, true, goomBody.getPosition(), GameInfo.P2M(16), false);
+		if(perp != null) {
+			runner.createRobot(RRDefFactory.makeFloatingPointsDef(PointAmount.P100, false,
+					goomBody.getPosition(), UInfo.P2M(16), (MarioRole) perp));
+		}
 	}
 
 	@Override
@@ -161,11 +169,6 @@ public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 			reverseConstVelocity(true,  false);
 	}
 
-	@Override
-	public void setActive(boolean active) {
-		goomBody.setActive(active);
-	}
-
 	// touching goomba does damage to players
 	@Override
 	public boolean isTouchDamage() {
@@ -180,6 +183,11 @@ public class GoombaRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 	@Override
 	public Rectangle getBounds() {
 		return goomBody.getBounds();
+	}
+
+	@Override
+	public MapProperties getProperties() {
+		return properties;
 	}
 
 	@Override

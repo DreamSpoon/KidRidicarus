@@ -1,28 +1,33 @@
 package kidridicarus.roles.robot.SMB;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.Direction4;
 import kidridicarus.bodies.PlayerBody;
 import kidridicarus.bodies.SMB.PipeWarpBody;
+import kidridicarus.info.KVInfo;
+import kidridicarus.info.UInfo;
+import kidridicarus.info.GameInfo.Direction4;
 import kidridicarus.roles.RobotRole;
-import kidridicarus.worldrunner.Spawnpoint;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.roles.robot.general.PlayerSpawner;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 public class PipeWarp implements RobotRole {
+	private MapProperties properties;
+	private RoleWorld runner;
 	private PipeWarpBody pwbody;
-	private Spawnpoint exitSpawnpoint;
 	private Direction4 direction;
 
-	public PipeWarp(WorldRunner runner, MapObject object, Spawnpoint exitSpawnpoint) {
+	public PipeWarp(RoleWorld runner, RobotRoleDef rdef) {
+		this.runner = runner;
+		properties = rdef.properties;
+
 		direction = null;
-		if(object.getProperties().containsKey(GameInfo.OBJKEY_DIRECTION)) {
-			String dir = object.getProperties().get(GameInfo.OBJKEY_DIRECTION, String.class);
+		if(rdef.properties.containsKey(KVInfo.KEY_DIRECTION)) {
+			String dir = rdef.properties.get(KVInfo.KEY_DIRECTION, String.class);
 			if(dir.equals("right"))
 				direction = Direction4.RIGHT;
 			else if(dir.equals("up"))
@@ -32,9 +37,7 @@ public class PipeWarp implements RobotRole {
 			else if(dir.equals("down"))
 				direction = Direction4.DOWN;
 		}
-		this.exitSpawnpoint = exitSpawnpoint;
-		pwbody = new PipeWarpBody(this, runner.getWorld(),
-				GameInfo.P2MRect(((RectangleMapObject) object).getRectangle()));
+		pwbody = new PipeWarpBody(this, runner.getWorld(), rdef.bounds);
 	}
 
 	@Override
@@ -65,24 +68,22 @@ public class PipeWarp implements RobotRole {
 		else if(direction == Direction4.LEFT || direction == Direction4.RIGHT) {
 			// Little mario or big mario might be entering the pipe, check that either one of these has a
 			// bottom y bound that is +- 2 pixels from the bottom y bound of the pipe.
-			if(pwbody.getBounds().y - GameInfo.P2M(2f) <= marioBody.getBounds().y &&
-					marioBody.getBounds().y <= pwbody.getBounds().y + GameInfo.P2M(2f))
+			if(pwbody.getBounds().y - UInfo.P2M(2f) <= marioBody.getBounds().y &&
+					marioBody.getBounds().y <= pwbody.getBounds().y + UInfo.P2M(2f))
 				return true;
 		}
 		return false;
 	}
 
-	public Spawnpoint getWarpExit() {
-		return exitSpawnpoint;
+	public PlayerSpawner getWarpExit() {
+		if(!properties.containsKey(KVInfo.KEY_EXITNAME))
+			return null;
+
+		return runner.getPlayerSpawnerByName(properties.get(KVInfo.KEY_EXITNAME, String.class));
 	}
 
 	public Direction4 getDirection() {
 		return direction;
-	}
-
-	@Override
-	public void setActive(boolean active) {
-		pwbody.setActive(active);
 	}
 
 	@Override
@@ -93,6 +94,11 @@ public class PipeWarp implements RobotRole {
 	@Override
 	public Rectangle getBounds() {
 		return pwbody.getBounds();
+	}
+
+	@Override
+	public MapProperties getProperties() {
+		return properties;
 	}
 
 	@Override

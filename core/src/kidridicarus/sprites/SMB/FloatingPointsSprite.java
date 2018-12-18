@@ -2,11 +2,12 @@ package kidridicarus.sprites.SMB;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.InfoSMB.PointAmount;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.SMBInfo.PointAmount;
+import kidridicarus.info.UInfo;
+import kidridicarus.tools.EncapTexAtlas;
 
 public class FloatingPointsSprite {
 	private enum PDigit { DIGIT_0, DIGIT_1, DIGIT_2, DIGIT_4, DIGIT_5, DIGIT_8 };
@@ -18,32 +19,32 @@ public class FloatingPointsSprite {
 	private Sprite sprite1UP;
 	private boolean is1UP;
 
-	public FloatingPointsSprite(TextureAtlas atlas, Vector2 position, PointAmount amount) {
+	public FloatingPointsSprite(EncapTexAtlas encapTexAtlas, Vector2 position, PointAmount amount) {
 		this.position = position;
 		
-		if(amount == PointAmount.UP1) {
-			sprite1UP = new Sprite(atlas.findRegion(GameInfo.TEXATLAS_1UPDIGITS), 0, 0, 16, 8);
-			sprite1UP.setBounds(sprite1UP.getX(), sprite1UP.getY(), GameInfo.P2M(16), GameInfo.P2M(8));
+		if(amount == PointAmount.P1UP) {
+			sprite1UP = new Sprite(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_1UPDIGITS, 0, 0, 16, 8));
+			sprite1UP.setBounds(sprite1UP.getX(), sprite1UP.getY(), UInfo.P2M(16), UInfo.P2M(8));
 			is1UP = true;
 			return;
 		}
 
 		dSprites = new Sprite[PDigit.values().length];
 		dSprites[PDigit.DIGIT_0.ordinal()] =
-				new Sprite(atlas.findRegion(GameInfo.TEXATLAS_POINTDIGITS), 0*4, 0, 4, 8);
+				new Sprite(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_POINTDIGITS, 0*4, 0, 4, 8));
 		dSprites[PDigit.DIGIT_1.ordinal()] =
-				new Sprite(atlas.findRegion(GameInfo.TEXATLAS_POINTDIGITS), 1*4, 0, 4, 8);
+				new Sprite(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_POINTDIGITS, 1*4, 0, 4, 8));
 		dSprites[PDigit.DIGIT_2.ordinal()] =
-				new Sprite(atlas.findRegion(GameInfo.TEXATLAS_POINTDIGITS), 2*4, 0, 4, 8);
+				new Sprite(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_POINTDIGITS, 2*4, 0, 4, 8));
 		dSprites[PDigit.DIGIT_4.ordinal()] =
-				new Sprite(atlas.findRegion(GameInfo.TEXATLAS_POINTDIGITS), 3*4, 0, 4, 8);
+				new Sprite(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_POINTDIGITS, 3*4, 0, 4, 8));
 		dSprites[PDigit.DIGIT_5.ordinal()] =
-				new Sprite(atlas.findRegion(GameInfo.TEXATLAS_POINTDIGITS), 4*4, 0, 4, 8);
+				new Sprite(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_POINTDIGITS, 4*4, 0, 4, 8));
 		dSprites[PDigit.DIGIT_8.ordinal()] =
-				new Sprite(atlas.findRegion(GameInfo.TEXATLAS_POINTDIGITS), 5*4, 0, 4, 8);
+				new Sprite(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_POINTDIGITS, 5*4, 0, 4, 8));
 
 		for(int i=0; i<PDigit.values().length; i++)
-			dSprites[i].setBounds(dSprites[i].getX(), dSprites[i].getY(), GameInfo.P2M(4), GameInfo.P2M(8));
+			dSprites[i].setBounds(dSprites[i].getX(), dSprites[i].getY(), UInfo.P2M(4), UInfo.P2M(8));
 
 		// allocate arrays for drawing point digits, set up draw offsets, and prefill trailing zero digits
 		switch(amount) {
@@ -53,9 +54,9 @@ public class FloatingPointsSprite {
 			case P500:
 			case P800:
 				drawOffsets = new Vector2[3];
-				drawOffsets[0] = GameInfo.P2MVector(-1f * 4f, 0f);
-				drawOffsets[1] = GameInfo.P2MVector(0f * 4f, 0f);
-				drawOffsets[2] = GameInfo.P2MVector(1f * 4f, 0f);
+				drawOffsets[0] = UInfo.P2MVector(-1f * 4f, 0f);
+				drawOffsets[1] = UInfo.P2MVector(0f * 4f, 0f);
+				drawOffsets[2] = UInfo.P2MVector(1f * 4f, 0f);
 				drawDigits = new PDigit[3];
 				drawDigits[1] = PDigit.DIGIT_0;
 				drawDigits[2] = PDigit.DIGIT_0;
@@ -66,10 +67,10 @@ public class FloatingPointsSprite {
 			case P5000:
 			case P8000:
 				drawOffsets = new Vector2[4];
-				drawOffsets[0] = GameInfo.P2MVector(-1.5f * 4f, 0f);
-				drawOffsets[1] = GameInfo.P2MVector(-0.5f * 4f, 0f);
-				drawOffsets[2] = GameInfo.P2MVector(0.5f * 4f, 0f);
-				drawOffsets[3] = GameInfo.P2MVector(1.5f * 4f, 0f);
+				drawOffsets[0] = UInfo.P2MVector(-1.5f * 4f, 0f);
+				drawOffsets[1] = UInfo.P2MVector(-0.5f * 4f, 0f);
+				drawOffsets[2] = UInfo.P2MVector(0.5f * 4f, 0f);
+				drawOffsets[3] = UInfo.P2MVector(1.5f * 4f, 0f);
 				drawDigits = new PDigit[4];
 				drawDigits[1] = PDigit.DIGIT_0;
 				drawDigits[2] = PDigit.DIGIT_0;

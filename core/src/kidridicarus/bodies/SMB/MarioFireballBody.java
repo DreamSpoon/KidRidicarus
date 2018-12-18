@@ -5,17 +5,19 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.GameInfo;
-import kidridicarus.bodies.B2DFactory;
 import kidridicarus.bodies.BotTouchBotBody;
+import kidridicarus.bodies.MobileRobotBody;
 import kidridicarus.bodies.RobotBody;
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.robot.SMB.MarioFireball;
+import kidridicarus.tools.B2DFactory;
 
-public class MarioFireballBody extends RobotBody implements BotTouchBotBody {
-	private static final float BODY_WIDTH = GameInfo.P2M(7f);
-	private static final float BODY_HEIGHT = GameInfo.P2M(7f);
+public class MarioFireballBody extends MobileRobotBody implements BotTouchBotBody {
+	private static final float BODY_WIDTH = UInfo.P2M(7f);
+	private static final float BODY_HEIGHT = UInfo.P2M(7f);
 
 	private MarioFireball role;
 
@@ -41,7 +43,7 @@ public class MarioFireballBody extends RobotBody implements BotTouchBotBody {
 	}
 
 	@Override
-	public RobotRole getRole() {
+	public RobotRole getParent() {
 		return role;
 	}
 
@@ -52,7 +54,7 @@ public class MarioFireballBody extends RobotBody implements BotTouchBotBody {
 
 	@Override
 	public void onTouchRobot(RobotBody robo) {
-		role.onTouchRobot(robo.getRole());
+		role.onTouchRobot(robo.getParent());
 	}
 
 	public void setGravityScale(float scale) {

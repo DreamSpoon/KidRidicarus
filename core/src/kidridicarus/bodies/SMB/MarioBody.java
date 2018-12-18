@@ -1,8 +1,5 @@
 package kidridicarus.bodies.SMB;
 
-import java.util.LinkedList;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -11,12 +8,16 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.Direction4;
 import kidridicarus.bodies.PlayerBody;
 import kidridicarus.bodies.RobotBody;
+import kidridicarus.bodies.general.RoomBoxBody;
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.AudioInfo;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.GameInfo.Direction4;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.player.MarioRole;
 import kidridicarus.roles.player.MarioRole.MarioPowerState;
@@ -25,14 +26,16 @@ import kidridicarus.roles.robot.HeadBounceBot;
 import kidridicarus.roles.robot.ItemBot;
 import kidridicarus.roles.robot.TouchDmgBot;
 import kidridicarus.roles.robot.SMB.Flagpole;
-import kidridicarus.roles.robot.SMB.LevelEnd;
+import kidridicarus.roles.robot.SMB.LevelEndTrigger;
 import kidridicarus.roles.robot.SMB.PipeWarp;
 import kidridicarus.roles.robot.SMB.enemy.TurtleRole;
-import kidridicarus.tiles.InteractiveTileObject;
+import kidridicarus.roles.robot.general.Room;
 import kidridicarus.tools.BasicInputs;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.tools.BlockingQueueList;
+import kidridicarus.worldrunner.RoleWorld;
+import kidridicarus.bodies.BotBumpableBody;
 
-public class MarioBody implements PlayerBody {
+public class MarioBody implements PlayerBody, Disposable {
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 	private static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
 	private static final float MARIO_RUNMOVE_XIMP = MARIO_WALKMOVE_XIMP * 1.5f;
@@ -56,7 +59,7 @@ public class MarioBody implements PlayerBody {
 	public enum MarioBodyState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, DEAD };
 
 	private MarioRole role;
-	private WorldRunner runner;
+	private RoleWorld runner;
 	private Body b2body;
 	private Fixture marioBodyFixture;	// for making mario invincible after damage
 
@@ -80,23 +83,22 @@ public class MarioBody implements PlayerBody {
 	private Vector2 prevVelocity;
 
 	// tiles that mario's head sensor is contacting, for head bump processes
-	private LinkedBlockingQueue<InteractiveTileObject> headTileContactAddQ;
-	private LinkedBlockingQueue<InteractiveTileObject> headTileContactRemoveQ;
-	private LinkedList<InteractiveTileObject> headTileContact;
+	private BlockingQueueList<RobotBody> headRobotContacts;
 
 	// adjacent warp pipes that mario might use
-	private LinkedBlockingQueue<PipeWarp> adjPipeAddQ;
-	private LinkedBlockingQueue<PipeWarp> adjacentPipeRemoveQ;
-	private LinkedList<PipeWarp> adjacentPipes;
+	private BlockingQueueList<PipeWarp> warpPipeContacts;
+
+	// rooms in contact with the player - but player is really just IN one room, by their getPosition()
+	private BlockingQueueList<Room> curRooms;
 
 	private PipeWarp pipeToEnter;
 	private Flagpole flagpoleTouched;
-	private LevelEnd levelendTouched;
+	private LevelEndTrigger levelendTouched;
 
 	private MarioBodyState curState;
 	private float stateTimer;
 
-	public MarioBody(MarioRole role, WorldRunner runner, Vector2 position, boolean isFacingRight, boolean isBig) {
+	public MarioBody(MarioRole role, RoleWorld runner, Vector2 position, boolean isFacingRight, boolean isBig) {
 		this.role = role;
 		this.runner = runner;
 
@@ -118,16 +120,23 @@ public class MarioBody implements PlayerBody {
 		isTakeDamage = false;
 		canHeadBang = true;
 
-		headTileContactAddQ = new LinkedBlockingQueue<InteractiveTileObject>();
-		headTileContactRemoveQ = new LinkedBlockingQueue<InteractiveTileObject>();
-		headTileContact = new LinkedList<InteractiveTileObject>();
+//		headTileContactAddQ = new LinkedBlockingQueue<RobotBody>();
+//		headTileContactRemoveQ = new LinkedBlockingQueue<RobotBody>();
+//		headTileContact = new LinkedList<RobotBody>();
+		headRobotContacts = new BlockingQueueList<RobotBody>();
 
-		adjacentPipes = new LinkedList<PipeWarp>();
-		adjPipeAddQ = new LinkedBlockingQueue<PipeWarp>();
-		adjacentPipeRemoveQ = new LinkedBlockingQueue<PipeWarp>();
+//		adjacentPipes = new LinkedList<PipeWarp>();
+//		adjPipeAddQ = new LinkedBlockingQueue<PipeWarp>();
+//		adjacentPipeRemoveQ = new LinkedBlockingQueue<PipeWarp>();
+		warpPipeContacts = new BlockingQueueList<PipeWarp>();
 		pipeToEnter = null;
 		flagpoleTouched = null;
 		levelendTouched = null;
+
+//		currentRoomAddQ = new LinkedBlockingQueue<Room>();
+//		currentRoomRemoveQ = new LinkedBlockingQueue<Room>();
+//		currentRooms = new LinkedList<Room>();
+		curRooms = new BlockingQueueList<Room>();
 
 		curState = MarioBodyState.STAND;
 		stateTimer = 0f;
@@ -153,23 +162,24 @@ public class MarioBody implements PlayerBody {
 	 * blocks when he hits, then choose the block closest to mario on the x axis.
 	 */
 	private void processHeadContacts() {
-		while(!headTileContactAddQ.isEmpty()) {
-			InteractiveTileObject ito = headTileContactAddQ.poll();
-			if(!headTileContact.contains(ito))
-				headTileContact.add(ito);
+/*		while(!headTileContactAddQ.isEmpty()) {
+			RobotBody rb = headTileContactAddQ.poll();
+			if(!headTileContact.contains(rb))
+				headTileContact.add(rb);
 		}
 		while(!headTileContactRemoveQ.isEmpty()) {
-			InteractiveTileObject ito = headTileContactRemoveQ.poll();
-			if(headTileContact.contains(ito))
-				headTileContact.remove(ito);
+			RobotBody rb = headTileContactRemoveQ.poll();
+			if(headTileContact.contains(rb))
+				headTileContact.remove(rb);
 		}
-
+*/
 		// if can head bang and is moving upwards fast enough then ...
 		if(canHeadBang && (b2body.getLinearVelocity().y > MIN_HEADBANG_VEL || prevVelocity.y > MIN_HEADBANG_VEL)) {
 			// check the list of tiles for the closest to mario
 			float closest = 0;
-			InteractiveTileObject closestTile = null;
-			for(InteractiveTileObject thingHit : headTileContact) {
+			RobotBody closestTile = null;
+//			for(RobotBody thingHit : headTileContact) {
+			for(RobotBody thingHit : this.headRobotContacts.getList()) {
 				float dist = Math.abs(thingHit.getPosition().x - b2body.getPosition().x);
 				if(closestTile == null || dist < closest) {
 					closest = dist;
@@ -180,7 +190,7 @@ public class MarioBody implements PlayerBody {
 			// we have a weiner!
 			if(closestTile != null && canHeadBang) {
 				canHeadBang = false;
-				closestTile.onHeadHit(role);
+				((BotBumpableBody) closestTile).onBump(role, role.getPosition());
 			}
 		}
 		// mario can headbang once per up/down cycle of movement, so re-enable head bang when mario moves down
@@ -189,7 +199,7 @@ public class MarioBody implements PlayerBody {
 	}
 
 	private void processPipes(BasicInputs bi) {
-		// process the add/remove queues
+/*		// process the add/remove queues
 		while(!adjPipeAddQ.isEmpty()) {
 			PipeWarp adj = adjPipeAddQ.poll();
 			if(!adjacentPipes.contains(adj))
@@ -200,7 +210,7 @@ public class MarioBody implements PlayerBody {
 			if(adjacentPipes.contains(adj))
 				adjacentPipes.remove(adj);
 		}
-
+*/
 		// check for pipe entry 
 		Direction4 dir = null;
 		if(bi.wantsToGoRight)
@@ -213,13 +223,42 @@ public class MarioBody implements PlayerBody {
 			dir = Direction4.DOWN;
 		else
 			return;
-		for(PipeWarp ent : adjacentPipes) {
+//		for(PipeWarp ent : adjacentPipes) {
+		for(PipeWarp ent : warpPipeContacts.getList()) {
 			if(ent.canPlayerEnterPipe(this, dir)) {
 				// player can enter pipe, so save a ref to the pipe
 				pipeToEnter = ent;
 				return;
 			}
 		}
+	}
+
+/*	private void processRooms() {
+		// process the add/remove queues
+		while(!currentRoomAddQ.isEmpty()) {
+			Room r = currentRoomAddQ.poll();
+			if(!currentRooms.contains(r))
+				currentRooms.add(r);
+		}
+		while(!currentRoomRemoveQ.isEmpty()) {
+			Room r = currentRoomRemoveQ.poll();
+			if(currentRooms.contains(r))
+				currentRooms.remove(r);
+		}
+	}
+*/
+	/*
+	 * Check the list of rooms that mario is currently in (or at least touching) to find a room that contains the
+	 * single point that is his position.
+	 * Returns null if mario's position is not inside a room.
+	 */
+	public Room getCurrentRoom() {
+//		for(Room r : currentRooms) {
+		for(Room r : curRooms.getList()) {
+			if(r.isPointInRoom(b2body.getPosition()))
+				return r;
+		}
+		return null;
 	}
 
 	public MarioBodyState update(float delta, BasicInputs bi, MarioPowerState curPowerState) {
@@ -231,6 +270,7 @@ public class MarioBody implements PlayerBody {
 		boolean doBrakeMove;
 
 		processPipes(bi);	// moving into warp pipes
+//		processRooms();
 		processHeadContacts();	// hitting bricks with his head
 		processHeadBounces();	// bouncing on heads of goombas, turtles, etc.
 
@@ -256,7 +296,7 @@ public class MarioBody implements PlayerBody {
 
 		// eligible for duck/unduck?
 		if(curPowerState != MarioPowerState.SMALL && isOnGround) {
-			Vector2 playerTilePos = runner.posToMapTileOffset(b2body.getPosition());
+			Vector2 playerTilePos = UInfo.getM2PTileForPos(b2body.getPosition());
 
 			// first time duck check
 			if(bi.wantsToGoDown && !isDucking) {
@@ -265,7 +305,7 @@ public class MarioBody implements PlayerBody {
 				if(isDuckSliding)
 					isDuckSliding = false;
 				else
-					defineBody(b2body.getPosition().cpy().sub(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
+					defineBody(b2body.getPosition().cpy().sub(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
 			}
 			// first time unduck check
 			else if(!bi.wantsToGoDown && isDucking) {
@@ -276,7 +316,7 @@ public class MarioBody implements PlayerBody {
 
 				// if the tile above ducking mario is solid ...
 				if(runner.isMapTileSolid(playerTilePos.cpy().add(0, 1))) {
-					Vector2 playerTileSubPos = runner.posToMapTileSubOffset(b2body.getPosition());
+					Vector2 playerTileSubPos = UInfo.getSubTileCoordsForMPos(b2body.getPosition());
 					// If the player's last velocity direction was rightward, and their position is in the left half
 					// of the tile, and the tile above and to the left of them is solid, then the player should
 					// duckslide right.
@@ -293,14 +333,14 @@ public class MarioBody implements PlayerBody {
 					isDuckSliding = true;
 				}
 				else
-					defineBody(b2body.getPosition().cpy().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
+					defineBody(b2body.getPosition().cpy().add(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
 			}
 
 			if(isDuckSliding) {
 				// if the player was duck sliding but the space above them is now nonsolid then end duckslide
 				if(!runner.isMapTileSolid(playerTilePos.cpy().add(0, 1))) {
 					isDuckSliding = false;
-					defineBody(b2body.getPosition().cpy().add(0f, GameInfo.P2M(8f)), b2body.getLinearVelocity());
+					defineBody(b2body.getPosition().cpy().add(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
 				}
 				else
 					doDuckSlideMove = true;
@@ -398,9 +438,9 @@ public class MarioBody implements PlayerBody {
 			// the remainder of the jump up velocity is achieved through mid-air up-force
 			jumpForceTimer = MARIO_JUMPFORCE_TIME;
 			if(curPowerState != MarioPowerState.SMALL)
-				runner.playSound(GameInfo.SOUND_MARIOBIGJUMP);
+				runner.playSound(AudioInfo.SOUND_MARIOBIGJUMP);
 			else
-				runner.playSound(GameInfo.SOUND_MARIOSMLJUMP);
+				runner.playSound(AudioInfo.SOUND_MARIOSMLJUMP);
 		}
 		else if(isJumping) {	// jumped and is mid-air
 			nextState = MarioBodyState.JUMP;
@@ -463,7 +503,7 @@ public class MarioBody implements PlayerBody {
 		bodyShape.setAsBox(bs.x/2f, bs.y/2f);
 
 		fdef.filter.categoryBits = GameInfo.MARIO_BIT;
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
+		fdef.filter.maskBits = GameInfo.ROOMBOX_BIT | GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
 		fdef.shape = bodyShape;
 		// mario should slide easily, but still have some friction to prevent sliding forever
 		fdef.friction = 0.01f;	// (default is 0.2f)
@@ -479,9 +519,9 @@ public class MarioBody implements PlayerBody {
 
 		// head sensor for detecting head banging behavior
 		if(!isBig || isDucking)
-			sensorShape.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(1f), new Vector2(GameInfo.P2M(0f), GameInfo.P2M(8f)), 0f);
+			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(8f)), 0f);
 		else
-			sensorShape.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(1f), new Vector2(GameInfo.P2M(0f), GameInfo.P2M(16f)), 0f);
+			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(16f)), 0f);
 		fdef.filter.categoryBits = GameInfo.MARIOHEAD_BIT;
 		fdef.filter.maskBits = GameInfo.BANGABLE_BIT | GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
@@ -495,9 +535,9 @@ public class MarioBody implements PlayerBody {
 
 		// foot sensor for detecting onGround and warp pipes
 		if(!isBig || isDucking)
-			sensorShape.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(2f), new Vector2(0f, GameInfo.P2M(-6)), 0f);
+			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-6)), 0f);
 		else
-			sensorShape.setAsBox(GameInfo.P2M(5f), GameInfo.P2M(2f), new Vector2(0f, GameInfo.P2M(-16)), 0f);
+			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-16)), 0f);
 		fdef.filter.categoryBits = GameInfo.MARIOFOOT_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
@@ -506,7 +546,8 @@ public class MarioBody implements PlayerBody {
 	}
 
 	private void createSideSensorFixtures() {
-		FixtureDef fdef = new FixtureDef();
+		// TODO: re-enable after fixing other stuff
+/*		FixtureDef fdef = new FixtureDef();
 		PolygonShape sensorShape = new PolygonShape();
 
 		// right side sensor for detecting warp pipes
@@ -524,6 +565,7 @@ public class MarioBody implements PlayerBody {
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
 		b2body.createFixture(fdef).setUserData(this);
+*/
 	}
 
 	private void createRobotSensorFixture() {
@@ -633,19 +675,22 @@ public class MarioBody implements PlayerBody {
 	public void onTouchRobot(RobotBody robotBody) {
 		// If the bottom of mario sprite is at least as high as the middle point of the robot sprite, then the robot
 		// takes damage. Otherwise mario takes damage.
-		RobotRole robo = robotBody.getRole();
+		RobotRole robo = robotBody.getParent();
 		float marioY = b2body.getPosition().y;
 		float robotY = robo.getPosition().y;
 
 		// touch end of level flagpole?
 		if(robo instanceof Flagpole)
 			flagpoleTouched = (Flagpole) robo;
-		else if(robo instanceof LevelEnd)
-			levelendTouched = (LevelEnd) robo;
+		else if(robo instanceof LevelEndTrigger) {
+			levelendTouched = (LevelEndTrigger) robo;
+			// the level end will trigger the castle flag
+			levelendTouched.trigger();
+		}
 		// test for powerstar damage
 		else if(robo instanceof DamageableBot && role.isPowerStarOn()) {
 			// playSound should go in the processBody method, but... this is so much easier!
-			runner.playSound(GameInfo.SOUND_KICK);
+			runner.playSound(AudioInfo.SOUND_KICK);
 			((DamageableBot) robo).onDamage(role, 1f, b2body.getPosition());
 		}
 		// test for bounce on head
@@ -665,37 +710,51 @@ public class MarioBody implements PlayerBody {
 
 	@Override
 	public void onTouchItem(RobotBody robotBody) {
-		RobotRole robo = robotBody.getRole();
+		RobotRole robo = robotBody.getParent();
 		if(robo instanceof ItemBot)
 			((ItemBot) robo).use(role);
 	}
 
 	@Override
-	public void onHeadTileContactStart(InteractiveTileObject thing) {
-		headTileContactAddQ.add(thing);
+	public void onHeadTileContactStart(RobotBody thing) {
+//		headTileContactAddQ.add(thing);
+		headRobotContacts.add(thing);
 	}
 
 	@Override
-	public void onHeadTileContactEnd(InteractiveTileObject thing) {
-		headTileContactRemoveQ.add(thing);
+	public void onHeadTileContactEnd(RobotBody thing) {
+//		headTileContactRemoveQ.add(thing);
+		headRobotContacts.remove(thing);
 	}
 
 	@Override
 	public void onStartTouchPipe(PipeWarpBody pipeEnt) {
-		if(!adjPipeAddQ.contains(pipeEnt.getRole()))
-			adjPipeAddQ.add((PipeWarp) pipeEnt.getRole());
+//		if(!adjPipeAddQ.contains(pipeEnt.getParent()))
+//			adjPipeAddQ.add((PipeWarp) pipeEnt.getParent());
+		warpPipeContacts.add((PipeWarp) pipeEnt.getParent());
 	}
 
 	@Override
 	public void onEndTouchPipe(PipeWarpBody pipeEnt) {
-		if(!adjacentPipeRemoveQ.contains(pipeEnt.getRole()))
-			adjacentPipeRemoveQ.add((PipeWarp) pipeEnt.getRole());
+//		if(!adjacentPipeRemoveQ.contains(pipeEnt.getParent()))
+//			adjacentPipeRemoveQ.add((PipeWarp) pipeEnt.getParent());
+		warpPipeContacts.remove((PipeWarp) pipeEnt.getParent());
+	}
+
+	public void onBeginContactRoom(RoomBoxBody room) {
+//		currentRoomAddQ.add(room.getParent());
+		curRooms.add(room.getParent());
+	}
+
+	public void onEndContactRoom(RoomBoxBody room) {
+//		currentRoomRemoveQ.add(room.getParent());
+		curRooms.remove(room.getParent());
 	}
 
 	public void respawn() {
 		resetPipeToEnter();
 		onGroundCount = 0;
-		adjacentPipes.clear();
+//		adjacentPipes.clear();
 	}
 
 	// use defineBody method to re-enable contacts
@@ -710,7 +769,7 @@ public class MarioBody implements PlayerBody {
 	public void enableRobotContact() {
 		Filter filter = new Filter();
 		filter.categoryBits = GameInfo.MARIO_BIT;
-		filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.ROBOT_BIT;
+		filter.maskBits = GameInfo.ROBOT_BIT | GameInfo.ROOMBOX_BIT | GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
 		marioBodyFixture.setFilterData(filter);
 	}
 
@@ -718,7 +777,7 @@ public class MarioBody implements PlayerBody {
 		// ensure mario cannot collide with enemies
 		Filter filter = new Filter();
 		filter.categoryBits = GameInfo.MARIO_BIT;
-		filter.maskBits = GameInfo.BOUNDARY_BIT;
+		filter.maskBits = GameInfo.ROOMBOX_BIT | GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
 		marioBodyFixture.setFilterData(filter);
 	}
 
@@ -754,7 +813,7 @@ public class MarioBody implements PlayerBody {
 		this.flagpoleTouched = null;
 	}
 
-	public LevelEnd getLevelEndTouched() {
+	public LevelEndTrigger getLevelEndTouched() {
 		return levelendTouched;
 	}
 
@@ -817,9 +876,9 @@ public class MarioBody implements PlayerBody {
 
 	public Vector2 getB2BodySize() {
 		if(isBigBody())
-			return new Vector2(GameInfo.P2M(7f * 2), GameInfo.P2M(13f * 2));
+			return new Vector2(UInfo.P2M(7f * 2), UInfo.P2M(13f * 2));
 		else
-			return new Vector2(GameInfo.P2M(7f * 2), GameInfo.P2M(6f * 2));
+			return new Vector2(UInfo.P2M(7f * 2), UInfo.P2M(6f * 2));
 	}
 
 	public boolean getAndResetTakeDamage() {
@@ -833,8 +892,9 @@ public class MarioBody implements PlayerBody {
 		role.die();
 	}
 
+	@Override
 	public void dispose() {
-		runner.getWorld().destroyBody(b2body);
+		b2body.getWorld().destroyBody(b2body);
 		b2body = null;
 	}
 }

@@ -1,18 +1,18 @@
 package kidridicarus.roles.robot.SMB.item;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.InfoSMB.PowerupType;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.SMBInfo.PowerupType;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.player.MarioRole;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.tools.EncapTexAtlas;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 public class Mush1UP extends BaseMushroom {
-	public Mush1UP(WorldRunner runner, Vector2 position) {
-		super(runner, position);
+	public Mush1UP(RoleWorld runner, RobotRoleDef rdef) {
+		super(runner, rdef);
 	}
 
 	@Override
@@ -22,12 +22,12 @@ public class Mush1UP extends BaseMushroom {
 
 		if(role instanceof MarioRole) {
 			((MarioRole) role).applyPowerup(PowerupType.MUSH1UP);
-			runner.removeRobot(this);
+			runner.destroyRobot(this);
 		}
 	}
 
 	@Override
-	protected TextureRegion getMushroomTextureRegion(TextureAtlas atlas) {
+	protected TextureRegion getMushroomTextureRegion(EncapTexAtlas atlas) {
 		return atlas.findRegion(GameInfo.TEXATLAS_MUSH1UP);
 	}
 }

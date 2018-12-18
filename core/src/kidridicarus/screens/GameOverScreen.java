@@ -15,8 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.GameInfo;
 import kidridicarus.MyKidRidicarus;
+import kidridicarus.info.GameInfo;
 
 public class GameOverScreen implements Screen {
 	private Viewport viewport;

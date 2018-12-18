@@ -4,18 +4,25 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.player.MarioRole;
 import kidridicarus.tools.BasicInputs;
 import kidridicarus.tools.KeyboardMapping;
+import kidridicarus.tools.RRDefFactory;
 
 public class Player implements Disposable {
+	private static final float SPAWN_TRIGGER_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 30);
+	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_X * 15);
+
 	private PlayerRole role;
 	private BasicInputs bi;
 
-	public Player(WorldRunner runner, Vector2 position) {
-		role = new MarioRole(runner, position);
+	public Player(RoleWorld runner, Vector2 position) {
+		role = runner.createPlayer(position);
 		bi = new BasicInputs();
+		runner.createRobot(RRDefFactory.makeRobotSpawnTriggerDef(this, position,
+				SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 	}
 
 	public void handleInput() {
@@ -27,12 +34,12 @@ public class Player implements Disposable {
 		bi.wantsToJump = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
 	}
 
-	public void update(float delta) {
-		role.update(delta, bi);
-	}
-
 	public PlayerRole getRole() {
 		return role;
+	}
+	
+	public BasicInputs getBI() {
+		return bi;
 	}
 
 	public int getPointTotal() {

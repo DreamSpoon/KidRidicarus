@@ -1,37 +1,40 @@
 package kidridicarus.roles.robot.SMB.item;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
-import kidridicarus.InfoSMB.PowerupType;
 import kidridicarus.bodies.SMB.FireFlowerBody;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.SMBInfo.PowerupType;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.player.MarioRole;
 import kidridicarus.roles.robot.ItemBot;
 import kidridicarus.sprites.SMB.FireFlowerSprite;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 public class FireFlower implements RobotRole, ItemBot {
 	private static final float SPROUT_TIME = 1f;
-	private static final float SPROUT_OFFSET = GameInfo.P2M(-13f);
+	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 
-	private WorldRunner runner;
+	private MapProperties properties;
+	private RoleWorld runner;
 	private FireFlowerSprite flowerSprite;
 	private FireFlowerBody ffbody;
 	private float stateTimer;
 	private boolean isSprouting;
 	private Vector2 sproutingPosition;
 
-	public FireFlower(WorldRunner runner, Vector2 position) {
+	public FireFlower(RoleWorld runner, RobotRoleDef rdef) {
+		properties = rdef.properties;
 		this.runner = runner;
 
-		flowerSprite = new FireFlowerSprite(runner.getAtlas(), position.cpy().add(0f, SPROUT_OFFSET));
-
-		sproutingPosition = position;
+		sproutingPosition = rdef.bounds.getCenter(new Vector2());
+		flowerSprite = new FireFlowerSprite(runner.getEncapTexAtlas(), sproutingPosition.add(0f, SPROUT_OFFSET));
 
 		stateTimer = 0f;
 		isSprouting = true;
@@ -69,13 +72,8 @@ public class FireFlower implements RobotRole, ItemBot {
 	public void use(PlayerRole role) {
 		if(stateTimer > SPROUT_TIME && role instanceof MarioRole) {
 			((MarioRole) role).applyPowerup(PowerupType.FIREFLOWER);
-			runner.removeRobot(this);
+			runner.destroyRobot(this);
 		}
-	}
-
-	@Override
-	public void setActive(boolean active) {
-		ffbody.setActive(active);
 	}
 
 	@Override
@@ -86,6 +84,11 @@ public class FireFlower implements RobotRole, ItemBot {
 	@Override
 	public Rectangle getBounds() {
 		return ffbody.getBounds();
+	}
+
+	@Override
+	public MapProperties getProperties() {
+		return properties;
 	}
 
 	@Override

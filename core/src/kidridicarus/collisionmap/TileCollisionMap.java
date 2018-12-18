@@ -1,5 +1,6 @@
 package kidridicarus.collisionmap;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -9,73 +10,79 @@ import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.GameInfo;
-import kidridicarus.tiles.BooleanTileMap;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.UInfo;
 
 public class TileCollisionMap {
 	private World world;
 	private BooleanTileMap bTileMap;
 
-	private int width;
-	private int height;
+//	private int width;
+//	private int height;
 	private int tileWidth;
 	private int tileHeight;
 	private LineSegList[] hLines;
 	private LineSegList[] vLines;
 
-	// 1) width and height are given in number of tiles (not number of pixels).
-	// 2) tileWidth and tileHeight are given in pixels.
-	public TileCollisionMap(World world, TiledMapTileLayer layer, int width, int height, int tileWidth, int tileHeight) {
+	// layers[] must contain a non-null layer in the zeroth position
+	public TileCollisionMap(World world, Collection<TiledMapTileLayer> solidLayers) {
+		if(solidLayers == null || solidLayers.size() < 1)
+			throw new IllegalArgumentException("Layers array was null or it referenced a null layer in the zeroth position.");
 		this.world = world;
-		this.width = width;
-		this.height = height;
-		this.tileWidth = tileWidth;
-		this.tileHeight = tileHeight;
+//		width = solidLayers[0].getWidth();
+//		height = solidLayers[0].getHeight();
+		TiledMapTileLayer a = solidLayers.iterator().next();
+		tileWidth = (int) a.getTileWidth();
+		tileHeight = (int) a.getTileHeight();
+		bTileMap = new BooleanTileMap(solidLayers);
 
-		hLines = new LineSegList[height+1];
-		for(int i=0; i<=height; i++)
+		hLines = new LineSegList[bTileMap.getHeight()+1];
+		for(int i=0; i<=bTileMap.getHeight(); i++)
 			hLines[i] = new LineSegList();
 
-		vLines = new LineSegList[width+1];
-		for(int i=0; i<=width; i++)
+		vLines = new LineSegList[bTileMap.getWidth()+1];
+		for(int i=0; i<=bTileMap.getWidth(); i++)
 			vLines[i] = new LineSegList();
 
-		bTileMap = new BooleanTileMap(layer);
 		calculateLineSegs();
 		createBodies();
 	}
 
-	// Create a minimal line segment based boundary set based on the tile map input - for collision geometry
-	// creation/tracking/removal.
-	// Use one dimensional integer line segments.
-	// The goal: Each non-empty (non-null) tile in the map layer will be surrounded by bounding lines (a bounding
-	// rectangle).
-	// The problems:
-	//     1) Irrelevant lines may be created (e.g. where two bricks are side by side, the overlapping/coincident
-	//        lines should be erased).
-	//     2) Parallel lines that share vertexes and have the same "upNormal" need to be fused together, to reduce
-	//        the total number of line segments without changing the physical boundaries.
-	//
-	// Brute force solution:
-	//     Loop through all non-empty tiles and create boxes for each, then remove unnecessary lines and fuse lines
-	//     where possible. This may necessitate something like a quadtree to track all the lines, and that's so
-	//     annoying to implement.
-	//
-	// Another solution:
-	//     Think of the problem as: How to create the minimum amount of of horizontal line segments, and vertical line
-	//     segments, to represent the boundaries of the non-empty tiles.
-	//     The horizontal lines, although crossing the vertical lines, are not affected by the vertical lines. That is,
-	//     the calculation of the horizontal lines is independent of the calculation of the vertical lines.
-	//     Since the horizontal lines are evenly spaced on the y-axis, it's simple to add them to an array/tree
-	//     structure for the y-dimension, then for each row create an array/tree to store the line segments on the
-	//     x-dimension. The lines are non-overlapping but may be adjacent (e.g. a ceiling is adjacent to a floor).
-	//
-	//     So,
-	//         1) Loop through the tiles from left-to-right, to create the horizontal lines.
-	//         2) Loop through the tiles from bottom-to-top, to create the vertical lines.
-	//     Caveat: This algorithm is designed specifically with a regular tileset of same sized rectangles in mind - every
-	//         tile must be the same size as every other tile.
-	//         Other shapes may not be compatible, and may be added later using a different algorithm (?).
+	/*
+	 * Create a minimal line segment based boundary set based on the tile map input - for collision geometry
+	 * 
+	 *
+	 * creation/tracking/removal.
+	 * Use one dimensional integer based line segments.
+	 * The goal: Each non-empty (non-null) tile in the map layer will be surrounded by bounding lines (a bounding
+	 * rectangle).
+	 * The problems:
+	 *     1) Irrelevant lines may be created (e.g. where two bricks are side by side, the overlapping/coincident
+	 *        lines should be erased).
+	 *     2) Parallel lines that share vertexes and have the same "upNormal" are not fused together, so too many
+	 *    lines are created.
+	 *
+	 * Brute force solution:
+	 *     Loop through all non-empty tiles and create boxes for each, then remove unnecessary lines and fuse lines
+	 *     where possible. This may necessitate something like a quadtree to track all the lines, and that's so
+	 *     annoying to implement.
+	 *
+	 * Another solution:
+	 *     Think of the problem as: How to create the minimum amount of of horizontal line segments, and vertical line
+	 *     segments, to represent the boundaries of the non-empty tiles.
+	 *     The horizontal lines, although crossing the vertical lines, are not affected by the vertical lines. That is,
+	 *     the calculation of the horizontal lines is independent of the calculation of the vertical lines.
+	 *     Since the horizontal lines are evenly spaced on the y-axis, it's simple to add them to an array/tree
+	 *     structure for the y-dimension, then for each row create an array/tree to store the line segments on the
+	 *     x-dimension. The lines are non-overlapping but may be adjacent (e.g. a ceiling is adjacent to a floor).
+	 *
+	 *     So,
+	 *         1) Loop through the tiles from left-to-right, to create the horizontal lines.
+	 *         2) Loop through the tiles from bottom-to-top, to create the vertical lines.
+	 *     Caveat: This algorithm is designed specifically with a regular tileset of same sized rectangles in mind - every
+	 *         tile must be the same size as every other tile.
+	 *         Other shapes may not be compatible, and may be added later using a different algorithm (?).
+	 */
 	private void calculateLineSegs() {
 		LineSeg currentSeg;
 
@@ -181,7 +188,7 @@ public class TileCollisionMap {
 	// create Box2d bodies for the horizontal and vertical line segments
 	private void createBodies() {
 		// loop through rows
-		for(int y=0; y<=height; y++) {
+		for(int y=0; y<=bTileMap.getHeight(); y++) {
 			// loop through row's line segments
 			Iterator<LineSeg> segIter = hLines[y].getIterator();
 			while(segIter.hasNext()) {
@@ -191,7 +198,7 @@ public class TileCollisionMap {
 		}
 
 		// loop through columns
-		for(int x=0; x<=width; x++) {
+		for(int x=0; x<=bTileMap.getWidth(); x++) {
 			// loop through row's line segments
 			Iterator<LineSeg> segIter = vLines[x].getIterator();
 			while(segIter.hasNext()) {
@@ -219,13 +226,13 @@ public class TileCollisionMap {
 		Body body;
 
 		bdef = new BodyDef();
-		bdef.position.set(GameInfo.P2M(startX * tileWidth), GameInfo.P2M(startY * tileHeight));
+		bdef.position.set(UInfo.P2M(startX * tileWidth), UInfo.P2M(startY * tileHeight));
 		bdef.type = BodyDef.BodyType.StaticBody;
 		body = world.createBody(bdef);
 
 		fdef = new FixtureDef();
 		edgeShape = new EdgeShape();
-		edgeShape.set(0f, 0f, GameInfo.P2M((endX - startX) * tileWidth), GameInfo.P2M((endY - startY) * tileHeight));
+		edgeShape.set(0f, 0f, UInfo.P2M((endX - startX) * tileWidth), UInfo.P2M((endY - startY) * tileHeight));
 		fdef.filter.categoryBits = GameInfo.BOUNDARY_BIT;
 //		fdef.filter.maskBits = ...
 
@@ -242,7 +249,7 @@ public class TileCollisionMap {
 	 * Returns false otherwise.
 	 */
 	public boolean isTileExist(int x, int y) {
-		if(x < 0 || x >= width || y < 0 || y > height)
+		if(x < 0 || x >= bTileMap.getWidth() || y < 0 || y > bTileMap.getHeight())
 			return false;
 		return bTileMap.getCell(x, y);
 	}
@@ -427,7 +434,7 @@ public class TileCollisionMap {
 		Iterator<LineSeg> iter;
 		if(hLines != null) {
 			// destroy any B2 bodies attached to line segments
-			for(int y=0; y<height+1; y++) {
+			for(int y=0; y<bTileMap.getHeight()+1; y++) {
 				iter = hLines[y].getIterator();
 				while(iter.hasNext())
 					iter.next().dispose();
@@ -435,7 +442,7 @@ public class TileCollisionMap {
 		}
 		if(vLines != null) {
 			// destroy any B2 bodies attached to line segments
-			for(int x=0; x<width+1; x++) {
+			for(int x=0; x<bTileMap.getWidth()+1; x++) {
 				iter = vLines[x].getIterator();
 				while(iter.hasNext())
 					iter.next().dispose();

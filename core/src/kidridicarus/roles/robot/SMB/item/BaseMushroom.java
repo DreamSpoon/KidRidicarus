@@ -1,32 +1,35 @@
 package kidridicarus.roles.robot.SMB.item;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
 import kidridicarus.bodies.SMB.BaseMushroomBody;
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.SimpleWalkRobotRole;
 import kidridicarus.roles.robot.BumpableBot;
 import kidridicarus.roles.robot.ItemBot;
 import kidridicarus.sprites.SMB.MushroomSprite;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.tools.EncapTexAtlas;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 public abstract class BaseMushroom extends SimpleWalkRobotRole implements ItemBot, BumpableBot {
 	private static final float SPROUT_TIME = 1f;
-	private static final float SPROUT_OFFSET = GameInfo.P2M(-13f);
+	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private static final float WALK_VEL = 0.6f;
 	private static final float BUMP_UPVEL = 1.5f;
 
 	private enum MushroomState { SPROUT, WALK, FALL };
 
-	protected WorldRunner runner;
+	protected MapProperties properties;
+	protected RoleWorld runner;
 	private BaseMushroomBody bmbody;
 	protected MushroomSprite mSprite;
 
@@ -38,16 +41,17 @@ public abstract class BaseMushroom extends SimpleWalkRobotRole implements ItemBo
 	private boolean isBumped;
 	private Vector2 bumpCenter;
 
-	protected abstract TextureRegion getMushroomTextureRegion(TextureAtlas atlas);
+	protected abstract TextureRegion getMushroomTextureRegion(EncapTexAtlas encapTexAtlas);
 
-	public BaseMushroom(WorldRunner runner, Vector2 position) {
+	public BaseMushroom(RoleWorld runner, RobotRoleDef rdef) {
+		properties = rdef.properties;
 		this.runner = runner;
 
-		mSprite = new MushroomSprite(getMushroomTextureRegion(runner.getAtlas()),
-				position.cpy().add(0f, SPROUT_OFFSET));
+		sproutingPosition = rdef.bounds.getCenter(new Vector2()); 
+		mSprite = new MushroomSprite(getMushroomTextureRegion(runner.getEncapTexAtlas()),
+				sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
 
 		isSprouting = true;
-		sproutingPosition = position;
 		isBumped = false;
 		setConstVelocity(new Vector2(WALK_VEL, 0f));
 
@@ -139,11 +143,6 @@ public abstract class BaseMushroom extends SimpleWalkRobotRole implements ItemBo
 	}
 
 	@Override
-	public void setActive(boolean active) {
-		bmbody.setActive(active);
-	}
-
-	@Override
 	public Vector2 getPosition() {
 		return bmbody.getPosition();
 	}
@@ -151,6 +150,11 @@ public abstract class BaseMushroom extends SimpleWalkRobotRole implements ItemBo
 	@Override
 	public Rectangle getBounds() {
 		return bmbody.getBounds();
+	}
+
+	@Override
+	public MapProperties getProperties() {
+		return properties;
 	}
 
 	@Override

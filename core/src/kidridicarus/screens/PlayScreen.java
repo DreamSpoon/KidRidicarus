@@ -5,16 +5,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.GameInfo;
-import kidridicarus.InfoSMB;
 import kidridicarus.MyKidRidicarus;
 import kidridicarus.hud.SMB_Hud;
-import kidridicarus.tools.QQ;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.SMBInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.worldrunner.Player;
 import kidridicarus.worldrunner.WorldRenderer;
 import kidridicarus.worldrunner.WorldRunner;
@@ -24,8 +22,6 @@ public class PlayScreen implements Screen {
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
 	private TextureAtlas atlas;
-	private TmxMapLoader maploader;
-	private TiledMap map;
 	private SMB_Hud smbHud;
 	private WorldRunner worldRunner;
 	private WorldRenderer worldRenderer;
@@ -37,36 +33,29 @@ public class PlayScreen implements Screen {
 		atlas = new TextureAtlas(GameInfo.TEXATLAS_FILENAME);
 
 		gamecam = new OrthographicCamera();
-		gameport = new FitViewport(GameInfo.P2M(GameInfo.V_WIDTH), GameInfo.P2M(GameInfo.V_HEIGHT), gamecam);
+		gameport = new FitViewport(UInfo.P2M(GameInfo.V_WIDTH), UInfo.P2M(GameInfo.V_HEIGHT), gamecam);
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2, gameport.getWorldHeight()/2, 0);
 
-		maploader = new TmxMapLoader();
-		map = maploader.load(GameInfo.GAMEMAP_FILENAME);
-
 		worldRunner = new WorldRunner(game.manager, atlas, gamecam);
-		worldRunner.loadMap(map, game.manager);
+		worldRunner.loadMap(GameInfo.GAMEMAP_FILENAME);
 		// start renderer after loading map into runner, TODO: fix this
 		worldRenderer = new WorldRenderer(worldRunner);
 
 		rePlayer = worldRunner.createPlayer();
 
-		smbHud = new SMB_Hud(game.batch, worldRunner, rePlayer);
+		smbHud = new SMB_Hud(game.batch, worldRunner.getSubWR(), rePlayer);
 	}
 
 	@Override
 	public void render(float delta) {
 		update(delta);
-
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		worldRenderer.drawAll(game.batch, gamecam);
-
 		// draw the HUD last, so it's on top of everything else
 		smbHud.draw();
-
-		QQ.renderTo(game.sr, gamecam.combined);
 
 		// change to game over screen?
 		if(gameWon()) {
@@ -94,13 +83,13 @@ public class PlayScreen implements Screen {
 	}
 
 	private boolean gameOver() {
-		if(rePlayer.getRole().isDead() && rePlayer.getRole().getStateTimer() > InfoSMB.MARIO_DEAD_TIME)
+		if(rePlayer.getRole().isDead() && rePlayer.getRole().getStateTimer() > SMBInfo.MARIO_DEAD_TIME)
 			return true;
 		return false;
 	}
 
 	private boolean gameWon() {
-		if(rePlayer.getRole().isAtLevelEnd() && rePlayer.getRole().getStateTimer() > InfoSMB.MARIO_LEVELEND_TIME)
+		if(rePlayer.getRole().isAtLevelEnd() && rePlayer.getRole().getStateTimer() > SMBInfo.MARIO_LEVELEND_TIME)
 			return true;
 		return false;
 	}
@@ -112,7 +101,6 @@ public class PlayScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		map.dispose();
 		worldRunner.dispose();
 		smbHud.dispose();
 	}

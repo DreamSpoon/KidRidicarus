@@ -1,26 +1,29 @@
 package kidridicarus.roles.robot.SMB.enemy;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
-import kidridicarus.InfoSMB.PointAmount;
 import kidridicarus.bodies.SMB.TurtleBody;
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.AudioInfo;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.SMBInfo.PointAmount;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.SimpleWalkRobotRole;
+import kidridicarus.roles.player.MarioRole;
 import kidridicarus.roles.robot.BotTouchBot;
 import kidridicarus.roles.robot.BumpableBot;
 import kidridicarus.roles.robot.DamageableBot;
 import kidridicarus.roles.robot.HeadBounceBot;
 import kidridicarus.roles.robot.TouchDmgBot;
 import kidridicarus.sprites.SMB.TurtleSprite;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.tools.RRDefFactory;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 /*
  * TODO:
@@ -29,8 +32,8 @@ import kidridicarus.worldrunner.WorldRunner;
  * -turtle shells do not slide properly when they are kicked while touching a robot, since the slide kill
  *  robot code is only called when touching starts
  */
-public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, TouchDmgBot, BumpableBot, DamageableBot, BotTouchBot
-{
+public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, TouchDmgBot, BumpableBot,
+		DamageableBot, BotTouchBot {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 1f;
@@ -41,7 +44,7 @@ public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 
 	public enum TurtleState { WALK, HIDE, WAKE_UP, SLIDE, DEAD };
 
-	private WorldRunner runner;
+	private RoleWorld runner;
 	private TurtleBody turtleBody;
 	private TurtleSprite turtleSprite;
 
@@ -58,12 +61,11 @@ public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 	private PlayerRole perp;
 	private PointAmount slidingTotal;
 
-	public TurtleRole(WorldRunner runner, MapObject object) {
+	public TurtleRole(RoleWorld runner, RobotRoleDef rdef) {
 		this.runner = runner;
 
-		Vector2 position = GameInfo.P2MVector(((RectangleMapObject) object).getRectangle().getCenter(new Vector2()));
-		turtleBody = new TurtleBody(this, runner.getWorld(), position);
-		turtleSprite = new TurtleSprite(runner.getAtlas(), position);
+		turtleBody = new TurtleBody(this, runner.getWorld(), rdef.bounds.getCenter(new Vector2()));
+		turtleSprite = new TurtleSprite(runner.getEncapTexAtlas(), rdef.bounds.getCenter(new Vector2()));
 
 		setConstVelocity(-WALK_VEL, 0f);
 		facingRight = false;
@@ -108,7 +110,7 @@ public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 					startDeath();
 				// check the old deceased for timeout
 				else if(stateTimer > DIE_FALL_TIME)
-					runner.removeRobot(this);
+					runner.destroyRobot(this);
 				break;
 			case HIDE:
 				// wait a short time and reappear
@@ -145,22 +147,21 @@ public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 	}
 
 	private void startSlide() {
-		runner.playSound(GameInfo.SOUND_KICK);
+		runner.playSound(AudioInfo.SOUND_KICK);
 		slidingTotal = PointAmount.P400;
-		// how to tell if player kicked from side or head bounced?
 		if(perp != null) {
-			runner.givePlayerPoints(perp, slidingTotal, true, turtleBody.getPosition(), GameInfo.P2M(16),
-					isHeadBounced);
+			runner.createRobot(RRDefFactory.makeFloatingPointsDef(slidingTotal, isHeadBounced,
+					turtleBody.getPosition(), UInfo.P2M(16), (MarioRole) perp));
 		}
 	}
 
 	private void startHideInShell() {
 		// stop moving
 		turtleBody.zeroVelocity();
-		runner.playSound(GameInfo.SOUND_STOMP);
+		runner.playSound(AudioInfo.SOUND_STOMP);
 		if(perp != null) {
-			runner.givePlayerPoints(perp, PointAmount.P100, true, turtleBody.getPosition(), GameInfo.P2M(16),
-					isHeadBounced);
+			runner.createRobot(RRDefFactory.makeFloatingPointsDef(PointAmount.P100, isHeadBounced,
+					turtleBody.getPosition(), UInfo.P2M(16), (MarioRole) perp));
 		}
 	}
 
@@ -182,8 +183,8 @@ public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 			turtleBody.applyImpulse(new Vector2(-BUMP_SIDE_VEL, BUMP_UP_VEL));
 
 		if(perp != null) {
-			runner.givePlayerPoints(perp, PointAmount.P500, true, turtleBody.getPosition(), GameInfo.P2M(16),
-					isHeadBounced);
+			runner.createRobot(RRDefFactory.makeFloatingPointsDef(PointAmount.P500, isHeadBounced,
+					turtleBody.getPosition(), UInfo.P2M(16), (MarioRole) perp));
 		}
 	}
 
@@ -245,10 +246,11 @@ public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 			else if(robo instanceof DamageableBot) {
 				// give the dmgable bot a null player ref so that it doesn't give points, we will give points here
 				((DamageableBot) robo).onDamage(null, 1f, robo.getPosition());
-				runner.playSound(GameInfo.SOUND_KICK);
+				runner.playSound(AudioInfo.SOUND_KICK);
 				if(perp != null) {
 					slidingTotal = slidingTotal.increment();
-					runner.givePlayerPoints(perp, slidingTotal, true, turtleBody.getPosition(), GameInfo.P2M(16), false);
+					runner.createRobot(RRDefFactory.makeFloatingPointsDef(slidingTotal, isHeadBounced,
+							turtleBody.getPosition(), UInfo.P2M(16), (MarioRole) perp));
 				}
 			}
 		}
@@ -260,7 +262,7 @@ public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 			reverseConstVelocity(true, false);
 			facingRight = !facingRight;
 			if(isSliding)
-				runner.playSound(GameInfo.SOUND_BUMP);
+				runner.playSound(AudioInfo.SOUND_BUMP);
 		}
 	}
 
@@ -309,11 +311,6 @@ public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 	}
 
 	@Override
-	public void setActive(boolean active) {
-		turtleBody.setActive(active);
-	}
-
-	@Override
 	public Vector2 getPosition() {
 		return turtleBody.getPosition();
 	}
@@ -326,5 +323,11 @@ public class TurtleRole extends SimpleWalkRobotRole implements HeadBounceBot, To
 	@Override
 	public void dispose() {
 		turtleBody.dispose();
+	}
+
+	@Override
+	public MapProperties getProperties() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

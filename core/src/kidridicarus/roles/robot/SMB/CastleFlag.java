@@ -1,37 +1,40 @@
 package kidridicarus.roles.robot.SMB;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.sprites.SMB.CastleFlagSprite;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 public class CastleFlag implements RobotRole {
 	private enum CastleFlagState { DOWN, RISING, UP};
-	private static final float RISE_DIST = GameInfo.P2M(32);
+	private static final float RISE_DIST = UInfo.P2M(32);
 	private static final float RISE_TIME = 1f;
+	private static final float BODY_WIDTH = UInfo.P2M(16f);
+	private static final float BODY_HEIGHT = UInfo.P2M(16f);
 
-	private WorldRunner runner;
+	private MapProperties properties;
+	private RoleWorld runner;
 	private CastleFlagSprite flagSprite;
 	private Vector2 startPosition;
 	private boolean isTriggered;
 	private CastleFlagState curState;
 	private float stateTimer;
 
-	public CastleFlag(WorldRunner runner, MapObject object) {
+	public CastleFlag(RoleWorld runner, RobotRoleDef rdef) {
 		this.runner = runner;
+		properties = rdef.properties;
 
-		Rectangle bounds = ((RectangleMapObject) object).getRectangle();
-		startPosition = new Vector2(GameInfo.P2M(bounds.getX() + bounds.getWidth() / 2f),
-				GameInfo.P2M(bounds.getY() + bounds.getHeight() / 2f));
+		startPosition = new Vector2(UInfo.P2M(rdef.bounds.getX() + rdef.bounds.getWidth() / 2f),
+				UInfo.P2M(rdef.bounds.getY() + rdef.bounds.getHeight() / 2f));
 
-		flagSprite = new CastleFlagSprite(runner.getAtlas(), startPosition);
+		flagSprite = new CastleFlagSprite(runner.getEncapTexAtlas(), startPosition);
 
 		isTriggered = false;
 		curState = CastleFlagState.DOWN;
@@ -94,16 +97,18 @@ public class CastleFlag implements RobotRole {
 
 	@Override
 	public Vector2 getPosition() {
-		return null;
+		return startPosition;
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return null;
+		// TODO: return actual position of flag, not just start position
+		return new Rectangle(startPosition.x - BODY_WIDTH/2f, startPosition.y - BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override
-	public void setActive(boolean active) {
+	public MapProperties getProperties() {
+		return properties;
 	}
 
 	@Override

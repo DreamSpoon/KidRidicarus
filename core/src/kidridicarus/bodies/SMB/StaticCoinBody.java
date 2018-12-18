@@ -5,16 +5,16 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.GameInfo;
-import kidridicarus.bodies.B2DFactory;
 import kidridicarus.bodies.RobotBody;
-import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.robot.SMB.item.StaticCoin;
+import kidridicarus.tools.B2DFactory;
 
 public class StaticCoinBody extends RobotBody {
-	private static final float BODY_WIDTH = GameInfo.P2M(16f);
-	private static final float BODY_HEIGHT = GameInfo.P2M(16f);
+	private static final float BODY_WIDTH = UInfo.P2M(16f);
+	private static final float BODY_HEIGHT = UInfo.P2M(16f);
 
 	private StaticCoin role;
 
@@ -38,12 +38,7 @@ public class StaticCoinBody extends RobotBody {
 	}
 
 	@Override
-	public RobotRole getRole() {
+	public RobotRole getParent() {
 		return role;
-	}
-
-	// coin doesnt move, nothing to do
-	@Override
-	protected void onTouchVertBoundLine(LineSeg seg) {
 	}
 }

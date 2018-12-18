@@ -4,16 +4,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-import kidridicarus.GameInfo;
-import kidridicarus.bodies.B2DFactory;
 import kidridicarus.bodies.RobotBody;
-import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.robot.SMB.item.FireFlower;
+import kidridicarus.tools.B2DFactory;
 
 public class FireFlowerBody extends RobotBody {
-	private static final float BODY_WIDTH = GameInfo.P2M(14f);
-	private static final float BODY_HEIGHT = GameInfo.P2M(12f);
+	private static final float BODY_WIDTH = UInfo.P2M(14f);
+	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 
 	private FireFlower role;
 
@@ -30,12 +30,7 @@ public class FireFlowerBody extends RobotBody {
 	}
 
 	@Override
-	public RobotRole getRole() {
+	public RobotRole getParent() {
 		return role;
-	}
-
-	// fire flower doesn't move, so this method is redundant
-	@Override
-	protected void onTouchVertBoundLine(LineSeg seg) {
 	}
 }

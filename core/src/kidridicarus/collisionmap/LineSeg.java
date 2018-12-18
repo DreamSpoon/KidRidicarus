@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import com.badlogic.gdx.physics.box2d.Body;
 
-import kidridicarus.GameInfo;
+import kidridicarus.info.UInfo;
 
 public class LineSeg {
 	// if begin = end, it means the LineSeg is one tile wide
@@ -94,17 +94,17 @@ public class LineSeg {
 	// return the x/y coordinate of the beginning of this segment as a Box2D coordinate
 	public float getB2Begin() {
 		if(isHorizontal)
-			return GameInfo.P2M(begin * GameInfo.TILEPIX_X);
+			return UInfo.P2M(begin * UInfo.TILEPIX_X);
 		else
-			return GameInfo.P2M(begin * GameInfo.TILEPIX_Y);
+			return UInfo.P2M(begin * UInfo.TILEPIX_Y);
 	}
 
 	// return the x/y coordinate of the end of this segment as a Box2D coordinate
 	public float getB2End() {
 		if(isHorizontal)
-			return GameInfo.P2M((end+1) * GameInfo.TILEPIX_X);
+			return UInfo.P2M((end+1) * UInfo.TILEPIX_X);
 		else
-			return GameInfo.P2M((end+1) * GameInfo.TILEPIX_Y);
+			return UInfo.P2M((end+1) * UInfo.TILEPIX_Y);
 	}
 
 	public void dispose() {

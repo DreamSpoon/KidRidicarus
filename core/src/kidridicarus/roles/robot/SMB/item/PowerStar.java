@@ -1,21 +1,23 @@
 package kidridicarus.roles.robot.SMB.item;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
-import kidridicarus.InfoSMB.PowerupType;
 import kidridicarus.bodies.SMB.PowerStarBody;
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.SMBInfo.PowerupType;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.PlayerRole;
 import kidridicarus.roles.SimpleWalkRobotRole;
 import kidridicarus.roles.player.MarioRole;
 import kidridicarus.roles.robot.BumpableBot;
 import kidridicarus.roles.robot.ItemBot;
 import kidridicarus.sprites.SMB.PowerStarSprite;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 /*
  * TODO:
@@ -25,17 +27,19 @@ import kidridicarus.worldrunner.WorldRunner;
 public class PowerStar extends SimpleWalkRobotRole implements ItemBot, BumpableBot {
 	private static final float SPROUT_TIME = 0.5f;
 	private static final Vector2 START_BOUNCE_VEL = new Vector2(0.5f, 2f); 
-	private static final float SPROUT_OFFSET = GameInfo.P2M(-13f);
+	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private enum StarState { SPROUT, WALK };
 
-	private WorldRunner runner;
+	private MapProperties properties;
+	private RoleWorld runner;
 	private PowerStarBody starBody;
 	private PowerStarSprite starSprite;
 
 	private float stateTimer;
 	private StarState prevState;
 
-	public PowerStar(WorldRunner runner, Vector2 position) {
+	public PowerStar(RoleWorld runner, RobotRoleDef rdef) {
+		properties = rdef.properties;
 		this.runner = runner;
 
 		setConstVelocity(START_BOUNCE_VEL);
@@ -43,7 +47,8 @@ public class PowerStar extends SimpleWalkRobotRole implements ItemBot, BumpableB
 		prevState = StarState.SPROUT;
 		stateTimer = 0f;
 
-		starSprite = new PowerStarSprite(runner.getAtlas(), position.cpy().add(0f, SPROUT_OFFSET));
+		Vector2 position = rdef.bounds.getCenter(new Vector2());
+		starSprite = new PowerStarSprite(runner.getEncapTexAtlas(), position.add(0f, SPROUT_OFFSET));
 		starBody = new PowerStarBody(this, runner.getWorld(), position);
 
 		runner.enableRobotUpdate(this);
@@ -105,7 +110,7 @@ public class PowerStar extends SimpleWalkRobotRole implements ItemBot, BumpableB
 
 		if(playerRole instanceof MarioRole) {
 			((MarioRole) playerRole).applyPowerup(PowerupType.POWERSTAR);
-			runner.removeRobot(this);
+			runner.destroyRobot(this);
 		}
 	}
 
@@ -113,11 +118,6 @@ public class PowerStar extends SimpleWalkRobotRole implements ItemBot, BumpableB
 		// bounce off of vertical bounds only
 		if(!seg.isHorizontal)
 			reverseConstVelocity(true,  false);
-	}
-
-	@Override
-	public void setActive(boolean active) {
-		starBody.setActive(active);
 	}
 
 	@Override
@@ -142,6 +142,12 @@ public class PowerStar extends SimpleWalkRobotRole implements ItemBot, BumpableB
 			reverseConstVelocity(true, false);
 
 		starBody.setVelocity(getConstVelocity().x, getConstVelocity().y);
+	}
+
+	@Override
+	public MapProperties getProperties() {
+		// return empty properties
+		return properties;
 	}
 
 	@Override

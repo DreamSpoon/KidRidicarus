@@ -4,12 +4,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.GameInfo;
-import kidridicarus.bodies.B2DFactory;
 import kidridicarus.bodies.RobotBody;
-import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.info.GameInfo;
 import kidridicarus.roles.RobotRole;
 import kidridicarus.roles.robot.SMB.Flagpole;
+import kidridicarus.tools.B2DFactory;
 
 public class FlagpoleBody extends RobotBody {
 	private Flagpole role;
@@ -26,12 +25,7 @@ public class FlagpoleBody extends RobotBody {
 	}
 
 	@Override
-	public RobotRole getRole() {
+	public RobotRole getParent() {
 		return role;
-	}
-
-	// redundant
-	@Override
-	protected void onTouchVertBoundLine(LineSeg seg) {
 	}
 }

@@ -1,4 +1,4 @@
-package kidridicarus.bodies;
+package kidridicarus.tools;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;

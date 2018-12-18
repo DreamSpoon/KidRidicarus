@@ -1,4 +1,4 @@
-package kidridicarus.tiles;
+package kidridicarus.worldrunner;
 
 public class TileIDs {
 	public static final int ANIMQ_BLINK1 = 25;

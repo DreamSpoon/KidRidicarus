@@ -1,33 +1,65 @@
 package kidridicarus.roles.robot.SMB;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
-import kidridicarus.InfoSMB.PointAmount;
+import kidridicarus.info.AudioInfo;
+import kidridicarus.info.KVInfo;
+import kidridicarus.info.SMBInfo;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.SMBInfo.PointAmount;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.RobotRole;
+import kidridicarus.roles.player.MarioRole;
 import kidridicarus.sprites.SMB.FloatingPointsSprite;
-import kidridicarus.worldrunner.WorldRunner;
+import kidridicarus.worldrunner.RobotRoleDef;
+import kidridicarus.worldrunner.RoleWorld;
 
 /*
- * SMB floating points, and 1-up
+ * SMB floating points, and 1-up.
+ * 
+ * Relative vs Absolute Points Notes:
+ *   This distinction is necessary due to the way mario can gain points.
+ * i.e. The sliding turtle shell points multiplier, and the consecutive head bounce multiplier.
+ * 
+ * The sliding turtle shell awards only absolute points, and head bounces award only relative points.
+ * Currently, mario fireball strikes award only absolute points.
  */
 public class FloatingPoints implements RobotRole {
 	private static final float FLOAT_TIME = 1f;
-	private static final float FLOAT_HEIGHT = GameInfo.P2M(48);
+	private static final float FLOAT_HEIGHT = UInfo.P2M(48);
 
-	private WorldRunner runner;
+	private MapProperties properties;
+	private RoleWorld runner;
 	private FloatingPointsSprite pointsSprite;
 	private float stateTimer;
 	private Vector2 originalPosition;
 
-	public FloatingPoints(WorldRunner runner, PointAmount amount, Vector2 position) {
+	public FloatingPoints(RoleWorld runner, RobotRoleDef rdef) {
+		properties = rdef.properties;
 		this.runner = runner;
-		this.originalPosition = position;
+		originalPosition = rdef.bounds.getCenter(new Vector2());
 
-		pointsSprite = new FloatingPointsSprite(runner.getAtlas(), position, amount);
+		// default to zero points
+		PointAmount amount = PointAmount.ZERO;
+		// check for point amount property
+		if(rdef.properties.containsKey(KVInfo.KEY_POINTAMOUNT))
+			amount = SMBInfo.strToPointAmount(rdef.properties.get(KVInfo.KEY_POINTAMOUNT, String.class));
+		// relative points can stack, absolute points can not
+		boolean relative = false;
+		if(rdef.properties.containsKey(KVInfo.KEY_RELPOINTAMOUNT))
+			relative = rdef.properties.get(KVInfo.KEY_POINTAMOUNT, Boolean.class);
+
+		// give points to player and get the actual amount awarded (since player may have points multiplier)
+		if(rdef.userData != null) {
+			amount = ((MarioRole) rdef.userData).givePoints(amount, relative);
+			if(amount == PointAmount.P1UP)
+				runner.playSound(AudioInfo.SOUND_1UP);
+		}
+
+		pointsSprite = new FloatingPointsSprite(runner.getEncapTexAtlas(), originalPosition, amount);
 
 		stateTimer = 0f;
 		runner.enableRobotUpdate(this);
@@ -40,7 +72,7 @@ public class FloatingPoints implements RobotRole {
 		pointsSprite.update(delta, originalPosition.cpy().add(0f, yOffset));
 		stateTimer += delta;
 		if(stateTimer > FLOAT_TIME)
-			runner.removeRobot(this);
+			runner.destroyRobot(this);
 	}
 
 	@Override
@@ -59,9 +91,45 @@ public class FloatingPoints implements RobotRole {
 	}
 
 	@Override
-	public void setActive(boolean active) {
+	public MapProperties getProperties() {
+		return properties;
 	}
+/*
+	// add points to mario's total, with option to display the point amount on-screen
+	public void givePlayerPoints(PlayerRole playrole, PointAmount amount, boolean visible, Vector2 position,
+			float yOffset, boolean isHeadBounce) {
+		MarioRole mario;
+		PointAmount finalAmt;
 
+		if(playrole == null)
+			throw new IllegalArgumentException("Cannot give points to null player.");
+
+		finalAmt = amount;
+		if(playrole instanceof MarioRole) {
+			mario = (MarioRole) playrole;
+			// check for points increase due to mario bouncing multiple times without touching the ground
+			if(isHeadBounce) {
+				mario.incrementFlyingPoints();
+				// if the flying points are greater than the incoming points amount then use the flying points
+				if(mario.getFlyingPoints().compareTo(amount) > 0 || mario.getFlyingPoints() == PointAmount.P1UP)
+					finalAmt = mario.getFlyingPoints();
+			}
+
+			if(finalAmt == PointAmount.P1UP) {
+				runner.playSound(AudioInfo.SOUND_1UP);
+				mario.give1UP();
+			}
+			else
+				mario.givePoints(finalAmt);
+		}
+
+		// if visible then create floating points that despawn after a short time
+		if(visible && position != null) {
+//			subWR.addRobot(new FloatingPoints(this, finalAmt, position.cpy().add(0f, yOffset)));
+			createRobot(RRDefFactory.makeFloatingPoints(this, playrole, finalAmt, position.cpy().add(0f, yOffset)));
+		}
+	}
+*/
 	@Override
 	public void dispose() {
 	}

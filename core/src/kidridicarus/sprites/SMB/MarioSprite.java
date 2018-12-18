@@ -3,15 +3,16 @@ package kidridicarus.sprites.SMB;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import kidridicarus.GameInfo;
 import kidridicarus.bodies.SMB.MarioBody.MarioBodyState;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.player.MarioRole.MarioPowerState;
 import kidridicarus.roles.player.MarioRole.MarioRoleState;
+import kidridicarus.tools.EncapTexAtlas;
 
 public class MarioSprite extends Sprite {
 	private static final float BLINK_DURATION = 0.05f;
@@ -57,16 +58,14 @@ public class MarioSprite extends Sprite {
 	private boolean runFireballAnimation;
 	private float starPowerFrameTimer;
 
-	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioBodyState stateIn, MarioPowerState subState, boolean facingRight) {
-		super(atlas.findRegion(GameInfo.TEXATLAS_SMLMARIO_REG));
-
+	public MarioSprite(EncapTexAtlas encapTexAtlas, Vector2 position, MarioBodyState stateIn, MarioPowerState subState, boolean facingRight) {
 		isBlinking = false;
 		blinkTimer = 0f;
 
-		createAnimations(atlas);
+		createAnimations(encapTexAtlas);
 
 		setRegion(anim[STAND_POSE][SML_SIZE][REG_GRP].getKeyFrame(0f));
-		setBounds(0, 0, GameInfo.P2M(GameInfo.TILEPIX_X), GameInfo.P2M(GameInfo.TILEPIX_Y));
+		setBounds(0, 0, UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y));
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
 		curState = MarioSpriteState.STAND;
@@ -81,7 +80,7 @@ public class MarioSprite extends Sprite {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void createAnimations(TextureAtlas atlas) {
+	private void createAnimations(EncapTexAtlas encapTexAtlas) {
 		Array<TextureRegion> frames;
 		String smlTempArray[], bigTempArray[];
 		int i, j;
@@ -112,45 +111,45 @@ public class MarioSprite extends Sprite {
 
 		for(i=0; i<NUM_GRPS; i++) {
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 0, 0, 16, 16));
+			frames.add(encapTexAtlas.findSubRegion(smlTempArray[i], 0, 0, 16, 16));
 			anim[STAND_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 0, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
 			anim[STAND_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
 
 		for(i=0; i<NUM_GRPS; i++) {
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 1*16, 0, 16, 16));
-			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 2*16, 0, 16, 16));
-			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 3*16, 0, 16, 16));
+			frames.add(encapTexAtlas.findSubRegion(smlTempArray[i], 1*16, 0, 16, 16));
+			frames.add(encapTexAtlas.findSubRegion(smlTempArray[i], 2*16, 0, 16, 16));
+			frames.add(encapTexAtlas.findSubRegion(smlTempArray[i], 3*16, 0, 16, 16));
 			anim[RUN_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 1*16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 2*16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 3*16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 1*16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 2*16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 3*16, 0, 16, 32));
 			anim[RUN_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
 
 		for(i=0; i<NUM_GRPS; i++) {
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 5*16, 0, 16, 16));
+			frames.add(encapTexAtlas.findSubRegion(smlTempArray[i], 5*16, 0, 16, 16));
 			anim[JUMP_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 5*16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 5*16, 0, 16, 32));
 			anim[JUMP_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
 
 		for(i=0; i<NUM_GRPS; i++) {
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 4*16, 0, 16, 16));
+			frames.add(encapTexAtlas.findSubRegion(smlTempArray[i], 4*16, 0, 16, 16));
 			anim[BRAKE_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 4*16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 4*16, 0, 16, 32));
 			anim[BRAKE_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
 
@@ -158,61 +157,61 @@ public class MarioSprite extends Sprite {
 		for(i=0; i<NUM_GRPS; i++) {
 			// for mario growth: he gets big, gets small again, then finishes big
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 15 * 16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 0, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 15 * 16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 0, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 15 * 16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 0, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 15 * 16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 0, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
 			anim[GROW_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 
 			// for mario shrink: he changes to jump mario, then big mario stand, gets small,
 			// gets big again, ..., then finishes small
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 5 * 16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 0, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 15 * 16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 0, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 15 * 16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 0, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 15 * 16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 0, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 15 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 5 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
 			anim[SHRINK_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
 
 		// NOTE: only big mario has the duck anim
 		for(i=0; i<NUM_GRPS; i++) {
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 6 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 6 * 16, 0, 16, 32));
 			anim[DUCK_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
 
 		// NOTE: only small mario has the death anim
 		for(i=0; i<NUM_GRPS; i++) {
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 6 * 16, 0, 16, 16));
+			frames.add(encapTexAtlas.findSubRegion(smlTempArray[i], 6 * 16, 0, 16, 16));
 			anim[DEAD_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
 
 		// NOTE: only big mario has the throw fireball anim
 		for(i=0; i<NUM_GRPS; i++) {
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 16 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 16 * 16, 0, 16, 32));
 			anim[FIREB_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
 
 		for(i=0; i<NUM_GRPS; i++) {
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 7 * 16, 0, 16, 16));
-			frames.add(new TextureRegion(atlas.findRegion(smlTempArray[i]), 8 * 16, 0, 16, 16));
+			frames.add(encapTexAtlas.findSubRegion(smlTempArray[i], 7 * 16, 0, 16, 16));
+			frames.add(encapTexAtlas.findSubRegion(smlTempArray[i], 8 * 16, 0, 16, 16));
 			anim[FLAG_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 
 			frames.clear();
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 7 * 16, 0, 16, 32));
-			frames.add(new TextureRegion(atlas.findRegion(bigTempArray[i]), 8 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 7 * 16, 0, 16, 32));
+			frames.add(encapTexAtlas.findSubRegion(bigTempArray[i], 8 * 16, 0, 16, 32));
 			anim[FLAG_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
 		}
 	}
@@ -230,7 +229,7 @@ public class MarioSprite extends Sprite {
 
 			runGrowAnimation = true;
 			stateTimer = 0f;
-			setBounds(getX(), getY(), GameInfo.P2M(GameInfo.TILEPIX_X), GameInfo.P2M(GameInfo.TILEPIX_Y)*2);
+			setBounds(getX(), getY(), UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y)*2);
 		}
 		else if(powerStateIn == MarioPowerState.SMALL && wasBig) {
 			if(runGrowAnimation)
@@ -247,7 +246,7 @@ public class MarioSprite extends Sprite {
 		if(runShrinkAnimation && anim[SHRINK_POSE][BIG_SIZE][REG_GRP].isAnimationFinished(stateTimer)) {
 			runShrinkAnimation = false;
 			// change sprite bounds to small mario size
-			setBounds(getX(), getY(), GameInfo.P2M(GameInfo.TILEPIX_X), GameInfo.P2M(GameInfo.TILEPIX_Y));
+			setBounds(getX(), getY(), UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y));
 		}
 
 		if(runFireballAnimation && anim[FIREB_POSE][BIG_SIZE][FIRE_GRP].isAnimationFinished(stateTimer))
@@ -262,7 +261,7 @@ public class MarioSprite extends Sprite {
 			fallStartStateTime = stateTimer;
 
 		if(curState == MarioSpriteState.DEAD && curState != prevState)
-			setBounds(getX(), getY(), GameInfo.P2M(GameInfo.TILEPIX_X), GameInfo.P2M(GameInfo.TILEPIX_Y));
+			setBounds(getX(), getY(), UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y));
 			
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
 		wasBig = (powerStateIn != MarioPowerState.SMALL);

@@ -3,13 +3,14 @@ package kidridicarus.worldrunner;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
-import kidridicarus.GameInfo;
-import kidridicarus.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.GameInfo.LayerDrawOrder;
+import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.RobotRole;
-import kidridicarus.tiles.InteractiveTileObject;
 
 public class WorldRenderer {
 	private WorldRunner runner;
@@ -19,7 +20,7 @@ public class WorldRenderer {
 	public WorldRenderer(WorldRunner runner) {
 		this.runner = runner;
 		b2dr = new Box2DDebugRenderer();
-		tileRrr = new OrthogonalTiledMapRenderer(runner.getMap(), GameInfo.P2M(1f));
+		tileRrr = new OrthogonalTiledMapRenderer(runner.getMap(), UInfo.P2M(1f));
 	}
 
 	public void dispose() {
@@ -28,7 +29,8 @@ public class WorldRenderer {
 	}
 
 	public void drawAll(SpriteBatch batch, OrthographicCamera gamecam) {
-		drawTileMapLayer(batch, gamecam, GameInfo.TILEMAP_BACKGROUND);
+		for(MapLayer layer : runner.getDrawLayers()[LayerDrawOrder.BOTTOM.ordinal()])
+			drawTileMapLayer(batch, gamecam, layer);
 
 		batch.setProjectionMatrix(gamecam.combined);
 
@@ -44,7 +46,8 @@ public class WorldRenderer {
 
 		batch.end();
 
-		drawTileMapLayer(batch, gamecam, GameInfo.TILEMAP_SCENERY);
+		for(MapLayer layer : runner.getDrawLayers()[LayerDrawOrder.MIDDLE.ordinal()])
+			drawTileMapLayer(batch, gamecam, layer);
 
 		batch.begin();
 
@@ -58,13 +61,10 @@ public class WorldRenderer {
 
 		batch.end();
 
-		drawTileMapLayer(batch, gamecam, GameInfo.TILEMAP_COLLISION);
+		for(MapLayer layer : runner.getDrawLayers()[LayerDrawOrder.TOP.ordinal()])
+			drawTileMapLayer(batch, gamecam, layer);
 
 		batch.begin();
-
-		// draw interactive tiles
-		for(InteractiveTileObject tile : runner.getIntTilesToUpdate())
-			tile.draw(batch);
 
 		// draw top robots
 		for(RobotRole roboRole : runner.getRobotsToDraw()[SpriteDrawOrder.TOP.ordinal()])
@@ -80,9 +80,9 @@ public class WorldRenderer {
 //		drawB2DebugRenderer(gamecam);
 	}
 
-	public void drawTileMapLayer(Batch batch, OrthographicCamera gamecam, String layerName) {
+	public void drawTileMapLayer(Batch batch, OrthographicCamera gamecam, MapLayer layer) {
 		tileRrr.setView(gamecam);
-		tileRrr.render(new int[] { runner.getMap().getLayers().getIndex(layerName) });
+		tileRrr.render(new int[] { runner.getMap().getLayers().getIndex(layer.getName()) } );
 	}
 
 	public void drawB2DebugRenderer(OrthographicCamera gamecam) {

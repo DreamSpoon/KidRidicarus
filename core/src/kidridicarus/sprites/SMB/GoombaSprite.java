@@ -2,30 +2,31 @@ package kidridicarus.sprites.SMB;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import kidridicarus.GameInfo;
+import kidridicarus.info.GameInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.roles.robot.SMB.enemy.GoombaRole.GoombaRoleState;
+import kidridicarus.tools.EncapTexAtlas;
 
 public class GoombaSprite extends Sprite {
 	private float stateTimer;
 	private Animation<TextureRegion> walkAnimation;
 	private TextureRegion squish;
 
-	public GoombaSprite(TextureAtlas atlas, Vector2 position) {
-		super(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_GOOMBA), 0, 0, 16, 16));
-		setBounds(getX(), getY(), GameInfo.P2M(16), GameInfo.P2M(16));
+	public GoombaSprite(EncapTexAtlas encapTexAtlas, Vector2 position) {
+		super(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_GOOMBA, 0, 0, 16, 16));
+		setBounds(getX(), getY(), UInfo.P2M(16), UInfo.P2M(16));
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
 		Array<TextureRegion> frames = new Array<TextureRegion>();
-		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_GOOMBA), 0, 0, 16, 16));
-		frames.add(new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_GOOMBA), 16, 0, 16, 16));
+		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_GOOMBA, 0, 0, 16, 16));
+		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_GOOMBA, 16, 0, 16, 16));
 		walkAnimation = new Animation<TextureRegion>(0.4f, frames);
 
-		squish = new TextureRegion(atlas.findRegion(GameInfo.TEXATLAS_GOOMBA), 2 * 16, 0, 16, 16);
+		squish = encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_GOOMBA, 2 * 16, 0, 16, 16);
 
 		stateTimer = 0;
 	}
