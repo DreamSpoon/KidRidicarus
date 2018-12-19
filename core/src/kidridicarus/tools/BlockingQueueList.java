@@ -9,8 +9,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class BlockingQueueList<T> {
 	private LinkedBlockingQueue<AddRemT> addRemoveQ;
 	private LinkedList<T> list;
+	private AddRemCallback<T> arcb;
 
-	public class AddRemT {
+	private class AddRemT {
 		public T myObj;
 		public boolean isAdd;
 
@@ -20,9 +21,19 @@ public class BlockingQueueList<T> {
 		}
 	}
 
+	public interface AddRemCallback<T> {
+		public void add(T obj);
+		public void remove(T obj);
+	}
+
 	public BlockingQueueList() {
+		this(null);
+	}
+
+	public BlockingQueueList(AddRemCallback<T> arcb) {
 		addRemoveQ = new LinkedBlockingQueue<AddRemT>();
 		list = new LinkedList<T>();
+		this.arcb = arcb;
 	}
 
 	public void add(T obj) {
@@ -42,13 +53,30 @@ public class BlockingQueueList<T> {
 		while(!addRemoveQ.isEmpty()) {
 			AddRemT ar = addRemoveQ.poll();
 			if(ar.isAdd) {
-				if(!list.contains(ar.myObj))
+				if(!list.contains(ar.myObj)) {
 					list.add(ar.myObj);
+					// invoke callback with ref to object added to list
+					if(arcb != null)
+						arcb.add(ar.myObj);
+				}
 			}
 			else {
-				if(list.contains(ar.myObj))
+				if(list.contains(ar.myObj)) {
 					list.remove(ar.myObj);
+					// invoke callback with ref to object removed from list
+					if(arcb != null)
+						arcb.remove(ar.myObj);
+				}
 			}
 		}
+	}
+
+	// force immediate processing of add/remove queue to update list
+	public void processQ() {
+		processAddRemoveQ();
+	}
+
+	public boolean contains(T obj) {
+		return list.contains(obj);
 	}
 }

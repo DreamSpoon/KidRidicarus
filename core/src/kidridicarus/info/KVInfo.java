@@ -2,7 +2,7 @@ package kidridicarus.info;
 
 /*
  * Title: Key Value Info
- * Desc: Used by the map loading and robot creation code.
+ * Desc: Used by the map loading and agent creation code.
  */
 public class KVInfo {
 	public static final String KEY_QBLOCK = "qblock";
@@ -28,27 +28,28 @@ public class KVInfo {
 
 	public static final String KEY_VIEWOFFSET_Y = "viewoffset_y";
 
-	public static final String KEY_ROBOTROLECLASS = "robotroleclass";
+	public static final String KEY_AGENTCLASS = "agentclass";
 	public static final String VAL_BUMPTILE = "bumptile";
 	public static final String VAL_GOOMBA = "goomba";
 	public static final String VAL_TURTLE = "turtle";
 	public static final String VAL_COIN = "coin";
 	public static final String VAL_SPAWNGOOMBA = "spawngoomba";
 	public static final String VAL_SPAWNTURTLE = "spawnturtle";
-	public static final String VAL_SPAWNPLAYER = "spawnplayer";
+	public static final String VAL_SPAWNGUIDE = "spawnguide";	// "player" spawner
 	public static final String VAL_FLAGPOLE = "flagpole";
 	public static final String VAL_LEVELEND_TRIGGER = "levelend_trigger";
 	public static final String VAL_PIPEWARP = "pipewarp";
 	public static final String VAL_ROOM = "room";
 	public static final String VAL_DESPAWN = "despawn";
-	public static final String VAL_ROBOTSPAWN_TRIGGER = "robotspawn_trigger";
+	public static final String VAL_AGENTSPAWN_TRIGGER = "agentspawn_trigger";
 	public static final String VAL_CASTLEFLAG = "castleflag";
 	public static final String VAL_FLOATINGPOINTS = "floatingpoints";
+	public static final String VAL_MARIO = "mario";
 
 	public static final String KEY_SPAWNITEM = "spawnitem";
 	public static final String VAL_COIN10 = "coin10";
 	public static final String VAL_MUSHROOM = "mushroom";
-	public static final String VAL_STAR = "powerstar";
+	public static final String VAL_POWERSTAR = "powerstar";
 	public static final String VAL_MUSH1UP = "mushroom1up";
 	public static final String VAL_FIREFLOWER = "fireflower";
 	public static final String VAL_BRICKPIECE = "brickpiece";

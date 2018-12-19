@@ -9,13 +9,12 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.MyKidRidicarus;
+import kidridicarus.agencydirector.Guide;
+import kidridicarus.agencydirector.AgencyDirector;
 import kidridicarus.hud.SMB_Hud;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.SMBInfo;
 import kidridicarus.info.UInfo;
-import kidridicarus.worldrunner.Player;
-import kidridicarus.worldrunner.WorldRenderer;
-import kidridicarus.worldrunner.WorldRunner;
 
 public class PlayScreen implements Screen {
 	private MyKidRidicarus game;
@@ -23,9 +22,8 @@ public class PlayScreen implements Screen {
 	private Viewport gameport;
 	private TextureAtlas atlas;
 	private SMB_Hud smbHud;
-	private WorldRunner worldRunner;
-	private WorldRenderer worldRenderer;
-	private Player rePlayer;
+	private AgencyDirector director;
+	private Guide rePlayer;
 
 	public PlayScreen(MyKidRidicarus game) {
 		this.game = game;
@@ -37,14 +35,12 @@ public class PlayScreen implements Screen {
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2, gameport.getWorldHeight()/2, 0);
 
-		worldRunner = new WorldRunner(game.manager, atlas, gamecam);
-		worldRunner.loadMap(GameInfo.GAMEMAP_FILENAME);
-		// start renderer after loading map into runner, TODO: fix this
-		worldRenderer = new WorldRenderer(worldRunner);
+		director = new AgencyDirector(game.manager, atlas, gamecam);
+		director.createSpace(GameInfo.GAMEMAP_FILENAME);
 
-		rePlayer = worldRunner.createPlayer();
+		rePlayer = director.createGuide();
 
-		smbHud = new SMB_Hud(game.batch, worldRunner.getSubWR(), rePlayer);
+		smbHud = new SMB_Hud(game.batch, director.getAgency(), rePlayer);
 	}
 
 	@Override
@@ -53,7 +49,8 @@ public class PlayScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		worldRenderer.drawAll(game.batch, gamecam);
+		director.draw(game.batch);
+
 		// draw the HUD last, so it's on top of everything else
 		smbHud.draw();
 
@@ -72,8 +69,7 @@ public class PlayScreen implements Screen {
 	private void update(float delta) {
 		handleInput(delta);
 
-		// robots are updated in the worldrunner update method
-		worldRunner.update(delta);
+		director.update(delta);
 
 		smbHud.update(delta);
 	}
@@ -83,13 +79,13 @@ public class PlayScreen implements Screen {
 	}
 
 	private boolean gameOver() {
-		if(rePlayer.getRole().isDead() && rePlayer.getRole().getStateTimer() > SMBInfo.MARIO_DEAD_TIME)
+		if(rePlayer.getAgent().isDead() && rePlayer.getAgent().getStateTimer() > SMBInfo.MARIO_DEAD_TIME)
 			return true;
 		return false;
 	}
 
 	private boolean gameWon() {
-		if(rePlayer.getRole().isAtLevelEnd() && rePlayer.getRole().getStateTimer() > SMBInfo.MARIO_LEVELEND_TIME)
+		if(rePlayer.getAgent().isAtLevelEnd() && rePlayer.getAgent().getStateTimer() > SMBInfo.MARIO_LEVELEND_TIME)
 			return true;
 		return false;
 	}
@@ -101,7 +97,7 @@ public class PlayScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		worldRunner.dispose();
+		director.dispose();
 		smbHud.dispose();
 	}
 

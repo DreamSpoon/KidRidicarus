@@ -6,7 +6,7 @@ public class GameInfo {
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_FILENAME = "map/level xyz v16.tmx";
+	public static final String GAMEMAP_FILENAME = "map/level xyz v17.tmx";
 	public static final String TEXATLAS_FILENAME = "sprite/SMB9.pack";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";
@@ -44,14 +44,14 @@ public class GameInfo {
 
 	public static final short NOTHING_BIT		= 0;
 	public static final short BOUNDARY_BIT		= 2 << 0;
-	public static final short MARIO_BIT			= 2 << 1;
-	public static final short MARIOHEAD_BIT		= 2 << 2;
-	public static final short MARIOFOOT_BIT		= 2 << 3;
+	public static final short PLAYER_BIT			= 2 << 1;
+	public static final short PLAYERHEAD_BIT		= 2 << 2;
+	public static final short PLAYERFOOT_BIT		= 2 << 3;
 	public static final short BANGABLE_BIT		= 2 << 4;
-	public static final short ROBOT_BIT			= 2 << 5;
-	public static final short ROBOTFOOT_BIT		= 2 << 6;
+	public static final short AGENT_BIT			= 2 << 5;
+	public static final short AGENTFOOT_BIT		= 2 << 6;
 	public static final short ITEM_BIT			= 2 << 7;
-	public static final short MARIO_ROBOSENSOR_BIT	= 2 << 8;
+	public static final short PLAYER_AGENTSENSOR_BIT	= 2 << 8;
 	public static final short PIPE_BIT			= 2 << 9;
 	// Replace head/foot/side/body sensor bits with a single bit: MARIO_SENSOR_BIT, and the sensors will tell
 	// mario which one was hit
@@ -62,7 +62,7 @@ public class GameInfo {
 	public static final short ROOMBOX_BIT		= 2 << 10;
 
 	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
-	public static final float ROBOT_VS_VERT_BOUND_EPSILON = 0.001f;
+	public static final float BODY_VS_VERT_BOUND_EPSILON = 0.001f;
 
 	/*
 	 * Draw order explained:
