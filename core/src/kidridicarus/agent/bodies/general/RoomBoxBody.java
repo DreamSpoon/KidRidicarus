@@ -27,7 +27,7 @@ public class RoomBoxBody extends AgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		fdef.filter.categoryBits = GameInfo.ROOMBOX_BIT;
-		fdef.filter.maskBits = GameInfo.PLAYER_BIT;
+		fdef.filter.maskBits = GameInfo.GUIDE_BIT;
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, bounds.width, bounds.height);
 	}
 

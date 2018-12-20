@@ -23,7 +23,7 @@ public class PipeWarpBody extends AgentBody {
 // TODO: fix mario sensor code
 		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, GameInfo.PIPE_BIT,
 //				(short) (GameInfo.MARIOFOOT_BIT | GameInfo.MARIOSIDE_BIT | GameInfo.MARIOHEAD_BIT), bounds);
-				(short) (GameInfo.PLAYERFOOT_BIT | GameInfo.PLAYERHEAD_BIT), bounds);
+				(short) (GameInfo.GUIDEFOOT_BIT | GameInfo.GUIDEHEAD_BIT), bounds);
 	}
 
 	@Override

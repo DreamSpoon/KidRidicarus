@@ -17,7 +17,7 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.agent.bodies.SMB.BumpTileBody;
-import kidridicarus.agent.option.BumpableAgent;
+import kidridicarus.agent.optional.BumpableAgent;
 import kidridicarus.agent.sprites.SMB.BumpTileSprite;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.GameInfo;

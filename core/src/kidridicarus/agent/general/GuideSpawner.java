@@ -56,21 +56,21 @@ public class GuideSpawner extends Agent {
 		psbody = new AgentGuideSpawnerBody(agency.getWorld(), this, adef.bounds);
 	}
 
-	public Vector2 calcBeginOffsetFromSpawn(Vector2 playerSize) {
+	public Vector2 calcBeginOffsetFromSpawn(Vector2 agentSize) {
 		switch(direction) {
 			case RIGHT:
 				return new Vector2(psbody.getBounds().x + psbody.getBounds().width +
-						playerSize.x/2f + SPAWN_SAFETYDIST, psbody.getBounds().y + playerSize.y/2f);
+						agentSize.x/2f + SPAWN_SAFETYDIST, psbody.getBounds().y + agentSize.y/2f);
 			case UP:
 				return new Vector2(psbody.getBounds().x + psbody.getBounds().width/2f,
-						psbody.getBounds().y + psbody.getBounds().height + playerSize.y/2f + SPAWN_SAFETYDIST);
+						psbody.getBounds().y + psbody.getBounds().height + agentSize.y/2f + SPAWN_SAFETYDIST);
 			case LEFT:
-				return new Vector2(psbody.getBounds().x - playerSize.x/2f - SPAWN_SAFETYDIST,
-						psbody.getBounds().y + playerSize.y/2f);
+				return new Vector2(psbody.getBounds().x - agentSize.x/2f - SPAWN_SAFETYDIST,
+						psbody.getBounds().y + agentSize.y/2f);
 			case DOWN:
 			default:
 				return new Vector2(psbody.getBounds().x + psbody.getBounds().width/2f,
-						psbody.getBounds().y - playerSize.y/2f - SPAWN_SAFETYDIST);
+						psbody.getBounds().y - agentSize.y/2f - SPAWN_SAFETYDIST);
 		}
 	}
 

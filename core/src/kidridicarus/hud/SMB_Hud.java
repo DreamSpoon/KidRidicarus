@@ -3,8 +3,8 @@ package kidridicarus.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -14,14 +14,12 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.agency.Agency;
-import kidridicarus.agencydirector.Guide;
+import kidridicarus.agencydirector.SMBGuide;
 import kidridicarus.info.GameInfo;
+import kidridicarus.tools.EncapTexAtlas;
 
 public class SMB_Hud implements Disposable {
-	private SpriteBatch batch;
-	private Agency agency;
-	private Guide rePlayer;
+	private SMBGuide guide;
 	private Stage stage;
 	private Viewport viewport;
 
@@ -30,10 +28,8 @@ public class SMB_Hud implements Disposable {
 	private Label worldVarLabel;
 	private Label timeVarLabel;
 
-	public SMB_Hud(SpriteBatch batch, Agency agency, Guide rePlayer) {
-		this.batch = batch;
-		this.agency = agency;
-		this.rePlayer = rePlayer;
+	public SMB_Hud(Batch batch, EncapTexAtlas encapTexAtlas, SMBGuide guide) {
+		this.guide = guide;
 
 		viewport = new FitViewport(GameInfo.V_WIDTH, GameInfo.V_HEIGHT, new OrthographicCamera());
 		stage = new Stage(viewport, batch);
@@ -57,7 +53,7 @@ public class SMB_Hud implements Disposable {
 		table.add(timeLabel).align(Align.left).expandX().padTop(16);
 		table.row();
 		table.add(scoreVarLabel).align(Align.left).expandX().padLeft(24);
-		table.add(new HudCoin(agency.getEncapTexAtlas())).align(Align.right);
+		table.add(new HudCoin(encapTexAtlas)).align(Align.right);
 		table.add(coinVarLabel).align(Align.left).expandX();
 		table.add(worldVarLabel).align(Align.left).expandX();
 		table.add(timeVarLabel).align(Align.left).expandX();
@@ -65,17 +61,22 @@ public class SMB_Hud implements Disposable {
 		stage.addActor(table);
 	}
 
+	public void setGuide(SMBGuide guide) {
+		this.guide = guide;
+	}
+
 	public void update(float delta) {
-		scoreVarLabel.setText(String.format("%06d", rePlayer.getPointTotal()));
-		timeVarLabel.setText(String.format("%03d", (int) agency.getLevelTimeRemaining()));
-		coinVarLabel.setText(String.format("×%02d", rePlayer.getCoinTotal()));
+		scoreVarLabel.setText(String.format("%06d", guide.getPointTotal()));
+		timeVarLabel.setText(String.format("%03d", (int) guide.getLevelTimeRemaining()));
+		coinVarLabel.setText(String.format("×%02d", guide.getCoinTotal()));
 	}
 
 	public void draw() {
-		batch.setProjectionMatrix(stage.getCamera().combined);
+		stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
 		stage.draw();
 	}
 
+	@Override
 	public void dispose() {
 		stage.dispose();
 	}

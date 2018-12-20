@@ -10,8 +10,8 @@ import kidridicarus.agency.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.item.BaseMushroom;
 import kidridicarus.agent.bodies.MobileAgentBody;
-import kidridicarus.agent.bodies.option.BumpableBody;
-import kidridicarus.agent.bodies.option.GroundCheckBody;
+import kidridicarus.agent.bodies.optional.BumpableBody;
+import kidridicarus.agent.bodies.optional.GroundCheckBody;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
@@ -32,7 +32,7 @@ public class BaseMushroomBody extends MobileAgentBody implements GroundCheckBody
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, GameInfo.ITEM_BIT,
-				(short) (GameInfo.BOUNDARY_BIT | GameInfo.PLAYER_AGENTSENSOR_BIT), position, BODY_WIDTH, BODY_HEIGHT);
+				(short) (GameInfo.BOUNDARY_BIT | GameInfo.GUIDE_AGENTSENSOR_BIT), position, BODY_WIDTH, BODY_HEIGHT);
 		createBottomSensor();
 	}
 

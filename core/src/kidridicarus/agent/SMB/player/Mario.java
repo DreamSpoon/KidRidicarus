@@ -30,6 +30,8 @@ public class Mario extends Agent {
 	public enum MarioState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
 		END6_RUN, END99, PIPE_ENTRYH, PIPE_EXITH, PIPE_ENTRYV, PIPE_EXITV };
 
+	private static final float LEVEL_MAX_TIME = 300f;
+
 	private static final float DMG_INVINCIBLE_TIME = 3f;
 	private static final float FIREBALL_OFFSET = UInfo.P2M(8f);
 	private static final float TIME_PER_FIREBALL = 0.5f;
@@ -59,14 +61,16 @@ public class Mario extends Agent {
 	private Vector2 marioSpriteOffset;
 	private PowerupType receivedPowerup;
 	private GuideSpawner exitingSpawnpoint;
+	private PointAmount consecBouncePoints;
 
 	private MarioState curState;
 	private float stateTimer;
 
+	private float levelTimeRemaining;
 	private int extraLives;
 	private int coinTotal;
 	private int pointTotal;
-	private PointAmount consecBouncePoints;
+
 	private BasicInputs frameInputs;
 
 	public Mario(Agency agency, AgentDef adef) {
@@ -85,6 +89,8 @@ public class Mario extends Agent {
 		receivedPowerup = PowerupType.NONE;
 
 		exitingSpawnpoint = null;
+
+		levelTimeRemaining = LEVEL_MAX_TIME;
 
 		frameInputs = new BasicInputs();
 
@@ -112,6 +118,8 @@ public class Mario extends Agent {
 		MarioState nextState;
 		boolean isStarPowered;
 
+		levelTimeRemaining -= delta;
+
 		// reset consecutive bounce points
 		if(mariobody.isOnGround())
 			consecBouncePoints = PointAmount.ZERO;
@@ -134,7 +142,7 @@ public class Mario extends Agent {
 			powerStarTimer -= delta;
 			// restart regular music when powerstar powerup finishes
 			if(powerStarTimer <= 0f)
-				agency.startRoomMusic();
+				agency.startMusic();
 		}
 
 		marioSprite.update(delta, mariobody.getPosition().cpy().add(marioSpriteOffset), curState, bodyState,
@@ -155,7 +163,7 @@ public class Mario extends Agent {
 		// scripted dead sequence
 		else if(marioIsDead) {
 			if(curState != MarioState.DEAD) {
-				agency.stopRoomMusic();
+				agency.stopMusic();
 				agency.playSound(AudioInfo.SOUND_MARIODIE);
 
 				mariobody.disableContacts();
@@ -226,7 +234,7 @@ public class Mario extends Agent {
 					mariobody.disableGravity();
 					mariobody.zeroVelocity(true, true);
 
-					agency.stopRoomMusic();
+					agency.stopMusic();
 					agency.playSound(AudioInfo.SOUND_FLAGPOLE);
 
 					return MarioState.END1_SLIDE;
@@ -323,8 +331,6 @@ public class Mario extends Agent {
 		// apply powerup if received
 		switch(receivedPowerup) {
 			case MUSH1UP:
-//				agency.givePlayerPoints(this, PointAmount.P1UP, true, mariobody.getPosition(), UInfo.P2M(16),
-//						false);
 				agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P1UP, false,
 						mariobody.getPosition(), UInfo.P2M(16), this));
 				break;
@@ -335,8 +341,6 @@ public class Mario extends Agent {
 							mariobody.getVelocity(), true);
 					agency.playSound(AudioInfo.SOUND_POWERUP_USE);
 				}
-//				agency.givePlayerPoints(this, PointAmount.P1000, true, mariobody.getPosition(), UInfo.P2M(16),
-//						false);
 				agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P1000, false,
 						mariobody.getPosition(), UInfo.P2M(16), this));
 				break;
@@ -351,18 +355,14 @@ public class Mario extends Agent {
 					curPowerState = MarioPowerState.FIRE;
 					agency.playSound(AudioInfo.SOUND_POWERUP_USE);
 				}
-//				agency.givePlayerPoints(this, PointAmount.P1000, true, mariobody.getPosition(), UInfo.P2M(16),
-//						false);
 				agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P1000, false,
 						mariobody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case POWERSTAR:
 				powerStarTimer = POWERSTAR_TIME;
-				agency.stopRoomMusic();
+				agency.stopMusic();
 				agency.playSound(AudioInfo.SOUND_POWERUP_USE);
 				agency.startSinglePlayMusic(AudioInfo.MUSIC_STARPOWER);
-//				agency.givePlayerPoints(this, PointAmount.P1000, true, mariobody.getPosition(), UInfo.P2M(16),
-//						false);
 				agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P1000, false,
 						mariobody.getPosition(), UInfo.P2M(16), this));
 				break;
@@ -420,45 +420,16 @@ public class Mario extends Agent {
 		receivedPowerup = powerup;
 	}
 
-	/*
-	 * Return true if marioIsDead flag is set and the update method has been called at least once while marioIsDead.
-	 * Return false otherwise.
-	 * This is done so the getStateTimer method returns the correct state time when mario is dead. 
-	 */
-//	@Override
-	public boolean isDead() {
-		if(marioIsDead && curState == MarioState.DEAD)
-			return true;
-		return false;
-	}
-
 	@Override
 	public void draw(Batch batch) {
 		if(mariobody.getLevelEndContacted() == null)
 			marioSprite.draw(batch);
 	}
 
-	public boolean isBig() {
-		return (curPowerState != MarioPowerState.SMALL);
+	public void setFrameInputs(BasicInputs bi) {
+		frameInputs = bi.cpy();
 	}
 
-//	@Override
-	public boolean isAtLevelEnd() {
-		return mariobody.getLevelEndContacted() != null;
-	}
-
-	// return null unless mario needs to warp
-//	@Override
-	public GuideSpawner getWarpSpawnpoint() {
-		if(mariobody.getPipeToEnter() != null &&
-				(curState == MarioState.PIPE_ENTRYH || curState == MarioState.PIPE_ENTRYV) &&
-				stateTimer > PIPE_WARPENTRYTIME) {
-			return mariobody.getPipeToEnter().getWarpExit();
-		}
-		return null;
-	}
-
-//	@Override
 	public void respawn(GuideSpawner sp) {
 		mariobody.respawn();
 
@@ -477,50 +448,8 @@ public class Mario extends Agent {
 		}
 	}
 
-	private Vector2 getPipeEntrySpriteEndOffset(PipeWarp pipeToEnter) {
-		switch(pipeToEnter.getDirection()) {
-			case RIGHT:
-				return new Vector2(PIPE_WARPWIDTH, 0f);
-			case UP:
-				return new Vector2(0f, PIPE_WARPHEIGHT);
-			case LEFT:
-				return new Vector2(-PIPE_WARPWIDTH, 0f);
-			case DOWN:
-			default:
-				return new Vector2(0f, -PIPE_WARPHEIGHT);
-		}
-	}
-
-	private Vector2 getSpawnExitSpriteBeginOffset() {
-		switch(exitingSpawnpoint.getDirection()) {
-			case RIGHT:
-				return new Vector2(-PIPE_WARPWIDTH, 0f);
-			case UP:
-				return new Vector2(0f, -PIPE_WARPHEIGHT);
-			case LEFT:
-				return new Vector2(PIPE_WARPWIDTH, 0f);
-			case DOWN:
-			default:
-				return new Vector2(0f, PIPE_WARPHEIGHT);
-		}
-	}
-
-	public boolean isPowerStarOn() {
-		return powerStarTimer > 0f;
-	}
-
-	public boolean isDmgInvincibleOn() {
-		return dmgInvincibleTime > 0f;
-	}
-
-	@Override
-	public Vector2 getPosition() {
-		return mariobody.getPosition();
-	}
-
-//	@Override
-	public float getStateTimer() {
-		return stateTimer;
+	public void die() {
+		marioIsDead = true;
 	}
 
 	public void giveCoin() {
@@ -555,6 +484,56 @@ public class Mario extends Agent {
 		extraLives++;
 	}
 
+	// return null unless mario needs to warp
+	public GuideSpawner getWarpSpawnpoint() {
+		if(mariobody.getPipeToEnter() != null &&
+				(curState == MarioState.PIPE_ENTRYH || curState == MarioState.PIPE_ENTRYV) &&
+				stateTimer > PIPE_WARPENTRYTIME) {
+			return mariobody.getPipeToEnter().getWarpExit();
+		}
+		return null;
+	}
+
+	private Vector2 getPipeEntrySpriteEndOffset(PipeWarp pipeToEnter) {
+		switch(pipeToEnter.getDirection()) {
+			case RIGHT:
+				return new Vector2(PIPE_WARPWIDTH, 0f);
+			case UP:
+				return new Vector2(0f, PIPE_WARPHEIGHT);
+			case LEFT:
+				return new Vector2(-PIPE_WARPWIDTH, 0f);
+			case DOWN:
+			default:
+				return new Vector2(0f, -PIPE_WARPHEIGHT);
+		}
+	}
+
+	private Vector2 getSpawnExitSpriteBeginOffset() {
+		switch(exitingSpawnpoint.getDirection()) {
+			case RIGHT:
+				return new Vector2(-PIPE_WARPWIDTH, 0f);
+			case UP:
+				return new Vector2(0f, -PIPE_WARPHEIGHT);
+			case LEFT:
+				return new Vector2(PIPE_WARPWIDTH, 0f);
+			case DOWN:
+			default:
+				return new Vector2(0f, PIPE_WARPHEIGHT);
+		}
+	}
+
+	public float getStateTimer() {
+		return stateTimer;
+	}
+
+	public Room getCurrentRoom() {
+		return mariobody.getCurrentRoom();
+	}
+
+	public float getLevelTimeRemaining() {
+		return levelTimeRemaining;
+	}
+
 	public int getCoinTotal() {
 		return coinTotal;
 	}
@@ -563,31 +542,49 @@ public class Mario extends Agent {
 		return pointTotal;
 	}
 
-	public void die() {
-		marioIsDead = true;
-	}
-
-//	@Override
-	public boolean isOnGround() {
-		return mariobody.isOnGround();
-	}
-
 	public int getExtraLives() {
 		return extraLives;
 	}
 
-	public Room getCurrentRoom() {
-		return mariobody.getCurrentRoom();
+	/*
+	 * Return true if marioIsDead flag is set and the update method has been called at least once while marioIsDead.
+	 * Return false otherwise.
+	 * This is done so the getStateTimer method returns the correct state time when mario is dead. 
+	 */
+	public boolean isDead() {
+		if(marioIsDead && curState == MarioState.DEAD)
+			return true;
+		return false;
+	}
+
+	public boolean isBig() {
+		return (curPowerState != MarioPowerState.SMALL);
+	}
+
+	public boolean isAtLevelEnd() {
+		return mariobody.getLevelEndContacted() != null;
+	}
+
+	public boolean isPowerStarOn() {
+		return powerStarTimer > 0f;
+	}
+
+	public boolean isDmgInvincibleOn() {
+		return dmgInvincibleTime > 0f;
+	}
+
+	public boolean isOnGround() {
+		return mariobody.isOnGround();
+	}
+
+	@Override
+	public Vector2 getPosition() {
+		return mariobody.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
 		return mariobody.getBounds();
-	}
-
-//	@Override
-	public void setFrameInputs(BasicInputs bi) {
-		frameInputs = bi.cpy();
 	}
 
 	@Override

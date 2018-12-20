@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.PlayerBody;
+import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.agent.bodies.SMB.PipeWarpBody;
 import kidridicarus.agent.general.GuideSpawner;
 import kidridicarus.info.KVInfo;
@@ -44,7 +44,7 @@ public class PipeWarp extends Agent {
 	public void draw(Batch batch) {
 	}
 
-	public boolean canPlayerEnterPipe(PlayerBody marioBody, Direction4 moveDir) {
+	public boolean canBodyEnterPipe(AgentBody marioBody, Direction4 moveDir) {
 		// move direction must match
 		if(direction != moveDir)
 			return false;
@@ -75,7 +75,7 @@ public class PipeWarp extends Agent {
 		if(!properties.containsKey(KVInfo.KEY_EXITNAME))
 			return null;
 
-		return agency.getPlayerSpawnerByName(properties.get(KVInfo.KEY_EXITNAME, String.class));
+		return agency.getGuideSpawnerByName(properties.get(KVInfo.KEY_EXITNAME, String.class));
 	}
 
 	public Direction4 getDirection() {

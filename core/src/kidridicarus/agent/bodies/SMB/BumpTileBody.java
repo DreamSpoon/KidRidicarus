@@ -10,7 +10,7 @@ import kidridicarus.agency.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.BumpTile;
 import kidridicarus.agent.bodies.AgentBody;
-import kidridicarus.agent.bodies.option.BumpableBody;
+import kidridicarus.agent.bodies.optional.BumpableBody;
 import kidridicarus.info.GameInfo;
 
 public class BumpTileBody extends AgentBody implements BumpableBody {
@@ -30,7 +30,7 @@ public class BumpTileBody extends AgentBody implements BumpableBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		fdef.filter.categoryBits = GameInfo.BANGABLE_BIT;
-		fdef.filter.maskBits = GameInfo.PLAYERHEAD_BIT;
+		fdef.filter.maskBits = GameInfo.GUIDEHEAD_BIT;
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, bounds.width, bounds.height);
 	}
 

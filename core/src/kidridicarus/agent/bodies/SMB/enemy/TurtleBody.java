@@ -10,10 +10,10 @@ import kidridicarus.agency.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.enemy.Turtle;
 import kidridicarus.agent.bodies.MobileAgentBody;
+import kidridicarus.agent.bodies.optional.AgentContactBody;
+import kidridicarus.agent.bodies.optional.BumpableBody;
+import kidridicarus.agent.bodies.optional.GroundCheckBody;
 import kidridicarus.agent.bodies.AgentBody;
-import kidridicarus.agent.bodies.option.BumpableBody;
-import kidridicarus.agent.bodies.option.GroundCheckBody;
-import kidridicarus.agent.bodies.option.AgentContactBody;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
@@ -34,7 +34,7 @@ public class TurtleBody extends MobileAgentBody implements GroundCheckBody, Agen
 	private void defineBody(World world, Vector2 position, Vector2 velocity) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, GameInfo.AGENT_BIT,
-				(short) (GameInfo.BOUNDARY_BIT | GameInfo.AGENT_BIT | GameInfo.PLAYER_AGENTSENSOR_BIT),
+				(short) (GameInfo.BOUNDARY_BIT | GameInfo.AGENT_BIT | GameInfo.GUIDE_AGENTSENSOR_BIT),
 				position, BODY_WIDTH, BODY_HEIGHT);
 		createBottomSensorFixture();
 	}

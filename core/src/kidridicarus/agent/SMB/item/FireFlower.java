@@ -10,7 +10,7 @@ import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.bodies.SMB.item.FireFlowerBody;
-import kidridicarus.agent.option.ItemAgent;
+import kidridicarus.agent.optional.ItemAgent;
 import kidridicarus.agent.sprites.SMB.item.FireFlowerSprite;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PowerupType;

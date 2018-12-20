@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.AudioInfo;
@@ -25,18 +24,17 @@ import kidridicarus.agent.SMB.PipeWarp;
 import kidridicarus.agent.SMB.enemy.Turtle;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.SMB.player.Mario.MarioPowerState;
-import kidridicarus.agent.bodies.PlayerBody;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.agent.bodies.SMB.PipeWarpBody;
 import kidridicarus.agent.bodies.general.RoomBoxBody;
-import kidridicarus.agent.bodies.option.BumpableBody;
+import kidridicarus.agent.bodies.optional.BumpableBody;
 import kidridicarus.agent.general.Room;
-import kidridicarus.agent.option.DamageableAgent;
-import kidridicarus.agent.option.HeadBounceAgent;
-import kidridicarus.agent.option.ItemAgent;
-import kidridicarus.agent.option.ContactDmgAgent;
+import kidridicarus.agent.optional.ContactDmgAgent;
+import kidridicarus.agent.optional.DamageableAgent;
+import kidridicarus.agent.optional.HeadBounceAgent;
+import kidridicarus.agent.optional.ItemAgent;
 
-public class MarioBody implements PlayerBody, Disposable {
+public class MarioBody extends AgentBody {
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 	private static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
 	private static final float MARIO_RUNMOVE_XIMP = MARIO_WALKMOVE_XIMP * 1.5f;
@@ -192,7 +190,7 @@ public class MarioBody implements PlayerBody, Disposable {
 		else
 			return;
 		for(PipeWarp ent : warpPipeContacts.getList()) {
-			if(ent.canPlayerEnterPipe(this, dir)) {
+			if(ent.canBodyEnterPipe(this, dir)) {
 				// player can enter pipe, so save a ref to the pipe
 				pipeToEnter = ent;
 				return;
@@ -206,9 +204,9 @@ public class MarioBody implements PlayerBody, Disposable {
 	 * Returns null if mario's position is not inside a room.
 	 */
 	public Room getCurrentRoom() {
-		for(Room r : curRooms.getList()) {
-			if(r.isPointInRoom(b2body.getPosition()))
-				return r;
+		for(Room room : curRooms.getList()) {
+			if(room.isPointInRoom(b2body.getPosition()))
+				return room;
 		}
 		return null;
 	}
@@ -247,7 +245,7 @@ public class MarioBody implements PlayerBody, Disposable {
 
 		// eligible for duck/unduck?
 		if(curPowerState != MarioPowerState.SMALL && isOnGround) {
-			Vector2 playerTilePos = UInfo.getM2PTileForPos(b2body.getPosition());
+			Vector2 bodyTilePos = UInfo.getM2PTileForPos(b2body.getPosition());
 
 			// first time duck check
 			if(bi.wantsToGoDown && !isDucking) {
@@ -266,14 +264,14 @@ public class MarioBody implements PlayerBody, Disposable {
 				// tight spot
 
 				// if the tile above ducking mario is solid ...
-				if(agency.isMapTileSolid(playerTilePos.cpy().add(0, 1))) {
-					Vector2 playerTileSubPos = UInfo.getSubTileCoordsForMPos(b2body.getPosition());
+				if(agency.isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
+					Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(b2body.getPosition());
 					// If the player's last velocity direction was rightward, and their position is in the left half
 					// of the tile, and the tile above and to the left of them is solid, then the player should
 					// duckslide right.
-					if((isLastVelocityRight && playerTileSubPos.x <= 0.5f && agency.isMapTileSolid(playerTilePos.cpy().add(-1, 1))) ||
-							(playerTileSubPos.x > 0.5f && !agency.isMapTileSolid(playerTilePos.cpy().add(1, 1))) ||
-							(isLastVelocityRight && playerTileSubPos.x > 0.5f && agency.isMapTileSolid(playerTilePos.cpy().add(1, 1)))) {
+					if((isLastVelocityRight && subTilePos.x <= 0.5f && agency.isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
+							(subTilePos.x > 0.5f && !agency.isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
+							(isLastVelocityRight && subTilePos.x > 0.5f && agency.isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
 						isDuckSlideRight = true;
 					}
 					// the only other option is to duckslide left
@@ -289,7 +287,7 @@ public class MarioBody implements PlayerBody, Disposable {
 
 			if(isDuckSliding) {
 				// if the player was duck sliding but the space above them is now nonsolid then end duckslide
-				if(!agency.isMapTileSolid(playerTilePos.cpy().add(0, 1))) {
+				if(!agency.isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
 					isDuckSliding = false;
 					defineBody(b2body.getPosition().cpy().add(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
 				}
@@ -453,7 +451,7 @@ public class MarioBody implements PlayerBody, Disposable {
 
 		bodyShape.setAsBox(bs.x/2f, bs.y/2f);
 
-		fdef.filter.categoryBits = GameInfo.PLAYER_BIT;
+		fdef.filter.categoryBits = GameInfo.GUIDE_BIT;
 		fdef.filter.maskBits = GameInfo.ROOMBOX_BIT | GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
 		fdef.shape = bodyShape;
 		// mario should slide easily, but still have some friction to prevent sliding forever
@@ -473,7 +471,7 @@ public class MarioBody implements PlayerBody, Disposable {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(8f)), 0f);
 		else
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(16f)), 0f);
-		fdef.filter.categoryBits = GameInfo.PLAYERHEAD_BIT;
+		fdef.filter.categoryBits = GameInfo.GUIDEHEAD_BIT;
 		fdef.filter.maskBits = GameInfo.BANGABLE_BIT | GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
@@ -489,7 +487,7 @@ public class MarioBody implements PlayerBody, Disposable {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-6)), 0f);
 		else
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-16)), 0f);
-		fdef.filter.categoryBits = GameInfo.PLAYERFOOT_BIT;
+		fdef.filter.categoryBits = GameInfo.GUIDEFOOT_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
@@ -528,7 +526,7 @@ public class MarioBody implements PlayerBody, Disposable {
 
 		// Create an agent sensor, so that mario doesn't collide with goombas or items like mushrooms and slow down -
 		// he should only sense when they contact
-		fdef.filter.categoryBits = GameInfo.PLAYER_AGENTSENSOR_BIT;
+		fdef.filter.categoryBits = GameInfo.GUIDE_AGENTSENSOR_BIT;
 		fdef.filter.maskBits = GameInfo.AGENT_BIT | GameInfo.ITEM_BIT;
 		fdef.shape = bodyShape;
 		fdef.isSensor = true;
@@ -605,7 +603,7 @@ public class MarioBody implements PlayerBody, Disposable {
 	 * and decrement for each contact end. If onGroundCount reaches zero then mario's foot sensor is not contacting
 	 * a boundary line, hence mario is not on the ground.
 	 */
-	@Override
+//	@Override
 	public void onFootBeginContactBound(LineSeg seg) {
 		if(!seg.isHorizontal)
 			return;
@@ -614,7 +612,7 @@ public class MarioBody implements PlayerBody, Disposable {
 		isOnGround = true;
 	}
 
-	@Override
+//	@Override
 	public void onFootEndContactBound(LineSeg seg) {
 		if(!seg.isHorizontal)
 			return;
@@ -624,7 +622,7 @@ public class MarioBody implements PlayerBody, Disposable {
 			isOnGround = false;
 	}
 
-	@Override
+//	@Override
 	public void onContactAgent(AgentBody agentBody) {
 		// If the bottom of mario sprite is at least as high as the middle point of the agent sprite, then
 		// the agent takes damage. Otherwise mario takes damage.
@@ -658,32 +656,32 @@ public class MarioBody implements PlayerBody, Disposable {
 			isTakeDamage = true;
 		}
 		else if(agent instanceof Turtle)
-			((Turtle) agent).onPlayerContact(parent, b2body.getPosition());	// push shell
+			((Turtle) agent).onGuideContact(parent, b2body.getPosition());	// push shell
 	}
 
-	@Override
+//	@Override
 	public void onContactItem(AgentBody agentBody) {
 		Agent agent = agentBody.getParent();
 		if(agent instanceof ItemAgent)
 			((ItemAgent) agent).use(parent);
 	}
 
-	@Override
+//	@Override
 	public void onHeadTileContactStart(AgentBody thing) {
 		headAgentContacts.add(thing);
 	}
 
-	@Override
+//	@Override
 	public void onHeadTileContactEnd(AgentBody thing) {
 		headAgentContacts.remove(thing);
 	}
 
-	@Override
+//	@Override
 	public void onBeginContactPipe(PipeWarpBody pipeEnt) {
 		warpPipeContacts.add((PipeWarp) pipeEnt.getParent());
 	}
 
-	@Override
+//	@Override
 	public void onEndContactPipe(PipeWarpBody pipeEnt) {
 		warpPipeContacts.remove((PipeWarp) pipeEnt.getParent());
 	}
@@ -712,7 +710,7 @@ public class MarioBody implements PlayerBody, Disposable {
 
 	public void enableAgentContact() {
 		Filter filter = new Filter();
-		filter.categoryBits = GameInfo.PLAYER_BIT;
+		filter.categoryBits = GameInfo.GUIDE_BIT;
 		filter.maskBits = GameInfo.AGENT_BIT | GameInfo.ROOMBOX_BIT | GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
 		marioBodyFixture.setFilterData(filter);
 	}
@@ -720,12 +718,12 @@ public class MarioBody implements PlayerBody, Disposable {
 	public void disableAgentContact() {
 		// ensure mario cannot collide with enemies
 		Filter filter = new Filter();
-		filter.categoryBits = GameInfo.PLAYER_BIT;
+		filter.categoryBits = GameInfo.GUIDE_BIT;
 		filter.maskBits = GameInfo.ROOMBOX_BIT | GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
 		marioBodyFixture.setFilterData(filter);
 	}
 
-	@Override
+//	@Override
 	public float getStateTimer() {
 		return stateTimer;
 	}
@@ -831,9 +829,14 @@ public class MarioBody implements PlayerBody, Disposable {
 		return t;
 	}
 
-	@Override
+//	@Override
 	public void onContactDespawn() {
 		parent.die();
+	}
+
+	@Override
+	public Agent getParent() {
+		return parent;
 	}
 
 	@Override

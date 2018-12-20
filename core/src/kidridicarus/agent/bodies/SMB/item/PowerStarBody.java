@@ -9,7 +9,7 @@ import kidridicarus.agency.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.item.PowerStar;
 import kidridicarus.agent.bodies.MobileAgentBody;
-import kidridicarus.agent.bodies.option.BumpableBody;
+import kidridicarus.agent.bodies.optional.BumpableBody;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
@@ -37,7 +37,7 @@ public class PowerStarBody extends MobileAgentBody implements BumpableBody {
 		fdef.restitution = 1f;	// bouncy
 		fdef.filter.categoryBits = GameInfo.ITEM_BIT;
 		// items contact mario but can pass through goombas, turtles, etc.
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.PLAYER_AGENTSENSOR_BIT;
+		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.GUIDE_AGENTSENSOR_BIT;
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, BODY_WIDTH, BODY_HEIGHT);
 	}
 

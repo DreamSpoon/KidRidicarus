@@ -9,11 +9,10 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.MyKidRidicarus;
-import kidridicarus.agencydirector.Guide;
+import kidridicarus.agencydirector.SMBGuide;
+import kidridicarus.agencydirector.space.SMBSpace;
 import kidridicarus.agencydirector.AgencyDirector;
-import kidridicarus.hud.SMB_Hud;
 import kidridicarus.info.GameInfo;
-import kidridicarus.info.SMBInfo;
 import kidridicarus.info.UInfo;
 
 public class PlayScreen implements Screen {
@@ -21,9 +20,9 @@ public class PlayScreen implements Screen {
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
 	private TextureAtlas atlas;
-	private SMB_Hud smbHud;
 	private AgencyDirector director;
-	private Guide rePlayer;
+	private SMBSpace space;
+	private SMBGuide guide;	// "player"
 
 	public PlayScreen(MyKidRidicarus game) {
 		this.game = game;
@@ -33,33 +32,30 @@ public class PlayScreen implements Screen {
 		gamecam = new OrthographicCamera();
 		gameport = new FitViewport(UInfo.P2M(GameInfo.V_WIDTH), UInfo.P2M(GameInfo.V_HEIGHT), gamecam);
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
-		gamecam.position.set(gameport.getWorldWidth()/2, gameport.getWorldHeight()/2, 0);
+		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
-		director = new AgencyDirector(game.manager, atlas, gamecam);
-		director.createSpace(GameInfo.GAMEMAP_FILENAME);
-
-		rePlayer = director.createGuide();
-
-		smbHud = new SMB_Hud(game.batch, director.getAgency(), rePlayer);
+		director = new AgencyDirector(game.manager, atlas);
+		space = director.createSpace(GameInfo.GAMEMAP_FILENAME);
+		guide = space.createGuide(game.batch, gamecam);
 	}
 
 	@Override
 	public void render(float delta) {
 		update(delta);
+
+		// clear screen
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		director.draw(game.batch);
-
-		// draw the HUD last, so it's on top of everything else
-		smbHud.draw();
+		// draw screen
+		director.draw(guide);
 
 		// change to game over screen?
-		if(gameWon()) {
+		if(space.isGameWon()) {
 			game.setScreen(new GameOverScreen(game, true));
 			dispose();
 		}
-		else if(gameOver()) {
+		else if(space.isGameOver()) {
 			game.setScreen(new GameOverScreen(game, false));
 			dispose();
 		}
@@ -67,27 +63,8 @@ public class PlayScreen implements Screen {
 
 	// Update the game world.
 	private void update(float delta) {
-		handleInput(delta);
-
+		guide.handleInput();
 		director.update(delta);
-
-		smbHud.update(delta);
-	}
-
-	private void handleInput(float delta) {
-		rePlayer.handleInput();
-	}
-
-	private boolean gameOver() {
-		if(rePlayer.getAgent().isDead() && rePlayer.getAgent().getStateTimer() > SMBInfo.MARIO_DEAD_TIME)
-			return true;
-		return false;
-	}
-
-	private boolean gameWon() {
-		if(rePlayer.getAgent().isAtLevelEnd() && rePlayer.getAgent().getStateTimer() > SMBInfo.MARIO_LEVELEND_TIME)
-			return true;
-		return false;
 	}
 
 	@Override
@@ -98,7 +75,6 @@ public class PlayScreen implements Screen {
 	@Override
 	public void dispose() {
 		director.dispose();
-		smbHud.dispose();
 	}
 
 	@Override

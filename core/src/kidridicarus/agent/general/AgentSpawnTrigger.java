@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
-import kidridicarus.agencydirector.Guide;
+import kidridicarus.agencydirector.SMBGuide;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.bodies.general.AgentSpawnTriggerBody;
 import kidridicarus.tools.BlockingQueueList;
@@ -14,7 +14,7 @@ import kidridicarus.tools.BlockingQueueList.AddRemCallback;
 
 public class AgentSpawnTrigger extends Agent {
 	private AgentSpawnTriggerBody stbody;
-	private Guide pr;
+	private SMBGuide guide;
 
 	// keep a list of the spawn boxes currently in contact with the spawn trigger
 	private BlockingQueueList<AgentSpawner> spawnBs;
@@ -31,7 +31,7 @@ public class AgentSpawnTrigger extends Agent {
 
 		stbody = new AgentSpawnTriggerBody(this, agency.getWorld(), adef.bounds);
 		// the spawn trigger is given a reference to the player that it follows
-		pr = (Guide) adef.userData;
+		guide = (SMBGuide) adef.userData;
 
 		spawnBs = new BlockingQueueList<AgentSpawner>(new SpawnAddRem());
 
@@ -41,11 +41,9 @@ public class AgentSpawnTrigger extends Agent {
 	@Override
 	public void update(float delta) {
 		updateSpawnBoxes(delta);
-
-		// get the player's current room and set the spawn trigger position based on the room view position 
-		Room r = pr.getAgent().getCurrentRoom();
-		if(r != null)
-			stbody.setPosition(r.getViewCenterForPos(pr.getAgent().getPosition()));
+		// follow the player's viewpoint
+		if(guide.getViewPosition() != null)
+			stbody.setPosition(guide.getViewPosition());
 	}
 
 	private void updateSpawnBoxes(float delta) {

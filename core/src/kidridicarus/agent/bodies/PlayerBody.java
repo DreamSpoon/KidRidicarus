@@ -1,13 +1,9 @@
 package kidridicarus.agent.bodies;
-
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-
-import kidridicarus.agent.bodies.SMB.PipeWarpBody;
-import kidridicarus.collisionmap.LineSeg;
-
+/*
+ * major TODO: merge PlayerBody with AgentBody!
+ */
 public interface PlayerBody {
-	public Vector2 getPosition();
+/*	public Vector2 getPosition();
 	public Rectangle getBounds();
 	public float getStateTimer();
 
@@ -20,4 +16,5 @@ public interface PlayerBody {
 	public void onBeginContactPipe(PipeWarpBody pipeEnt);
 	public void onEndContactPipe(PipeWarpBody pipeEnt);
 	public void onContactDespawn();
+*/
 }

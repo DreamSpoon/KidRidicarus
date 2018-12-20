@@ -1,4 +1,4 @@
-package kidridicarus.agent.bodies.option;
+package kidridicarus.agent.bodies.optional;
 
 import kidridicarus.agent.bodies.AgentBody;
 

@@ -1,4 +1,4 @@
-package kidridicarus.agent.option;
+package kidridicarus.agent.optional;
 
 import com.badlogic.gdx.math.Vector2;
 

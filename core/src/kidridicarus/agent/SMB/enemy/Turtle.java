@@ -11,11 +11,11 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.SimpleWalkAgent;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.bodies.SMB.enemy.TurtleBody;
-import kidridicarus.agent.option.BumpableAgent;
-import kidridicarus.agent.option.DamageableAgent;
-import kidridicarus.agent.option.HeadBounceAgent;
-import kidridicarus.agent.option.AgentContactAgent;
-import kidridicarus.agent.option.ContactDmgAgent;
+import kidridicarus.agent.optional.AgentContactAgent;
+import kidridicarus.agent.optional.BumpableAgent;
+import kidridicarus.agent.optional.ContactDmgAgent;
+import kidridicarus.agent.optional.DamageableAgent;
+import kidridicarus.agent.optional.HeadBounceAgent;
 import kidridicarus.agent.sprites.SMB.enemy.TurtleSprite;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.AudioInfo;
@@ -275,7 +275,7 @@ public class Turtle extends SimpleWalkAgent implements HeadBounceAgent, ContactD
 	}
 
 	 // the player can "kick" a turtle hiding in its shell
-	public void onPlayerContact(Agent perp, Vector2 position) {
+	public void onGuideContact(Agent perp, Vector2 position) {
 		if(isDead)
 			return;
 

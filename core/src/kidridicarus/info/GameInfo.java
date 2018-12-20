@@ -44,14 +44,14 @@ public class GameInfo {
 
 	public static final short NOTHING_BIT		= 0;
 	public static final short BOUNDARY_BIT		= 2 << 0;
-	public static final short PLAYER_BIT			= 2 << 1;
-	public static final short PLAYERHEAD_BIT		= 2 << 2;
-	public static final short PLAYERFOOT_BIT		= 2 << 3;
+	public static final short GUIDE_BIT			= 2 << 1;
+	public static final short GUIDEHEAD_BIT		= 2 << 2;
+	public static final short GUIDEFOOT_BIT		= 2 << 3;
 	public static final short BANGABLE_BIT		= 2 << 4;
 	public static final short AGENT_BIT			= 2 << 5;
 	public static final short AGENTFOOT_BIT		= 2 << 6;
 	public static final short ITEM_BIT			= 2 << 7;
-	public static final short PLAYER_AGENTSENSOR_BIT	= 2 << 8;
+	public static final short GUIDE_AGENTSENSOR_BIT	= 2 << 8;
 	public static final short PIPE_BIT			= 2 << 9;
 	// Replace head/foot/side/body sensor bits with a single bit: MARIO_SENSOR_BIT, and the sensors will tell
 	// mario which one was hit

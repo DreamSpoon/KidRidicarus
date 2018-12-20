@@ -41,8 +41,6 @@ import kidridicarus.tools.BlockingQueueList.AddRemCallback;
 import kidridicarus.tools.EncapTexAtlas;
 
 public class Agency implements Disposable {
-	private static final float LEVEL_MAX_TIME = 300f;
-
 	private World world;
 	private WorldContactListener contactListener;
 	private TileCollisionMap collisionMap;
@@ -79,31 +77,26 @@ public class Agency implements Disposable {
 	private EncapTexAtlas encapTexAtlas;
 	private AgencyEventListener agencyEventListener;
 
-	private float levelTimeRemaining;
-
 	private class AllAgentsAddRem implements AddRemCallback<Agent> {
 		@Override
-		public void add(Agent obj) {}
+		public void add(Agent agent) {}
 		@Override
-		public void remove(Agent obj) {
+		public void remove(Agent agent) {
 			// check list of agentss to update, remove agent if found
-			if(allUpdateAgents.contains(obj))
-				allUpdateAgents.remove(obj);
+			if(allUpdateAgents.contains(agent))
+				allUpdateAgents.remove(agent);
 			// check lists of agents to draw, remove agent if found
 			for(int i=0; i<SpriteDrawOrder.values().length; i++) {
-				if(drawAgents[i].contains(obj))
-					drawAgents[i].remove(obj);
+				if(drawAgents[i].contains(agent))
+					drawAgents[i].remove(agent);
 			}
-			// release agent
-			obj.dispose();
+			agent.dispose();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public Agency() {
 		encapTexAtlas = null;
-
-		levelTimeRemaining = LEVEL_MAX_TIME;
 
 		physicTileChangeQ = new LinkedBlockingQueue<PhysTileItem>();
 
@@ -128,14 +121,11 @@ public class Agency implements Disposable {
 		collisionMap = new TileCollisionMap(world, solidLayers);
 	}
 
-	public void step(float delta) {
+	public void update(float delta) {
 		world.step(delta, 6, 2);
 
-//		marioPlayer.update(delta);
 		updateAgents(delta);
 		updateTileWorld(delta);
-
-		levelTimeRemaining -= delta;
 	}
 
 	public void disposeAgent(Agent agent) {
@@ -153,53 +143,53 @@ public class Agency implements Disposable {
 	public Agent createAgent(AgentDef adef) {
 		String rClass = adef.properties.get(KVInfo.KEY_AGENTCLASS, String.class);
 
-		Agent rr = null;
+		Agent agent = null;
 		if(rClass.equals(KVInfo.VAL_BUMPTILE))
-			allAgents.add(rr = new BumpTile(this, adef));
+			allAgents.add(agent = new BumpTile(this, adef));
 		else if(rClass.equals(KVInfo.VAL_GOOMBA))
-			allAgents.add(rr = new Goomba(this, adef));
+			allAgents.add(agent = new Goomba(this, adef));
 		else if(rClass.equals(KVInfo.VAL_TURTLE))
-			allAgents.add(rr = new Turtle(this, adef));
+			allAgents.add(agent = new Turtle(this, adef));
 		else if(rClass.equals(KVInfo.VAL_COIN))
-			allAgents.add(rr = new StaticCoin(this, adef));
+			allAgents.add(agent = new StaticCoin(this, adef));
 		else if(rClass.equals(KVInfo.VAL_SPAWNGOOMBA) || rClass.equals(KVInfo.VAL_SPAWNTURTLE))
-			allAgents.add(rr = new AgentSpawner(this, adef));
+			allAgents.add(agent = new AgentSpawner(this, adef));
 		else if(rClass.equals(KVInfo.VAL_SPAWNGUIDE))
-			allAgents.add(rr = new GuideSpawner(this, adef));
+			allAgents.add(agent = new GuideSpawner(this, adef));
 		else if(rClass.equals(KVInfo.VAL_ROOM))
-			allAgents.add(rr = new Room(this, adef));
+			allAgents.add(agent = new Room(this, adef));
 		else if(rClass.equals(KVInfo.VAL_FLAGPOLE))
-			allAgents.add(rr = new Flagpole(this, adef));
+			allAgents.add(agent = new Flagpole(this, adef));
 		else if(rClass.equals(KVInfo.VAL_LEVELEND_TRIGGER))
-			allAgents.add(rr = new LevelEndTrigger(this, adef));
+			allAgents.add(agent = new LevelEndTrigger(this, adef));
 		else if(rClass.equals(KVInfo.VAL_PIPEWARP))
-			allAgents.add(rr = new PipeWarp(this, adef));
+			allAgents.add(agent = new PipeWarp(this, adef));
 		else if(rClass.equals(KVInfo.VAL_DESPAWN))
-			allAgents.add(rr = new DespawnBox(this, adef));
+			allAgents.add(agent = new DespawnBox(this, adef));
 		else if(rClass.equals(KVInfo.VAL_AGENTSPAWN_TRIGGER))
-			allAgents.add(rr = new AgentSpawnTrigger(this, adef));
+			allAgents.add(agent = new AgentSpawnTrigger(this, adef));
 		else if(rClass.equals(KVInfo.VAL_CASTLEFLAG))
-			allAgents.add(rr = new CastleFlag(this, adef));
+			allAgents.add(agent = new CastleFlag(this, adef));
 		else if(rClass.equals(KVInfo.VAL_MUSHROOM))
-			allAgents.add(rr = new PowerMushroom(this, adef));
+			allAgents.add(agent = new PowerMushroom(this, adef));
 		else if(rClass.equals(KVInfo.VAL_FIREFLOWER))
-			allAgents.add(rr = new FireFlower(this, adef));
+			allAgents.add(agent = new FireFlower(this, adef));
 		else if(rClass.equals(KVInfo.VAL_MUSH1UP))
-			allAgents.add(rr = new Mush1UP(this, adef));
+			allAgents.add(agent = new Mush1UP(this, adef));
 		else if(rClass.equals(KVInfo.VAL_POWERSTAR))
-			allAgents.add(rr = new PowerStar(this, adef));
+			allAgents.add(agent = new PowerStar(this, adef));
 		else if(rClass.equals(KVInfo.VAL_BRICKPIECE))
-			allAgents.add(rr = new BrickPiece(this, adef));
+			allAgents.add(agent = new BrickPiece(this, adef));
 		else if(rClass.equals(KVInfo.VAL_SPINCOIN))
-			allAgents.add(rr = new SpinCoin(this, adef));
+			allAgents.add(agent = new SpinCoin(this, adef));
 		else if(rClass.equals(KVInfo.VAL_MARIOFIREBALL))
-			allAgents.add(rr = new MarioFireball(this, adef));
+			allAgents.add(agent = new MarioFireball(this, adef));
 		else if(rClass.equals(KVInfo.VAL_FLOATINGPOINTS))
-			allAgents.add(rr = new FloatingPoints(this, adef));
+			allAgents.add(agent = new FloatingPoints(this, adef));
 		else if(rClass.equals(KVInfo.VAL_MARIO))
-			allAgents.add(rr = new Mario(this, adef));
+			allAgents.add(agent = new Mario(this, adef));
 
-		return rr;
+		return agent;
 	}
 
 	public void enableAgentUpdate(Agent agent) {
@@ -281,14 +271,19 @@ public class Agency implements Disposable {
 			agencyEventListener.onPlaySound(soundName);
 	}
 
-	public void startRoomMusic() {
+	public void changeAndStartMusic(String musicName) {
 		if(agencyEventListener != null)
-			agencyEventListener.onStartRoomMusic();
+			agencyEventListener.onChangeAndStartMusic(musicName);
 	}
 
-	public void stopRoomMusic() {
+	public void startMusic() {
 		if(agencyEventListener != null)
-			agencyEventListener.onStopRoomMusic();
+			agencyEventListener.onStartMusic();
+	}
+
+	public void stopMusic() {
+		if(agencyEventListener != null)
+			agencyEventListener.onStopMusic();
 	}
 
 	public void startSinglePlayMusic(String musicName) {
@@ -341,30 +336,26 @@ public class Agency implements Disposable {
 	}
 
 	/*
-	 * Returns null if player spawner not found
+	 * Returns null if guide spawner not found
 	 */
-	public GuideSpawner getPlayerSpawnerByName(String name) {
-		Agent rr = getFirstAgentByProperties(new String[] { KVInfo.KEY_AGENTCLASS, KVInfo.KEY_NAME },
+	public GuideSpawner getGuideSpawnerByName(String name) {
+		Agent agent = getFirstAgentByProperties(new String[] { KVInfo.KEY_AGENTCLASS, KVInfo.KEY_NAME },
 				new String[] { KVInfo.VAL_SPAWNGUIDE, name });
-		if(rr instanceof GuideSpawner)
-			return (GuideSpawner) rr;
+		if(agent instanceof GuideSpawner)
+			return (GuideSpawner) agent;
 		return null;
 	}
 
 	/*
-	 * Returns null if player spawner not found
+	 * Returns null if guide spawner not found
 	 */
-	public GuideSpawner getPlayerMainSpawner() {
-		Agent rr = getFirstAgentByProperties(
+	public GuideSpawner getGuideMainSpawner() {
+		Agent agent = getFirstAgentByProperties(
 				new String[] { KVInfo.KEY_AGENTCLASS, KVInfo.KEY_SPAWNMAIN },
 				new String[] { KVInfo.VAL_SPAWNGUIDE, null });
-		if(rr instanceof GuideSpawner)
-			return (GuideSpawner) rr;
+		if(agent instanceof GuideSpawner)
+			return (GuideSpawner) agent;
 		return null;
-	}
-
-	public float getLevelTimeRemaining() {
-		return levelTimeRemaining;
 	}
 
 	@Override
