@@ -22,16 +22,18 @@ public class LineSegList {
 		return lineSegs.remove(seg);
 	}
 
-	// ** Useful for finding line segments to remove when a tile block is removed **
-	// Return a 2 element LineSeg array:
-	//     { [a 'left' LineSeg reference, or a null], [a 'right' LineSeg reference, or a null] }.
-	// If the 'left' LineSeg is not null:
-	//     It is either a LineSeg that is adjacent to the left of offset, or
-	//     a LineSeg that overlaps offset.
-	// If the 'right' LineSeg is not null:
-	//     It is a LineSeg that overlaps offset or is adjacent to the right of offset.
-	//
-	// Does not return null in any case, but may return an array of nulls.
+	/*
+	 * Return a 2 element LineSeg array:
+	 *     { [a 'left' LineSeg reference, or a null], [a 'right' LineSeg reference, or a null] }.
+	 * 
+	 * If the 'left' LineSeg is not null:
+	 *     It is either a LineSeg that is adjacent to the left of offset, or
+	 *     a LineSeg that overlaps offset.
+	 * If the 'right' LineSeg is not null:
+	 *     It is a LineSeg that overlaps offset or is adjacent to the right of offset.
+	 * 
+	 * Does not return null in any case, but may return an array of nulls.
+	 */
 	public static final int LEFT_SEG = 0;
 	public static final int RIGHT_SEG = 1;
 	public LineSeg[] getAdjacentAndOverlap(int offset, boolean isHorizontal) {	// Should this be getAdjacentOrOverlap()?

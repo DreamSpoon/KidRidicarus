@@ -6,5 +6,5 @@ import kidridicarus.agent.Agent;
 
 public interface BumpableAgent {
 	// brick bumped from below when mario jump punched the brick
-	public void onBump(Agent perp, Vector2 fromCenter);
+	public void onBump(Agent bumpingAgent, Vector2 fromCenter);
 }

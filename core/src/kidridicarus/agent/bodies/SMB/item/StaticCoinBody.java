@@ -33,7 +33,7 @@ public class StaticCoinBody extends AgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		fdef.filter.categoryBits = GameInfo.ITEM_BIT;
-		fdef.filter.maskBits = GameInfo.GUIDE_AGENTSENSOR_BIT;
+		fdef.filter.maskBits = GameInfo.GUIDE_SENSOR_BIT;
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, BODY_WIDTH, BODY_HEIGHT);
 	}
 

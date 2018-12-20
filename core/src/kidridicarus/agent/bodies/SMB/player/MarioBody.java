@@ -16,7 +16,9 @@ import kidridicarus.info.GameInfo.Direction4;
 import kidridicarus.info.UInfo;
 import kidridicarus.tools.BlockingQueueList;
 import kidridicarus.agency.Agency;
-import kidridicarus.agencydirector.BasicInputs;
+import kidridicarus.agencydirector.Advice;
+import kidridicarus.agencydirector.GuideSensor;
+import kidridicarus.agencydirector.GuideSensor.SensorType;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.Flagpole;
 import kidridicarus.agent.SMB.LevelEndTrigger;
@@ -176,16 +178,16 @@ public class MarioBody extends AgentBody {
 			canHeadBang = true;
 	}
 
-	private void processPipes(BasicInputs bi) {
+	private void processPipes(Advice advice) {
 		// check for pipe entry 
 		Direction4 dir = null;
-		if(bi.wantsToGoRight)
+		if(advice.moveRight)
 			dir = Direction4.RIGHT;
-		else if(bi.wantsToGoUp)
+		else if(advice.moveUp)
 			dir = Direction4.UP;
-		else if(bi.wantsToGoLeft)
+		else if(advice.moveLeft)
 			dir = Direction4.LEFT;
-		else if(bi.wantsToGoDown)
+		else if(advice.moveDown)
 			dir = Direction4.DOWN;
 		else
 			return;
@@ -211,7 +213,7 @@ public class MarioBody extends AgentBody {
 		return null;
 	}
 
-	public MarioBodyState update(float delta, BasicInputs bi, MarioPowerState curPowerState) {
+	public MarioBodyState update(float delta, Advice advice, MarioPowerState curPowerState) {
 		MarioBodyState nextState;
 		boolean isVelocityLeft, isVelocityRight;
 		boolean doDuckSlideMove;
@@ -219,7 +221,7 @@ public class MarioBody extends AgentBody {
 		boolean doDecelMove;
 		boolean doBrakeMove;
 
-		processPipes(bi);	// moving into warp pipes
+		processPipes(advice);	// moving into warp pipes
 		processHeadContacts();	// hitting bricks with his head
 		processHeadBounces();	// bouncing on heads of goombas, turtles, etc.
 
@@ -228,7 +230,7 @@ public class MarioBody extends AgentBody {
 		isVelocityLeft = b2body.getLinearVelocity().x < -MARIO_MIN_WALKSPEED;
 
 		// if mario's velocity is below min walking speed while on ground then set velocity to 0
-		if(isOnGround && !isVelocityRight && !isVelocityLeft && !bi.wantsToGoRight && !bi.wantsToGoLeft && !isDuckSliding)
+		if(isOnGround && !isVelocityRight && !isVelocityLeft && !advice.moveRight && !advice.moveLeft && !isDuckSliding)
 			b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
 
 		// multiple concurrent body impulses may be necessary
@@ -248,7 +250,7 @@ public class MarioBody extends AgentBody {
 			Vector2 bodyTilePos = UInfo.getM2PTileForPos(b2body.getPosition());
 
 			// first time duck check
-			if(bi.wantsToGoDown && !isDucking) {
+			if(advice.moveDown && !isDucking) {
 				// quack
 				isDucking = true;
 				if(isDuckSliding)
@@ -257,7 +259,7 @@ public class MarioBody extends AgentBody {
 					defineBody(b2body.getPosition().cpy().sub(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
 			}
 			// first time unduck check
-			else if(!bi.wantsToGoDown && isDucking) {
+			else if(!advice.moveDown && isDucking) {
 				isDucking = false;
 
 				// Check the space above and around mario to test if mario can unduck normally, or if he is in a
@@ -297,13 +299,13 @@ public class MarioBody extends AgentBody {
 		}
 
 		// want to move left or right? (but not both! because they would cancel each other)
-		if((bi.wantsToGoRight && !bi.wantsToGoLeft) || (!bi.wantsToGoRight && bi.wantsToGoLeft)) {
+		if((advice.moveRight && !advice.moveLeft) || (!advice.moveRight && advice.moveLeft)) {
 			doWalkRunMove = true;
 
 			// mario can change facing direction, but not while airborne
 			if(isOnGround) {
 				// brake becomes available again when facing direction changes
-				if(isFacingRight != bi.wantsToGoRight) {
+				if(isFacingRight != advice.moveRight) {
 					isBrakeAvailable = true;
 					brakeTimer = 0f;
 				}
@@ -314,7 +316,7 @@ public class MarioBody extends AgentBody {
 					doDecelMove = true;
 				}
 				else	// update facing direction
-					isFacingRight = bi.wantsToGoRight;
+					isFacingRight = advice.moveRight;
 			}
 		}
 		// decelerate if on ground and not wanting to move left or right
@@ -342,7 +344,7 @@ public class MarioBody extends AgentBody {
 			nextState = MarioBodyState.BRAKE;
 		}
 		else if(doWalkRunMove) {
-			moveBodyLeftRight(bi.wantsToGoRight, bi.wantsToRun);
+			moveBodyLeftRight(advice.moveRight, advice.run);
 			nextState = MarioBodyState.WALKRUN;
 		}
 		else if(doDecelMove) {
@@ -360,13 +362,13 @@ public class MarioBody extends AgentBody {
 			// button but, they need to be on the ground with the button released.
 			if(isOnGround) {
 				isJumping = false;
-				if(!bi.wantsToJump)
+				if(!advice.jump)
 					isNewJumpAllowed = true;
 			}
 		}
 
 		// jump?
-		if(bi.wantsToJump && isNewJumpAllowed) {	// do jump
+		if(advice.jump && isNewJumpAllowed) {	// do jump
 			isNewJumpAllowed = false;
 			isJumping = true;
 			// start a timer to delay checking for onGround status
@@ -394,7 +396,7 @@ public class MarioBody extends AgentBody {
 		else if(isJumping) {	// jumped and is mid-air
 			nextState = MarioBodyState.JUMP;
 			// jump force stops, and cannot be restarted, if the player releases the jump key
-			if(!bi.wantsToJump)
+			if(!advice.jump)
 				jumpForceTimer = 0f;
 			// The longer the player holds the jump key, the higher they go,
 			// if mario is moving up (no jump force allowed while mario is moving down)
@@ -471,11 +473,11 @@ public class MarioBody extends AgentBody {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(8f)), 0f);
 		else
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(16f)), 0f);
-		fdef.filter.categoryBits = GameInfo.GUIDEHEAD_BIT;
+		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
 		fdef.filter.maskBits = GameInfo.BANGABLE_BIT | GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(this);
+		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.HEAD));
 	}
 
 	private void createBottomSensorFixture() {
@@ -487,34 +489,32 @@ public class MarioBody extends AgentBody {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-6)), 0f);
 		else
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-16)), 0f);
-		fdef.filter.categoryBits = GameInfo.GUIDEFOOT_BIT;
+		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(this);
+		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.FOOT));
 	}
 
 	private void createSideSensorFixtures() {
-		// TODO: re-enable after fixing other stuff
-/*		FixtureDef fdef = new FixtureDef();
+		FixtureDef fdef = new FixtureDef();
 		PolygonShape sensorShape = new PolygonShape();
 
 		// right side sensor for detecting warp pipes
-		sensorShape.setAsBox(GameInfo.P2M(1f), GameInfo.P2M(5f), new Vector2(GameInfo.P2M(7), 0f), 0f);
-		fdef.filter.categoryBits = GameInfo.MARIOSIDE_BIT;
+		sensorShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), new Vector2(UInfo.P2M(7), 0f), 0f);
+		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
 		fdef.filter.maskBits = GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(this);
+		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.SIDE));
 
 		// left side sensor for detecting warp pipes
-		sensorShape.setAsBox(GameInfo.P2M(1f), GameInfo.P2M(5f), new Vector2(GameInfo.P2M(-7), 0f), 0f);
-		fdef.filter.categoryBits = GameInfo.MARIOSIDE_BIT;
+		sensorShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), new Vector2(UInfo.P2M(-7), 0f), 0f);
+		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
 		fdef.filter.maskBits = GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(this);
-*/
+		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.SIDE));
 	}
 
 	private void createAgentSensorFixture() {
@@ -526,11 +526,11 @@ public class MarioBody extends AgentBody {
 
 		// Create an agent sensor, so that mario doesn't collide with goombas or items like mushrooms and slow down -
 		// he should only sense when they contact
-		fdef.filter.categoryBits = GameInfo.GUIDE_AGENTSENSOR_BIT;
+		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
 		fdef.filter.maskBits = GameInfo.AGENT_BIT | GameInfo.ITEM_BIT;
 		fdef.shape = bodyShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(this);
+		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.BODY));
 	}
 
 	private void decelLeftRight(boolean right) {
@@ -603,7 +603,6 @@ public class MarioBody extends AgentBody {
 	 * and decrement for each contact end. If onGroundCount reaches zero then mario's foot sensor is not contacting
 	 * a boundary line, hence mario is not on the ground.
 	 */
-//	@Override
 	public void onFootBeginContactBound(LineSeg seg) {
 		if(!seg.isHorizontal)
 			return;
@@ -612,7 +611,6 @@ public class MarioBody extends AgentBody {
 		isOnGround = true;
 	}
 
-//	@Override
 	public void onFootEndContactBound(LineSeg seg) {
 		if(!seg.isHorizontal)
 			return;
@@ -622,7 +620,6 @@ public class MarioBody extends AgentBody {
 			isOnGround = false;
 	}
 
-//	@Override
 	public void onContactAgent(AgentBody agentBody) {
 		// If the bottom of mario sprite is at least as high as the middle point of the agent sprite, then
 		// the agent takes damage. Otherwise mario takes damage.
@@ -659,29 +656,24 @@ public class MarioBody extends AgentBody {
 			((Turtle) agent).onGuideContact(parent, b2body.getPosition());	// push shell
 	}
 
-//	@Override
 	public void onContactItem(AgentBody agentBody) {
 		Agent agent = agentBody.getParent();
 		if(agent instanceof ItemAgent)
 			((ItemAgent) agent).use(parent);
 	}
 
-//	@Override
-	public void onHeadTileContactStart(AgentBody thing) {
+	public void onBeginContactBumpable(AgentBody thing) {
 		headAgentContacts.add(thing);
 	}
 
-//	@Override
-	public void onHeadTileContactEnd(AgentBody thing) {
+	public void onEndContactBumpable(AgentBody thing) {
 		headAgentContacts.remove(thing);
 	}
 
-//	@Override
 	public void onBeginContactPipe(PipeWarpBody pipeEnt) {
 		warpPipeContacts.add((PipeWarp) pipeEnt.getParent());
 	}
 
-//	@Override
 	public void onEndContactPipe(PipeWarpBody pipeEnt) {
 		warpPipeContacts.remove((PipeWarp) pipeEnt.getParent());
 	}
@@ -692,6 +684,10 @@ public class MarioBody extends AgentBody {
 
 	public void onEndContactRoom(RoomBoxBody room) {
 		curRooms.remove(room.getParent());
+	}
+
+	public void onContactDespawn() {
+		parent.die();
 	}
 
 	public void respawn() {
@@ -723,20 +719,8 @@ public class MarioBody extends AgentBody {
 		marioBodyFixture.setFilterData(filter);
 	}
 
-//	@Override
 	public float getStateTimer() {
 		return stateTimer;
-	}
-
-	@Override
-	public Vector2 getPosition() {
-		return b2body.getPosition();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		Vector2 s = getB2BodySize();
-		return new Rectangle(b2body.getPosition().x - s.x/2f, b2body.getPosition().y - s.y/2f, s.x, s.y);
 	}
 
 	public PipeWarp getPipeToEnter() {
@@ -829,14 +813,20 @@ public class MarioBody extends AgentBody {
 		return t;
 	}
 
-//	@Override
-	public void onContactDespawn() {
-		parent.die();
-	}
-
 	@Override
 	public Agent getParent() {
 		return parent;
+	}
+
+	@Override
+	public Vector2 getPosition() {
+		return b2body.getPosition();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		Vector2 s = getB2BodySize();
+		return new Rectangle(b2body.getPosition().x - s.x/2f, b2body.getPosition().y - s.y/2f, s.x, s.y);
 	}
 
 	@Override

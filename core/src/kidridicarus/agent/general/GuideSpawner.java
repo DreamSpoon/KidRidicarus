@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.general.AgentGuideSpawnerBody;
+import kidridicarus.agent.bodies.general.GuideSpawnerBody;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
 import kidridicarus.info.GameInfo.Direction4;
@@ -17,7 +17,7 @@ public class GuideSpawner extends Agent {
 
 	public enum SpawnType { IMMEDIATE, PIPEWARP };
 
-	private AgentGuideSpawnerBody psbody;
+	private GuideSpawnerBody psbody;
 
 	private String name;
 	private boolean isMain;
@@ -53,7 +53,15 @@ public class GuideSpawner extends Agent {
 			}
 		}
 
-		psbody = new AgentGuideSpawnerBody(agency.getWorld(), this, adef.bounds);
+		psbody = new GuideSpawnerBody(agency.getWorld(), this, adef.bounds);
+	}
+
+	@Override
+	public void update(float delta) {
+	}
+
+	@Override
+	public void draw(Batch batch) {
 	}
 
 	public Vector2 calcBeginOffsetFromSpawn(Vector2 agentSize) {
@@ -88,14 +96,6 @@ public class GuideSpawner extends Agent {
 
 	public Direction4 getDirection() {
 		return direction;
-	}
-
-	@Override
-	public void update(float delta) {
-	}
-
-	@Override
-	public void draw(Batch batch) {
 	}
 
 	@Override

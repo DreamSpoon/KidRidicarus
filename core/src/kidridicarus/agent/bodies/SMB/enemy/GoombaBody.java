@@ -7,18 +7,19 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.B2DFactory;
+import kidridicarus.agencydirector.AgentSensor;
+import kidridicarus.agencydirector.AgentSensor.AgentSensorType;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.enemy.Goomba;
 import kidridicarus.agent.bodies.MobileAgentBody;
 import kidridicarus.agent.bodies.optional.AgentContactBody;
 import kidridicarus.agent.bodies.optional.BumpableBody;
-import kidridicarus.agent.bodies.optional.GroundCheckBody;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 
-public class GoombaBody extends MobileAgentBody implements GroundCheckBody, AgentContactBody, BumpableBody {
+public class GoombaBody extends MobileAgentBody implements AgentContactBody, BumpableBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
@@ -34,7 +35,7 @@ public class GoombaBody extends MobileAgentBody implements GroundCheckBody, Agen
 	private void defineBody(World world, Vector2 position, Vector2 velocity) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, GameInfo.AGENT_BIT,
-				(short) (GameInfo.BOUNDARY_BIT | GameInfo.AGENT_BIT | GameInfo.GUIDE_AGENTSENSOR_BIT), position,
+				(short) (GameInfo.BOUNDARY_BIT | GameInfo.AGENT_BIT | GameInfo.GUIDE_SENSOR_BIT), position,
 				BODY_WIDTH, BODY_HEIGHT);
 		createBottomSensorFixture();
 	}
@@ -45,21 +46,21 @@ public class GoombaBody extends MobileAgentBody implements GroundCheckBody, Agen
 		PolygonShape footSensor;
 		footSensor = new PolygonShape();
 		footSensor.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
-		fdef.filter.categoryBits = GameInfo.AGENTFOOT_BIT;
+		fdef.filter.categoryBits = GameInfo.AGENT_SENSOR_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
 		fdef.shape = footSensor;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(this);
+		b2body.createFixture(fdef).setUserData(new AgentSensor(this, AgentSensorType.FOOT));
 	}
 
 	@Override
-	public void onContactVertBoundLine(LineSeg seg) {
+	public void onContactWall(LineSeg seg) {
 		parent.onContactBoundLine(seg);
 	}
 
 	@Override
-	public void onBump(Agent perp, Vector2 fromCenter) {
-		parent.onBump(perp, fromCenter);
+	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
+		parent.onBump(bumpingAgent, fromCenter);
 	}
 
 	@Override

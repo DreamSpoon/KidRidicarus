@@ -45,21 +45,16 @@ public class GameInfo {
 	public static final short NOTHING_BIT		= 0;
 	public static final short BOUNDARY_BIT		= 2 << 0;
 	public static final short GUIDE_BIT			= 2 << 1;
-	public static final short GUIDEHEAD_BIT		= 2 << 2;
-	public static final short GUIDEFOOT_BIT		= 2 << 3;
-	public static final short BANGABLE_BIT		= 2 << 4;
-	public static final short AGENT_BIT			= 2 << 5;
-	public static final short AGENTFOOT_BIT		= 2 << 6;
-	public static final short ITEM_BIT			= 2 << 7;
-	public static final short GUIDE_AGENTSENSOR_BIT	= 2 << 8;
-	public static final short PIPE_BIT			= 2 << 9;
-	// Replace head/foot/side/body sensor bits with a single bit: MARIO_SENSOR_BIT, and the sensors will tell
-	// mario which one was hit
-//	public static final short MARIOSIDE_BIT		= 2 << 10;
-	public static final short DESPAWN_BIT		= 2 << 11;
-	public static final short SPAWNBOX_BIT		= 2 << 12;
-	public static final short SPAWNTRIGGER_BIT	= 2 << 13;
-	public static final short ROOMBOX_BIT		= 2 << 10;
+	public static final short GUIDE_SENSOR_BIT	= 2 << 2;
+	public static final short BANGABLE_BIT		= 2 << 3;
+	public static final short AGENT_BIT			= 2 << 4;
+	public static final short AGENT_SENSOR_BIT	= 2 << 5;
+	public static final short ITEM_BIT			= 2 << 6;
+	public static final short PIPE_BIT			= 2 << 7;
+	public static final short DESPAWN_BIT		= 2 << 8;
+	public static final short SPAWNBOX_BIT		= 2 << 9;
+	public static final short SPAWNTRIGGER_BIT	= 2 << 10;
+	public static final short ROOMBOX_BIT		= 2 << 11;
 
 	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
 	public static final float BODY_VS_VERT_BOUND_EPSILON = 0.001f;

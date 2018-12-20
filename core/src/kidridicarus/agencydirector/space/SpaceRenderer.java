@@ -15,15 +15,15 @@ import kidridicarus.info.UInfo;
 
 public class SpaceRenderer {
 	private Box2DDebugRenderer b2dr;
-	private OrthogonalTiledMapRenderer tileRrr;
+	private OrthogonalTiledMapRenderer tileRenderer;
 
 	public SpaceRenderer() {
 		b2dr = new Box2DDebugRenderer();
-		tileRrr = null;
+		tileRenderer = null;
 	}
 
 	public void dispose() {
-		tileRrr.dispose();
+		tileRenderer.dispose();
 		b2dr.dispose();
 	}
 
@@ -31,42 +31,42 @@ public class SpaceRenderer {
 		Batch batch = guide.getBatch();
 		OrthographicCamera gamecam = guide.getGamecam();
 
-		// TODO: init tileRrr elsewhere?
-		if(tileRrr == null)
-			tileRrr = new OrthogonalTiledMapRenderer(space.getTiledMap(), UInfo.P2M(1f), guide.getBatch());
-		tileRrr.setView(gamecam);
+		// TODO: init tileRenderer elsewhere?
+		if(tileRenderer == null)
+			tileRenderer = new OrthogonalTiledMapRenderer(space.getTiledMap(), UInfo.P2M(1f), guide.getBatch());
+		tileRenderer.setView(gamecam);
 
 		batch.setProjectionMatrix(gamecam.combined);
 		batch.begin();
 
 		// draw bottom layers
 		for(MapLayer layer : space.getDrawLayers()[LayerDrawOrder.BOTTOM.ordinal()])
-			tileRrr.renderTileLayer((TiledMapTileLayer) layer);
+			tileRenderer.renderTileLayer((TiledMapTileLayer) layer);
 
 		// draw bottom agents
-		for(Agent a : space.getAgentsToDraw()[SpriteDrawOrder.BOTTOM.ordinal()])
-			a.draw(batch);
+		for(Agent agent : space.getAgentsToDraw()[SpriteDrawOrder.BOTTOM.ordinal()])
+			agent.draw(batch);
 
 		// draw middle layers
 		for(MapLayer layer : space.getDrawLayers()[LayerDrawOrder.MIDDLE.ordinal()])
-			tileRrr.renderTileLayer((TiledMapTileLayer) layer);
+			tileRenderer.renderTileLayer((TiledMapTileLayer) layer);
 
 		// draw middle agents
-		for(Agent a : space.getAgentsToDraw()[SpriteDrawOrder.MIDDLE.ordinal()])
-			a.draw(batch);
+		for(Agent agent : space.getAgentsToDraw()[SpriteDrawOrder.MIDDLE.ordinal()])
+			agent.draw(batch);
 
 		// draw top layers
 		for(MapLayer layer : space.getDrawLayers()[LayerDrawOrder.TOP.ordinal()])
-			tileRrr.renderTileLayer((TiledMapTileLayer) layer);
+			tileRenderer.renderTileLayer((TiledMapTileLayer) layer);
 
 		// draw top agents
-		for(Agent a : space.getAgentsToDraw()[SpriteDrawOrder.TOP.ordinal()])
-			a.draw(batch);
+		for(Agent agent : space.getAgentsToDraw()[SpriteDrawOrder.TOP.ordinal()])
+			agent.draw(batch);
 
 		batch.end();
 
 		// DEBUG: draw outlines of Box2D fixtures
-		drawB2DebugRenderer(space, gamecam);
+//		drawB2DebugRenderer(space, gamecam);
 
 		// draw the HUD last, so it's on top of everything else
 		guide.drawHUD();

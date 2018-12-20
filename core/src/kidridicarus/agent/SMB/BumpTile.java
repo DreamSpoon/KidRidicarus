@@ -55,14 +55,14 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 
 	private BumpState curState;
 	private float stateTimer;
-	private Agent prhead;
+	private Agent bumpingAgent;
 	private boolean wasHitByBig;
 
 	public BumpTile(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
 		isHit = false;
-		prhead = null;
+		bumpingAgent = null;
 		wasHitByBig = false;
 		curState = BumpState.PREBUMP;
 		stateTimer = 0f;
@@ -228,9 +228,8 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 		Iterator<AgentBody> iter = agentsOnMe.iterator();
 		while(iter.hasNext()) {
 			AgentBody agentBody = iter.next();
-			if(agentBody.getParent() instanceof BumpableAgent) {
-				((BumpableAgent) agentBody.getParent()).onBump(prhead, itbody.getPosition());
-			}
+			if(agentBody.getParent() instanceof BumpableAgent)
+				((BumpableAgent) agentBody.getParent()).onBump(bumpingAgent, itbody.getPosition());
 		}
 	}
 
@@ -260,8 +259,7 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 
 	private void startBreakBrick() {
 		agency.playSound(AudioInfo.SOUND_BREAK);
-		agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P200, false,
-				itbody.getPosition(), UInfo.P2M(UInfo.TILEPIX_Y * 2), (Mario) prhead));
+		((Mario) bumpingAgent).givePoints(PointAmount.P200, false);
 		agency.setPhysicTile(UInfo.getM2PTileForPos(itbody.getPosition()), false);
 
 		// create 4 brick pieces in the 4 corners of the original space and blast them upwards
@@ -283,7 +281,7 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 	private void startSpinningCoin() {
 		agency.playSound(AudioInfo.SOUND_COIN);
 		agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P200, false, itbody.getPosition(),
-				UInfo.P2M(UInfo.TILEPIX_Y * 2), (Mario) prhead));
+				UInfo.P2M(UInfo.TILEPIX_Y * 2), (Mario) bumpingAgent));
 
 		// spawn a coin one tile's height above the current tile position
 		agency.createAgent(ADefFactory.makeSpinCoinDef(itbody.getPosition().cpy().add(0f,
@@ -296,10 +294,10 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 	}
 
 	@Override
-	public void onBump(Agent perp, Vector2 fromCenter) {
+	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
 		isHit = true;
-		prhead = perp;
-		if(perp instanceof Mario && ((Mario) perp).isBig())
+		this.bumpingAgent = bumpingAgent;
+		if(bumpingAgent instanceof Mario && ((Mario) bumpingAgent).isBig())
 			wasHitByBig = true;
 	}
 

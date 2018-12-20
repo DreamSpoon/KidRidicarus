@@ -26,7 +26,7 @@ public class SMBGuide implements Disposable {
 	private OrthographicCamera gamecam;
 	private SMB_Hud smbHud;
 	private String currentMusicName;
-	private BasicInputs bi;
+	private Advice advice;
 
 	public SMBGuide(Agency agency, Mario agent, Batch batch, OrthographicCamera gamecam) {
 		this.agency = agency;
@@ -35,7 +35,7 @@ public class SMBGuide implements Disposable {
 		this.gamecam = gamecam;
 		currentMusicName = "";
 		smbHud = new SMB_Hud(batch, agency.getEncapTexAtlas(), this);
-		bi = new BasicInputs();
+		advice = new Advice();
 		agency.createAgent(ADefFactory.makeAgentSpawnTriggerDef(this, agent.getPosition(),
 				SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 	}
@@ -47,7 +47,7 @@ public class SMBGuide implements Disposable {
 			agent.respawn(sp);
 
 		smbHud.update(delta);
-		agent.setFrameInputs(bi);
+		agent.setFrameAdvice(advice);
 
 		// check for music change
 		if(getCurrentRoom() != null && !getCurrentRoom().getRoommusic().equals(currentMusicName)) {
@@ -56,7 +56,7 @@ public class SMBGuide implements Disposable {
 		}
 	}
 
-	public void postUpdate(float delta) {
+	public void postUpdate() {
 		// if player is not dead then use their current room to determine the gamecam position
 		if(!agent.isDead()) {
 			if(getCurrentRoom() != null) {
@@ -72,12 +72,12 @@ public class SMBGuide implements Disposable {
 	}
 
 	public void handleInput() {
-		bi.wantsToGoRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
-		bi.wantsToGoUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
-		bi.wantsToGoLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
-		bi.wantsToGoDown = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_DOWN);
-		bi.wantsToRun = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUN);
-		bi.wantsToJump = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
+		advice.moveRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
+		advice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
+		advice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
+		advice.moveDown = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_DOWN);
+		advice.run = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUN);
+		advice.jump = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
 	}
 
 	public Room getCurrentRoom() {

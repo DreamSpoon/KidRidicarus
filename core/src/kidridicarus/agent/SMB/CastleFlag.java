@@ -39,22 +39,7 @@ public class CastleFlag extends Agent {
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
 	}
 
-	private CastleFlagState getState() {
-		switch(curState) {
-			case DOWN:
-			default:
-				if(isTriggered)
-					return CastleFlagState.RISING;
-				return CastleFlagState.DOWN;
-			case RISING:
-				if(stateTimer > RISE_TIME)
-					return CastleFlagState.UP;
-				return CastleFlagState.RISING;
-			case UP:
-				return CastleFlagState.UP;
-		}
-	}
-
+	@Override
 	public void update(float delta) {
 		float yOffset;
 		CastleFlagState nextState = getState();
@@ -81,6 +66,23 @@ public class CastleFlag extends Agent {
 		flagSprite.update(startPosition.cpy().add(0f, yOffset));
 	}
 
+	private CastleFlagState getState() {
+		switch(curState) {
+			case DOWN:
+			default:
+				if(isTriggered)
+					return CastleFlagState.RISING;
+				return CastleFlagState.DOWN;
+			case RISING:
+				if(stateTimer > RISE_TIME)
+					return CastleFlagState.UP;
+				return CastleFlagState.RISING;
+			case UP:
+				return CastleFlagState.UP;
+		}
+	}
+
+	@Override
 	public void draw(Batch batch) {
 		if(isTriggered)
 			flagSprite.draw(batch);

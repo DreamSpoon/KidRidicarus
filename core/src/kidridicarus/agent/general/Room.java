@@ -39,6 +39,14 @@ public class Room extends Agent {
 			vOffset = UInfo.P2M(Float.valueOf(adef.properties.get(KVInfo.KEY_VIEWOFFSET_Y, String.class)));
 	}
 
+	@Override
+	public void update(float delta) {
+	}
+
+	@Override
+	public void draw(Batch batch) {
+	}
+
 	public Vector2 getViewCenterForPos(Vector2 pos) {
 		Vector2 center = new Vector2();
 		switch(roomtype) {
@@ -61,14 +69,6 @@ public class Room extends Agent {
 
 	public boolean isPointInRoom(Vector2 position) {
 		return rbody.getBounds().contains(position);
-	}
-
-	@Override
-	public void update(float delta) {
-	}
-
-	@Override
-	public void draw(Batch batch) {
 	}
 
 	@Override

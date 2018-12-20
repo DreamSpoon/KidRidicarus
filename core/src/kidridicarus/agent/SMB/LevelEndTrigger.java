@@ -26,16 +26,6 @@ public class LevelEndTrigger extends Agent {
 	public void draw(Batch batch) {
 	}
 
-	@Override
-	public Vector2 getPosition() {
-		return lebody.getPosition();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return lebody.getBounds();
-	}
-
 	/*
 	 * Usually called when player contacts the level end box.
 	 */
@@ -44,6 +34,16 @@ public class LevelEndTrigger extends Agent {
 				new String[] { KVInfo.VAL_CASTLEFLAG});
 		if(agent instanceof CastleFlag)
 			((CastleFlag) agent).trigger();
+	}
+
+	@Override
+	public Vector2 getPosition() {
+		return lebody.getPosition();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return lebody.getBounds();
 	}
 
 	@Override

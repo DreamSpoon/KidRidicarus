@@ -3,14 +3,38 @@ package kidridicarus.agent.bodies;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agencydirector.AgentSensor.AgentSensorType;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo;
 
 public abstract class MobileAgentBody extends AgentBody {
 	private int onGroundCount = 0;
 
-	protected abstract void onContactVertBoundLine(LineSeg seg);
-	public void onContactBoundLine(LineSeg seg) {
+	public void onBodyBeginContact(LineSeg lineSeg) {
+		if(!lineSeg.isHorizontal)
+			onContactVertBoundLine(lineSeg);
+	}
+
+	public void onBeginContactSensor(AgentSensorType sensorType, LineSeg lineSeg) {
+		if(sensorType == AgentSensorType.FOOT && lineSeg.isHorizontal && lineSeg.upNormal)
+			onBeginContactGround();
+	}
+
+	public void onEndContactSensor(AgentSensorType sensorType, LineSeg lineSeg) {
+		if(sensorType == AgentSensorType.FOOT && lineSeg.isHorizontal && lineSeg.upNormal)
+			onEndContactGround();
+	}
+
+	public void onBeginContactGround() {
+		onGroundCount++;
+	}
+
+	public void onEndContactGround() {
+		onGroundCount--;
+	}
+
+	protected abstract void onContactWall(LineSeg seg);
+	private void onContactVertBoundLine(LineSeg seg) {
 		Rectangle bounds = getBounds();
 		float lineBeginY = seg.getB2Begin();
 		float lineEndY = seg.getB2End();
@@ -23,17 +47,9 @@ public abstract class MobileAgentBody extends AgentBody {
 			if(meBeginY + GameInfo.BODY_VS_VERT_BOUND_EPSILON < lineEndY &&
 					meEndY - GameInfo.BODY_VS_VERT_BOUND_EPSILON > lineBeginY) {
 				// bounce off of vertical bounds
-				onContactVertBoundLine(seg);
+				onContactWall(seg);
 			}
 		}
-	}
-
-	public void onBeginContactGround() {
-		onGroundCount++;
-	}
-
-	public void onEndContactGround() {
-		onGroundCount--;
 	}
 
 	// Foot sensor might come into contact with multiple boundary lines, so increment for each contact start,

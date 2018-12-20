@@ -126,17 +126,7 @@ public class PowerStar extends SimpleWalkAgent implements ItemAgent, BumpableAge
 	}
 
 	@Override
-	public Vector2 getPosition() {
-		return starBody.getPosition();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return starBody.getBounds();
-	}
-
-	@Override
-	public void onBump(Agent perp, Vector2 fromCenter) {
+	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
 		if(stateTimer <= SPROUT_TIME)
 			return;
 
@@ -147,6 +137,16 @@ public class PowerStar extends SimpleWalkAgent implements ItemAgent, BumpableAge
 			reverseConstVelocity(true, false);
 
 		starBody.setVelocity(getConstVelocity().x, getConstVelocity().y);
+	}
+
+	@Override
+	public Vector2 getPosition() {
+		return starBody.getPosition();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return starBody.getBounds();
 	}
 
 	@Override

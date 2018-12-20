@@ -20,10 +20,8 @@ public class PipeWarpBody extends AgentBody {
 
 	private void defineBody(World world, Rectangle bounds) {
 		setBodySize(bounds.width, bounds.height);
-// TODO: fix mario sensor code
 		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, GameInfo.PIPE_BIT,
-//				(short) (GameInfo.MARIOFOOT_BIT | GameInfo.MARIOSIDE_BIT | GameInfo.MARIOHEAD_BIT), bounds);
-				(short) (GameInfo.GUIDEFOOT_BIT | GameInfo.GUIDEHEAD_BIT), bounds);
+				(short) (GameInfo.GUIDE_SENSOR_BIT | GameInfo.GUIDE_SENSOR_BIT), bounds);
 	}
 
 	@Override

@@ -83,21 +83,6 @@ public class Turtle extends SimpleWalkAgent implements HeadBounceAgent, ContactD
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
 	}
 
-	private TurtleState getState() {
-		if(isDead)
-			return TurtleState.DEAD;
-		else if(isSliding)
-			return TurtleState.SLIDE;
-		else if(isHiding) {
-			if(isWaking)
-				return TurtleState.WAKE_UP;
-			else
-				return TurtleState.HIDE;
-		}
-		else
-			return TurtleState.WALK;
-	}
-
 	public void update(float delta) {
 		TurtleState curState = getState();
 		switch(curState) {
@@ -141,6 +126,21 @@ public class Turtle extends SimpleWalkAgent implements HeadBounceAgent, ContactD
 		prevState = curState;
 
 		isHeadBounced = false;
+	}
+
+	private TurtleState getState() {
+		if(isDead)
+			return TurtleState.DEAD;
+		else if(isSliding)
+			return TurtleState.SLIDE;
+		else if(isHiding) {
+			if(isWaking)
+				return TurtleState.WAKE_UP;
+			else
+				return TurtleState.HIDE;
+		}
+		else
+			return TurtleState.WALK;
 	}
 
 	private void startSlide() {
@@ -274,6 +274,16 @@ public class Turtle extends SimpleWalkAgent implements HeadBounceAgent, ContactD
 			isDeadToRight = false;
 	}
 
+	@Override
+	public void onBump(Agent perp, Vector2 fromCenter) {
+		this.perp = perp;
+		isDead = true;
+		if(fromCenter.x < turtleBody.getPosition().x)
+			isDeadToRight = true;
+		else
+			isDeadToRight = false;
+	}
+
 	 // the player can "kick" a turtle hiding in its shell
 	public void onGuideContact(Agent perp, Vector2 position) {
 		if(isDead)
@@ -288,16 +298,6 @@ public class Turtle extends SimpleWalkAgent implements HeadBounceAgent, ContactD
 			else
 				initSlide(false);	// slide left
 		}
-	}
-
-	@Override
-	public void onBump(Agent perp, Vector2 fromCenter) {
-		this.perp = perp;
-		isDead = true;
-		if(fromCenter.x < turtleBody.getPosition().x)
-			isDeadToRight = true;
-		else
-			isDeadToRight = false;
 	}
 
 	@Override

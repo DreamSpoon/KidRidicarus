@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.MyKidRidicarus;
 import kidridicarus.agencydirector.SMBGuide;
-import kidridicarus.agencydirector.space.SMBSpace;
 import kidridicarus.agencydirector.AgencyDirector;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
@@ -21,7 +20,6 @@ public class PlayScreen implements Screen {
 	private Viewport gameport;
 	private TextureAtlas atlas;
 	private AgencyDirector director;
-	private SMBSpace space;
 	private SMBGuide guide;	// "player"
 
 	public PlayScreen(MyKidRidicarus game) {
@@ -35,8 +33,8 @@ public class PlayScreen implements Screen {
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
 		director = new AgencyDirector(game.manager, atlas);
-		space = director.createSpace(GameInfo.GAMEMAP_FILENAME);
-		guide = space.createGuide(game.batch, gamecam);
+		director.createSpace(GameInfo.GAMEMAP_FILENAME);
+		guide = director.createGuide(game.batch, gamecam);
 	}
 
 	@Override
@@ -51,11 +49,11 @@ public class PlayScreen implements Screen {
 		director.draw(guide);
 
 		// change to game over screen?
-		if(space.isGameWon()) {
+		if(guide.isGameWon()) {
 			game.setScreen(new GameOverScreen(game, true));
 			dispose();
 		}
-		else if(space.isGameOver()) {
+		else if(guide.isGameOver()) {
 			game.setScreen(new GameOverScreen(game, false));
 			dispose();
 		}

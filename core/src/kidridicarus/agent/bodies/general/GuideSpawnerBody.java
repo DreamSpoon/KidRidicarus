@@ -12,10 +12,10 @@ import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.agent.general.GuideSpawner;
 import kidridicarus.info.GameInfo;
 
-public class AgentGuideSpawnerBody extends AgentBody {
+public class GuideSpawnerBody extends AgentBody {
 	private GuideSpawner parent;
 
-	public AgentGuideSpawnerBody(World world, GuideSpawner parent, Rectangle bounds) {
+	public GuideSpawnerBody(World world, GuideSpawner parent, Rectangle bounds) {
 		this.parent = parent;
 		setBodySize(bounds.width, bounds.height);
 		defineBody(world, bounds);

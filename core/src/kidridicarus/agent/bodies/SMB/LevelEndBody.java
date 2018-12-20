@@ -21,7 +21,7 @@ public class LevelEndBody extends AgentBody {
 	private void defineBody(World world, Rectangle bounds) {
 		setBodySize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, GameInfo.AGENT_BIT,
-				GameInfo.GUIDE_AGENTSENSOR_BIT, bounds);
+				GameInfo.GUIDE_SENSOR_BIT, bounds);
 	}
 
 	@Override

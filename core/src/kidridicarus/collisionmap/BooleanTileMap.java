@@ -58,10 +58,12 @@ public class BooleanTileMap {
 		cells[x][y] = b;
 	}
 
-	// A "safe" tile getter that will cope gracefully with out of bounds cell requests.
-	// Returns false if x or y are out of bounds,
-	// Returns false if the cell is null (empty),
-	// Otherwise, returns true because there is a tile at (x, y).
+	/*
+	 * A "safe" tile getter that will cope gracefully with out of bounds cell requests.
+	 * Returns false if x or y are out of bounds,
+	 * Returns false if the cell is null (empty),
+	 * Otherwise, returns true because there is a tile at (x, y).
+	 */
 	public boolean gracefulGetCell(int x, int y) {
 		if(x < 0 || y < 0 || x >= width || y >= height)
 			return false;

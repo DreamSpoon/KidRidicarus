@@ -6,15 +6,20 @@ import java.util.LinkedList;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.agency.ADefFactory;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgencyEventListener;
 import kidridicarus.agencydirector.space.SMBSpace;
 import kidridicarus.agencydirector.space.SpaceRenderer;
 import kidridicarus.agencydirector.space.SpaceTemplateLoader;
 import kidridicarus.agent.Agent;
+import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
 
@@ -22,6 +27,7 @@ public class AgencyDirector implements Disposable {
 	private AssetManager manager;
 	private TextureAtlas atlas;
 	private SMBSpace smbSpace;
+	private SMBGuide smbGuide;
 	private SpaceRenderer spaceRenderer;
 	private Agency agency;
 
@@ -30,6 +36,7 @@ public class AgencyDirector implements Disposable {
 	public AgencyDirector(AssetManager manager, TextureAtlas atlas) {
 		this.manager = manager;
 		this.atlas = atlas;
+		smbGuide = null;
 
 		currentMusic = null;
 
@@ -49,10 +56,33 @@ public class AgencyDirector implements Disposable {
 	}
 
 	public SMBSpace createSpace(String spaceTemplateFilename) {
+		if(smbSpace != null)
+			throw new IllegalStateException("Space already created. Cannot create again.");
+
 		smbSpace = new SMBSpace(agency, atlas, SpaceTemplateLoader.loadMap(spaceTemplateFilename));
 		preloadSpaceMusic();
 		spaceRenderer = new SpaceRenderer();
 		return smbSpace;
+	}
+
+	public SMBGuide createGuide(Batch batch, OrthographicCamera gamecam) {
+		if(smbGuide != null)
+			throw new IllegalStateException("Guide already created. Cannot create again.");
+
+		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
+		Collection<Agent> list = agency.getAgentsByProperties(
+				new String[] { KVInfo.KEY_AGENTCLASS, KVInfo.KEY_SPAWNMAIN },
+				new String[] { KVInfo.VAL_SPAWNGUIDE, KVInfo.VAL_TRUE });
+		if(list.isEmpty()) {
+			smbGuide = new SMBGuide(agency,
+					(Mario) agency.createAgent(ADefFactory.makeMarioDef(new Vector2(0f, 0f))), batch, gamecam);
+		}
+		else {
+			smbGuide = new SMBGuide(agency,
+					(Mario) agency.createAgent(ADefFactory.makeMarioDef(list.iterator().next().getPosition())), batch, gamecam);
+		}
+
+		return smbGuide;
 	}
 
 	private void preloadSpaceMusic() {
@@ -72,7 +102,9 @@ public class AgencyDirector implements Disposable {
 	}
 
 	public void update(float delta) {
-		smbSpace.update(delta);
+		smbGuide.preUpdate(delta);
+		agency.update(delta);
+		smbGuide.postUpdate();
 	}
 
 	public void playSound(String sound) {
@@ -116,8 +148,17 @@ public class AgencyDirector implements Disposable {
 		spaceRenderer.draw(smbSpace, guide);
 	}
 
+	public boolean isGameOver() {
+		return smbGuide.isGameOver();
+	}
+
+	public boolean isGameWon() {
+		return smbGuide.isGameWon();
+	}
+
 	@Override
 	public void dispose() {
+		smbGuide.dispose();
 		smbSpace.dispose();
 		agency.dispose();
 	}

@@ -17,8 +17,6 @@ public class TileCollisionMap {
 	private World world;
 	private BooleanTileMap bTileMap;
 
-//	private int width;
-//	private int height;
 	private int tileWidth;
 	private int tileHeight;
 	private LineSegList[] hLines;
@@ -29,8 +27,6 @@ public class TileCollisionMap {
 		if(solidLayers == null || solidLayers.size() < 1)
 			throw new IllegalArgumentException("Layers array was null or it referenced a null layer in the zeroth position.");
 		this.world = world;
-//		width = solidLayers[0].getWidth();
-//		height = solidLayers[0].getHeight();
 		TiledMapTileLayer a = solidLayers.iterator().next();
 		tileWidth = (int) a.getTileWidth();
 		tileHeight = (int) a.getTileHeight();

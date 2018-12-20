@@ -61,17 +61,7 @@ public class Goomba extends SimpleWalkAgent implements HeadBounceAgent, ContactD
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
 	}
 
-	private GoombaState getState() {
-		if(isBumped)
-			return GoombaState.DEAD_BUMPED;
-		else if(isSquished)
-			return GoombaState.DEAD_SQUISH;
-		else if(goomBody.isOnGround())
-			return GoombaState.WALK;
-		else
-			return GoombaState.FALL;
-	}
-
+	@Override
 	public void update(float delta) {
 		GoombaState curState = getState();
 		switch(curState) {
@@ -104,6 +94,17 @@ public class Goomba extends SimpleWalkAgent implements HeadBounceAgent, ContactD
 		// increment state timer if state stayed the same, otherwise reset timer
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
 		prevState = curState;
+	}
+
+	private GoombaState getState() {
+		if(isBumped)
+			return GoombaState.DEAD_BUMPED;
+		else if(isSquished)
+			return GoombaState.DEAD_SQUISH;
+		else if(goomBody.isOnGround())
+			return GoombaState.WALK;
+		else
+			return GoombaState.FALL;
 	}
 
 	private void startSquish() {

@@ -46,7 +46,7 @@ public class AgentSpawnTriggerBody extends AgentBody implements Disposable {
 	private void createMouseJoint(World world, Rectangle bounds) {
 		Body tempB;	// mouse joint body
 
-		// mouse joint needs a body, so create a sensor body with no gravity
+		// mouse joint needs a fake body, so create a sensor body with no gravity
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		bdef.position.set(0f, 0f);

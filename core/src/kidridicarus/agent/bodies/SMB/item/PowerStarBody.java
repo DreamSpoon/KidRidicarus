@@ -37,17 +37,17 @@ public class PowerStarBody extends MobileAgentBody implements BumpableBody {
 		fdef.restitution = 1f;	// bouncy
 		fdef.filter.categoryBits = GameInfo.ITEM_BIT;
 		// items contact mario but can pass through goombas, turtles, etc.
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.GUIDE_AGENTSENSOR_BIT;
+		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.GUIDE_SENSOR_BIT;
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override
-	public void onBump(Agent perp, Vector2 fromCenter) {
-		parent.onBump(perp, fromCenter);
+	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
+		parent.onBump(bumpingAgent, fromCenter);
 	}
 
 	@Override
-	protected void onContactVertBoundLine(LineSeg seg) {
+	protected void onContactWall(LineSeg seg) {
 		parent.onContactBoundLine(seg);
 	}
 

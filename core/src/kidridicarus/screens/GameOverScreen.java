@@ -88,7 +88,6 @@ public class GameOverScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-//		if(Gdx.input.justTouched()) {
 		if(didAnythingHappen) {
 			game.setScreen(new PlayScreen((MyKidRidicarus) game));
 			dispose();

@@ -30,7 +30,7 @@ public class BumpTileBody extends AgentBody implements BumpableBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		fdef.filter.categoryBits = GameInfo.BANGABLE_BIT;
-		fdef.filter.maskBits = GameInfo.GUIDEHEAD_BIT;
+		fdef.filter.maskBits = GameInfo.GUIDE_SENSOR_BIT;
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, bounds.width, bounds.height);
 	}
 
@@ -40,7 +40,7 @@ public class BumpTileBody extends AgentBody implements BumpableBody {
 	}
 
 	@Override
-	public void onBump(Agent perp, Vector2 fromCenter) {
-		parent.onBump(perp, fromCenter);
+	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
+		parent.onBump(bumpingAgent, fromCenter);
 	}
 }

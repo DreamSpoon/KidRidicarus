@@ -26,7 +26,7 @@ public class FireFlowerBody extends AgentBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		// items contact mario but can pass through goombas, turtles, etc.
 		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, GameInfo.ITEM_BIT,
-				(short) (GameInfo.BOUNDARY_BIT | GameInfo.GUIDE_AGENTSENSOR_BIT), position, BODY_WIDTH, BODY_HEIGHT);
+				(short) (GameInfo.BOUNDARY_BIT | GameInfo.GUIDE_SENSOR_BIT), position, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
-import kidridicarus.agencydirector.BasicInputs;
+import kidridicarus.agencydirector.Advice;
 import kidridicarus.agency.ADefFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.PipeWarp;
@@ -71,7 +71,7 @@ public class Mario extends Agent {
 	private int coinTotal;
 	private int pointTotal;
 
-	private BasicInputs frameInputs;
+	private Advice advice;
 
 	public Mario(Agency agency, AgentDef adef) {
 		super(agency, adef);
@@ -92,7 +92,7 @@ public class Mario extends Agent {
 
 		levelTimeRemaining = LEVEL_MAX_TIME;
 
-		frameInputs = new BasicInputs();
+		advice = new Advice();
 
 		curState = MarioState.PLAY;
 		stateTimer = 0f;
@@ -125,12 +125,12 @@ public class Mario extends Agent {
 			consecBouncePoints = PointAmount.ZERO;
 
 		bodyState = MarioBodyState.STAND;
-		nextState = processMarioState(delta, frameInputs);
+		nextState = processMarioState(delta);
 		// mario special states (e.g. end level script) override regular body states (e.g. mario use powerup) 
 		if(nextState == MarioState.PLAY || nextState == MarioState.FIREBALL) {
 			processDamage(delta);
 			processPowerups();
-			bodyState = mariobody.update(delta, frameInputs, curPowerState);
+			bodyState = mariobody.update(delta, advice, curPowerState);
 		}
 
 		stateTimer = nextState == curState ? stateTimer + delta : 0f;
@@ -148,13 +148,13 @@ public class Mario extends Agent {
 		marioSprite.update(delta, mariobody.getPosition().cpy().add(marioSpriteOffset), curState, bodyState,
 				curPowerState, mariobody.isFacingRight(), isDmgInvincible, isStarPowered, mariobody.isBigBody());
 
-		wantsToRunOnPrevUpdate = frameInputs.wantsToRun;
+		wantsToRunOnPrevUpdate = advice.run;
 		
-		frameInputs.clear();
+		advice.clear();
 	}
 
 	// Process the body and return a character state based on the findings.
-	private MarioState processMarioState(float delta, BasicInputs bi) {
+	private MarioState processMarioState(float delta) {
 		// scripted level end sequence
 		if(mariobody.getLevelEndContacted() != null) {
 			mariobody.zeroVelocity(true, true);
@@ -290,7 +290,7 @@ public class Mario extends Agent {
 		}
 		// otherwise the player has control, because no script is runnning
 		else {
-			if(processFireball(delta, bi))
+			if(processFireball(delta))
 				return MarioState.FIREBALL;
 			else
 				return MarioState.PLAY;
@@ -298,7 +298,7 @@ public class Mario extends Agent {
 	}
 
 	// mario can shoot fireballs two at a time, but must wait if his "fireball timer" runs low
-	private boolean processFireball(float delta, BasicInputs bi) {
+	private boolean processFireball(float delta) {
 		if(curState != MarioState.PLAY)
 			return false;
 
@@ -307,7 +307,7 @@ public class Mario extends Agent {
 			fireballTimer = TIME_PER_FIREBALL;
 
 		// fire a ball?
-		if(curPowerState == MarioPowerState.FIRE && bi.wantsToRun && !wantsToRunOnPrevUpdate && fireballTimer > 0f) {
+		if(curPowerState == MarioPowerState.FIRE && advice.run && !wantsToRunOnPrevUpdate && fireballTimer > 0f) {
 			fireballTimer -= TIME_PER_FIREBALL;
 			throwFireball();
 			return true;
@@ -426,8 +426,8 @@ public class Mario extends Agent {
 			marioSprite.draw(batch);
 	}
 
-	public void setFrameInputs(BasicInputs bi) {
-		frameInputs = bi.cpy();
+	public void setFrameAdvice(Advice advice) {
+		this.advice = advice.cpy();
 	}
 
 	public void respawn(GuideSpawner sp) {

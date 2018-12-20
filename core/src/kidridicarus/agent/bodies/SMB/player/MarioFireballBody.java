@@ -48,7 +48,7 @@ public class MarioFireballBody extends MobileAgentBody implements AgentContactBo
 	}
 
 	@Override
-	protected void onContactVertBoundLine(LineSeg seg) {
+	protected void onContactWall(LineSeg seg) {
 		parent.onContactBoundLine(seg);
 	}
 

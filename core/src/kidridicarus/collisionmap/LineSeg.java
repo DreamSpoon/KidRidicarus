@@ -3,24 +3,27 @@ package kidridicarus.collisionmap;
 import java.util.Comparator;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.info.UInfo;
 
-public class LineSeg {
+public class LineSeg implements Disposable {
 	// if begin = end, it means the LineSeg is one tile wide
 	public int begin, end;	// in tile coordinates (not pixel coordinates), where begin <= end
 	public Body body;
 	public boolean isHorizontal;
 
-	// Conceptually, each LineSeg has a 2D normal vector. "Up" means +y or +x as the case may be.  
-	// Horizontal lines can be floors or ceilings. For horizontal lines:
-	//     If upNormal = true, this LineSeg is a floor, and the area below it is solid
-	//     If upNormal = false, this LineSeg is a ceiling, and the area above it is solid.
-	// Vertical lines can be left walls or right walls. For vertical lines:
-	//     If upNormal = true, this LineSeg is a left wall, and the area on its left is solid
-	//     If upNormal = false, this LineSeg is a right wall, and the area on its right is solid.
-	// Note: upNormal instead of rightNormal to prevent confusion by way of left walls with right normals.
-	//       Also, more word variety so more interesting.
+	/*
+	 * Conceptually, each LineSeg has a 2D normal vector. "Up" means +y or +x as the case may be.
+	 * Horizontal lines can be floors or ceilings. For horizontal lines:
+	 *     If upNormal = true, this LineSeg is a floor, and the area below it is solid
+	 *     If upNormal = false, this LineSeg is a ceiling, and the area above it is solid.
+	 * Vertical lines can be left walls or right walls. For vertical lines:
+	 *     If upNormal = true, this LineSeg is a left wall, and the area on its left is solid
+	 *     If upNormal = false, this LineSeg is a right wall, and the area on its right is solid.
+	 * Note: upNormal instead of rightNormal to prevent confusion by way of left walls with right normals.
+	 *       Also, more word variety so more interesting.  
+	 */
 	public boolean upNormal;
 
 	public LineSeg(int begin, int end, boolean isHorizontal, boolean upNormal) {
@@ -107,6 +110,7 @@ public class LineSeg {
 			return UInfo.P2M((end+1) * UInfo.TILEPIX_Y);
 	}
 
+	@Override
 	public void dispose() {
 		if(body != null)
 			body.getWorld().destroyBody(body);

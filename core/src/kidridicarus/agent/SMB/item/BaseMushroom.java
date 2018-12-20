@@ -57,15 +57,7 @@ public abstract class BaseMushroom extends SimpleWalkAgent implements ItemAgent,
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
 	}
 
-	private MushroomState getState() {
-		if(isSprouting)
-			return MushroomState.SPROUT;
-		else if(bmbody.isOnGround())
-			return MushroomState.WALK;
-		else
-			return MushroomState.FALL;
-	}
-
+	@Override
 	public void update(float delta) {
 		MushroomState curState;
 		float yOffset;
@@ -113,6 +105,15 @@ public abstract class BaseMushroom extends SimpleWalkAgent implements ItemAgent,
 		prevState = curState;
 	}
 
+	private MushroomState getState() {
+		if(isSprouting)
+			return MushroomState.SPROUT;
+		else if(bmbody.isOnGround())
+			return MushroomState.WALK;
+		else
+			return MushroomState.FALL;
+	}
+
 	@Override
 	public void draw(Batch batch) {
 		mSprite.draw(batch);
@@ -125,7 +126,7 @@ public abstract class BaseMushroom extends SimpleWalkAgent implements ItemAgent,
 	}
 
 	@Override
-	public void onBump(Agent perp, Vector2 fromCenter) {
+	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
 		if(isSprouting)
 			return;
 

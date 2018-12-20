@@ -1,7 +1,6 @@
 package kidridicarus.agent.SMB.player;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -122,12 +121,6 @@ public class MarioFireball extends SimpleWalkAgent implements AgentContactAgent 
 	@Override
 	public Rectangle getBounds() {
 		return fbbody.getBounds();
-	}
-
-	@Override
-	public MapProperties getProperties() {
-		// return empty properties
-		return new MapProperties();
 	}
 
 	@Override
