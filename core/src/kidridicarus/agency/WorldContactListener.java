@@ -99,8 +99,10 @@ public class WorldContactListener implements ContactListener {
 				break;
 			// agent touched another agent
 			case (GameInfo.AGENT_BIT):
-				((AgentContactBody) fixA.getUserData()).onContactAgent((AgentBody) fixB.getUserData());
-				((AgentContactBody) fixB.getUserData()).onContactAgent((AgentBody) fixA.getUserData());
+				if(fixA instanceof AgentContactBody)
+					((AgentContactBody) fixA.getUserData()).onContactAgent((AgentBody) fixB.getUserData());
+				if(fixB instanceof AgentContactBody)
+					((AgentContactBody) fixB.getUserData()).onContactAgent((AgentBody) fixA.getUserData());
 				break;
 			default:
 				break;

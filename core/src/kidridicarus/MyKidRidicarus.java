@@ -52,11 +52,11 @@ public class MyKidRidicarus extends Game {
 
 	public String getLevelFilename(int level) {
 		if(level == 0)
-			return GameInfo.GAMEMAP_FILENAME2;
-		else
 			return GameInfo.GAMEMAP_FILENAME1;
+		else
+			return GameInfo.GAMEMAP_FILENAME2;
 	}
-	
+
 	@Override
 	public void dispose () {
 		super.dispose();

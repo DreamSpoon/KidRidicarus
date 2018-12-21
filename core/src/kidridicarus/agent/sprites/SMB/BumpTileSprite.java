@@ -48,8 +48,10 @@ public class BumpTileSprite extends Sprite {
 	}
 
 	public void update(float delta, Vector2 position, boolean isQ, boolean isEmpty) {
-		if(isEmpty)
+		if(isEmpty) {
 			setRegion(emptyblockTex);
+			doNotDraw = false;
+		}
 		// q block?
 		else if(isQ)
 			setRegion(qblockAnim.getKeyFrame(totalTime, true));

@@ -6,8 +6,8 @@ public class GameInfo {
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_FILENAME1 = "map/level xyz v17.tmx";
-	public static final String GAMEMAP_FILENAME2 = "map/level uvw v1.tmx";
+	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v1.tmx";
+	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v1.tmx";
 	public static final String TEXATLAS_FILENAME = "sprite/KidRid1.pack";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";

@@ -5,8 +5,6 @@ package kidridicarus.info;
  * Desc: Used by the map loading and agent creation code.
  */
 public class KVInfo {
-	public static final String KEY_QBLOCK = "qblock";
-
 	public static final String KEY_SPAWNMAIN = "spawnmain";
 	public static final String KEY_SPAWNTYPE = "spawntype";
 	// spawnpoint needs a name
@@ -82,4 +80,7 @@ public class KVInfo {
 	public static final String VAL_FALSE = "false";
 
 	public static final String KEY_SOLIDLAYER = "solidlayer";
+
+	public static final String KEY_QBLOCK = "qblock";
+	public static final String KEY_SECRETBLOCK = "secretblock";
 }

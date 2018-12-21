@@ -99,8 +99,9 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 
 		btsprite = new BumpTileSprite(agency.getEncapTexAtlas(), adef.tileTexRegion);
 
-		// make the tile solid in the tile physics layer
-		agency.setPhysicTile(UInfo.getM2PTileForPos(itbody.getPosition()), true);
+		// make the tile solid in the tile physics layer if it is not a secret block 
+		if(!adef.properties.get(KVInfo.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))
+			agency.setPhysicTile(UInfo.getM2PTileForPos(itbody.getPosition()), true);
 
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
 		agency.enableAgentUpdate(this);
@@ -170,6 +171,10 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 		if(blockItem == BlockItem.NONE && wasHitByBig)
 			startBreakBrick();
 		else {
+			// if the tile was a secret block then it was not solid, so make it solid 
+			if(properties.get(KVInfo.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))
+				agency.setPhysicTile(UInfo.getM2PTileForPos(itbody.getPosition()), true);
+
 			switch(blockItem) {
 				case COIN:
 					isItemAvailable = false;
