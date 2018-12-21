@@ -7,17 +7,17 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.B2DFactory;
-import kidridicarus.agencydirector.AgentSensor;
-import kidridicarus.agencydirector.AgentSensor.AgentSensorType;
+import kidridicarus.agencydirector.WalkingSensor;
+import kidridicarus.agencydirector.WalkingSensor.WalkingSensorType;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.item.BaseMushroom;
-import kidridicarus.agent.bodies.MobileAgentBody;
+import kidridicarus.agent.bodies.MobileGroundAgentBody;
 import kidridicarus.agent.bodies.optional.BumpableBody;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 
-public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
+public class BaseMushroomBody extends MobileGroundAgentBody implements BumpableBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
@@ -45,7 +45,7 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 		fdef.isSensor = true;
 		fdef.filter.categoryBits = GameInfo.AGENT_SENSOR_BIT;
 		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
-		b2body.createFixture(fdef).setUserData(new AgentSensor(this, AgentSensorType.FOOT));
+		b2body.createFixture(fdef).setUserData(new WalkingSensor(this, WalkingSensorType.FOOT));
 	}
 
 	@Override

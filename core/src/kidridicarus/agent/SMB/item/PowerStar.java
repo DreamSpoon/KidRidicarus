@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.SimpleWalkAgent;
+import kidridicarus.agent.BasicWalkAgent;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.bodies.SMB.item.PowerStarBody;
 import kidridicarus.agent.optional.BumpableAgent;
@@ -23,7 +23,7 @@ import kidridicarus.info.UInfo;
  * -allow the star to spawn down-right out of bricks like on level 1-1
  * -test the star's onBump method - I could not bump it, needs precise timing - maybe loosen the timing? 
  */
-public class PowerStar extends SimpleWalkAgent implements ItemAgent, BumpableAgent {
+public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgent {
 	private static final float SPROUT_TIME = 0.5f;
 	private static final Vector2 START_BOUNCE_VEL = new Vector2(0.5f, 2f); 
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);

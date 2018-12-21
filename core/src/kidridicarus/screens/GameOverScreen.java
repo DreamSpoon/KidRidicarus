@@ -57,9 +57,9 @@ public class GameOverScreen implements Screen {
 	}
 
 	public class MyLittleInPr implements InputProcessor {
-		private GameOverScreen gos;
-		public MyLittleInPr(GameOverScreen gos) { this.gos = gos; }
-		private boolean a() { return gos.onSomethingHappen(); }
+		private GameOverScreen screen;
+		public MyLittleInPr(GameOverScreen screen) { this.screen = screen; }
+		private boolean a() { return screen.onSomethingHappen(); }
 		@Override
 		public boolean keyDown(int keycode) { return a(); }
 		@Override
@@ -89,7 +89,7 @@ public class GameOverScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		if(didAnythingHappen) {
-			game.setScreen(new PlayScreen((MyKidRidicarus) game));
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, 0));
 			dispose();
 		}
 

@@ -8,7 +8,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.ADefFactory;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.SimpleWalkAgent;
+import kidridicarus.agent.BasicWalkAgent;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.bodies.SMB.enemy.TurtleBody;
 import kidridicarus.agent.optional.AgentContactAgent;
@@ -30,7 +30,7 @@ import kidridicarus.info.UInfo;
  * -turtle shells do not slide properly when they are kicked while contacting an agent, since the slide kill
  *  agent code is only called when contacting starts
  */
-public class Turtle extends SimpleWalkAgent implements HeadBounceAgent, ContactDmgAgent, BumpableAgent,
+public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDmgAgent, BumpableAgent,
 		DamageableAgent, AgentContactAgent {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;

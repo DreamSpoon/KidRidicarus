@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.SimpleWalkAgent;
+import kidridicarus.agent.BasicWalkAgent;
 import kidridicarus.agent.bodies.SMB.item.BaseMushroomBody;
 import kidridicarus.agent.optional.BumpableAgent;
 import kidridicarus.agent.optional.ItemAgent;
@@ -18,7 +18,7 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.UInfo;
 import kidridicarus.tools.EncapTexAtlas;
 
-public abstract class BaseMushroom extends SimpleWalkAgent implements ItemAgent, BumpableAgent {
+public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, BumpableAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private static final float WALK_VEL = 0.6f;

@@ -45,6 +45,7 @@ public class KVInfo {
 	public static final String VAL_CASTLEFLAG = "castleflag";
 	public static final String VAL_FLOATINGPOINTS = "floatingpoints";
 	public static final String VAL_MARIO = "mario";
+	public static final String VAL_ZOOMER = "zoomer";
 
 	public static final String KEY_SPAWNITEM = "spawnitem";
 	public static final String VAL_COIN10 = "coin10";

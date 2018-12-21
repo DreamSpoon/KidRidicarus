@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import kidridicarus.info.AudioInfo;
+import kidridicarus.info.GameInfo;
 import kidridicarus.screens.PlayScreen;
 
 public class MyKidRidicarus extends Game {
@@ -21,7 +22,7 @@ public class MyKidRidicarus extends Game {
 		batch = new SpriteBatch();
 		sr = new ShapeRenderer();
 		manager = new AssetManager();
-		// other musics may be loaded when a level loads
+		// other music files may be loaded later when a space is loaded
 		manager.load(AudioInfo.MUSIC_LEVELEND, Music.class);
 		manager.load(AudioInfo.MUSIC_STARPOWER, Music.class);
 		manager.load(AudioInfo.SOUND_COIN, Sound.class);
@@ -39,12 +40,21 @@ public class MyKidRidicarus extends Game {
 		manager.load(AudioInfo.SOUND_FLAGPOLE, Sound.class);
 		manager.load(AudioInfo.SOUND_1UP, Sound.class);
 		manager.finishLoading();
-		setScreen(new PlayScreen(this));
+
+		// start playing first level 
+		setScreen(new PlayScreen(this, 0));
 	}
 
 	@Override
 	public void render () {
 		super.render();
+	}
+
+	public String getLevelFilename(int level) {
+		if(level == 0)
+			return GameInfo.GAMEMAP_FILENAME2;
+		else
+			return GameInfo.GAMEMAP_FILENAME1;
 	}
 	
 	@Override

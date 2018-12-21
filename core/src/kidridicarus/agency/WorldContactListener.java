@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 import kidridicarus.agencydirector.AgentSensor;
 import kidridicarus.agencydirector.GuideSensor;
-import kidridicarus.agent.bodies.MobileAgentBody;
+import kidridicarus.agent.bodies.MobileGroundAgentBody;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.agent.bodies.SMB.PipeWarpBody;
 import kidridicarus.agent.bodies.SMB.player.MarioBody;
@@ -85,10 +85,11 @@ public class WorldContactListener implements ContactListener {
 			// agent touched horizontal or vertical bound
 			case (GameInfo.AGENT_BIT | GameInfo.BOUNDARY_BIT):
 			case (GameInfo.ITEM_BIT | GameInfo.BOUNDARY_BIT):
-				if(fixA.getFilterData().categoryBits == GameInfo.AGENT_BIT)
-					((MobileAgentBody) fixA.getUserData()).onBodyBeginContact((LineSeg) fixB.getUserData());
-				else
-					((MobileAgentBody) fixB.getUserData()).onBodyBeginContact((LineSeg) fixA.getUserData());
+				if(fixA.getFilterData().categoryBits == GameInfo.AGENT_BIT &&
+					fixA.getUserData() instanceof MobileGroundAgentBody)
+					((MobileGroundAgentBody) fixA.getUserData()).onBodyBeginContact((LineSeg) fixB.getUserData());
+				else if(fixB.getUserData() instanceof MobileGroundAgentBody)
+					((MobileGroundAgentBody) fixB.getUserData()).onBodyBeginContact((LineSeg) fixA.getUserData());
 				break;
 			case (GameInfo.AGENT_SENSOR_BIT | GameInfo.BOUNDARY_BIT):
 				if(fixA.getFilterData().categoryBits == GameInfo.AGENT_SENSOR_BIT)

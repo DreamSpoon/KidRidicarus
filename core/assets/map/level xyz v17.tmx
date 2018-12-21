@@ -105,7 +105,7 @@
   <properties>
    <property name="agentclass" value="spawnguide"/>
   </properties>
-  <object id="225" x="1712" y="416" width="16" height="16">
+  <object id="225" x="3008" y="288" width="16" height="16">
    <properties>
     <property name="spawnmain" value="true"/>
    </properties>

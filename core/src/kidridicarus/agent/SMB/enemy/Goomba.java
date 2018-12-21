@@ -9,7 +9,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.ADefFactory;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.SimpleWalkAgent;
+import kidridicarus.agent.BasicWalkAgent;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.bodies.SMB.enemy.GoombaBody;
 import kidridicarus.agent.optional.AgentContactAgent;
@@ -24,7 +24,7 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
 import kidridicarus.info.UInfo;
 
-public class Goomba extends SimpleWalkAgent implements HeadBounceAgent, ContactDmgAgent, BumpableAgent,
+public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDmgAgent, BumpableAgent,
 		DamageableAgent, AgentContactAgent, Disposable
 {
 	private static final float GOOMBA_WALK_VEL = 0.4f;

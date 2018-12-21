@@ -8,14 +8,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.MarioFireball;
-import kidridicarus.agent.bodies.MobileAgentBody;
+import kidridicarus.agent.bodies.MobileGroundAgentBody;
 import kidridicarus.agent.bodies.optional.AgentContactBody;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 
-public class MarioFireballBody extends MobileAgentBody implements AgentContactBody {
+public class MarioFireballBody extends MobileGroundAgentBody implements AgentContactBody {
 	private static final float BODY_WIDTH = UInfo.P2M(7f);
 	private static final float BODY_HEIGHT = UInfo.P2M(7f);
 

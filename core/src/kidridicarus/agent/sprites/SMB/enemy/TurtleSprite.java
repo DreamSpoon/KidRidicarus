@@ -12,31 +12,31 @@ import kidridicarus.info.UInfo;
 import kidridicarus.tools.EncapTexAtlas;
 
 public class TurtleSprite extends Sprite {
-	private static final float WALK_ANIM_SPEED = 0.25f;
+	private static final float ANIM_SPEED = 0.25f;
 
-	private float stateTimer;
 	private Animation<TextureRegion> walkAnimation;
 	private TextureRegion insideShell;
 	private Animation<TextureRegion> wakeUpAnimation;
+	private float stateTimer;
 
 	public TurtleSprite(EncapTexAtlas encapTexAtlas, Vector2 position) {
-		super(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 0, 0, 16, 24));
-		setBounds(getX(), getY(), UInfo.P2M(16), UInfo.P2M(24));
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
-
 		Array<TextureRegion> frames = new Array<TextureRegion>();
 		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 0, 0, 16, 24));
 		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 16, 0, 16, 24));
-		walkAnimation = new Animation<TextureRegion>(WALK_ANIM_SPEED, frames);
+		walkAnimation = new Animation<TextureRegion>(ANIM_SPEED, frames);
 
 		frames.clear();
 		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 5 * 16, 0, 16, 24));
 		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 4 * 16, 0, 16, 24));
-		wakeUpAnimation = new Animation<TextureRegion>(WALK_ANIM_SPEED, frames);
+		wakeUpAnimation = new Animation<TextureRegion>(ANIM_SPEED, frames);
 
 		insideShell = encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 4 * 16, 0, 16, 24);
 
 		stateTimer = 0;
+
+		setRegion(walkAnimation.getKeyFrame(0f));
+		setBounds(getX(), getY(), UInfo.P2M(16), UInfo.P2M(24));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position, TurtleState curState, boolean facingRight) {

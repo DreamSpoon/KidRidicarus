@@ -8,13 +8,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.item.PowerStar;
-import kidridicarus.agent.bodies.MobileAgentBody;
+import kidridicarus.agent.bodies.MobileGroundAgentBody;
 import kidridicarus.agent.bodies.optional.BumpableBody;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 
-public class PowerStarBody extends MobileAgentBody implements BumpableBody {
+public class PowerStarBody extends MobileGroundAgentBody implements BumpableBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 

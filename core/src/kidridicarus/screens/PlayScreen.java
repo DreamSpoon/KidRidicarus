@@ -21,9 +21,11 @@ public class PlayScreen implements Screen {
 	private TextureAtlas atlas;
 	private AgencyDirector director;
 	private SMBGuide guide;	// "player"
+	private int level;
 
-	public PlayScreen(MyKidRidicarus game) {
+	public PlayScreen(MyKidRidicarus game, int level) {
 		this.game = game;
+		this.level = level;
 
 		atlas = new TextureAtlas(GameInfo.TEXATLAS_FILENAME);
 
@@ -33,7 +35,8 @@ public class PlayScreen implements Screen {
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
 		director = new AgencyDirector(game.manager, atlas);
-		director.createSpace(GameInfo.GAMEMAP_FILENAME);
+//		director.createSpace(GameInfo.GAMEMAP_FILENAME);
+		director.createSpace(game.getLevelFilename(level));
 		guide = director.createGuide(game.batch, gamecam);
 	}
 
@@ -48,11 +51,13 @@ public class PlayScreen implements Screen {
 		// draw screen
 		director.draw(guide);
 
-		// change to game over screen?
+		// change to next level?
 		if(guide.isGameWon()) {
-			game.setScreen(new GameOverScreen(game, true));
+//			game.setScreen(new GameOverScreen(game, true));
+			game.setScreen(new LevelTransitScreen(game, level+1));
 			dispose();
 		}
+		// change to game over screen?
 		else if(guide.isGameOver()) {
 			game.setScreen(new GameOverScreen(game, false));
 			dispose();

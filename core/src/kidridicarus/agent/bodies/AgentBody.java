@@ -10,6 +10,10 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agent.Agent;
 import kidridicarus.info.GameInfo;
 
+/*
+ * Assume that an AgentBody can contain only 1 Box2D body. If more bodies are needed then a linked agent
+ * scenario may be fruitful.
+ */
 public abstract class AgentBody implements Disposable {
 	private float bodyWidth = 0f;
 	private float bodyHeight = 0f;

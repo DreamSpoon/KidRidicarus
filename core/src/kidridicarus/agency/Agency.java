@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agent.Agent;
+import kidridicarus.agent.Metroid.enemy.Zoomer;
 import kidridicarus.agent.SMB.BrickPiece;
 import kidridicarus.agent.SMB.BumpTile;
 import kidridicarus.agent.SMB.CastleFlag;
@@ -39,6 +40,7 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.tools.BlockingQueueList;
 import kidridicarus.tools.BlockingQueueList.AddRemCallback;
 import kidridicarus.tools.EncapTexAtlas;
+import kidridicarus.tools.QQ;
 
 public class Agency implements Disposable {
 	private World world;
@@ -188,6 +190,10 @@ public class Agency implements Disposable {
 			allAgents.add(agent = new FloatingPoints(this, adef));
 		else if(rClass.equals(KVInfo.VAL_MARIO))
 			allAgents.add(agent = new Mario(this, adef));
+		else if(rClass.equals(KVInfo.VAL_ZOOMER))
+			allAgents.add(agent = new Zoomer(this, adef));
+		else
+			QQ.pr("Unknown agent class to create: " + rClass);
 
 		return agent;
 	}

@@ -66,7 +66,7 @@ public class SpaceRenderer {
 		batch.end();
 
 		// DEBUG: draw outlines of Box2D fixtures
-//		drawB2DebugRenderer(space, gamecam);
+		drawB2DebugRenderer(space, gamecam);
 
 		// draw the HUD last, so it's on top of everything else
 		guide.drawHUD();

@@ -15,10 +15,8 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
   * End of level part of game needs time to points conversion countdown
 
   * Some minor fixes (e.g. sometimes mario stops using jump force too early, enemies tend to "stick" together when there are many close together)
-  
-  * Refactor code to improve clarity and organization, and remove bugs (note: refactoring in progress)
 
-* Metroid is on the horizon
+* Metroid level 1 has begun, Zoomer implemented
 
 ### Process:
 

@@ -1,5 +1,5 @@
 
-SMB9.png
+KidRid1.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -115,6 +115,13 @@ goomba
   orig: 48, 16
   offset: 0, 0
   index: -1
+zoomer
+  rotate: false
+  xy: 631, 43
+  size: 32, 16
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
 fireball
   rotate: false
   xy: 339, 33
@@ -124,14 +131,14 @@ fireball
   index: -1
 brick_pieces
   rotate: false
-  xy: 631, 43
+  xy: 953, 93
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 castleflag
   rotate: false
-  xy: 953, 93
+  xy: 793, 75
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -145,21 +152,21 @@ coin_hud
   index: -1
 flag
   rotate: false
-  xy: 793, 75
+  xy: 971, 93
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 mush1up
   rotate: false
-  xy: 649, 43
+  xy: 811, 75
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 mushroom
   rotate: false
-  xy: 971, 93
+  xy: 989, 93
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -173,7 +180,7 @@ pointdigits
   index: -1
 1up
   rotate: false
-  xy: 703, 65
+  xy: 1007, 101
   size: 16, 8
   orig: 16, 8
   offset: 0, 0

@@ -12,23 +12,24 @@ import kidridicarus.info.UInfo;
 import kidridicarus.tools.EncapTexAtlas;
 
 public class GoombaSprite extends Sprite {
-	private float stateTimer;
+	private static final float ANIM_SPEED = 0.4f;
+
 	private Animation<TextureRegion> walkAnimation;
 	private TextureRegion squish;
+	private float stateTimer;
 
 	public GoombaSprite(EncapTexAtlas encapTexAtlas, Vector2 position) {
-		super(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_GOOMBA, 0, 0, 16, 16));
-		setBounds(getX(), getY(), UInfo.P2M(16), UInfo.P2M(16));
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
-
 		Array<TextureRegion> frames = new Array<TextureRegion>();
 		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_GOOMBA, 0, 0, 16, 16));
 		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_GOOMBA, 16, 0, 16, 16));
-		walkAnimation = new Animation<TextureRegion>(0.4f, frames);
-
+		walkAnimation = new Animation<TextureRegion>(ANIM_SPEED, frames);
 		squish = encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_GOOMBA, 2 * 16, 0, 16, 16);
 
 		stateTimer = 0;
+
+		setRegion(walkAnimation.getKeyFrame(0f));
+		setBounds(getX(), getY(), UInfo.P2M(16), UInfo.P2M(16));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position, GoombaState curState) {

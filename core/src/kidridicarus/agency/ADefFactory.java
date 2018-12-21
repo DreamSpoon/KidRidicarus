@@ -99,6 +99,13 @@ public class ADefFactory {
 		return adef;
 	}
 
+	public static AgentDef makeZoomerDef(Vector2 position) {
+		AgentDef adef = makePointBoundsDef(position);
+		adef.properties.put(KVInfo.KEY_AGENTCLASS, KVInfo.VAL_ZOOMER);
+
+		return adef;
+	}
+
 	private static AgentDef makePointBoundsDef(Vector2 position) {
 		AgentDef adef = new AgentDef();
 		adef.bounds = new Rectangle(position.x, position.y, 0f, 0f);

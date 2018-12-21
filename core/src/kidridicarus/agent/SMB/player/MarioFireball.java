@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.SimpleWalkAgent;
+import kidridicarus.agent.BasicWalkAgent;
 import kidridicarus.agent.bodies.SMB.player.MarioFireballBody;
 import kidridicarus.agent.optional.AgentContactAgent;
 import kidridicarus.agent.optional.DamageableAgent;
@@ -17,7 +17,7 @@ import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
-public class MarioFireball extends SimpleWalkAgent implements AgentContactAgent {
+public class MarioFireball extends BasicWalkAgent implements AgentContactAgent {
 	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
 	private static final float MAX_Y_VEL = 2.0f;
 

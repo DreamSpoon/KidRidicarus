@@ -6,8 +6,9 @@ public class GameInfo {
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_FILENAME = "map/level xyz v17.tmx";
-	public static final String TEXATLAS_FILENAME = "sprite/SMB9.pack";
+	public static final String GAMEMAP_FILENAME1 = "map/level xyz v17.tmx";
+	public static final String GAMEMAP_FILENAME2 = "map/level uvw v1.tmx";
+	public static final String TEXATLAS_FILENAME = "sprite/KidRid1.pack";
 
 	public static final String TILESET_GUTTER = "tileset_gutter";
 
@@ -27,6 +28,8 @@ public class GameInfo {
 	public static final String TEXATLAS_TURTLE = "turtle";
 	public static final String TEXATLAS_POINTDIGITS = "pointdigits";
 	public static final String TEXATLAS_1UPDIGITS = "1up";
+
+	public static final String TEXATLAS_M_ZOOMER= "zoomer";
 
 	public static final String TEXATLAS_SMLMARIO_REG = "little_mario";
 	// TODO: little fire mario separate image?
@@ -85,6 +88,34 @@ public class GameInfo {
 		public boolean isVertical() {
 			return this.equals(UP) || this.equals(DOWN);
 		}
+
+		// rotate 90 degrees counterclockwise
+		public Direction4 rotate90() {
+			switch(this) {
+				case RIGHT:
+					return Direction4.UP;
+				case UP:
+					return Direction4.LEFT;
+				case LEFT:
+					return Direction4.DOWN;
+				default:
+					return Direction4.RIGHT;
+			}
+		}
+		// rotate 270 degrees counterclockwise (90 degrees clockwise)
+		public Direction4 rotate270() {
+			switch(this) {
+				case RIGHT:
+					return Direction4.DOWN;
+				case DOWN:
+					return Direction4.LEFT;
+				case LEFT:
+					return Direction4.UP;
+				default:
+					return Direction4.RIGHT;
+			}
+		}
 	};
 
+	public enum DiagonalDir4 { TOPRIGHT, TOPLEFT, BOTTOMLEFT, BOTTOMRIGHT };
 }
