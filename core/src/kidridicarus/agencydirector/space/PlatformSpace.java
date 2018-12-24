@@ -12,12 +12,12 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agent.Agent;
 import kidridicarus.tools.EncapTexAtlas;
 
-public class SMBSpace implements Disposable {
+public class PlatformSpace implements Disposable {
 	private Agency agency;
 	private TiledMap tiledMap;
 	private Collection<MapLayer>[] drawLayers;
 
-	public SMBSpace(Agency agency, TextureAtlas atlas, SpaceTemplate spaceTemp) {
+	public PlatformSpace(Agency agency, TextureAtlas atlas, SpaceTemplate spaceTemp) {
 		this.agency = agency;
 		loadSpaceTemplate(spaceTemp, atlas);
 	}

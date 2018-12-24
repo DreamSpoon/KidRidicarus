@@ -10,7 +10,9 @@ import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.info.GameInfo;
+import kidridicarus.agency.contacts.AgentBodyFilter;
+import kidridicarus.agency.contacts.CFBitSeq;
+import kidridicarus.agency.contacts.CFBitSeq.CFBit;
 import kidridicarus.info.UInfo;
 
 public class TileCollisionMap {
@@ -128,6 +130,7 @@ public class TileCollisionMap {
 
 			// at the end of the x axis check, if a line segment exists, then add to list and reset current
 			if(currentSeg != null) {
+				currentSeg.end = bTileMap.getWidth()-1;
 				hLines[y].add(currentSeg);
 				currentSeg = null;
 			}
@@ -175,6 +178,7 @@ public class TileCollisionMap {
 
 			// at the end of the y axis check, if a line segment exists, then add to list and reset current
 			if(currentSeg != null) {
+				currentSeg.end = bTileMap.getHeight()-1;
 				vLines[x].add(currentSeg);
 				currentSeg = null;
 			}
@@ -229,11 +233,10 @@ public class TileCollisionMap {
 		fdef = new FixtureDef();
 		edgeShape = new EdgeShape();
 		edgeShape.set(0f, 0f, UInfo.P2M((endX - startX) * tileWidth), UInfo.P2M((endY - startY) * tileHeight));
-		fdef.filter.categoryBits = GameInfo.BOUNDARY_BIT;
-//		fdef.filter.maskBits = ...
 
 		fdef.shape = edgeShape;
-		body.createFixture(fdef).setUserData(seg);
+		body.createFixture(fdef).setUserData(new AgentBodyFilter(new CFBitSeq(CFBit.SOLID_BOUND_BIT),
+				new CFBitSeq(CFBit.SOLID_BIT), seg));
 
 		return body;
 	}

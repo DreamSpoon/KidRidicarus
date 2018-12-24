@@ -151,7 +151,7 @@ public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	}
 
 	@Override
-	public void onBump(Agent perp, Vector2 fromCenter) {
+	public void onBump(Agent perp) {
 		this.perp = perp;
 		isBumped = true;
 	}

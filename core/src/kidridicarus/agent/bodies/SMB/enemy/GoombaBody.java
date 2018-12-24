@@ -7,16 +7,18 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.B2DFactory;
-import kidridicarus.agencydirector.WalkingSensor;
-import kidridicarus.agencydirector.WalkingSensor.WalkingSensorType;
+import kidridicarus.agency.contacts.CFBitSeq.CFBit;
+import kidridicarus.agency.contacts.AgentBodyFilter;
+import kidridicarus.agency.contacts.CFBitSeq;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.enemy.Goomba;
 import kidridicarus.agent.bodies.MobileGroundAgentBody;
 import kidridicarus.agent.bodies.optional.AgentContactBody;
 import kidridicarus.agent.bodies.optional.BumpableBody;
+import kidridicarus.agent.bodies.sensor.WalkingSensor;
+import kidridicarus.agent.bodies.sensor.WalkingSensor.WalkingSensorType;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.collisionmap.LineSeg;
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 
 public class GoombaBody extends MobileGroundAgentBody implements AgentContactBody, BumpableBody {
@@ -34,8 +36,9 @@ public class GoombaBody extends MobileGroundAgentBody implements AgentContactBod
 
 	private void defineBody(World world, Vector2 position, Vector2 velocity) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, GameInfo.AGENT_BIT,
-				(short) (GameInfo.BOUNDARY_BIT | GameInfo.AGENT_BIT | GameInfo.GUIDE_SENSOR_BIT), position,
+		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT, CFBit.SOLID_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.AGENT_BIT, CFBit.GUIDE_SENSOR_BIT);
+		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, catBits, maskBits, position,
 				BODY_WIDTH, BODY_HEIGHT);
 		createBottomSensorFixture();
 	}
@@ -43,14 +46,14 @@ public class GoombaBody extends MobileGroundAgentBody implements AgentContactBod
 	// create the foot sensor for detecting onGround
 	private void createBottomSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape footSensor;
-		footSensor = new PolygonShape();
-		footSensor.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
-		fdef.filter.categoryBits = GameInfo.AGENT_SENSOR_BIT;
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
-		fdef.shape = footSensor;
+		PolygonShape footShape;
+		footShape = new PolygonShape();
+		footShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
+		fdef.shape = footShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new WalkingSensor(this, WalkingSensorType.FOOT));
+		CFBitSeq catBits = new CFBitSeq(CFBit.SOLID_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, new WalkingSensor(this, WalkingSensorType.FOOT)));
 	}
 
 	@Override
@@ -59,8 +62,8 @@ public class GoombaBody extends MobileGroundAgentBody implements AgentContactBod
 	}
 
 	@Override
-	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
-		parent.onBump(bumpingAgent, fromCenter);
+	public void onBump(Agent bumpingAgent) {
+		parent.onBump(bumpingAgent);
 	}
 
 	@Override

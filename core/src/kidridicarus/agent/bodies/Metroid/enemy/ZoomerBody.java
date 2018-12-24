@@ -7,11 +7,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 
 import kidridicarus.agency.B2DFactory;
-import kidridicarus.agencydirector.CrawlSensor;
+import kidridicarus.agency.contacts.CFBitSeq.CFBit;
+import kidridicarus.agency.contacts.AgentBodyFilter;
+import kidridicarus.agency.contacts.CFBitSeq;
 import kidridicarus.agent.Metroid.enemy.Zoomer;
 import kidridicarus.agent.bodies.MobileAgentBody;
+import kidridicarus.agent.bodies.sensor.CrawlSensor;
 import kidridicarus.collisionmap.LineSeg;
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.GameInfo.DiagonalDir4;
 import kidridicarus.info.UInfo;
 
@@ -58,23 +60,23 @@ public class ZoomerBody extends MobileAgentBody {
 		bdef.position.set(position);
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
-		fdef.filter.categoryBits = GameInfo.AGENT_BIT;
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.GUIDE_SENSOR_BIT;
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, BODY_WIDTH, BODY_HEIGHT);
+		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT, CFBit.SOLID_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.GUIDE_SENSOR_BIT);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	// create the sensors for detecting walls to crawl on
 	private void createCrawlSensor(float posX, float posY, float sizeX, float sizeY,
 			DiagonalDir4 quad) {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape footSensor;
-		footSensor = new PolygonShape();
-		footSensor.setAsBox(sizeX/2f, sizeY/2f, new Vector2(posX, posY), 0f);
-		fdef.filter.categoryBits = GameInfo.AGENT_SENSOR_BIT;
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
-		fdef.shape = footSensor;
+		PolygonShape footShape;
+		footShape = new PolygonShape();
+		footShape.setAsBox(sizeX/2f, sizeY/2f, new Vector2(posX, posY), 0f);
+		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_SENSOR_BIT, CFBit.SOLID_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		fdef.shape = footShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new CrawlSensor(this, quad));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, new CrawlSensor(this, quad)));
 	}
 
 	public void onBeginContactWall(DiagonalDir4 quad, LineSeg lineSeg) {

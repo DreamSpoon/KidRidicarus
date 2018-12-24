@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
-import kidridicarus.agencydirector.SMBGuide;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.bodies.general.AgentSpawnTriggerBody;
+import kidridicarus.guide.SMBGuide;
 import kidridicarus.tools.BlockingQueueList;
 import kidridicarus.tools.BlockingQueueList.AddRemCallback;
 

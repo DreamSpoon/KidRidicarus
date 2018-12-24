@@ -6,12 +6,10 @@ public class GameInfo {
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v1.tmx";
-	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v1.tmx";
-	public static final String TEXATLAS_FILENAME = "sprite/KidRid1.pack";
+	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v2.tmx";
+	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v2.tmx";
 
-	public static final String TILESET_GUTTER = "tileset_gutter";
-
+	public static final String TEXATLAS_FILENAME = "sprite/KidRid2.pack";
 	public static final String TEXATLAS_MUSHROOM = "mushroom";
 	public static final String TEXATLAS_FIREFLOWER = "fireflower";
 	public static final String TEXATLAS_POWERSTAR = "powerstar";
@@ -30,6 +28,7 @@ public class GameInfo {
 	public static final String TEXATLAS_1UPDIGITS = "1up";
 
 	public static final String TEXATLAS_M_ZOOMER= "zoomer";
+	public static final String TEXATLAS_M_SKREE= "skree";
 
 	public static final String TEXATLAS_SMLMARIO_REG = "little_mario";
 	// TODO: little fire mario separate image?
@@ -44,20 +43,6 @@ public class GameInfo {
 	public static final String TEXATLAS_BIGMARIO_INV3 = "big_mario_invinc3";
 
 	public static final String SMB_FONT = "font/prstart v1.fnt";
-
-	public static final short NOTHING_BIT		= 0;
-	public static final short BOUNDARY_BIT		= 2 << 0;
-	public static final short GUIDE_BIT			= 2 << 1;
-	public static final short GUIDE_SENSOR_BIT	= 2 << 2;
-	public static final short BANGABLE_BIT		= 2 << 3;
-	public static final short AGENT_BIT			= 2 << 4;
-	public static final short AGENT_SENSOR_BIT	= 2 << 5;
-	public static final short ITEM_BIT			= 2 << 6;
-	public static final short PIPE_BIT			= 2 << 7;
-	public static final short DESPAWN_BIT		= 2 << 8;
-	public static final short SPAWNBOX_BIT		= 2 << 9;
-	public static final short SPAWNTRIGGER_BIT	= 2 << 10;
-	public static final short ROOMBOX_BIT		= 2 << 11;
 
 	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
 	public static final float BODY_VS_VERT_BOUND_EPSILON = 0.001f;

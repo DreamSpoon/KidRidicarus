@@ -126,12 +126,12 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 	}
 
 	@Override
-	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
+	public void onBump(Agent bumpingAgent) {
 		if(isSprouting)
 			return;
 
 		isBumped = true;
-		bumpCenter = fromCenter.cpy(); 
+		bumpCenter = bumpingAgent.getPosition().cpy(); 
 	}
 
 	@Override

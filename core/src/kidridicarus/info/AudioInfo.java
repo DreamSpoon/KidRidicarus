@@ -19,6 +19,6 @@ public class AudioInfo {
 	public static final String SOUND_FLAGPOLE = "audio/sound/SMB/Flagpole.wav";
 	public static final String SOUND_1UP = "audio/sound/SMB/1up.wav";
 
-	public static final float MUSIC_VOLUME = 0.05f;
-	public static final float SOUND_VOLUME = 0.25f;
+	public static final float MUSIC_VOLUME = 0.2f;
+	public static final float SOUND_VOLUME = 0.6f;
 }

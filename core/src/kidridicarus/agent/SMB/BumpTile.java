@@ -13,20 +13,21 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.ADefFactory;
 import kidridicarus.agency.AgentDef;
+import kidridicarus.agency.contacts.AgentBodyFilter;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.agent.bodies.SMB.BumpTileBody;
 import kidridicarus.agent.optional.BumpableAgent;
+import kidridicarus.agent.optional.BumpableTileAgent;
 import kidridicarus.agent.sprites.SMB.BumpTileSprite;
 import kidridicarus.info.AudioInfo;
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
 import kidridicarus.info.UInfo;
 
-public class BumpTile extends Agent implements BumpableAgent, Disposable {
+public class BumpTile extends Agent implements BumpableTileAgent, Disposable {
 	private static final float BOUNCE_TIME = 0.175f;
 	private static final float BOUNCE_HEIGHT_FRAC = 0.225f;	// bounce up about 1/5 of tile height
 
@@ -219,10 +220,15 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 				new QueryCallback() {
 					@Override
 					public boolean reportFixture(Fixture fixture) {
-						if(fixture.getUserData() instanceof AgentBody &&
-								(fixture.getFilterData().categoryBits & (GameInfo.AGENT_BIT | GameInfo.ITEM_BIT)) != 0) {
-							agentsOnMe.add((AgentBody) fixture.getUserData()); 
-						}
+//						if(fixture.getUserData() instanceof AgentBody &&
+//								(fixture.getFilterData().categoryBits & (GameInfo.AGENT_BIT | GameInfo.ITEM_BIT)) != 0) {
+//							agentsOnMe.add((AgentBody) fixture.getUserData()); 
+//						}
+//						return true;
+						if(!(fixture.getUserData() instanceof AgentBodyFilter))
+								return true;
+						if(((AgentBodyFilter) fixture.getUserData()).userData instanceof AgentBody)
+							agentsOnMe.add((AgentBody) ((AgentBodyFilter) fixture.getUserData()).userData); 
 						return true;
 					}
 				}, itbody.getPosition().x - itbody.getBounds().width/2f*0.25f, itbody.getPosition().y + itbody.getBounds().height/2f,
@@ -234,7 +240,7 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 		while(iter.hasNext()) {
 			AgentBody agentBody = iter.next();
 			if(agentBody.getParent() instanceof BumpableAgent)
-				((BumpableAgent) agentBody.getParent()).onBump(bumpingAgent, itbody.getPosition());
+				((BumpableAgent) agentBody.getParent()).onBump(bumpingAgent);
 		}
 	}
 
@@ -299,7 +305,7 @@ public class BumpTile extends Agent implements BumpableAgent, Disposable {
 	}
 
 	@Override
-	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
+	public void onBumpTile(Agent bumpingAgent) {
 		isHit = true;
 		this.bumpingAgent = bumpingAgent;
 		if(bumpingAgent instanceof Mario && ((Mario) bumpingAgent).isBig())

@@ -1,4 +1,4 @@
-package kidridicarus.agencydirector;
+package kidridicarus.guide.sensor;
 
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.bodies.AgentBody;
@@ -23,7 +23,7 @@ public class GuideSensor {
 		if(agentBody instanceof PipeWarpBody)
 			marioBody.onBeginContactPipe((PipeWarpBody) agentBody);
 		else if(agentBody instanceof BumpableBody && sensorType == SensorType.HEAD)
-			marioBody.onBeginContactBumpable(agentBody);
+			marioBody.onBeginContactBumpTile(agentBody);
 		else if(sensorType == SensorType.BODY) {
 			Agent agent = agentBody.getParent();
 			if(agent instanceof ItemAgent)
@@ -37,7 +37,7 @@ public class GuideSensor {
 		if(agentBody instanceof PipeWarpBody)
 			marioBody.onEndContactPipe((PipeWarpBody) agentBody);
 		else if(agentBody instanceof BumpableBody && sensorType == SensorType.HEAD)
-			marioBody.onEndContactBumpable(agentBody);
+			marioBody.onEndContactBumpTile(agentBody);
 	}
 
 	public void onBeginContact(LineSeg lineSeg) {
@@ -48,5 +48,9 @@ public class GuideSensor {
 	public void onEndContact(LineSeg lineSeg) {
 		if(sensorType == SensorType.FOOT)
 			marioBody.onFootEndContactBound(lineSeg);
+	}
+
+	public AgentBody getParent() {
+		return marioBody;
 	}
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="3">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="3">
  <tileset firstgid="1" name="MetroidTilesetV1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="24" columns="4">
   <image source="MetroidTilesetV1.png" width="72" height="108"/>
  </tileset>
@@ -28,6 +28,14 @@
    eJzt2LEJAEAIBEE7sP9uPzcThEeZqeCCizYCAKAnfw/gpPorPwMAAACAnSbanj4IwCYP0FcATA==
   </data>
  </layer>
+ <layer id="6" name="skree" width="160" height="15">
+  <properties>
+   <property name="agentclass" value="skree"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAIA7CJwL9WvlkgJK2CJgB8MtcBAAAAAAAAAKAWoT4AFQ==
+  </data>
+ </layer>
  <objectgroup id="3" name="playerspawn">
   <properties>
    <property name="agentclass" value="spawnguide"/>
@@ -35,7 +43,7 @@
   </properties>
   <object id="1" x="640" y="160" width="16" height="16"/>
  </objectgroup>
- <objectgroup id="4" name="rooms">
+ <objectgroup id="4" name="rooms" visible="0">
   <properties>
    <property name="agentclass" value="room"/>
   </properties>

@@ -7,10 +7,10 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.B2DFactory;
+import kidridicarus.agency.contacts.CFBitSeq;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.agent.general.GuideSpawner;
-import kidridicarus.info.GameInfo;
 
 public class GuideSpawnerBody extends AgentBody {
 	private GuideSpawner parent;
@@ -27,9 +27,8 @@ public class GuideSpawnerBody extends AgentBody {
 		bdef.position.set(bounds.getCenter(new Vector2()));
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		fdef.filter.categoryBits = GameInfo.NOTHING_BIT;
-		fdef.filter.maskBits = GameInfo.NOTHING_BIT;
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, bounds.width, bounds.height);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, new CFBitSeq(), new CFBitSeq(),
+				bounds.width, bounds.height);
 	}
 
 	@Override

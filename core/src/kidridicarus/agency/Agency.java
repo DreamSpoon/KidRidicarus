@@ -10,7 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.agency.contacts.WorldContactFilter;
+import kidridicarus.agency.contacts.WorldContactListener;
 import kidridicarus.agent.Agent;
+import kidridicarus.agent.Metroid.enemy.Skree;
 import kidridicarus.agent.Metroid.enemy.Zoomer;
 import kidridicarus.agent.SMB.BrickPiece;
 import kidridicarus.agent.SMB.BumpTile;
@@ -44,7 +47,6 @@ import kidridicarus.tools.QQ;
 
 public class Agency implements Disposable {
 	private World world;
-	private WorldContactListener contactListener;
 	private TileCollisionMap collisionMap;
 
 	private BlockingQueueList<Agent> allAgents;
@@ -110,8 +112,8 @@ public class Agency implements Disposable {
 		setAgentDrawLayerQ = new LinkedBlockingQueue<AgentDrawOrderItem>();
 
 		world = new World(new Vector2(0, -10f), true);
-		contactListener = new WorldContactListener();
-		world.setContactListener(contactListener);
+		world.setContactListener(new WorldContactListener());
+		world.setContactFilter(new WorldContactFilter());
 	}
 
 	public void setEncapTexAtlas(EncapTexAtlas encapTexAtlas) {
@@ -192,6 +194,8 @@ public class Agency implements Disposable {
 			allAgents.add(agent = new Mario(this, adef));
 		else if(rClass.equals(KVInfo.VAL_ZOOMER))
 			allAgents.add(agent = new Zoomer(this, adef));
+		else if(rClass.equals(KVInfo.VAL_SKREE))
+			allAgents.add(agent = new Skree(this, adef));
 		else
 			QQ.pr("Unknown agent class to create: " + rClass);
 

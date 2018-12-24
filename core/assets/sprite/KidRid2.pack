@@ -1,5 +1,5 @@
 
-KidRid1.png
+KidRid2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -71,6 +71,13 @@ turtle
   xy: 227, 1
   size: 96, 24
   orig: 96, 24
+  offset: 0, 0
+  index: -1
+skree
+  rotate: false
+  xy: 325, 1
+  size: 48, 24
+  orig: 48, 24
   offset: 0, 0
   index: -1
 coin_spin

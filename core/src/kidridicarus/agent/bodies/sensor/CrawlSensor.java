@@ -1,4 +1,4 @@
-package kidridicarus.agencydirector;
+package kidridicarus.agent.bodies.sensor;
 
 import kidridicarus.agent.bodies.Metroid.enemy.ZoomerBody;
 import kidridicarus.collisionmap.LineSeg;

@@ -18,15 +18,31 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
 * Metroid level 1 has begun, Zoomer implemented
 
+### Keyboard Controls
+
+* I use a custom setup:
+
+  * RIGHT = 'F' key
+
+  * UP = 'E' key
+
+  * LEFT = 'S' key
+
+  * DOWN = 'D' key
+
+  * RUN = 'Left' key
+
+  * JUMP = 'Down' key
+
 ### Process:
 
 * Coding
 
   * Write code in Eclipse IDE
 
-  * libGDX for graphics, sound, input
+  * Use libGDX for graphics, sound, input
 
-  * Using [Brent Aureli's SMB code](https://github.com/BrentAureli/SuperMario) (retrieved about Oct 17, 2018) as a starting point, modify as needed
+  * Using [Brent Aureli's SMB code](www.github.com/BrentAureli/SuperMario) (retrieved about Oct 17, 2018) as a starting point, modify as needed
 
   * When stumped, Google stuff and usually find things on [Stack Overflow](www.stackoverflow.com) or [BadLogicGames](www.badlogicgames.com).
 
@@ -46,6 +62,16 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
     * The images will be used in a tileset via TilEd so use the GIMP Gutter Add tool to add gutter to the tile images (if you don't add gutter to your tile images then you may see flickering black lines when running a map)
 
+    * TilEd for creating maps
+
+	* A very special tool for a very special use: Img2tmx = Convert maps in .png form to TilEd maps, complete with tileset .png output
+
+	  * It is fun to draw game maps by hand, and also fun to trace maps in TilEd by adding image backgrounds and tracing what you see...
+
+	  * However, if you want to double check your map and make sure you copied everything perfectly... then use this tool!
+
+	  * The code is brilliant
+
 * Audio
 
   * Find sounds at The Sounds Resource, and music at the Video Game Music Preservation Foundation
@@ -58,41 +84,55 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
   
   * Save AVI videos from FCEUX, watch videos with ShotCut to see the action frame by frame
 
-  * TilEd for creating maps
-
 ### Coding Resources:
 
 [LibGDX](libgdx.badlogicgames.com)
 
-Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.com/watch?v=a8MPxzkwBwo&list=PLZm85UZQLd2SXQzsF-a0-pPF6IWDDdrXt)
+Brent Aureli's YouTube series [Creating Super Mario Bros](www.youtube.com/watch?v=a8MPxzkwBwo&list=PLZm85UZQLd2SXQzsF-a0-pPF6IWDDdrXt)
+
+[Img2tmx](www.github.com/GregSam/Img2Tmx)
+
+  * Note: I modified the code cited above slightly for my purposes, I commented out the (lines 93 - 95):
+  
+    * readLayerFile("layer2.txt", tmxL2Tiles);
+
+    * readLayerFile("layer3.txt", tmxL3Tiles);
+
+    * readLayerFile("layer4.txt", tmxL4Tiles);
+
+  * I seem to be missing these 3 files :(
+  
+  * Also, I had to modify the output files a bit - but this tool rocks!
 
 ### Tools:
 
 [Eclipse IDE](www.eclipse.org)
 
-[GIMP](www.gimp.org)
-
-[ShotCut](www.shotcut.org)
-
 [FCEUX](www.fceux.com)
-
-### Sprite / Tile / Map Resources:
 
 [TilEd](www.mapeditor.org)
 
 [TexturePacker](www.codeandweb.com/texturepacker)
 
+[libGDX Hiero tool for bitmap font conversion](www.github.com/libgdx/libgdx/wiki/Hiero)
+
+[GIMP](www.gimp.org)
+
+[GIMP Addon - Sprite Gutter Add/Remove tool](www.gimper.net/threads/add-remove-sprite-sheet-gutter-padding-and-spacing.14189)
+
+  * Great for preparing tilesets for use (read up on TilED and libGDX tile maps to know why - hint: padding).
+
+[ShotCut](www.shotcut.org)
+
+[Audacity](www.audacityteam.org)
+
+### Sprite / Tile / Map Resources:
+
 [NESMAPS.COM](www.nesmaps.com)
 
 [The Spriters Resource](www.spriters-resource.com)
 
-[GIMP Addon - Sprite Gutter Add/Remove tool](https://gimper.net/threads/add-remove-sprite-sheet-gutter-padding-and-spacing.14189/)
-
-  * Great for preparing tilesets for use (read up on TilED and libGDX tile maps to know why - hint: padding).
-
 ### Audio Resources:
-
-[Audacity](www.audacityteam.org)
 
 [The Sounds Resource](www.sounds-resource.com)
 
@@ -100,15 +140,15 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](https://www.youtube.co
 
 ### Other:
 
-[SMB Font: Press Start by codeman38 at FontSpace](https://www.fontspace.com/codeman38/press-start)
+[SMB Font: Press Start by codeman38 at FontSpace](www.fontspace.com/codeman38/press-start)
 
-[libGDX Hiero tool for bitmap font conversion](https://github.com/libgdx/libgdx/wiki/Hiero)
+[SMB Physics Doc](i276.photobucket.com/albums/kk21/jdaster64/smb_playerphysics.png.html)
 
-[SMB Physics Doc](http://i276.photobucket.com/albums/kk21/jdaster64/smb_playerphysics.png.html)
+[MarioWiki](www.mariowiki.com)
 
-[MarioWiki](https://www.mariowiki.com/)
+[Strategy Wiki](www.strategywiki.org)
 
-### Further Credits:
+### Credits:
 
 I'd like to thank my arms for staying by my side. I'd like to thank my legs for all their support. And I'd like to thank my hands especially - I could always count on my hands.
 

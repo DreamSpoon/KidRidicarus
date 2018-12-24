@@ -275,10 +275,10 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	}
 
 	@Override
-	public void onBump(Agent perp, Vector2 fromCenter) {
+	public void onBump(Agent perp) {
 		this.perp = perp;
 		isDead = true;
-		if(fromCenter.x < turtleBody.getPosition().x)
+		if(perp.getPosition().x < turtleBody.getPosition().x)
 			isDeadToRight = true;
 		else
 			isDeadToRight = false;

@@ -2,7 +2,7 @@ package kidridicarus.agent.bodies;
 
 import com.badlogic.gdx.math.Rectangle;
 
-import kidridicarus.agencydirector.WalkingSensor.WalkingSensorType;
+import kidridicarus.agent.bodies.sensor.WalkingSensor.WalkingSensorType;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo;
 

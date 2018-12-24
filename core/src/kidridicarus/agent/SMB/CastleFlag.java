@@ -27,8 +27,8 @@ public class CastleFlag extends Agent {
 	public CastleFlag(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
-		startPosition = new Vector2(UInfo.P2M(adef.bounds.getX() + adef.bounds.getWidth() / 2f),
-				UInfo.P2M(adef.bounds.getY() + adef.bounds.getHeight() / 2f));
+		startPosition = new Vector2(adef.bounds.getX() + adef.bounds.getWidth() / 2f,
+				adef.bounds.getY() + adef.bounds.getHeight() / 2f);
 
 		flagSprite = new CastleFlagSprite(agency.getEncapTexAtlas(), startPosition);
 

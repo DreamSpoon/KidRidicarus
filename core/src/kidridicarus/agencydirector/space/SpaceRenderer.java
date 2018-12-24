@@ -9,8 +9,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 import kidridicarus.info.GameInfo.LayerDrawOrder;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
-import kidridicarus.agencydirector.SMBGuide;
 import kidridicarus.agent.Agent;
+import kidridicarus.guide.SMBGuide;
 import kidridicarus.info.UInfo;
 
 public class SpaceRenderer {
@@ -27,7 +27,7 @@ public class SpaceRenderer {
 		b2dr.dispose();
 	}
 
-	public void draw(SMBSpace space, SMBGuide guide) {
+	public void draw(PlatformSpace space, SMBGuide guide) {
 		Batch batch = guide.getBatch();
 		OrthographicCamera gamecam = guide.getGamecam();
 
@@ -66,13 +66,13 @@ public class SpaceRenderer {
 		batch.end();
 
 		// DEBUG: draw outlines of Box2D fixtures
-//		drawB2DebugRenderer(space, gamecam);
+		drawB2DebugRenderer(space, gamecam);
 
 		// draw the HUD last, so it's on top of everything else
 		guide.drawHUD();
 	}
 
-	public void drawB2DebugRenderer(SMBSpace space, OrthographicCamera gamecam) {
+	public void drawB2DebugRenderer(PlatformSpace space, OrthographicCamera gamecam) {
 		// draw debug lines for physics of world
 		b2dr.render(space.getWorld(), gamecam.combined);
 	}

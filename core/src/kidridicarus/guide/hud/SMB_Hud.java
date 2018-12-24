@@ -1,4 +1,4 @@
-package kidridicarus.hud;
+package kidridicarus.guide.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.agencydirector.SMBGuide;
+import kidridicarus.guide.SMBGuide;
 import kidridicarus.info.GameInfo;
 import kidridicarus.tools.EncapTexAtlas;
 
@@ -69,6 +69,7 @@ public class SMB_Hud implements Disposable {
 		scoreVarLabel.setText(String.format("%06d", guide.getPointTotal()));
 		timeVarLabel.setText(String.format("%03d", (int) guide.getLevelTimeRemaining()));
 		coinVarLabel.setText(String.format("×%02d", guide.getCoinTotal()));
+		stage.act();
 	}
 
 	public void draw() {

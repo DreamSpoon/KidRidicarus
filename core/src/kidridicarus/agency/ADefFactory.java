@@ -3,8 +3,8 @@ package kidridicarus.agency;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agencydirector.SMBGuide;
 import kidridicarus.agent.SMB.player.Mario;
+import kidridicarus.guide.SMBGuide;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.SMBInfo;
 import kidridicarus.info.SMBInfo.PointAmount;
@@ -102,6 +102,13 @@ public class ADefFactory {
 	public static AgentDef makeZoomerDef(Vector2 position) {
 		AgentDef adef = makePointBoundsDef(position);
 		adef.properties.put(KVInfo.KEY_AGENTCLASS, KVInfo.VAL_ZOOMER);
+
+		return adef;
+	}
+
+	public static AgentDef makeSkreeDef(Vector2 position) {
+		AgentDef adef = makePointBoundsDef(position);
+		adef.properties.put(KVInfo.KEY_AGENTCLASS, KVInfo.VAL_SKREE);
 
 		return adef;
 	}

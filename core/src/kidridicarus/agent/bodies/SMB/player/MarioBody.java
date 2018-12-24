@@ -4,21 +4,22 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.guide.Advice;
+import kidridicarus.guide.sensor.GuideSensor;
+import kidridicarus.guide.sensor.GuideSensor.SensorType;
 import kidridicarus.info.AudioInfo;
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.GameInfo.Direction4;
 import kidridicarus.info.UInfo;
 import kidridicarus.tools.BlockingQueueList;
 import kidridicarus.agency.Agency;
-import kidridicarus.agencydirector.Advice;
-import kidridicarus.agencydirector.GuideSensor;
-import kidridicarus.agencydirector.GuideSensor.SensorType;
+import kidridicarus.agency.contacts.CFBitSeq.CFBit;
+import kidridicarus.agency.contacts.AgentBodyFilter;
+import kidridicarus.agency.contacts.CFBitSeq;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.Flagpole;
 import kidridicarus.agent.SMB.LevelEndTrigger;
@@ -27,9 +28,9 @@ import kidridicarus.agent.SMB.enemy.Turtle;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.SMB.player.Mario.MarioPowerState;
 import kidridicarus.agent.bodies.AgentBody;
+import kidridicarus.agent.bodies.SMB.BumpTileBody;
 import kidridicarus.agent.bodies.SMB.PipeWarpBody;
 import kidridicarus.agent.bodies.general.RoomBoxBody;
-import kidridicarus.agent.bodies.optional.BumpableBody;
 import kidridicarus.agent.general.Room;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.DamageableAgent;
@@ -170,7 +171,7 @@ public class MarioBody extends AgentBody {
 			// we have a weiner!
 			if(closestTile != null && canHeadBang) {
 				canHeadBang = false;
-				((BumpableBody) closestTile).onBump(parent, parent.getPosition());
+				((BumpTileBody) closestTile).onBumpTile(parent);
 			}
 		}
 		// mario can headbang once per up/down cycle of movement, so re-enable head bang when mario moves down
@@ -453,15 +454,15 @@ public class MarioBody extends AgentBody {
 
 		bodyShape.setAsBox(bs.x/2f, bs.y/2f);
 
-		fdef.filter.categoryBits = GameInfo.GUIDE_BIT;
-		fdef.filter.maskBits = GameInfo.ROOMBOX_BIT | GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
 		fdef.shape = bodyShape;
 		// mario should slide easily, but still have some friction to prevent sliding forever
 		fdef.friction = 0.01f;	// (default is 0.2f)
 
 		// save a ref to the body fixture for use later when mario has dmg invincibility
 		marioBodyFixture = b2body.createFixture(fdef);
-		marioBodyFixture.setUserData(this);
+		CFBitSeq catBits = new CFBitSeq(CFBit.SOLID_BIT, CFBit.ROOM_CONTACT_BIT, CFBit.GUIDE_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.ROOM_BIT, CFBit.DESPAWN_BIT);
+		marioBodyFixture.setUserData(new AgentBodyFilter(catBits, maskBits, this));
 	}
 
 	private void createTopSensorFixture() {
@@ -473,11 +474,11 @@ public class MarioBody extends AgentBody {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(8f)), 0f);
 		else
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(16f)), 0f);
-		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
-		fdef.filter.maskBits = GameInfo.BANGABLE_BIT | GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.HEAD));
+		CFBitSeq catBits = new CFBitSeq(CFBit.GUIDE_SENSOR_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.BUMPABLE_BIT, CFBit.PIPE_BIT);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, new GuideSensor(this, SensorType.HEAD)));
 	}
 
 	private void createBottomSensorFixture() {
@@ -489,11 +490,11 @@ public class MarioBody extends AgentBody {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-6)), 0f);
 		else
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-16)), 0f);
-		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.FOOT));
+		CFBitSeq catBits = new CFBitSeq(CFBit.SOLID_BIT, CFBit.GUIDE_SENSOR_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.PIPE_BIT);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, new GuideSensor(this, SensorType.FOOT)));
 	}
 
 	private void createSideSensorFixtures() {
@@ -502,19 +503,17 @@ public class MarioBody extends AgentBody {
 
 		// right side sensor for detecting warp pipes
 		sensorShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), new Vector2(UInfo.P2M(7), 0f), 0f);
-		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
-		fdef.filter.maskBits = GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.SIDE));
+		CFBitSeq catBits = new CFBitSeq(CFBit.GUIDE_SENSOR_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.PIPE_BIT);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, new GuideSensor(this, SensorType.SIDE)));
 
 		// left side sensor for detecting warp pipes
 		sensorShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), new Vector2(UInfo.P2M(-7), 0f), 0f);
-		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
-		fdef.filter.maskBits = GameInfo.PIPE_BIT;
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.SIDE));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, new GuideSensor(this, SensorType.SIDE)));
 	}
 
 	private void createAgentSensorFixture() {
@@ -526,11 +525,11 @@ public class MarioBody extends AgentBody {
 
 		// Create an agent sensor, so that mario doesn't collide with goombas or items like mushrooms and slow down -
 		// he should only sense when they contact
-		fdef.filter.categoryBits = GameInfo.GUIDE_SENSOR_BIT;
-		fdef.filter.maskBits = GameInfo.AGENT_BIT | GameInfo.ITEM_BIT;
 		fdef.shape = bodyShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new GuideSensor(this, SensorType.BODY));
+		CFBitSeq catBits = new CFBitSeq(CFBit.GUIDE_SENSOR_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, new GuideSensor(this, SensorType.BODY)));
 	}
 
 	private void decelLeftRight(boolean right) {
@@ -662,11 +661,11 @@ public class MarioBody extends AgentBody {
 			((ItemAgent) agent).use(parent);
 	}
 
-	public void onBeginContactBumpable(AgentBody thing) {
+	public void onBeginContactBumpTile(AgentBody thing) {
 		headAgentContacts.add(thing);
 	}
 
-	public void onEndContactBumpable(AgentBody thing) {
+	public void onEndContactBumpTile(AgentBody thing) {
 		headAgentContacts.remove(thing);
 	}
 
@@ -692,31 +691,35 @@ public class MarioBody extends AgentBody {
 
 	public void respawn() {
 		resetPipeToEnter();
-		onGroundCount = 0;
 	}
 
 	// use defineBody method to re-enable contacts
 	public void disableContacts() {
 		// make mario uncontactable while warping down a pipe
-		Filter filter = new Filter();
-		filter.maskBits = GameInfo.NOTHING_BIT;
-		for(Fixture fixture : b2body.getFixtureList())
-			fixture.setFilterData(filter);
+		for(Fixture fixture : b2body.getFixtureList()) {
+			if(!(fixture.getUserData() instanceof AgentBodyFilter))
+				continue;
+			((AgentBodyFilter) fixture.getUserData()).categoryBits.setZero();
+			((AgentBodyFilter) fixture.getUserData()).maskBits.setZero();
+		}
 	}
 
+	// enable guide to contact agents
 	public void enableAgentContact() {
-		Filter filter = new Filter();
-		filter.categoryBits = GameInfo.GUIDE_BIT;
-		filter.maskBits = GameInfo.AGENT_BIT | GameInfo.ROOMBOX_BIT | GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
-		marioBodyFixture.setFilterData(filter);
+		CFBitSeq catBits = new CFBitSeq(CFBit.SOLID_BIT, CFBit.ROOM_CONTACT_BIT, CFBit.GUIDE_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.ROOM_BIT, CFBit.AGENT_BIT, CFBit.DESPAWN_BIT);
+		((AgentBodyFilter) marioBodyFixture.getUserData()).categoryBits = catBits;
+		((AgentBodyFilter) marioBodyFixture.getUserData()).maskBits = maskBits;
+		marioBodyFixture.refilter();
 	}
 
+	// disable contacts between guides and agents
 	public void disableAgentContact() {
-		// ensure mario cannot collide with enemies
-		Filter filter = new Filter();
-		filter.categoryBits = GameInfo.GUIDE_BIT;
-		filter.maskBits = GameInfo.ROOMBOX_BIT | GameInfo.BOUNDARY_BIT | GameInfo.DESPAWN_BIT;
-		marioBodyFixture.setFilterData(filter);
+		CFBitSeq catBits = new CFBitSeq(CFBit.SOLID_BIT, CFBit.ROOM_CONTACT_BIT, CFBit.GUIDE_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.ROOM_BIT, CFBit.DESPAWN_BIT);
+		((AgentBodyFilter) marioBodyFixture.getUserData()).categoryBits = catBits;
+		((AgentBodyFilter) marioBodyFixture.getUserData()).maskBits = maskBits;
+		marioBodyFixture.refilter();
 	}
 
 	public float getStateTimer() {

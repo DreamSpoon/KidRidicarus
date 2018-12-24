@@ -10,9 +10,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
+import kidridicarus.agency.contacts.AgentBodyFilter;
+import kidridicarus.agency.contacts.CFBitSeq;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.sprites.SMB.BounceCoinSprite;
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.UInfo;
 
@@ -52,12 +53,9 @@ public class SpinCoin extends Agent {
 		fdef = new FixtureDef();
 		coinShape = new PolygonShape();
 		coinShape.setAsBox(BODY_WIDTH/2f,  BODY_HEIGHT/2f);
-		// coin does not touch anything
-		fdef.filter.categoryBits = GameInfo.NOTHING_BIT;
-		fdef.filter.maskBits = GameInfo.NOTHING_BIT;
-
 		fdef.shape = coinShape;
-		b2body.createFixture(fdef).setUserData(this);
+		// coin does not touch anything
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(new CFBitSeq(), new CFBitSeq(), this));
 	}
 
 	@Override

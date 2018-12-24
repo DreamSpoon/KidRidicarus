@@ -7,13 +7,14 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.B2DFactory;
+import kidridicarus.agency.contacts.CFBitSeq;
+import kidridicarus.agency.contacts.CFBitSeq.CFBit;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.BumpTile;
 import kidridicarus.agent.bodies.AgentBody;
-import kidridicarus.agent.bodies.optional.BumpableBody;
-import kidridicarus.info.GameInfo;
+import kidridicarus.agent.bodies.optional.BumpableTileBody;
 
-public class BumpTileBody extends AgentBody implements BumpableBody {
+public class BumpTileBody extends AgentBody implements BumpableTileBody {
 	private BumpTile parent;
 
 	public BumpTileBody(World world, BumpTile parent, Rectangle bounds) {
@@ -29,9 +30,10 @@ public class BumpTileBody extends AgentBody implements BumpableBody {
 		bdef.position.set(bounds.getCenter(new Vector2()));
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		fdef.filter.categoryBits = GameInfo.BANGABLE_BIT;
-		fdef.filter.maskBits = GameInfo.GUIDE_SENSOR_BIT;
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, bounds.width, bounds.height);
+		CFBitSeq catBits = new CFBitSeq(CFBit.BUMPABLE_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.GUIDE_SENSOR_BIT);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width,
+				bounds.height);
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class BumpTileBody extends AgentBody implements BumpableBody {
 	}
 
 	@Override
-	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
-		parent.onBump(bumpingAgent, fromCenter);
+	public void onBumpTile(Agent bumpingAgent) {
+		parent.onBumpTile(bumpingAgent);
 	}
 }

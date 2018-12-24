@@ -12,7 +12,6 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.sprites.SMB.BrickPieceSprite;
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
@@ -60,9 +59,6 @@ public class BrickPiece extends Agent {
         pieceShape.setRadius(BODY_WIDTH / 2f);
 
 		// does not interact with anything
-		fdef.filter.categoryBits = GameInfo.NOTHING_BIT;
-		fdef.filter.maskBits = GameInfo.NOTHING_BIT;
-
 		fdef.shape = pieceShape;
 		b2body.createFixture(fdef);
 	}

@@ -126,14 +126,14 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 	}
 
 	@Override
-	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
+	public void onBump(Agent bumpingAgent) {
 		if(stateTimer <= SPROUT_TIME)
 			return;
 
 		// if bump came from left and star is moving left then reverse,
 		// if bump came from right and star is moving right then reverse
-		if((fromCenter.x < starBody.getPosition().x && starBody.getVelocity().x < 0f) ||
-			(fromCenter.x > starBody.getPosition().x && starBody.getVelocity().x > 0f))
+		if((bumpingAgent.getPosition().x < starBody.getPosition().x && starBody.getVelocity().x < 0f) ||
+			(bumpingAgent.getPosition().x > starBody.getPosition().x && starBody.getVelocity().x > 0f))
 			reverseConstVelocity(true, false);
 
 		starBody.setVelocity(getConstVelocity().x, getConstVelocity().y);

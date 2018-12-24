@@ -1,4 +1,4 @@
-package kidridicarus.agencydirector;
+package kidridicarus.guide;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,7 +11,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.general.GuideSpawner;
 import kidridicarus.agent.general.Room;
-import kidridicarus.hud.SMB_Hud;
+import kidridicarus.guide.hud.SMB_Hud;
 import kidridicarus.info.SMBInfo;
 import kidridicarus.info.UInfo;
 import kidridicarus.tools.KeyboardMapping;

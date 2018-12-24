@@ -5,10 +5,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.B2DFactory;
+import kidridicarus.agency.contacts.CFBitSeq;
+import kidridicarus.agency.contacts.CFBitSeq.CFBit;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.LevelEndTrigger;
 import kidridicarus.agent.bodies.AgentBody;
-import kidridicarus.info.GameInfo;
 
 public class LevelEndBody extends AgentBody {
 	private LevelEndTrigger parent;
@@ -20,8 +21,11 @@ public class LevelEndBody extends AgentBody {
 
 	private void defineBody(World world, Rectangle bounds) {
 		setBodySize(bounds.width, bounds.height);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, GameInfo.AGENT_BIT,
-				GameInfo.GUIDE_SENSOR_BIT, bounds);
+//		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, GameInfo.AGENT_BIT,
+//				GameInfo.GUIDE_SENSOR_BIT, bounds);
+		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.GUIDE_SENSOR_BIT);
+		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, catBits, maskBits, bounds);
 	}
 
 	@Override

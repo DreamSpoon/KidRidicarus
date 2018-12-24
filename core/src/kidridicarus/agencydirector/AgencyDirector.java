@@ -15,18 +15,19 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.ADefFactory;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgencyEventListener;
-import kidridicarus.agencydirector.space.SMBSpace;
+import kidridicarus.agencydirector.space.PlatformSpace;
 import kidridicarus.agencydirector.space.SpaceRenderer;
 import kidridicarus.agencydirector.space.SpaceTemplateLoader;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.Mario;
+import kidridicarus.guide.SMBGuide;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
 
 public class AgencyDirector implements Disposable {
 	private AssetManager manager;
 	private TextureAtlas atlas;
-	private SMBSpace smbSpace;
+	private PlatformSpace smbSpace;
 	private SMBGuide smbGuide;
 	private SpaceRenderer spaceRenderer;
 	private Agency agency;
@@ -55,11 +56,11 @@ public class AgencyDirector implements Disposable {
 		});
 	}
 
-	public SMBSpace createSpace(String spaceTemplateFilename) {
+	public PlatformSpace createSpace(String spaceTemplateFilename) {
 		if(smbSpace != null)
 			throw new IllegalStateException("Space already created. Cannot create again.");
 
-		smbSpace = new SMBSpace(agency, atlas, SpaceTemplateLoader.loadMap(spaceTemplateFilename));
+		smbSpace = new PlatformSpace(agency, atlas, SpaceTemplateLoader.loadMap(spaceTemplateFilename));
 		preloadSpaceMusic();
 		spaceRenderer = new SpaceRenderer();
 		return smbSpace;

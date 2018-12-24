@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
-import kidridicarus.agencydirector.Advice;
 import kidridicarus.agency.ADefFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.PipeWarp;
@@ -15,6 +14,7 @@ import kidridicarus.agent.bodies.SMB.player.MarioBody.MarioBodyState;
 import kidridicarus.agent.general.GuideSpawner;
 import kidridicarus.agent.general.Room;
 import kidridicarus.agent.sprites.SMB.player.MarioSprite;
+import kidridicarus.guide.Advice;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
@@ -41,7 +41,7 @@ public class Mario extends Agent {
 	private static final float END_BRAKETIME = 0.02f;
 	private static final Vector2 FLAG_JUMPOFF_VEL = new Vector2(1.0f, 1.0f);
 
-	private static float PIPE_WARPHEIGHT = UInfo.P2M(32);
+	private static final float PIPE_WARPHEIGHT = UInfo.P2M(32);
 	private static final float PIPE_WARPWIDTH = UInfo.P2M(16);
 	private static final float PIPE_WARPENTRYTIME = 0.7f;
 
@@ -254,6 +254,9 @@ public class Mario extends Agent {
 				default:
 					agency.playSound(AudioInfo.SOUND_POWERDOWN);
 
+					// Mario disappears behind the pipe as he moves into it
+					agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
+
 					mariobody.disableContacts();
 
 					mariobody.disableGravity();
@@ -272,6 +275,9 @@ public class Mario extends Agent {
 				case PIPE_EXITV:
 					marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
 					if(stateTimer > PIPE_WARPENTRYTIME) {
+						// Mario reappears in front of the pipe as he moves out of it
+						agency.setAgentDrawLayer(this, SpriteDrawOrder.TOP);
+
 						exitingSpawnpoint = null;
 						marioSpriteOffset.set(0f, 0f);
 						return MarioState.PLAY;
@@ -391,7 +397,7 @@ public class Mario extends Agent {
 					mariobody.setBodyPosVelAndSize(mariobody.getPosition().sub(0f, UInfo.P2M(8f)),
 							mariobody.getVelocity(), false);
 				}
-				
+
 				startDmgInvincibility();
 				agency.playSound(AudioInfo.SOUND_POWERDOWN);
 			}
@@ -404,14 +410,12 @@ public class Mario extends Agent {
 	private void startDmgInvincibility() {
 		isDmgInvincible = true;
 		dmgInvincibleTime = DMG_INVINCIBLE_TIME;
-
 		mariobody.disableAgentContact();
 	}
 
 	private void endDmgInvincibility() {
 		isDmgInvincible = false;
 		dmgInvincibleTime = 0f;
-
 		mariobody.enableAgentContact();
 	}
 

@@ -7,14 +7,16 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.B2DFactory;
-import kidridicarus.agencydirector.WalkingSensor;
-import kidridicarus.agencydirector.WalkingSensor.WalkingSensorType;
+import kidridicarus.agency.contacts.CFBitSeq.CFBit;
+import kidridicarus.agency.contacts.AgentBodyFilter;
+import kidridicarus.agency.contacts.CFBitSeq;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.item.BaseMushroom;
 import kidridicarus.agent.bodies.MobileGroundAgentBody;
 import kidridicarus.agent.bodies.optional.BumpableBody;
+import kidridicarus.agent.bodies.sensor.WalkingSensor;
+import kidridicarus.agent.bodies.sensor.WalkingSensor.WalkingSensorType;
 import kidridicarus.collisionmap.LineSeg;
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 
 public class BaseMushroomBody extends MobileGroundAgentBody implements BumpableBody {
@@ -32,20 +34,23 @@ public class BaseMushroomBody extends MobileGroundAgentBody implements BumpableB
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, GameInfo.ITEM_BIT,
-				(short) (GameInfo.BOUNDARY_BIT | GameInfo.GUIDE_SENSOR_BIT), position, BODY_WIDTH, BODY_HEIGHT);
+		CFBitSeq catBits = new CFBitSeq(CFBit.SOLID_BIT, CFBit.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.GUIDE_SENSOR_BIT);
+		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, catBits, maskBits, position,
+				BODY_WIDTH, BODY_HEIGHT);
 		createBottomSensor();
 	}
 
 	private void createBottomSensor() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape footSensor = new PolygonShape();
-		footSensor.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
-		fdef.shape = footSensor;
+		PolygonShape footShape = new PolygonShape();
+		footShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
+		fdef.shape = footShape;
 		fdef.isSensor = true;
-		fdef.filter.categoryBits = GameInfo.AGENT_SENSOR_BIT;
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT;
-		b2body.createFixture(fdef).setUserData(new WalkingSensor(this, WalkingSensorType.FOOT));
+		CFBitSeq catBits = new CFBitSeq(CFBit.SOLID_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits,
+				new WalkingSensor(this, WalkingSensorType.FOOT)));
 	}
 
 	@Override
@@ -54,8 +59,8 @@ public class BaseMushroomBody extends MobileGroundAgentBody implements BumpableB
 	}
 
 	@Override
-	public void onBump(Agent bumpingAgent, Vector2 fromCenter) {
-		parent.onBump(bumpingAgent, fromCenter);
+	public void onBump(Agent bumpingAgent) {
+		parent.onBump(bumpingAgent);
 	}
 
 	@Override

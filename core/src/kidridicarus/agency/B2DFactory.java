@@ -5,20 +5,23 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+
+import kidridicarus.agency.contacts.AgentBodyFilter;
+import kidridicarus.agency.contacts.CFBitSeq;
+
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class B2DFactory {
-	// for convenience
-	public static Body makeBoxBody(World world, BodyType bodytype, Object userData, short categoryBits,
-			short maskBits, Rectangle bounds) {
+	public static Body makeBoxBody(World world, BodyType bodytype, Object userData, CFBitSeq categoryBits,
+			CFBitSeq maskBits, Rectangle bounds) {
 		return makeBoxBody(world, bodytype, userData, categoryBits, maskBits, bounds.getCenter(new Vector2()),
 				bounds.width, bounds.height);
 	}
 
-	public static Body makeBoxBody(World world, BodyType bodytype, Object userData, short categoryBits, short maskBits,
-			Vector2 position, float width, float height) {
+	public static Body makeBoxBody(World world, BodyType bodytype, Object userData, CFBitSeq categoryBits,
+			CFBitSeq maskBits, Vector2 position, float width, float height) {
 		Body b2body;
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(position);
@@ -29,15 +32,13 @@ public class B2DFactory {
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(width/2f, height/2f);
 		fdef.shape = boxShape;
-		fdef.filter.categoryBits = categoryBits;
-		fdef.filter.maskBits = maskBits;
-		b2body.createFixture(fdef).setUserData(userData);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(categoryBits, maskBits, userData));
 
 		return b2body;
 	}
 
 	public static Body makeSpecialBoxBody(World world, BodyDef bdef, FixtureDef fdef, Object userData,
-			float width, float height) {
+			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height) {
 		Body b2body;
 		b2body = world.createBody(bdef);
 
@@ -49,9 +50,7 @@ public class B2DFactory {
 		boxFdef.restitution = fdef.restitution;
 		boxFdef.density = fdef.density;
 		boxFdef.isSensor = fdef.isSensor;
-		boxFdef.filter.categoryBits = fdef.filter.categoryBits;
-		boxFdef.filter.maskBits = fdef.filter.maskBits;
-		b2body.createFixture(boxFdef).setUserData(userData);
+		b2body.createFixture(boxFdef).setUserData(new AgentBodyFilter(categoryBits, maskBits, userData));
 
 		return b2body;
 	}

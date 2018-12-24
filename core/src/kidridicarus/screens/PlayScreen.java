@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.MyKidRidicarus;
-import kidridicarus.agencydirector.SMBGuide;
 import kidridicarus.agencydirector.AgencyDirector;
+import kidridicarus.guide.SMBGuide;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 

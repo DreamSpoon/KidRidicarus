@@ -6,13 +6,14 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.B2DFactory;
+import kidridicarus.agency.contacts.CFBitSeq;
+import kidridicarus.agency.contacts.CFBitSeq.CFBit;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.MarioFireball;
 import kidridicarus.agent.bodies.MobileGroundAgentBody;
 import kidridicarus.agent.bodies.optional.AgentContactBody;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.collisionmap.LineSeg;
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 
 public class MarioFireballBody extends MobileGroundAgentBody implements AgentContactBody {
@@ -37,9 +38,9 @@ public class MarioFireballBody extends MobileGroundAgentBody implements AgentCon
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0f;		// slippery
 		fdef.restitution = 1f;	// bouncy
-		fdef.filter.categoryBits = GameInfo.AGENT_BIT;
-		fdef.filter.maskBits = GameInfo.BOUNDARY_BIT | GameInfo.AGENT_BIT;
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, BODY_WIDTH, BODY_HEIGHT);
+		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT, CFBit.SOLID_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.AGENT_BIT);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override

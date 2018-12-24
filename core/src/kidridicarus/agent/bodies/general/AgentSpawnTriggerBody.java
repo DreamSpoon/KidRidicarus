@@ -11,9 +11,10 @@ import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.B2DFactory;
+import kidridicarus.agency.contacts.CFBitSeq;
+import kidridicarus.agency.contacts.CFBitSeq.CFBit;
 import kidridicarus.agent.bodies.AgentBody;
 import kidridicarus.agent.general.AgentSpawnTrigger;
-import kidridicarus.info.GameInfo;
 
 public class AgentSpawnTriggerBody extends AgentBody implements Disposable {
 	private AgentSpawnTrigger parent;
@@ -37,9 +38,9 @@ public class AgentSpawnTriggerBody extends AgentBody implements Disposable {
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		fdef.filter.categoryBits = GameInfo.SPAWNTRIGGER_BIT;
-		fdef.filter.maskBits = GameInfo.SPAWNBOX_BIT;
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, bounds.width, bounds.height);
+		CFBitSeq catBits = new CFBitSeq(CFBit.SPAWNTRIGGER_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SPAWNBOX_BIT);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width, bounds.height);
 	}
 
 	// mouse joint allows us to pretty quickly change the position of the spawn trigger body without breaking Box2D
@@ -53,9 +54,9 @@ public class AgentSpawnTriggerBody extends AgentBody implements Disposable {
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		fdef.filter.categoryBits = GameInfo.NOTHING_BIT;
-		fdef.filter.maskBits = GameInfo.NOTHING_BIT;
-		tempB = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, 1f, 1f);
+		CFBitSeq catBits = new CFBitSeq();
+		CFBitSeq maskBits = new CFBitSeq();
+		tempB = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, 1f, 1f);
 
 		MouseJointDef mjdef = new MouseJointDef();
 		// this body is supposedly ignored by box2d, but needs to be a valid non-static body (non-sensor also?)
