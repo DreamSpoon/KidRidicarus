@@ -30,7 +30,7 @@ public class FireFlower extends Agent implements ItemAgent, Disposable {
 		super(agency, adef);
 
 		sproutingPosition = adef.bounds.getCenter(new Vector2());
-		flowerSprite = new FireFlowerSprite(agency.getEncapTexAtlas(), sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
+		flowerSprite = new FireFlowerSprite(agency.getAtlas(), sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
 
 		stateTimer = 0f;
 		isSprouting = true;

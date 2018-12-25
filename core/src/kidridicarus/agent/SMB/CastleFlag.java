@@ -30,7 +30,7 @@ public class CastleFlag extends Agent {
 		startPosition = new Vector2(adef.bounds.getX() + adef.bounds.getWidth() / 2f,
 				adef.bounds.getY() + adef.bounds.getHeight() / 2f);
 
-		flagSprite = new CastleFlagSprite(agency.getEncapTexAtlas(), startPosition);
+		flagSprite = new CastleFlagSprite(agency.getAtlas(), startPosition);
 
 		isTriggered = false;
 		curState = CastleFlagState.DOWN;

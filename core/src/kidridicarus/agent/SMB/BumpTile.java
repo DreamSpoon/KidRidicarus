@@ -98,7 +98,7 @@ public class BumpTile extends Agent implements BumpableTileAgent, Disposable {
 
 		itbody = new BumpTileBody(agency.getWorld(), this, adef.bounds);
 
-		btsprite = new BumpTileSprite(agency.getEncapTexAtlas(), adef.tileTexRegion);
+		btsprite = new BumpTileSprite(agency.getAtlas(), adef.tileTexRegion);
 
 		// make the tile solid in the tile physics layer if it is not a secret block 
 		if(!adef.properties.get(KVInfo.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))

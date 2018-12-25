@@ -2,12 +2,12 @@ package kidridicarus.guide.hud;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
-import com.badlogic.gdx.utils.Array;
 
-import kidridicarus.info.GameInfo;
-import kidridicarus.tools.EncapTexAtlas;
+import kidridicarus.info.SMBAnim;
 
 public class CoinHudDrawable extends BaseDrawable {
 	private static final float ANIM_SPEED = 0.2f;
@@ -15,14 +15,13 @@ public class CoinHudDrawable extends BaseDrawable {
 	private Animation<TextureRegion> coinAnimation;
 	private float stateTimer;
 
-	public CoinHudDrawable(EncapTexAtlas encapTexAtlas) {
-		Array<TextureRegion> frames = new Array<TextureRegion>();
-		frames.add(new TextureRegion(encapTexAtlas.findRegion(GameInfo.TEXATLAS_COIN_HUD), 0, 0, 8, 8));
-		frames.add(new TextureRegion(encapTexAtlas.findRegion(GameInfo.TEXATLAS_COIN_HUD), 0, 0, 8, 8));
-		frames.add(new TextureRegion(encapTexAtlas.findRegion(GameInfo.TEXATLAS_COIN_HUD), 8, 0, 8, 8));
-		frames.add(new TextureRegion(encapTexAtlas.findRegion(GameInfo.TEXATLAS_COIN_HUD), 16, 0, 8, 8));
-		frames.add(new TextureRegion(encapTexAtlas.findRegion(GameInfo.TEXATLAS_COIN_HUD), 8, 0, 8, 8));
-		coinAnimation = new Animation<TextureRegion>(ANIM_SPEED, frames);
+	/*
+	 * Source: https://stackoverflow.com/questions/6667243/using-enum-values-as-string-literals
+	 * Date: 2018.12.25
+	 */
+	public CoinHudDrawable(TextureAtlas atlas) {
+		coinAnimation = new Animation<TextureRegion>(ANIM_SPEED,
+				atlas.findRegions(SMBAnim.General.COIN), PlayMode.LOOP);
 		setMinWidth(8);
 		setMinHeight(8);
 		stateTimer = 0f;

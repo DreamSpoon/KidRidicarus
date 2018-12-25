@@ -35,7 +35,7 @@ public class BrickPiece extends Agent {
 		int startFrame = 0;
 		if(properties.containsKey(KVInfo.KEY_STARTFRAME))
 			startFrame = properties.get(KVInfo.KEY_STARTFRAME, Integer.class);
-		bpSprite = new BrickPieceSprite(agency.getEncapTexAtlas(), pos, BODY_WIDTH, startFrame);
+		bpSprite = new BrickPieceSprite(agency.getAtlas(), pos, startFrame);
 
 		stateTimer = 0f;
 

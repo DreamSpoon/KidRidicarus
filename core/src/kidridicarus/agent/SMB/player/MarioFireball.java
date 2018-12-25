@@ -39,7 +39,7 @@ public class MarioFireball extends BasicWalkAgent implements AgentContactAgent {
 		mario = (Mario) adef.userData;
 
 		Vector2 position = adef.bounds.getCenter(new Vector2());
-		fireballSprite = new MarioFireballSprite(agency.getEncapTexAtlas(), position);
+		fireballSprite = new MarioFireballSprite(agency.getAtlas(), position);
 
 		// fireball on right?
 		if(properties.containsKey(KVInfo.KEY_DIRECTION) &&

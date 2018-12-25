@@ -27,7 +27,7 @@ public class PlayScreen implements Screen {
 		this.game = game;
 		this.level = level;
 
-		atlas = new TextureAtlas(GameInfo.TEXATLAS_FILENAME);
+		atlas = new TextureAtlas(GameInfo.TA_MAIN_FILENAME);
 
 		gamecam = new OrthographicCamera();
 		gameport = new FitViewport(UInfo.P2M(GameInfo.V_WIDTH), UInfo.P2M(GameInfo.V_HEIGHT), gamecam);

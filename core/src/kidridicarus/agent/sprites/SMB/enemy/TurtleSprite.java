@@ -2,16 +2,18 @@ package kidridicarus.agent.sprites.SMB.enemy;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 import kidridicarus.agent.SMB.enemy.Turtle.TurtleState;
-import kidridicarus.info.GameInfo;
+import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
-import kidridicarus.tools.EncapTexAtlas;
 
 public class TurtleSprite extends Sprite {
+	private static final int SPRITE_WIDTH = 16;
+	private static final int SPRITE_HEIGHT = 24;
 	private static final float ANIM_SPEED = 0.25f;
 
 	private Animation<TextureRegion> walkAnimation;
@@ -19,23 +21,17 @@ public class TurtleSprite extends Sprite {
 	private Animation<TextureRegion> wakeUpAnimation;
 	private float stateTimer;
 
-	public TurtleSprite(EncapTexAtlas encapTexAtlas, Vector2 position) {
-		Array<TextureRegion> frames = new Array<TextureRegion>();
-		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 0, 0, 16, 24));
-		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 16, 0, 16, 24));
-		walkAnimation = new Animation<TextureRegion>(ANIM_SPEED, frames);
-
-		frames.clear();
-		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 5 * 16, 0, 16, 24));
-		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 4 * 16, 0, 16, 24));
-		wakeUpAnimation = new Animation<TextureRegion>(ANIM_SPEED, frames);
-
-		insideShell = encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_TURTLE, 4 * 16, 0, 16, 24);
+	public TurtleSprite(TextureAtlas atlas, Vector2 position) {
+		walkAnimation = new Animation<TextureRegion>(ANIM_SPEED,
+				atlas.findRegions(SMBAnim.Enemy.TURTLE_WALK), PlayMode.LOOP);
+		wakeUpAnimation = new Animation<TextureRegion>(ANIM_SPEED,
+				atlas.findRegions(SMBAnim.Enemy.TURTLE_WAKEUP), PlayMode.LOOP);
+		insideShell = atlas.findRegion(SMBAnim.Enemy.TURTLE_HIDE);
 
 		stateTimer = 0;
 
 		setRegion(walkAnimation.getKeyFrame(0f));
-		setBounds(getX(), getY(), UInfo.P2M(16), UInfo.P2M(24));
+		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 

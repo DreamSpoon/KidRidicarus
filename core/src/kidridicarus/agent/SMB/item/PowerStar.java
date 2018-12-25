@@ -45,7 +45,7 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 		setConstVelocity(START_BOUNCE_VEL);
 		starBody = null;
 		sproutingPosition = adef.bounds.getCenter(new Vector2());
-		starSprite = new PowerStarSprite(agency.getEncapTexAtlas(), sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
+		starSprite = new PowerStarSprite(agency.getAtlas(), sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
 
 		prevState = StarState.SPROUT;
 		stateTimer = 0f;

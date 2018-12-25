@@ -2,33 +2,33 @@ package kidridicarus.agent.sprites.Metroid.enemy;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 import kidridicarus.agent.Metroid.enemy.Zoomer.ZoomerState;
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.GameInfo.Direction4;
+import kidridicarus.info.MetroidAnim;
 import kidridicarus.info.UInfo;
-import kidridicarus.tools.EncapTexAtlas;
 
 public class ZoomerSprite extends Sprite {
+	private static final int SPRITE_WIDTH = 16;
+	private static final int SPRITE_HEIGHT = 16;
 	private static final float ANIM_SPEED = 0.05f;
 
-	private Animation<TextureRegion> walkAnimation;
+	private Animation<TextureRegion> walkAnim;
 	private float stateTimer;
 
-	public ZoomerSprite(EncapTexAtlas encapTexAtlas, Vector2 position) {
-		Array<TextureRegion> frames = new Array<TextureRegion>();
-		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_M_ZOOMER, 0, 0, 16, 16));
-		frames.add(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_M_ZOOMER, 16, 0, 16, 16));
-		walkAnimation = new Animation<TextureRegion>(ANIM_SPEED, frames);
+	public ZoomerSprite(TextureAtlas atlas, Vector2 position) {
+		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
+				atlas.findRegions(MetroidAnim.Enemy.ZOOMER), PlayMode.LOOP);
 
 		stateTimer = 0;
 
-		setRegion(walkAnimation.getKeyFrame(0f));
-		setBounds(getX(), getY(), UInfo.P2M(16), UInfo.P2M(16));
-		setOrigin(UInfo.P2M(8f), UInfo.P2M(8f));
+		setRegion(walkAnim.getKeyFrame(0f));
+		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
+		setOrigin(UInfo.P2M(SPRITE_WIDTH/2f), UInfo.P2M(SPRITE_HEIGHT/2f));
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
@@ -36,7 +36,7 @@ public class ZoomerSprite extends Sprite {
 	public void update(float delta, Vector2 position, ZoomerState curState, Direction4 upDir) {
 		switch(curState) {
 			case WALK:
-				setRegion(walkAnimation.getKeyFrame(stateTimer, true));
+				setRegion(walkAnim.getKeyFrame(stateTimer, true));
 				break;
 			case DEAD:
 				break;

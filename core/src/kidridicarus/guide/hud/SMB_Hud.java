@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -16,7 +17,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.guide.SMBGuide;
 import kidridicarus.info.GameInfo;
-import kidridicarus.tools.EncapTexAtlas;
 
 public class SMB_Hud implements Disposable {
 	private SMBGuide guide;
@@ -28,7 +28,7 @@ public class SMB_Hud implements Disposable {
 	private Label worldVarLabel;
 	private Label timeVarLabel;
 
-	public SMB_Hud(Batch batch, EncapTexAtlas encapTexAtlas, SMBGuide guide) {
+	public SMB_Hud(Batch batch, TextureAtlas atlas, SMBGuide guide) {
 		this.guide = guide;
 
 		viewport = new FitViewport(GameInfo.V_WIDTH, GameInfo.V_HEIGHT, new OrthographicCamera());
@@ -38,7 +38,7 @@ public class SMB_Hud implements Disposable {
 		table.top();
 		table.setFillParent(true);
 
-		LabelStyle labelstyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal(GameInfo.SMB_FONT), false),
+		LabelStyle labelstyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal(GameInfo.SMB1_FONT), false),
 				Color.WHITE);
 		Label marioLabel = new Label("MARIO", labelstyle);
 		Label worldLabel = new Label("WORLD", labelstyle);
@@ -53,7 +53,7 @@ public class SMB_Hud implements Disposable {
 		table.add(timeLabel).align(Align.left).expandX().padTop(16);
 		table.row();
 		table.add(scoreVarLabel).align(Align.left).expandX().padLeft(24);
-		table.add(new HudCoin(encapTexAtlas)).align(Align.right);
+		table.add(new HudCoin(atlas)).align(Align.right);
 		table.add(coinVarLabel).align(Align.left).expandX();
 		table.add(worldVarLabel).align(Align.left).expandX();
 		table.add(timeVarLabel).align(Align.left).expandX();

@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agent.Agent;
-import kidridicarus.tools.EncapTexAtlas;
 
 public class PlatformSpace implements Disposable {
 	private Agency agency;
@@ -25,7 +24,7 @@ public class PlatformSpace implements Disposable {
 	private void loadSpaceTemplate(SpaceTemplate spaceTemp, TextureAtlas atlas) {
 		tiledMap = spaceTemp.getMap();
 		drawLayers = spaceTemp.getDrawLayers();
-		agency.setEncapTexAtlas(new EncapTexAtlas(atlas, tiledMap.getTileSets()));
+		agency.setAtlas(atlas);
 		agency.createCollisionMap(spaceTemp.getSolidLayers());
 		agency.createAgents(spaceTemp.getAgentDefs());
 	}

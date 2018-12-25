@@ -1,14 +1,14 @@
 package kidridicarus.agent.SMB.item;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.Mario;
-import kidridicarus.info.GameInfo;
+import kidridicarus.info.SMBAnim;
 import kidridicarus.info.SMBInfo.PowerupType;
-import kidridicarus.tools.EncapTexAtlas;
 
 public class PowerMushroom extends BaseMushroom {
 	public PowerMushroom(Agency agency, AgentDef adef) {
@@ -27,7 +27,7 @@ public class PowerMushroom extends BaseMushroom {
 	}
 
 	@Override
-	protected TextureRegion getMushroomTextureRegion(EncapTexAtlas atlas) {
-		return atlas.findRegion(GameInfo.TEXATLAS_MUSHROOM);
+	protected TextureRegion getMushroomTextureRegion(TextureAtlas atlas) {
+		return atlas.findRegion(SMBAnim.Item.MUSHROOM);
 	}
 }

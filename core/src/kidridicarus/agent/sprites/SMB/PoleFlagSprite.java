@@ -1,16 +1,19 @@
 package kidridicarus.agent.sprites.SMB;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.info.GameInfo;
+import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
-import kidridicarus.tools.EncapTexAtlas;
 
 public class PoleFlagSprite extends Sprite {
-	public PoleFlagSprite(EncapTexAtlas encapTexAtlas, Vector2 position) {
-		super(encapTexAtlas.findSubRegion(GameInfo.TEXATLAS_FLAG, 0, 0, 16, 16));
-		setBounds(getX(), getY(), UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y));
+	private static final float SPRITE_WIDTH = UInfo.P2M(16);
+	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
+
+	public PoleFlagSprite(TextureAtlas atlas, Vector2 position) {
+		super(atlas.findRegion(SMBAnim.General.POLEFLAG));
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 

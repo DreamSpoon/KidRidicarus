@@ -1,23 +1,15 @@
 package kidridicarus.tools;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSets;
 
 /*
  * Combine a TextureAtlas so sprites can get their textureRegions, and TiledMapTileSets so agents can copy
  * tile texture regions for their sprites (e.g. the bumpable bricks in SMB1).
  */
 public class EncapTexAtlas {
-	private TextureAtlas atlas;
-	private TiledMapTileSets tileSets;
-	public EncapTexAtlas(TextureAtlas atlas, TiledMapTileSets tileSets) {
-		this.atlas = atlas;
-		this.tileSets = tileSets;
-	}
+/*	private TextureAtlas atlas;
 
-	public TextureRegion getTexForID(int tileID) {
-		return tileSets.getTile(tileID).getTextureRegion();
+	public EncapTexAtlas(TextureAtlas atlas) {
+		this.atlas = atlas;
 	}
 
 	public TextureRegion findRegion(String regionName) {
@@ -27,4 +19,10 @@ public class EncapTexAtlas {
 	public TextureRegion findSubRegion(String regionName, int x, int y, int w, int h) {
 		return new TextureRegion(atlas.findRegion(regionName), x,y, w, h);
 	}
+
+	public Animation<TextureRegion> findAnimation(String animationName, float animSpeed, PlayMode playMode) {
+QQ.pr("animspeed="+animSpeed);
+		return new Animation<TextureRegion>(animSpeed, atlas.findRegions(animationName), playMode);
+	}
+*/
 }

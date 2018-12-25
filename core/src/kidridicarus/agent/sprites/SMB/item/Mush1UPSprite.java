@@ -4,13 +4,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.info.GameInfo;
+import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
 public class Mush1UPSprite extends Sprite {
+	private static final int SPRITE_WIDTH = 16;
+	private static final int SPRITE_HEIGHT = 16;
+
 	public Mush1UPSprite(TextureAtlas atlas, Vector2 position) {
-		super(atlas.findRegion(GameInfo.TEXATLAS_MUSH1UP));
-		setBounds(getX(), getY(), UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y));
+		super(atlas.findRegion(SMBAnim.Item.MUSH1UP));
+		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 

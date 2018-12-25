@@ -21,7 +21,7 @@ public class StaticCoin extends Agent implements ItemAgent, Disposable {
 	public StaticCoin(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
-		coinSprite = new StaticCoinSprite(agency.getEncapTexAtlas(), adef.bounds.getCenter(new Vector2()));
+		coinSprite = new StaticCoinSprite(agency.getAtlas(), adef.bounds.getCenter(new Vector2()));
 		coinBody = new StaticCoinBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 
 		agency.enableAgentUpdate(this);

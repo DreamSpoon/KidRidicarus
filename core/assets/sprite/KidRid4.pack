@@ -1,0 +1,1014 @@
+
+KidRid4.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+enemy/skree
+  rotate: false
+  xy: 1, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+enemy/skree
+  rotate: false
+  xy: 19, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+enemy/skree
+  rotate: false
+  xy: 37, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+enemy/turtle_hide
+  rotate: false
+  xy: 55, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+enemy/turtle_wake
+  rotate: false
+  xy: 55, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+enemy/turtle_wake
+  rotate: false
+  xy: 73, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+enemy/turtle_walk
+  rotate: false
+  xy: 91, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+enemy/turtle_walk
+  rotate: false
+  xy: 109, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+enemy/goomba_squish
+  rotate: false
+  xy: 127, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+enemy/goomba_walk
+  rotate: false
+  xy: 145, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+enemy/goomba_walk
+  rotate: false
+  xy: 163, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+enemy/zoomer
+  rotate: false
+  xy: 181, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+enemy/zoomer
+  rotate: false
+  xy: 199, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+
+KidRid42.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+general/castleflag
+  rotate: false
+  xy: 1, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+general/coin_spin
+  rotate: false
+  xy: 19, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+general/coin_spin
+  rotate: false
+  xy: 37, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+general/coin_spin
+  rotate: false
+  xy: 55, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+general/coin_spin
+  rotate: false
+  xy: 73, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 4
+general/pointdigits
+  rotate: false
+  xy: 1, 1
+  size: 24, 8
+  orig: 24, 8
+  offset: 0, 0
+  index: -1
+general/poleflag
+  rotate: false
+  xy: 91, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+general/qblock
+  rotate: false
+  xy: 109, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+general/qblock
+  rotate: false
+  xy: 127, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+general/qblock
+  rotate: false
+  xy: 145, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+general/qblock_empty
+  rotate: false
+  xy: 163, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+general/1up
+  rotate: false
+  xy: 27, 1
+  size: 16, 8
+  orig: 16, 8
+  offset: 0, 0
+  index: -1
+general/brickpiece
+  rotate: false
+  xy: 181, 19
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+general/brickpiece
+  rotate: false
+  xy: 45, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+general/coin_hud
+  rotate: false
+  xy: 191, 19
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+general/coin_hud
+  rotate: false
+  xy: 55, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+general/coin_hud
+  rotate: false
+  xy: 201, 19
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+
+KidRid43.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+item/coin_static
+  rotate: false
+  xy: 1, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+item/coin_static
+  rotate: false
+  xy: 19, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+item/coin_static
+  rotate: false
+  xy: 37, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+item/fireflower
+  rotate: false
+  xy: 55, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+item/fireflower
+  rotate: false
+  xy: 73, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+item/fireflower
+  rotate: false
+  xy: 91, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+item/fireflower
+  rotate: false
+  xy: 109, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 4
+item/mush1up
+  rotate: false
+  xy: 127, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+item/mushroom
+  rotate: false
+  xy: 145, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+item/powerstar
+  rotate: false
+  xy: 163, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+item/powerstar
+  rotate: false
+  xy: 181, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+item/powerstar
+  rotate: false
+  xy: 199, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+item/powerstar
+  rotate: false
+  xy: 217, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 4
+
+KidRid44.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+mario/mario_big_fire_brake
+  rotate: false
+  xy: 1, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_fire_climb
+  rotate: false
+  xy: 19, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_fire_climb
+  rotate: false
+  xy: 37, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_fire_duck
+  rotate: false
+  xy: 55, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_fire_jump
+  rotate: false
+  xy: 73, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_fire_run
+  rotate: false
+  xy: 91, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_fire_run
+  rotate: false
+  xy: 109, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_fire_run
+  rotate: false
+  xy: 127, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 3
+mario/mario_big_fire_stand
+  rotate: false
+  xy: 145, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_fire_throw
+  rotate: false
+  xy: 163, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv1_brake
+  rotate: false
+  xy: 181, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv1_climb
+  rotate: false
+  xy: 199, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_inv1_climb
+  rotate: false
+  xy: 217, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_inv1_duck
+  rotate: false
+  xy: 235, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv1_jump
+  rotate: false
+  xy: 253, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv1_run
+  rotate: false
+  xy: 271, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_inv1_run
+  rotate: false
+  xy: 289, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_inv1_run
+  rotate: false
+  xy: 307, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 3
+mario/mario_big_inv1_stand
+  rotate: false
+  xy: 325, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv1_throw
+  rotate: false
+  xy: 343, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv2_brake
+  rotate: false
+  xy: 361, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv2_climb
+  rotate: false
+  xy: 379, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_inv2_climb
+  rotate: false
+  xy: 397, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_inv2_duck
+  rotate: false
+  xy: 415, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv2_jump
+  rotate: false
+  xy: 433, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv2_run
+  rotate: false
+  xy: 451, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_inv2_run
+  rotate: false
+  xy: 469, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_inv2_run
+  rotate: false
+  xy: 487, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 3
+mario/mario_big_inv2_stand
+  rotate: false
+  xy: 505, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv2_throw
+  rotate: false
+  xy: 523, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv3_brake
+  rotate: false
+  xy: 541, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv3_climb
+  rotate: false
+  xy: 559, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_inv3_climb
+  rotate: false
+  xy: 577, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_inv3_duck
+  rotate: false
+  xy: 595, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv3_jump
+  rotate: false
+  xy: 613, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv3_run
+  rotate: false
+  xy: 631, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_inv3_run
+  rotate: false
+  xy: 649, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_inv3_run
+  rotate: false
+  xy: 667, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 3
+mario/mario_big_inv3_stand
+  rotate: false
+  xy: 685, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_inv3_throw
+  rotate: false
+  xy: 703, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_reg_brake
+  rotate: false
+  xy: 721, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_reg_climb
+  rotate: false
+  xy: 739, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_reg_climb
+  rotate: false
+  xy: 757, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_reg_duck
+  rotate: false
+  xy: 775, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_reg_grow
+  rotate: false
+  xy: 793, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_reg_grow
+  rotate: false
+  xy: 793, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 3
+mario/mario_big_reg_grow
+  rotate: false
+  xy: 793, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 5
+mario/mario_big_reg_shrink
+  rotate: false
+  xy: 793, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_reg_shrink
+  rotate: false
+  xy: 793, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 3
+mario/mario_big_reg_shrink
+  rotate: false
+  xy: 793, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 5
+mario/mario_big_reg_grow
+  rotate: false
+  xy: 811, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_reg_grow
+  rotate: false
+  xy: 811, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 4
+mario/mario_big_reg_shrink
+  rotate: false
+  xy: 811, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_reg_shrink
+  rotate: false
+  xy: 811, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 4
+mario/mario_big_reg_stand
+  rotate: false
+  xy: 811, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_reg_jump
+  rotate: false
+  xy: 829, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+mario/mario_big_reg_run
+  rotate: false
+  xy: 847, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 1
+mario/mario_big_reg_run
+  rotate: false
+  xy: 865, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 2
+mario/mario_big_reg_run
+  rotate: false
+  xy: 883, 29
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: 3
+mario/fireball_explode
+  rotate: false
+  xy: 1, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+mario/fireball_explode
+  rotate: false
+  xy: 901, 45
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+mario/fireball_explode
+  rotate: false
+  xy: 19, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+mario/mario_sml_inv1_brake
+  rotate: false
+  xy: 919, 45
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_inv1_climb
+  rotate: false
+  xy: 37, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+mario/mario_sml_inv1_climb
+  rotate: false
+  xy: 937, 45
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+mario/mario_sml_inv1_jump
+  rotate: false
+  xy: 55, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_inv1_run
+  rotate: false
+  xy: 955, 45
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+mario/mario_sml_inv1_run
+  rotate: false
+  xy: 73, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+mario/mario_sml_inv1_run
+  rotate: false
+  xy: 973, 45
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+mario/mario_sml_inv1_stand
+  rotate: false
+  xy: 91, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_inv2_brake
+  rotate: false
+  xy: 991, 45
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_inv2_climb02
+  rotate: false
+  xy: 109, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_inv2_climb
+  rotate: false
+  xy: 127, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+mario/mario_sml_inv2_jump
+  rotate: false
+  xy: 145, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_inv2_run
+  rotate: false
+  xy: 163, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+mario/mario_sml_inv2_run
+  rotate: false
+  xy: 181, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+mario/mario_sml_inv2_run
+  rotate: false
+  xy: 199, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+mario/mario_sml_inv2_stand
+  rotate: false
+  xy: 217, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_inv3_brake
+  rotate: false
+  xy: 235, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_inv3_climb
+  rotate: false
+  xy: 253, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+mario/mario_sml_inv3_climb
+  rotate: false
+  xy: 271, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+mario/mario_sml_inv3_jump
+  rotate: false
+  xy: 289, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_inv3_run
+  rotate: false
+  xy: 307, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+mario/mario_sml_inv3_run
+  rotate: false
+  xy: 325, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+mario/mario_sml_inv3_run
+  rotate: false
+  xy: 343, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+mario/mario_sml_inv3_stand
+  rotate: false
+  xy: 361, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_reg_brake
+  rotate: false
+  xy: 379, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_reg_climb
+  rotate: false
+  xy: 397, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+mario/mario_sml_reg_climb
+  rotate: false
+  xy: 415, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+mario/mario_sml_reg_dead
+  rotate: false
+  xy: 433, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_reg_jump
+  rotate: false
+  xy: 451, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/mario_sml_reg_run
+  rotate: false
+  xy: 469, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+mario/mario_sml_reg_run
+  rotate: false
+  xy: 487, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+mario/mario_sml_reg_run
+  rotate: false
+  xy: 505, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+mario/mario_sml_reg_stand
+  rotate: false
+  xy: 523, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+mario/fireball
+  rotate: false
+  xy: 1, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+mario/fireball
+  rotate: false
+  xy: 901, 35
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+mario/fireball
+  rotate: false
+  xy: 1009, 53
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+mario/fireball
+  rotate: false
+  xy: 541, 19
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 4

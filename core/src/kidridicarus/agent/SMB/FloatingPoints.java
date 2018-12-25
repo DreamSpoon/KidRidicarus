@@ -54,7 +54,7 @@ public class FloatingPoints extends Agent {
 				agency.playSound(AudioInfo.SOUND_1UP);
 		}
 
-		pointsSprite = new FloatingPointsSprite(agency.getEncapTexAtlas(), originalPosition, amount);
+		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount);
 
 		stateTimer = 0f;
 		agency.enableAgentUpdate(this);

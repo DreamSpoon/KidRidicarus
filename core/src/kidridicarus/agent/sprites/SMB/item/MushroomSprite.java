@@ -7,9 +7,12 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.info.UInfo;
 
 public class MushroomSprite extends Sprite {
+	private static final int SPRITE_WIDTH = 16;
+	private static final int SPRITE_HEIGHT = 16;
+
 	public MushroomSprite(TextureRegion textureRegion, Vector2 position) {
 		super(textureRegion);
-		setBounds(getX(), getY(), UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y));
+		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 

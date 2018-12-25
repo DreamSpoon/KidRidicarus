@@ -27,7 +27,7 @@ public class Skree extends Agent {
 		curState = SkreeState.SLEEP;
 
 		sBody = new SkreeBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()).add(SPECIAL_OFFSET));
-		sSprite = new SkreeSprite(agency.getEncapTexAtlas(), sBody.getPosition());
+		sSprite = new SkreeSprite(agency.getAtlas(), sBody.getPosition());
 
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);

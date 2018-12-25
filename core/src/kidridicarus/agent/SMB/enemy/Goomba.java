@@ -48,7 +48,7 @@ public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 		setConstVelocity(-GOOMBA_WALK_VEL, 0f);
 		Vector2 position = adef.bounds.getCenter(new Vector2());
 		goomBody = new GoombaBody(this, agency.getWorld(), position, getConstVelocity());
-		goombaSprite = new GoombaSprite(agency.getEncapTexAtlas(), position);
+		goombaSprite = new GoombaSprite(agency.getAtlas(), position);
 
 		// the equivalent of isDead: bumped | squished
 		isBumped = false;

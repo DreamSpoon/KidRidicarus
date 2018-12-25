@@ -105,7 +105,7 @@ public class Mario extends Agent {
 		mariobody = new MarioBody(this, agency, adef.bounds.getCenter(new Vector2()), true, false);
 
 		// graphic
-		marioSprite = new MarioSprite(agency.getEncapTexAtlas(), adef.bounds.getCenter(new Vector2()),
+		marioSprite = new MarioSprite(agency.getAtlas(), adef.bounds.getCenter(new Vector2()),
 				MarioBodyState.STAND, curPowerState, mariobody.isFacingRight());
 
 		agency.enableAgentUpdate(this);

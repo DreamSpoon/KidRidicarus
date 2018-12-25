@@ -9,40 +9,9 @@ public class GameInfo {
 	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v2.tmx";
 	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v2.tmx";
 
-	public static final String TEXATLAS_FILENAME = "sprite/KidRid2.pack";
-	public static final String TEXATLAS_MUSHROOM = "mushroom";
-	public static final String TEXATLAS_FIREFLOWER = "fireflower";
-	public static final String TEXATLAS_POWERSTAR = "powerstar";
-	public static final String TEXATLAS_MUSH1UP = "mush1up";
-	public static final String TEXATLAS_FIREBALL = "fireball";
-	public static final String TEXATLAS_FIREBALL_EXP = "fireball_explode";
-	public static final String TEXATLAS_COIN_SPIN = "coin_spin";
-	public static final String TEXATLAS_COIN_STATIC = "coin_static";
-	public static final String TEXATLAS_COIN_HUD = "coin_hud";
-	public static final String TEXATLAS_BRICKPIECES = "brick_pieces";
-	public static final String TEXATLAS_FLAG = "flag";
-	public static final String TEXATLAS_CASTLEFLAG = "castleflag";
-	public static final String TEXATLAS_GOOMBA = "goomba";
-	public static final String TEXATLAS_TURTLE = "turtle";
-	public static final String TEXATLAS_POINTDIGITS = "pointdigits";
-	public static final String TEXATLAS_1UPDIGITS = "1up";
+	public static final String TA_MAIN_FILENAME = "sprite/KidRid4.pack";
 
-	public static final String TEXATLAS_M_ZOOMER= "zoomer";
-	public static final String TEXATLAS_M_SKREE= "skree";
-
-	public static final String TEXATLAS_SMLMARIO_REG = "little_mario";
-	// TODO: little fire mario separate image?
-	public static final String TEXATLAS_SMLMARIO_FIRE = TEXATLAS_SMLMARIO_REG;
-	public static final String TEXATLAS_SMLMARIO_INV1 = "little_mario_invinc1";
-	public static final String TEXATLAS_SMLMARIO_INV2 = "little_mario_invinc2";
-	public static final String TEXATLAS_SMLMARIO_INV3 = "little_mario_invinc3";
-	public static final String TEXATLAS_BIGMARIO_REG = "big_mario";
-	public static final String TEXATLAS_BIGMARIO_FIRE = "fire_mario";
-	public static final String TEXATLAS_BIGMARIO_INV1 = "big_mario_invinc1";
-	public static final String TEXATLAS_BIGMARIO_INV2 = "big_mario_invinc2";
-	public static final String TEXATLAS_BIGMARIO_INV3 = "big_mario_invinc3";
-
-	public static final String SMB_FONT = "font/prstart v1.fnt";
+	public static final String SMB1_FONT = "font/prstart v1.fnt";
 
 	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
 	public static final float BODY_VS_VERT_BOUND_EPSILON = 0.001f;
@@ -57,9 +26,11 @@ public class GameInfo {
 	 * 4) Foreground scenery tiles are drawn.
 	 * 5) TOP sprites are drawn.
 	 * 
+	 * If order is NONE then layer is not drawn.
 	 * Usually, the player sprite is drawn TOP order, turtles and goombas are drawn MIDDLE order.
 	 */
-	public enum SpriteDrawOrder { NONE, BOTTOM, MIDDLE, TOP };	// if layer == NONE then don't draw
+	// 
+	public enum SpriteDrawOrder { NONE, BOTTOM, MIDDLE, TOP };
 
 	public enum LayerDrawOrder { NONE, BOTTOM, MIDDLE, TOP };
 

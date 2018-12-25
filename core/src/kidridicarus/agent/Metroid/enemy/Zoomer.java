@@ -55,7 +55,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 		zBody = new ZoomerBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		prevBodyPosition = zBody.getPosition();
 
-		zSprite = new ZoomerSprite(agency.getEncapTexAtlas(), zBody.getPosition());
+		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
 
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);

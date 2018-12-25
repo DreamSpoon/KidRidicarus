@@ -1,6 +1,7 @@
 package kidridicarus.agent.SMB.item;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -16,7 +17,6 @@ import kidridicarus.agent.sprites.SMB.item.MushroomSprite;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.UInfo;
-import kidridicarus.tools.EncapTexAtlas;
 
 public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, BumpableAgent {
 	private static final float SPROUT_TIME = 1f;
@@ -37,13 +37,13 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 	private boolean isBumped;
 	private Vector2 bumpCenter;
 
-	protected abstract TextureRegion getMushroomTextureRegion(EncapTexAtlas encapTexAtlas);
+	protected abstract TextureRegion getMushroomTextureRegion(TextureAtlas atlas);
 
 	public BaseMushroom(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
 		sproutingPosition = adef.bounds.getCenter(new Vector2()); 
-		mSprite = new MushroomSprite(getMushroomTextureRegion(agency.getEncapTexAtlas()),
+		mSprite = new MushroomSprite(getMushroomTextureRegion(agency.getAtlas()),
 				sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
 
 		isSprouting = true;

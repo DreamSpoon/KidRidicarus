@@ -31,7 +31,7 @@ public class SpinCoin extends Agent {
 		super(agency, adef);
 
 		Vector2 pos = adef.bounds.getCenter(new Vector2());
-		coinSprite = new BounceCoinSprite(agency.getEncapTexAtlas(), pos);
+		coinSprite = new BounceCoinSprite(agency.getAtlas(), pos);
 		defineBody(pos, START_VELOCITY);
 		stateTimer = 0f;
 

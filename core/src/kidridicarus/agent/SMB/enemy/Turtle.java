@@ -62,7 +62,7 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 		super(agency, adef);
 
 		turtleBody = new TurtleBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
-		turtleSprite = new TurtleSprite(agency.getEncapTexAtlas(), adef.bounds.getCenter(new Vector2()));
+		turtleSprite = new TurtleSprite(agency.getAtlas(), adef.bounds.getCenter(new Vector2()));
 
 		setConstVelocity(-WALK_VEL, 0f);
 		facingRight = false;

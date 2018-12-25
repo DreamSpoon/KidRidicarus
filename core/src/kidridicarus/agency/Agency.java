@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -42,7 +43,6 @@ import kidridicarus.info.KVInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.tools.BlockingQueueList;
 import kidridicarus.tools.BlockingQueueList.AddRemCallback;
-import kidridicarus.tools.EncapTexAtlas;
 import kidridicarus.tools.QQ;
 
 public class Agency implements Disposable {
@@ -78,7 +78,7 @@ public class Agency implements Disposable {
 	private LinkedList<Agent>[] drawAgents;
 	private LinkedBlockingQueue<AgentDrawOrderItem> setAgentDrawLayerQ;
 
-	private EncapTexAtlas encapTexAtlas;
+	private TextureAtlas atlas;
 	private AgencyEventListener agencyEventListener;
 
 	private class AllAgentsAddRem implements AddRemCallback<Agent> {
@@ -100,7 +100,7 @@ public class Agency implements Disposable {
 
 	@SuppressWarnings("unchecked")
 	public Agency() {
-		encapTexAtlas = null;
+		atlas = null;
 
 		physicTileChangeQ = new LinkedBlockingQueue<PhysTileItem>();
 
@@ -116,8 +116,8 @@ public class Agency implements Disposable {
 		world.setContactFilter(new WorldContactFilter());
 	}
 
-	public void setEncapTexAtlas(EncapTexAtlas encapTexAtlas) {
-		this.encapTexAtlas = encapTexAtlas;
+	public void setAtlas(TextureAtlas atlas) {
+		this.atlas = atlas;
 	}
 
 	// uses the input layers to find solid (i.e. non-null) tiles and create the collision map
@@ -268,8 +268,8 @@ public class Agency implements Disposable {
 		return drawAgents;
 	}
 
-	public EncapTexAtlas getEncapTexAtlas() {
-		return encapTexAtlas;
+	public TextureAtlas getAtlas() {
+		return atlas;
 	}
 
 	public void setEventListener(AgencyEventListener listener) {

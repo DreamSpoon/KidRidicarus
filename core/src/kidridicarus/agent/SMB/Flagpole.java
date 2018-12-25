@@ -32,7 +32,7 @@ public class Flagpole extends Agent {
 		dropTimer = 0f;
 		initFlagPos = FLAG_START_OFFSET.cpy().add(adef.bounds.x, adef.bounds.y+adef.bounds.height);
 		flagPos = initFlagPos;
-		flagSprite = new PoleFlagSprite(agency.getEncapTexAtlas(), flagPos);
+		flagSprite = new PoleFlagSprite(agency.getAtlas(), flagPos);
 
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
 		agency.enableAgentUpdate(this);
