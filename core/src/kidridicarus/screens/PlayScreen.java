@@ -35,7 +35,6 @@ public class PlayScreen implements Screen {
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
 		director = new AgencyDirector(game.manager, atlas);
-//		director.createSpace(GameInfo.GAMEMAP_FILENAME);
 		director.createSpace(game.getLevelFilename(level));
 		guide = director.createGuide(game.batch, gamecam);
 	}
@@ -53,7 +52,6 @@ public class PlayScreen implements Screen {
 
 		// change to next level?
 		if(guide.isGameWon()) {
-//			game.setScreen(new GameOverScreen(game, true));
 			game.setScreen(new LevelTransitScreen(game, level+1));
 			dispose();
 		}

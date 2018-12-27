@@ -11,25 +11,25 @@ import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
 public class BrickPieceSprite extends Sprite {
-	private static final int SPRITE_WIDTH = 8;
-	private static final int SPRITE_HEIGHT = 8;
+	private static final float SPRITE_WIDTH = UInfo.P2M(8);
+	private static final float SPRITE_HEIGHT = UInfo.P2M(8);
 	private static final float ANIM_SPEED = 0.2f;
-	private Animation<TextureRegion> spinAnimation;
+	private Animation<TextureRegion> spinAnim;
 	private float stateTimer;
 
 	public BrickPieceSprite(TextureAtlas atlas, Vector2 position, int startFrame) {
-		spinAnimation = new Animation<TextureRegion>(ANIM_SPEED,
+		spinAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMBAnim.General.BRICKPIECE), PlayMode.LOOP);
 
 		stateTimer = (float) startFrame * ANIM_SPEED;
 
-		setRegion(spinAnimation.getKeyFrame(0f));
-		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
+		setRegion(spinAnim.getKeyFrame(0f));
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(Vector2 position, float delta) {
-		setRegion(spinAnimation.getKeyFrame(stateTimer, true));
+		setRegion(spinAnim.getKeyFrame(stateTimer, true));
 		stateTimer += delta;
 
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);

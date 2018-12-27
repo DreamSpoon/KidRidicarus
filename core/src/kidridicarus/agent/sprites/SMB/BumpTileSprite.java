@@ -12,6 +12,8 @@ import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
 public class BumpTileSprite extends Sprite {
+	private static final float SPRITE_WIDTH = UInfo.P2M(16);
+	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.133f;
 
 	private TextureRegion prebumpTex;
@@ -27,34 +29,24 @@ public class BumpTileSprite extends Sprite {
 		emptyblockTex = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMBAnim.General.QBLOCKEMPTY), PlayMode.LOOP);
 		qBlockAnim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMBAnim.General.QBLOCK), PlayMode.LOOP);
 
-//		Array<TextureRegion> frames = new Array<TextureRegion>();
-//		frames.add(encapTexAtlas.getTexForID(TileIDs.ANIMQ_BLINK1));
-//		frames.add(encapTexAtlas.getTexForID(TileIDs.ANIMQ_BLINK2));
-//		frames.add(encapTexAtlas.getTexForID(TileIDs.ANIMQ_BLINK3));
-//		frames.add(encapTexAtlas.getTexForID(TileIDs.ANIMQ_BLINK2));
-//		frames.add(encapTexAtlas.getTexForID(TileIDs.ANIMQ_BLINK1));
-//		frames.add(encapTexAtlas.getTexForID(TileIDs.ANIMQ_BLINK1));
-//		qblockAnim = new Animation<TextureRegion>(QANIM_SPEED, frames);
-// QANIM_SPEED = 0.133f
-
 		doNotDraw = true;
 		if(prebumpTex != null) {
 			doNotDraw = false;
 			setRegion(prebumpTex);
 		}
-		setBounds(getX(), getY(), UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y));
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 
 		totalTime = 0f;
 	}
 
-	public void update(float delta, Vector2 position, boolean isQ, boolean isEmpty) {
+	public void update(float delta, float globalTimer, Vector2 position, boolean isQ, boolean isEmpty) {
 		if(isEmpty) {
 			setRegion(emptyblockTex.getKeyFrame(totalTime, true));
 			doNotDraw = false;
 		}
 		// q block?
 		else if(isQ)
-			setRegion(qBlockAnim.getKeyFrame(totalTime, true));
+			setRegion(qBlockAnim.getKeyFrame(globalTimer, true));
 		// has a texture?
 		else if(prebumpTex != null) {
 			doNotDraw = false;

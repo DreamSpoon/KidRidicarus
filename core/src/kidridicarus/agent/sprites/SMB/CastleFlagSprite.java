@@ -8,12 +8,12 @@ import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
 public class CastleFlagSprite extends Sprite {
-	private static final int SPRITE_WIDTH = 16;
-	private static final int SPRITE_HEIGHT = 16;
+	private static final float SPRITE_WIDTH = UInfo.P2M(16);
+	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 
 	public CastleFlagSprite(TextureAtlas atlas, Vector2 position) {
 		super(atlas.findRegion(SMBAnim.General.CASTLEFLAG));
-		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 

@@ -29,7 +29,8 @@ public class RoomBoxBody extends AgentBody {
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.ROOM_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.ROOM_CONTACT_BIT);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width, bounds.height);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width,
+				bounds.height);
 	}
 
 	@Override

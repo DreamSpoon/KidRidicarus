@@ -15,8 +15,4 @@ public class AgentBodyFilter {
 		return filterA.categoryBits.and(filterB.maskBits).isNonZero() &
 				filterB.categoryBits.and(filterA.maskBits).isNonZero();
 	}
-
-	public static boolean isShareBits(CFBitSeq categoryBitsA, CFBitSeq categoryBitsB, CFBitSeq shareBits) {
-		return categoryBitsA.or(categoryBitsB).equals(shareBits);
-	}
 }

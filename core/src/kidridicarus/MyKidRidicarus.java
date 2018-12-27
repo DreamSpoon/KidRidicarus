@@ -17,6 +17,10 @@ public class MyKidRidicarus extends Game {
 
 	public AssetManager manager;
 
+	public String levelFilenames[] = new String[] {
+			GameInfo.GAMEMAP_FILENAME1,
+			GameInfo.GAMEMAP_FILENAME2 };
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -51,10 +55,9 @@ public class MyKidRidicarus extends Game {
 	}
 
 	public String getLevelFilename(int level) {
-		if(level == 0)
-			return GameInfo.GAMEMAP_FILENAME1;
-		else
-			return GameInfo.GAMEMAP_FILENAME2;
+		if(level < 0 || level >= levelFilenames.length)
+			return "";
+		return levelFilenames[level];
 	}
 
 	@Override

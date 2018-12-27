@@ -15,6 +15,7 @@ import kidridicarus.agency.contacts.WorldContactFilter;
 import kidridicarus.agency.contacts.WorldContactListener;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.Metroid.enemy.Skree;
+import kidridicarus.agent.Metroid.enemy.SkreeExp;
 import kidridicarus.agent.Metroid.enemy.Zoomer;
 import kidridicarus.agent.SMB.BrickPiece;
 import kidridicarus.agent.SMB.BumpTile;
@@ -98,9 +99,13 @@ public class Agency implements Disposable {
 		}
 	}
 
+	private float globalTimer;
+
 	@SuppressWarnings("unchecked")
 	public Agency() {
 		atlas = null;
+
+		globalTimer = 0f;
 
 		physicTileChangeQ = new LinkedBlockingQueue<PhysTileItem>();
 
@@ -130,6 +135,8 @@ public class Agency implements Disposable {
 
 		updateAgents(delta);
 		updateTileWorld(delta);
+
+		globalTimer += delta;
 	}
 
 	public void disposeAgent(Agent agent) {
@@ -196,6 +203,8 @@ public class Agency implements Disposable {
 			allAgents.add(agent = new Zoomer(this, adef));
 		else if(rClass.equals(KVInfo.VAL_SKREE))
 			allAgents.add(agent = new Skree(this, adef));
+		else if(rClass.equals(KVInfo.VAL_SKREE_EXP))
+			allAgents.add(agent = new SkreeExp(this, adef));
 		else
 			QQ.pr("Unknown agent class to create: " + rClass);
 
@@ -366,6 +375,10 @@ public class Agency implements Disposable {
 		if(agent instanceof GuideSpawner)
 			return (GuideSpawner) agent;
 		return null;
+	}
+
+	public float getGlobalTimer() {
+		return globalTimer;
 	}
 
 	@Override

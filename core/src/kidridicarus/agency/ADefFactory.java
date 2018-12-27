@@ -1,6 +1,5 @@
 package kidridicarus.agency;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agent.SMB.player.Mario;
@@ -113,15 +112,23 @@ public class ADefFactory {
 		return adef;
 	}
 
+	public static AgentDef makeSkreeExpDef(Vector2 position, Vector2 velocity) {
+		AgentDef adef = makePointBoundsDef(position);
+		adef.velocity.set(velocity);
+		adef.properties.put(KVInfo.KEY_AGENTCLASS, KVInfo.VAL_SKREE_EXP);
+
+		return adef;
+	}
+
 	private static AgentDef makePointBoundsDef(Vector2 position) {
 		AgentDef adef = new AgentDef();
-		adef.bounds = new Rectangle(position.x, position.y, 0f, 0f);
+		adef.bounds.set(position.x, position.y, 0f, 0f);
 		return adef;
 	}
 
 	private static AgentDef makeBoxBoundsDef(Vector2 position, float width, float height) {
 		AgentDef adef = new AgentDef();
-		adef.bounds = new Rectangle(position.x, position.y, width, height);
+		adef.bounds.set(position.x, position.y, width, height);
 		return adef;
 	}
 }

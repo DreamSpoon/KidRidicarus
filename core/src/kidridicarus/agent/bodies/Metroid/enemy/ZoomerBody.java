@@ -11,13 +11,13 @@ import kidridicarus.agency.contacts.CFBitSeq.CFBit;
 import kidridicarus.agency.contacts.AgentBodyFilter;
 import kidridicarus.agency.contacts.CFBitSeq;
 import kidridicarus.agent.Metroid.enemy.Zoomer;
-import kidridicarus.agent.bodies.MobileAgentBody;
+import kidridicarus.agent.bodies.CrawlAgentBody;
 import kidridicarus.agent.bodies.sensor.CrawlSensor;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo.DiagonalDir4;
 import kidridicarus.info.UInfo;
 
-public class ZoomerBody extends MobileAgentBody {
+public class ZoomerBody extends CrawlAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float SENSORSIZEFACTOR = 1.2f;
@@ -79,10 +79,12 @@ public class ZoomerBody extends MobileAgentBody {
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, new CrawlSensor(this, quad)));
 	}
 
+	@Override
 	public void onBeginContactWall(DiagonalDir4 quad, LineSeg lineSeg) {
 		contactCounts[quad.ordinal()]++;
 	}
 
+	@Override
 	public void onEndContactWall(DiagonalDir4 quad, LineSeg lineSeg) {
 		contactCounts[quad.ordinal()]--;
 	}

@@ -25,7 +25,7 @@
    <property name="agentclass" value="zoomer"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt2LEJAEAIBEE7sP9uPzcThEeZqeCCizYCAKAnfw/gpPorPwMAAACAnSbanj4IwCYP0FcATA==
+   eJzt17EJAEAIA0A3cP9tHeCrBwWRuzJ9IIkAYIv8zAEAAK7xfwAAXjYS9NEnACYU7WcATA==
   </data>
  </layer>
  <layer id="6" name="skree" width="160" height="15">
@@ -33,7 +33,7 @@
    <property name="agentclass" value="skree"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzjENAAAIA7CJwL9WvlkgJK2CJgB8MtcBAAAAAAAAAKAWoT4AFQ==
+   eJzt0jENAAAIwDBE4F8rFjgIHLQKdiwCmJLXAdDgUzb4DAAAAAAAAPiiAI7JAD0=
   </data>
  </layer>
  <objectgroup id="3" name="playerspawn">

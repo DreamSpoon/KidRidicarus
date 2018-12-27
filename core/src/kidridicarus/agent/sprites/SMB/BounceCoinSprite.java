@@ -11,26 +11,26 @@ import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
 public class BounceCoinSprite extends Sprite {
-	private static final int SPRITE_WIDTH = 16;
-	private static final int SPRITE_HEIGHT = 16;
+	private static final float SPRITE_WIDTH = UInfo.P2M(16);
+	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 1f / 30f;
 
-	private Animation<TextureRegion> spinAnimation;
+	private Animation<TextureRegion> spinAnim;
 	private float stateTimer;
 
 	public BounceCoinSprite(TextureAtlas atlas, Vector2 position) {
-		spinAnimation = new Animation<TextureRegion>(ANIM_SPEED,
+		spinAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMBAnim.General.COIN_SPIN), PlayMode.LOOP);
 
 		stateTimer = 0;
 
-		setRegion(spinAnimation.getKeyFrame(stateTimer, true));
-		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
+		setRegion(spinAnim.getKeyFrame(stateTimer, true));
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position) {
-		setRegion(spinAnimation.getKeyFrame(stateTimer, true));
+		setRegion(spinAnim.getKeyFrame(stateTimer, true));
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 		stateTimer += delta;
 	}

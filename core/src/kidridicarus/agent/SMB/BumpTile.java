@@ -149,7 +149,7 @@ public class BumpTile extends Agent implements BumpableTileAgent, Disposable {
 		}
 
 		boolean isEmpty = !isItemAvailable && blockItem != BlockItem.NONE;
-		btsprite.update(delta, itbody.getPosition().add(0f,  offsetY), isQ, isEmpty);
+		btsprite.update(delta, agency.getGlobalTimer(), itbody.getPosition().add(0f,  offsetY), isQ, isEmpty);
 
 		isHit = false;
 		if(blockItem == BlockItem.COIN10) {
@@ -179,6 +179,8 @@ public class BumpTile extends Agent implements BumpableTileAgent, Disposable {
 			switch(blockItem) {
 				case COIN:
 					isItemAvailable = false;
+					if(bumpingAgent instanceof Mario)
+						((Mario) bumpingAgent).giveCoin();
 					startSpinningCoin();
 					break;
 				case COIN10:
@@ -199,6 +201,8 @@ public class BumpTile extends Agent implements BumpableTileAgent, Disposable {
 					else
 						coin10BumpResetTimer = COIN_BUMP_RESET_TIME;
 
+					if(bumpingAgent instanceof Mario)
+						((Mario) bumpingAgent).giveCoin();
 					startSpinningCoin();
 					break;
 				default:
@@ -220,11 +224,6 @@ public class BumpTile extends Agent implements BumpableTileAgent, Disposable {
 				new QueryCallback() {
 					@Override
 					public boolean reportFixture(Fixture fixture) {
-//						if(fixture.getUserData() instanceof AgentBody &&
-//								(fixture.getFilterData().categoryBits & (GameInfo.AGENT_BIT | GameInfo.ITEM_BIT)) != 0) {
-//							agentsOnMe.add((AgentBody) fixture.getUserData()); 
-//						}
-//						return true;
 						if(!(fixture.getUserData() instanceof AgentBodyFilter))
 								return true;
 						if(((AgentBodyFilter) fixture.getUserData()).userData instanceof AgentBody)

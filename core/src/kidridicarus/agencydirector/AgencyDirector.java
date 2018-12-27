@@ -79,8 +79,8 @@ public class AgencyDirector implements Disposable {
 					(Mario) agency.createAgent(ADefFactory.makeMarioDef(new Vector2(0f, 0f))), batch, gamecam);
 		}
 		else {
-			smbGuide = new SMBGuide(agency,
-					(Mario) agency.createAgent(ADefFactory.makeMarioDef(list.iterator().next().getPosition())), batch, gamecam);
+			smbGuide = new SMBGuide(agency, (Mario) agency.createAgent(ADefFactory.makeMarioDef(
+					list.iterator().next().getPosition())), batch, gamecam);
 		}
 
 		return smbGuide;

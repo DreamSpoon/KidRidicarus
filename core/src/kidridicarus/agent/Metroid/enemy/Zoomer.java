@@ -17,7 +17,6 @@ import kidridicarus.info.GameInfo.Direction4;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
 /*
- * TODO:
  * The sensor code. It seems like a million cases due to the 4 possible "up" directions of the zoomer,
  * and the 4 sensor states, and the fact that the zoomer moves left or right. But, this can all be
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then

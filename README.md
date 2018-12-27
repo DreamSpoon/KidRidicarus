@@ -16,7 +16,7 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
   * Some minor fixes (e.g. sometimes mario stops using jump force too early, enemies tend to "stick" together when there are many close together)
 
-* Metroid level 1 has begun, Zoomer implemented
+* Metroid level 1 has begun, Zoomer and Skree implemented
 
 ### Keyboard Controls
 

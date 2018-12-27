@@ -106,16 +106,10 @@ public class CFBitSeq {
 		// if the other bit sequence has a different number of bits than this sequence then they are not equal
 		if(bits.size() != other.bits.size())
 			return false;
-
-		int count = 0;
-		for(CFBit b : other.bits) {
-			if(bits.contains(b))
-				count++;
-		}
-		// If this sequence and the other sequence have the same number of bits (see above), and they both have
-		// all of the same bits then return true.
-		// Otherwise return false.
-		return count == bits.size();
+		for(CFBit b : other.bits)
+			if(!bits.contains(b))
+				return false;
+		return true;
 	}
 
 	public String toString() {

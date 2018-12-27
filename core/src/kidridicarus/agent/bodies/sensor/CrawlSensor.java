@@ -1,23 +1,23 @@
 package kidridicarus.agent.bodies.sensor;
 
-import kidridicarus.agent.bodies.Metroid.enemy.ZoomerBody;
+import kidridicarus.agent.bodies.CrawlAgentBody;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.info.GameInfo.DiagonalDir4;
 
-public class CrawlSensor implements AgentSensor {
-	private ZoomerBody zBody;
+public class CrawlSensor implements LineSegContactSensor {
+	private CrawlAgentBody body;
 	private DiagonalDir4 quad;
 
-	public CrawlSensor(ZoomerBody zBody, DiagonalDir4 quad) {
-		this.zBody = zBody;
+	public CrawlSensor(CrawlAgentBody caBody, DiagonalDir4 quad) {
+		this.body = caBody;
 		this.quad = quad;
 	}
 
 	public void onBeginContact(LineSeg lineSeg) {
-		zBody.onBeginContactWall(quad, lineSeg);
+		body.onBeginContactWall(quad, lineSeg);
 	}
 
 	public void onEndContact(LineSeg lineSeg) {
-		zBody.onEndContactWall(quad, lineSeg);
+		body.onEndContactWall(quad, lineSeg);
 	}
 }

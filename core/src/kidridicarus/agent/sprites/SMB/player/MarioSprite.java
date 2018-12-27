@@ -13,10 +13,10 @@ import kidridicarus.agent.bodies.SMB.player.MarioBody.MarioBodyState;
 import kidridicarus.info.UInfo;
 
 public class MarioSprite extends Sprite {
-	private static final float SMLSPR_WIDTH = 16;
-	private static final float SMLSPR_HEIGHT = 16;
-	private static final float BIGSPR_WIDTH = 16;
-	private static final float BIGSPR_HEIGHT = 32;
+	private static final float SMLSPR_WIDTH = UInfo.P2M(16);
+	private static final float SMLSPR_HEIGHT = UInfo.P2M(16);
+	private static final float BIGSPR_WIDTH = UInfo.P2M(16);
+	private static final float BIGSPR_HEIGHT = UInfo.P2M(32);
 	private static final float BLINK_DURATION = 0.05f;
 	private static final float STARPOWER_ANIM_SPEED = 0.05f;
 	private static final int NUM_STARPOWER_FRAMES = 4;
@@ -35,6 +35,7 @@ public class MarioSprite extends Sprite {
 	private static final int CLIMB_POSE = 9;
 
 	private static final String[] GRP_NAMES = new String[] { "reg", "inv1", "inv2", "inv3", "fire" };
+	// big has exactly 1 more group than small, but the number are the same, sortof...
 	private static final int BIG_NUM_GRPS = 5;
 	private static final int BIG_REG_GRP = 0;
 	private static final int BIG_INV1_GRP = 1;
@@ -57,11 +58,11 @@ public class MarioSprite extends Sprite {
 	private float stateTimer;
 	private float fallStartStateTime;
 	private boolean wasBigLastFrame;
-	private boolean doGrowAnimation;
-	private boolean doShrinkAnimation;
+	private boolean doGrowAnim;
+	private boolean doShrinkAnim;
+	private boolean doFireballAnim;
 	private boolean isBlinking;
 	private float blinkTimer;
-	private boolean doFireballAnimation;
 	private float starPowerFrameTimer;
 
 	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioBodyState stateIn, MarioPowerState subState,
@@ -72,7 +73,7 @@ public class MarioSprite extends Sprite {
 		createAnimations(atlas);
 
 		setRegion(smlAnim[STAND_POSE][BIG_REG_GRP].getKeyFrame(0f));
-		setBounds(0, 0, UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y));
+		setBounds(0, 0, SMLSPR_WIDTH, SMLSPR_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
 		curState = MarioSpriteState.STAND;
@@ -80,9 +81,9 @@ public class MarioSprite extends Sprite {
 		fallStartStateTime = 0f;
 
 		wasBigLastFrame = (subState != MarioPowerState.SMALL);
-		doGrowAnimation = false;
-		doShrinkAnimation = false;
-		doFireballAnimation = false;
+		doGrowAnim = false;
+		doShrinkAnim = false;
+		doFireballAnim = false;
 		starPowerFrameTimer = 0f;
 	}
 
@@ -99,202 +100,65 @@ public class MarioSprite extends Sprite {
 		// brake
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[BRAKE_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_sml_" + GRP_NAMES[i] + "_brake"));
+					atlas.findRegions("mario/sml/mario_" + GRP_NAMES[i] + "_brake"));
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[BRAKE_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_big_" + GRP_NAMES[i] + "_brake"));
+					atlas.findRegions("mario/big/mario_" + GRP_NAMES[i] + "_brake"));
 
 		// climb
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[CLIMB_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_sml_" + GRP_NAMES[i] + "_climb"));
+					atlas.findRegions("mario/sml/mario_" + GRP_NAMES[i] + "_climb"));
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[CLIMB_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_big_" + GRP_NAMES[i] + "_climb"));
+					atlas.findRegions("mario/big/mario_" + GRP_NAMES[i] + "_climb"));
 
 		// dead
 		smlAnim[DEAD_POSE][SML_REG_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_sml_reg_dead"));
+					atlas.findRegions("mario/sml/mario_reg_dead"));
 
 		// duck
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[DUCK_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_big_" + GRP_NAMES[i] + "_duck"));
+					atlas.findRegions("mario/big/mario_" + GRP_NAMES[i] + "_duck"));
 
 		// grow
 		bigAnim[GROW_POSE][BIG_REG_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-				atlas.findRegions("mario/mario_big_reg_grow"));
+				atlas.findRegions("mario/big/mario_reg_grow"));
 
 		// jump
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[JUMP_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_sml_" + GRP_NAMES[i] + "_jump"));
+					atlas.findRegions("mario/sml/mario_" + GRP_NAMES[i] + "_jump"));
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[JUMP_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_big_" + GRP_NAMES[i] + "_jump"));
+					atlas.findRegions("mario/big/mario_" + GRP_NAMES[i] + "_jump"));
 
 		// run
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[RUN_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_sml_" + GRP_NAMES[i] + "_run"));
+					atlas.findRegions("mario/sml/mario_" + GRP_NAMES[i] + "_run"));
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[RUN_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_big_" + GRP_NAMES[i] + "_run"));
+					atlas.findRegions("mario/big/mario_" + GRP_NAMES[i] + "_run"));
 
 		// shrink
 		bigAnim[SHRINK_POSE][BIG_REG_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-				atlas.findRegions("mario/mario_big_reg_shrink"));
+				atlas.findRegions("mario/big/mario_reg_shrink"));
 
 		// stand
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[STAND_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_sml_" + GRP_NAMES[i] + "_stand"));
+					atlas.findRegions("mario/sml/mario_" + GRP_NAMES[i] + "_stand"));
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[STAND_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("mario/mario_big_" + GRP_NAMES[i] + "_stand"));
+					atlas.findRegions("mario/big/mario_" + GRP_NAMES[i] + "_stand"));
 
 		// throw fireball
-		bigAnim[THROW_POSE][BIG_FIRE_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-				atlas.findRegions("mario/mario_big_fire_throw"));
+		for(int i=0; i<BIG_NUM_GRPS; i++)
+			bigAnim[THROW_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
+					atlas.findRegions("mario/big/mario_" + GRP_NAMES[i] + "_throw"));
 	}
-
-/*	@SuppressWarnings("unchecked")
-	private void createAnimations(TextureAtlas atlas) {
-		Array<TextureRegion> frames;
-		String smlTempArray[], bigTempArray[];
-		int i, j;
-
-		// allocate the arrays
-		anim = (Animation<TextureRegion>[][][]) new Animation[NUM_POSES][][];
-		for(i=0; i<NUM_POSES; i++) {
-			anim[i] = (Animation<TextureRegion>[][]) new Animation[NUM_SIZES][];
-			for(j=0; j<NUM_SIZES; j++)
-				anim[i][j] = (Animation<TextureRegion>[]) new Animation[NUM_GRPS];
-		}
-
-		// small and big sprites have different offsets in their sheets, so don't merge the two sizes
-		smlTempArray = new String[NUM_GRPS];
-		smlTempArray[REG_GRP] = SMBInfo.TA_SMB1_MARIO_REG_SML;
-		smlTempArray[FIRE_GRP] = SMBInfo.TA_SMB1_SMLMARIO_FIRE;
-		smlTempArray[INV1_GRP] = SMBInfo.TA_SMB1_MARIO_SML_INV1;
-		smlTempArray[INV2_GRP] = SMBInfo.TA_SMB1_MARIO_SML_INV2;
-		smlTempArray[INV3_GRP] = SMBInfo.TA_SMB1_MARIO_SML_INV3;
-		bigTempArray = new String[NUM_GRPS];
-		bigTempArray[REG_GRP] = SMBInfo.TA_SMB1_MARIO_BIG_REG;
-		bigTempArray[FIRE_GRP] = SMBInfo.TA_SMB1_MARIO_BIG_FIRE;
-		bigTempArray[INV1_GRP] = SMBInfo.TA_SMB1_MARIO_BIG_INV1;
-		bigTempArray[INV2_GRP] = SMBInfo.TA_SMB1_MARIO_BIG_INV2;
-		bigTempArray[INV3_GRP] = SMBInfo.TA_SMB1_MARIO_BIG_INV3;
-
-		frames = new Array<TextureRegion>();
-
-		for(i=0; i<NUM_GRPS; i++) {
-			frames.clear();
-			frames.add(atlas.findSubRegion(smlTempArray[i], 0, 0, 16, 16));
-			anim[STAND_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-
-			frames.clear();
-			frames.add(atlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
-			anim[STAND_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-		}
-
-		for(i=0; i<NUM_GRPS; i++) {
-			frames.clear();
-			frames.add(atlas.findSubRegion(smlTempArray[i], 1*16, 0, 16, 16));
-			frames.add(atlas.findSubRegion(smlTempArray[i], 2*16, 0, 16, 16));
-			frames.add(atlas.findSubRegion(smlTempArray[i], 3*16, 0, 16, 16));
-			anim[RUN_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-
-			frames.clear();
-			frames.add(atlas.findSubRegion(bigTempArray[i], 1*16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 2*16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 3*16, 0, 16, 32));
-			anim[RUN_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-		}
-
-		for(i=0; i<NUM_GRPS; i++) {
-			frames.clear();
-			frames.add(atlas.findSubRegion(smlTempArray[i], 5*16, 0, 16, 16));
-			anim[JUMP_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-
-			frames.clear();
-			frames.add(atlas.findSubRegion(bigTempArray[i], 5*16, 0, 16, 32));
-			anim[JUMP_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-		}
-
-		for(i=0; i<NUM_GRPS; i++) {
-			frames.clear();
-			frames.add(atlas.findSubRegion(smlTempArray[i], 4*16, 0, 16, 16));
-			anim[BRAKE_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-
-			frames.clear();
-			frames.add(atlas.findSubRegion(bigTempArray[i], 4*16, 0, 16, 32));
-			anim[BRAKE_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-		}
-
-		// NOTE: no grow or shrink animations attached to small mario, only on the big mario
-		for(i=0; i<NUM_GRPS; i++) {
-			// for mario growth: he gets big, gets small again, then finishes big
-			frames.clear();
-			frames.add(atlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
-			anim[GROW_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-
-			// for mario shrink: he changes to jump mario, then big mario stand, gets small,
-			// gets big again, ..., then finishes small
-			frames.clear();
-			frames.add(atlas.findSubRegion(bigTempArray[i], 5 * 16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 0, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 15 * 16, 0, 16, 32));
-			anim[SHRINK_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-		}
-
-		// NOTE: only big mario has the duck anim
-		for(i=0; i<NUM_GRPS; i++) {
-			frames.clear();
-			frames.add(atlas.findSubRegion(bigTempArray[i], 6 * 16, 0, 16, 32));
-			anim[DUCK_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-		}
-
-		// NOTE: only small mario has the death anim
-		for(i=0; i<NUM_GRPS; i++) {
-			frames.clear();
-			frames.add(atlas.findSubRegion(smlTempArray[i], 6 * 16, 0, 16, 16));
-			anim[DEAD_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-		}
-
-		// NOTE: only big mario has the throw fireball anim
-		for(i=0; i<NUM_GRPS; i++) {
-			frames.clear();
-			frames.add(atlas.findSubRegion(bigTempArray[i], 16 * 16, 0, 16, 32));
-			anim[FIREB_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-		}
-
-		for(i=0; i<NUM_GRPS; i++) {
-			frames.clear();
-			frames.add(atlas.findSubRegion(smlTempArray[i], 7 * 16, 0, 16, 16));
-			frames.add(atlas.findSubRegion(smlTempArray[i], 8 * 16, 0, 16, 16));
-			anim[FLAG_POSE][SML_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-
-			frames.clear();
-			frames.add(atlas.findSubRegion(bigTempArray[i], 7 * 16, 0, 16, 32));
-			frames.add(atlas.findSubRegion(bigTempArray[i], 8 * 16, 0, 16, 32));
-			anim[FLAG_POSE][BIG_SIZE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED, frames);
-		}
-	}
-*/
 
 	public void update(float delta, Vector2 position, MarioState agentState, MarioBodyState bodyState,
 			MarioPowerState powerState, boolean facingRight, boolean isDmgInvincible, boolean isStarPowered,
@@ -304,33 +168,33 @@ public class MarioSprite extends Sprite {
 		// switch from small to big?
 		if(powerState != MarioPowerState.SMALL && !wasBigLastFrame) {
 			// TODO: still need to test that mario can switch from shrinking to growing at the same time
-			if(doShrinkAnimation)
-				doShrinkAnimation = false;
+			if(doShrinkAnim)
+				doShrinkAnim = false;
 
-			doGrowAnimation = true;
+			doGrowAnim = true;
 			stateTimer = 0f;
-			setBounds(getX(), getY(), UInfo.P2M(BIGSPR_WIDTH), UInfo.P2M(BIGSPR_HEIGHT));
+			setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 		}
 		else if(powerState == MarioPowerState.SMALL && wasBigLastFrame) {
-			if(doGrowAnimation)
-				doGrowAnimation = false;
+			if(doGrowAnim)
+				doGrowAnim = false;
 
-			doShrinkAnimation = true;
+			doShrinkAnim = true;
 			stateTimer = 0f;
 			// setBounds when shrink animation finishes
 		}
 
-		if(doGrowAnimation && bigAnim[GROW_POSE][BIG_REG_GRP].isAnimationFinished(stateTimer))
-			doGrowAnimation = false;
+		if(doGrowAnim && bigAnim[GROW_POSE][BIG_REG_GRP].isAnimationFinished(stateTimer))
+			doGrowAnim = false;
 
-		if(doShrinkAnimation && bigAnim[SHRINK_POSE][BIG_REG_GRP].isAnimationFinished(stateTimer)) {
-			doShrinkAnimation = false;
+		if(doShrinkAnim && bigAnim[SHRINK_POSE][BIG_REG_GRP].isAnimationFinished(stateTimer)) {
+			doShrinkAnim = false;
 			// change sprite bounds to small mario size
-			setBounds(getX(), getY(), UInfo.P2M(SMLSPR_WIDTH), UInfo.P2M(SMLSPR_HEIGHT));
+			setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
 		}
 
-		if(doFireballAnimation && bigAnim[THROW_POSE][BIG_FIRE_GRP].isAnimationFinished(stateTimer))
-			doFireballAnimation = false;
+		if(doFireballAnim && bigAnim[THROW_POSE][BIG_FIRE_GRP].isAnimationFinished(stateTimer))
+			doFireballAnim = false;
 
 		prevState = curState;
 		curState = getState(bodyState, powerState, agentState);
@@ -341,7 +205,7 @@ public class MarioSprite extends Sprite {
 			fallStartStateTime = stateTimer;
 
 		if(curState == MarioSpriteState.DEAD && curState != prevState)
-			setBounds(getX(), getY(), UInfo.P2M(UInfo.TILEPIX_X), UInfo.P2M(UInfo.TILEPIX_Y));
+			setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
 			
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
 		wasBigLastFrame = (powerState != MarioPowerState.SMALL);
@@ -358,7 +222,7 @@ public class MarioSprite extends Sprite {
 		setRegion(getFrame(powerState, facingRight, isStarPowered));
 
 		// if mario's body is small, but his sprite is big (the shrink animation is a big sprite) then offset
-		if(!isBigBody && (powerState != MarioPowerState.SMALL || doShrinkAnimation))
+		if(!isBigBody && (powerState != MarioPowerState.SMALL || doShrinkAnim))
 			setPosition(position.x - getWidth() / 2f, position.y - getHeight() / 2f + getHeight() / 4f);
 		// otherwise center the sprite on mario's body
 		else
@@ -397,13 +261,13 @@ public class MarioSprite extends Sprite {
 			// (note: the animation might just be one frame, but displayed for a duration)
 			if(agentState != MarioState.DEAD) {
 				if(agentState == MarioState.FIREBALL)
-					doFireballAnimation = true;
+					doFireballAnim = true;
 
-				if(doGrowAnimation)
+				if(doGrowAnim)
 					return MarioSpriteState.GROW;
-				else if(doShrinkAnimation)
+				else if(doShrinkAnim)
 					return MarioSpriteState.SHRINK;
-				else if(doFireballAnimation)
+				else if(doFireballAnim)
 					return MarioSpriteState.FIREBALL;
 			}
 		}

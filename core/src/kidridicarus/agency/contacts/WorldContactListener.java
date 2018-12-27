@@ -15,7 +15,8 @@ import kidridicarus.agent.bodies.general.DespawnBody;
 import kidridicarus.agent.bodies.general.RoomBoxBody;
 import kidridicarus.agent.bodies.optional.AgentContactBody;
 import kidridicarus.agent.bodies.optional.BumpableTileBody;
-import kidridicarus.agent.bodies.sensor.AgentSensor;
+import kidridicarus.agent.bodies.sensor.FindGuideAgentSensor;
+import kidridicarus.agent.bodies.sensor.LineSegContactSensor;
 import kidridicarus.collisionmap.LineSeg;
 import kidridicarus.guide.sensor.GuideSensor;
 
@@ -29,6 +30,7 @@ public class WorldContactListener implements ContactListener {
 
 		Object objA = ((AgentBodyFilter) contact.getFixtureA().getUserData()).userData;
 		Object objB = ((AgentBodyFilter) contact.getFixtureB().getUserData()).userData;
+
 		// guide contacted a room
 		if(isObjClasses(objA, objB, MarioBody.class, RoomBoxBody.class)) {
 			if(objA instanceof MarioBody)
@@ -71,6 +73,13 @@ public class WorldContactListener implements ContactListener {
 			else
 				((GuideSensor) objB).onBeginContact((AgentBody) objA);
 		}
+		// guide touched a guide finder sensor
+		else if(isObjClasses(objA, objB, MarioBody.class, FindGuideAgentSensor.class)) {
+			if(objA instanceof FindGuideAgentSensor)
+				((FindGuideAgentSensor) objA).onBeginContact((AgentBody) objB);
+			else
+				((FindGuideAgentSensor) objB).onBeginContact((AgentBody) objA);
+		}
 		// spawntrigger contacted a spawner
 		else if(isObjClasses(objA, objB, AgentSpawnTriggerBody.class, AgentSpawnerBody.class)) {
 			if(objA instanceof AgentSpawnTriggerBody)
@@ -86,16 +95,18 @@ public class WorldContactListener implements ContactListener {
 				((MobileGroundAgentBody) objB).onBodyBeginContact((LineSeg) objA);
 		}
 		// an agent's sensor contacted a horizontal or vertical bound
-		else if(isObjClasses(objA, objB, AgentSensor.class, LineSeg.class)) {
-			if(objA instanceof AgentSensor)
-				((AgentSensor) objA).onBeginContact((LineSeg) objB);
+		else if(isObjClasses(objA, objB, LineSegContactSensor.class, LineSeg.class)) {
+			if(objA instanceof LineSegContactSensor)
+				((LineSegContactSensor) objA).onBeginContact((LineSeg) objB);
 			else
-				((AgentSensor) objB).onBeginContact((LineSeg) objA);
+				((LineSegContactSensor) objB).onBeginContact((LineSeg) objA);
 		}
 		// an agent contacted another agent
-		else if(isObjClasses(objA, objB, AgentBody.class, AgentBody.class)) {
-			((AgentContactBody) objA).onContactAgent((AgentBody) objB);
-			((AgentContactBody) objB).onContactAgent((AgentBody) objA);
+		else { //if(isObjClasses(objA, objB, AgentBody.class, AgentBody.class)) {
+			if(objA instanceof AgentContactBody)
+				((AgentContactBody) objA).onContactAgent((AgentBody) objB);
+			if(objB instanceof AgentContactBody)
+				((AgentContactBody) objB).onContactAgent((AgentBody) objA);
 		}
 	}
 
@@ -137,6 +148,13 @@ public class WorldContactListener implements ContactListener {
 			else
 				((GuideSensor) objB).onEndContact((LineSeg) objA);
 		}
+		// guide stopped touching a guide finder sensor
+		else if(isObjClasses(objA, objB, MarioBody.class, FindGuideAgentSensor.class)) {
+			if(objA instanceof FindGuideAgentSensor)
+				((FindGuideAgentSensor) objA).onEndContact((AgentBody) objB);
+			else
+				((FindGuideAgentSensor) objB).onEndContact((AgentBody) objA);
+		}
 		// spawntrigger stopped contacting a spawner
 		else if(isObjClasses(objA, objB, AgentSpawnTriggerBody.class, AgentSpawnerBody.class)) {
 			if(objA instanceof AgentSpawnTriggerBody)
@@ -145,11 +163,11 @@ public class WorldContactListener implements ContactListener {
 				((AgentSpawnTriggerBody) objB).onEndContactSpawnBox((AgentSpawnerBody) objA);
 		}
 		// invoke agent's foot hit method
-		else if(isObjClasses(objA, objB, AgentSensor.class, LineSeg.class)) {
-			if(objA instanceof AgentSensor)
-				((AgentSensor) objA).onEndContact((LineSeg) objB);
+		else if(isObjClasses(objA, objB, LineSegContactSensor.class, LineSeg.class)) {
+			if(objA instanceof LineSegContactSensor)
+				((LineSegContactSensor) objA).onEndContact((LineSeg) objB);
 			else
-				((AgentSensor) objB).onEndContact((LineSeg) objA);
+				((LineSegContactSensor) objB).onEndContact((LineSeg) objA);
 		}
 	}
 

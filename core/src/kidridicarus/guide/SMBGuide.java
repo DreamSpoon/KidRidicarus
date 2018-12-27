@@ -34,7 +34,7 @@ public class SMBGuide implements Disposable {
 		this.batch = batch;
 		this.gamecam = gamecam;
 		currentMusicName = "";
-		smbHud = new SMB_Hud(batch, agency.getAtlas(), this);
+		smbHud = new SMB_Hud(agency, batch, this);
 		advice = new Advice();
 		agency.createAgent(ADefFactory.makeAgentSpawnTriggerDef(this, agent.getPosition(),
 				SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));

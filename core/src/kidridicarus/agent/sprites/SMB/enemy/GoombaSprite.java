@@ -12,23 +12,23 @@ import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
 public class GoombaSprite extends Sprite {
-	private static final int SPRITE_WIDTH = 16;
-	private static final int SPRITE_HEIGHT = 16;
+	private static final float SPRITE_WIDTH = UInfo.P2M(16);
+	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.4f;
 
-	private Animation<TextureRegion> walkAnimation;
+	private Animation<TextureRegion> walkAnim;
 	private TextureRegion squish;
 	private float stateTimer;
 
 	public GoombaSprite(TextureAtlas atlas, Vector2 position) {
-		walkAnimation = new Animation<TextureRegion>(ANIM_SPEED,
+		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMBAnim.Enemy.GOOMBA_WALK), PlayMode.LOOP);
 		squish = atlas.findRegion(SMBAnim.Enemy.GOOMBA_SQUISH);
 
 		stateTimer = 0;
 
-		setRegion(walkAnimation.getKeyFrame(0f));
-		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
+		setRegion(walkAnim.getKeyFrame(0f));
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
@@ -36,14 +36,14 @@ public class GoombaSprite extends Sprite {
 		switch(curState) {
 			case WALK:
 			case FALL:
-				setRegion(walkAnimation.getKeyFrame(stateTimer, true));
+				setRegion(walkAnim.getKeyFrame(stateTimer, true));
 				break;
 			case DEAD_SQUISH:
 				setRegion(squish);
 				break;
 			case DEAD_BUMPED:
 				// no walking after bopping
-				setRegion(walkAnimation.getKeyFrame(0, true));
+				setRegion(walkAnim.getKeyFrame(0, true));
 				// upside down when bopped
 				if(!isFlipY())
 					flip(false,  true);

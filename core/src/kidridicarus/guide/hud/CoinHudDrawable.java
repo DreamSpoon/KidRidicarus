@@ -10,29 +10,26 @@ import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import kidridicarus.info.SMBAnim;
 
 public class CoinHudDrawable extends BaseDrawable {
-	private static final float ANIM_SPEED = 0.2f;
+	private static final float ANIM_SPEED = 0.133f;
 
-	private Animation<TextureRegion> coinAnimation;
-	private float stateTimer;
+	private Animation<TextureRegion> coinAnim;
+	private float globalTimer;
 
-	/*
-	 * Source: https://stackoverflow.com/questions/6667243/using-enum-values-as-string-literals
-	 * Date: 2018.12.25
-	 */
 	public CoinHudDrawable(TextureAtlas atlas) {
-		coinAnimation = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMBAnim.General.COIN), PlayMode.LOOP);
+		coinAnim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMBAnim.General.HUD_COIN),
+				PlayMode.LOOP);
 		setMinWidth(8);
 		setMinHeight(8);
-		stateTimer = 0f;
+		globalTimer = 0f;
 	}
 
+	// the act function must be passed globalTimer instead of delta time
 	public void act(float delta) {
-		stateTimer += delta;
+		globalTimer = delta;
 	}
 
 	@Override
 	public void draw(Batch batch, float x, float y, float width, float height) {
-		batch.draw(coinAnimation.getKeyFrame(stateTimer, true), x, y, width, height);
+		batch.draw(coinAnim.getKeyFrame(globalTimer, true), x, y, width, height);
 	}
 }

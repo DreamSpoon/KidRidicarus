@@ -11,25 +11,25 @@ import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
 public class FireFlowerSprite extends Sprite {
-	private static final int SPRITE_WIDTH = 16;
-	private static final int SPRITE_HEIGHT = 16;
+	private static final float SPRITE_WIDTH = UInfo.P2M(16);
+	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.2f;
 
-	private Animation<TextureRegion> flowerAnimation;
+	private Animation<TextureRegion> flowerAnim;
 	private float stateTimer;
 
 	public FireFlowerSprite(TextureAtlas atlas, Vector2 position) {
-		flowerAnimation = new Animation<TextureRegion>(ANIM_SPEED,
+		flowerAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMBAnim.Item.FIREFLOWER), PlayMode.LOOP);
 
 		stateTimer = 0f;
-		setRegion(flowerAnimation.getKeyFrame(0));
-		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
+		setRegion(flowerAnim.getKeyFrame(0));
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position) {
-		setRegion(flowerAnimation.getKeyFrame(stateTimer, true));
+		setRegion(flowerAnim.getKeyFrame(stateTimer, true));
 
 		// update sprite position
 		setPosition(position.x - getWidth()/2, position.y - getHeight()/2);

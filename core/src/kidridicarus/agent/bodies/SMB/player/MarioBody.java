@@ -38,6 +38,9 @@ import kidridicarus.agent.optional.HeadBounceAgent;
 import kidridicarus.agent.optional.ItemAgent;
 
 public class MarioBody extends AgentBody {
+	private static final Vector2 BIG_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(26f));
+	private static final Vector2 SML_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(12f));
+
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 	private static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
 	private static final float MARIO_RUNMOVE_XIMP = MARIO_WALKMOVE_XIMP * 1.5f;
@@ -256,8 +259,10 @@ public class MarioBody extends AgentBody {
 				isDucking = true;
 				if(isDuckSliding)
 					isDuckSliding = false;
-				else
+				else {
+					// mario's body's height is reduced when ducking, so recreate the body in a slightly lower pos
 					defineBody(b2body.getPosition().cpy().sub(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
+				}
 			}
 			// first time unduck check
 			else if(!advice.moveDown && isDucking) {
@@ -450,7 +455,7 @@ public class MarioBody extends AgentBody {
 	private void createBodyFixture() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape bodyShape = new PolygonShape();
-		Vector2 bs = getB2BodySize();
+		Vector2 bs = getBodySize();
 
 		bodyShape.setAsBox(bs.x/2f, bs.y/2f);
 
@@ -461,7 +466,7 @@ public class MarioBody extends AgentBody {
 		// save a ref to the body fixture for use later when mario has dmg invincibility
 		marioBodyFixture = b2body.createFixture(fdef);
 		CFBitSeq catBits = new CFBitSeq(CFBit.SOLID_BIT, CFBit.ROOM_CONTACT_BIT, CFBit.GUIDE_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.ROOM_BIT, CFBit.DESPAWN_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.ROOM_BIT, CFBit.DESPAWN_BIT, CFBit.AGENT_SENSOR_BIT);
 		marioBodyFixture.setUserData(new AgentBodyFilter(catBits, maskBits, this));
 	}
 
@@ -519,7 +524,7 @@ public class MarioBody extends AgentBody {
 	private void createAgentSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape bodyShape = new PolygonShape();
-		Vector2 bs = getB2BodySize();
+		Vector2 bs = getBodySize();
 
 		bodyShape.setAsBox(bs.x/2f, bs.y/2f);
 
@@ -641,7 +646,7 @@ public class MarioBody extends AgentBody {
 			((DamageableAgent) agent).onDamage(parent, 1f, b2body.getPosition());
 		}
 		// test for bounce on head
-		else if(agent instanceof HeadBounceAgent && marioY - (getB2BodySize().y/2f) >= agentY) {
+		else if(agent instanceof HeadBounceAgent && marioY - (getBodySize().y/2f) >= agentY) {
 			((HeadBounceAgent) agent).onHeadBounce(parent, b2body.getPosition());
 			isHeadBouncing = true;
 		}
@@ -803,11 +808,11 @@ public class MarioBody extends AgentBody {
 			return true;
 	}
 
-	public Vector2 getB2BodySize() {
+	public Vector2 getBodySize() {
 		if(isBigBody())
-			return new Vector2(UInfo.P2M(7f * 2), UInfo.P2M(13f * 2));
+			return BIG_BODY_SIZE;
 		else
-			return new Vector2(UInfo.P2M(7f * 2), UInfo.P2M(6f * 2));
+			return SML_BODY_SIZE;
 	}
 
 	public boolean getAndResetTakeDamage() {
@@ -828,7 +833,7 @@ public class MarioBody extends AgentBody {
 
 	@Override
 	public Rectangle getBounds() {
-		Vector2 s = getB2BodySize();
+		Vector2 s = getBodySize();
 		return new Rectangle(b2body.getPosition().x - s.x/2f, b2body.getPosition().y - s.y/2f, s.x, s.y);
 	}
 

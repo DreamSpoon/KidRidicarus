@@ -43,7 +43,7 @@ public class AgentSpawnTriggerBody extends AgentBody implements Disposable {
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width, bounds.height);
 	}
 
-	// mouse joint allows us to pretty quickly change the position of the spawn trigger body without breaking Box2D
+	// mouse joint allows us to quickly change the position of the spawn trigger body without breaking Box2D
 	private void createMouseJoint(World world, Rectangle bounds) {
 		Body tempB;	// mouse joint body
 

@@ -12,40 +12,40 @@ import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
 public class TurtleSprite extends Sprite {
-	private static final int SPRITE_WIDTH = 16;
-	private static final int SPRITE_HEIGHT = 24;
+	private static final float SPRITE_WIDTH = UInfo.P2M(16);
+	private static final float SPRITE_HEIGHT = UInfo.P2M(24);
 	private static final float ANIM_SPEED = 0.25f;
 
-	private Animation<TextureRegion> walkAnimation;
+	private Animation<TextureRegion> walkAnim;
 	private TextureRegion insideShell;
-	private Animation<TextureRegion> wakeUpAnimation;
+	private Animation<TextureRegion> wakeUpAnim;
 	private float stateTimer;
 
 	public TurtleSprite(TextureAtlas atlas, Vector2 position) {
-		walkAnimation = new Animation<TextureRegion>(ANIM_SPEED,
+		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMBAnim.Enemy.TURTLE_WALK), PlayMode.LOOP);
-		wakeUpAnimation = new Animation<TextureRegion>(ANIM_SPEED,
+		wakeUpAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMBAnim.Enemy.TURTLE_WAKEUP), PlayMode.LOOP);
 		insideShell = atlas.findRegion(SMBAnim.Enemy.TURTLE_HIDE);
 
 		stateTimer = 0;
 
-		setRegion(walkAnimation.getKeyFrame(0f));
-		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
+		setRegion(walkAnim.getKeyFrame(0f));
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position, TurtleState curState, boolean facingRight) {
 		switch(curState) {
 			case WALK:
-				setRegion(walkAnimation.getKeyFrame(stateTimer, true));
+				setRegion(walkAnim.getKeyFrame(stateTimer, true));
 				break;
 			case HIDE:
 			case SLIDE:
 				setRegion(insideShell);
 				break;
 			case WAKE_UP:
-				setRegion(wakeUpAnimation.getKeyFrame(stateTimer, true));
+				setRegion(wakeUpAnim.getKeyFrame(stateTimer, true));
 				break;
 			case DEAD:
 				setRegion(insideShell);

@@ -439,7 +439,7 @@ public class Mario extends Agent {
 
 		switch(sp.getSpawnType()) {
 			case PIPEWARP:
-				mariobody.setPosAndVel(sp.calcBeginOffsetFromSpawn(mariobody.getB2BodySize()), new Vector2(0f, 0f));
+				mariobody.setPosAndVel(sp.calcBeginOffsetFromSpawn(mariobody.getBodySize()), new Vector2(0f, 0f));
 				exitingSpawnpoint = sp;
 				marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
 				break;

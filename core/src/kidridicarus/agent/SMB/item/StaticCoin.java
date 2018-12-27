@@ -30,7 +30,7 @@ public class StaticCoin extends Agent implements ItemAgent, Disposable {
 
 	@Override
 	public void update(float delta) {
-		coinSprite.update(delta);
+		coinSprite.update(agency.getGlobalTimer());
 	}
 
 	@Override

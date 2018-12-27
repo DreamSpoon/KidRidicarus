@@ -9,8 +9,10 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 public class WorldContactFilter implements ContactFilter {
 	@Override
 	public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
-		if(!(fixtureA.getUserData() instanceof AgentBodyFilter) || !(fixtureB.getUserData() instanceof AgentBodyFilter))
+		if(!(fixtureA.getUserData() instanceof AgentBodyFilter) ||
+				!(fixtureB.getUserData() instanceof AgentBodyFilter))
 			return false;
-		return AgentBodyFilter.isContact((AgentBodyFilter) fixtureA.getUserData(), (AgentBodyFilter) fixtureB.getUserData());
+		return AgentBodyFilter.isContact((AgentBodyFilter) fixtureA.getUserData(),
+				(AgentBodyFilter) fixtureB.getUserData());
 	}
 }

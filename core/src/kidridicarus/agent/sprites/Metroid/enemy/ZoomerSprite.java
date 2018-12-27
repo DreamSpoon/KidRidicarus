@@ -13,8 +13,8 @@ import kidridicarus.info.MetroidAnim;
 import kidridicarus.info.UInfo;
 
 public class ZoomerSprite extends Sprite {
-	private static final int SPRITE_WIDTH = 16;
-	private static final int SPRITE_HEIGHT = 16;
+	private static final float SPRITE_WIDTH = UInfo.P2M(16);
+	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.05f;
 
 	private Animation<TextureRegion> walkAnim;
@@ -27,8 +27,8 @@ public class ZoomerSprite extends Sprite {
 		stateTimer = 0;
 
 		setRegion(walkAnim.getKeyFrame(0f));
-		setBounds(getX(), getY(), UInfo.P2M(SPRITE_WIDTH), UInfo.P2M(SPRITE_HEIGHT));
-		setOrigin(UInfo.P2M(SPRITE_WIDTH/2f), UInfo.P2M(SPRITE_HEIGHT/2f));
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
+		setOrigin(SPRITE_WIDTH/2f, SPRITE_HEIGHT/2f);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
