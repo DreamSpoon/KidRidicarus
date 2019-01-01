@@ -10,10 +10,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
-import kidridicarus.agency.contacts.AgentBodyFilter;
-import kidridicarus.agency.contacts.CFBitSeq;
+import kidridicarus.agency.contact.AgentBodyFilter;
+import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.sprites.SMB.BounceCoinSprite;
+import kidridicarus.agent.sprite.SMB.BounceCoinSprite;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.UInfo;
 
@@ -80,6 +80,11 @@ public class SpinCoin extends Agent {
 	public Rectangle getBounds() {
 		return new Rectangle(b2body.getPosition().x - BODY_WIDTH/2f, b2body.getPosition().y - BODY_HEIGHT/2f,
 				BODY_WIDTH, BODY_HEIGHT);
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override

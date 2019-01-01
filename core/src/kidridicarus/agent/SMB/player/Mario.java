@@ -6,19 +6,21 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
-import kidridicarus.agency.ADefFactory;
+import kidridicarus.agent.AdvisableAgent;
 import kidridicarus.agent.Agent;
+import kidridicarus.agent.PlayerAgent;
+import kidridicarus.agent.SMB.FloatingPoints;
 import kidridicarus.agent.SMB.PipeWarp;
-import kidridicarus.agent.bodies.SMB.player.MarioBody;
-import kidridicarus.agent.bodies.SMB.player.MarioBody.MarioBodyState;
+import kidridicarus.agent.body.SMB.player.MarioBody;
+import kidridicarus.agent.body.SMB.player.MarioBody.MarioBodyState;
 import kidridicarus.agent.general.GuideSpawner;
 import kidridicarus.agent.general.Room;
-import kidridicarus.agent.sprites.SMB.player.MarioSprite;
+import kidridicarus.agent.sprite.SMB.player.MarioSprite;
 import kidridicarus.guide.Advice;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.PowerupInfo.PowType;
 import kidridicarus.info.SMBInfo.PointAmount;
-import kidridicarus.info.SMBInfo.PowerupType;
 import kidridicarus.info.UInfo;
 
 /*
@@ -26,7 +28,7 @@ import kidridicarus.info.UInfo;
  * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
  * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe - fix this
  */
-public class Mario extends Agent {
+public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	public enum MarioState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
 		END6_RUN, END99, PIPE_ENTRYH, PIPE_EXITH, PIPE_ENTRYV, PIPE_EXITV };
 
@@ -48,30 +50,29 @@ public class Mario extends Agent {
 	public enum MarioPowerState { SMALL, BIG, FIRE };
 
 	private MarioSprite marioSprite;
-	private MarioBody mariobody;
-
+	private MarioBody mBody;
 	private MarioPowerState curPowerState;
+	private MarioState curState;
+	private float stateTimer;
+	private Advice advice;
 
+	private Vector2 marioSpriteOffset;
+	private GuideSpawner exitingSpawnpoint;
 	private boolean marioIsDead;
 	private boolean wantsToRunOnPrevUpdate;
 	private boolean isDmgInvincible;
 	private float dmgInvincibleTime;
 	private float fireballTimer;
 	private float powerStarTimer;
-	private Vector2 marioSpriteOffset;
-	private PowerupType receivedPowerup;
-	private GuideSpawner exitingSpawnpoint;
-	private PointAmount consecBouncePoints;
-
-	private MarioState curState;
-	private float stateTimer;
-
 	private float levelTimeRemaining;
 	private int extraLives;
 	private int coinTotal;
 	private int pointTotal;
-
-	private Advice advice;
+	private PointAmount consecBouncePoints;
+	// powerup received
+	private PowType powerupRec;
+	// non-character powerup received
+	private PowType nonCharPowerupRec;
 
 	public Mario(Agency agency, AgentDef adef) {
 		super(agency, adef);
@@ -86,7 +87,8 @@ public class Mario extends Agent {
 
 		curPowerState = MarioPowerState.SMALL;
 
-		receivedPowerup = PowerupType.NONE;
+		powerupRec = PowType.NONE;
+		nonCharPowerupRec = PowType.NONE;
 
 		exitingSpawnpoint = null;
 
@@ -102,11 +104,11 @@ public class Mario extends Agent {
 		consecBouncePoints = PointAmount.ZERO;
 
 		// physic
-		mariobody = new MarioBody(this, agency, adef.bounds.getCenter(new Vector2()), true, false);
+		mBody = new MarioBody(this, agency, adef.bounds.getCenter(new Vector2()), true, false);
 
 		// graphic
 		marioSprite = new MarioSprite(agency.getAtlas(), adef.bounds.getCenter(new Vector2()),
-				MarioBodyState.STAND, curPowerState, mariobody.isFacingRight());
+				MarioBodyState.STAND, curPowerState, mBody.isFacingRight());
 
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.TOP);
@@ -120,8 +122,11 @@ public class Mario extends Agent {
 
 		levelTimeRemaining -= delta;
 
+		// check for warp movement and respawn if necessary
+		processRespawn();
+
 		// reset consecutive bounce points
-		if(mariobody.isOnGround())
+		if(mBody.isOnGround())
 			consecBouncePoints = PointAmount.ZERO;
 
 		bodyState = MarioBodyState.STAND;
@@ -130,7 +135,7 @@ public class Mario extends Agent {
 		if(nextState == MarioState.PLAY || nextState == MarioState.FIREBALL) {
 			processDamage(delta);
 			processPowerups();
-			bodyState = mariobody.update(delta, advice, curPowerState);
+			bodyState = mBody.update(delta, advice, curPowerState);
 		}
 
 		stateTimer = nextState == curState ? stateTimer + delta : 0f;
@@ -140,13 +145,10 @@ public class Mario extends Agent {
 		if(powerStarTimer > 0f) {
 			isStarPowered = true;
 			powerStarTimer -= delta;
-			// restart regular music when powerstar powerup finishes
-			if(powerStarTimer <= 0f)
-				agency.startMusic();
 		}
 
-		marioSprite.update(delta, mariobody.getPosition().cpy().add(marioSpriteOffset), curState, bodyState,
-				curPowerState, mariobody.isFacingRight(), isDmgInvincible, isStarPowered, mariobody.isBigBody());
+		marioSprite.update(delta, mBody.getPosition().cpy().add(marioSpriteOffset), curState, bodyState,
+				curPowerState, mBody.isFacingRight(), isDmgInvincible, isStarPowered, mBody.isBigBody());
 
 		wantsToRunOnPrevUpdate = advice.run;
 		
@@ -156,8 +158,8 @@ public class Mario extends Agent {
 	// Process the body and return a character state based on the findings.
 	private MarioState processMarioState(float delta) {
 		// scripted level end sequence
-		if(mariobody.getLevelEndContacted() != null) {
-			mariobody.zeroVelocity(true, true);
+		if(mBody.getLevelEndContacted() != null) {
+			mBody.zeroVelocity(true, true);
 			return MarioState.END99;
 		}
 		// scripted dead sequence
@@ -166,36 +168,36 @@ public class Mario extends Agent {
 				agency.stopMusic();
 				agency.playSound(AudioInfo.SOUND_MARIODIE);
 
-				mariobody.disableContacts();
+				mBody.disableAllContacts();
 
-				mariobody.setVelocity(0f, 0f);
-				mariobody.applyImpulse(new Vector2(0, 4f));
+				mBody.setVelocity(0f, 0f);
+				mBody.applyImpulse(new Vector2(0, 4f));
 			}
 			// make sure mario doesn't move left or right while dead
-			mariobody.zeroVelocity(true, false);
+			mBody.zeroVelocity(true, false);
 			return MarioState.DEAD;
 		}
 		// scripted flagpole level end sequence
-		else if(mariobody.getFlagpoleContacted() != null) {
+		else if(mBody.getFlagpoleContacted() != null) {
 			// scripted level end sequence using curCharState and stateTimer
 			switch(curState) {
 				case END1_SLIDE:
 					// switch sides if necessary when hit ground
-					if(mariobody.isOnGround())
+					if(mBody.isOnGround())
 						return MarioState.END2_WAIT1;
 					// sliding down
 					else {
-						mariobody.setVelocity(0f, FLAG_SLIDE_VELOCITY);
+						mBody.setVelocity(0f, FLAG_SLIDE_VELOCITY);
 						return MarioState.END1_SLIDE;
 					}
 				case END2_WAIT1:
-					if(mariobody.getFlagpoleContacted().isAtBottom()) {
-						mariobody.setFacingRight(false);
+					if(mBody.getFlagpoleContacted().isAtBottom()) {
+						mBody.setFacingRight(false);
 						// if mario is on left side of flagpole, move him to right side
-						if(mariobody.getFlagpoleContacted().getPosition().x > mariobody.getPosition().x) {
-							mariobody.setPosAndVel(mariobody.getPosition().cpy().add(2f *
-									(mariobody.getFlagpoleContacted().getPosition().x -
-									mariobody.getPosition().x), 0f),
+						if(mBody.getFlagpoleContacted().getPosition().x > mBody.getPosition().x) {
+							mBody.setPosAndVel(mBody.getPosition().cpy().add(2f *
+									(mBody.getFlagpoleContacted().getPosition().x -
+									mBody.getPosition().x), 0f),
 									new Vector2(0f, 0f));
 						}
 						return MarioState.END3_WAIT2;
@@ -205,34 +207,34 @@ public class Mario extends Agent {
 				case END3_WAIT2:
 					if(stateTimer > END_FLAGWAIT) {
 						// switch to first walk frame and push mario to right
-						mariobody.enableGravity();
-						mariobody.applyImpulse(FLAG_JUMPOFF_VEL);
+						mBody.enableGravity();
+						mBody.applyImpulse(FLAG_JUMPOFF_VEL);
 						return MarioState.END4_FALL;
 					}
 					else
 						return MarioState.END3_WAIT2;
 				case END4_FALL:
-					if(mariobody.isOnGround())
+					if(mBody.isOnGround())
 						return MarioState.END5_BRAKE;
 					else
 						return MarioState.END4_FALL;
 				case END5_BRAKE:
 					if(stateTimer > END_BRAKETIME) {
-						mariobody.setFacingRight(true);
+						mBody.setFacingRight(true);
 						agency.startSinglePlayMusic(AudioInfo.MUSIC_LEVELEND);
-						mariobody.resetFlagpoleContacted();
+						mBody.resetFlagpoleContacted();
 						return MarioState.END6_RUN;
 					}
 					else
 						return MarioState.END5_BRAKE;
 				case END6_RUN:
- 					mariobody.moveBodyLeftRight(true, false);
+ 					mBody.moveBodyLeftRight(true, false);
 					return MarioState.END6_RUN;
 				// first frame of level end state
 				default:
-					mariobody.getFlagpoleContacted().startDrop();
-					mariobody.disableGravity();
-					mariobody.zeroVelocity(true, true);
+					mBody.getFlagpoleContacted().startDrop();
+					mBody.disableGravity();
+					mBody.zeroVelocity(true, true);
 
 					agency.stopMusic();
 					agency.playSound(AudioInfo.SOUND_FLAGPOLE);
@@ -241,12 +243,12 @@ public class Mario extends Agent {
 			}
 		}
 		// scripted pipe entrance
-		else if(mariobody.getPipeToEnter() != null) {
+		else if(mBody.getPipeToEnter() != null) {
 			switch(curState) {
 				// continuing pipe entry
 				case PIPE_ENTRYH:
 				case PIPE_ENTRYV:
-					marioSpriteOffset.set(getPipeEntrySpriteEndOffset(mariobody.getPipeToEnter()));
+					marioSpriteOffset.set(getPipeEntrySpriteEndOffset(mBody.getPipeToEnter()));
 					if(stateTimer < PIPE_WARPENTRYTIME)
 						marioSpriteOffset.scl(stateTimer / PIPE_WARPENTRYTIME);
 					return curState;
@@ -257,11 +259,11 @@ public class Mario extends Agent {
 					// Mario disappears behind the pipe as he moves into it
 					agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
 
-					mariobody.disableContacts();
+					mBody.disableAllContacts();
 
-					mariobody.disableGravity();
-					mariobody.zeroVelocity(true, true);
-					if(mariobody.getPipeToEnter().getDirection().isHorizontal())
+					mBody.disableGravity();
+					mBody.zeroVelocity(true, true);
+					if(mBody.getPipeToEnter().getDirection().isHorizontal())
 						return MarioState.PIPE_ENTRYH;
 					else
 						return MarioState.PIPE_ENTRYV;
@@ -324,59 +326,62 @@ public class Mario extends Agent {
 
 	private void throwFireball() {
 		Vector2 offset;
-		if(mariobody.isFacingRight())
-			offset = mariobody.getPosition().cpy().add(FIREBALL_OFFSET, 0f);
+		if(mBody.isFacingRight())
+			offset = mBody.getPosition().cpy().add(FIREBALL_OFFSET, 0f);
 		else
-			offset = mariobody.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
+			offset = mBody.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
-		agency.createAgent(ADefFactory.makeMarioFireballDef(offset, mariobody.isFacingRight(), this));
+		agency.createAgent(MarioFireball.makeMarioFireballDef(offset, mBody.isFacingRight(), this));
 		agency.playSound(AudioInfo.SOUND_FIREBALL);
 	}
 
 	private void processPowerups() {
 		// apply powerup if received
-		switch(receivedPowerup) {
+		switch(powerupRec) {
 			case MUSH1UP:
-				agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P1UP, false,
-						mariobody.getPosition(), UInfo.P2M(16), this));
+				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1UP, false,
+						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case MUSHROOM:
 				if(curPowerState == MarioPowerState.SMALL) {
 					curPowerState = MarioPowerState.BIG;
-					mariobody.setBodyPosVelAndSize(mariobody.getPosition().add(0f, UInfo.P2M(8f)),
-							mariobody.getVelocity(), true);
+					mBody.setBodyPosVelAndSize(mBody.getPosition().add(0f, UInfo.P2M(8f)),
+							mBody.getVelocity(), true);
 					agency.playSound(AudioInfo.SOUND_POWERUP_USE);
 				}
-				agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P1000, false,
-						mariobody.getPosition(), UInfo.P2M(16), this));
+				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
+						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case FIREFLOWER:
 				if(curPowerState == MarioPowerState.SMALL) {
 					curPowerState = MarioPowerState.BIG;
-					mariobody.setBodyPosVelAndSize(mariobody.getPosition().add(0f, UInfo.P2M(8f)),
-							mariobody.getVelocity(), true);
+					mBody.setBodyPosVelAndSize(mBody.getPosition().add(0f, UInfo.P2M(8f)),
+							mBody.getVelocity(), true);
 					agency.playSound(AudioInfo.SOUND_POWERUP_USE);
 				}
 				else if(curPowerState == MarioPowerState.BIG) {
 					curPowerState = MarioPowerState.FIRE;
 					agency.playSound(AudioInfo.SOUND_POWERUP_USE);
 				}
-				agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P1000, false,
-						mariobody.getPosition(), UInfo.P2M(16), this));
+				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
+						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case POWERSTAR:
 				powerStarTimer = POWERSTAR_TIME;
-				agency.stopMusic();
 				agency.playSound(AudioInfo.SOUND_POWERUP_USE);
 				agency.startSinglePlayMusic(AudioInfo.MUSIC_STARPOWER);
-				agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P1000, false,
-						mariobody.getPosition(), UInfo.P2M(16), this));
+				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
+						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case NONE:
 				break;
+			// did mario receive a powerup that's not for his character?
+			default:
+				nonCharPowerupRec = powerupRec;
+				break;
 		}
 
-		receivedPowerup = PowerupType.NONE;
+		powerupRec = PowType.NONE;
 	}
 
 	private void processDamage(float delta) {
@@ -386,16 +391,16 @@ public class Mario extends Agent {
 			endDmgInvincibility();
 
 		// apply damage if received
-		if(mariobody.getAndResetTakeDamage()) {
+		if(mBody.getAndResetTakeDamage()) {
 			// fire mario becomes small mario
 			// big mario becomes small mario
 			if(curPowerState == MarioPowerState.FIRE || curPowerState == MarioPowerState.BIG) {
 				curPowerState = MarioPowerState.SMALL;
-				if(mariobody.isDucking())
-					mariobody.setBodyPosVelAndSize(mariobody.getPosition(), mariobody.getVelocity(), false);
+				if(mBody.isDucking())
+					mBody.setBodyPosVelAndSize(mBody.getPosition(), mBody.getVelocity(), false);
 				else {
-					mariobody.setBodyPosVelAndSize(mariobody.getPosition().sub(0f, UInfo.P2M(8f)),
-							mariobody.getVelocity(), false);
+					mBody.setBodyPosVelAndSize(mBody.getPosition().sub(0f, UInfo.P2M(8f)),
+							mBody.getVelocity(), false);
 				}
 
 				startDmgInvincibility();
@@ -410,46 +415,29 @@ public class Mario extends Agent {
 	private void startDmgInvincibility() {
 		isDmgInvincible = true;
 		dmgInvincibleTime = DMG_INVINCIBLE_TIME;
-		mariobody.disableAgentContact();
 	}
 
 	private void endDmgInvincibility() {
 		isDmgInvincible = false;
 		dmgInvincibleTime = 0f;
-		mariobody.enableAgentContact();
 	}
 
-	public void applyPowerup(PowerupType powerup) {
+
+	@Override
+	public void applyPowerup(PowType pt) {
 		// TODO: check if already received powerup, and check for rank
-		receivedPowerup = powerup;
+		powerupRec = pt;
 	}
 
 	@Override
 	public void draw(Batch batch) {
-		if(mariobody.getLevelEndContacted() == null)
+		if(mBody.getLevelEndContacted() == null)
 			marioSprite.draw(batch);
 	}
 
+	@Override
 	public void setFrameAdvice(Advice advice) {
 		this.advice = advice.cpy();
-	}
-
-	public void respawn(GuideSpawner sp) {
-		mariobody.respawn();
-
-		switch(sp.getSpawnType()) {
-			case PIPEWARP:
-				mariobody.setPosAndVel(sp.calcBeginOffsetFromSpawn(mariobody.getBodySize()), new Vector2(0f, 0f));
-				exitingSpawnpoint = sp;
-				marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
-				break;
-			case IMMEDIATE:
-			default:
-				mariobody.setPosAndVel(sp.getPosition(), new Vector2(0f, 0f));
-				marioSpriteOffset.set(0f, 0f);
-				exitingSpawnpoint = null;
-				break;
-		}
 	}
 
 	public void die() {
@@ -466,7 +454,7 @@ public class Mario extends Agent {
 		PointAmount actualAmt = amt;
 		if(relative) {
 			// relative points do not stack when mario is onground
-			if(!mariobody.isOnGround()) {
+			if(!mBody.isOnGround()) {
 				if(consecBouncePoints.increment().getIntAmt() >= amt.getIntAmt()) {
 					consecBouncePoints = consecBouncePoints.increment();
 					actualAmt = consecBouncePoints;
@@ -488,12 +476,35 @@ public class Mario extends Agent {
 		extraLives++;
 	}
 
+	private void processRespawn() {
+		// check for warp movement and respawn if necessary
+		GuideSpawner sp = getWarpSpawnpoint(); 
+		if(sp == null)
+			return;
+
+		mBody.resetPipeToEnter();
+
+		switch(sp.getSpawnType()) {
+			case PIPEWARP:
+				mBody.setPosAndVel(sp.calcBeginOffsetFromSpawn(mBody.getBodySize()), new Vector2(0f, 0f));
+				exitingSpawnpoint = sp;
+				marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
+				break;
+			case IMMEDIATE:
+			default:
+				mBody.setPosAndVel(sp.getPosition(), new Vector2(0f, 0f));
+				marioSpriteOffset.set(0f, 0f);
+				exitingSpawnpoint = null;
+				break;
+		}
+	}
+
 	// return null unless mario needs to warp
-	public GuideSpawner getWarpSpawnpoint() {
-		if(mariobody.getPipeToEnter() != null &&
+	private GuideSpawner getWarpSpawnpoint() {
+		if(mBody.getPipeToEnter() != null &&
 				(curState == MarioState.PIPE_ENTRYH || curState == MarioState.PIPE_ENTRYV) &&
 				stateTimer > PIPE_WARPENTRYTIME) {
-			return mariobody.getPipeToEnter().getWarpExit();
+			return mBody.getPipeToEnter().getWarpExit();
 		}
 		return null;
 	}
@@ -530,8 +541,9 @@ public class Mario extends Agent {
 		return stateTimer;
 	}
 
+	@Override
 	public Room getCurrentRoom() {
-		return mariobody.getCurrentRoom();
+		return mBody.getCurrentRoom();
 	}
 
 	public float getLevelTimeRemaining() {
@@ -566,7 +578,7 @@ public class Mario extends Agent {
 	}
 
 	public boolean isAtLevelEnd() {
-		return mariobody.getLevelEndContacted() != null;
+		return mBody.getLevelEndContacted() != null;
 	}
 
 	public boolean isPowerStarOn() {
@@ -578,21 +590,34 @@ public class Mario extends Agent {
 	}
 
 	public boolean isOnGround() {
-		return mariobody.isOnGround();
+		return mBody.isOnGround();
+	}
+
+	// get and reset the non character powerup received (if any)
+	@Override
+	public PowType pollNonCharPowerup() {
+		PowType ret = nonCharPowerupRec;
+		nonCharPowerupRec = PowType.NONE;
+		return ret;
 	}
 
 	@Override
 	public Vector2 getPosition() {
-		return mariobody.getPosition();
+		return mBody.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return mariobody.getBounds();
+		return mBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return mBody.getVelocity();
 	}
 
 	@Override
 	public void dispose() {
-		mariobody.dispose();
+		mBody.dispose();
 	}
 }

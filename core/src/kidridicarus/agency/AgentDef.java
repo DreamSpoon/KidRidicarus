@@ -5,6 +5,8 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.info.KVInfo;
+
 public class AgentDef {
 	public Rectangle bounds;
 	public Vector2 velocity;
@@ -19,5 +21,19 @@ public class AgentDef {
 		properties = new MapProperties();
 		tileTexRegion = null;
 		userData = null;
+	}
+
+	public static AgentDef makePointBoundsDef(String agentClass, Vector2 position) {
+		AgentDef adef = new AgentDef();
+		adef.properties.put(KVInfo.KEY_AGENTCLASS, agentClass);
+		adef.bounds.set(position.x, position.y, 0f, 0f);
+		return adef;
+	}
+
+	public static AgentDef makeBoxBoundsDef(String agentClass, Vector2 position, float width, float height) {
+		AgentDef adef = new AgentDef();
+		adef.properties.put(KVInfo.KEY_AGENTCLASS, agentClass);
+		adef.bounds.set(position.x, position.y, width, height);
+		return adef;
 	}
 }

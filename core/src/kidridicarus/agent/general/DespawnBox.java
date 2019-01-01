@@ -7,14 +7,14 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.general.DespawnBody;
+import kidridicarus.agent.body.general.DespawnBody;
 
 public class DespawnBox extends Agent {
-	private DespawnBody dsbody;
+	private DespawnBody dsBody;
 
 	public DespawnBox(Agency agency, AgentDef adef) {
 		super(agency, adef);
-		dsbody = new DespawnBody(this, agency.getWorld(), adef.bounds);
+		dsBody = new DespawnBody(this, agency.getWorld(), adef.bounds);
 	}
 
 	@Override
@@ -27,16 +27,21 @@ public class DespawnBox extends Agent {
 
 	@Override
 	public Vector2 getPosition() {
-		return dsbody.getPosition();
+		return dsBody.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return dsbody.getBounds();
+		return dsBody.getBounds();
 	}
 
 	@Override
 	public void dispose() {
-		dsbody.dispose();
+		dsBody.dispose();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 }

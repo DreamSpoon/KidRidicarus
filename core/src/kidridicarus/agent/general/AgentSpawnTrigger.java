@@ -7,56 +7,40 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.general.AgentSpawnTriggerBody;
-import kidridicarus.guide.SMBGuide;
-import kidridicarus.tools.BlockingQueueList;
-import kidridicarus.tools.BlockingQueueList.AddRemCallback;
+import kidridicarus.agent.body.general.AgentSpawnTriggerBody;
+import kidridicarus.guide.MainGuide;
+import kidridicarus.info.KVInfo;
 
 public class AgentSpawnTrigger extends Agent {
-	private AgentSpawnTriggerBody stbody;
-	private SMBGuide guide;
-
-	// keep a list of the spawn boxes currently in contact with the spawn trigger
-	private BlockingQueueList<AgentSpawner> spawnBs;
-
-	private class SpawnAddRem implements AddRemCallback<AgentSpawner> {
-		@Override
-		public void add(AgentSpawner obj) { obj.onStartVisibility(); }
-		@Override
-		public void remove(AgentSpawner obj) { obj.onEndVisibility(); }
-	}
+	private AgentSpawnTriggerBody stBody;
+	private MainGuide guide;
+	private boolean enabled;
 
 	public AgentSpawnTrigger(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
-		stbody = new AgentSpawnTriggerBody(this, agency.getWorld(), adef.bounds);
+		// begin in the disabled state (will not trigger spawners)
+		enabled = false;
+		stBody = new AgentSpawnTriggerBody(this, agency.getWorld(), adef.bounds);
 		// the spawn trigger is given a reference to the player that it follows
-		guide = (SMBGuide) adef.userData;
-
-		spawnBs = new BlockingQueueList<AgentSpawner>(new SpawnAddRem());
+		guide = (MainGuide) adef.userData;
 
 		agency.enableAgentUpdate(this);
 	}
 
 	@Override
 	public void update(float delta) {
-		updateSpawnBoxes(delta);
+		if(enabled)
+			updateSpawnBoxes(delta);
+
 		// follow the player's viewpoint
 		if(guide.getViewPosition() != null)
-			stbody.setPosition(guide.getViewPosition());
+			stBody.setPosition(guide.getViewPosition());
 	}
 
 	private void updateSpawnBoxes(float delta) {
-		for(AgentSpawner sb : spawnBs.getList())
+		for(Agent sb : stBody.getSpawnerContacts())
 			sb.update(delta);
-	}
-
-	public void onBeginContactSpawnBox(AgentSpawner spawnBox) {
-		spawnBs.add(spawnBox);
-	}
-
-	public void onEndContactSpawnBox(AgentSpawner spawnBox) {
-		spawnBs.remove(spawnBox);
 	}
 
 	@Override
@@ -65,16 +49,36 @@ public class AgentSpawnTrigger extends Agent {
 
 	@Override
 	public Vector2 getPosition() {
-		return stbody.getPosition();
+		return stBody.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return stbody.getBounds();
+		return stBody.getBounds();
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public boolean getEnabled() {
+		return enabled;
 	}
 
 	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
+	}
+	
+	@Override
 	public void dispose() {
-		stbody.dispose();
+		stBody.dispose();
+	}
+
+	public static AgentDef makeAgentSpawnTriggerDef(MainGuide parentGuide, Vector2 position, float width,
+			float height) {
+		AgentDef adef = AgentDef.makeBoxBoundsDef(KVInfo.VAL_AGENTSPAWN_TRIGGER, position, width, height);
+		adef.userData = parentGuide;
+		return adef;
 	}
 }

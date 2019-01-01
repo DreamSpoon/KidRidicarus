@@ -10,11 +10,10 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.BasicWalkAgent;
-import kidridicarus.agent.bodies.SMB.item.BaseMushroomBody;
+import kidridicarus.agent.body.SMB.item.BaseMushroomBody;
 import kidridicarus.agent.optional.BumpableAgent;
 import kidridicarus.agent.optional.ItemAgent;
-import kidridicarus.agent.sprites.SMB.item.MushroomSprite;
-import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.agent.sprite.SMB.item.MushroomSprite;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.UInfo;
 
@@ -26,7 +25,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 
 	private enum MushroomState { SPROUT, WALK, FALL };
 
-	private BaseMushroomBody bmbody;
+	private BaseMushroomBody bmBody;
 	protected MushroomSprite mSprite;
 
 	private MushroomState prevState;
@@ -62,16 +61,21 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 		MushroomState curState;
 		float yOffset;
 
-		// process bumpings
-		if(isBumped) {
-			isBumped = false;
-			// If moving right and bumped from the right then reverse velocity,
-			// if moving left and bumped from the left then reverse velocity
-			if((getConstVelocity().x > 0 && bumpCenter.x > bmbody.getPosition().x) ||
-					(getConstVelocity().x < 0 && bumpCenter.x < bmbody.getPosition().x)) {
-				reverseConstVelocity(true, false);
+		if(bmBody != null) {
+			// process bumpings
+			if(isBumped) {
+				isBumped = false;
+				// If moving right and bumped from the right then reverse velocity,
+				// if moving left and bumped from the left then reverse velocity
+				if((getConstVelocity().x > 0 && bumpCenter.x > bmBody.getPosition().x) ||
+						(getConstVelocity().x < 0 && bumpCenter.x < bmBody.getPosition().x)) {
+					reverseConstVelocity(true, false);
+				}
+				bmBody.applyImpulse(new Vector2(0f, BUMP_UPVEL));
 			}
-			bmbody.applyImpulse(new Vector2(0f, BUMP_UPVEL));
+			// bounce off of vertical bounds
+			else if(bmBody.isMoveBlocked(getConstVelocity().x > 0f))
+				reverseConstVelocity(true, false);
 		}
 
 		yOffset = 0f;
@@ -79,14 +83,14 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 		switch(curState) {
 			case WALK:
 				// move if walking
-				bmbody.setVelocity(getConstVelocity().x, bmbody.getVelocity().y);
+				bmBody.setVelocity(getConstVelocity().x, bmBody.getVelocity().y);
 				break;
 			case SPROUT:
 				// wait a short time to finish sprouting, then spawn the body when sprout finishes
 				if(stateTimer > SPROUT_TIME) {
 					isSprouting = false;
 					agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
-					bmbody = new BaseMushroomBody(this, agency.getWorld(), sproutingPosition);
+					bmBody = new BaseMushroomBody(this, agency.getWorld(), sproutingPosition);
 				}
 				else
 					yOffset = SPROUT_OFFSET * (SPROUT_TIME - stateTimer) / SPROUT_TIME;
@@ -98,7 +102,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 		if(isSprouting)
 			mSprite.update(delta, sproutingPosition.cpy().add(0f, yOffset));
 		else
-			mSprite.update(delta, bmbody.getPosition().cpy().add(0f, yOffset));
+			mSprite.update(delta, bmBody.getPosition().cpy().add(0f, yOffset));
 
 		// increment state timer if state stayed the same, otherwise reset timer
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
@@ -108,7 +112,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 	private MushroomState getState() {
 		if(isSprouting)
 			return MushroomState.SPROUT;
-		else if(bmbody.isOnGround())
+		else if(bmBody.isOnGround())
 			return MushroomState.WALK;
 		else
 			return MushroomState.FALL;
@@ -117,12 +121,6 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 	@Override
 	public void draw(Batch batch) {
 		mSprite.draw(batch);
-	}
-
-	public void onContactVertBoundLine(LineSeg seg) {
-		// bounce off of vertical bounds only
-		if(!seg.isHorizontal)
-			reverseConstVelocity(true,  false);
 	}
 
 	@Override
@@ -136,16 +134,21 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 
 	@Override
 	public Vector2 getPosition() {
-		return bmbody.getPosition();
+		return bmBody.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return bmbody.getBounds();
+		return bmBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return bmBody.getVelocity();
 	}
 
 	@Override
 	public void dispose() {
-		bmbody.dispose();
+		bmBody.dispose();
 	}
 }

@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.MyKidRidicarus;
 import kidridicarus.info.GameInfo;
+import kidridicarus.info.PowerupInfo.PowChar;
 
 public class GameOverScreen implements Screen {
 	private Viewport viewport;
@@ -89,7 +90,7 @@ public class GameOverScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		if(didAnythingHappen) {
-			game.setScreen(new PlayScreen((MyKidRidicarus) game, 0));
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, 0, PowChar.MARIO));
 			dispose();
 		}
 

@@ -3,18 +3,17 @@ package kidridicarus.agent.SMB.item;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.Mario;
-import kidridicarus.agent.bodies.SMB.item.StaticCoinBody;
+import kidridicarus.agent.body.SMB.item.StaticCoinBody;
 import kidridicarus.agent.optional.ItemAgent;
-import kidridicarus.agent.sprites.SMB.item.StaticCoinSprite;
+import kidridicarus.agent.sprite.SMB.item.StaticCoinSprite;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
-public class StaticCoin extends Agent implements ItemAgent, Disposable {
+public class StaticCoin extends Agent implements ItemAgent {
 	private StaticCoinSprite coinSprite;
 	private StaticCoinBody coinBody;
 
@@ -54,6 +53,11 @@ public class StaticCoin extends Agent implements ItemAgent, Disposable {
 	@Override
 	public Rectangle getBounds() {
 		return coinBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override

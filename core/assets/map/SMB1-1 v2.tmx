@@ -76,7 +76,8 @@
  </layer>
  <layer id="90" name="goombatiles" width="230" height="46">
   <properties>
-   <property name="agentclass" value="spawngoomba"/>
+   <property name="agentclass" value="agentspawner"/>
+   <property name="spawnagentclass" value="goomba"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt2TEKACAIBVCv4P0v2x4EBRKR7y0u8hVXIwAAAAAAAAAAAAAAAAAAAAAAesupAgAAAAAAAO+p/OedZmXx/Bsqdt7JWPV0vRkAAAAAAAAAAAAAAAAAAADALwZZIQER
@@ -84,7 +85,8 @@
  </layer>
  <layer id="91" name="turtletiles" width="230" height="46">
   <properties>
-   <property name="agentclass" value="spawnturtle"/>
+   <property name="agentclass" value="agentspawner"/>
+   <property name="spawnagentclass" value="turtle"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztzgENAAAIA6D3L2gdY9xNSEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAN9MOAAAAAAAAAAAAAAAAAAAAAHDWApmcANg=
@@ -102,7 +104,7 @@
   <properties>
    <property name="agentclass" value="spawnguide"/>
   </properties>
-  <object id="225" x="64" y="416" width="16" height="16">
+  <object id="225" x="224" y="416" width="16" height="16">
    <properties>
     <property name="spawnmain" value="true"/>
    </properties>

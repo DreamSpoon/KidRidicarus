@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.general.RoomBoxBody;
+import kidridicarus.agent.body.general.RoomBoxBody;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
 
@@ -79,6 +79,11 @@ public class Room extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return rbody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.MyKidRidicarus;
 import kidridicarus.info.GameInfo;
+import kidridicarus.info.PowerupInfo.PowChar;
 
 public class LevelTransitScreen implements Screen {
 	private Viewport viewport;
@@ -88,7 +89,7 @@ public class LevelTransitScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		if(didAnythingHappen) {
-			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevel));
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevel, PowChar.MARIO));
 			dispose();
 		}
 

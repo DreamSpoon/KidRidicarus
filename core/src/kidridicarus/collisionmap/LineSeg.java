@@ -2,14 +2,17 @@ package kidridicarus.collisionmap;
 
 import java.util.Comparator;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 
 public class LineSeg implements Disposable {
 	// if begin = end, it means the LineSeg is one tile wide
 	public int begin, end;	// in tile coordinates (not pixel coordinates), where begin <= end
+	private int otherOffset;
 	public Body body;
 	public boolean isHorizontal;
 
@@ -26,11 +29,12 @@ public class LineSeg implements Disposable {
 	 */
 	public boolean upNormal;
 
-	public LineSeg(int begin, int end, boolean isHorizontal, boolean upNormal) {
+	public LineSeg(int begin, int end, int otherOffset, boolean isHorizontal, boolean upNormal) {
 		if(begin > end)
 			throw new IllegalArgumentException("Line segment begin > end exception, begin = " + begin + ", end = " + end);
 		this.begin = begin;
 		this.end = end;
+		this.otherOffset = otherOffset;
 		this.isHorizontal = isHorizontal;
 		this.upNormal = upNormal;
 	}
@@ -95,7 +99,7 @@ public class LineSeg implements Disposable {
 	}
 
 	// return the x/y coordinate of the beginning of this segment as a Box2D coordinate
-	public float getB2Begin() {
+/*	public float getB2Begin() {
 		if(isHorizontal)
 			return UInfo.P2M(begin * UInfo.TILEPIX_X);
 		else
@@ -109,10 +113,39 @@ public class LineSeg implements Disposable {
 		else
 			return UInfo.P2M((end+1) * UInfo.TILEPIX_Y);
 	}
-
+*/
 	@Override
 	public void dispose() {
 		if(body != null)
 			body.getWorld().destroyBody(body);
+	}
+
+	/*
+	 * Epsilon test of this lineSeg's bounds against otherBounds.
+	 */
+	public boolean dblCheckContact(Rectangle otherBounds) {
+		Rectangle thisBounds = getBounds();
+		if(isHorizontal &&
+				thisBounds.x + thisBounds.width - GameInfo.BODY_VS_VERT_BOUND_EPSILON > otherBounds.x &&
+				thisBounds.x + GameInfo.BODY_VS_VERT_BOUND_EPSILON < otherBounds.x + otherBounds.width) {
+			return true;
+		}
+		else if(!isHorizontal &&
+				thisBounds.y + thisBounds.height - GameInfo.BODY_VS_VERT_BOUND_EPSILON > otherBounds.y &&
+				thisBounds.y + GameInfo.BODY_VS_VERT_BOUND_EPSILON < otherBounds.y + otherBounds.height) {
+			return true;
+		}
+		return false;
+	}
+
+	public Rectangle getBounds() {
+		if(isHorizontal) {
+			return new Rectangle(UInfo.P2M(begin * UInfo.TILEPIX_X), UInfo.P2M(otherOffset * UInfo.TILEPIX_Y),
+					UInfo.P2M((end+1-begin) * UInfo.TILEPIX_X), 0f);
+		}
+		else {
+			return new Rectangle(UInfo.P2M(otherOffset * UInfo.TILEPIX_X), UInfo.P2M(begin * UInfo.TILEPIX_Y),
+					0f, UInfo.P2M((end+1-begin) * UInfo.TILEPIX_Y));
+		}
 	}
 }

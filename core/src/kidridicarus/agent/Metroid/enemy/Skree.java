@@ -4,15 +4,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.ADefFactory;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.Metroid.enemy.SkreeBody;
+import kidridicarus.agent.body.Metroid.enemy.SkreeBody;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.DamageableAgent;
-import kidridicarus.agent.sprites.Metroid.enemy.SkreeSprite;
+import kidridicarus.agent.sprite.Metroid.enemy.SkreeSprite;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
 
 public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
@@ -42,7 +42,6 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 	// TODO: what if agent is removed/disposed while being targeted? Agent.isDisposed()?
 	private Agent target;
 
-	private boolean isHitGround;
 	private boolean isDead;
 
 	public Skree(Agency agency, AgentDef adef) {
@@ -50,7 +49,6 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 
 		isDead = false;
 		target = null;
-		isHitGround = false;
 		curState = SkreeState.SLEEP;
 		stateTimer = 0f;
 
@@ -63,8 +61,10 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 
 	@Override
 	public void update(float delta) {
-		if(isHitGround)
+		if(sBody.isOnGround())
 			sBody.setVelocity(0f, 0f);
+		if(sBody.getPlayerContact() != null)
+			target = sBody.getPlayerContact();
 
 		SkreeState nextState = getNextState();
 		switch(nextState) {
@@ -96,7 +96,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 			return SkreeState.EXPLODE;
 		else if(curState == SkreeState.ONGROUND && stateTimer > EXPLODE_WAIT)
 			return SkreeState.EXPLODE;
-		else if(isHitGround)
+		else if(sBody.isOnGround())
 			return SkreeState.ONGROUND;
 		else if(target != null)
 			return SkreeState.FALL;
@@ -139,8 +139,11 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 			throw new IllegalStateException("The Skree explosion offset array length does not equal the " +
 					"explode velocity array length.");
 		for(int i=0; i<EXPLODE_OFFSET.length; i++) {
-			agency.createAgent(ADefFactory.makeSkreeExpDef(sBody.getPosition().cpy().add(
-					EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
+			AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.VAL_SKREE_EXP, sBody.getPosition().cpy().add(
+					EXPLODE_OFFSET[i]));
+			adef.velocity.set(EXPLODE_VEL[i]);
+			agency.createAgent(adef);
+			
 		}
 		agency.disposeAgent(this);
 	}
@@ -160,14 +163,6 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 		return sBody.getBounds();
 	}
 
-	public void setTarget(Agent target) {
-		this.target = target;
-	}
-
-	public void hitGround() {
-		isHitGround = true;
-	}
-
 	@Override
 	public void onDamage(Agent agent, float amount, Vector2 fromCenter) {
 		isDead = true;
@@ -176,6 +171,11 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 	@Override
 	public boolean isContactDamage() {
 		return true;
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return sBody.getVelocity();
 	}
 
 	@Override

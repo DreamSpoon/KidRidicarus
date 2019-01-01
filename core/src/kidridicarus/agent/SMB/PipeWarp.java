@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.AgentBody;
-import kidridicarus.agent.bodies.SMB.PipeWarpBody;
+import kidridicarus.agent.body.AgentBody;
+import kidridicarus.agent.body.SMB.PipeWarpBody;
 import kidridicarus.agent.general.GuideSpawner;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
@@ -90,6 +90,11 @@ public class PipeWarp extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return pwbody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override

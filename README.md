@@ -92,7 +92,7 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](www.youtube.com/watch?
 
 [Img2tmx](www.github.com/GregSam/Img2Tmx)
 
-  * Note: I modified the code cited above slightly for my purposes, I commented out the (lines 93 - 95):
+  * Note: I modified the code cited above slightly for my purposes, I commented out lines 93 - 95:
   
     * readLayerFile("layer2.txt", tmxL2Tiles);
 
@@ -102,7 +102,7 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](www.youtube.com/watch?
 
   * I seem to be missing these 3 files :(
   
-  * Also, I had to modify the output files a bit - but this tool rocks!
+  * Also, I had to modify the output files a bit
 
 ### Tools:
 
@@ -152,6 +152,6 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](www.youtube.com/watch?
 
 I'd like to thank my arms for staying by my side. I'd like to thank my legs for all their support. And I'd like to thank my hands especially - I could always count on my hands.
 
-If there are any more unthanked or unacknowledged contributors, I thank and acknowledge you now: Thanks!
+If there are any more unthanked or unacknowledged contributors then I thank and acknowledge you now: Thanks!
 
 This repo is maintained by David Loucks.

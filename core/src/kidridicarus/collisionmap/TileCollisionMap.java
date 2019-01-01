@@ -10,9 +10,9 @@ import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.contacts.AgentBodyFilter;
-import kidridicarus.agency.contacts.CFBitSeq;
-import kidridicarus.agency.contacts.CFBitSeq.CFBit;
+import kidridicarus.agency.contact.AgentBodyFilter;
+import kidridicarus.agency.contact.CFBitSeq;
+import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.info.UInfo;
 
 public class TileCollisionMap {
@@ -116,14 +116,14 @@ public class TileCollisionMap {
 					upNormal = (!me && belowMe);
 					// start a new segment if none currently exists
 					if(currentSeg == null)
-						currentSeg = new LineSeg(x, x, true, upNormal);
+						currentSeg = new LineSeg(x, x, y, true, upNormal);
 					// end the current segment and start a new one if the upNormal changed
 					else if(upNormal != currentSeg.upNormal) {
 						currentSeg.end = x-1;
 						hLines[y].add(currentSeg);
 
 						// start new segment with new upNormal
-						currentSeg = new LineSeg(x, x, true, upNormal);
+						currentSeg = new LineSeg(x, x, y, true, upNormal);
 					}
 				}
 			}
@@ -164,14 +164,14 @@ public class TileCollisionMap {
 					upNormal = (!me && leftOfMe);
 					// start a new segment if none currently exists
 					if(currentSeg == null)
-						currentSeg = new LineSeg(y, y, false, upNormal);
+						currentSeg = new LineSeg(y, y, x, false, upNormal);
 					// end the current segment and start a new one if the upNormal changed
 					else if(upNormal != currentSeg.upNormal) {
 						currentSeg.end = y-1;
 						vLines[x].add(currentSeg);
 
 						// start new segment with new upNormal
-						currentSeg = new LineSeg(y, y, false, upNormal);
+						currentSeg = new LineSeg(y, y, x, false, upNormal);
 					}
 				}
 			}
@@ -236,7 +236,7 @@ public class TileCollisionMap {
 
 		fdef.shape = edgeShape;
 		body.createFixture(fdef).setUserData(new AgentBodyFilter(new CFBitSeq(CFBit.SOLID_BOUND_BIT),
-				new CFBitSeq(CFBit.SOLID_BIT), seg));
+				new CFBitSeq(CFBit.THE_ONE_BIT), seg));
 
 		return body;
 	}
@@ -340,7 +340,7 @@ public class TileCollisionMap {
 		LineSeg floorSeg;
 		LineSeg higherSeg;
 
-		newSeg = new LineSeg(x, x, isHorizontal, upNormal);
+		newSeg = new LineSeg(x, x, y, isHorizontal, upNormal);
 		// floor gives <= x
 		// (usually overlap may occur, but since we are adding, the overlap is assumed to be impossible)
 		floorSeg = horvLines[y].lineSegs.floor(newSeg);
@@ -392,7 +392,7 @@ public class TileCollisionMap {
 		int rightEnd;
 
 		// upNormal is arbitrary
-		testSeg = new LineSeg(x, x, isHorizontal, false);
+		testSeg = new LineSeg(x, x, y, isHorizontal, false);
 		// floor gives <= x
 		// (usually overlap may occur, but since we are adding, the overlap is assumed to be impossible)
 		floorSeg = horvLines[y].lineSegs.floor(testSeg);
@@ -411,7 +411,7 @@ public class TileCollisionMap {
 		rightEnd = floorSeg.end;
 		// need to create new lineSeg on left?
 		if(leftBegin <= leftEnd) {
-			newSeg = new LineSeg(leftBegin, leftEnd, floorSeg.isHorizontal, floorSeg.upNormal);
+			newSeg = new LineSeg(leftBegin, leftEnd, y, floorSeg.isHorizontal, floorSeg.upNormal);
 			if(isHorizontal)
 				newSeg.body = defineHLineBody(y, newSeg);
 			else
@@ -420,7 +420,7 @@ public class TileCollisionMap {
 		}
 		// need to create new lineSeg on right?
 		if(rightBegin <= rightEnd) {
-			newSeg = new LineSeg(rightBegin, rightEnd, floorSeg.isHorizontal, floorSeg.upNormal);
+			newSeg = new LineSeg(rightBegin, rightEnd, y, floorSeg.isHorizontal, floorSeg.upNormal);
 			if(isHorizontal)
 				newSeg.body = defineHLineBody(y, newSeg);
 			else

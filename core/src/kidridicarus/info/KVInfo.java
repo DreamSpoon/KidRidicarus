@@ -27,12 +27,12 @@ public class KVInfo {
 	public static final String KEY_VIEWOFFSET_Y = "viewoffset_y";
 
 	public static final String KEY_AGENTCLASS = "agentclass";
-	public static final String VAL_BUMPTILE = "bumptile";
+	public static final String VAL_AGENTSPAWNER = "agentspawner";
+	public static final String KEY_SPAWNAGENTCLASS = "spawnagentclass";
 	public static final String VAL_GOOMBA = "goomba";
 	public static final String VAL_TURTLE = "turtle";
+	public static final String VAL_BUMPTILE = "bumptile";
 	public static final String VAL_COIN = "coin";
-	public static final String VAL_SPAWNGOOMBA = "spawngoomba";
-	public static final String VAL_SPAWNTURTLE = "spawnturtle";
 	public static final String VAL_SPAWNGUIDE = "spawnguide";	// "player" spawner
 	public static final String VAL_FLAGPOLE = "flagpole";
 	public static final String VAL_LEVELEND_TRIGGER = "levelend_trigger";
@@ -46,6 +46,8 @@ public class KVInfo {
 	public static final String VAL_ZOOMER = "zoomer";
 	public static final String VAL_SKREE = "skree";
 	public static final String VAL_SKREE_EXP = "skree_exp";
+	public static final String VAL_MARUMARI = "marumari";
+	public static final String VAL_SAMUS = "samus";
 
 	public static final String KEY_SPAWNITEM = "spawnitem";
 	public static final String VAL_COIN10 = "coin10";

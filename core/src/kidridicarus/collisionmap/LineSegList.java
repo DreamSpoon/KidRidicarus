@@ -33,10 +33,12 @@ public class LineSegList {
 	 *     It is a LineSeg that overlaps offset or is adjacent to the right of offset.
 	 * 
 	 * Does not return null in any case, but may return an array of nulls.
+	 * 
+	 * possible TODO: Should this be getAdjacentOrOverlap()?
 	 */
 	public static final int LEFT_SEG = 0;
 	public static final int RIGHT_SEG = 1;
-	public LineSeg[] getAdjacentAndOverlap(int offset, boolean isHorizontal) {	// Should this be getAdjacentOrOverlap()?
+	public LineSeg[] getAdjacentAndOverlap(int offset, boolean isHorizontal) {	// 
 		LineSeg testSeg;
 		LineSeg floorSeg;
 		LineSeg higherSeg;
@@ -49,9 +51,9 @@ public class LineSegList {
 		// (don't return null, instead return a ref to nulls)
 		if(lineSegs.isEmpty()) return adjOverlapArray;
 
-		// Create a one tile test segment to represent 'offset' (upNormal is set arbitrarily as it is not used in
-		// the tests) 
-		testSeg = new LineSeg(offset, offset, isHorizontal, true);
+		// Create a one tile test segment to represent 'offset' (otherOffest and upNormal are set arbitrarily as
+		// they are not used in the tests) 
+		testSeg = new LineSeg(offset, offset, 0, isHorizontal, true);
 		// test for segment <= to 'testSeg' (overlap possible)
 		floorSeg = lineSegs.floor(testSeg);
 		// test for segment > 'testSeg' (overlap impossible)

@@ -7,10 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.Metroid.enemy.ZoomerBody;
+import kidridicarus.agent.body.Metroid.enemy.ZoomerBody;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.DamageableAgent;
-import kidridicarus.agent.sprites.Metroid.enemy.ZoomerSprite;
+import kidridicarus.agent.sprite.Metroid.enemy.ZoomerSprite;
 import kidridicarus.info.UInfo;
 import kidridicarus.info.GameInfo.DiagonalDir4;
 import kidridicarus.info.GameInfo.Direction4;
@@ -57,7 +57,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
 	}
 
 	@Override
@@ -296,6 +296,11 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	@Override
 	public Rectangle getBounds() {
 		return zBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return zBody.getVelocity();
 	}
 
 	@Override

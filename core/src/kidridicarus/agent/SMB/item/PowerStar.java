@@ -9,13 +9,12 @@ import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.BasicWalkAgent;
 import kidridicarus.agent.SMB.player.Mario;
-import kidridicarus.agent.bodies.SMB.item.PowerStarBody;
+import kidridicarus.agent.body.SMB.item.PowerStarBody;
 import kidridicarus.agent.optional.BumpableAgent;
 import kidridicarus.agent.optional.ItemAgent;
-import kidridicarus.agent.sprites.SMB.item.PowerStarSprite;
-import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.agent.sprite.SMB.item.PowerStarSprite;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
-import kidridicarus.info.SMBInfo.PowerupType;
+import kidridicarus.info.PowerupInfo.PowType;
 import kidridicarus.info.UInfo;
 
 /*
@@ -74,6 +73,10 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 					break;
 				}
 
+				// bounce off of vertical boundaries
+				if(starBody.isMoveBlocked(getConstVelocity().x > 0f))
+					reverseConstVelocity(true,  false);
+
 				// clamp y velocity and maintain steady x velocity
 				if(starBody.getVelocity().y > getConstVelocity().y)
 					starBody.setVelocity(getConstVelocity().x, getConstVelocity().y);
@@ -114,15 +117,9 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 			return;
 
 		if(agent instanceof Mario) {
-			((Mario) agent).applyPowerup(PowerupType.POWERSTAR);
+			((Mario) agent).applyPowerup(PowType.POWERSTAR);
 			agency.disposeAgent(this);
 		}
-	}
-
-	public void onContactBoundLine(LineSeg seg) {
-		// bounce off of vertical bounds only
-		if(!seg.isHorizontal)
-			reverseConstVelocity(true,  false);
 	}
 
 	@Override
@@ -147,6 +144,11 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 	@Override
 	public Rectangle getBounds() {
 		return starBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return starBody.getVelocity();
 	}
 
 	@Override

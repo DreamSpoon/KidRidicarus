@@ -5,19 +5,17 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.ADefFactory;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.BasicWalkAgent;
-import kidridicarus.agent.SMB.player.Mario;
-import kidridicarus.agent.bodies.SMB.enemy.TurtleBody;
-import kidridicarus.agent.optional.AgentContactAgent;
+import kidridicarus.agent.PlayerAgent;
+import kidridicarus.agent.SMB.FloatingPoints;
+import kidridicarus.agent.body.SMB.enemy.TurtleBody;
 import kidridicarus.agent.optional.BumpableAgent;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.DamageableAgent;
 import kidridicarus.agent.optional.HeadBounceAgent;
-import kidridicarus.agent.sprites.SMB.enemy.TurtleSprite;
-import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.agent.sprite.SMB.enemy.TurtleSprite;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
@@ -30,8 +28,8 @@ import kidridicarus.info.UInfo;
  * -turtle shells do not slide properly when they are kicked while contacting an agent, since the slide kill
  *  agent code is only called when contacting starts
  */
-public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDmgAgent, BumpableAgent,
-		DamageableAgent, AgentContactAgent {
+public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounceAgent, BumpableAgent,
+		ContactDmgAgent {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 1f;
@@ -49,7 +47,7 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	private float stateTimer;
 
 	private boolean facingRight;
-	private boolean isHiding;	// after mario bounces on head, turtle hides in shell
+	private boolean isHiding;	// after player bounces on head, turtle hides in shell
 	private boolean isWaking;
 	private boolean isSliding;
 	private boolean isDead;
@@ -84,12 +82,14 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	}
 
 	public void update(float delta) {
+		processContacts();
+
 		TurtleState curState = getState();
 		switch(curState) {
 			case DEAD:
 				// newly deceased?
 				if(curState != prevState)
-					startDeath();
+					doStartDeath();
 				// check the old deceased for timeout
 				else if(stateTimer > DIE_FALL_TIME)
 					agency.disposeAgent(this);
@@ -98,18 +98,18 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 				// wait a short time and reappear
 				if(curState != prevState) {
 					isWaking = false;
-					startHideInShell();
+					doStartHide();
 				}
 				else if(stateTimer > WAKE_UP_DELAY)
 					isWaking = true;
 				break;
 			case WAKE_UP:
 				if(curState == prevState && stateTimer > WAKING_TIME)
-					endHideInShell();
+					doEndHide();
 				break;
 			case SLIDE:
 				if(curState != prevState)
-					startSlide();
+					doStartSlide();
 				// Intentionally not using break;
 				// Because sliding turtle needs to move when onGround.
 			case WALK:
@@ -143,35 +143,107 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 			return TurtleState.WALK;
 	}
 
-	private void startSlide() {
+	private void processContacts() {
+		// check for head bounces
+		if(isHeadBounced) {
+			if(isSliding)
+				disableSlide();
+			else if(isHiding) {
+				if(perp.getPosition().x > turtleBody.getPosition().x)
+					enableSlide(false);	// slide right
+				else
+					enableSlide(true);	// slide left
+			}
+			else
+				isHiding = true;
+		}
+
+		boolean nowDead = false;
+		if(isSliding) {
+			// check the list of contacting agents, if there are damageable agents then slide damage them
+			for(Agent a : turtleBody.getContactAgents()) {
+				// if hit another sliding turtle, then both die
+				if(a instanceof Turtle && ((Turtle) a).isSliding) {
+					((DamageableAgent) a).onDamage(perp, 1f, turtleBody.getPosition());
+					onDamage(perp, 1f, a.getPosition());
+					nowDead = true;
+					break;
+				}
+				// hit non-turtle, so continue sliding and apply damage to other agent
+				else if(a instanceof DamageableAgent)
+					((DamageableAgent) a).onDamage(this, 1.0f, turtleBody.getPosition());
+			}
+		}
+		else {
+			// check the list of contacting agents, if there is a player agent then be kicked by them
+			for(Agent a : turtleBody.getContactAgents()) {
+				if(a instanceof PlayerAgent) {
+					onPlayerContact(a);
+					break;
+				}
+			}
+		}
+
+		// if not hiding and not dead then check if move is blocked and reverse direction if necessary
+		if(!isHiding && !nowDead && (turtleBody.isMoveBlocked(getConstVelocity().x > 0f) ||
+				turtleBody.isMoveBlockedByAgent(getPosition(), getConstVelocity().x > 0f)))
+			bounceOffThing();
+	}
+
+	private void bounceOffThing() {
+		// bounce off of vertical bounds
+		reverseConstVelocity(true, false);
+		facingRight = !facingRight;
+		if(isSliding)
+			agency.playSound(AudioInfo.SOUND_BUMP);
+	}
+
+	private void enableSlide(boolean right) {
+		isSliding = true;
+		facingRight = right;
+		if(right)
+			setConstVelocity(SLIDE_VEL, 0f);
+		else
+			setConstVelocity(-SLIDE_VEL, 0f);
+	}
+
+	private void disableSlide() {
+		isSliding = false;
+		if(getConstVelocity().x > 0)
+			setConstVelocity(WALK_VEL, 0f);
+		else
+			setConstVelocity(-WALK_VEL, 0f);
+	}
+
+	private void doStartSlide() {
 		agency.playSound(AudioInfo.SOUND_KICK);
 		slidingTotal = PointAmount.P400;
 		if(perp != null) {
-			agency.createAgent(ADefFactory.makeFloatingPointsDef(slidingTotal, isHeadBounced,
-					turtleBody.getPosition(), UInfo.P2M(16), (Mario) perp));
+			agency.createAgent(FloatingPoints.makeFloatingPointsDef(slidingTotal, isHeadBounced,
+					turtleBody.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
 
-	private void startHideInShell() {
+	private void doStartHide() {
 		// stop moving
-		turtleBody.zeroVelocity();
+		turtleBody.zeroVelocity(true, true);
 		agency.playSound(AudioInfo.SOUND_STOMP);
 		if(perp != null) {
-			agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P100, isHeadBounced,
-					turtleBody.getPosition(), UInfo.P2M(16), (Mario) perp));
+			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P100, isHeadBounced,
+					turtleBody.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
 
-	private void endHideInShell() {
+	private void doEndHide() {
 		isWaking = false;
 		isHiding = false;
 		if(turtleBody.isOnGround())
 			turtleBody.setVelocity(getConstVelocity());
 	}
 
-	private void startDeath() {
-		turtleBody.disableContacts();
-		turtleBody.zeroVelocity();
+	private void doStartDeath() {
+		turtleBody.disableAllContacts();
+		turtleBody.zeroVelocity(true, true);
 
 		// die move to the right or die move to to the left?
 		if(isDeadToRight)
@@ -180,8 +252,8 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 			turtleBody.applyImpulse(new Vector2(-BUMP_SIDE_VEL, BUMP_UP_VEL));
 
 		if(perp != null) {
-			agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P500, isHeadBounced,
-					turtleBody.getPosition(), UInfo.P2M(16), (Mario) perp));
+			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P500, isHeadBounced,
+					turtleBody.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
 
@@ -191,76 +263,11 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	}
 
 	@Override
-	public void onHeadBounce(Agent perp, Vector2 fromPos) {
-		if(isDead)
+	public void onHeadBounce(Agent perp) {
+		if(isDead || isHeadBounced)
 			return;
-
-		isHeadBounced = true;
 		this.perp = perp;
-		if(isSliding)
-			cancelSlide();
-		else if(isHiding) {
-			if(fromPos.x > turtleBody.getPosition().x)
-				initSlide(false);	// slide right
-			else
-				initSlide(true);	// slide left
-		}
-		else
-			isHiding = true;
-	}
-
-	private void initSlide(boolean right) {
-		isSliding = true;
-		facingRight = right;
-		if(right)
-			setConstVelocity(SLIDE_VEL, 0f);
-		else
-			setConstVelocity(-SLIDE_VEL, 0f);
-	}
-
-	private void cancelSlide() {
-		isSliding = false;
-		if(getConstVelocity().x > 0)
-			setConstVelocity(WALK_VEL, 0f);
-		else
-			setConstVelocity(-WALK_VEL, 0f);
-	}
-
-	@Override
-	public void onContactAgent(Agent agent) {
-		// if walking normally and contacted another agent then reverse direction
-		if(!isHiding && !isSliding) {
-			reverseConstVelocity(true, false);
-			facingRight = !facingRight;
-		}
-		else if(isSliding) {
-			// if hit another sliding turtle, then both die
-			if(agent instanceof Turtle && ((Turtle) agent).isSliding) {
-				((DamageableAgent) agent).onDamage(perp, 1f, turtleBody.getPosition());
-				onDamage(perp, 1f, agent.getPosition());
-			}
-			// else if sliding and strikes a dmgable bot...
-			else if(agent instanceof DamageableAgent) {
-				// give the dmgable bot a null player ref so that it doesn't give points, we will give points here
-				((DamageableAgent) agent).onDamage(null, 1f, agent.getPosition());
-				agency.playSound(AudioInfo.SOUND_KICK);
-				if(perp != null) {
-					slidingTotal = slidingTotal.increment();
-					agency.createAgent(ADefFactory.makeFloatingPointsDef(slidingTotal, isHeadBounced,
-							turtleBody.getPosition(), UInfo.P2M(16), (Mario) perp));
-				}
-			}
-		}
-	}
-
-	public void onContactBoundLine(LineSeg seg) {
-		// bounce off of vertical bounds
-		if(!seg.isHorizontal) {
-			reverseConstVelocity(true, false);
-			facingRight = !facingRight;
-			if(isSliding)
-				agency.playSound(AudioInfo.SOUND_BUMP);
-		}
+		isHeadBounced = true;
 	}
 
 	// assume any amount of damage kills, for now...
@@ -285,18 +292,18 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	}
 
 	 // the player can "kick" a turtle hiding in its shell
-	public void onGuideContact(Agent perp, Vector2 position) {
+	private void onPlayerContact(Agent player) {
 		if(isDead)
 			return;
 
 		// a living turtle hiding in the shell and not sliding can be "pushed" to slide
 		if(isHiding && !isSliding) {
-			this.perp = perp;
+			perp = player;
 			// pushed from left?
-			if(position.x < turtleBody.getPosition().x)
-				initSlide(true);	// slide right
+			if(player.getPosition().x < turtleBody.getPosition().x)
+				enableSlide(true);	// slide right
 			else
-				initSlide(false);	// slide left
+				enableSlide(false);	// slide left
 		}
 	}
 
@@ -315,6 +322,11 @@ public class Turtle extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	@Override
 	public Rectangle getBounds() {
 		return turtleBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return turtleBody.getVelocity();
 	}
 
 	@Override

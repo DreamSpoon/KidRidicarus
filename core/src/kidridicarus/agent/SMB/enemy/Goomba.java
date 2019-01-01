@@ -3,30 +3,25 @@ package kidridicarus.agent.SMB.enemy;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.ADefFactory;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.BasicWalkAgent;
-import kidridicarus.agent.SMB.player.Mario;
-import kidridicarus.agent.bodies.SMB.enemy.GoombaBody;
-import kidridicarus.agent.optional.AgentContactAgent;
+import kidridicarus.agent.SMB.FloatingPoints;
+import kidridicarus.agent.body.SMB.enemy.GoombaBody;
 import kidridicarus.agent.optional.BumpableAgent;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.DamageableAgent;
 import kidridicarus.agent.optional.HeadBounceAgent;
-import kidridicarus.agent.sprites.SMB.enemy.GoombaSprite;
-import kidridicarus.collisionmap.LineSeg;
+import kidridicarus.agent.sprite.SMB.enemy.GoombaSprite;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
 import kidridicarus.info.UInfo;
 
-public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDmgAgent, BumpableAgent,
-		DamageableAgent, AgentContactAgent, Disposable
-{
+public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounceAgent, BumpableAgent,
+		ContactDmgAgent {
 	private static final float GOOMBA_WALK_VEL = 0.4f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
@@ -40,14 +35,14 @@ public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	private float stateTimer;
 	private boolean isSquished;
 	private boolean isBumped;
-	private Agent perp;	// player perpetrator of squish, bump, and damage
+	private Agent perp;	// perpetrator of squish, bump, and damage
 
 	public Goomba(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
 		setConstVelocity(-GOOMBA_WALK_VEL, 0f);
 		Vector2 position = adef.bounds.getCenter(new Vector2());
-		goomBody = new GoombaBody(this, agency.getWorld(), position, getConstVelocity());
+		goomBody = new GoombaBody(this, agency.getWorld(), position);
 		goombaSprite = new GoombaSprite(agency.getAtlas(), position);
 
 		// the equivalent of isDead: bumped | squished
@@ -63,6 +58,8 @@ public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 
 	@Override
 	public void update(float delta) {
+		checkReverseVelocity();
+
 		GoombaState curState = getState();
 		switch(curState) {
 			case DEAD_SQUISH:
@@ -96,6 +93,16 @@ public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 		prevState = curState;
 	}
 
+	private void checkReverseVelocity() {
+		boolean moveRight = getConstVelocity().x > 0f;
+		// if regular move is blocked...
+		if(goomBody.isMoveBlocked(moveRight) || goomBody.isMoveBlockedByAgent(moveRight)) {
+			// ... and reverse move is not also blocked then reverse 
+			if(!goomBody.isMoveBlocked(!moveRight) && !goomBody.isMoveBlockedByAgent(!moveRight))
+				reverseConstVelocity(true,  false);
+		}
+	}
+
 	private GoombaState getState() {
 		if(isBumped)
 			return GoombaState.DEAD_BUMPED;
@@ -108,27 +115,23 @@ public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	}
 
 	private void startSquish() {
-		// stop dead
-		goomBody.zeroVelocity();
-
-		goomBody.makeUncontactable();
-
+		goomBody.zeroVelocity(true, true);
+		goomBody.disableAgentContact();
 		agency.playSound(AudioInfo.SOUND_STOMP);
 		if(perp != null) {
-			agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P100, true,
-					goomBody.getPosition(), UInfo.P2M(16), (Mario) perp));
+			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P100, true,
+					goomBody.getPosition(), UInfo.P2M(16), perp));
 		}
-
 	}
 
 	private void startBump() {
-		goomBody.disableContacts();
+		goomBody.disableAllContacts();
 
 		// keep x velocity, but redo the y velocity so goomba bounces up
 		goomBody.setVelocity(goomBody.getVelocity().x, GOOMBA_BUMP_UP_VEL);
 		if(perp != null) {
-			agency.createAgent(ADefFactory.makeFloatingPointsDef(PointAmount.P100, false,
-					goomBody.getPosition(), UInfo.P2M(16), (Mario) perp));
+			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P100, false,
+					goomBody.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
 
@@ -145,7 +148,7 @@ public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	}
 
 	@Override
-	public void onHeadBounce(Agent perp, Vector2 fromPos) {
+	public void onHeadBounce(Agent perp) {
 		this.perp = perp;
 		isSquished = true;
 	}
@@ -156,21 +159,10 @@ public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 		isBumped = true;
 	}
 
-	@Override
-	public void onContactAgent(Agent agent) {
-		reverseConstVelocity(true, false);
-	}
-
-	public void onContactBoundLine(LineSeg seg) {
-		// bounce off of vertical bounds
-		if(!seg.isHorizontal)
-			reverseConstVelocity(true,  false);
-	}
-
 	// contacting goomba does damage to players
 	@Override
 	public boolean isContactDamage() {
-		return true;
+		return !(isBumped || isSquished);
 	}
 
 	@Override
@@ -181,6 +173,11 @@ public class Goomba extends BasicWalkAgent implements HeadBounceAgent, ContactDm
 	@Override
 	public Rectangle getBounds() {
 		return goomBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return goomBody.getVelocity();
 	}
 
 	@Override

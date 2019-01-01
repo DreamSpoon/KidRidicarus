@@ -10,9 +10,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.MyKidRidicarus;
 import kidridicarus.agencydirector.AgencyDirector;
-import kidridicarus.guide.SMBGuide;
+import kidridicarus.guide.MainGuide;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
+import kidridicarus.info.PowerupInfo.PowChar;
 
 public class PlayScreen implements Screen {
 	private MyKidRidicarus game;
@@ -20,10 +21,10 @@ public class PlayScreen implements Screen {
 	private Viewport gameport;
 	private TextureAtlas atlas;
 	private AgencyDirector director;
-	private SMBGuide guide;	// "player"
+	private MainGuide guide;	// "player"
 	private int level;
 
-	public PlayScreen(MyKidRidicarus game, int level) {
+	public PlayScreen(MyKidRidicarus game, int level, PowChar initPowChar) {
 		this.game = game;
 		this.level = level;
 
@@ -36,7 +37,7 @@ public class PlayScreen implements Screen {
 
 		director = new AgencyDirector(game.manager, atlas);
 		director.createSpace(game.getLevelFilename(level));
-		guide = director.createGuide(game.batch, gamecam);
+		guide = director.createGuide(game.batch, gamecam, initPowChar);
 	}
 
 	@Override

@@ -8,8 +8,6 @@ public class SMBInfo {
 	public static final float MARIO_DEAD_TIME = 3f;
 	public static final float MARIO_LEVELEND_TIME = 5f;
 
-	public enum PowerupType { NONE, MUSHROOM, FIREFLOWER, POWERSTAR, MUSH1UP };
-
 	// https://www.mariowiki.com/Point
 	//   Super Mario Bros. 1
 	//     100 - 200 - 400 - 500 - 800 - 1000 - 2000 - 4000 - 5000 - 8000 - 1UP 

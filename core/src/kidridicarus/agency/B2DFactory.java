@@ -6,8 +6,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-import kidridicarus.agency.contacts.AgentBodyFilter;
-import kidridicarus.agency.contacts.CFBitSeq;
+import kidridicarus.agency.contact.AgentBodyFilter;
+import kidridicarus.agency.contact.CFBitSeq;
 
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;

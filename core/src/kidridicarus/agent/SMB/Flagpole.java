@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.SMB.FlagpoleBody;
-import kidridicarus.agent.sprites.SMB.PoleFlagSprite;
+import kidridicarus.agent.body.SMB.FlagpoleBody;
+import kidridicarus.agent.sprite.SMB.PoleFlagSprite;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.UInfo;
 
@@ -17,7 +17,7 @@ public class Flagpole extends Agent {
 
 	// offset is from top-left of flagpole bounds
 	private static final Vector2 FLAG_START_OFFSET = new Vector2(UInfo.P2M(-4), UInfo.P2M(-16));
-	private FlagpoleBody fpbody;
+	private FlagpoleBody fpBody;
 	private PoleFlagSprite flagSprite;
 	private Vector2 flagPos;
 	private Vector2 initFlagPos;
@@ -27,7 +27,7 @@ public class Flagpole extends Agent {
 	public Flagpole(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
-		fpbody = new FlagpoleBody(this, agency.getWorld(), adef.bounds);
+		fpBody = new FlagpoleBody(this, agency.getWorld(), adef.bounds);
 		isAtBottom = false;
 		dropTimer = 0f;
 		initFlagPos = FLAG_START_OFFSET.cpy().add(adef.bounds.x, adef.bounds.y+adef.bounds.height);
@@ -43,7 +43,7 @@ public class Flagpole extends Agent {
 		if(isAtBottom)
 			return;
 		if(dropTimer > 0f) {
-			flagPos = initFlagPos.cpy().add(0f, -(fpbody.getBounds().height - UInfo.P2M(32)) * (DROP_TIME - dropTimer) / DROP_TIME);
+			flagPos = initFlagPos.cpy().add(0f, -(fpBody.getBounds().height - UInfo.P2M(32)) * (DROP_TIME - dropTimer) / DROP_TIME);
 
 			dropTimer -= delta;
 			if(dropTimer <= 0f)
@@ -70,16 +70,21 @@ public class Flagpole extends Agent {
 
 	@Override
 	public Vector2 getPosition() {
-		return fpbody.getPosition();
+		return fpBody.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return fpbody.getBounds();
+		return fpBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override
 	public void dispose() {
-		fpbody.dispose();
+		fpBody.dispose();
 	}
 }

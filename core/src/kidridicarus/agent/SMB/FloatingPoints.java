@@ -8,7 +8,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.Mario;
-import kidridicarus.agent.sprites.SMB.FloatingPointsSprite;
+import kidridicarus.agent.sprite.SMB.FloatingPointsSprite;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.SMBInfo;
@@ -87,5 +87,20 @@ public class FloatingPoints extends Agent {
 
 	@Override
 	public void dispose() {
+	}
+
+	public static AgentDef makeFloatingPointsDef(PointAmount amt, boolean relative, Vector2 position,
+			float yOffset, Agent parentAgent) {
+		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
+		adef.properties.put(KVInfo.KEY_POINTAMOUNT, SMBInfo.pointAmountToStr(amt));
+		if(relative)
+			adef.properties.put(KVInfo.KEY_RELPOINTAMOUNT, KVInfo.VAL_TRUE);
+		adef.userData = parentAgent;
+		return adef;
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 }

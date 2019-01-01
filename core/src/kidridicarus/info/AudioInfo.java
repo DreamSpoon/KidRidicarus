@@ -3,6 +3,7 @@ package kidridicarus.info;
 public class AudioInfo {
 	public static final String MUSIC_STARPOWER = "audio/music/SMB/04_-_Super_Mario_Bros._-_NES_-_Invincible_BGM.ogg";
 	public static final String MUSIC_LEVELEND = "audio/music/SMB/02_-_Super_Mario_Bros._-_NES_-_Course_Clear_Fanfare.ogg";
+	public static final String MUSIC_METROIDITEM = "audio/music/Metroid/08_-_Metroid_-_NES_-_Get_Item_Jingle.ogg";
 
 	public static final String SOUND_BREAK = "audio/sound/SMB/Break.wav";
 	public static final String SOUND_BUMP = "audio/sound/SMB/Bump.wav";

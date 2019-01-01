@@ -12,10 +12,12 @@ import kidridicarus.agency.AgentDef;
 public abstract class Agent implements Disposable {
 	protected Agency agency;
 	protected MapProperties properties;
+
 	public Agent(Agency agency, AgentDef adef) {
 		this.agency = agency;
 		properties = adef.properties;
 	}
+
 	public MapProperties getProperties() {
 		return properties;
 	}
@@ -24,4 +26,5 @@ public abstract class Agent implements Disposable {
 	public abstract void draw(Batch batch);
 	public abstract Vector2 getPosition(); 
 	public abstract Rectangle getBounds();
+	public abstract Vector2 getVelocity(); 
 }

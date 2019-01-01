@@ -9,7 +9,7 @@ public class GameInfo {
 	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v2.tmx";
 	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v2.tmx";
 
-	public static final String TA_MAIN_FILENAME = "sprite/KidRid4.pack";
+	public static final String TA_MAIN_FILENAME = "sprite/KidRid6.pack";
 
 	public static final String SMB1_FONT = "font/prstart v1.fnt";
 
@@ -74,4 +74,14 @@ public class GameInfo {
 	};
 
 	public enum DiagonalDir4 { TOPRIGHT, TOPLEFT, BOTTOMLEFT, BOTTOMRIGHT };
+
+	// deleted code, maybe useful?
+	/*
+	 * Source of code:
+	 * https://stackoverflow.com/questions/6821810/determine-if-two-java-objects-are-of-the-same-class
+	 */
+//	private <T, U> boolean isObjClasses(Object obj1, Object obj2, Class<T> class1, Class<U> class2) {
+//		return (class1.isAssignableFrom(obj1.getClass()) && class2.isAssignableFrom(obj2.getClass())) ||
+//				(class1.isAssignableFrom(obj2.getClass()) && class2.isAssignableFrom(obj1.getClass()));
+//	}
 }

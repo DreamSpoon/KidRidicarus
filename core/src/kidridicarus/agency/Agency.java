@@ -11,12 +11,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.contacts.WorldContactFilter;
-import kidridicarus.agency.contacts.WorldContactListener;
+import kidridicarus.agency.contact.WorldContactFilter;
+import kidridicarus.agency.contact.WorldContactListener;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.Metroid.enemy.Skree;
 import kidridicarus.agent.Metroid.enemy.SkreeExp;
 import kidridicarus.agent.Metroid.enemy.Zoomer;
+import kidridicarus.agent.Metroid.item.MaruMari;
+import kidridicarus.agent.Metroid.player.Samus;
 import kidridicarus.agent.SMB.BrickPiece;
 import kidridicarus.agent.SMB.BumpTile;
 import kidridicarus.agent.SMB.CastleFlag;
@@ -139,6 +141,8 @@ public class Agency implements Disposable {
 		globalTimer += delta;
 	}
 
+	// TODO: If the World.step method is NOT running at present then dispose the agent immediately, otherwise add it
+	// to the queue to be disposed later - apply this same concept to other queues if possible.
 	public void disposeAgent(Agent agent) {
 		allAgents.remove(agent);
 	}
@@ -163,7 +167,7 @@ public class Agency implements Disposable {
 			allAgents.add(agent = new Turtle(this, adef));
 		else if(rClass.equals(KVInfo.VAL_COIN))
 			allAgents.add(agent = new StaticCoin(this, adef));
-		else if(rClass.equals(KVInfo.VAL_SPAWNGOOMBA) || rClass.equals(KVInfo.VAL_SPAWNTURTLE))
+		else if(rClass.equals(KVInfo.VAL_AGENTSPAWNER))
 			allAgents.add(agent = new AgentSpawner(this, adef));
 		else if(rClass.equals(KVInfo.VAL_SPAWNGUIDE))
 			allAgents.add(agent = new GuideSpawner(this, adef));
@@ -205,6 +209,10 @@ public class Agency implements Disposable {
 			allAgents.add(agent = new Skree(this, adef));
 		else if(rClass.equals(KVInfo.VAL_SKREE_EXP))
 			allAgents.add(agent = new SkreeExp(this, adef));
+		else if(rClass.equals(KVInfo.VAL_MARUMARI))
+			allAgents.add(agent = new MaruMari(this, adef));
+		else if(rClass.equals(KVInfo.VAL_SAMUS))
+			allAgents.add(agent = new Samus(this, adef));
 		else
 			QQ.pr("Unknown agent class to create: " + rClass);
 

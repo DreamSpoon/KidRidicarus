@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.sprites.SMB.BrickPieceSprite;
+import kidridicarus.agent.sprite.SMB.BrickPieceSprite;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
@@ -85,6 +85,11 @@ public class BrickPiece extends Agent {
 	public Rectangle getBounds() {
 		return new Rectangle(b2body.getPosition().x - BODY_WIDTH/2f, b2body.getPosition().y - BODY_HEIGHT/2f,
 				BODY_WIDTH, BODY_HEIGHT);
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return b2body.getLinearVelocity();
 	}
 
 	@Override

@@ -7,8 +7,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.Mario;
+import kidridicarus.info.PowerupInfo.PowType;
 import kidridicarus.info.SMBAnim;
-import kidridicarus.info.SMBInfo.PowerupType;
 
 public class PowerMushroom extends BaseMushroom {
 	public PowerMushroom(Agency agency, AgentDef adef) {
@@ -21,7 +21,7 @@ public class PowerMushroom extends BaseMushroom {
 			return;
 
 		if(agent instanceof Mario) {
-			((Mario) agent).applyPowerup(PowerupType.MUSHROOM);
+			((Mario) agent).applyPowerup(PowType.MUSHROOM);
 			agency.disposeAgent(this);
 		}
 	}

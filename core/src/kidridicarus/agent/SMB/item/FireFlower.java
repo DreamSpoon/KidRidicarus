@@ -3,25 +3,24 @@ package kidridicarus.agent.SMB.item;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.Mario;
-import kidridicarus.agent.bodies.SMB.item.FireFlowerBody;
+import kidridicarus.agent.body.SMB.item.FireFlowerBody;
 import kidridicarus.agent.optional.ItemAgent;
-import kidridicarus.agent.sprites.SMB.item.FireFlowerSprite;
+import kidridicarus.agent.sprite.SMB.item.FireFlowerSprite;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
-import kidridicarus.info.SMBInfo.PowerupType;
+import kidridicarus.info.PowerupInfo.PowType;
 import kidridicarus.info.UInfo;
 
-public class FireFlower extends Agent implements ItemAgent, Disposable {
+public class FireFlower extends Agent implements ItemAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 
 	private FireFlowerSprite flowerSprite;
-	private FireFlowerBody ffbody;
+	private FireFlowerBody ffBody;
 	private float stateTimer;
 	private boolean isSprouting;
 	private Vector2 sproutingPosition;
@@ -45,7 +44,7 @@ public class FireFlower extends Agent implements ItemAgent, Disposable {
 			if(stateTimer > SPROUT_TIME) {
 				isSprouting = false;
 				agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
-				ffbody = new FireFlowerBody(this, agency.getWorld(), sproutingPosition);
+				ffBody = new FireFlowerBody(this, agency.getWorld(), sproutingPosition);
 			}
 			else
 				yOffset = SPROUT_OFFSET * (SPROUT_TIME - stateTimer) / SPROUT_TIME;
@@ -53,7 +52,7 @@ public class FireFlower extends Agent implements ItemAgent, Disposable {
 			flowerSprite.update(delta, sproutingPosition.cpy().add(0f, yOffset));
 		}
 		else
-			flowerSprite.update(delta, ffbody.getPosition());
+			flowerSprite.update(delta, ffBody.getPosition());
 
 		// increment state timer
 		stateTimer += delta;
@@ -67,23 +66,28 @@ public class FireFlower extends Agent implements ItemAgent, Disposable {
 	@Override
 	public void use(Agent agent) {
 		if(stateTimer > SPROUT_TIME && agent instanceof Mario) {
-			((Mario) agent).applyPowerup(PowerupType.FIREFLOWER);
+			((Mario) agent).applyPowerup(PowType.FIREFLOWER);
 			agency.disposeAgent(this);
 		}
 	}
 
 	@Override
 	public Vector2 getPosition() {
-		return ffbody.getPosition();
+		return ffBody.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return ffbody.getBounds();
+		return ffBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override
 	public void dispose() {
-		ffbody.dispose();
+		ffBody.dispose();
 	}
 }

@@ -37,10 +37,6 @@ public class SpaceTemplateLoader {
 	}
 
 	private static LinkedList<AgentDef> checkLayerForAgentDefs(MapLayer layer) {
-		// the layer needs the agent class key to unlock agent def creation
-		if(!layer.getProperties().containsKey(KVInfo.KEY_AGENTCLASS))
-			return null;
-
 		if(layer instanceof TiledMapTileLayer)
 			return makeThingsFromTileLayer((TiledMapTileLayer) layer);
 		else
@@ -49,6 +45,10 @@ public class SpaceTemplateLoader {
 
 	private static LinkedList<AgentDef> makeThingsFromTileLayer(TiledMapTileLayer layer) {
 		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
+		if(!layer.getProperties().containsKey(KVInfo.KEY_AGENTCLASS))
+			return agentDefs;	// if no agentclass then return empty list of agent defs
+
+		// create list of agent defs
 		for(int y=0; y<layer.getHeight(); y++) {
 			for(int x=0; x<layer.getWidth(); x++) {
 				if(layer.getCell(x, y) == null || layer.getCell(x, y).getTile() == null)

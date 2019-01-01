@@ -8,7 +8,7 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.sprites.SMB.CastleFlagSprite;
+import kidridicarus.agent.sprite.SMB.CastleFlagSprite;
 import kidridicarus.info.UInfo;
 
 public class CastleFlag extends Agent {
@@ -102,6 +102,11 @@ public class CastleFlag extends Agent {
 	public Rectangle getBounds() {
 		// TODO: return actual position of flag, not just start position
 		return new Rectangle(startPosition.x - BODY_WIDTH/2f, startPosition.y - BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT);
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override

@@ -15,11 +15,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.guide.SMBGuide;
+import kidridicarus.guide.MainGuide;
 import kidridicarus.info.GameInfo;
 
 public class SMB_Hud implements Disposable {
-	private SMBGuide guide;
+	private MainGuide guide;
 	private Stage stage;
 	private Viewport viewport;
 
@@ -28,7 +28,7 @@ public class SMB_Hud implements Disposable {
 	private Label worldVarLabel;
 	private Label timeVarLabel;
 
-	public SMB_Hud(Agency agency, Batch batch, SMBGuide guide) {
+	public SMB_Hud(Agency agency, Batch batch, MainGuide guide) {
 		this.guide = guide;
 
 		viewport = new FitViewport(GameInfo.V_WIDTH, GameInfo.V_HEIGHT, new OrthographicCamera());
@@ -61,7 +61,7 @@ public class SMB_Hud implements Disposable {
 		stage.addActor(table);
 	}
 
-	public void setGuide(SMBGuide guide) {
+	public void setGuide(MainGuide guide) {
 		this.guide = guide;
 	}
 

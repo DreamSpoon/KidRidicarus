@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.GameInfo;
+import kidridicarus.info.PowerupInfo.PowChar;
 import kidridicarus.screens.PlayScreen;
 
 public class MyKidRidicarus extends Game {
@@ -29,6 +30,7 @@ public class MyKidRidicarus extends Game {
 		// other music files may be loaded later when a space is loaded
 		manager.load(AudioInfo.MUSIC_LEVELEND, Music.class);
 		manager.load(AudioInfo.MUSIC_STARPOWER, Music.class);
+		manager.load(AudioInfo.MUSIC_METROIDITEM, Music.class);
 		manager.load(AudioInfo.SOUND_COIN, Sound.class);
 		manager.load(AudioInfo.SOUND_BUMP, Sound.class);
 		manager.load(AudioInfo.SOUND_BREAK, Sound.class);
@@ -46,7 +48,7 @@ public class MyKidRidicarus extends Game {
 		manager.finishLoading();
 
 		// start playing first level 
-		setScreen(new PlayScreen(this, 0));
+		setScreen(new PlayScreen(this, 0, PowChar.MARIO));
 	}
 
 	@Override

@@ -7,15 +7,15 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.bodies.SMB.LevelEndBody;
+import kidridicarus.agent.body.SMB.LevelEndBody;
 import kidridicarus.info.KVInfo;
 
 public class LevelEndTrigger extends Agent {
-	private LevelEndBody lebody;
+	private LevelEndBody leBody;
 
 	public LevelEndTrigger(Agency agency, AgentDef adef) {
 		super(agency, adef);
-		lebody = new LevelEndBody(this, agency.getWorld(), adef.bounds);
+		leBody = new LevelEndBody(this, agency.getWorld(), adef.bounds);
 	}
 
 	@Override
@@ -38,16 +38,21 @@ public class LevelEndTrigger extends Agent {
 
 	@Override
 	public Vector2 getPosition() {
-		return lebody.getPosition();
+		return leBody.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return lebody.getBounds();
+		return leBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override
 	public void dispose() {
-		lebody.dispose();
+		leBody.dispose();
 	}
 }
