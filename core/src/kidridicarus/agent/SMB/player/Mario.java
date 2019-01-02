@@ -10,7 +10,7 @@ import kidridicarus.agent.AdvisableAgent;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.PlayerAgent;
 import kidridicarus.agent.SMB.FloatingPoints;
-import kidridicarus.agent.SMB.PipeWarp;
+import kidridicarus.agent.SMB.WarpPipe;
 import kidridicarus.agent.body.SMB.player.MarioBody;
 import kidridicarus.agent.body.SMB.player.MarioBody.MarioBodyState;
 import kidridicarus.agent.general.GuideSpawner;
@@ -509,7 +509,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 		return null;
 	}
 
-	private Vector2 getPipeEntrySpriteEndOffset(PipeWarp pipeToEnter) {
+	private Vector2 getPipeEntrySpriteEndOffset(WarpPipe pipeToEnter) {
 		switch(pipeToEnter.getDirection()) {
 			case RIGHT:
 				return new Vector2(PIPE_WARPWIDTH, 0f);

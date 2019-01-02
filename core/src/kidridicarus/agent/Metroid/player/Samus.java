@@ -17,7 +17,8 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.PowerupInfo.PowType;
 
 public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
-	private static final float RUN_VEL = 1f;
+	private static final float RUN_VEL = 0.8f;
+	private static final float RUN_AIR_VEL = RUN_VEL * 0.6f;
 	public enum SamusState { NONE, STAND, RUN, JUMP };
 
 	private Advice advice;
@@ -48,7 +49,9 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 
 	@Override
 	public void update(float delta) {
-		processAdvice();
+		processContacts();
+		processMoveState();
+
 		SamusState nextState = getNextState();
 
 		stateTimer = nextState == curState ? stateTimer + delta : 0f;
@@ -59,25 +62,38 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		advice.clear();
 	}
 
-	private void processAdvice() {
+	private void processContacts() {
+	}
+
+	private void processMoveState() {
 		if(advice.moveRight && !advice.moveLeft) {
 			isFacingRight = true;
-			isRunning = true;
-			sBody.setVelocity(RUN_VEL, sBody.getVelocity().y);
+			if(sBody.isOnGround()) {
+				isRunning = true;
+				sBody.setVelocity(RUN_VEL, sBody.getVelocity().y);
+			}
+			else
+				sBody.setVelocity(RUN_AIR_VEL, sBody.getVelocity().y);
 		}
 		else if(advice.moveLeft && !advice.moveRight) {
 			isFacingRight = false;
-			isRunning = true;
-			sBody.setVelocity(-RUN_VEL, sBody.getVelocity().y);
+			if(sBody.isOnGround()) {
+				isRunning = true;
+				sBody.setVelocity(-RUN_VEL, sBody.getVelocity().y);
+			}
+			else
+				sBody.setVelocity(-RUN_AIR_VEL, sBody.getVelocity().y);
 		}
 		else {
 			sBody.setVelocity(0f, sBody.getVelocity().y);
 			isRunning = false;
 		}
 		
-//		if(advice.jump) {
-//			if(sBody.)
-//		}
+		if(advice.jump) {
+			if(sBody.isOnGround()) {
+				
+			}
+		}
 	}
 
 	private SamusState getNextState() {

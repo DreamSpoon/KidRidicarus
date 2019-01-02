@@ -15,8 +15,8 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.enemy.Goomba;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
-import kidridicarus.agent.body.sensor.HMoveSensor;
 import kidridicarus.agent.body.sensor.OnGroundSensor;
+import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.UInfo;
 
 public class GoombaBody extends MobileAgentBody {
@@ -27,7 +27,7 @@ public class GoombaBody extends MobileAgentBody {
 
 	private Goomba parent;
 	private OnGroundSensor ogSensor;
-	private HMoveSensor hmSensor;
+	private SolidBoundSensor hmSensor;
 	private AgentContactSensor acSensor;
 	private Fixture acSensorFixture;
 
@@ -46,15 +46,14 @@ public class GoombaBody extends MobileAgentBody {
 	private void createBody(World world, Vector2 position) {
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
-		hmSensor = new HMoveSensor(parent);
+		hmSensor = new SolidBoundSensor(parent);
 		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, catBits, maskBits, position,
 				BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	private void createAgentSensor() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape;
-		boxShape = new PolygonShape();
+		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
@@ -75,15 +74,16 @@ public class GoombaBody extends MobileAgentBody {
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
-		ogSensor = new OnGroundSensor();
+		ogSensor = new OnGroundSensor(null);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
 	}
 
 	public boolean isMoveBlocked(boolean moveRight) {
-		return hmSensor.isMoveBlocked(getBounds(), moveRight);
+		return hmSensor.isHMoveBlocked(getBounds(), moveRight);
 	}
 
 	public boolean isOnGround() {
+		// return true if the on ground contacts list contains at least 1 floor
 		return ogSensor.isOnGround();
 	}
 

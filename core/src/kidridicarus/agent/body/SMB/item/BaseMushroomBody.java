@@ -14,8 +14,8 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.item.BaseMushroom;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.optional.BumpableBody;
-import kidridicarus.agent.body.sensor.HMoveSensor;
 import kidridicarus.agent.body.sensor.OnGroundSensor;
+import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.UInfo;
 
 public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
@@ -25,8 +25,8 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
 	private BaseMushroom parent;
-	private OnGroundSensor groundSensor;
-	private HMoveSensor hwalkSensor;
+	private OnGroundSensor ogSensor;
+	private SolidBoundSensor hmSensor;
 
 	public BaseMushroomBody(BaseMushroom parent, World world, Vector2 position) {
 		this.parent = parent;
@@ -37,8 +37,8 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		CFBitSeq catBits = new CFBitSeq(CFBit.ITEM_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.AGENT_BIT);
-		hwalkSensor = new HMoveSensor(parent);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hwalkSensor, catBits, maskBits, position,
+		hmSensor = new SolidBoundSensor(parent);
+		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, catBits, maskBits, position,
 				BODY_WIDTH, BODY_HEIGHT);
 		createBottomSensor();
 	}
@@ -51,16 +51,17 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
-		groundSensor = new OnGroundSensor();
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, groundSensor));
+		ogSensor = new OnGroundSensor(null);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
 	}
 
 	public boolean isOnGround() {
-		return groundSensor.isOnGround();
+		// return true if the on ground contacts list contains at least 1 floor
+		return ogSensor.isOnGround();
 	}
 
 	public boolean isMoveBlocked(boolean movingRight) {
-		return hwalkSensor.isMoveBlocked(getBounds(), movingRight);
+		return hmSensor.isHMoveBlocked(getBounds(), movingRight);
 	}
 
 	@Override

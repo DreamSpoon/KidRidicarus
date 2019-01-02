@@ -8,13 +8,13 @@ import kidridicarus.agency.B2DFactory;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.SMB.PipeWarp;
+import kidridicarus.agent.SMB.WarpPipe;
 import kidridicarus.agent.body.AgentBody;
 
-public class PipeWarpBody extends AgentBody {
-	private PipeWarp parent;
+public class WarpPipeBody extends AgentBody {
+	private WarpPipe parent;
 
-	public PipeWarpBody(PipeWarp parent, World world, Rectangle bounds) {
+	public WarpPipeBody(WarpPipe parent, World world, Rectangle bounds) {
 		this.parent = parent;
 		defineBody(world, bounds);
 	}

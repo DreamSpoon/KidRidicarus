@@ -67,4 +67,12 @@ public class QQ {
 	public static long hackTime() {
 		return Math.floorMod(System.currentTimeMillis(), 100000);
 	}
+
+	private static boolean isOn = false;
+	public static void toggleOn() {
+		isOn = !isOn;
+	}
+	public static boolean isOn() {
+		return isOn;
+	}
 }

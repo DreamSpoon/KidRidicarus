@@ -21,13 +21,13 @@ import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.Flagpole;
 import kidridicarus.agent.SMB.LevelEndTrigger;
-import kidridicarus.agent.SMB.PipeWarp;
+import kidridicarus.agent.SMB.WarpPipe;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.SMB.player.Mario.MarioPowerState;
 import kidridicarus.agent.body.MobileAgentBody;
+import kidridicarus.agent.body.sensor.AgentContactBeginSensor;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.OnGroundSensor;
-import kidridicarus.agent.body.sensor.WarpPipeSensor;
 import kidridicarus.agent.general.DespawnBox;
 import kidridicarus.agent.general.Room;
 import kidridicarus.agent.optional.BumpableTileAgent;
@@ -86,15 +86,15 @@ public class MarioBody extends MobileAgentBody {
 	private Vector2 prevVelocity;
 	private Vector2 prevPosition;
 
-	private Room currentRoom;
-	private PipeWarp pipeToEnter;
+	private WarpPipe pipeToEnter;
 	private Flagpole flagpoleContacted;
 	private LevelEndTrigger levelendContacted;
 
 	private OnGroundSensor ogSensor;
-	private WarpPipeSensor wpSensor;
+	private AgentContactSensor wpSensor;
 	private AgentContactSensor btSensor;
 	private AgentContactSensor acSensor;
+	private AgentContactBeginSensor acBeginSensor;
 	private Fixture acSensorFixture;
 
 	private MarioBodyState curState;
@@ -119,7 +119,6 @@ public class MarioBody extends MobileAgentBody {
 		isTakeDamage = false;
 		canHeadBang = true;
 
-		currentRoom = null;
 		pipeToEnter = null;
 		flagpoleContacted = null;
 		levelendContacted = null;
@@ -137,7 +136,7 @@ public class MarioBody extends MobileAgentBody {
 		createBody(position, velocity);
 
 		// the warp pipe sensor is chained to other sensors, so create it here
-		wpSensor = new WarpPipeSensor();
+		wpSensor = new AgentContactSensor(this);
 		createGroundAndPipeSensor();
 		createSidePipeSensors();
 		createBumpTileAndPipeSensor();
@@ -176,8 +175,8 @@ public class MarioBody extends MobileAgentBody {
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.PIPE_BIT);
-		ogSensor = new OnGroundSensor();
-		// the og chains to the wp sensor, bcause the wp sensor will be attached to other fixtures
+		ogSensor = new OnGroundSensor(null);
+		// the og chains to the wp sensor, because the wp sensor will be attached to other fixtures
 		ogSensor.chainTo(wpSensor);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
 	}
@@ -230,8 +229,10 @@ public class MarioBody extends MobileAgentBody {
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT, CFBit.ROOM_BIT, CFBit.ITEM_BIT, CFBit.DESPAWN_BIT);
 		acSensor = new AgentContactSensor(this);
+		acBeginSensor = new AgentContactBeginSensor(this);
+		acBeginSensor.chainTo(acSensor);
 		acSensorFixture = b2body.createFixture(fdef);
-		acSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
+		acSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, acBeginSensor));
 	}
 
 	public MarioBodyState update(float delta, Advice advice, MarioPowerState curPowerState) {
@@ -462,20 +463,16 @@ public class MarioBody extends MobileAgentBody {
 			dir = Direction4.DOWN;
 		else
 			return;
-		for(PipeWarp pw : wpSensor.getPipes()) {
-			if(pw.canBodyEnterPipe(this, dir)) {
+		for(Agent pw : wpSensor.getContactsByClass(WarpPipe.class)) {
+			if(((WarpPipe) pw).canBodyEnterPipe(this, dir)) {
 				// player can enter pipe, so save a ref to the pipe
-				pipeToEnter = pw;
+				pipeToEnter = (WarpPipe) pw;
 				return;
 			}
 		}
 	}
 
 	private void processOtherContacts() {
-		Room r = (Room) acSensor.getFirstContactByClass(Room.class);
-		if(r != null)
-			currentRoom = r;
-
 		// despawn contact?
 		if(acSensor.getFirstContactByClass(DespawnBox.class) != null) {
 			parent.die();
@@ -516,9 +513,12 @@ public class MarioBody extends MobileAgentBody {
 		}
 		else {
 			// check for headbounces
-			list = (LinkedList<Agent>) acSensor.getContactsByClass(HeadBounceAgent.class);
+			list = (LinkedList<Agent>) acBeginSensor.getAndResetContacts();
 			LinkedList<Agent> bouncedAgents = new LinkedList<Agent>();
 			for(Agent a : list) {
+				if(!(a instanceof HeadBounceAgent))
+					continue;
+
 				// If the bottom of mario's bounds box is at least as high as the middle of the agent then bounce.
 				// (i.e. if mario's foot is at least as high as midway up the other agent...)
 				// Note: check this frame postiion and previous frame postiion in case mario is travelling quickly...
@@ -536,8 +536,9 @@ public class MarioBody extends MobileAgentBody {
 			// if not invincible then check for incoming damage
 			if(!parent.isDmgInvincibleOn()) {
 				// check for contact damage
-				list = (LinkedList<Agent>) acSensor.getContactsByClass(ContactDmgAgent.class);
 				for(Agent a : list) {
+					if(!(a instanceof ContactDmgAgent))
+						continue;
 					// if the agent does contact damage and they were not head bounced
 					if(((ContactDmgAgent) a).isContactDamage() && !bouncedAgents.contains(a))
 						isTakeDamage = true;
@@ -658,7 +659,7 @@ public class MarioBody extends MobileAgentBody {
 		return stateTimer;
 	}
 
-	public PipeWarp getPipeToEnter() {
+	public WarpPipe getPipeToEnter() {
 		return pipeToEnter;
 	}
 
@@ -733,7 +734,7 @@ public class MarioBody extends MobileAgentBody {
 	}
 
 	public Room getCurrentRoom() {
-		return currentRoom;
+		return (Room) acSensor.getFirstContactByClass(Room.class);
 	}
 
 	@Override

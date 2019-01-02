@@ -22,6 +22,7 @@ import kidridicarus.info.PowerupInfo.PowType;
 import kidridicarus.info.SMBInfo;
 import kidridicarus.info.UInfo;
 import kidridicarus.tools.KeyboardMapping;
+import kidridicarus.tools.QQ;
 
 public class MainGuide implements Disposable {
 	private static final float SPAWN_TRIGGER_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 30);
@@ -116,6 +117,14 @@ public class MainGuide implements Disposable {
 		advice.moveDown = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_DOWN);
 		advice.run = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUN);
 		advice.jump = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
+
+		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
+			QQ.toggleOn();
+		if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP)) {
+			if(agent instanceof Mario) {
+				((Mario) agent).applyPowerup(PowType.FIREFLOWER);
+			}
+		}
 	}
 
 	public void setAgent(Agent agent) {

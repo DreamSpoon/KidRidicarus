@@ -12,7 +12,8 @@ import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agent.Metroid.enemy.Zoomer;
 import kidridicarus.agent.body.MobileAgentBody;
-import kidridicarus.agent.body.sensor.CrawlSensor;
+import kidridicarus.agent.body.sensor.AgentContactSensor;
+import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.GameInfo.DiagonalDir4;
 import kidridicarus.info.UInfo;
 
@@ -22,13 +23,13 @@ public class ZoomerBody extends MobileAgentBody {
 	private static final float SENSORSIZEFACTOR = 1.2f;
 
 	private Zoomer parent;
-	private CrawlSensor[] crawlSense;
+	private SolidBoundSensor[] crawlSense;
 	int[] contactCounts;
 
 	public ZoomerBody(Zoomer parent, World world, Vector2 position) {
 		this.parent = parent;
 		// 4 sensors: top-right, top-left, bottom-left, bottom-right
-		crawlSense = new CrawlSensor[] { null, null, null, null };
+		crawlSense = new SolidBoundSensor[] { null, null, null, null };
 
 		contactCounts = new int[DiagonalDir4.values().length];
 		for(int i=0; i<contactCounts.length; i++)
@@ -41,6 +42,7 @@ public class ZoomerBody extends MobileAgentBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 
 		createBody(world, position);
+		createAgentSensor();
 
 		Vector2 subBoxSize = new Vector2(BODY_WIDTH/2f*SENSORSIZEFACTOR,
 				BODY_HEIGHT/2f*SENSORSIZEFACTOR);
@@ -71,8 +73,20 @@ public class ZoomerBody extends MobileAgentBody {
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
 
+	private void createAgentSensor() {
+		FixtureDef fdef = new FixtureDef();
+		PolygonShape boxShape = new PolygonShape();
+		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
+		fdef.shape = boxShape;
+		fdef.isSensor = true;
+		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits,
+				new AgentContactSensor(this)));
+	}
+
 	// create the sensors for detecting walls to crawl on
-	private CrawlSensor createCrawlSensor(float posX, float posY, float sizeX, float sizeY) {
+	private SolidBoundSensor createCrawlSensor(float posX, float posY, float sizeX, float sizeY) {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape;
 		boxShape = new PolygonShape();
@@ -81,13 +95,13 @@ public class ZoomerBody extends MobileAgentBody {
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CrawlSensor sensor = new CrawlSensor();
+		SolidBoundSensor sensor = new SolidBoundSensor(null);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, sensor));
 		return sensor;
 	}
 
 	public boolean isSensorContacting(DiagonalDir4 quad) {
-		return crawlSense[quad.ordinal()].isContacting();
+		return crawlSense[quad.ordinal()].getContacts().size() > 0;
 	}
 
 	@Override

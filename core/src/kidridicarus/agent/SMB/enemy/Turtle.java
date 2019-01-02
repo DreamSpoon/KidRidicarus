@@ -1,5 +1,7 @@
 package kidridicarus.agent.SMB.enemy;
 
+import java.util.LinkedList;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -158,10 +160,11 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 				isHiding = true;
 		}
 
+		LinkedList<Agent> contBeginAgents = turtleBody.getAndResetContactBeginAgents();
 		boolean nowDead = false;
 		if(isSliding) {
 			// check the list of contacting agents, if there are damageable agents then slide damage them
-			for(Agent a : turtleBody.getContactAgents()) {
+			for(Agent a : contBeginAgents) {
 				// if hit another sliding turtle, then both die
 				if(a instanceof Turtle && ((Turtle) a).isSliding) {
 					((DamageableAgent) a).onDamage(perp, 1f, turtleBody.getPosition());
@@ -174,9 +177,9 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 					((DamageableAgent) a).onDamage(this, 1.0f, turtleBody.getPosition());
 			}
 		}
-		else {
+		else if(!isHeadBounced) {
 			// check the list of contacting agents, if there is a player agent then be kicked by them
-			for(Agent a : turtleBody.getContactAgents()) {
+			for(Agent a : contBeginAgents) {
 				if(a instanceof PlayerAgent) {
 					onPlayerContact(a);
 					break;
@@ -185,7 +188,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		}
 
 		// if not hiding and not dead then check if move is blocked and reverse direction if necessary
-		if(!isHiding && !nowDead && (turtleBody.isMoveBlocked(getConstVelocity().x > 0f) ||
+		if((isSliding || !isHiding) && !nowDead && (turtleBody.isMoveBlocked(getConstVelocity().x > 0f) ||
 				turtleBody.isMoveBlockedByAgent(getPosition(), getConstVelocity().x > 0f)))
 			bounceOffThing();
 	}

@@ -40,6 +40,6 @@ public class SMBAnim {
 
 		public static final String TURTLE_WALK =	DIR+"turtle_walk";
 		public static final String TURTLE_HIDE =	DIR+"turtle_hide";
-		public static final String TURTLE_WAKEUP =	DIR+"turtle_wakeup";
+		public static final String TURTLE_WAKEUP =	DIR+"turtle_wake";
 	}
 }

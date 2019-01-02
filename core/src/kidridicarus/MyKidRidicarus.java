@@ -18,7 +18,8 @@ public class MyKidRidicarus extends Game {
 
 	public AssetManager manager;
 
-	public String levelFilenames[] = new String[] {
+	private PowChar initPowChar = PowChar.MARIO;
+	private String levelFilenames[] = new String[] {
 			GameInfo.GAMEMAP_FILENAME1,
 			GameInfo.GAMEMAP_FILENAME2 };
 
@@ -48,7 +49,7 @@ public class MyKidRidicarus extends Game {
 		manager.finishLoading();
 
 		// start playing first level 
-		setScreen(new PlayScreen(this, 0, PowChar.MARIO));
+		setScreen(new PlayScreen(this, 0, initPowChar));
 	}
 
 	@Override

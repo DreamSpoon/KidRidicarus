@@ -8,17 +8,17 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.body.AgentBody;
-import kidridicarus.agent.body.SMB.PipeWarpBody;
+import kidridicarus.agent.body.SMB.WarpPipeBody;
 import kidridicarus.agent.general.GuideSpawner;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
 import kidridicarus.info.GameInfo.Direction4;
 
-public class PipeWarp extends Agent {
-	private PipeWarpBody pwbody;
+public class WarpPipe extends Agent {
+	private WarpPipeBody pwbody;
 	private Direction4 direction;
 
-	public PipeWarp(Agency agency, AgentDef adef) {
+	public WarpPipe(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
 		direction = null;
@@ -33,7 +33,7 @@ public class PipeWarp extends Agent {
 			else if(dir.equals("down"))
 				direction = Direction4.DOWN;
 		}
-		pwbody = new PipeWarpBody(this, agency.getWorld(), adef.bounds);
+		pwbody = new WarpPipeBody(this, agency.getWorld(), adef.bounds);
 	}
 
 	@Override

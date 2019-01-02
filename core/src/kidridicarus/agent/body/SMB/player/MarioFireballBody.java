@@ -16,7 +16,7 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.MarioFireball;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
-import kidridicarus.agent.body.sensor.HMoveSensor;
+import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.UInfo;
 
 public class MarioFireballBody extends MobileAgentBody {
@@ -24,7 +24,7 @@ public class MarioFireballBody extends MobileAgentBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(7f);
 
 	private MarioFireball parent;
-	private HMoveSensor hmSensor;
+	private SolidBoundSensor hmSensor;
 	private AgentContactSensor acSensor;
 
 	public MarioFireballBody(MarioFireball parent, World world, Vector2 position, Vector2 velocity) {
@@ -50,7 +50,7 @@ public class MarioFireballBody extends MobileAgentBody {
 		fdef.restitution = 1f;	// bouncy
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
-		hmSensor = new HMoveSensor(parent);
+		hmSensor = new SolidBoundSensor(parent);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hmSensor, catBits, maskBits,
 				BODY_WIDTH, BODY_HEIGHT);
 	}
@@ -76,7 +76,7 @@ public class MarioFireballBody extends MobileAgentBody {
 	}
 
 	public boolean isMoveBlocked(boolean movingRight) {
-		return hmSensor.isMoveBlocked(getBounds(), movingRight);
+		return hmSensor.isHMoveBlocked(getBounds(), movingRight);
 	}
 
 	public void setGravityScale(float scale) {

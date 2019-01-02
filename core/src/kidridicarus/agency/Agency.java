@@ -25,7 +25,7 @@ import kidridicarus.agent.SMB.CastleFlag;
 import kidridicarus.agent.SMB.Flagpole;
 import kidridicarus.agent.SMB.FloatingPoints;
 import kidridicarus.agent.SMB.LevelEndTrigger;
-import kidridicarus.agent.SMB.PipeWarp;
+import kidridicarus.agent.SMB.WarpPipe;
 import kidridicarus.agent.SMB.SpinCoin;
 import kidridicarus.agent.SMB.enemy.Goomba;
 import kidridicarus.agent.SMB.enemy.Turtle;
@@ -178,7 +178,7 @@ public class Agency implements Disposable {
 		else if(rClass.equals(KVInfo.VAL_LEVELEND_TRIGGER))
 			allAgents.add(agent = new LevelEndTrigger(this, adef));
 		else if(rClass.equals(KVInfo.VAL_PIPEWARP))
-			allAgents.add(agent = new PipeWarp(this, adef));
+			allAgents.add(agent = new WarpPipe(this, adef));
 		else if(rClass.equals(KVInfo.VAL_DESPAWN))
 			allAgents.add(agent = new DespawnBox(this, adef));
 		else if(rClass.equals(KVInfo.VAL_AGENTSPAWN_TRIGGER))

@@ -12,7 +12,7 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.item.PowerStar;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.optional.BumpableBody;
-import kidridicarus.agent.body.sensor.HMoveSensor;
+import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.UInfo;
 
 public class PowerStarBody extends MobileAgentBody implements BumpableBody {
@@ -20,7 +20,7 @@ public class PowerStarBody extends MobileAgentBody implements BumpableBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 
 	private PowerStar parent;
-	private HMoveSensor hwalkSensor;
+	private SolidBoundSensor hmSensor;
 
 	public PowerStarBody(PowerStar parent, World world, Vector2 position) {
 		this.parent = parent;
@@ -40,8 +40,8 @@ public class PowerStarBody extends MobileAgentBody implements BumpableBody {
 		// items contact mario but can pass through goombas, turtles, etc.
 		CFBitSeq catBits = new CFBitSeq(CFBit.ITEM_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.AGENT_BIT);
-		hwalkSensor = new HMoveSensor(parent);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hwalkSensor, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
+		hmSensor = new SolidBoundSensor(parent);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hmSensor, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class PowerStarBody extends MobileAgentBody implements BumpableBody {
 	}
 
 	public boolean isMoveBlocked(boolean movingRight) {
-		return hwalkSensor.isMoveBlocked(getBounds(), movingRight);
+		return hmSensor.isHMoveBlocked(getBounds(), movingRight);
 	}
 
 	@Override

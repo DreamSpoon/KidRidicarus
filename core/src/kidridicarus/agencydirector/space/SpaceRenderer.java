@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 import kidridicarus.info.GameInfo.LayerDrawOrder;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.tools.QQ;
 import kidridicarus.agent.Agent;
 import kidridicarus.guide.MainGuide;
 import kidridicarus.info.UInfo;
@@ -66,7 +67,8 @@ public class SpaceRenderer {
 		batch.end();
 
 		// DEBUG: draw outlines of Box2D fixtures
-		drawB2DebugRenderer(space, gamecam);
+		if(QQ.isOn())
+			drawB2DebugRenderer(space, gamecam);
 
 		// draw the HUD last, so it's on top of everything else
 		guide.drawHUD();

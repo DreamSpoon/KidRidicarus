@@ -28,18 +28,22 @@ public class SkreeBody extends MobileAgentBody {
 
 	private Skree parent;
 	private AgentContactSensor playerSensor;
-	private OnGroundSensor groundSensor;
+	private OnGroundSensor ogSensor;
 
 	public SkreeBody(Skree parent, World world, Vector2 position) {
 		this.parent = parent;
 		defineBody(world, position);
-		createPlayerSensor();
-		createGroundSensor();
 	}
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
+		createBody(world, position);
+		createAgentSensor();
+		createPlayerSensor();
+		createGroundSensor();
+	}
 
+	private void createBody(World world, Vector2 position) {
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyType.DynamicBody;
 		bdef.position.set(position);
@@ -50,6 +54,20 @@ public class SkreeBody extends MobileAgentBody {
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
 
+	// same size as main body, for detecting agents
+	private void createAgentSensor() {
+		FixtureDef fdef = new FixtureDef();
+		PolygonShape boxShape = new PolygonShape();
+		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
+		fdef.shape = boxShape;
+		fdef.isSensor = true;
+		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits,
+				new AgentContactSensor(this)));
+	}
+
+	// cone shaped sensor extending down below skree to check for player target 
 	private void createPlayerSensor() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape footShape;
@@ -82,12 +100,13 @@ public class SkreeBody extends MobileAgentBody {
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
-		groundSensor = new OnGroundSensor();
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, groundSensor));
+		ogSensor = new OnGroundSensor(null);
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
 	}
 
 	public boolean isOnGround() {
-		return groundSensor.isOnGround();
+		// return true if the on ground contacts list contains at least 1 floor
+		return ogSensor.isOnGround();
 	}
 
 	@Override
