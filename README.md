@@ -2,6 +2,12 @@
 
 ## Mashup of Super Mario Bros., Metroid, and Kid Icarus
 
+### Dedication:
+
+I dedicate this to Huyền.
+
+Anh Yêu Em.
+
 ### Intent:
 
 Mashup the first levels of 3 of my favorite games of the 80s.
@@ -10,13 +16,7 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
 ### Current State of Affairs:
 
-* Super Mario Bros. 1 almost done, still needs:
-
-  * End of level part of game needs time to points conversion countdown
-
-  * Some minor fixes (e.g. sometimes mario stops using jump force too early, enemies tend to "stick" together when there are many close together)
-
-* Metroid level 1 has begun, Zoomer and Skree implemented
+* Some Mario, Some Metroid
 
 ### Keyboard Controls
 
