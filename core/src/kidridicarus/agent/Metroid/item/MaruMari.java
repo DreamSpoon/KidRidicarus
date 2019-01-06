@@ -10,19 +10,19 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.PlayerAgent;
 import kidridicarus.agent.body.Metroid.item.MaruMariBody;
 import kidridicarus.agent.optional.ItemAgent;
-import kidridicarus.agent.sprite.Metroid.item.MaruMariSprite;
+import kidridicarus.agent.sprite.Metroid.item.MaruMariSprite2;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.PowerupInfo.PowType;
 
 public class MaruMari extends Agent implements ItemAgent {
 	private MaruMariBody mmBody;
-	private MaruMariSprite mmSprite;
+	private MaruMariSprite2 mmSprite;
 
 	public MaruMari(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
 		mmBody = new MaruMariBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
-		mmSprite = new MaruMariSprite(agency.getAtlas(), mmBody.getPosition());
+		mmSprite = new MaruMariSprite2(agency.getAtlas(), mmBody.getPosition());
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
 		agency.enableAgentUpdate(this);
 	}

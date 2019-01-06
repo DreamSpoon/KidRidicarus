@@ -2,12 +2,6 @@
 
 ## Mashup of Super Mario Bros., Metroid, and Kid Icarus
 
-### Dedication:
-
-I dedicate this to Huyền.
-
-Anh Yêu Em.
-
 ### Intent:
 
 Mashup the first levels of 3 of my favorite games of the 80s.
@@ -22,17 +16,21 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
 * I use a custom setup:
 
-  * RIGHT = 'F' key
+  * F - Move right
 
-  * UP = 'E' key
+  * E - Move up
 
-  * LEFT = 'S' key
+  * S - Move left
 
-  * DOWN = 'D' key
+  * D - Move down
 
-  * RUN = 'Left' key
+  * Left = Run
 
-  * JUMP = 'Down' key
+  * Down = Jump
+  
+  * F1  - Show Box2D Debug Renderer
+  
+  * F2  - Give Mario a Fireflower (nothing for Samus, sorry!)
 
 ### Process:
 
@@ -153,5 +151,8 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](www.youtube.com/watch?
 I'd like to thank my arms for staying by my side. I'd like to thank my legs for all their support. And I'd like to thank my hands especially - I could always count on my hands.
 
 If there are any more unthanked or unacknowledged contributors then I thank and acknowledge you now: Thanks!
+
+> Dedicated to Huyền
+> Anh Yêu Em
 
 This repo is maintained by David Loucks.

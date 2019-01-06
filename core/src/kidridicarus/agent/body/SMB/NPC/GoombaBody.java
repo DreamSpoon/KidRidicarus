@@ -1,4 +1,4 @@
-package kidridicarus.agent.body.SMB.enemy;
+package kidridicarus.agent.body.SMB.NPC;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -12,7 +12,7 @@ import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.SMB.enemy.Goomba;
+import kidridicarus.agent.SMB.NPC.Goomba;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.OnGroundSensor;

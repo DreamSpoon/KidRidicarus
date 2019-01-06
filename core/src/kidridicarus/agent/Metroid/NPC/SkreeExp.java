@@ -1,4 +1,4 @@
-package kidridicarus.agent.Metroid.enemy;
+package kidridicarus.agent.Metroid.NPC;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
@@ -7,9 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.body.Metroid.enemy.SkreeExpBody;
+import kidridicarus.agent.body.Metroid.NPC.SkreeExpBody;
 import kidridicarus.agent.optional.ContactDmgAgent;
-import kidridicarus.agent.sprite.Metroid.enemy.SkreeExpSprite;
+import kidridicarus.agent.sprite.Metroid.NPC.SkreeExpSprite;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
 public class SkreeExp extends Agent implements ContactDmgAgent {

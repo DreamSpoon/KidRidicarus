@@ -1,4 +1,4 @@
-package kidridicarus.agent.SMB.enemy;
+package kidridicarus.agent.SMB.NPC;
 
 import java.util.LinkedList;
 
@@ -12,12 +12,12 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.BasicWalkAgent;
 import kidridicarus.agent.PlayerAgent;
 import kidridicarus.agent.SMB.FloatingPoints;
-import kidridicarus.agent.body.SMB.enemy.TurtleBody;
+import kidridicarus.agent.body.SMB.NPC.TurtleBody;
 import kidridicarus.agent.optional.BumpableAgent;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.DamageableAgent;
 import kidridicarus.agent.optional.HeadBounceAgent;
-import kidridicarus.agent.sprite.SMB.enemy.TurtleSprite;
+import kidridicarus.agent.sprite.SMB.NPC.TurtleSprite;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
@@ -174,7 +174,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 				}
 				// hit non-turtle, so continue sliding and apply damage to other agent
 				else if(a instanceof DamageableAgent)
-					((DamageableAgent) a).onDamage(this, 1.0f, turtleBody.getPosition());
+					((DamageableAgent) a).onDamage(perp, 1.0f, turtleBody.getPosition());
 			}
 		}
 		else if(!isHeadBounced) {
@@ -187,10 +187,11 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 			}
 		}
 
-		// if not hiding and not dead then check if move is blocked and reverse direction if necessary
-		if((isSliding || !isHiding) && !nowDead && (turtleBody.isMoveBlocked(getConstVelocity().x > 0f) ||
-				turtleBody.isMoveBlockedByAgent(getPosition(), getConstVelocity().x > 0f)))
+		// if not dead then check if move is blocked and reverse direction if necessary
+		if(!nowDead && ((isSliding  && turtleBody.isMoveBlocked(getConstVelocity().x > 0f)) ||
+				(!isHiding && turtleBody.isMoveBlockedByAgent(getPosition(), getConstVelocity().x > 0f)))) {
 			bounceOffThing();
+		}
 	}
 
 	private void bounceOffThing() {

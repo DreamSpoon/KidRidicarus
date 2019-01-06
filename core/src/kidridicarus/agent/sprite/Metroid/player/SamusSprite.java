@@ -23,7 +23,7 @@ public class SamusSprite extends Sprite {
 	private static final float SML_SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SML_SPRITE_HEIGHT = UInfo.P2M(16);
 
-	private static final float ANIM_SPEED = 0.075f;
+	private static final float ANIM_SPEED = 0.05f;
 
 	private Animation<TextureRegion> aimRightAnim;
 	private Animation<TextureRegion> aimUpAnim;
@@ -78,13 +78,11 @@ public class SamusSprite extends Sprite {
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
-			case AIR:
 			case JUMP:
 				setRegion(jumpAnim.getKeyFrame(stateTimer, true));
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
-			case AIRSPIN:
 			case JUMPSPIN:
 				setRegion(jumpSpinAnim.getKeyFrame(stateTimer, true));
 				setBounds(getX(), getY(), MED_SPRITE_WIDTH, MED_SPRITE_HEIGHT);

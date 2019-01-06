@@ -1,4 +1,4 @@
-package kidridicarus.agent.body.SMB.enemy;
+package kidridicarus.agent.body.SMB.NPC;
 
 import java.util.LinkedList;
 
@@ -13,7 +13,7 @@ import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.SMB.enemy.Turtle;
+import kidridicarus.agent.SMB.NPC.Turtle;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.optional.BumpableBody;
 import kidridicarus.agent.body.sensor.AgentContactBeginSensor;

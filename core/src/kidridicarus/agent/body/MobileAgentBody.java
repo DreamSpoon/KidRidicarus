@@ -24,4 +24,8 @@ public abstract class MobileAgentBody extends AgentBody {
 	public void applyImpulse(Vector2 impulse) {
 		b2body.applyLinearImpulse(impulse, b2body.getWorldCenter(), true);
 	}
+
+	public void applyForce(Vector2 f) {
+		b2body.applyForceToCenter(f, true);
+	}
 }

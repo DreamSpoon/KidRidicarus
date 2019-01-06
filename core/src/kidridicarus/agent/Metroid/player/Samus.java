@@ -19,11 +19,12 @@ import kidridicarus.info.PowerupInfo.PowType;
 
 public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 	private static final float MIN_JUMPING_UP_VEL = 0.0001f;
-	private static final float DAMAGE_INV_TIME = 1f;
-	private static final Vector2 DAMAGE_KICK_IMP = new Vector2(2.7f, 0f);
+	private static final float DAMAGE_INV_TIME = 0.8f;
+	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
+	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
 
 	public enum ContactState { REGULAR, DAMAGE };
-	public enum MoveState { STAND, RUN, JUMP, AIR, AIRSPIN, JUMPSPIN };
+	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN };
 
 	private Advice advice;
 	private SamusBody sBody;
@@ -101,11 +102,16 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		sBody.setVelocity(sBody.getVelocity().x, 0);
 		// apply a kick impulse to the left or right depending on other agent's position
 		if(sBody.getPosition().x < position.x)
-			sBody.applyImpulse(DAMAGE_KICK_IMP.cpy().scl(-1f));
+			sBody.applyImpulse(DAMAGE_KICK_SIDE_IMP.cpy().scl(-1f));
 		else
-			sBody.applyImpulse(DAMAGE_KICK_IMP);
+			sBody.applyImpulse(DAMAGE_KICK_SIDE_IMP);
 
-		isJumpForceEnabled = false;
+		// apply kick up impulse if the player is above the other agent
+		if(sBody.getPosition().y > position.y)
+			sBody.applyImpulse(DAMAGE_KICK_UP_IMP);
+
+		if(curMoveState != MoveState.JUMPSPIN)
+			isJumpForceEnabled = false;
 	}
 
 	private void processMoveState(float delta) {
@@ -119,6 +125,10 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 			case RUN:
 				if(!isNextJumpEnabled && !advice.jump)
 					isNextJumpEnabled = true;
+
+				// if body is falling, or is not rising, then enable the next jump
+				if(sBody.getVelocity().y <= MIN_JUMPING_UP_VEL)
+					isLastJumpLanded = true;
 
 				if(advice.jump && sBody.isOnGround() && isLastJumpLanded && isNextJumpEnabled) {
 					isLastJumpLanded = false;
@@ -136,8 +146,6 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 						nextState = MoveState.STAND;
 				}
 				break;
-			case AIR:
-			case AIRSPIN:
 			case JUMP:
 			case JUMPSPIN:
 				// if body is falling, or is not rising, then enable the next jump and disable jump up force
@@ -169,7 +177,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 			if(jumpStart)
 				sBody.doJumpStart();
 			if(isJumpForceEnabled)
-				sBody.doJumpContinue();
+				sBody.doJumpContinue(delta);
 		}
 
 		if(isMoveHorizontal) {
@@ -179,9 +187,12 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 					sBody.doGroundMove(advice.moveRight);
 					break;
 				case JUMP:
+					// samus can airmove if jumping and not in damage state
+					if(curContactState != ContactState.DAMAGE)
+						sBody.doAirMove(advice.moveRight);
+					break;
 				case JUMPSPIN:
-				case AIR:
-				case AIRSPIN:
+					// samus can airmove while jump spinning even when in damage state
 					sBody.doAirMove(advice.moveRight);
 					break;
 			}

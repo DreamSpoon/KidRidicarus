@@ -1,8 +1,8 @@
 package kidridicarus.info;
 
 public class MetroidAnim {
-	public class Enemy {
-		private static final String DIR = "enemy/";
+	public class NPC {
+		private static final String DIR = "NPC/metroid/";
 
 		public static final String SKREE =		DIR+"skree";
 		public static final String SKREE_EXP =	DIR+"skree_exp";
@@ -10,13 +10,13 @@ public class MetroidAnim {
 	}
 
 	public class Item {
-		private static final String DIR = "item/";
+		private static final String DIR = "item/metroid/";
 
 		public static final String MARUMARI = DIR+"marumari";
 	}
 
 	public class Player {
-		private static final String DIR = "samus/";
+		private static final String DIR = "player/metroid/";
 
 		public static final String AIMRIGHT = DIR+"samus_aim_right";
 		public static final String AIMUP = DIR+"samus_aim_up";

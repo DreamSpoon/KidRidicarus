@@ -2,7 +2,7 @@ package kidridicarus.info;
 
 public class SMBAnim {
 	public class General {
-		private static final String DIR = "general/";
+		private static final String DIR = "general/SMB/";
 
 		public static final String FIREBALL =	DIR+"fireball";
 		public static final String FIREBALL_EXP =	DIR+"fireball_explode";
@@ -23,7 +23,7 @@ public class SMBAnim {
 	}
 
 	public class Item {
-		private static final String DIR = "item/";
+		private static final String DIR = "item/SMB/";
 
 		public static final String MUSH1UP =	DIR+"mush1up";
 		public static final String MUSHROOM =	DIR+"mushroom";
@@ -32,8 +32,8 @@ public class SMBAnim {
 		public static final String COIN_STATIC =	DIR+"coin_static";
 	}
 
-	public class Enemy {
-		private static final String DIR = "enemy/";
+	public class NPC {
+		private static final String DIR = "NPC/SMB/";
 
 		public static final String GOOMBA_WALK =	DIR+"goomba_walk";
 		public static final String GOOMBA_SQUISH =	DIR+"goomba_squish";

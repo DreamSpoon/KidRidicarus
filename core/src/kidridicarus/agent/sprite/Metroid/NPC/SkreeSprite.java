@@ -1,4 +1,4 @@
-package kidridicarus.agent.sprite.Metroid.enemy;
+package kidridicarus.agent.sprite.Metroid.NPC;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agent.Metroid.enemy.Skree.SkreeState;
+import kidridicarus.agent.Metroid.NPC.Skree.SkreeState;
 import kidridicarus.info.MetroidAnim;
 import kidridicarus.info.UInfo;
 
@@ -27,9 +27,9 @@ public class SkreeSprite extends Sprite {
 
 	public SkreeSprite(TextureAtlas atlas, Vector2 position) {
 		spinAnim = new Animation<TextureRegion>(ANIM_SPEED_REG,
-				atlas.findRegions(MetroidAnim.Enemy.SKREE), PlayMode.LOOP);
+				atlas.findRegions(MetroidAnim.NPC.SKREE), PlayMode.LOOP);
 		spinFastAnim = new Animation<TextureRegion>(ANIM_SPEED_FAST,
-				atlas.findRegions(MetroidAnim.Enemy.SKREE), PlayMode.LOOP);
+				atlas.findRegions(MetroidAnim.NPC.SKREE), PlayMode.LOOP);
 
 		stateTimer = 0;
 

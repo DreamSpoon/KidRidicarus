@@ -1,4 +1,4 @@
-package kidridicarus.agent.sprite.SMB.enemy;
+package kidridicarus.agent.sprite.SMB.NPC;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agent.SMB.enemy.Turtle.TurtleState;
+import kidridicarus.agent.SMB.NPC.Turtle.TurtleState;
 import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
@@ -23,10 +23,10 @@ public class TurtleSprite extends Sprite {
 
 	public TurtleSprite(TextureAtlas atlas, Vector2 position) {
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMBAnim.Enemy.TURTLE_WALK), PlayMode.LOOP);
+				atlas.findRegions(SMBAnim.NPC.TURTLE_WALK), PlayMode.LOOP);
 		wakeUpAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMBAnim.Enemy.TURTLE_WAKEUP), PlayMode.LOOP);
-		insideShell = atlas.findRegion(SMBAnim.Enemy.TURTLE_HIDE);
+				atlas.findRegions(SMBAnim.NPC.TURTLE_WAKEUP), PlayMode.LOOP);
+		insideShell = atlas.findRegion(SMBAnim.NPC.TURTLE_HIDE);
 
 		stateTimer = 0;
 

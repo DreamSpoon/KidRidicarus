@@ -1,4 +1,4 @@
-package kidridicarus.agent.Metroid.enemy;
+package kidridicarus.agent.Metroid.NPC;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
@@ -7,10 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.body.Metroid.enemy.ZoomerBody;
+import kidridicarus.agent.body.Metroid.NPC.ZoomerBody;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.DamageableAgent;
-import kidridicarus.agent.sprite.Metroid.enemy.ZoomerSprite;
+import kidridicarus.agent.sprite.Metroid.NPC.ZoomerSprite;
 import kidridicarus.info.UInfo;
 import kidridicarus.info.GameInfo.DiagonalDir4;
 import kidridicarus.info.GameInfo.Direction4;

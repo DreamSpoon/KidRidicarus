@@ -429,7 +429,7 @@ public class MarioBody extends MobileAgentBody {
 			else if(b2body.getLinearVelocity().y > 0f && jumpForceTimer > 0f) {
 				jumpForceTimer -= delta;
 				// the force was strong to begin and tapered off over time - some said it became irrelevant
-				useTheForceMario(MARIO_JUMP_FORCE * jumpForceTimer / MARIO_JUMPFORCE_TIME);
+				applyForce(new Vector2(0, MARIO_JUMP_FORCE * jumpForceTimer / MARIO_JUMPFORCE_TIME));
 			}
 		}
 		// finally, if mario is not on the ground (for reals) then he is falling since he is not jumping
@@ -638,10 +638,6 @@ public class MarioBody extends MobileAgentBody {
 	private void moveBodyY(float value) {
 		b2body.applyLinearImpulse(new Vector2(0, value),
 				b2body.getWorldCenter(), true);
-	}
-
-	private void useTheForceMario(float notMyFather) {
-		b2body.applyForce(new Vector2(0, notMyFather), b2body.getWorldCenter(), true);
 	}
 
 	// use defineBody method to re-enable contacts

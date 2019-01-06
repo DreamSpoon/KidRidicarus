@@ -1,4 +1,4 @@
-package kidridicarus.agent.body.Metroid.enemy;
+package kidridicarus.agent.body.Metroid.NPC;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -14,7 +14,7 @@ import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.PlayerAgent;
-import kidridicarus.agent.Metroid.enemy.Skree;
+import kidridicarus.agent.Metroid.NPC.Skree;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.OnGroundSensor;

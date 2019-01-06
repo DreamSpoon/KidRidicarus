@@ -6,12 +6,12 @@ public class GameInfo {
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v3.tmx";
-	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v3.tmx";
+	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v4.tmx";
+	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v4.tmx";
 
-	public static final String TA_MAIN_FILENAME = "sprite/KidRid7.pack";
+	public static final String TA_MAIN_FILENAME = "sprite/KidRid8.pack";
 
-	public static final String SMB1_FONT = "font/prstart v1.fnt";
+	public static final String SMB1_FONT = "font/prstart.fnt";
 
 	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
 	public static final float BODY_VS_VERT_BOUND_EPSILON = 0.001f;

@@ -1,4 +1,4 @@
-package kidridicarus.agent.body.Metroid.enemy;
+package kidridicarus.agent.body.Metroid.NPC;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -10,7 +10,7 @@ import kidridicarus.agency.B2DFactory;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agent.Metroid.enemy.Zoomer;
+import kidridicarus.agent.Metroid.NPC.Zoomer;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.SolidBoundSensor;
