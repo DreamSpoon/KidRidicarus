@@ -70,15 +70,15 @@ public class SkreeBody extends MobileAgentBody {
 	// cone shaped sensor extending down below skree to check for player target 
 	private void createPlayerSensor() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape footShape;
-		footShape = new PolygonShape();
+		PolygonShape boxShape;
+		boxShape = new PolygonShape();
 		float[] shapeVerts = new float[] {
 				UInfo.P2M(24), UInfo.P2M(16),
 				UInfo.P2M(-24), UInfo.P2M(16),
 				UInfo.P2M(-80), UInfo.P2M(-176),
 				UInfo.P2M(80), UInfo.P2M(-176) };
-		footShape.set(shapeVerts);
-		fdef.shape = footShape;
+		boxShape.set(shapeVerts);
+		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
@@ -93,10 +93,10 @@ public class SkreeBody extends MobileAgentBody {
 	// create the foot sensor for detecting onGround
 	private void createGroundSensor() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape footShape;
-		footShape = new PolygonShape();
-		footShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
-		fdef.shape = footShape;
+		PolygonShape boxShape;
+		boxShape = new PolygonShape();
+		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
+		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);

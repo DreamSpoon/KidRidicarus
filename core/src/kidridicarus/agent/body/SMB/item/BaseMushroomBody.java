@@ -45,9 +45,9 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 
 	private void createBottomSensor() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape footShape = new PolygonShape();
-		footShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
-		fdef.shape = footShape;
+		PolygonShape boxShape = new PolygonShape();
+		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
+		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);

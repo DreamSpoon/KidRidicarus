@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="230" height="46" tilewidth="16" tileheight="16" infinite="0" nextlayerid="94" nextobjectid="305">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="230" height="46" tilewidth="16" tileheight="16" infinite="0" nextlayerid="95" nextobjectid="305">
  <tileset firstgid="1" name="SMBTilesetV1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="48" columns="8">
   <image source="SMBTilesetV2.png" width="144" height="108"/>
  </tileset>
@@ -100,15 +100,19 @@
    eJzt1bEJAAAIwDAf8v/3HEUQdyGB3tAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAuuQQAtO2VngkAk18CAAAAAJ8UjQ0DWA==
   </data>
  </layer>
+ <layer id="94" name="playerstart" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="spawnguide"/>
+   <property name="spawnmain" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6DnsX9AY3w6SEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPDPtAMAAAAAAAAAAAAAAAAAAAAAAHDUAmwsACs=
+  </data>
+ </layer>
  <objectgroup id="20" name="spawnplayer">
   <properties>
    <property name="agentclass" value="spawnguide"/>
   </properties>
-  <object id="225" x="112" y="416" width="16" height="16">
-   <properties>
-    <property name="spawnmain" value="true"/>
-   </properties>
-  </object>
   <object id="232" x="720" y="560" width="16" height="16">
    <properties>
     <property name="name" value="level1coins"/>

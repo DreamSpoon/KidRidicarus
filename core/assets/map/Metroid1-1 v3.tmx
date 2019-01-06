@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="4">
- <tileset firstgid="1" name="MetroidTilesetV1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="24" columns="4">
-  <image source="MetroidTilesetV1.png" width="72" height="108"/>
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="4">
+ <tileset firstgid="1" name="MetroidTilesetV1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="40" columns="8">
+  <image source="MetroidTilesetV2.png" width="144" height="90"/>
  </tileset>
  <layer id="2" name="background" width="160" height="15">
   <properties>
@@ -26,7 +26,7 @@
    <property name="spawnagentclass" value="zoomer"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt17EJAEAIA0A3cP9tHeCrBwWRuzJ9IIkAYIv8zAEAAK7xfwAAXjYS9NEnACYU7WcATA==
+   eJzt1sEJADAIA0DH6P6TOoAvoYK0d8/8ExIBwBanmQMAf/MRgBfZNgCAykeCe/QJgAkJngUAkQ==
   </data>
  </layer>
  <layer id="6" name="skree" width="160" height="15">
@@ -35,16 +35,26 @@
    <property name="spawnagentclass" value="skree"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0jENAAAIwDBE4F8rFjgIHLQKdiwCmJLXAdDgUzb4DAAAAAAAAPiiAI7JAD0=
+   eJzt0jENAAAIwDB84N8nFjgIHLQKdiwCmJLXAdDgUzb4DAAAAAAAAPiiACbeAFI=
   </data>
  </layer>
- <objectgroup id="3" name="playerspawn">
+ <layer id="9" name="marumari" width="160" height="15">
+  <properties>
+   <property name="agentclass" value="marumari"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAIA7AJwb9O3jkgJK2CJgAAAAAA8MdcBwAAAKAsv+8AHQ==
+  </data>
+ </layer>
+ <layer id="10" name="playerstart" width="160" height="15">
   <properties>
    <property name="agentclass" value="spawnguide"/>
    <property name="spawnmain" value="true"/>
   </properties>
-  <object id="1" x="640" y="160" width="16" height="16"/>
- </objectgroup>
+  <data encoding="base64" compression="zlib">
+   eJztzkERAAAIA6AVsX9NS+z0AwlIAAAAAAAAuDTfAQAAoGYBfe8AHg==
+  </data>
+ </layer>
  <objectgroup id="4" name="rooms" visible="0">
   <properties>
    <property name="agentclass" value="room"/>
@@ -53,13 +63,6 @@
    <properties>
     <property name="roommusic" value="audio/music/Metroid/03_-_Metroid_-_NES_-_Brinstar_(Rock_Stage).ogg"/>
     <property name="roomtype" value="hscroll"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="8" name="powerup">
-  <object id="3" x="352" y="144" width="16" height="16">
-   <properties>
-    <property name="agentclass" value="marumari"/>
    </properties>
   </object>
  </objectgroup>

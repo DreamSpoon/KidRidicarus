@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agent.Metroid.player.Samus.SamusState;
+import kidridicarus.agent.Metroid.player.Samus.MoveState;
 import kidridicarus.info.MetroidAnim;
 import kidridicarus.info.UInfo;
 
@@ -18,7 +18,7 @@ public class SamusSprite extends Sprite {
 
 	private static final float MED_SPRITE_WIDTH = UInfo.P2M(24);
 	private static final float MED_SPRITE_HEIGHT = UInfo.P2M(24);
-	private static final Vector2 MED_SPRITE_OFFSET = UInfo.P2MVector(0, 0);
+	private static final Vector2 MED_SPRITE_OFFSET = UInfo.P2MVector(0, 5);
 
 	private static final float SML_SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SML_SPRITE_HEIGHT = UInfo.P2M(16);
@@ -65,11 +65,10 @@ public class SamusSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, SamusState parentState, boolean isFacingRight) {
+	public void update(float delta, Vector2 position, MoveState parentState, boolean isFacingRight) {
 		Vector2 offset = new Vector2(0f, 0f);
 		switch(parentState) {
 			case STAND:
-			case NONE:
 				setRegion(aimRightAnim.getKeyFrame(stateTimer, true));
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
@@ -79,8 +78,15 @@ public class SamusSprite extends Sprite {
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
+			case AIR:
 			case JUMP:
 				setRegion(jumpAnim.getKeyFrame(stateTimer, true));
+				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
+				offset.set(BIG_SPRITE_OFFSET);
+				break;
+			case AIRSPIN:
+			case JUMPSPIN:
+				setRegion(jumpSpinAnim.getKeyFrame(stateTimer, true));
 				setBounds(getX(), getY(), MED_SPRITE_WIDTH, MED_SPRITE_HEIGHT);
 				offset.set(MED_SPRITE_OFFSET);
 				break;

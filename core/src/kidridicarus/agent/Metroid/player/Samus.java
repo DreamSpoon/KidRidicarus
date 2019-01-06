@@ -11,34 +11,50 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.PlayerAgent;
 import kidridicarus.agent.body.Metroid.player.SamusBody;
 import kidridicarus.agent.general.Room;
+import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.sprite.Metroid.player.SamusSprite;
 import kidridicarus.guide.Advice;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.PowerupInfo.PowType;
 
 public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
-	private static final float RUN_VEL = 0.8f;
-	private static final float RUN_AIR_VEL = RUN_VEL * 0.6f;
-	public enum SamusState { NONE, STAND, RUN, JUMP };
+	private static final float MIN_JUMPING_UP_VEL = 0.0001f;
+	private static final float DAMAGE_INV_TIME = 1f;
+	private static final Vector2 DAMAGE_KICK_IMP = new Vector2(2.7f, 0f);
+
+	public enum ContactState { REGULAR, DAMAGE };
+	public enum MoveState { STAND, RUN, JUMP, AIR, AIRSPIN, JUMPSPIN };
 
 	private Advice advice;
 	private SamusBody sBody;
 	private SamusSprite sSprite;
 
-	private SamusState curState;
-	private float stateTimer;
+	private MoveState curMoveState;
+	private float moveStateTimer;
+	private ContactState curContactState;
+	private float contactStateTimer;
 
 	private boolean isFacingRight;
-	private boolean isRunning;
+	private boolean isJumpForceEnabled;
+	// the last jump must land before the next jump can start
+	private boolean isLastJumpLanded;
+	private boolean isNextJumpEnabled;
+	private Vector2 damagePos = new Vector2();
+	private boolean isDrawnLastFrame;
 
 	public Samus(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
 		advice = new Advice();
-		curState = SamusState.STAND;
-		stateTimer = 0f;
+		curMoveState = MoveState.STAND;
+		moveStateTimer = 0f;
+		curContactState = ContactState.REGULAR;
+		contactStateTimer = 0f;
 		isFacingRight = true;
-		isRunning = false;
+		isJumpForceEnabled = true;
+		isLastJumpLanded = true;
+		isNextJumpEnabled = true;
+		isDrawnLastFrame = false;
 
 		sBody = new SamusBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
@@ -49,63 +65,154 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 
 	@Override
 	public void update(float delta) {
-		processContacts();
-		processMoveState();
-
-		SamusState nextState = getNextState();
-
-		stateTimer = nextState == curState ? stateTimer + delta : 0f;
-		curState = nextState;
-
-		sSprite.update(delta, sBody.getPosition(), curState, isFacingRight);
-
+		processContacts(delta);
+		processMoveState(delta);
+		sSprite.update(delta, sBody.getPosition(), curMoveState, isFacingRight);
 		advice.clear();
 	}
 
-	private void processContacts() {
+	private void processContacts(float delta) {
+		ContactState nextState = ContactState.REGULAR;
+		switch(curContactState) {
+			case REGULAR:
+				for(Agent a : sBody.getContactsByClass(ContactDmgAgent.class)) {
+					ContactDmgAgent cda = (ContactDmgAgent) a;
+					if(cda.isContactDamage()) {
+						nextState = ContactState.DAMAGE;
+						doContactDamage(a.getPosition());
+					}
+				}
+				break;
+			case DAMAGE:
+				if(contactStateTimer > DAMAGE_INV_TIME)
+					nextState = ContactState.REGULAR;
+				else
+					nextState = ContactState.DAMAGE;
+				break;
+		}
+
+		contactStateTimer = nextState == curContactState ? contactStateTimer + delta : 0f;
+		curContactState = nextState;
 	}
 
-	private void processMoveState() {
-		if(advice.moveRight && !advice.moveLeft) {
-			isFacingRight = true;
-			if(sBody.isOnGround()) {
-				isRunning = true;
-				sBody.setVelocity(RUN_VEL, sBody.getVelocity().y);
-			}
-			else
-				sBody.setVelocity(RUN_AIR_VEL, sBody.getVelocity().y);
-		}
-		else if(advice.moveLeft && !advice.moveRight) {
-			isFacingRight = false;
-			if(sBody.isOnGround()) {
-				isRunning = true;
-				sBody.setVelocity(-RUN_VEL, sBody.getVelocity().y);
-			}
-			else
-				sBody.setVelocity(-RUN_AIR_VEL, sBody.getVelocity().y);
-		}
-		else {
-			sBody.setVelocity(0f, sBody.getVelocity().y);
-			isRunning = false;
-		}
-		
-		if(advice.jump) {
-			if(sBody.isOnGround()) {
-				
-			}
-		}
-	}
-
-	private SamusState getNextState() {
-		if(isRunning)
-			return SamusState.RUN;
+	private void doContactDamage(Vector2 position) {
+		damagePos.set(position);
+		// zero the y velocity
+		sBody.setVelocity(sBody.getVelocity().x, 0);
+		// apply a kick impulse to the left or right depending on other agent's position
+		if(sBody.getPosition().x < position.x)
+			sBody.applyImpulse(DAMAGE_KICK_IMP.cpy().scl(-1f));
 		else
-			return SamusState.STAND;
+			sBody.applyImpulse(DAMAGE_KICK_IMP);
+
+		isJumpForceEnabled = false;
+	}
+
+	private void processMoveState(float delta) {
+		MoveState nextState = null;
+		boolean jumpStart = false;
+		// XOR the moveleft and moveright, becuase can't move left and right at same time
+		boolean isMoveHorizontal = advice.moveRight^advice.moveLeft;
+
+		switch(curMoveState) {
+			case STAND:
+			case RUN:
+				if(!isNextJumpEnabled && !advice.jump)
+					isNextJumpEnabled = true;
+
+				if(advice.jump && sBody.isOnGround() && isLastJumpLanded && isNextJumpEnabled) {
+					isLastJumpLanded = false;
+					isJumpForceEnabled = true;
+					jumpStart = true;
+					if(isMoveHorizontal)
+						nextState = MoveState.JUMPSPIN;
+					else
+						nextState = MoveState.JUMP;
+				}
+				else {
+					if(isMoveHorizontal)
+						nextState = MoveState.RUN;
+					else
+						nextState = MoveState.STAND;
+				}
+				break;
+			case AIR:
+			case AIRSPIN:
+			case JUMP:
+			case JUMPSPIN:
+				// if body is falling, or is not rising, then enable the next jump and disable jump up force
+				if(sBody.getVelocity().y <= MIN_JUMPING_UP_VEL) {
+					isLastJumpLanded = true;
+					isJumpForceEnabled = false;
+				}
+				// if body is rising but not being advised to jump then disable jump up force
+				else if(!advice.jump)
+					isJumpForceEnabled = false;
+
+				// If the body is now onground but jump is still advised then disallow jumping until the
+				// jump advice stops
+				if(sBody.isOnGround() && advice.jump)
+					isNextJumpEnabled = false;
+
+				if(sBody.isOnGround() && !isJumpForceEnabled) {
+					if(isMoveHorizontal)
+						nextState = MoveState.RUN;
+					else
+						nextState = MoveState.STAND;
+				}
+				else
+					nextState = curMoveState;
+				break;
+		}
+
+		if(nextState == MoveState.JUMP || nextState == MoveState.JUMPSPIN) {
+			if(jumpStart)
+				sBody.doJumpStart();
+			if(isJumpForceEnabled)
+				sBody.doJumpContinue();
+		}
+
+		if(isMoveHorizontal) {
+			switch(nextState) {
+				case STAND:
+				case RUN:
+					sBody.doGroundMove(advice.moveRight);
+					break;
+				case JUMP:
+				case JUMPSPIN:
+				case AIR:
+				case AIRSPIN:
+					sBody.doAirMove(advice.moveRight);
+					break;
+			}
+		}
+		// if not moving right/left then do stop move
+		else {
+			if(curContactState == ContactState.DAMAGE && contactStateTimer < 0.2f)
+				sBody.doStopMove(true);
+			else
+				sBody.doStopMove(false);
+		}
+
+		sBody.clampMove();
+
+		// if advised move left or right (but not both at same time!) then set facing direction accordingly
+		if(advice.moveRight^advice.moveLeft)
+			isFacingRight = advice.moveRight;
+
+		moveStateTimer = nextState == curMoveState ? moveStateTimer + delta : 0f;
+		curMoveState = nextState;
 	}
 
 	@Override
 	public void draw(Batch batch) {
-		sSprite.draw(batch);
+		// toggle sprite on/off each frame while in contact damage state
+		if(curContactState == ContactState.DAMAGE && isDrawnLastFrame)
+			isDrawnLastFrame = false;
+		else {
+			sSprite.draw(batch);
+			isDrawnLastFrame = true;
+		}
 	}
 
 	@Override
@@ -130,7 +237,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 
 	@Override
 	public float getStateTimer() {
-		return stateTimer;
+		return moveStateTimer;
 	}
 
 	@Override

@@ -30,18 +30,27 @@ public class QQ {
 	public static void pr(String p) {
 		System.out.println(p);
 	}
+
+	// current time millis mod a big number, so we see the time without e notation
+	public static long tm() {
+		return Math.floorMod(System.currentTimeMillis(), 100000);
+	}
+
 	public static void addRect(Rectangle box, Color c, boolean isTemp) {
 		if(isTemp)
 			tempShowRects.add(new QQRect(box, c));
 		else
 			showRects.add(new QQRect(box, c));
 	}
+
 	public static void clearRects() {
 		showRects.clear();
 	}
+
 	public static void clearTempRects() {
 		tempShowRects.clear();
 	}
+
 	public static void renderTo(ShapeRenderer sr, Matrix4 combined) {
 		sr.setProjectionMatrix(combined);
 		sr.begin(ShapeType.Line);
@@ -63,16 +72,15 @@ public class QQ {
 		tempShowRects.clear();
 	}
 
-	// current time millis mod a big number, so we see the time without e notation
-	public static long hackTime() {
-		return Math.floorMod(System.currentTimeMillis(), 100000);
-	}
-
+	// global "is on" variable - to be used by anything, for anything - but there is only one on
 	private static boolean isOn = false;
-	public static void toggleOn() {
-		isOn = !isOn;
+	public static void setOn(boolean on) {
+		isOn = on;
 	}
 	public static boolean isOn() {
 		return isOn;
+	}
+	public static void toggleOn() {
+		isOn = !isOn;
 	}
 }
