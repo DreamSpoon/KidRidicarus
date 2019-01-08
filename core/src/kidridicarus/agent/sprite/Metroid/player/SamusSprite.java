@@ -22,6 +22,7 @@ public class SamusSprite extends Sprite {
 
 	private static final float SML_SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SML_SPRITE_HEIGHT = UInfo.P2M(16);
+	private static final Vector2 SML_SPRITE_OFFSET = UInfo.P2MVector(0, 0);
 
 	private static final float ANIM_SPEED = 0.05f;
 
@@ -65,21 +66,31 @@ public class SamusSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, MoveState parentState, boolean isFacingRight) {
+	public void update(float delta, Vector2 position, MoveState parentState, boolean isFacingRight, boolean isFacingUp) {
 		Vector2 offset = new Vector2(0f, 0f);
+
 		switch(parentState) {
 			case STAND:
-				setRegion(aimRightAnim.getKeyFrame(stateTimer, true));
+				if(isFacingUp)
+					setRegion(aimUpAnim.getKeyFrame(stateTimer, true));
+				else
+					setRegion(aimRightAnim.getKeyFrame(stateTimer, true));
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case RUN:
-				setRegion(runAnim.getKeyFrame(stateTimer, true));
+				if(isFacingUp)
+					setRegion(runAimUpAnim.getKeyFrame(stateTimer, true));
+				else
+					setRegion(runAnim.getKeyFrame(stateTimer, true));
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case JUMP:
-				setRegion(jumpAnim.getKeyFrame(stateTimer, true));
+				if(isFacingUp)
+					setRegion(jumpAimUpAnim.getKeyFrame(stateTimer, true));
+				else
+					setRegion(jumpAnim.getKeyFrame(stateTimer, true));
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
@@ -87,6 +98,11 @@ public class SamusSprite extends Sprite {
 				setRegion(jumpSpinAnim.getKeyFrame(stateTimer, true));
 				setBounds(getX(), getY(), MED_SPRITE_WIDTH, MED_SPRITE_HEIGHT);
 				offset.set(MED_SPRITE_OFFSET);
+				break;
+			case BALL:
+				setRegion(ballAnim.getKeyFrame(stateTimer, true));
+				setBounds(getX(), getY(), SML_SPRITE_WIDTH, SML_SPRITE_HEIGHT);
+				offset.set(SML_SPRITE_OFFSET);
 				break;
 		}
 

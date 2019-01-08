@@ -19,6 +19,7 @@ import kidridicarus.agent.Metroid.NPC.SkreeExp;
 import kidridicarus.agent.Metroid.NPC.Zoomer;
 import kidridicarus.agent.Metroid.item.MaruMari;
 import kidridicarus.agent.Metroid.player.Samus;
+import kidridicarus.agent.Metroid.player.SamusShot;
 import kidridicarus.agent.SMB.BrickPiece;
 import kidridicarus.agent.SMB.BumpTile;
 import kidridicarus.agent.SMB.CastleFlag;
@@ -213,6 +214,8 @@ public class Agency implements Disposable {
 			allAgents.add(agent = new MaruMari(this, adef));
 		else if(rClass.equals(KVInfo.VAL_SAMUS))
 			allAgents.add(agent = new Samus(this, adef));
+		else if(rClass.equals(KVInfo.VAL_SAMUS_SHOT))
+			allAgents.add(agent = new SamusShot(this, adef));
 		else
 			QQ.pr("Unknown agent class to create: " + rClass);
 

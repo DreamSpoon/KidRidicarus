@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="4">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="4">
  <tileset firstgid="1" name="MetroidTilesetV3" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="40" columns="8">
   <image source="MetroidTilesetV3.png" width="144" height="90"/>
  </tileset>
@@ -11,13 +11,21 @@
    eJztwzENAAAMBKGb37/gaugOCaumqqqqqqqqqqrq+wEYEV3B
   </data>
  </layer>
+ <layer id="11" name="doorway" width="160" height="15">
+  <properties>
+   <property name="draworder" value="top"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt0jsKgEAMBNCcwB96/6tqYdh+QWLgPZhyioGJAAAA4M+WJ+ubraDfXe5nzh7jP0dBv7vcz5wzxn+ugn53uR8AAACAb92/9QHp
+  </data>
+ </layer>
  <layer id="1" name="collision" width="160" height="15">
   <properties>
    <property name="draworder" value="top"/>
    <property name="solidlayer" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzlWoluwzAIdZeuy7Sru7L//9M1UlHYEz6wcbDWJ6HGUGywiHlNcwgh3F3kwEQznsC2yhFs9yBcl/P3tKdiPzGpWeNkMMfRIH/M8SEjOF/r/vE55srxut7j9ZOAMeFe8Oucv7ddin0Kf/PQroH+LXG25sfzohqjaxzjfK37N8N3teNDaEPO39ue8uN7oV2D+8+R7+TmSOlL7QisQT5+Euaz2r/UuYr9l9t74Fmp98AMsrd/L1CtYc+laytQ3lJ94RjPSm4vhcbvRan3QGsPsOwhlsjxPyuk6ouPpX7L7Zr1Sv2Im+Z0nni9yNtVzg7+vZDjf1ag/Ev4nVSj2vtWc3ZKvb1nv6/Be9jq54Ppaa8+QTD+mL83UvxvMlyH8i/hexb8T3N2SnbtedsbX2Grn28H/17Yi/9R/iV8z4L/BYW/xMm9eTrFTbETH0B+hOceCubPn4OR3hO9+F9s/3J8z4r/UQwl/lJtjsbTKQctP8L8R+MVe/G/GJ+T+nEN/1si+lr+OBp4/Uj8CM89grTfI/GKvfhfrJ+28D/+fG6J6Gv542igXoF9OAfsu968AuHx/E/7f1uMvy1hq7sfQVeKJSGjoPU+wv5ya4jxOy3/Wz9T7xfcgr3m/Bpl/3K/N/aIL8X3cvyP22PvF/xne6x/xvgfAX/recVf8r5Bz/V/AUeGEV4=
+   eJztWmFPxDAI7dx5zqifTOb//6e6RCK+QCktXat3LyG3wtEC6cq73ZaU0sOXLEw84xVsh1zA9gjCdZb/SHsu9iuTmjWuAXNcAvLHHJ8Mwfla68fn2CrHx3rP358EjAlrwa8t/9F2KfY1/c7Duwb6t8TZmh/Pi/YYXeMY52ut3wbf9Y6X1AbLf7Q958dr4V2D+2/Kd6w5cvpSOwL3IB+/CPNF1S93rmL/5fYeeHXqR2ADOdu/F2ivYc+l6yhQ3tL+wjGeldxeCo/fm1M/Aq09ILKHRMLif1HI7S8+lvott3vWK/Ujbmrp7oiHxf+iUcLvpD3qvW89Z6fU23v2+0hQrd5B/kr8Of63dlivhO9F8D/P2SnZveftHXU4i/8RSvheBP9LDn+Jk4/m6RQ3xU58APkRnnsomD9/Dkb6kejF/7T6WXwviv9RDCX+0t6cjadTDl5+hPnP1pfP4n8an5P6cQ3/2xV9LX+cDXz/SPwIzz2CVO+ZeMVZ/E/rpy38jz+f2xV9LX+cDdQrsA9bwL47mlcgRjz/8/7fpvG3Pf3suw9BV4o9I7Og9T7C/nJr0Pidl/8dn7n3C27BXnN+zVI/6/fGGfHl+J7F/7hde7/gP9u1/qnxPwL+1hsVf8n7Bj3X/wStAg92
   </data>
  </layer>
  <layer id="5" name="zoomer" width="160" height="15">

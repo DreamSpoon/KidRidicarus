@@ -51,7 +51,7 @@ public class FloatingPoints extends Agent {
 			amount = ((Mario) adef.userData).givePoints(amount, adef.properties.get(
 					KVInfo.KEY_RELPOINTAMOUNT, "", String.class).equals(KVInfo.VAL_TRUE));
 			if(amount == PointAmount.P1UP)
-				agency.playSound(AudioInfo.SOUND_1UP);
+				agency.playSound(AudioInfo.Sound.SMB.UP1);
 		}
 
 		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount);

@@ -78,9 +78,9 @@ public class AgencyDirector implements Disposable {
 		Vector2 startPos = getMainSpawnPosition();
 		smbGuide = new MainGuide(agency, batch, gamecam);
 		if(pc == PowChar.MARIO)
-			smbGuide.setAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_MARIO, startPos)));
+			smbGuide.setAdviseAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_MARIO, startPos)));
 		else if(pc == PowChar.SAMUS)
-			smbGuide.setAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_SAMUS, startPos)));
+			smbGuide.setAdviseAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_SAMUS, startPos)));
 
 		return smbGuide;
 	}

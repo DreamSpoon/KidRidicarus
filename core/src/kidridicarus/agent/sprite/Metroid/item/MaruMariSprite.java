@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.info.MetroidAnim;
 import kidridicarus.info.UInfo;
 
-public class MaruMariSprite2 extends Sprite {
+public class MaruMariSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.033f;
@@ -18,7 +18,7 @@ public class MaruMariSprite2 extends Sprite {
 	private Animation<TextureRegion> mmAnim;
 	private float stateTimer;
 
-	public MaruMariSprite2(TextureAtlas atlas, Vector2 position) {
+	public MaruMariSprite(TextureAtlas atlas, Vector2 position) {
 		mmAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidAnim.Item.MARUMARI), PlayMode.LOOP);
 

@@ -88,7 +88,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 		zSprite.update(delta, zBody.getPosition(), curState, upDir);
 	}
 
-	private static final float JUKE_EPSILON1 = 0.001f;
+	private static final float JUKE_EPSILON1 = 0.0002f;
 	private static final float JUKE_EPSILON2 = UInfo.P2M(0.01f);
 	private void checkYourself() {
 		/* Get the movement delta between this frame and last frame, and apply transform according to upDir and

@@ -1,5 +1,5 @@
 
-KidRid8.png
+KidRid9.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -249,7 +249,7 @@ general/SMB/digit8
   offset: 0, 0
   index: -1
 
-KidRid82.png
+KidRid92.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -282,7 +282,7 @@ item/metroid/marumari
   offset: 0, 0
   index: 4
 
-KidRid83.png
+KidRid93.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -399,7 +399,7 @@ item/SMB/powerstar
   offset: 0, 0
   index: 4
 
-KidRid84.png
+KidRid94.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -446,7 +446,7 @@ NPC/metroid/skree_exp
   offset: 0, 0
   index: -1
 
-KidRid85.png
+KidRid95.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -507,7 +507,7 @@ NPC/SMB/goomba_walk
   offset: 0, 0
   index: 2
 
-KidRid86.png
+KidRid96.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -925,7 +925,7 @@ player/mario/big/mario_reg_run
   offset: 0, 0
   index: 3
 
-KidRid87.png
+KidRid97.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1161,7 +1161,7 @@ player/mario/sml/mario_reg_stand
   offset: 0, 0
   index: -1
 
-KidRid88.png
+KidRid98.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1319,3 +1319,17 @@ player/metroid/samus_ball
   orig: 16, 16
   offset: 0, 0
   index: 4
+player/metroid/shot_explode
+  rotate: false
+  xy: 171, 67
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+player/metroid/shot_regular
+  rotate: false
+  xy: 241, 119
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1

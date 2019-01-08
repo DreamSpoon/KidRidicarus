@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 
 public class LineSeg implements Disposable {
@@ -126,13 +125,13 @@ public class LineSeg implements Disposable {
 	public boolean dblCheckContact(Rectangle otherBounds) {
 		Rectangle thisBounds = getBounds();
 		if(isHorizontal &&
-				thisBounds.x + thisBounds.width - GameInfo.BODY_VS_VERT_BOUND_EPSILON > otherBounds.x &&
-				thisBounds.x + GameInfo.BODY_VS_VERT_BOUND_EPSILON < otherBounds.x + otherBounds.width) {
+				thisBounds.x + thisBounds.width - UInfo.POS_EPSILON > otherBounds.x &&
+				thisBounds.x + UInfo.POS_EPSILON < otherBounds.x + otherBounds.width) {
 			return true;
 		}
 		else if(!isHorizontal &&
-				thisBounds.y + thisBounds.height - GameInfo.BODY_VS_VERT_BOUND_EPSILON > otherBounds.y &&
-				thisBounds.y + GameInfo.BODY_VS_VERT_BOUND_EPSILON < otherBounds.y + otherBounds.height) {
+				thisBounds.y + thisBounds.height - UInfo.POS_EPSILON > otherBounds.y &&
+				thisBounds.y + UInfo.POS_EPSILON < otherBounds.y + otherBounds.height) {
 			return true;
 		}
 		return false;

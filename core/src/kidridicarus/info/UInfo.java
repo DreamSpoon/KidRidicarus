@@ -12,6 +12,9 @@ public class UInfo {
 	public static final float PPM = 100f;
 	public static final int TILEPIX_X = 16;
 	public static final int TILEPIX_Y = 16;
+	public static final float VEL_EPSILON = 0.0001f;	// velocity epsilon (TODO: verify value)
+	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
+	public static final float POS_EPSILON = 0.001f;
 
 	/*
 	 * Input unit: Pixels
@@ -103,5 +106,9 @@ public class UInfo {
 	 */
 	public static Rectangle getP2MTileRect(int x, int y) {
 		return P2MRect(new Rectangle(x*TILEPIX_X, y*TILEPIX_Y, TILEPIX_X, TILEPIX_Y));
+	}
+
+	public static boolean EpsCheck(float input, float target, float epsilon) {
+		return input >= target-epsilon && input <= target+epsilon;
 	}
 }

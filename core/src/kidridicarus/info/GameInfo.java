@@ -9,12 +9,9 @@ public class GameInfo {
 	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v4.tmx";
 	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v4.tmx";
 
-	public static final String TA_MAIN_FILENAME = "sprite/KidRid8.pack";
+	public static final String TA_MAIN_FILENAME = "sprite/KidRid9.pack";
 
 	public static final String SMB1_FONT = "font/prstart.fnt";
-
-	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
-	public static final float BODY_VS_VERT_BOUND_EPSILON = 0.001f;
 
 	/*
 	 * Draw order explained:
@@ -29,7 +26,6 @@ public class GameInfo {
 	 * If order is NONE then layer is not drawn.
 	 * Usually, the player sprite is drawn TOP order, turtles and goombas are drawn MIDDLE order.
 	 */
-	// 
 	public enum SpriteDrawOrder { NONE, BOTTOM, MIDDLE, TOP };
 
 	public enum LayerDrawOrder { NONE, BOTTOM, MIDDLE, TOP };
@@ -73,7 +69,7 @@ public class GameInfo {
 		}
 	};
 
-	public enum DiagonalDir4 { TOPRIGHT, TOPLEFT, BOTTOMLEFT, BOTTOMRIGHT };
+	public enum DiagonalDir4 { TOPRIGHT, TOPLEFT, BOTTOMLEFT, BOTTOMRIGHT }
 
 	// deleted code, maybe useful?
 	/*

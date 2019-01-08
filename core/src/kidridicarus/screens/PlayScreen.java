@@ -14,6 +14,8 @@ import kidridicarus.guide.MainGuide;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 import kidridicarus.info.PowerupInfo.PowChar;
+import kidridicarus.tools.KeyboardMapping;
+import kidridicarus.tools.QQ;
 
 public class PlayScreen implements Screen {
 	private MyKidRidicarus game;
@@ -23,6 +25,12 @@ public class PlayScreen implements Screen {
 	private AgencyDirector director;
 	private MainGuide guide;	// "player"
 	private int level;
+
+	// debug stuff
+	private boolean useForcedFramerate = false;
+	private float forcedFPS = 30f;
+	private float frameTimer = 0;
+	private float forcedDelta = 1f/60f;
 
 	public PlayScreen(MyKidRidicarus game, int level, PowChar initPowChar) {
 		this.game = game;
@@ -42,7 +50,13 @@ public class PlayScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-		update(delta);
+		processForcedFramerate();
+		if(useForcedFramerate) {
+			if(pollForcedFrame(delta))
+				update(forcedDelta);
+		}
+		else
+			update(delta);
 
 		// clear screen
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -61,6 +75,37 @@ public class PlayScreen implements Screen {
 			game.setScreen(new GameOverScreen(game, false));
 			dispose();
 		}
+	}
+
+	private void processForcedFramerate() {
+		if(Gdx.input.isKeyJustPressed(KeyboardMapping.FORCE_FRAMERATE_TOGGLE)) {
+			useForcedFramerate = !useForcedFramerate;
+			QQ.pr("useForcedFramerate=" + useForcedFramerate);
+		}
+		boolean updated=false;
+		if(Gdx.input.isKeyJustPressed(KeyboardMapping.FORCE_FRAMERATE_FASTER)) {
+			updated = true;
+			forcedFPS *= 1.1f;
+		}
+		else if(Gdx.input.isKeyJustPressed(KeyboardMapping.FORCE_FRAMERATE_SLOWER)) {
+			updated = true;
+			forcedFPS /= 1.1f;
+		}
+		if(forcedFPS < 1f)
+			forcedFPS = 1f;
+		else if(forcedFPS > 60f)
+			forcedFPS = 60f;
+		if(updated)
+			QQ.pr("Force framerate is set to " + String.format("%1.1f", forcedFPS) + " FPS");
+	}
+
+	private boolean pollForcedFrame(float delta) {
+		frameTimer += delta;
+		if(frameTimer >= 1f / forcedFPS) {
+			frameTimer -= 1f / forcedFPS;
+			return true;
+		}
+		return false;
 	}
 
 	// Update the game world.

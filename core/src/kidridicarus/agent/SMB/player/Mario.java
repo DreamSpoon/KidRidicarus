@@ -166,7 +166,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 		else if(marioIsDead) {
 			if(curState != MarioState.DEAD) {
 				agency.stopMusic();
-				agency.playSound(AudioInfo.SOUND_MARIODIE);
+				agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
 
 				mBody.disableAllContacts();
 
@@ -221,7 +221,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 				case END5_BRAKE:
 					if(stateTimer > END_BRAKETIME) {
 						mBody.setFacingRight(true);
-						agency.startSinglePlayMusic(AudioInfo.MUSIC_LEVELEND);
+						agency.startSinglePlayMusic(AudioInfo.Music.SMB.LEVELEND);
 						mBody.resetFlagpoleContacted();
 						return MarioState.END6_RUN;
 					}
@@ -237,7 +237,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					mBody.zeroVelocity(true, true);
 
 					agency.stopMusic();
-					agency.playSound(AudioInfo.SOUND_FLAGPOLE);
+					agency.playSound(AudioInfo.Sound.SMB.FLAGPOLE);
 
 					return MarioState.END1_SLIDE;
 			}
@@ -254,7 +254,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					return curState;
 				// first frame of pipe entry
 				default:
-					agency.playSound(AudioInfo.SOUND_POWERDOWN);
+					agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
 
 					// Mario disappears behind the pipe as he moves into it
 					agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
@@ -332,7 +332,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 			offset = mBody.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
 		agency.createAgent(MarioFireball.makeMarioFireballDef(offset, mBody.isFacingRight(), this));
-		agency.playSound(AudioInfo.SOUND_FIREBALL);
+		agency.playSound(AudioInfo.Sound.SMB.FIREBALL);
 	}
 
 	private void processPowerups() {
@@ -347,7 +347,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					curPowerState = MarioPowerState.BIG;
 					mBody.setBodyPosVelAndSize(mBody.getPosition().add(0f, UInfo.P2M(8f)),
 							mBody.getVelocity(), true);
-					agency.playSound(AudioInfo.SOUND_POWERUP_USE);
+					agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 				}
 				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
 						mBody.getPosition(), UInfo.P2M(16), this));
@@ -357,19 +357,19 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					curPowerState = MarioPowerState.BIG;
 					mBody.setBodyPosVelAndSize(mBody.getPosition().add(0f, UInfo.P2M(8f)),
 							mBody.getVelocity(), true);
-					agency.playSound(AudioInfo.SOUND_POWERUP_USE);
+					agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 				}
 				else if(curPowerState == MarioPowerState.BIG) {
 					curPowerState = MarioPowerState.FIRE;
-					agency.playSound(AudioInfo.SOUND_POWERUP_USE);
+					agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 				}
 				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
 						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case POWERSTAR:
 				powerStarTimer = POWERSTAR_TIME;
-				agency.playSound(AudioInfo.SOUND_POWERUP_USE);
-				agency.startSinglePlayMusic(AudioInfo.MUSIC_STARPOWER);
+				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+				agency.startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
 				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
 						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
@@ -404,7 +404,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 				}
 
 				startDmgInvincibility();
-				agency.playSound(AudioInfo.SOUND_POWERDOWN);
+				agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
 			}
 			// die if small and not invincible
 			else
@@ -445,7 +445,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	}
 
 	public void giveCoin() {
-		agency.playSound(AudioInfo.SOUND_COIN);
+		agency.playSound(AudioInfo.Sound.SMB.COIN);
 		givePoints(PointAmount.P200, false);
 		coinTotal++;
 	}

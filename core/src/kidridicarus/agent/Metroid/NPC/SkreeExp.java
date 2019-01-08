@@ -35,8 +35,10 @@ public class SkreeExp extends Agent implements ContactDmgAgent {
 	public void update(float delta) {
 		if(stateTimer > LIVE_TIME)
 			agency.disposeAgent(this);
-		seSprite.update(delta, seBody.getPosition());
-		stateTimer += delta;
+		else {
+			seSprite.update(delta, seBody.getPosition());
+			stateTimer += delta;
+		}
 	}
 
 	@Override

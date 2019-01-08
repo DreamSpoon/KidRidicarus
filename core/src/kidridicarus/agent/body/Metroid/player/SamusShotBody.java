@@ -1,4 +1,4 @@
-package kidridicarus.agent.body.SMB.player;
+package kidridicarus.agent.body.Metroid.player;
 
 import java.util.LinkedList;
 
@@ -7,27 +7,28 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.B2DFactory;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.SMB.player.MarioFireball;
+import kidridicarus.agent.Metroid.player.SamusShot;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.UInfo;
 
-public class MarioFireballBody extends MobileAgentBody {
-	private static final float BODY_WIDTH = UInfo.P2M(7f);
-	private static final float BODY_HEIGHT = UInfo.P2M(7f);
+public class SamusShotBody extends MobileAgentBody {
+	private static final float BODY_WIDTH = UInfo.P2M(4);
+	private static final float BODY_HEIGHT = UInfo.P2M(4);
 
-	private MarioFireball parent;
-	private SolidBoundSensor hmSensor;
+	private SamusShot parent;
+	private SolidBoundSensor boundSensor;
 	private AgentContactSensor acSensor;
 
-	public MarioFireballBody(MarioFireball parent, World world, Vector2 position, Vector2 velocity) {
+	public SamusShotBody(SamusShot parent, World world, Vector2 position, Vector2 velocity) {
 		this.parent = parent;
 		defineBody(world, position, velocity);
 	}
@@ -41,18 +42,15 @@ public class MarioFireballBody extends MobileAgentBody {
 
 	private void createBody(World world, Vector2 position, Vector2 velocity) {
 		BodyDef bdef = new BodyDef();
+		bdef.type = BodyType.DynamicBody;
 		bdef.position.set(position);
 		bdef.linearVelocity.set(velocity);
-		bdef.gravityScale = 2f;	// heavy
-		bdef.type = BodyDef.BodyType.DynamicBody;
+		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
-		fdef.friction = 0f;		// slippery
-		fdef.restitution = 1f;	// bouncy
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
-		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hmSensor, catBits, maskBits,
-				BODY_WIDTH, BODY_HEIGHT);
+		boundSensor = new SolidBoundSensor(parent);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, boundSensor, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	private void createAgentSensor() {
@@ -67,20 +65,12 @@ public class MarioFireballBody extends MobileAgentBody {
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
 	}
 
-	public LinkedList<Agent> getContactAgents() {
-		return acSensor.getContacts();
+	public boolean isHitBound() {
+		return boundSensor.getContacts().size() > 0;
 	}
 
 	public <T> LinkedList<Agent> getContactAgentsByClass(Class<T> clazz) {
 		return acSensor.getContactsByClass(clazz);
-	}
-
-	public boolean isMoveBlocked(boolean movingRight) {
-		return hmSensor.isHMoveBlocked(getBounds(), movingRight);
-	}
-
-	public void setGravityScale(float scale) {
-		b2body.setGravityScale(scale);
 	}
 
 	@Override

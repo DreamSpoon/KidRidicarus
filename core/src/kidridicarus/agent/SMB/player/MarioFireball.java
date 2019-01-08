@@ -78,9 +78,9 @@ public class MarioFireball extends BasicWalkAgent {
 					fbBody.setVelocity(0f, 0f);
 					fbBody.setGravityScale(0f);
 					if(contactState == ContactState.AGENT)
-						agency.playSound(AudioInfo.SOUND_KICK);
+						agency.playSound(AudioInfo.Sound.SMB.KICK);
 					else
-						agency.playSound(AudioInfo.SOUND_BUMP);
+						agency.playSound(AudioInfo.Sound.SMB.BUMP);
 				}
 				if(fireballSprite.isExplodeFinished())
 					agency.disposeAgent(this);

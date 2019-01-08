@@ -414,9 +414,9 @@ public class MarioBody extends MobileAgentBody {
 			// the remainder of the jump up velocity is achieved through mid-air up-force
 			jumpForceTimer = MARIO_JUMPFORCE_TIME;
 			if(curPowerState != MarioPowerState.SMALL)
-				agency.playSound(AudioInfo.SOUND_MARIOBIGJUMP);
+				agency.playSound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
 			else
-				agency.playSound(AudioInfo.SOUND_MARIOSMLJUMP);
+				agency.playSound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
 		}
 		else if(isJumping) {	// jumped and is mid-air
 			nextState = MarioBodyState.JUMP;
@@ -507,7 +507,7 @@ public class MarioBody extends MobileAgentBody {
 			list = (LinkedList<Agent>) acSensor.getContactsByClass(DamageableAgent.class);
 			for(Agent a : list) {
 				// playSound should go in the processBody method, but... this is so much easier!
-				agency.playSound(AudioInfo.SOUND_KICK);
+				agency.playSound(AudioInfo.Sound.SMB.KICK);
 				((DamageableAgent) a).onDamage(parent, 1f, b2body.getPosition());
 			}
 		}

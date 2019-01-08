@@ -199,7 +199,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		reverseConstVelocity(true, false);
 		facingRight = !facingRight;
 		if(isSliding)
-			agency.playSound(AudioInfo.SOUND_BUMP);
+			agency.playSound(AudioInfo.Sound.SMB.BUMP);
 	}
 
 	private void enableSlide(boolean right) {
@@ -220,7 +220,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 	}
 
 	private void doStartSlide() {
-		agency.playSound(AudioInfo.SOUND_KICK);
+		agency.playSound(AudioInfo.Sound.SMB.KICK);
 		slidingTotal = PointAmount.P400;
 		if(perp != null) {
 			agency.createAgent(FloatingPoints.makeFloatingPointsDef(slidingTotal, isHeadBounced,
@@ -231,7 +231,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 	private void doStartHide() {
 		// stop moving
 		turtleBody.zeroVelocity(true, true);
-		agency.playSound(AudioInfo.SOUND_STOMP);
+		agency.playSound(AudioInfo.Sound.SMB.STOMP);
 		if(perp != null) {
 			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P100, isHeadBounced,
 					turtleBody.getPosition(), UInfo.P2M(16), perp));

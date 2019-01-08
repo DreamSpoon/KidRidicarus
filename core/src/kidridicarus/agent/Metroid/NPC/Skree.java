@@ -143,7 +143,6 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 					EXPLODE_OFFSET[i]));
 			adef.velocity.set(EXPLODE_VEL[i]);
 			agency.createAgent(adef);
-			
 		}
 		agency.disposeAgent(this);
 	}

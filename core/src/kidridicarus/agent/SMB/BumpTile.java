@@ -245,11 +245,11 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		Vector2 pos = btBody.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y));
 		switch(blockItem) {
 			case MUSH1UP:
-				agency.playSound(AudioInfo.SOUND_POWERUP_SPAWN);
+				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
 				agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_MUSH1UP, pos));
 				break;
 			case MUSHROOM:
-				agency.playSound(AudioInfo.SOUND_POWERUP_SPAWN);
+				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
 				// big mario pops a fireflower?
 				if(wasHitByBig)
 					agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_FIREFLOWER, pos));
@@ -257,7 +257,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 					agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_MUSHROOM, pos));
 				break;
 			case STAR:
-				agency.playSound(AudioInfo.SOUND_POWERUP_SPAWN);
+				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
 				agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_POWERSTAR, pos));
 				break;
 			default:
@@ -266,7 +266,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 	}
 
 	private void startBreakBrick() {
-		agency.playSound(AudioInfo.SOUND_BREAK);
+		agency.playSound(AudioInfo.Sound.SMB.BREAK);
 		((Mario) bumpingAgent).givePoints(PointAmount.P200, false);
 		agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), false);
 
@@ -294,7 +294,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 	}
 
 	private void startSpinningCoin() {
-		agency.playSound(AudioInfo.SOUND_COIN);
+		agency.playSound(AudioInfo.Sound.SMB.COIN);
 		agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P200, false, btBody.getPosition(),
 				UInfo.P2M(UInfo.TILEPIX_Y * 2), (Mario) bumpingAgent));
 

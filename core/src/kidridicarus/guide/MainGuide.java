@@ -81,7 +81,7 @@ public class MainGuide implements Disposable {
 		// if mario received a maru mari then switch to samus
 		PowType ncPow = ((PlayerAgent) agent).pollNonCharPowerup();
 		if(ncPow == PowType.MARUMARI) {
-			agency.startSinglePlayMusic(AudioInfo.MUSIC_METROIDITEM);
+			agency.startSinglePlayMusic(AudioInfo.Music.Metroid.METROIDITEM);
 			switchAgentType(PowChar.SAMUS);
 		}
 	}
@@ -127,7 +127,7 @@ public class MainGuide implements Disposable {
 		}
 	}
 
-	public void setAgent(Agent agent) {
+	public void setAdviseAgent(Agent agent) {
 		if(!(agent instanceof PlayerAgent) || !(agent instanceof AdvisableAgent)) {
 			throw new IllegalArgumentException("setAgent method must be given only instances of PlayerAgent "+
 					"combined with AdvisableAgent.");

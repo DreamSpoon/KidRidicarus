@@ -117,7 +117,7 @@ public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounc
 	private void startSquish() {
 		goomBody.zeroVelocity(true, true);
 		goomBody.disableAgentContact();
-		agency.playSound(AudioInfo.SOUND_STOMP);
+		agency.playSound(AudioInfo.Sound.SMB.STOMP);
 		if(perp != null) {
 			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P100, true,
 					goomBody.getPosition(), UInfo.P2M(16), perp));

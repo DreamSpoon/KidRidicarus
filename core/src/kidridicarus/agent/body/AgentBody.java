@@ -33,6 +33,14 @@ public abstract class AgentBody implements Disposable {
 		return new Rectangle(b2body.getPosition().x - bodyWidth/2f,
 				b2body.getPosition().y - bodyHeight/2f, bodyWidth, bodyHeight);
 	}
+	
+	public float getBodyWidth() {
+		return bodyWidth;
+	}
+
+	public float getBodyHeight() {
+		return bodyHeight;
+	}
 
 	public void setActive(boolean active) {
 		b2body.setActive(active);

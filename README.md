@@ -16,13 +16,13 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
 * I use a custom setup:
 
-  * F - Move right
+  * W - Move up
 
-  * E - Move up
+  * A - Move left
 
-  * S - Move left
+  * S - Move down
 
-  * D - Move down
+  * D - Move right
 
   * Left = Run
 
@@ -31,6 +31,12 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
   * F1  - Show Box2D Debug Renderer
   
   * F2  - Give Mario a Fireflower (nothing for Samus, sorry!)
+  
+  * F3 - Toggle forced frame rate (world step method is called with delta=1/60th second, step method is called less often, effectively slowing gameplay)
+  
+  * F4 - Increase forced frame rate
+ 
+  * F5 - Decrease forced frame rate
 
 ### Process:
 
@@ -76,10 +82,8 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
   * Use Audacity for modifying/converting audio
 
-* Game
+* Field Research
 
-  * FCEUX with the emulation speed turned down to 50%
-  
   * Save AVI videos from FCEUX, watch videos with ShotCut to see the action frame by frame
 
 ### Coding Resources:
@@ -136,6 +140,8 @@ Brent Aureli's YouTube series [Creating Super Mario Bros](www.youtube.com/watch?
 
 [Video Game Music Preservation Foundation](www.vgmpf.com)
 
+[Metroid (NES) - Sound Effects Collection](https://www.youtube.com/watch?v=9zwzH58y3m4)
+
 ### Other:
 
 [SMB Font: Press Start by codeman38 at FontSpace](www.fontspace.com/codeman38/press-start)
@@ -153,6 +159,7 @@ I'd like to thank my arms for staying by my side. I'd like to thank my legs for 
 If there are any more unthanked or unacknowledged contributors then I thank and acknowledge you now: Thanks!
 
 > Dedicated to Huyền
+
 > Anh Yêu Em
 
 This repo is maintained by David Loucks.

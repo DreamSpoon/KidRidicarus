@@ -21,8 +21,11 @@ import kidridicarus.agent.general.Room;
 import kidridicarus.info.UInfo;
 
 public class SamusBody extends MobileAgentBody {
-	private static final float BODY_WIDTH = UInfo.P2M(12f);
-	private static final float BODY_HEIGHT = UInfo.P2M(25f);
+	private static final float STAND_BODY_WIDTH = UInfo.P2M(10f);
+	private static final float STAND_BODY_HEIGHT = UInfo.P2M(25f);
+
+	private static final float BALL_BODY_WIDTH = UInfo.P2M(8f);
+	private static final float BALL_BODY_HEIGHT = UInfo.P2M(10f);
 
 	private static final float FOOT_WIDTH = UInfo.P2M(10f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
@@ -32,33 +35,43 @@ public class SamusBody extends MobileAgentBody {
 	// when samus is damaged, the stopping force is halved (really?)
 	private static final Vector2 STOPMOVE_DAMAGE_IMP = STOPMOVE_IMP.cpy().scl(0.5f);
 	private static final float MAX_UP_VELOCITY = 1.75f;
-	private static final float MAX_DOWN_VELOCITY = 1.8f;
+	private static final float MAX_DOWN_VELOCITY = 2.5f;
 
-	private static final Vector2 GROUNDMOVE_IMP = new Vector2(0.3f, 0f);
-	private static final float MAX_GROUNDMOVE_VEL = 0.9f;
+	private static final Vector2 GROUNDMOVE_IMP = new Vector2(0.28f, 0f);
+	private static final float MAX_GROUNDMOVE_VEL = 0.85f;
 
-	private static final Vector2 AIRMOVE_IMP = GROUNDMOVE_IMP.scl(1f);
+	private static final Vector2 AIRMOVE_IMP = GROUNDMOVE_IMP.scl(0.7f);
 	private static final float MAX_AIRMOVE_VEL = MAX_GROUNDMOVE_VEL;
 
 	private static final float JUMPUP_FORCE_DURATION = 0.75f;
 	private static final Vector2 JUMPUP_FORCE = new Vector2(0f, 6.75f);
 	private static final Vector2 JUMPUP_IMP = new Vector2(0f, 1.25f);
 
+	private World world;
 	private Samus parent;
 	private AgentContactSensor acSensor;
 	private OnGroundSensor ogSensor;
+	private boolean isBallForm;
+	private Vector2 prevVelocity;
 
 	public SamusBody(Samus parent, World world, Vector2 position) {
 		super();
-
+		this.world = world;
 		this.parent = parent;
-		defineBody(world, position);
+		isBallForm = false;
+		defineBody(position);
 	}
 
-	private void defineBody(World world, Vector2 position) {
-		createBody(world, position);
+	private void defineBody(Vector2 position) {
+		if(isBallForm)
+			setBodySize(BALL_BODY_WIDTH, BALL_BODY_HEIGHT);
+		else
+			setBodySize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
+
+		createBody(position);
 		createAgentSensor();
 		createGroundSensor();
+		prevVelocity = new Vector2(0f, 0f);
 	}
 
 	/*
@@ -66,21 +79,26 @@ public class SamusBody extends MobileAgentBody {
 	 * go round) so that it will "catch" on to ledges when samus is falling and is moving toward a wall and
 	 * there's an opening that's barely large enough to enter. 
 	 */
-	private void createBody(World world, Vector2 position) {
+	private void createBody(Vector2 position) {
+		// dispose the old body if it exists
+		if(b2body != null)
+			world.destroyBody(b2body);
+
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		bdef.position.set(position);
-		bdef.gravityScale = 0.5f;
+		bdef.gravityScale = 0.5f;	// floaty
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0.001f;	// (default is 0.2f)
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, null, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, null, catBits, maskBits,
+				getBodyWidth(), getBodyHeight());
 	}
 
 	private void createAgentSensor() {
 		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
+		boxShape.setAsBox(getBodyWidth()/2f, getBodyHeight()/2f);
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
@@ -90,12 +108,12 @@ public class SamusBody extends MobileAgentBody {
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
 	}
 
-	// create the foot sensor for detecting onGround
+	// create the sensor for detecting onGround
 	private void createGroundSensor() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape;
 		boxShape = new PolygonShape();
-		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
+		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBodyHeight()/2f), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
@@ -188,7 +206,42 @@ public class SamusBody extends MobileAgentBody {
 			setVelocity(getVelocity().x, -MAX_DOWN_VELOCITY);
 	}
 
+	public void switchToBallForm() {
+		isBallForm = true;
+		defineBody(b2body.getPosition());
+	}
+
+	public void switchToStandForm() {
+		isBallForm = false;
+		defineBody(b2body.getPosition());
+	}
+
 	public <T> LinkedList<Agent> getContactsByClass(Class<T> clazz) {
 		return acSensor.getContactsByClass(clazz);
+	}
+
+	/*
+	 * This method assumes it is being called consecutively, i.e. it uses a prevVelocity variable that updates after
+	 * each method call. Prev velocity is reset when ball form is started or ended.
+	 * TODO: explain this betterly
+	 */
+	public void doBounceCheck() {
+		// Check for bounce up (no left/right bounces, no down bounces).
+		// Since body restitution=0, bounce occurs when current velocity=0 and previous velocity > 0.
+		// Check against 0 using velocity epsilon.
+		if(UInfo.EpsCheck(getVelocity().y, 0f, UInfo.VEL_EPSILON)) {
+			float amount = -prevVelocity.y;
+			if(amount > MAX_DOWN_VELOCITY-UInfo.VEL_EPSILON)
+				amount = MAX_UP_VELOCITY-UInfo.VEL_EPSILON;
+			else
+				amount = amount * 0.6f;
+			setVelocity(getVelocity().x, amount);
+		}
+
+		prevVelocity.set(getVelocity());
+	}
+
+	public boolean hasMaxDownVelocity() {
+		return getVelocity().y <= -MAX_DOWN_VELOCITY + UInfo.VEL_EPSILON;
 	}
 }
