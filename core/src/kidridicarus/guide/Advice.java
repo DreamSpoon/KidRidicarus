@@ -7,25 +7,28 @@ public class Advice {
 	public boolean moveDown;
 	public boolean run;
 	public boolean jump;
+	public boolean shoot;
 
 	public Advice() {
-		this(false, false, false, false, false, false);
+		this(false, false, false, false, false, false, false);
 	}
 
-	public Advice(boolean moveRight, boolean moveUp, boolean moveLeft, boolean moveDown, boolean run, boolean jump) {
+	public Advice(boolean moveRight, boolean moveUp, boolean moveLeft, boolean moveDown, boolean run, boolean jump,
+			boolean shoot) {
 		this.moveRight = moveRight;
 		this.moveUp = moveUp;
 		this.moveLeft = moveLeft;
 		this.moveDown = moveDown;
 		this.run = run;
 		this.jump = jump;
+		this.shoot = shoot;
 	}
 
 	public Advice cpy() {
-		return new Advice(moveRight, moveUp, moveLeft, moveDown, run, jump);
+		return new Advice(moveRight, moveUp, moveLeft, moveDown, run, jump, shoot);
 	}
 
 	public void clear() {
-		moveRight = moveUp = moveLeft = moveRight = run = jump = false; 
+		moveRight = moveUp = moveLeft = moveRight = run = jump = shoot = false; 
 	}
 }

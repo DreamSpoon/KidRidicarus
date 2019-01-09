@@ -79,10 +79,15 @@ public class SamusSprite extends Sprite {
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case RUN:
+			case SHOOT:
 				if(isFacingUp)
 					setRegion(runAimUpAnim.getKeyFrame(stateTimer, true));
-				else
-					setRegion(runAnim.getKeyFrame(stateTimer, true));
+				else {
+					if(parentState == MoveState.RUN)
+						setRegion(runAnim.getKeyFrame(stateTimer, true));
+					else
+						setRegion(runAimRightAnim.getKeyFrame(stateTimer, true));
+				}
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
@@ -98,6 +103,14 @@ public class SamusSprite extends Sprite {
 				setRegion(jumpSpinAnim.getKeyFrame(stateTimer, true));
 				setBounds(getX(), getY(), MED_SPRITE_WIDTH, MED_SPRITE_HEIGHT);
 				offset.set(MED_SPRITE_OFFSET);
+				break;
+			case JUMPSHOOT:
+				if(isFacingUp)
+					setRegion(jumpAimUpAnim.getKeyFrame(stateTimer, true));
+				else
+					setRegion(jumpAimRightAnim.getKeyFrame(stateTimer, true));
+				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
+				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case BALL:
 				setRegion(ballAnim.getKeyFrame(stateTimer, true));

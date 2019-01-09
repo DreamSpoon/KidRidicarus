@@ -115,7 +115,8 @@ public class MainGuide implements Disposable {
 		advice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
 		advice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
 		advice.moveDown = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_DOWN);
-		advice.run = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUN);
+		// run and shoot share a key temporarily
+		advice.run = advice.shoot = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUNSHOOT);
 		advice.jump = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
 
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))

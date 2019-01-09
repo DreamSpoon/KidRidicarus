@@ -16,7 +16,6 @@ import kidridicarus.agent.sprite.Metroid.player.SamusSprite;
 import kidridicarus.guide.Advice;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.PowerupInfo.PowType;
-import kidridicarus.tools.QQ;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.UInfo;
 
@@ -32,9 +31,12 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(2, 20);
 	private static final float SHOT_VEL = 2f;
 	private static final float SHOOT_COOLDOWN = 0.15f;
+	private static final float JUMPSHOOT_RESPIN_DELAY = 0.05f;
+	private static final float STEP_SOUND_TIME = 0.167f;
+	private static final float POSTPONE_RUN_DELAY = 0.15f;
 
 	public enum ContactState { REGULAR, DAMAGE };
-	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL };
+	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT };
 
 	private Advice advice;
 	private SamusBody sBody;
@@ -53,9 +55,12 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 	private boolean isNextJumpEnabled;
 	private Vector2 damagePos = new Vector2();
 	private boolean isDrawnLastFrame;
-	private float shootResetTime;
+	private float shootCooldownTime;
 	private float startJumpY;
 	private boolean isJumpSpinAvailable;
+	private float lastStepSoundTime = 0f;
+	private boolean isAutoContinueRightAirMove;
+	private boolean isAutoContinueLeftAirMove;
 
 	public Samus(Agency agency, AgentDef adef) {
 		super(agency, adef);
@@ -71,9 +76,11 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		isLastJumpLandable = true;
 		isNextJumpEnabled = true;
 		isDrawnLastFrame = false;
-		shootResetTime = agency.getGlobalTimer();
+		shootCooldownTime = agency.getGlobalTimer();
 		startJumpY = 0;
 		isJumpSpinAvailable = false;
+		isAutoContinueRightAirMove = false;
+		isAutoContinueLeftAirMove = false;
 
 		sBody = new SamusBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
@@ -139,7 +146,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		boolean jumpStart = false;
 		// XOR the moveleft and moveright, becuase can't move left and right at same time
 		boolean isMoveHorizontal = advice.moveRight^advice.moveLeft;
-
+		
 		switch(curMoveState) {
 			case BALL:
 				if(advice.moveUp) {
@@ -160,6 +167,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 				break;
 			case STAND:
 			case RUN:
+			case SHOOT:
 				if(!isNextJumpEnabled && !advice.jump)
 					isNextJumpEnabled = true;
 
@@ -171,8 +179,8 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 
 				// switch to ball form?
 				if(advice.moveDown && sBody.isOnGround()) {
-					nextMoveState = MoveState.BALL;
 					sBody.switchToBallForm();
+					nextMoveState = MoveState.BALL;
 				}
 				// jump?
 				else if(advice.jump && sBody.isOnGround() && isLastJumpLandable && isNextJumpEnabled) {
@@ -181,62 +189,59 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 					jumpStart = true;
 					if(isMoveHorizontal)
 						isJumpSpinAvailable = true;
-					nextMoveState = MoveState.JUMP;
 					startJumpY = sBody.getPosition().y;
 					agency.playSound(AudioInfo.Sound.Metroid.JUMP);
+					nextMoveState = MoveState.JUMP;
 				}
 				else {
-					// run = shoot
-					if(advice.run && shootResetTime <= agency.getGlobalTimer()) {
-						shootResetTime = agency.getGlobalTimer() + SHOOT_COOLDOWN;
-						AgentDef adef;
-						Vector2 position = new Vector2();
-						Vector2 velocity = new Vector2();
-						if(isFacingUp) {
-							if(isFacingRight)
-								position.set(SHOT_OFFSET_UP).add(sBody.getPosition());
-							else
-								position.set(SHOT_OFFSET_UP).scl(-1, 1).add(sBody.getPosition());
-							velocity.set(0f, SHOT_VEL);
-						}
-						else if(isFacingRight) {
-							position.set(SHOT_OFFSET_RIGHT).add(sBody.getPosition());
-							velocity.set(SHOT_VEL, 0f);
-						}
-						else {
-							position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(sBody.getPosition());
-							velocity.set(-SHOT_VEL, 0f);
-						}
-						adef = SamusShot.makeSamusShotDef(position, velocity, this);
-						agency.createAgent(adef);
-						agency.playSound(AudioInfo.Sound.Metroid.SHOOT);
-					}
+					boolean didShoot = checkAndDoShoot();
+
 					// stand/run on ground?
 					if(sBody.isOnGround()) {
+						// moving sideways?
 						if(isMoveHorizontal) {
-							checkDoStepSound();
-							nextMoveState = MoveState.RUN;
+							if((advice.moveRight && sBody.isContactingWall(true)) ||
+									(advice.moveLeft && sBody.isContactingWall(false)))
+								nextMoveState = MoveState.STAND;
+							// move is not blocked
+							else {
+								checkDoStepSound();
+								// Start the shoot state if did shoot, or postpone the run state and continue the
+								// shoot state if still in the postpone period 
+								if(didShoot || (curMoveState == MoveState.SHOOT &&
+										moveStateTimer < POSTPONE_RUN_DELAY)) {
+									nextMoveState = MoveState.SHOOT;
+								}
+								else
+									nextMoveState = MoveState.RUN;
+							}
 						}
+						// on ground and not moving, therefore stand state
 						else
 							nextMoveState = MoveState.STAND;
 					}
+					// fall
 					else {
-						// fall
-						nextMoveState = MoveState.JUMP;
+						// jump is disable when fall starts
 						isLastJumpLandable = false;
 						isJumpForceEnabled = false;
+
+						if(didShoot)
+							nextMoveState = MoveState.JUMPSHOOT;
+						else
+							nextMoveState = MoveState.JUMP;
 					}
 				}
 				break;
 			case JUMP:
 			case JUMPSPIN:
-				// if body is falling, or is not rising, then enable the next jump and disable jump up force
+			case JUMPSHOOT:
+				// if body is falling then enable the next jump and disable jump up force
 				if(sBody.getVelocity().y <= UInfo.VEL_EPSILON) {
 					isLastJumpLandable = true;
 					isJumpForceEnabled = false;
-					isJumpSpinAvailable = false;
 				}
-				// if body is rising but not being advised to jump then disable jump up force
+				// else if body is not being advised to jump then disable jump up force
 				else if(!advice.jump)
 					isJumpForceEnabled = false;
 
@@ -245,21 +250,65 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 				if(sBody.isOnGround() && advice.jump)
 					isNextJumpEnabled = false;
 
+				// disallow change to facing up if player is falling and they started jump with spin allowed
+				if(!isFacingUp && advice.moveUp && !(isJumpSpinAvailable && sBody.getVelocity().y <= 0f))
+					isFacingUp = true;
+
+				// Change back to facing sideways if already facing up, and not advised to moveUp,
+				// and jump spin is available, and body is moving upward
+				if(isFacingUp && !advice.moveUp && isJumpSpinAvailable && sBody.getVelocity().y > 0f)
+					isFacingUp = false;
+
+				// check for landing on ground
 				if(sBody.isOnGround() && !isJumpForceEnabled) {
+					isJumpSpinAvailable = false;
+					isAutoContinueLeftAirMove = false;
+					isAutoContinueRightAirMove = false;
+					// play landing sound
 					agency.playSound(AudioInfo.Sound.Metroid.STEP);
+					// if on ground and moving then run
 					if(isMoveHorizontal)
 						nextMoveState = MoveState.RUN;
 					else
 						nextMoveState = MoveState.STAND;
 				}
+				// still mid-air
 				else {
-					if(curMoveState == MoveState.JUMP) {
-						if(sBody.getVelocity().y > 0f && isJumpSpinAvailable && sBody.getPosition().y >
-								startJumpY + 2f*UInfo.P2M(UInfo.TILEPIX_Y))
+					// do shoot?
+					if(checkAndDoShoot())
+						nextMoveState = MoveState.JUMPSHOOT;
+					// already shooting?
+					else if(curMoveState == MoveState.JUMPSHOOT) {
+						// If delay is finished, and not advised to shoot, and moving horizontally, and spin
+						// is available, and body is moving upward, and samus is at least 2 tiles higher than
+						// jump start position, then switch back to jumpspin.
+						if(moveStateTimer > JUMPSHOOT_RESPIN_DELAY && !advice.shoot && isMoveHorizontal &&
+								isJumpSpinAvailable && sBody.getVelocity().y > 0f &&
+								sBody.getPosition().y > startJumpY + 2f*UInfo.P2M(UInfo.TILEPIX_Y)) {
 							nextMoveState = MoveState.JUMPSPIN;
+						}
+						// otherwise continue jump shoot
+						else
+							nextMoveState = MoveState.JUMPSHOOT;
+					}
+					// not shooting, just jumping?
+					else if(curMoveState == MoveState.JUMP) {
+						// switch to jumpspin when samus moves at least 2 tiles higher than jump start position 
+						if(sBody.getVelocity().y > 0f && isJumpSpinAvailable && sBody.getPosition().y >
+								startJumpY + 2f*UInfo.P2M(UInfo.TILEPIX_Y)) {
+							// If move left/right advice is given during change from jump to jumpspin then
+							// auto continue air move in advised direction until user presses other direction
+							if(advice.moveRight)
+								isAutoContinueRightAirMove = true;
+							else if(advice.moveLeft)
+								isAutoContinueLeftAirMove = true;
+
+							nextMoveState = MoveState.JUMPSPIN;
+						}
 						else
 							nextMoveState = MoveState.JUMP;
 					}
+					// not shooting, currently jump spinning
 					else {
 						// switch to regular JUMP state if moving down and below 1 tile height above jump start position
 						if(sBody.getVelocity().y <= 0f &&
@@ -272,21 +321,33 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 				break;
 		}
 
-		if(nextMoveState == MoveState.JUMP || nextMoveState == MoveState.JUMPSPIN) {
+		// check for and apply vertical (jump) impulses, forces, etc.
+		if(nextMoveState == MoveState.JUMP || nextMoveState == MoveState.JUMPSPIN ||
+				nextMoveState == MoveState.JUMPSHOOT) {
 			if(jumpStart)
 				sBody.doJumpStart();
 			if(isJumpForceEnabled)
 				sBody.doJumpContinue(delta);
 		}
 
+		// check for and apply horizontal movement impulses, forces, etc.
 		if(isMoveHorizontal) {
+			// cancel auto air move right?
+			if(isAutoContinueRightAirMove && advice.moveLeft)
+				isAutoContinueRightAirMove = false;
+			// cancel auto air move left?
+			else if(isAutoContinueLeftAirMove && advice.moveRight)
+				isAutoContinueLeftAirMove = false;
+
 			switch(nextMoveState) {
 				case BALL:
 				case STAND:
 				case RUN:
+				case SHOOT:
 					sBody.doGroundMove(advice.moveRight);
 					break;
 				case JUMP:
+				case JUMPSHOOT:
 					// samus can airmove if jumping and not in damage state
 					if(curContactState != ContactState.DAMAGE)
 						sBody.doAirMove(advice.moveRight);
@@ -297,19 +358,36 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 					break;
 			}
 		}
-		// if not moving right/left then do stop move
+		// not moving left/right - may be on-ground or mid-air
 		else {
-			if(curContactState == ContactState.DAMAGE && contactStateTimer < 0.2f)
-				sBody.doStopMove(true);
-			else
-				sBody.doStopMove(false);
+			// The spin jump may cause air move to continue even though move left/right advice is not given,
+			// check left...
+			if(isAutoContinueRightAirMove)
+				sBody.doAirMove(true);
+			// ... and right
+			// Note: Auto left/right air move is cancelled when on-ground.
+			else if(isAutoContinueLeftAirMove)
+				sBody.doAirMove(false);
+			// if auto move is not continuing, then do stop move
+			else {
+				if(curContactState == ContactState.DAMAGE && contactStateTimer < 0.2f)
+					sBody.doStopMove(true);
+				else
+					sBody.doStopMove(false);
+			}
 		}
 
+		// check against maximum velocities, etc.
 		sBody.clampMove();
+
+		// update prev velocity
+		sBody.postUpdate();
 
 		// if advised move left or right (but not both at same time!) then set facing direction accordingly
 		if(advice.moveRight^advice.moveLeft)
 			isFacingRight = advice.moveRight;
+
+		// update move state timer and current move state
 		moveStateTimer = nextMoveState == curMoveState ? moveStateTimer + delta : 0f;
 		curMoveState = nextMoveState;
 	}
@@ -318,8 +396,6 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		sSprite.update(delta, sBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
 	}
 
-	private float lastStepSoundTime = 0f;
-	private static final float STEP_SOUND_TIME = 0.167f;
 	private void checkDoStepSound() {
 		if(curMoveState != MoveState.RUN)
 			lastStepSoundTime = 0;
@@ -327,6 +403,40 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 			lastStepSoundTime = moveStateTimer;
 			agency.playSound(AudioInfo.Sound.Metroid.STEP);
 		}
+	}
+
+	private boolean checkAndDoShoot() {
+		// can't shoot if not advised to shoot or cooldown has not finished
+		if(!advice.shoot || shootCooldownTime > agency.getGlobalTimer())
+			return false;
+
+		shootCooldownTime = agency.getGlobalTimer() + SHOOT_COOLDOWN;
+
+		// calculate position and velocity of shot based on samus' orientation
+		Vector2 velocity = new Vector2();
+		Vector2 position = new Vector2();
+		if(isFacingUp) {
+			velocity.set(0f, SHOT_VEL);
+			if(isFacingRight)
+				position.set(SHOT_OFFSET_UP).add(sBody.getPosition());
+			else
+				position.set(SHOT_OFFSET_UP).scl(-1, 1).add(sBody.getPosition());
+		}
+		else if(isFacingRight) {
+			velocity.set(SHOT_VEL, 0f);
+			position.set(SHOT_OFFSET_RIGHT).add(sBody.getPosition());
+		}
+		else {
+			velocity.set(-SHOT_VEL, 0f);
+			position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(sBody.getPosition());
+		}
+		// create shot
+		AgentDef adef = SamusShot.makeSamusShotDef(position, velocity, this);
+		agency.createAgent(adef);
+		agency.playSound(AudioInfo.Sound.Metroid.SHOOT);
+
+		// shot fired, so return true
+		return true;
 	}
 
 	@Override

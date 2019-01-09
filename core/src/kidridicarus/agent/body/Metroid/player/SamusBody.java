@@ -17,6 +17,7 @@ import kidridicarus.agent.Metroid.player.Samus;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.OnGroundSensor;
+import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.agent.general.Room;
 import kidridicarus.info.UInfo;
 
@@ -53,6 +54,7 @@ public class SamusBody extends MobileAgentBody {
 	private OnGroundSensor ogSensor;
 	private boolean isBallForm;
 	private Vector2 prevVelocity;
+	private SolidBoundSensor sbSensor;
 
 	public SamusBody(Samus parent, World world, Vector2 position) {
 		super();
@@ -92,8 +94,13 @@ public class SamusBody extends MobileAgentBody {
 		fdef.friction = 0.001f;	// (default is 0.2f)
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
 		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, null, catBits, maskBits,
+		sbSensor = new SolidBoundSensor(this);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, sbSensor, catBits, maskBits,
 				getBodyWidth(), getBodyHeight());
+	}
+
+	public boolean isContactingWall(boolean isRightWall) {
+		return sbSensor.isHMoveBlocked(getBounds(), isRightWall);
 	}
 
 	private void createAgentSensor() {
@@ -220,11 +227,6 @@ public class SamusBody extends MobileAgentBody {
 		return acSensor.getContactsByClass(clazz);
 	}
 
-	/*
-	 * This method assumes it is being called consecutively, i.e. it uses a prevVelocity variable that updates after
-	 * each method call. Prev velocity is reset when ball form is started or ended.
-	 * TODO: explain this betterly
-	 */
 	public void doBounceCheck() {
 		// Check for bounce up (no left/right bounces, no down bounces).
 		// Since body restitution=0, bounce occurs when current velocity=0 and previous velocity > 0.
@@ -237,11 +239,13 @@ public class SamusBody extends MobileAgentBody {
 				amount = amount * 0.6f;
 			setVelocity(getVelocity().x, amount);
 		}
-
-		prevVelocity.set(getVelocity());
 	}
 
 	public boolean hasMaxDownVelocity() {
 		return getVelocity().y <= -MAX_DOWN_VELOCITY + UInfo.VEL_EPSILON;
+	}
+
+	public void postUpdate() {
+		prevVelocity.set(getVelocity());
 	}
 }

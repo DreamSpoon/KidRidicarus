@@ -59,7 +59,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	private Vector2 marioSpriteOffset;
 	private GuideSpawner exitingSpawnpoint;
 	private boolean marioIsDead;
-	private boolean wantsToRunOnPrevUpdate;
+	private boolean prevFrameAdvisedShoot;
 	private boolean isDmgInvincible;
 	private float dmgInvincibleTime;
 	private float fireballTimer;
@@ -78,7 +78,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 		super(agency, adef);
 
 		marioIsDead = false;
-		wantsToRunOnPrevUpdate = false;
+		prevFrameAdvisedShoot = false;
 		isDmgInvincible = false;
 		dmgInvincibleTime = 0f;
 		fireballTimer = TIME_PER_FIREBALL * 2f;
@@ -150,7 +150,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 		marioSprite.update(delta, mBody.getPosition().cpy().add(marioSpriteOffset), curState, bodyState,
 				curPowerState, mBody.isFacingRight(), isDmgInvincible, isStarPowered, mBody.isBigBody());
 
-		wantsToRunOnPrevUpdate = advice.run;
+		prevFrameAdvisedShoot = advice.shoot;
 		
 		advice.clear();
 	}
@@ -315,7 +315,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 			fireballTimer = TIME_PER_FIREBALL;
 
 		// fire a ball?
-		if(curPowerState == MarioPowerState.FIRE && advice.run && !wantsToRunOnPrevUpdate && fireballTimer > 0f) {
+		if(curPowerState == MarioPowerState.FIRE && advice.shoot && !prevFrameAdvisedShoot && fireballTimer > 0f) {
 			fireballTimer -= TIME_PER_FIREBALL;
 			throwFireball();
 			return true;
