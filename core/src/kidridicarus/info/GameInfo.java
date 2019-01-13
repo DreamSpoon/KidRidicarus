@@ -9,7 +9,7 @@ public class GameInfo {
 	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v4.tmx";
 	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v4.tmx";
 
-	public static final String TA_MAIN_FILENAME = "sprite/KidRid9.pack";
+	public static final String TA_MAIN_FILENAME = "sprite/KidRid10.pack";
 
 	public static final String SMB1_FONT = "font/prstart.fnt";
 

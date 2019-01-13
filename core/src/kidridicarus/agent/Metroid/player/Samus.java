@@ -27,8 +27,8 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
-	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(8, 6);
-	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(2, 20);
+	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
+	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
 	private static final float SHOT_VEL = 2f;
 	private static final float SHOOT_COOLDOWN = 0.15f;
 	private static final float JUMPSHOOT_RESPIN_DELAY = 0.05f;

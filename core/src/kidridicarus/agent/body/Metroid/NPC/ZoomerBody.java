@@ -77,6 +77,7 @@ public class ZoomerBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
+		fdef.friction = 0.001f;
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);

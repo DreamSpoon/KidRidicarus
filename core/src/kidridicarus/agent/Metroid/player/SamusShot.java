@@ -14,13 +14,14 @@ import kidridicarus.info.KVInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
 public class SamusShot extends Agent {
-	private static final float LIVE_TIME = 0.2f;
+	private static final float LIVE_TIME = 0.217f;
 
 	private Samus parent;
 	private SamusShotBody shotBody;
 	private SamusShotSprite shotSprite;
 	private float stateTimer;
 
+	// TODO: check if shot is being created inside solid area, and change to shot explision if so
 	public SamusShot(Agency agency, AgentDef adef) {
 		super(agency, adef);
 

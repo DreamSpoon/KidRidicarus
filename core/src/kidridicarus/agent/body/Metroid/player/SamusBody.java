@@ -22,13 +22,13 @@ import kidridicarus.agent.general.Room;
 import kidridicarus.info.UInfo;
 
 public class SamusBody extends MobileAgentBody {
-	private static final float STAND_BODY_WIDTH = UInfo.P2M(10f);
+	private static final float STAND_BODY_WIDTH = UInfo.P2M(5f);
 	private static final float STAND_BODY_HEIGHT = UInfo.P2M(25f);
 
 	private static final float BALL_BODY_WIDTH = UInfo.P2M(8f);
 	private static final float BALL_BODY_HEIGHT = UInfo.P2M(10f);
 
-	private static final float FOOT_WIDTH = UInfo.P2M(10f);
+	private static final float FOOT_WIDTH = UInfo.P2M(4f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
 	private static final float MIN_MOVE_VEL = 0.1f;

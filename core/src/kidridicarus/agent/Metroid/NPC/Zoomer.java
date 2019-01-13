@@ -24,7 +24,9 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
  */
 public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	public enum ZoomerState { WALK, DEAD };
-	private static final Vector2 MOVEVEL = new Vector2(0.3f, 0.3f);
+	// MOVEVEL.x is the horizontal velocity when moving right, and
+	// MOVEVEL.y is the vertical velocity when moving right.
+	private static final Vector2 MOVEVEL = new Vector2(0.25f, -0.25f);
 
 	private ZoomerBody zBody;
 	private ZoomerSprite zSprite;
@@ -144,28 +146,28 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	private Vector2 getMoveRight() {
 		switch(upDir) {
 			case RIGHT:
-				return new Vector2(-MOVEVEL.x*REDUCE_FACTOR, -MOVEVEL.y);
+				return new Vector2(-MOVEVEL.x*REDUCE_FACTOR, MOVEVEL.y);
 			case UP:
-				return new Vector2(MOVEVEL.x, -MOVEVEL.y*REDUCE_FACTOR);
+				return new Vector2(MOVEVEL.x, MOVEVEL.y*REDUCE_FACTOR);
 			case LEFT:
-				return new Vector2(MOVEVEL.x*REDUCE_FACTOR, MOVEVEL.y);
+				return new Vector2(MOVEVEL.x*REDUCE_FACTOR, -MOVEVEL.y);
 			// DOWN, by deduction
 			default:
-				return new Vector2(-MOVEVEL.x, MOVEVEL.y*REDUCE_FACTOR);
+				return new Vector2(-MOVEVEL.x, -MOVEVEL.y*REDUCE_FACTOR);
 		}
 	}
 
 	private Vector2 getMoveLeft() {
 		switch(upDir) {
 			case RIGHT:
-				return new Vector2(-MOVEVEL.x*REDUCE_FACTOR, MOVEVEL.y);
+				return new Vector2(-MOVEVEL.x*REDUCE_FACTOR, -MOVEVEL.y);
 			case UP:
-				return new Vector2(-MOVEVEL.x, -MOVEVEL.y*REDUCE_FACTOR);
+				return new Vector2(-MOVEVEL.x, MOVEVEL.y*REDUCE_FACTOR);
 			case LEFT:
-				return new Vector2(MOVEVEL.x*REDUCE_FACTOR, -MOVEVEL.y);
+				return new Vector2(MOVEVEL.x*REDUCE_FACTOR, MOVEVEL.y);
 			// DOWN, by deduction
 			default:
-				return new Vector2(MOVEVEL.x, MOVEVEL.y*REDUCE_FACTOR);
+				return new Vector2(MOVEVEL.x, -MOVEVEL.y*REDUCE_FACTOR);
 		}
 	}
 

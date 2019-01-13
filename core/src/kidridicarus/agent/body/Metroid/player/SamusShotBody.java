@@ -21,8 +21,10 @@ import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.UInfo;
 
 public class SamusShotBody extends MobileAgentBody {
-	private static final float BODY_WIDTH = UInfo.P2M(4);
-	private static final float BODY_HEIGHT = UInfo.P2M(4);
+	private static final float BODY_WIDTH = UInfo.P2M(1);
+	private static final float BODY_HEIGHT = UInfo.P2M(1);
+	private static final float SENSOR_WIDTH = UInfo.P2M(3);
+	private static final float SENSOR_HEIGHT = UInfo.P2M(3);
 
 	private SamusShot parent;
 	private SolidBoundSensor boundSensor;
@@ -56,7 +58,7 @@ public class SamusShotBody extends MobileAgentBody {
 	private void createAgentSensor() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
+		boxShape.setAsBox(SENSOR_WIDTH/2f, SENSOR_HEIGHT/2f);
 		fdef.isSensor = true;
 		fdef.shape = boxShape;
 		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
