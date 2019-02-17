@@ -15,7 +15,8 @@ public abstract class Agent implements Disposable {
 
 	public Agent(Agency agency, AgentDef adef) {
 		this.agency = agency;
-		properties = adef.properties;
+		if(adef != null)
+			properties = adef.properties;
 	}
 
 	public MapProperties getProperties() {

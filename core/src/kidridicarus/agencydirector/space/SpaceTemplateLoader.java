@@ -22,28 +22,28 @@ public class SpaceTemplateLoader {
 		SpaceTemplate ret = new SpaceTemplate();
 		TiledMap tiledMap = (new TmxMapLoader()).load(spaceFilename);
 		ret.setMap(tiledMap);
-		ret.addAgentDefs(loadAgentDefsFromLayers(tiledMap.getLayers()));
+		ret.addAgentDefs(makeAgentDefsFromLayers(tiledMap.getLayers()));
 		return ret;
 	}
 
-	private static LinkedList<AgentDef> loadAgentDefsFromLayers(MapLayers layers) {
+	private static LinkedList<AgentDef> makeAgentDefsFromLayers(MapLayers layers) {
 		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
 		for(MapLayer layer : layers) {
-			LinkedList<AgentDef> check = checkLayerForAgentDefs(layer);
+			LinkedList<AgentDef> check = makeAgentDefsFromLayer(layer);
 			if(check != null)
 				agentDefs.addAll(check);
 		}
 		return agentDefs;
 	}
 
-	private static LinkedList<AgentDef> checkLayerForAgentDefs(MapLayer layer) {
+	private static LinkedList<AgentDef> makeAgentDefsFromLayer(MapLayer layer) {
 		if(layer instanceof TiledMapTileLayer)
-			return makeThingsFromTileLayer((TiledMapTileLayer) layer);
+			return makeAgentDefsFromTileLayer((TiledMapTileLayer) layer);
 		else
-			return makeThingsFromObjLayer(layer);
+			return makeAgentDefsFromObjLayer(layer);
 	}
 
-	private static LinkedList<AgentDef> makeThingsFromTileLayer(TiledMapTileLayer layer) {
+	private static LinkedList<AgentDef> makeAgentDefsFromTileLayer(TiledMapTileLayer layer) {
 		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
 		if(!layer.getProperties().containsKey(KVInfo.KEY_AGENTCLASS))
 			return agentDefs;	// if no agentclass then return empty list of agent defs
@@ -53,26 +53,26 @@ public class SpaceTemplateLoader {
 			for(int x=0; x<layer.getWidth(); x++) {
 				if(layer.getCell(x, y) == null || layer.getCell(x, y).getTile() == null)
 					continue;
-				agentDefs.add(createAgentDef(UInfo.getP2MTileRect(x, y), layer.getProperties(),
+				agentDefs.add(makeAgentDef(UInfo.getP2MTileRect(x, y), layer.getProperties(),
 						layer.getCell(x,  y).getTile().getTextureRegion()));
 			}
 		}
 		return agentDefs;
 	}
 
-	private static LinkedList<AgentDef> makeThingsFromObjLayer(MapLayer layer) {
+	private static LinkedList<AgentDef> makeAgentDefsFromObjLayer(MapLayer layer) {
 		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
 		for(MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
 			// combine the layer and object properties and pass to the agent def creator
 			MapProperties combined = new MapProperties();
 			combined.putAll(layer.getProperties());
 			combined.putAll(object.getProperties());
-			agentDefs.add(createAgentDef(UInfo.P2MRect(((RectangleMapObject) object).getRectangle()), combined, null));
+			agentDefs.add(makeAgentDef(UInfo.P2MRect(((RectangleMapObject) object).getRectangle()), combined, null));
 		}
 		return agentDefs;
 	}
 
-	private static AgentDef createAgentDef(Rectangle bounds, MapProperties properties, TextureRegion tileTexRegion) {
+	private static AgentDef makeAgentDef(Rectangle bounds, MapProperties properties, TextureRegion tileTexRegion) {
 		AgentDef adef = new AgentDef();
 		adef.bounds = bounds;
 		adef.properties = properties;

@@ -48,7 +48,13 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 
   * Using [Brent Aureli's SMB code](www.github.com/BrentAureli/SuperMario) (retrieved about Oct 17, 2018) as a starting point, modify as needed
 
-  * When stumped, Google stuff and usually find things on [Stack Overflow](www.stackoverflow.com) or [BadLogicGames](www.badlogicgames.com).
+  * When stumped, Google stuff and usually find things on:
+
+    * [Stack Overflow](www.stackoverflow.com)
+
+	* [StackExchange](www.stackexchange.com)
+
+	* [BadLogicGames](www.badlogicgames.com)
 
 * Graphics
 

@@ -1,5 +1,6 @@
 package kidridicarus.agency;
 
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -47,7 +48,6 @@ import kidridicarus.info.KVInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.tools.BlockingQueueList;
 import kidridicarus.tools.BlockingQueueList.AddRemCallback;
-import kidridicarus.tools.QQ;
 
 public class Agency implements Disposable {
 	private World world;
@@ -101,6 +101,37 @@ public class Agency implements Disposable {
 			agent.dispose();
 		}
 	}
+
+	private Object[] agentClassList = new Object[] {
+			KVInfo.VAL_BUMPTILE, BumpTile.class,
+			KVInfo.VAL_GOOMBA, Goomba.class,
+			KVInfo.VAL_TURTLE, Turtle.class,
+			KVInfo.VAL_COIN, StaticCoin.class,
+			KVInfo.VAL_AGENTSPAWNER, AgentSpawner.class,
+			KVInfo.VAL_SPAWNGUIDE, GuideSpawner.class,
+			KVInfo.VAL_ROOM, Room.class,
+			KVInfo.VAL_FLAGPOLE, Flagpole.class,
+			KVInfo.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
+			KVInfo.VAL_PIPEWARP, WarpPipe.class,
+			KVInfo.VAL_DESPAWN, DespawnBox.class,
+			KVInfo.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
+			KVInfo.VAL_CASTLEFLAG, CastleFlag.class,
+			KVInfo.VAL_MUSHROOM, PowerMushroom.class,
+			KVInfo.VAL_FIREFLOWER, FireFlower.class,
+			KVInfo.VAL_MUSH1UP, Mush1UP.class,
+			KVInfo.VAL_POWERSTAR, PowerStar.class,
+			KVInfo.VAL_BRICKPIECE, BrickPiece.class,
+			KVInfo.VAL_SPINCOIN, SpinCoin.class,
+			KVInfo.VAL_MARIOFIREBALL, MarioFireball.class,
+			KVInfo.VAL_FLOATINGPOINTS, FloatingPoints.class,
+			KVInfo.VAL_MARIO, Mario.class,
+			KVInfo.VAL_ZOOMER, Zoomer.class,
+			KVInfo.VAL_SKREE, Skree.class,
+			KVInfo.VAL_SKREE_EXP, SkreeExp.class,
+			KVInfo.VAL_MARUMARI, MaruMari.class,
+			KVInfo.VAL_SAMUS, Samus.class,
+			KVInfo.VAL_SAMUS_SHOT, SamusShot.class
+		};
 
 	private float globalTimer;
 
@@ -156,7 +187,45 @@ public class Agency implements Disposable {
 		}
 	}
 
+	/*
+	 * Create an agent based on the adef.
+	 * See website:
+	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
+	 */
 	public Agent createAgent(AgentDef adef) {
+		String desiredAgentClass = adef.properties.get(KVInfo.KEY_AGENTCLASS, String.class);
+
+		Class<?> agentClass = null;
+		for(int i=0; i<agentClassList.length; i+=2) {
+			String agentClassName = (String) agentClassList[i+0];
+			if(agentClassName.equals(desiredAgentClass)) {
+				agentClass = (Class<?>) agentClassList[i+1];
+				break;
+			}
+		}
+		if(agentClass == null) {
+			return null;
+		}
+
+		Constructor<?> constructor;
+		Agent newlyCreatedAgent = null;
+		try {
+			constructor = agentClass.getConstructor(new Class[] { Agency.class, AgentDef.class });
+			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { this, adef });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		allAgents.add(newlyCreatedAgent);
+		return newlyCreatedAgent;
+	}
+
+	/*
+	 * TODO: Use a hashmap of string and Class objects to instantiate new agents.
+	 * See website:
+	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
+	 */
+/*	public Agent createOldAgent(AgentDef adef) {
 		String rClass = adef.properties.get(KVInfo.KEY_AGENTCLASS, String.class);
 
 		Agent agent = null;
@@ -221,7 +290,7 @@ public class Agency implements Disposable {
 
 		return agent;
 	}
-
+*/
 	public void enableAgentUpdate(Agent agent) {
 		allUpdateAgents.add(agent);
 	}
