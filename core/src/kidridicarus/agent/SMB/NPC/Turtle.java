@@ -25,7 +25,7 @@ import kidridicarus.info.UInfo;
 
 /*
  * TODO:
- * -Do sliding turtle shells break bricks when they strike them?
+ * -do sliding turtle shells break bricks when they strike them?
  *  I couldn't find any maps in SMB 1 that would clear up this matter.
  * -turtle shells do not slide properly when they are kicked while contacting an agent, since the slide kill
  *  agent code is only called when contacting starts
@@ -34,29 +34,30 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		ContactDmgAgent {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
-	private static final float BUMP_SIDE_VEL = 1f;
+	private static final float BUMP_SIDE_VEL = 0.4f;
 	private static final float SLIDE_VEL = 2f;
 	private static final float WAKING_TIME = 3f;
 	private static final float WAKE_UP_DELAY = 1.7f;
 	private static final float DIE_FALL_TIME = 6f;
 
-	public enum TurtleState { WALK, HIDE, WAKE_UP, SLIDE, DEAD };
+	public enum MoveState { NONE, WALK, HIDE, WAKE_UP, SLIDE, DEAD };
 
 	private TurtleBody turtleBody;
 	private TurtleSprite turtleSprite;
 
-	private TurtleState prevState;
-	private float stateTimer;
+	private MoveState moveState;
+	private float moveStateTimer;
 
 	private boolean facingRight;
 	private boolean isHiding;	// after player bounces on head, turtle hides in shell
 	private boolean isWaking;
 	private boolean isSliding;
-	private boolean isDead;
-	private boolean isDeadToRight;
-	private boolean isHeadBounced;
-	private Agent perp;
 	private PointAmount slidingTotal;
+
+	private boolean isHeadBounced;
+	private boolean isDead;
+	private Vector2 deadVelocity;
+	private Agent perp;
 
 	public Turtle(Agency agency, AgentDef adef) {
 		super(agency, adef);
@@ -70,14 +71,14 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		isWaking = false;
 		isSliding = false;
 		isDead = false;
-		isDeadToRight = false;
+		deadVelocity = new Vector2(0f, 0f);
 		isHeadBounced = false;
 		perp = null;
 		// the more sequential hits while sliding the higher the points per hit
 		slidingTotal = PointAmount.ZERO;
 
-		prevState = TurtleState.WALK;
-		stateTimer = 0f;
+		moveState = MoveState.NONE;
+		moveStateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
@@ -85,64 +86,8 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 
 	public void update(float delta) {
 		processContacts();
-
-		TurtleState curState = getState();
-		switch(curState) {
-			case DEAD:
-				// newly deceased?
-				if(curState != prevState)
-					doStartDeath();
-				// check the old deceased for timeout
-				else if(stateTimer > DIE_FALL_TIME)
-					agency.disposeAgent(this);
-				break;
-			case HIDE:
-				// wait a short time and reappear
-				if(curState != prevState) {
-					isWaking = false;
-					doStartHide();
-				}
-				else if(stateTimer > WAKE_UP_DELAY)
-					isWaking = true;
-				break;
-			case WAKE_UP:
-				if(curState == prevState && stateTimer > WAKING_TIME)
-					doEndHide();
-				break;
-			case SLIDE:
-				if(curState != prevState)
-					doStartSlide();
-				// Intentionally not using break;
-				// Because sliding turtle needs to move when onGround.
-			case WALK:
-				if(turtleBody.isOnGround())
-					turtleBody.setVelocity(getConstVelocity());
-				break;
-		}
-
-		// update sprite position and graphic
-		turtleSprite.update(delta, turtleBody.getPosition(), curState, facingRight);
-
-		// increment state timer if state stayed the same, otherwise reset timer
-		stateTimer = curState == prevState ? stateTimer+delta : 0f;
-		prevState = curState;
-
-		isHeadBounced = false;
-	}
-
-	private TurtleState getState() {
-		if(isDead)
-			return TurtleState.DEAD;
-		else if(isSliding)
-			return TurtleState.SLIDE;
-		else if(isHiding) {
-			if(isWaking)
-				return TurtleState.WAKE_UP;
-			else
-				return TurtleState.HIDE;
-		}
-		else
-			return TurtleState.WALK;
+		processMove(delta);
+		processSprite(delta);
 	}
 
 	private void processContacts() {
@@ -192,6 +137,64 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 				(!isHiding && turtleBody.isMoveBlockedByAgent(getPosition(), getConstVelocity().x > 0f)))) {
 			bounceOffThing();
 		}
+
+		isHeadBounced = false;
+	}
+
+	private void processMove(float delta) {
+		MoveState oldMoveState = moveState;
+		moveState = getMoveState();
+		switch(moveState) {
+			case DEAD:
+				// newly deceased?
+				if(moveState != oldMoveState)
+					doStartDeath();
+				// check the old deceased for timeout
+				else if(moveStateTimer > DIE_FALL_TIME)
+					agency.disposeAgent(this);
+				break;
+			case HIDE:
+				// wait a short time and reappear
+				if(moveState != oldMoveState) {
+					isWaking = false;
+					doStartHide();
+				}
+				else if(moveStateTimer > WAKE_UP_DELAY)
+					isWaking = true;
+				break;
+			case WAKE_UP:
+				if(moveState == oldMoveState && moveStateTimer > WAKING_TIME)
+					doEndHide();
+				break;
+			case SLIDE:
+				if(moveState != oldMoveState)
+					doStartSlide();
+				// Intentionally not using break;
+				// Because sliding turtle needs to move when onGround.
+			case WALK:
+			case NONE:
+				if(turtleBody.isOnGround())
+					turtleBody.setVelocity(getConstVelocity());
+				break;
+		}
+
+		// increment state timer if state stayed the same, otherwise reset timer
+		moveStateTimer = moveState == oldMoveState ? moveStateTimer+delta : 0f;
+	}
+
+	private MoveState getMoveState() {
+		if(isDead)
+			return MoveState.DEAD;
+		else if(isSliding)
+			return MoveState.SLIDE;
+		else if(isHiding) {
+			if(isWaking)
+				return MoveState.WAKE_UP;
+			else
+				return MoveState.HIDE;
+		}
+		else
+			return MoveState.WALK;
 	}
 
 	private void bounceOffThing() {
@@ -247,18 +250,16 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 
 	private void doStartDeath() {
 		turtleBody.disableAllContacts();
-		turtleBody.zeroVelocity(true, true);
-
-		// die move to the right or die move to to the left?
-		if(isDeadToRight)
-			turtleBody.applyImpulse(new Vector2(BUMP_SIDE_VEL, BUMP_UP_VEL));
-		else
-			turtleBody.applyImpulse(new Vector2(-BUMP_SIDE_VEL, BUMP_UP_VEL));
-
+		turtleBody.setVelocity(deadVelocity);
 		if(perp != null) {
 			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P500, isHeadBounced,
 					turtleBody.getPosition(), UInfo.P2M(16), perp));
 		}
+	}
+
+	private void processSprite(float delta) {
+		// update sprite position and graphic
+		turtleSprite.update(delta, turtleBody.getPosition(), moveState, facingRight);
 	}
 
 	@Override
@@ -274,15 +275,20 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		isHeadBounced = true;
 	}
 
+	@Override
+	public boolean isBouncy() {
+		return !isDead;
+	}
+
 	// assume any amount of damage kills, for now...
 	@Override
 	public void onDamage(Agent perp, float amount, Vector2 fromCenter) {
 		this.perp = perp;
 		isDead = true;
 		if(fromCenter.x < turtleBody.getPosition().x)
-			isDeadToRight = true;
+			deadVelocity.set(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
-			isDeadToRight = false;
+			deadVelocity.set(-BUMP_SIDE_VEL, BUMP_UP_VEL);
 	}
 
 	@Override
@@ -290,9 +296,9 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		this.perp = perp;
 		isDead = true;
 		if(perp.getPosition().x < turtleBody.getPosition().x)
-			isDeadToRight = true;
+			deadVelocity.set(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
-			isDeadToRight = false;
+			deadVelocity.set(-BUMP_SIDE_VEL, BUMP_UP_VEL);
 	}
 
 	 // the player can "kick" a turtle hiding in its shell

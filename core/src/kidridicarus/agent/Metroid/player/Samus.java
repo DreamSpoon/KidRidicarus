@@ -91,13 +91,13 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 
 	@Override
 	public void update(float delta) {
-		processContactState(delta);
-		processMoveState(delta);
-		processSpriteState(delta);
+		processContacts(delta);
+		processMove(delta);
+		processSprite(delta);
 		advice.clear();
 	}
 
-	private void processContactState(float delta) {
+	private void processContacts(float delta) {
 		ContactState nextContactState = ContactState.REGULAR;
 		switch(curContactState) {
 			case REGULAR:
@@ -141,7 +141,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		agency.playSound(AudioInfo.Sound.Metroid.HURT);
 	}
 
-	private void processMoveState(float delta) {
+	private void processMove(float delta) {
 		MoveState nextMoveState = null;
 		boolean jumpStart = false;
 		// XOR the moveleft and moveright, becuase can't move left and right at same time
@@ -392,7 +392,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		curMoveState = nextMoveState;
 	}
 
-	private void processSpriteState(float delta) {
+	private void processSprite(float delta) {
 		sSprite.update(delta, sBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
 	}
 

@@ -63,7 +63,11 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 
 	@Override
 	public void update(float delta) {
-		float yOffset = 0f;
+		processMove(delta);
+		processSprite(delta);
+	}
+
+	private void processMove(float delta) {
 		StarState curState = getState();
 		switch(curState) {
 			case WALK:
@@ -91,19 +95,21 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 					agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
 					starBody = new PowerStarBody(this, agency.getWorld(), sproutingPosition);
 				}
-				else
-					yOffset = SPROUT_OFFSET * (SPROUT_TIME - stateTimer) / SPROUT_TIME;
 				break;
 		}
-
-		if(starBody != null)
-			starSprite.update(delta, starBody.getPosition().cpy().add(0f, yOffset));
-		else
-			starSprite.update(delta, sproutingPosition.cpy().add(0f, yOffset));
 
 		// increment state timer
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
 		prevState = curState;
+	}
+
+	private void processSprite(float delta) {
+		if(starBody != null)
+			starSprite.update(delta, starBody.getPosition());
+		else {
+			float yOffset = SPROUT_OFFSET * (SPROUT_TIME - stateTimer) / SPROUT_TIME;
+			starSprite.update(delta, sproutingPosition.cpy().add(0f, yOffset));
+		}
 	}
 
 	@Override

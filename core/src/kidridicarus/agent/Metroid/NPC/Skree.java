@@ -61,11 +61,17 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 
 	@Override
 	public void update(float delta) {
-		if(sBody.isOnGround())
-			sBody.setVelocity(0f, 0f);
+		processContacts();
+		processMove(delta);
+		processSprite(delta);
+	}
+
+	private void processContacts() {
 		if(sBody.getPlayerContact() != null)
 			target = sBody.getPlayerContact();
+	}
 
+	private void processMove(float delta) {
 		SkreeState nextState = getNextState();
 		switch(nextState) {
 			case SLEEP:
@@ -74,6 +80,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 				doFall();
 				break;
 			case ONGROUND:
+				sBody.setVelocity(0f, 0f);
 				break;
 			case EXPLODE:
 				doExplode();
@@ -85,7 +92,9 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 
 		stateTimer = nextState == curState ? stateTimer+delta : 0f;
 		curState = nextState;
+	}
 
+	private void processSprite(float delta) {
 		sSprite.update(delta, sBody.getPosition(), curState);
 	}
 

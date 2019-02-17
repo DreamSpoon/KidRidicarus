@@ -23,7 +23,7 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
  * check the sensors.
  */
 public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
-	public enum ZoomerState { WALK, DEAD };
+	public enum MoveState { WALK, DEAD };
 	// MOVEVEL.x is the horizontal velocity when moving right, and
 	// MOVEVEL.y is the vertical velocity when moving right.
 	private static final Vector2 MOVEVEL = new Vector2(0.25f, -0.25f);
@@ -42,7 +42,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	
 	private Vector2 prevBodyPosition;
 
-	private ZoomerState curState;
+	private MoveState curState;
 
 	public Zoomer(Agency agency, AgentDef adef) {
 		super(agency, adef);
@@ -51,7 +51,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 		upDir = null;
 		upDirChangeTimer = 0;
 		isDead = false;
-		curState = ZoomerState.WALK;
+		curState = MoveState.WALK;
 
 		zBody = new ZoomerBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		prevBodyPosition = zBody.getPosition();
@@ -64,15 +64,23 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 
 	@Override
 	public void update(float delta) {
-		ZoomerState nextState = getState();
+		processContacts(delta);
+		processMove(delta);
+		processSprite(delta);
+	}
 
-		switch(nextState) {
+	private void processContacts(float delta) {
+		if(upDir == null)
+			setInitialUpDir();
+		else if(upDirChangeTimer > UPDIR_CHANGE_MINTIME)
+			checkYourself();
+		upDirChangeTimer += delta;
+	}
+
+	private void processMove(float delta) {
+		MoveState nextMoveState = getNextMoveState();
+		switch(nextMoveState) {
 			case WALK:
-				if(upDir == null)
-					setInitialUpDir();
-				else if(upDirChangeTimer > UPDIR_CHANGE_MINTIME)
-					checkYourself();
-
 				if(isWalkingRight)
 					zBody.setVelocity(getMoveRight());
 				else
@@ -82,17 +90,13 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 				agency.disposeAgent(this);
 				break;
 		}
-
+		curState = nextMoveState;
 		prevBodyPosition = zBody.getPosition().cpy();
-		
-		upDirChangeTimer += delta;
-
-		zSprite.update(delta, zBody.getPosition(), curState, upDir);
 	}
 
 	private static final float JUKE_EPSILON1 = 0.0002f;
 	private static final float JUKE_EPSILON2 = UInfo.P2M(0.01f);
-	private void checkYourself() {
+	private void checkYourself() {	// before you wreck yourself
 		/* Get the movement delta between this frame and last frame, and apply transform according to upDir and
 		 * isWalkingRight to get movement assuming upDir is actually "UP", and isWalkingRight is true.
 		 * This transform simplifies later calculations. 
@@ -136,7 +140,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 				return new Vector2(notFlipsign ? -pos.x : pos.x, -pos.y);
 			case RIGHT:
 				return new Vector2(notFlipsign ? -pos.y : pos.y, pos.x);
-//			case LEFT:
+			// LEFT, by deduction
 			default:
 				return new Vector2(notFlipsign ? pos.y : -pos.y, -pos.x);
 		}
@@ -268,11 +272,15 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 		}
 	}
 
-	private ZoomerState getState() {
+	private MoveState getNextMoveState() {
 		if(isDead)
-			return ZoomerState.DEAD;
+			return MoveState.DEAD;
 		else
-			return ZoomerState.WALK;
+			return MoveState.WALK;
+	}
+
+	private void processSprite(float delta) {
+		zSprite.update(delta, zBody.getPosition(), curState, upDir);
 	}
 
 	@Override

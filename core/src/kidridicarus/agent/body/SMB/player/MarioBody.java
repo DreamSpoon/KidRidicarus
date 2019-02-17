@@ -516,9 +516,9 @@ public class MarioBody extends MobileAgentBody {
 			list = (LinkedList<Agent>) acBeginSensor.getAndResetContacts();
 			LinkedList<Agent> bouncedAgents = new LinkedList<Agent>();
 			for(Agent a : list) {
-				if(!(a instanceof HeadBounceAgent))
+				// skip the agent if not bouncy :)
+				if(!(a instanceof HeadBounceAgent) || !((HeadBounceAgent) a).isBouncy())
 					continue;
-
 				// If the bottom of mario's bounds box is at least as high as the middle of the agent then bounce.
 				// (i.e. if mario's foot is at least as high as midway up the other agent...)
 				// Note: check this frame postiion and previous frame postiion in case mario is travelling quickly...

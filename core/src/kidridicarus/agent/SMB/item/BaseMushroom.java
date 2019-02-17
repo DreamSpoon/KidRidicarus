@@ -23,13 +23,13 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 	private static final float WALK_VEL = 0.6f;
 	private static final float BUMP_UPVEL = 1.5f;
 
-	private enum MushroomState { SPROUT, WALK, FALL };
+	private enum MoveState { SPROUT, WALK, FALL };
 
 	private BaseMushroomBody bmBody;
 	protected MushroomSprite mSprite;
 
-	private MushroomState prevState;
-	private float stateTimer;
+	private MoveState prevState;
+	private float moveStateTimer;
 
 	protected boolean isSprouting;
 	private Vector2 sproutingPosition;
@@ -49,8 +49,8 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 		isBumped = false;
 		setConstVelocity(new Vector2(WALK_VEL, 0f));
 
-		prevState = MushroomState.WALK;
-		stateTimer = 0f;
+		prevState = MoveState.WALK;
+		moveStateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
@@ -58,9 +58,12 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 
 	@Override
 	public void update(float delta) {
-		MushroomState curState;
-		float yOffset;
+		processContacts();
+		processMove(delta);
+		processSprite(delta);
+	}
 
+	private void processContacts() {
 		if(bmBody != null) {
 			// process bumpings
 			if(isBumped) {
@@ -77,9 +80,10 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 			else if(bmBody.isMoveBlocked(getConstVelocity().x > 0f))
 				reverseConstVelocity(true, false);
 		}
+	}
 
-		yOffset = 0f;
-		curState = getState();
+	private void processMove(float delta) {
+		MoveState curState = getMoveState();
 		switch(curState) {
 			case WALK:
 				// move if walking
@@ -87,35 +91,37 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 				break;
 			case SPROUT:
 				// wait a short time to finish sprouting, then spawn the body when sprout finishes
-				if(stateTimer > SPROUT_TIME) {
+				if(moveStateTimer > SPROUT_TIME) {
 					isSprouting = false;
 					agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
 					bmBody = new BaseMushroomBody(this, agency.getWorld(), sproutingPosition);
 				}
-				else
-					yOffset = SPROUT_OFFSET * (SPROUT_TIME - stateTimer) / SPROUT_TIME;
 				break;
 			case FALL:
 				break;	// do nothing if falling
 		}
 
-		if(isSprouting)
-			mSprite.update(delta, sproutingPosition.cpy().add(0f, yOffset));
-		else
-			mSprite.update(delta, bmBody.getPosition().cpy().add(0f, yOffset));
-
 		// increment state timer if state stayed the same, otherwise reset timer
-		stateTimer = curState == prevState ? stateTimer+delta : 0f;
+		moveStateTimer = curState == prevState ? moveStateTimer+delta : 0f;
 		prevState = curState;
 	}
 
-	private MushroomState getState() {
+	private MoveState getMoveState() {
 		if(isSprouting)
-			return MushroomState.SPROUT;
+			return MoveState.SPROUT;
 		else if(bmBody.isOnGround())
-			return MushroomState.WALK;
+			return MoveState.WALK;
 		else
-			return MushroomState.FALL;
+			return MoveState.FALL;
+	}
+
+	private void processSprite(float delta) {
+		if(isSprouting) {
+			float yOffset = SPROUT_OFFSET * (SPROUT_TIME - moveStateTimer) / SPROUT_TIME;
+			mSprite.update(delta, sproutingPosition.cpy().add(0f, yOffset));
+		}
+		else
+			mSprite.update(delta, bmBody.getPosition());
 	}
 
 	@Override

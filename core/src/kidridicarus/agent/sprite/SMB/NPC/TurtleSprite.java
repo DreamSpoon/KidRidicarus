@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agent.SMB.NPC.Turtle.TurtleState;
+import kidridicarus.agent.SMB.NPC.Turtle.MoveState;
 import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
@@ -35,7 +35,7 @@ public class TurtleSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, TurtleState curState, boolean facingRight) {
+	public void update(float delta, Vector2 position, MoveState curState, boolean facingRight) {
 		switch(curState) {
 			case WALK:
 				setRegion(walkAnim.getKeyFrame(stateTimer, true));

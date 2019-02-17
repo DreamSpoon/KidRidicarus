@@ -21,7 +21,7 @@ public class SamusShot extends Agent {
 	private SamusShotSprite shotSprite;
 	private float stateTimer;
 
-	// TODO: check if shot is being created inside solid area, and change to shot explision if so
+	// TODO: check if shot is being created inside solid area, and change to shot explosion if so
 	public SamusShot(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
@@ -38,16 +38,9 @@ public class SamusShot extends Agent {
 
 	@Override
 	public void update(float delta) {
-		// dispose if dead
-		if(stateTimer > LIVE_TIME) {
-			agency.disposeAgent(this);
-			return;
-		}
-
 		processContacts();
-
-		shotSprite.update(delta, shotBody.getPosition());
-		stateTimer += delta;
+		processMove(delta);
+		processSprite(delta);
 	}
 
 	private void processContacts() {
@@ -66,6 +59,17 @@ public class SamusShot extends Agent {
 			agency.disposeAgent(this);
 			return;
 		}
+	}
+
+	private void processMove(float delta) {
+		// dispose if dead
+		if(stateTimer > LIVE_TIME)
+			agency.disposeAgent(this);
+		stateTimer += delta;
+	}
+
+	private void processSprite(float delta) {
+		shotSprite.update(delta, shotBody.getPosition());
 	}
 
 	@Override

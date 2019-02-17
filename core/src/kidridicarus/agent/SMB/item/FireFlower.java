@@ -39,8 +39,12 @@ public class FireFlower extends Agent implements ItemAgent {
 
 	@Override
 	public void update(float delta) {
-		float yOffset = 0f;
+		processSprite(delta);
+	}
+
+	private void processSprite(float delta) {
 		if(isSprouting) {
+			float yOffset = 0f;
 			if(stateTimer > SPROUT_TIME) {
 				isSprouting = false;
 				agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);

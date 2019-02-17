@@ -20,7 +20,7 @@ public class MyKidRidicarus extends Game {
 
 	private PowChar initPowChar = PowChar.MARIO;
 	private String levelFilenames[] = new String[] {
-			GameInfo.GAMEMAP_FILENAME1,
+			GameInfo.GAMEMAP_FILENAME2,
 			GameInfo.GAMEMAP_FILENAME2 };
 
 	@Override

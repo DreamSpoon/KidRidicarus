@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agent.SMB.NPC.Goomba.GoombaState;
+import kidridicarus.agent.SMB.NPC.Goomba.MoveState;
 import kidridicarus.info.SMBAnim;
 import kidridicarus.info.UInfo;
 
@@ -32,21 +32,20 @@ public class GoombaSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, GoombaState curState) {
-		switch(curState) {
-			case WALK:
-			case FALL:
-				setRegion(walkAnim.getKeyFrame(stateTimer, true));
-				break;
-			case DEAD_SQUISH:
+	public void update(float delta, Vector2 position, MoveState moveState) {
+		switch(moveState) {
+			case SQUISH:
 				setRegion(squish);
 				break;
-			case DEAD_BUMPED:
+			case BUMP:
 				// no walking after bopping
 				setRegion(walkAnim.getKeyFrame(0, true));
 				// upside down when bopped
 				if(!isFlipY())
 					flip(false,  true);
+				break;
+			default:
+				setRegion(walkAnim.getKeyFrame(stateTimer, true));
 				break;
 		}
 

@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.info.GameInfo.Direction4;
-import kidridicarus.agent.Metroid.NPC.Zoomer.ZoomerState;
+import kidridicarus.agent.Metroid.NPC.Zoomer.MoveState;
 import kidridicarus.info.MetroidAnim;
 import kidridicarus.info.UInfo;
 
@@ -33,7 +33,7 @@ public class ZoomerSprite extends Sprite {
 	}
 
 	// TODO: change angle of sprite based on upDir
-	public void update(float delta, Vector2 position, ZoomerState curState, Direction4 upDir) {
+	public void update(float delta, Vector2 position, MoveState curState, Direction4 upDir) {
 		switch(curState) {
 			case WALK:
 				setRegion(walkAnim.getKeyFrame(stateTimer, true));
