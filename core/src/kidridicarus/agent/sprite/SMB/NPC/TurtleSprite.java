@@ -37,6 +37,7 @@ public class TurtleSprite extends Sprite {
 
 	public void update(float delta, Vector2 position, MoveState curState, boolean facingRight) {
 		switch(curState) {
+			case NONE:
 			case WALK:
 				setRegion(walkAnim.getKeyFrame(stateTimer, true));
 				break;

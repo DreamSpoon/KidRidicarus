@@ -19,10 +19,10 @@ import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.PowerupInfo.PowChar;
 import kidridicarus.info.PowerupInfo.PowType;
+import kidridicarus.tool.KeyboardMapping;
+import kidridicarus.tool.QQ;
 import kidridicarus.info.SMBInfo;
 import kidridicarus.info.UInfo;
-import kidridicarus.tools.KeyboardMapping;
-import kidridicarus.tools.QQ;
 
 public class MainGuide implements Disposable {
 	private static final float SPAWN_TRIGGER_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 30);

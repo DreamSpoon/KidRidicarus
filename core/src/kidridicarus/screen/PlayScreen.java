@@ -1,4 +1,4 @@
-package kidridicarus.screens;
+package kidridicarus.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -14,8 +14,8 @@ import kidridicarus.guide.MainGuide;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.UInfo;
 import kidridicarus.info.PowerupInfo.PowChar;
-import kidridicarus.tools.KeyboardMapping;
-import kidridicarus.tools.QQ;
+import kidridicarus.tool.KeyboardMapping;
+import kidridicarus.tool.QQ;
 
 public class PlayScreen implements Screen {
 	private MyKidRidicarus game;

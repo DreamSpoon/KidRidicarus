@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 import kidridicarus.info.GameInfo.LayerDrawOrder;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
-import kidridicarus.tools.QQ;
+import kidridicarus.tool.QQ;
 import kidridicarus.agent.Agent;
 import kidridicarus.guide.MainGuide;
 import kidridicarus.info.UInfo;

@@ -4,8 +4,18 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 /*
- * Title: Contact Filter Bit Sequence
- * Desc: A collection of contact filter bits, no duplicates.
+ * Title: Contact Filter (CF) Bit Sequence
+ * Desc:
+ * A collection of contact filter bits, no duplicates. "Bitwise operations" supported:
+ *   AND
+ *   OR
+ *   Set all bits to 0 (full off)
+ *   Set all bits to 1 (full on)
+ * 
+ * A special flag bit, THE_ONE_BIT, is used to indicate when all "bits" are "on". There can be no more than one
+ * THE_ONE_BIT in a CF bit sequence.
+ *
+ * TODO: Refactor to use Strings instead of enums, to increase flexibility.
  */
 public class CFBitSeq {
 	/*

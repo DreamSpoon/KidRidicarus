@@ -10,8 +10,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.GameInfo;
 import kidridicarus.info.PowerupInfo.PowChar;
-import kidridicarus.screens.PlayScreen;
+import kidridicarus.screen.PlayScreen;
 
+/*
+ * Main game asset loader class - or at least, it should be...
+ * TODO: Load level assets here?
+ */
 public class MyKidRidicarus extends Game {
 	public SpriteBatch batch;
 	public ShapeRenderer sr;
@@ -20,7 +24,7 @@ public class MyKidRidicarus extends Game {
 
 	private PowChar initPowChar = PowChar.MARIO;
 	private String levelFilenames[] = new String[] {
-			GameInfo.GAMEMAP_FILENAME2,
+			GameInfo.GAMEMAP_FILENAME1,
 			GameInfo.GAMEMAP_FILENAME2 };
 
 	@Override

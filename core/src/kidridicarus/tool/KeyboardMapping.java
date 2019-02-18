@@ -1,4 +1,4 @@
-package kidridicarus.tools;
+package kidridicarus.tool;
 
 import com.badlogic.gdx.Input;
 

@@ -1,4 +1,4 @@
-package kidridicarus.tools;
+package kidridicarus.tool;
 
 import java.util.LinkedList;
 

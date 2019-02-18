@@ -1,4 +1,4 @@
-package kidridicarus.screens;
+package kidridicarus.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;

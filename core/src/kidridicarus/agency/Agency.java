@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -14,6 +13,8 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.contact.WorldContactFilter;
 import kidridicarus.agency.contact.WorldContactListener;
+import kidridicarus.agency.helper.AgentDrawOrderLists;
+import kidridicarus.agency.helper.SolidTileChangeQueue;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.Metroid.NPC.Skree;
 import kidridicarus.agent.Metroid.NPC.SkreeExp;
@@ -46,61 +47,19 @@ import kidridicarus.agent.general.Room;
 import kidridicarus.collisionmap.TileCollisionMap;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
-import kidridicarus.tools.BlockingQueueList;
-import kidridicarus.tools.BlockingQueueList.AddRemCallback;
+import kidridicarus.tool.BlockingQueueList;
+import kidridicarus.tool.BlockingQueueList.AddRemCallback;
 
 public class Agency implements Disposable {
 	private World world;
 	private TileCollisionMap collisionMap;
-
-	private BlockingQueueList<Agent> allAgents;
-
-	// sub-list of agents, just agents receiving updates
-	private BlockingQueueList<Agent> allUpdateAgents;
-
-	private class PhysTileItem {
-		public int x;
-		public int y;
-		public boolean solid;
-		public PhysTileItem(int x, int y, boolean solid) {
-			this.x = x;
-			this.y = y;
-			this.solid = solid;
-		}
-	}
-	private LinkedBlockingQueue<PhysTileItem> physicTileChangeQ;
-
-	private class AgentDrawOrderItem {
-		public Agent agent;
-		public SpriteDrawOrder drawOrder;
-		public AgentDrawOrderItem(Agent agent, SpriteDrawOrder drawOrder) {
-			this.agent = agent;
-			this.drawOrder = drawOrder;
-		}
-	}
-	// sub-list of agents, just agents being drawn
-	private LinkedList<Agent>[] drawAgents;
-	private LinkedBlockingQueue<AgentDrawOrderItem> setAgentDrawLayerQ;
-
+	private SolidTileChangeQueue tileChangeQ;
+	private BlockingQueueList<Agent> agents;
+	private BlockingQueueList<Agent> updateAgents;
+	private AgentDrawOrderLists agentDrawOrderLists;
 	private TextureAtlas atlas;
+	private float globalTimer;
 	private AgencyEventListener agencyEventListener;
-
-	private class AllAgentsAddRem implements AddRemCallback<Agent> {
-		@Override
-		public void add(Agent agent) {}
-		@Override
-		public void remove(Agent agent) {
-			// check list of agentss to update, remove agent if found
-			if(allUpdateAgents.contains(agent))
-				allUpdateAgents.remove(agent);
-			// check lists of agents to draw, remove agent if found
-			for(int i=0; i<SpriteDrawOrder.values().length; i++) {
-				if(drawAgents[i].contains(agent))
-					drawAgents[i].remove(agent);
-			}
-			agent.dispose();
-		}
-	}
 
 	private Object[] agentClassList = new Object[] {
 			KVInfo.VAL_BUMPTILE, BumpTile.class,
@@ -133,22 +92,23 @@ public class Agency implements Disposable {
 			KVInfo.VAL_SAMUS_SHOT, SamusShot.class
 		};
 
-	private float globalTimer;
-
-	@SuppressWarnings("unchecked")
 	public Agency() {
 		atlas = null;
-
 		globalTimer = 0f;
+		tileChangeQ = new SolidTileChangeQueue();
 
-		physicTileChangeQ = new LinkedBlockingQueue<PhysTileItem>();
-
-		allAgents = new BlockingQueueList<Agent>(new AllAgentsAddRem());
-		allUpdateAgents = new BlockingQueueList<Agent>();
-		drawAgents = (LinkedList<Agent>[]) new LinkedList[SpriteDrawOrder.values().length];
-		for(int i=0; i<SpriteDrawOrder.values().length; i++)
-			drawAgents[i] = new LinkedList<Agent>();
-		setAgentDrawLayerQ = new LinkedBlockingQueue<AgentDrawOrderItem>();
+		updateAgents = new BlockingQueueList<Agent>();
+		agentDrawOrderLists = new AgentDrawOrderLists();
+		agents = new BlockingQueueList<Agent>(new AddRemCallback<Agent>() {
+				@Override
+				public void add(Agent agent) {}
+				@Override
+				public void remove(Agent agent) {
+					updateAgents.remove(agent);
+					agentDrawOrderLists.remove(agent);
+					agent.dispose();
+				}
+			});
 
 		world = new World(new Vector2(0, -10f), true);
 		world.setContactListener(new WorldContactListener());
@@ -159,24 +119,27 @@ public class Agency implements Disposable {
 		this.atlas = atlas;
 	}
 
-	// uses the input layers to find solid (i.e. non-null) tiles and create the collision map
+	/*
+	 * Use the input layers to find solid (i.e. non-null) tiles and create the collision map.
+	 */
 	public void createCollisionMap(Collection<TiledMapTileLayer> solidLayers) {
 		collisionMap = new TileCollisionMap(world, solidLayers);
 	}
 
 	public void update(float delta) {
 		world.step(delta, 6, 2);
-
 		updateAgents(delta);
-		updateTileWorld(delta);
-
+		// agent updates may have modified collision map, so process the changes
+		tileChangeQ.processUpdates(collisionMap);
 		globalTimer += delta;
 	}
 
-	// TODO: If the World.step method is NOT running at present then dispose the agent immediately, otherwise add it
-	// to the queue to be disposed later - apply this same concept to other queues if possible.
+	/*
+	 * TODO: If the World.step method is NOT running at present then dispose the agent immediately, otherwise
+	 * add it to the queue to be disposed later - apply this same concept to other queues if possible.
+	 */
 	public void disposeAgent(Agent agent) {
-		allAgents.remove(agent);
+		agents.remove(agent);
 	}
 
 	public void createAgents(Collection<AgentDef> agentDefs) {
@@ -212,65 +175,52 @@ public class Agency implements Disposable {
 		try {
 			constructor = agentClass.getConstructor(new Class[] { Agency.class, AgentDef.class });
 			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { this, adef });
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		allAgents.add(newlyCreatedAgent);
+		agents.add(newlyCreatedAgent);
 		return newlyCreatedAgent;
 	}
 
-	public void enableAgentUpdate(Agent agent) {
-		allUpdateAgents.add(agent);
-	}
-
-	public void disableAgentUpdate(Agent agent) {
-		allUpdateAgents.remove(agent);
-	}
-
-	public void setAgentDrawLayer(Agent agent, SpriteDrawOrder layer) {
-		setAgentDrawLayerQ.add(new AgentDrawOrderItem(agent, layer));
-	}
-
 	public void updateAgents(float delta) {
-		for(Agent a : allUpdateAgents.getList())
+		// loop through list of agents receiving updates, calling each agent's update method
+		for(Agent a : updateAgents.getList())
 			a.update(delta);
-
-		// during update of agents, some agents may have been added to agents add/destroy queue, process the queues
-		allAgents.processQ();
-		allUpdateAgents.processQ();
-
-		while(!setAgentDrawLayerQ.isEmpty())
-			doSetAgentDrawLayer(setAgentDrawLayerQ.poll());
-	}
-
-	private void doSetAgentDrawLayer(AgentDrawOrderItem adoi) {
-		// check all layers for agent and remove if necessary
-		for(int i=0; i<SpriteDrawOrder.values().length; i++) {
-			if(drawAgents[i].contains(adoi.agent))
-				drawAgents[i].remove(adoi.agent);
-		}
-		if(adoi.drawOrder != SpriteDrawOrder.NONE)
-			drawAgents[adoi.drawOrder.ordinal()].add(adoi.agent);
+		// During the update, agents may have been added/removed from queues:
+		//   -agents to add/remove from queues
+		//   -update agents
+		//   -draw order agents
+		// The queues must be processed in the correct order, to prevent errors/unknown behavior.
+		// Here is my attempt to get the order of operations right:
+		//   After all agents have had their update method called,
+		//     1) Process the "all agents list" add/removes. Since any agents that were destroyed will not be
+		//        affected by update enable/disable or draw order change.
+		//     2) Process the update enable/disable queue and draw order change queue, in any order.
+		agents.processQ();
+		updateAgents.processQ();
+		agentDrawOrderLists.process();
 	}
 
 	public void setPhysicTile(Vector2 t, boolean solid) {
-		physicTileChangeQ.add(new PhysTileItem((int) t.x, (int) t.y, solid));
-	}
-
-	// tile creates and destroys
-	public void updateTileWorld(float delta) {
-		while(!physicTileChangeQ.isEmpty()) {
-			PhysTileItem pTile = physicTileChangeQ.poll();
-			if(pTile.solid == true)
-				collisionMap.addTile(pTile.x, pTile.y);
-			else
-				collisionMap.removeTile(pTile.x, pTile.y);
-		}
+		tileChangeQ.add((int) t.x, (int) t.y, solid);
 	}
 
 	public boolean isMapTileSolid(Vector2 tilePos) {
 		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
+	}
+
+	public void enableAgentUpdate(Agent agent) {
+		updateAgents.add(agent);
+	}
+
+	public void disableAgentUpdate(Agent agent) {
+		updateAgents.remove(agent);
+	}
+
+	public void setAgentDrawLayer(Agent agent, SpriteDrawOrder layer) {
+		agentDrawOrderLists.setAgentDrawOrder(agent, layer);
 	}
 
 	public World getWorld() {
@@ -281,9 +231,11 @@ public class Agency implements Disposable {
 		return collisionMap;
 	}
 
-	// WorldRenderer will get and render the agents to draw
+	/*
+	 * WorldRenderer will call this method to get and render the drawable agents.
+	 */
 	public Collection<Agent>[] getAgentsToDraw() {
-		return drawAgents;
+		return agentDrawOrderLists.getAgentsToDraw();
 	}
 
 	public TextureAtlas getAtlas() {
@@ -319,15 +271,23 @@ public class Agency implements Disposable {
 			agencyEventListener.onStartSinglePlayMusic(musicName);
 	}
 
+	/*
+	 * Find agents in list which contain map properties equal to the given keys/vals data.
+	 * Note: A value in the vals[] array can be set to null if the value of it's key is to be ignored (in this case,
+	 * only the key need exist in the agent's properties - the value for the key is irrelevant).
+	 */
+	public Collection<Agent> getAgentsByProperties(String[] keys, String[] vals) {
+		return getAgentsByPropertiesInt(keys, vals, false);
+	}
+
+	/*
+	 * Same as gettAgentsByProperties, but returns only the first agent (if any) found.
+	 */
 	public Agent getFirstAgentByProperties(String[] keys, String[] vals) {
 		Collection<Agent> r = getAgentsByPropertiesInt(keys, vals, true);
 		if(r.iterator().hasNext())
 			return r.iterator().next(); 
 		return null;
-	}
-
-	public Collection<Agent> getAgentsByProperties(String[] keys, String[] vals) {
-		return getAgentsByPropertiesInt(keys, vals, false);
 	}
 
 	/*
@@ -340,7 +300,7 @@ public class Agency implements Disposable {
 			throw new IllegalArgumentException("keys[] and vals[] arrays are not of equal length.");
 
 		// loop through list of all agents, ignoring agents that have any wrong key/value pairs 
-		for(Agent a : allAgents.getList()) {
+		for(Agent a : agents.getList()) {
 			boolean ignore = false;
 			for(int i=0; i<keys.length; i++) {
 				// If the key is not found, or the value doesn't match then ignore this agent (if the value 
@@ -386,6 +346,9 @@ public class Agency implements Disposable {
 		return null;
 	}
 
+	/*
+	 * How much time has passed since this agency was constructed?
+	 */
 	public float getGlobalTimer() {
 		return globalTimer;
 	}
