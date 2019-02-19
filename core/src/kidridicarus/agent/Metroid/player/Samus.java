@@ -6,12 +6,12 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
-import kidridicarus.agent.AdvisableAgent;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.PlayerAgent;
 import kidridicarus.agent.body.Metroid.player.SamusBody;
 import kidridicarus.agent.general.Room;
+import kidridicarus.agent.optional.AdvisableAgent;
 import kidridicarus.agent.optional.ContactDmgAgent;
+import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.agent.sprite.Metroid.player.SamusSprite;
 import kidridicarus.guide.Advice;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;

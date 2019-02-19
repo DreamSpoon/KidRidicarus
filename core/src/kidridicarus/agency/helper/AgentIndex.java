@@ -7,10 +7,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.utils.Disposable;
+
 import kidridicarus.agent.Agent;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
-public class AgentIndex {
+/*
+ * A list of agents, with sub-lists available upon request.
+ * Sub-lists relate to which agents receive updates and agent draw orders.
+ */
+public class AgentIndex implements Disposable {
 	private HashMap<Agent, AgentWrapper> allAgents;
 	private List<Agent> updateAgents;
 	private List<Agent>[] drawAgents;
@@ -56,6 +62,29 @@ public class AgentIndex {
 		AgentWrapper aw = allAgents.get(agent);
 		if(aw == null)
 			throw new IllegalArgumentException("Agent does not exist in list of all agents: " + agent);
+/*
+ * TODO: Fix this (2019.02.19 12.34.12):
+ * WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.lwjgl.LWJGLUtil$3 (file:/C:/Users/pluser/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl/2.9.2/a9d80fe5935c7a9149f6584d9777cfd471f65489/lwjgl-2.9.2.jar) to method java.lang.ClassLoader.findLibrary(java.lang.String)
+WARNING: Please consider reporting this to the maintainers of org.lwjgl.LWJGLUtil$3
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+Exception in thread "LWJGL Application" java.lang.IllegalArgumentException: Agent does not exist in list of all agents: kidridicarus.agent.Metroid.player.SamusShot@308a81eb
+	at kidridicarus.agency.helper.AgentIndex.disableAgentUpdate(AgentIndex.java:62)
+	at kidridicarus.agency.helper.AgentIndex.removeAgent(AgentIndex.java:41)
+	at kidridicarus.agency.Agency$1.change(Agency.java:217)
+	at kidridicarus.agency.helper.AgentChangeQueue.process(AgentChangeQueue.java:65)
+	at kidridicarus.agency.Agency.processAgentChangeQ(Agency.java:210)
+	at kidridicarus.agency.Agency.updateAgents(Agency.java:206)
+	at kidridicarus.agency.Agency.update(Agency.java:140)
+	at kidridicarus.agencydirector.AgencyDirector.update(AgencyDirector.java:121)
+	at kidridicarus.screen.PlayScreen.update(PlayScreen.java:114)
+	at kidridicarus.screen.PlayScreen.render(PlayScreen.java:59)
+	at com.badlogic.gdx.Game.render(Game.java:46)
+	at kidridicarus.MyKidRidicarus.render(MyKidRidicarus.java:65)
+	at com.badlogic.gdx.backends.lwjgl.LwjglApplication.mainLoop(LwjglApplication.java:225)
+	at com.badlogic.gdx.backends.lwjgl.LwjglApplication$1.run(LwjglApplication.java:126)
+ */
 		if(aw.receiveUpdates == true) {
 			aw.receiveUpdates = false;
 			updateAgents.remove(agent);
@@ -114,5 +143,19 @@ public class AgentIndex {
 			if(agentIter.iterate(agent))
 				break;
 		}
+	}
+
+	/*
+	 * Call dispose method of each agent in the all agents list.
+	 */
+	@Override
+	public void dispose() {
+		iterateThroughAllAgents(new AgentIter() {
+				@Override
+				public boolean iterate(Agent agent) {
+					agent.dispose();
+					return false;
+				}
+			});
 	}
 }

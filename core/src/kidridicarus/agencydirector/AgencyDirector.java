@@ -25,6 +25,10 @@ import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.PowerupInfo.PowChar;
 
+/*
+ * Run the agency, insert guides (players) into the agency, and take direction from the agency to
+ * play sounds, music, etc. 
+ */
 public class AgencyDirector implements Disposable {
 	private AssetManager manager;
 	private TextureAtlas atlas;

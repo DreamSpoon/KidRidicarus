@@ -1,9 +1,10 @@
-package kidridicarus.agent;
+package kidridicarus.agent.general;
 
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
+import kidridicarus.agent.Agent;
 
 public abstract class BasicWalkAgent extends Agent {
 	private Vector2 constVelocity = new Vector2();

@@ -6,15 +6,15 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
-import kidridicarus.agent.AdvisableAgent;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.PlayerAgent;
 import kidridicarus.agent.SMB.FloatingPoints;
 import kidridicarus.agent.SMB.WarpPipe;
 import kidridicarus.agent.body.SMB.player.MarioBody;
 import kidridicarus.agent.body.SMB.player.MarioBody.MarioBodyState;
 import kidridicarus.agent.general.GuideSpawner;
 import kidridicarus.agent.general.Room;
+import kidridicarus.agent.optional.AdvisableAgent;
+import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.agent.sprite.SMB.player.MarioSprite;
 import kidridicarus.guide.Advice;
 import kidridicarus.info.AudioInfo;

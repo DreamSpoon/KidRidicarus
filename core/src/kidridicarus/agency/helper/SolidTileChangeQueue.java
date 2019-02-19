@@ -5,7 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import kidridicarus.collisionmap.TileCollisionMap;
 
 /*
- * Store a queue of collision map tiles that need to be switched (e.g. switching a solid tile to non-solid).
+ * A queue of collision map tiles that need to be switched (e.g. switching a solid tile to non-solid).
  */
 public class SolidTileChangeQueue {
 	private LinkedBlockingQueue<SolidTile> changeQueue;

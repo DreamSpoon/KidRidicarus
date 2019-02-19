@@ -53,6 +53,28 @@ import kidridicarus.collisionmap.TileCollisionMap;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
+/*
+ * Desc:
+ *   Agency contains Agents and organizes interactions between Agents (Agent-to-Agent), and between Agents and
+ *   Agency (Agent-to-Agency, and Agency-to-Agent).
+ * Wikipedia definitions for some context:
+ *   "Agency - Psychology"
+ *     https://en.wikipedia.org/wiki/Agency_(psychology)
+ *     "In psychology, agents are goal-directed entities that are able to monitor their environment to select and
+ *     perform efficient means-ends actions that are available in a given situation to achieve an intended goal."
+ *   "Structure and agency"
+ *     https://en.wikipedia.org/wiki/Structure_and_agency
+ *     "Agency is the capacity of individuals to act independently and to make their own free choices."
+ *   "Government Agency"
+ *     https://en.wikipedia.org/wiki/Government_agency
+ *     "A government or state agency, sometimes an appointed commission, is a permanent or semi-permanent organization
+ *     in the machinery of government that is responsible for the oversight and administration of specific functions,
+ *     such as an intelligence agency."
+ * "Agency" Google dictionary definition to complete the picture:
+ *   http://www.google.com/search?q=agency+definition
+ *   "a business or organization established to provide a particular service, typically one that involves organizing
+ *   transactions between two other parties."
+ */
 public class Agency implements Disposable {
 	private World world;
 	private TileCollisionMap collisionMap;
@@ -184,9 +206,18 @@ public class Agency implements Disposable {
 		//   -agents to add/remove from queues
 		//   -update agents
 		//   -draw order agents
+		// Process these queues.
 		processAgentChangeQ();
 	}
 
+	/*
+	 * Process the queue of changes to perform the following:
+	 *   -add an agent to list of all agents
+	 *   -remove an agent from list of all agents
+	 *   -enable updates of an agent
+	 *   -disable updates of an agent
+	 *   -set the draw order of an agent
+	 */
 	public void processAgentChangeQ() {
 		agentChangeQ.process(new AgentChangeCallback() {
 				@Override
@@ -209,10 +240,16 @@ public class Agency implements Disposable {
 			});
 	}
 
+	/*
+	 * Add a collision map tile change to the tile change queue.
+	 */
 	public void setPhysicTile(Vector2 t, boolean solid) {
 		tileChangeQ.add((int) t.x, (int) t.y, solid);
 	}
 
+	/*
+	 * Returns solid status of a tile in collision map (solid = true).
+	 */
 	public boolean isMapTileSolid(Vector2 tilePos) {
 		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
 	}
@@ -363,7 +400,12 @@ public class Agency implements Disposable {
 
 	@Override
 	public void dispose() {
+		disposeAllAgents();
 		collisionMap.dispose();
 		world.dispose();
+	}
+
+	private void disposeAllAgents() {
+		agentIndex.dispose();
 	}
 }

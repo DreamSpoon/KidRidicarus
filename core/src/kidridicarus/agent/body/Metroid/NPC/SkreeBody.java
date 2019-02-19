@@ -13,11 +13,11 @@ import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.PlayerAgent;
 import kidridicarus.agent.Metroid.NPC.Skree;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.OnGroundSensor;
+import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.info.UInfo;
 
 public class SkreeBody extends MobileAgentBody {

@@ -19,6 +19,7 @@ public class SamusShot extends Agent {
 	private Samus parent;
 	private SamusShotBody shotBody;
 	private SamusShotSprite shotSprite;
+	private boolean isExploding;
 	private float stateTimer;
 
 	// TODO: check if shot is being created inside solid area, and change to shot explosion if so
@@ -28,6 +29,7 @@ public class SamusShot extends Agent {
 		parent = (Samus) adef.userData;
 
 		stateTimer = 0f;
+		isExploding = false;
 
 		shotBody = new SamusShotBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()), adef.velocity);
 		shotSprite = new SamusShotSprite(agency.getAtlas(), shotBody.getPosition());
@@ -45,10 +47,8 @@ public class SamusShot extends Agent {
 
 	private void processContacts() {
 		// if hit a wall
-		if(shotBody.isHitBound()) {
-			agency.disposeAgent(this);
-			return;
-		}
+		if(shotBody.isHitBound())
+			isExploding = true;
 
 		// check for agents needing damage, and damage the first one
 		for(Agent a : shotBody.getContactAgentsByClass(DamageableAgent.class)) {
@@ -63,8 +63,9 @@ public class SamusShot extends Agent {
 
 	private void processMove(float delta) {
 		// dispose if dead
-		if(stateTimer > LIVE_TIME)
+		if(stateTimer > LIVE_TIME || isExploding)
 			agency.disposeAgent(this);
+
 		stateTimer += delta;
 	}
 

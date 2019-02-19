@@ -8,12 +8,12 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
-import kidridicarus.agent.AdvisableAgent;
 import kidridicarus.agent.Agent;
-import kidridicarus.agent.PlayerAgent;
 import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.general.AgentSpawnTrigger;
 import kidridicarus.agent.general.Room;
+import kidridicarus.agent.optional.AdvisableAgent;
+import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.guide.hud.SMB_Hud;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
@@ -187,6 +187,6 @@ public class MainGuide implements Disposable {
 	@Override
 	public void dispose() {
 		smbHud.dispose();
-		agent.dispose();
+		agency.disposeAgent(agent);
 	}
 }

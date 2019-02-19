@@ -74,6 +74,8 @@ public class MyKidRidicarus extends Game {
 	@Override
 	public void dispose () {
 		super.dispose();
+		if(getScreen() != null)
+			getScreen().dispose();
 		batch.dispose();
 		sr.dispose();
 		manager.dispose();

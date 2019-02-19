@@ -1,4 +1,4 @@
-package kidridicarus.agent;
+package kidridicarus.agent.optional;
 
 import kidridicarus.guide.Advice;
 

@@ -13,6 +13,9 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+/*
+ * Convenience class for Box2D body creation.
+ */
 public class B2DFactory {
 	public static Body makeBoxBody(World world, BodyType bodytype, Object userData, CFBitSeq categoryBits,
 			CFBitSeq maskBits, Rectangle bounds) {

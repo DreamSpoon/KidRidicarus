@@ -9,6 +9,11 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 
+/*
+ * Best Box2D analogy is the Body class. The agent can interact with other agents.
+ * Also, the agent can have "contacts" (equivalent to Fixture in Box2D).
+ * The "contacts" are used to detect when agent is on ground, collisions between agents, etc.
+ */
 public abstract class Agent implements Disposable {
 	protected Agency agency;
 	protected MapProperties properties;
@@ -27,5 +32,5 @@ public abstract class Agent implements Disposable {
 	public abstract void draw(Batch batch);
 	public abstract Vector2 getPosition(); 
 	public abstract Rectangle getBounds();
-	public abstract Vector2 getVelocity(); 
+	public abstract Vector2 getVelocity();
 }
