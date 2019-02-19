@@ -13,7 +13,7 @@ import kidridicarus.info.UInfo;
 
 public class Room extends Agent {
 	private RoomBoxBody rbody;
-	private enum RoomType { CENTER, HSCROLL };
+	private enum RoomType { CENTER, HSCROLL }
 	private RoomType roomtype;
 	private String roommusic;
 	private float vOffset;
@@ -25,9 +25,8 @@ public class Room extends Agent {
 
 		// default to CENTER roomtype
 		roomtype = RoomType.CENTER;
-		if(adef.properties.containsKey(KVInfo.KEY_ROOMTYPE)) {
-			if(adef.properties.get(KVInfo.KEY_ROOMTYPE, String.class).equals(KVInfo.VAL_ROOMTYPE_HSCROLL))
-				roomtype = RoomType.HSCROLL;
+		if(adef.properties.get(KVInfo.KEY_ROOMTYPE, "", String.class).equals(KVInfo.VAL_ROOMTYPE_HSCROLL)) {
+			roomtype = RoomType.HSCROLL;
 		}
 		// default to no music
 		roommusic = "";
@@ -65,10 +64,6 @@ public class Room extends Agent {
 
 	public String getRoommusic() {
 		return roommusic;
-	}
-
-	public boolean isPointInRoom(Vector2 position) {
-		return rbody.getBounds().contains(position);
 	}
 
 	@Override

@@ -12,7 +12,7 @@ import kidridicarus.agent.sprite.SMB.CastleFlagSprite;
 import kidridicarus.info.UInfo;
 
 public class CastleFlag extends Agent {
-	private enum CastleFlagState { DOWN, RISING, UP};
+	private enum CastleFlagState { DOWN, RISING, UP}
 	private static final float RISE_DIST = UInfo.P2M(32);
 	private static final float RISE_TIME = 1f;
 	private static final float BODY_WIDTH = UInfo.P2M(16f);
@@ -36,7 +36,7 @@ public class CastleFlag extends Agent {
 		curState = CastleFlagState.DOWN;
 		stateTimer = 0f;
 
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
 	}
 
 	@Override

@@ -23,7 +23,7 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
  * check the sensors.
  */
 public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
-	public enum MoveState { WALK, DEAD };
+	public enum MoveState { WALK, DEAD }
 	// MOVEVEL.x is the horizontal velocity when moving right, and
 	// MOVEVEL.y is the vertical velocity when moving right.
 	private static final Vector2 MOVEVEL = new Vector2(0.25f, -0.25f);
@@ -59,13 +59,13 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
 	}
 
 	@Override
 	public void update(float delta) {
 		processContacts(delta);
-		processMove(delta);
+		processMove();
 		processSprite(delta);
 	}
 
@@ -77,7 +77,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 		upDirChangeTimer += delta;
 	}
 
-	private void processMove(float delta) {
+	private void processMove() {
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case WALK:

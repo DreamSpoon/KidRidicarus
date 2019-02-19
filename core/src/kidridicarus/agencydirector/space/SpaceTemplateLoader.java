@@ -28,11 +28,8 @@ public class SpaceTemplateLoader {
 
 	private static LinkedList<AgentDef> makeAgentDefsFromLayers(MapLayers layers) {
 		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
-		for(MapLayer layer : layers) {
-			LinkedList<AgentDef> check = makeAgentDefsFromLayer(layer);
-			if(check != null)
-				agentDefs.addAll(check);
-		}
+		for(MapLayer layer : layers)
+			agentDefs.addAll(makeAgentDefsFromLayer(layer));
 		return agentDefs;
 	}
 

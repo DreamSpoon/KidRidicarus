@@ -1,6 +1,6 @@
 package kidridicarus.agent.body.SMB.player;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -67,11 +67,11 @@ public class MarioFireballBody extends MobileAgentBody {
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
 	}
 
-	public LinkedList<Agent> getContactAgents() {
+	public List<Agent> getContactAgents() {
 		return acSensor.getContacts();
 	}
 
-	public <T> LinkedList<Agent> getContactAgentsByClass(Class<T> clazz) {
+	public <T> List<Agent> getContactAgentsByClass(Class<T> clazz) {
 		return acSensor.getContactsByClass(clazz);
 	}
 

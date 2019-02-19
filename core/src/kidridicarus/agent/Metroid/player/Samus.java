@@ -35,8 +35,8 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 	private static final float STEP_SOUND_TIME = 0.167f;
 	private static final float POSTPONE_RUN_DELAY = 0.15f;
 
-	public enum ContactState { REGULAR, DAMAGE };
-	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT };
+	public enum ContactState { REGULAR, DAMAGE }
+	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT }
 
 	private Advice advice;
 	private SamusBody sBody;
@@ -85,7 +85,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		sBody = new SamusBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
 
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

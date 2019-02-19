@@ -1,6 +1,6 @@
 package kidridicarus.agent.body.Metroid.player;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -223,7 +223,7 @@ public class SamusBody extends MobileAgentBody {
 		defineBody(b2body.getPosition());
 	}
 
-	public <T> LinkedList<Agent> getContactsByClass(Class<T> clazz) {
+	public <T> List<Agent> getContactsByClass(Class<T> clazz) {
 		return acSensor.getContactsByClass(clazz);
 	}
 
@@ -231,7 +231,7 @@ public class SamusBody extends MobileAgentBody {
 		// Check for bounce up (no left/right bounces, no down bounces).
 		// Since body restitution=0, bounce occurs when current velocity=0 and previous velocity > 0.
 		// Check against 0 using velocity epsilon.
-		if(UInfo.EpsCheck(getVelocity().y, 0f, UInfo.VEL_EPSILON)) {
+		if(UInfo.epsCheck(getVelocity().y, 0f, UInfo.VEL_EPSILON)) {
 			float amount = -prevVelocity.y;
 			if(amount > MAX_DOWN_VELOCITY-UInfo.VEL_EPSILON)
 				amount = MAX_UP_VELOCITY-UInfo.VEL_EPSILON;
@@ -239,10 +239,6 @@ public class SamusBody extends MobileAgentBody {
 				amount = amount * 0.6f;
 			setVelocity(getVelocity().x, amount);
 		}
-	}
-
-	public boolean hasMaxDownVelocity() {
-		return getVelocity().y <= -MAX_DOWN_VELOCITY + UInfo.VEL_EPSILON;
 	}
 
 	public void postUpdate() {

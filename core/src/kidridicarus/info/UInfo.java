@@ -36,24 +36,8 @@ public class UInfo {
 	 * Input unit: Pixels
 	 * Output unit: Meters
 	 */
-	public static Vector2 P2MVector(Vector2 vec) {
-		return P2MVector(vec.x, vec.y);
-	}
-
-	/*
-	 * Input unit: Pixels
-	 * Output unit: Meters
-	 */
 	public static Vector2 P2MVector(float x, float y) {
 		return new Vector2(P2M(x), P2M(y));
-	}
-
-	/*
-	 * Input unit: Meters
-	 * Output unit: Pixels
-	 */
-	public static Vector2 M2PVector(int x, int y) {
-		return new Vector2(M2P(x), M2P(y));
 	}
 
 	/*
@@ -91,15 +75,6 @@ public class UInfo {
 	}
 
 	/*
-	 * Get center of tile at (x, y), in meters.
-	 * Input unit: Pixels
-	 * Output unit: Meters
-	 */
-	public static Vector2 getP2MTileCenter(int x, int y) {
-		return P2MVector(x * TILEPIX_X + TILEPIX_X/2f, y* TILEPIX_Y + TILEPIX_Y/2f);
-	}
-
-	/*
 	 * Get rectangle bounds of tile at (x, y), in meters.
 	 * Input unit: Pixels
 	 * Output unit: Meters
@@ -108,7 +83,7 @@ public class UInfo {
 		return P2MRect(new Rectangle(x*TILEPIX_X, y*TILEPIX_Y, TILEPIX_X, TILEPIX_Y));
 	}
 
-	public static boolean EpsCheck(float input, float target, float epsilon) {
+	public static boolean epsCheck(float input, float target, float epsilon) {
 		return input >= target-epsilon && input <= target+epsilon;
 	}
 }

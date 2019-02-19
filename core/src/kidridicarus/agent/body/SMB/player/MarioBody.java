@@ -1,6 +1,7 @@
 package kidridicarus.agent.body.SMB.player;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -64,7 +65,7 @@ public class MarioBody extends MobileAgentBody {
 	private static final float MARIO_HEADBOUNCE_VEL = 1.75f;	// up velocity
 	private static final float MIN_HEADBANG_VEL = 0.01f;	// TODO: test this with different values to the best
 
-	public enum MarioBodyState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, DEAD };
+	public enum MarioBodyState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, DEAD }
 
 	private Mario parent;
 	private Agency agency;
@@ -373,7 +374,7 @@ public class MarioBody extends MobileAgentBody {
 			nextState = MarioBodyState.WALKRUN;
 		}
 		else if(doDecelMove) {
-			decelLeftRight(isFacingRight);
+			decelLeftRight();
 			nextState = MarioBodyState.WALKRUN;
 		}
 
@@ -406,7 +407,7 @@ public class MarioBody extends MobileAgentBody {
 			if(mult > 1f)
 				mult = 1f;
 
-			mult *= (float) MARIO_RUNJUMP_MULT;
+			mult *= MARIO_RUNJUMP_MULT;
 			mult += 1f;
 
 			// apply initial (and only) jump impulse
@@ -501,10 +502,10 @@ public class MarioBody extends MobileAgentBody {
 		if(item != null)
 			item.use(parent);
 
-		LinkedList<Agent> list;
+		List<Agent> list;
 		if(parent.isPowerStarOn()) {
 			// apply powerstar damage
-			list = (LinkedList<Agent>) acSensor.getContactsByClass(DamageableAgent.class);
+			list = acSensor.getContactsByClass(DamageableAgent.class);
 			for(Agent a : list) {
 				// playSound should go in the processBody method, but... this is so much easier!
 				agency.playSound(AudioInfo.Sound.SMB.KICK);
@@ -513,7 +514,7 @@ public class MarioBody extends MobileAgentBody {
 		}
 		else {
 			// check for headbounces
-			list = (LinkedList<Agent>) acBeginSensor.getAndResetContacts();
+			list = acBeginSensor.getAndResetContacts();
 			LinkedList<Agent> bouncedAgents = new LinkedList<Agent>();
 			for(Agent a : list) {
 				// skip the agent if not bouncy :)
@@ -528,7 +529,7 @@ public class MarioBody extends MobileAgentBody {
 					((HeadBounceAgent) a).onHeadBounce(parent);
 				}
 			}
-			if(bouncedAgents.size() > 0) {
+			if(!bouncedAgents.isEmpty()) {
 				b2body.setLinearVelocity(b2body.getLinearVelocity().x, 0f);
 				b2body.applyLinearImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL), b2body.getWorldCenter(), true);
 			}
@@ -569,7 +570,7 @@ public class MarioBody extends MobileAgentBody {
 			}
 
 			// we have a weiner!
-			if(closestTile != null && canHeadBang) {
+			if(closestTile != null) {
 				canHeadBang = false;
 				((BumpableTileAgent) closestTile).onBumpTile(parent);
 			}
@@ -579,7 +580,7 @@ public class MarioBody extends MobileAgentBody {
 			canHeadBang = true;
 	}
 
-	private void decelLeftRight(boolean right) {
+	private void decelLeftRight() {
 		float vx = b2body.getLinearVelocity().x;
 		if(vx == 0f)
 			return;

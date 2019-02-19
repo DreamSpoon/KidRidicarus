@@ -34,7 +34,7 @@ public class FireFlower extends Agent implements ItemAgent {
 		stateTimer = 0f;
 		isSprouting = true;
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class FireFlower extends Agent implements ItemAgent {
 			float yOffset = 0f;
 			if(stateTimer > SPROUT_TIME) {
 				isSprouting = false;
-				agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+				agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 				ffBody = new FireFlowerBody(this, agency.getWorld(), sproutingPosition);
 			}
 			else

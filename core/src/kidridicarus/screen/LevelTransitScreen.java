@@ -35,7 +35,7 @@ public class LevelTransitScreen implements Screen {
 		this.game = game;
 		this.nextLevel = nextLevel;
 		viewport = new FitViewport(GameInfo.V_WIDTH, GameInfo.V_HEIGHT, new OrthographicCamera());
-		stage = new Stage(viewport, ((MyKidRidicarus) game).batch);
+		stage = new Stage(viewport, game.batch);
 
 		font = new LabelStyle(new BitmapFont(), Color.WHITE);
 		table = new Table();
@@ -53,13 +53,11 @@ public class LevelTransitScreen implements Screen {
 
 		didAnythingHappen = false;
 		oldInPr = Gdx.input.getInputProcessor();
-		Gdx.input.setInputProcessor(new MyLittleInPr(this));
+		Gdx.input.setInputProcessor(new MyLittleInPr());
 	}
 
 	private class MyLittleInPr implements InputProcessor {
-		private LevelTransitScreen screen;
-		public MyLittleInPr(LevelTransitScreen screen) { this.screen = screen; }
-		private boolean a() { return screen.onSomethingHappen(); }
+		private boolean a() { return didAnythingHappen = true; }
 		@Override
 		public boolean keyDown(int keycode) { return a(); }
 		@Override
@@ -80,10 +78,6 @@ public class LevelTransitScreen implements Screen {
 
 	@Override
 	public void show() {
-	}
-
-	public boolean onSomethingHappen() {
-		return didAnythingHappen = true;
 	}
 
 	@Override

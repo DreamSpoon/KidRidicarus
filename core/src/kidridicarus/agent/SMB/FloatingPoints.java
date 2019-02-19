@@ -58,13 +58,13 @@ public class FloatingPoints extends Agent {
 
 		stateTimer = 0f;
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.TOP);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.TOP);
 	}
 
 	@Override
 	public void update(float delta) {
 		float yOffset = stateTimer <= FLOAT_TIME ? FLOAT_HEIGHT * stateTimer / FLOAT_TIME : FLOAT_HEIGHT;
-		pointsSprite.update(delta, originalPosition.cpy().add(0f, yOffset));
+		pointsSprite.update(originalPosition.cpy().add(0f, yOffset));
 		stateTimer += delta;
 		if(stateTimer > FLOAT_TIME)
 			agency.disposeAgent(this);

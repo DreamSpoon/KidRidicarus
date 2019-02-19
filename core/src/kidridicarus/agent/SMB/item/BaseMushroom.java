@@ -23,10 +23,10 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 	private static final float WALK_VEL = 0.6f;
 	private static final float BUMP_UPVEL = 1.5f;
 
-	private enum MoveState { SPROUT, WALK, FALL };
+	private enum MoveState { SPROUT, WALK, FALL }
 
 	private BaseMushroomBody bmBody;
-	protected MushroomSprite mSprite;
+	private MushroomSprite mSprite;
 
 	private MoveState prevState;
 	private float moveStateTimer;
@@ -53,14 +53,14 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 		moveStateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
 	}
 
 	@Override
 	public void update(float delta) {
 		processContacts();
 		processMove(delta);
-		processSprite(delta);
+		processSprite();
 	}
 
 	private void processContacts() {
@@ -93,7 +93,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 				// wait a short time to finish sprouting, then spawn the body when sprout finishes
 				if(moveStateTimer > SPROUT_TIME) {
 					isSprouting = false;
-					agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+					agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 					bmBody = new BaseMushroomBody(this, agency.getWorld(), sproutingPosition);
 				}
 				break;
@@ -115,13 +115,13 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 			return MoveState.FALL;
 	}
 
-	private void processSprite(float delta) {
+	private void processSprite() {
 		if(isSprouting) {
 			float yOffset = SPROUT_OFFSET * (SPROUT_TIME - moveStateTimer) / SPROUT_TIME;
-			mSprite.update(delta, sproutingPosition.cpy().add(0f, yOffset));
+			mSprite.update(sproutingPosition.cpy().add(0f, yOffset));
 		}
 		else
-			mSprite.update(delta, bmBody.getPosition());
+			mSprite.update(bmBody.getPosition());
 	}
 
 	@Override

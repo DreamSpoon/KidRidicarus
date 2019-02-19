@@ -2,7 +2,7 @@ package kidridicarus.info;
 
 public class PowerupInfo {
 	// "powerup character" - shortened for brevity
-	public enum PowChar { NONE, MARIO, SAMUS };
+	public enum PowChar { NONE, MARIO, SAMUS }
 
 	// "powerup type"
 	public enum PowType {
@@ -14,5 +14,5 @@ public class PowerupInfo {
 		PowType(PowChar pc) { this.pc = pc; }
 		// return true if the power character of this powerup type matches the other power character
 		public boolean isPowChar(PowChar other) { return pc.equals(other); }
-	};
+	}
 }

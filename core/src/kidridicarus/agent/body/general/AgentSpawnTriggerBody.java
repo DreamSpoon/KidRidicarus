@@ -1,6 +1,6 @@
 package kidridicarus.agent.body.general;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -62,7 +62,7 @@ public class AgentSpawnTriggerBody extends AgentBody {
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, acSensor, catBits, maskBits, bounds.width, bounds.height);
 	}
 
-	public LinkedList<Agent> getSpawnerContacts() {
+	public List<Agent> getSpawnerContacts() {
 		return acSensor.getContactsByClass(AgentSpawner.class);
 	}
 
@@ -103,7 +103,7 @@ public class AgentSpawnTriggerBody extends AgentBody {
 			mj.setTarget(position);
 	}
 
-	public void resetPosition(Vector2 position) {
+	private void resetPosition(Vector2 position) {
 		Rectangle oldBounds = getBounds();
 		defineBody(b2body.getWorld(), new Rectangle(position.x - oldBounds.width/2f,
 				position.y - oldBounds.height/2f, oldBounds.width, oldBounds.height));

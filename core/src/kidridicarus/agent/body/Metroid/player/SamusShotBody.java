@@ -1,6 +1,6 @@
 package kidridicarus.agent.body.Metroid.player;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -68,10 +68,10 @@ public class SamusShotBody extends MobileAgentBody {
 	}
 
 	public boolean isHitBound() {
-		return boundSensor.getContacts().size() > 0;
+		return !boundSensor.getContacts().isEmpty();
 	}
 
-	public <T> LinkedList<Agent> getContactAgentsByClass(Class<T> clazz) {
+	public <T> List<Agent> getContactAgentsByClass(Class<T> clazz) {
 		return acSensor.getContactsByClass(clazz);
 	}
 

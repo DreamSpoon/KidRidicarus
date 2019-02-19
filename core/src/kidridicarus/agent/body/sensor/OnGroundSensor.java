@@ -11,6 +11,6 @@ public class OnGroundSensor extends SolidBoundSensor {
 
 	public boolean isOnGround() {
 		// return true if the contacts list contains at least 1 floor
-		return getContactsFiltered(true, true, true, true).size() > 0;
+		return !getContactsFiltered(true, true, true, true).isEmpty();
 	}
 }

@@ -54,13 +54,11 @@ public class GameOverScreen implements Screen {
 
 		didAnythingHappen = false;
 		oldInPr = Gdx.input.getInputProcessor();
-		Gdx.input.setInputProcessor(new MyLittleInPr(this));
+		Gdx.input.setInputProcessor(new MyLittleInPr());
 	}
 
-	public class MyLittleInPr implements InputProcessor {
-		private GameOverScreen screen;
-		public MyLittleInPr(GameOverScreen screen) { this.screen = screen; }
-		private boolean a() { return screen.onSomethingHappen(); }
+	private class MyLittleInPr implements InputProcessor {
+		private boolean a() { return didAnythingHappen = true; }
 		@Override
 		public boolean keyDown(int keycode) { return a(); }
 		@Override
@@ -81,10 +79,6 @@ public class GameOverScreen implements Screen {
 
 	@Override
 	public void show() {
-	}
-
-	public boolean onSomethingHappen() {
-		return didAnythingHappen = true;
 	}
 
 	@Override

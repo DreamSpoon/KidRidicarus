@@ -58,9 +58,7 @@ public class TurtleSprite extends Sprite {
 
 		// Ensure the sprite is facing the correct direction
 		// (the turtle sprite faces left in the spritesheet, so left/right is reversed)
-		if(facingRight && !isFlipX())
-			flip(true, false);
-		else if(!facingRight && isFlipX())
+		if((facingRight && !isFlipX()) || (!facingRight && isFlipX()))
 			flip(true, false);
 
 		setPosition(position.x - getWidth() / 2f, position.y - getHeight() * 0.375f);

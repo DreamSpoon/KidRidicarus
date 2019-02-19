@@ -1,6 +1,7 @@
 package kidridicarus.agent.body.sensor;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -37,7 +38,7 @@ public class AgentContactSensor extends ContactSensor {
 		return contacts.getFirst();
 	}
 
-	public LinkedList<Agent> getContacts() {
+	public List<Agent> getContacts() {
 		return contacts;
 	}
 
@@ -49,13 +50,13 @@ public class AgentContactSensor extends ContactSensor {
 		return null;
 	}
 
-	public <T> LinkedList<Agent> getContactsByClass(Class<T> clazz) {
-		LinkedList<Agent> list = new LinkedList<Agent>();
+	public <T> List<Agent> getContactsByClass(Class<T> clazz) {
+		List<Agent> aList = new LinkedList<Agent>();
 		for(Agent a : contacts) {
 			if(clazz.isAssignableFrom(a.getClass()))
-				list.add(a);
+				aList.add(a);
 		}
-		return list;
+		return aList;
 	}
 
 	public static boolean isMoveBlockedByAgent(AgentContactSensor theSensor, Vector2 position, boolean moveRight) {

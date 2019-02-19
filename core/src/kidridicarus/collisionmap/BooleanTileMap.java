@@ -8,7 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 public class BooleanTileMap {
 	private int width;
 	private int height;
-	private boolean cells[][];
+	private boolean[][] cells;
 
 	// initializes cells to false
 	public BooleanTileMap(int w, int h) {
@@ -24,7 +24,7 @@ public class BooleanTileMap {
 	 *   -change a cell to true when solid tile is found in any of the input layers
 	 */
 	public BooleanTileMap(Collection<TiledMapTileLayer> layers) {
-		if(layers == null || layers.size() < 1)
+		if(layers == null || layers.isEmpty())
 			throw new IllegalArgumentException("Layers array was null or it referenced a null layer in the zeroth position.");
 		// get width and height from the first layer in the collection 
 		TiledMapTileLayer a = layers.iterator().next();

@@ -27,6 +27,7 @@ public class PlatformSpace implements Disposable {
 		agency.setAtlas(atlas);
 		agency.createCollisionMap(spaceTemp.getSolidLayers());
 		agency.createAgents(spaceTemp.getAgentDefs());
+		agency.processAgentChangeQ();
 	}
 
 	public TiledMap getTiledMap() {

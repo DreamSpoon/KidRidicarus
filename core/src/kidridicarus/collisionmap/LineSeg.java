@@ -94,25 +94,9 @@ public class LineSeg implements Disposable {
 	}
 
 	public String toString( ) {
-		return (String) "LineSeg: { begin=" + begin + ", end=" + end + ", isHorizontal= " + isHorizontal + "}";
+		return "LineSeg: { begin=" + begin + ", end=" + end + ", isHorizontal= " + isHorizontal + "}";
 	}
 
-	// return the x/y coordinate of the beginning of this segment as a Box2D coordinate
-/*	public float getB2Begin() {
-		if(isHorizontal)
-			return UInfo.P2M(begin * UInfo.TILEPIX_X);
-		else
-			return UInfo.P2M(begin * UInfo.TILEPIX_Y);
-	}
-
-	// return the x/y coordinate of the end of this segment as a Box2D coordinate
-	public float getB2End() {
-		if(isHorizontal)
-			return UInfo.P2M((end+1) * UInfo.TILEPIX_X);
-		else
-			return UInfo.P2M((end+1) * UInfo.TILEPIX_Y);
-	}
-*/
 	@Override
 	public void dispose() {
 		if(body != null)
@@ -124,11 +108,13 @@ public class LineSeg implements Disposable {
 	 */
 	public boolean dblCheckContact(Rectangle otherBounds) {
 		Rectangle thisBounds = getBounds();
+		// if within the width bounds...
 		if(isHorizontal &&
 				thisBounds.x + thisBounds.width - UInfo.POS_EPSILON > otherBounds.x &&
 				thisBounds.x + UInfo.POS_EPSILON < otherBounds.x + otherBounds.width) {
 			return true;
 		}
+		// else if within the height bounds...
 		else if(!isHorizontal &&
 				thisBounds.y + thisBounds.height - UInfo.POS_EPSILON > otherBounds.y &&
 				thisBounds.y + UInfo.POS_EPSILON < otherBounds.y + otherBounds.height) {

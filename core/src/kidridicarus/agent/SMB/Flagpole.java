@@ -34,7 +34,7 @@ public class Flagpole extends Agent {
 		flagPos = initFlagPos;
 		flagSprite = new PoleFlagSprite(agency.getAtlas(), flagPos);
 
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

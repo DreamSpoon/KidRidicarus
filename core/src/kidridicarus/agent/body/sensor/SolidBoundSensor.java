@@ -1,6 +1,7 @@
 package kidridicarus.agent.body.sensor;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -34,13 +35,13 @@ public class SolidBoundSensor extends ContactSensor {
 		}
 	}
 
-	public LinkedList<LineSeg> getContacts() {
+	public List<LineSeg> getContacts() {
 		return contacts;
 	}
 
-	public LinkedList<LineSeg> getContactsFiltered(boolean filterHorV, boolean isHorizontal, boolean filterUpNormal,
+	public List<LineSeg> getContactsFiltered(boolean filterHorV, boolean isHorizontal, boolean filterUpNormal,
 			boolean upNormal) {
-		LinkedList<LineSeg> list = new LinkedList<LineSeg>();
+		List<LineSeg> list = new LinkedList<LineSeg>();
 		for(LineSeg ls : contacts) {
 			if(filterHorV && ls.isHorizontal != isHorizontal)
 				continue;

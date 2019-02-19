@@ -33,14 +33,14 @@ public class SamusShot extends Agent {
 		shotSprite = new SamusShotSprite(agency.getAtlas(), shotBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 	}
 
 	@Override
 	public void update(float delta) {
 		processContacts();
 		processMove(delta);
-		processSprite(delta);
+		processSprite();
 	}
 
 	private void processContacts() {
@@ -68,8 +68,8 @@ public class SamusShot extends Agent {
 		stateTimer += delta;
 	}
 
-	private void processSprite(float delta) {
-		shotSprite.update(delta, shotBody.getPosition());
+	private void processSprite() {
+		shotSprite.update(shotBody.getPosition());
 	}
 
 	@Override

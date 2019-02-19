@@ -24,12 +24,12 @@ public class MarioFireball extends BasicWalkAgent {
 	private MarioFireballBody fbBody;
 	private MarioFireballSprite fireballSprite;
 
-	public enum FireballState { FLY, EXPLODE };
+	public enum FireballState { FLY, EXPLODE }
 	private FireballState prevState;
 	private float stateTimer;
 	private boolean isMovingRight;	
 
-	private enum ContactState { NONE, WALL, AGENT };
+	private enum ContactState { NONE, WALL, AGENT }
 	private ContactState contactState;
 
 	public MarioFireball(Agency agency, AgentDef adef) {
@@ -57,7 +57,7 @@ public class MarioFireball extends BasicWalkAgent {
 		contactState = ContactState.NONE;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 	}
 
 	private FireballState getState() {

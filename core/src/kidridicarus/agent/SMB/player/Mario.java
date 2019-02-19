@@ -30,7 +30,7 @@ import kidridicarus.info.UInfo;
  */
 public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	public enum MarioState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
-		END6_RUN, END99, PIPE_ENTRYH, PIPE_EXITH, PIPE_ENTRYV, PIPE_EXITV };
+		END6_RUN, END99, PIPE_ENTRYH, PIPE_EXITH, PIPE_ENTRYV, PIPE_EXITV }
 
 	private static final float LEVEL_MAX_TIME = 300f;
 
@@ -47,7 +47,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	private static final float PIPE_WARPWIDTH = UInfo.P2M(16);
 	private static final float PIPE_WARPENTRYTIME = 0.7f;
 
-	public enum MarioPowerState { SMALL, BIG, FIRE };
+	public enum MarioPowerState { SMALL, BIG, FIRE }
 
 	private MarioSprite marioSprite;
 	private MarioBody mBody;
@@ -108,10 +108,10 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 
 		// graphic
 		marioSprite = new MarioSprite(agency.getAtlas(), adef.bounds.getCenter(new Vector2()),
-				MarioBodyState.STAND, curPowerState, mBody.isFacingRight());
+				curPowerState);
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.TOP);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.TOP);
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
 
 					// Mario disappears behind the pipe as he moves into it
-					agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
+					agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
 
 					mBody.disableAllContacts();
 
@@ -278,7 +278,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
 					if(stateTimer > PIPE_WARPENTRYTIME) {
 						// Mario reappears in front of the pipe as he moves out of it
-						agency.setAgentDrawLayer(this, SpriteDrawOrder.TOP);
+						agency.setAgentDrawOrder(this, SpriteDrawOrder.TOP);
 
 						exitingSpawnpoint = null;
 						marioSpriteOffset.set(0f, 0f);
@@ -452,16 +452,14 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 
 	public PointAmount givePoints(PointAmount amt, boolean relative) {
 		PointAmount actualAmt = amt;
-		if(relative) {
-			// relative points do not stack when mario is onground
-			if(!mBody.isOnGround()) {
-				if(consecBouncePoints.increment().getIntAmt() >= amt.getIntAmt()) {
-					consecBouncePoints = consecBouncePoints.increment();
-					actualAmt = consecBouncePoints;
-				}
-				else
-					consecBouncePoints = amt;
+		// relative points do not stack when mario is onground
+		if(relative && !mBody.isOnGround()) {
+			if(consecBouncePoints.increment().getIntAmt() >= amt.getIntAmt()) {
+				consecBouncePoints = consecBouncePoints.increment();
+				actualAmt = consecBouncePoints;
 			}
+			else
+				consecBouncePoints = amt;
 		}
 
 		if(actualAmt == PointAmount.P1UP)
@@ -472,7 +470,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 		return actualAmt;
 	}
 
-	public void give1UP() {
+	private void give1UP() {
 		extraLives++;
 	}
 

@@ -49,7 +49,7 @@ public class MarioSprite extends Sprite {
 //	private static final int SML_INV3_GRP = 3;
 
 	public enum MarioSpriteState { STAND, RUN, JUMP, BRAKE, FALL, SHRINK, GROW, DUCK, FIREBALL, DEAD, END_SLIDE,
-		END_SLIDE_DONE, END_SLIDE_FALL };
+		END_SLIDE_DONE, END_SLIDE_FALL }
 
 	private MarioSpriteState curState;
 
@@ -65,8 +65,7 @@ public class MarioSprite extends Sprite {
 	private float blinkTimer;
 	private float starPowerFrameTimer;
 
-	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioBodyState stateIn, MarioPowerState subState,
-			boolean facingRight) {
+	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioPowerState subState) {
 		isBlinking = false;
 		blinkTimer = 0f;
 
@@ -197,7 +196,7 @@ public class MarioSprite extends Sprite {
 			doFireballAnim = false;
 
 		prevState = curState;
-		curState = getState(bodyState, powerState, agentState);
+		curState = getState(bodyState, agentState);
 
 		if(prevState == MarioSpriteState.STAND && curState == MarioSpriteState.FALL)
 			fallStartStateTime = -1;
@@ -229,7 +228,7 @@ public class MarioSprite extends Sprite {
 			setPosition(position.x - getWidth() / 2f, position.y - getHeight() / 2f);
 	}
 
-	private MarioSpriteState getState(MarioBodyState bodyState, MarioPowerState subState, MarioState agentState) {
+	private MarioSpriteState getState(MarioBodyState bodyState, MarioState agentState) {
 		if(agentState != MarioState.PLAY && agentState != MarioState.FIREBALL) {
 			switch(agentState) {
 				case DEAD:
@@ -393,15 +392,8 @@ public class MarioSprite extends Sprite {
 
 	@Override
 	public void draw(Batch batch) {
-		boolean visible;
-
-		visible = true;
-		if(isBlinking) {
-			if(Math.floorMod((int) ((float) blinkTimer / BLINK_DURATION), 2) == 0)
-				visible = false;
-		}
-
-		if(visible)
+		// if isBlinking is true and blink is currently "off", or if isBlinking is false...
+		if(!(isBlinking && Math.floorMod((int) (blinkTimer / BLINK_DURATION), 2) == 0))
 			super.draw(batch);
 	}
 }

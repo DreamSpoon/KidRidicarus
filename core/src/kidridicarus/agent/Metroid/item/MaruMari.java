@@ -23,7 +23,7 @@ public class MaruMari extends Agent implements ItemAgent {
 
 		mmBody = new MaruMariBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		mmSprite = new MaruMariSprite(agency.getAtlas(), mmBody.getPosition());
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

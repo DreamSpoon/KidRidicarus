@@ -27,13 +27,11 @@ public class SMBInfo {
 			else
 				return PointAmount.P1UP;
 		}
-	};
+	}
 
 	public static PointAmount strToPointAmount(String strAmt) {
 		if(strAmt.equals(KVInfo.VAL_POINTS0))
 			return PointAmount.ZERO;
-		else if(strAmt.equals(KVInfo.VAL_POINTS100))
-			return PointAmount.P100;
 		else if(strAmt.equals(KVInfo.VAL_POINTS100))
 			return PointAmount.P100;
 		else if(strAmt.equals(KVInfo.VAL_POINTS200))

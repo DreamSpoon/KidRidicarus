@@ -1,6 +1,7 @@
 package kidridicarus.agent.body.sensor;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agent.Agent;
@@ -20,14 +21,17 @@ public class AgentContactBeginSensor extends ContactSensor {
 			contacts.add(agent);
 	}
 
+	/*
+	 * Only begin sense is needed.
+	 */
 	@Override
 	public void onEndSense(AgentBodyFilter abf) {
 	}
 
-	public LinkedList<Agent> getAndResetContacts() {
-		LinkedList<Agent> list = new LinkedList<Agent>();
-		list.addAll(contacts);
+	public List<Agent> getAndResetContacts() {
+		List<Agent> aList = new LinkedList<Agent>();
+		aList.addAll(contacts);
 		contacts.clear();
-		return list;
+		return aList;
 	}
 }

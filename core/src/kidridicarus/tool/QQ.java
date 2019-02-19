@@ -1,6 +1,7 @@
 package kidridicarus.tool;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -18,14 +19,14 @@ import com.badlogic.gdx.math.Rectangle;
 public class QQ {
 	@SuppressWarnings("serial")
 	static class QQRect extends Rectangle {
-		public Color c;
+		private Color c;
 		public QQRect(Rectangle r, Color c) {
 			super(r);
 			this.c = c;
 		}
 	}
-	private static LinkedList<QQRect> showRects = new LinkedList<QQRect>();
-	private static LinkedList<QQRect> tempShowRects = new LinkedList<QQRect>();
+	private static List<QQRect> showRects = new LinkedList<QQRect>();
+	private static List<QQRect> tempShowRects = new LinkedList<QQRect>();
 
 	public static void pr(String p) {
 		System.out.println(p);

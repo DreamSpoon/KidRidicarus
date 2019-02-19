@@ -65,7 +65,7 @@ public class SMB_Hud implements Disposable {
 		this.guide = guide;
 	}
 
-	public void update(float delta) {
+	public void update() {
 		scoreVarLabel.setText(String.format("%06d", guide.getPointTotal()));
 		timeVarLabel.setText(String.format("%03d", (int) guide.getLevelTimeRemaining()));
 		coinVarLabel.setText(String.format("×%02d", guide.getCoinTotal()));

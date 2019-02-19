@@ -37,8 +37,8 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 	private static final float MAX_COIN_BUMP_TIME = 3f;
 
 	// only blocks with items can reach the empty state, other blocks only use pre- and mid-bump
-	public enum BumpState { PREBUMP, MIDBUMP, EMPTY };
-	public enum BlockItem { NONE, COIN, COIN10, MUSHROOM, STAR, MUSH1UP };
+	public enum BumpState { PREBUMP, MIDBUMP, EMPTY }
+	public enum BlockItem { NONE, COIN, COIN10, MUSHROOM, STAR, MUSH1UP }
 
 	private BumpTileBody btBody;
 	private BumpTileSprite btSprite;
@@ -101,7 +101,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		if(!adef.properties.get(KVInfo.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))
 			agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
 
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 
@@ -296,7 +296,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 	private void startSpinningCoin() {
 		agency.playSound(AudioInfo.Sound.SMB.COIN);
 		agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P200, false, btBody.getPosition(),
-				UInfo.P2M(UInfo.TILEPIX_Y * 2), (Mario) bumpingAgent));
+				UInfo.P2M(UInfo.TILEPIX_Y * 2f), (Mario) bumpingAgent));
 
 		// spawn a coin one tile's height above the current tile position
 		agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_SPINCOIN, btBody.getPosition().cpy().add(0f,

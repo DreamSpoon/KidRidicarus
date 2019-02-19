@@ -15,7 +15,7 @@ import kidridicarus.info.GameInfo.Direction4;
 public class GuideSpawner extends Agent {
 	private static final float SPAWN_SAFETYDIST = UInfo.P2M(1);
 
-	public enum SpawnType { IMMEDIATE, PIPEWARP };
+	public enum SpawnType { IMMEDIATE, PIPEWARP }
 
 	private GuideSpawnerBody psbody;
 

@@ -31,7 +31,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 			UInfo.P2MVector(-4f, 8f), UInfo.P2MVector(4f, 8f),
 			UInfo.P2MVector(-8f, 0f), UInfo.P2MVector(8f, 0f) };
 
-	public enum SkreeState { SLEEP, FALL, ONGROUND, EXPLODE, DEAD };
+	public enum SkreeState { SLEEP, FALL, ONGROUND, EXPLODE, DEAD }
 
 	private SkreeBody sBody;
 	private SkreeSprite sSprite;
@@ -56,7 +56,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 		sSprite = new SkreeSprite(agency.getAtlas(), sBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
 	}
 
 	@Override

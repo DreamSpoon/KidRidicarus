@@ -17,7 +17,7 @@ public class SamusShotSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position) {
+	public void update(Vector2 position) {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 }

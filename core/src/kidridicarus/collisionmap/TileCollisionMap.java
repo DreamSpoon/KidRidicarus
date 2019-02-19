@@ -26,7 +26,7 @@ public class TileCollisionMap {
 
 	// layers[] must contain a non-null layer in the zeroth position
 	public TileCollisionMap(World world, Collection<TiledMapTileLayer> solidLayers) {
-		if(solidLayers == null || solidLayers.size() < 1)
+		if(solidLayers == null || solidLayers.isEmpty())
 			throw new IllegalArgumentException("Layers array was null or it referenced a null layer in the zeroth position.");
 		this.world = world;
 		TiledMapTileLayer a = solidLayers.iterator().next();

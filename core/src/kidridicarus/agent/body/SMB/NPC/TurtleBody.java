@@ -1,6 +1,6 @@
 package kidridicarus.agent.body.SMB.NPC;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -89,7 +89,7 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 		return hmSensor.isHMoveBlocked(getBounds(), moveRight);
 	}
 
-	public boolean isMoveBlockedByAgent(Vector2 position, boolean moveRight) {
+	public boolean isMoveBlockedByAgent(boolean moveRight) {
 		return AgentContactSensor.isMoveBlockedByAgent(acSensor, getPosition(), moveRight);
 	}
 
@@ -98,7 +98,7 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 		return ogSensor.isOnGround();
 	}
 
-	public LinkedList<Agent> getAndResetContactBeginAgents() {
+	public List<Agent> getAndResetContactBeginAgents() {
 		return kickSensor.getAndResetContacts();
 	}
 

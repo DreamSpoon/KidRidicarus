@@ -113,12 +113,12 @@ public class AgencyDirector implements Disposable {
 	}
 
 	public void update(float delta) {
-		smbGuide.preUpdate(delta);
+		smbGuide.preUpdate();
 		agency.update(delta);
 		smbGuide.postUpdate();
 	}
 
-	public void playSound(String sound) {
+	private void playSound(String sound) {
 		manager.get(sound, Sound.class).play(AudioInfo.SOUND_VOLUME);
 	}
 
@@ -131,7 +131,7 @@ public class AgencyDirector implements Disposable {
 		isMainMusicPlaying = true;
 	}
 
-	public void startMusic() {
+	private void startMusic() {
 		if(currentMainMusic != null) {
 			currentMainMusic.setLooping(true);
 			currentMainMusic.setVolume(AudioInfo.MUSIC_VOLUME);
@@ -140,7 +140,7 @@ public class AgencyDirector implements Disposable {
 		}
 	}
 
-	public void stopMusic() {
+	private void stopMusic() {
 		if(currentMainMusic != null) {
 			currentMainMusic.stop();
 			isMainMusicPlaying = false;
@@ -148,7 +148,7 @@ public class AgencyDirector implements Disposable {
 	}
 
 	// play music, no loop (for things like mario powerstar)
-	public void startSinglePlayMusic(String musicName) {
+	private void startSinglePlayMusic(String musicName) {
 		// pause the current music
 		if(currentMainMusic != null)
 			currentMainMusic.pause();
@@ -192,8 +192,13 @@ public class AgencyDirector implements Disposable {
 
 	@Override
 	public void dispose() {
-		smbGuide.dispose();
-		smbSpace.dispose();
-		agency.dispose();
+		if(spaceRenderer != null)
+			spaceRenderer.dispose();
+		if(smbGuide != null)
+			smbGuide.dispose();
+		if(smbSpace != null)
+			smbSpace.dispose();
+		if(agency != null)
+			agency.dispose();
 	}
 }

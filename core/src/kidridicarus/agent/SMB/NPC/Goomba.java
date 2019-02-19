@@ -28,7 +28,7 @@ public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounc
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 0.4f;
 
-	public enum MoveState { NONE, WALK, FALL, SQUISH, BUMP };
+	public enum MoveState { NONE, WALK, FALL, SQUISH, BUMP }
 
 	private GoombaBody goomBody;
 	private GoombaSprite goombaSprite;
@@ -58,17 +58,17 @@ public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		goombaSprite = new GoombaSprite(agency.getAtlas(), position);
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 	}
 
 	@Override
 	public void update(float delta) {
-		processContacts(delta);
+		processContacts();
 		processMove(delta);
 		processSprite(delta);
 	}
 
-	private void processContacts(float delta) {
+	private void processContacts() {
 		checkReverseVelocity();
 	}
 

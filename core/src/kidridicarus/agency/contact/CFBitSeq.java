@@ -23,7 +23,7 @@ public class CFBitSeq {
 	 */
 	public enum CFBit { THE_ONE_BIT, AGENT_BIT, SOLID_BOUND_BIT, ROOM_BIT, DESPAWN_BIT, SPAWNBOX_BIT,
 		SPAWNTRIGGER_BIT, BUMPABLE_BIT, PIPE_BIT, ITEM_BIT;
-	};
+	}
 
 	private TreeSet<CFBit> bits;
 
@@ -112,11 +112,15 @@ public class CFBitSeq {
 		return bits.contains(CFBit.THE_ONE_BIT);
 	}
 
-	public boolean equals(CFBitSeq other) {
+	@Override
+	public boolean equals(Object other) {
+		if(!(other instanceof CFBitSeq))
+			return super.equals(other);
+
 		// if the other bit sequence has a different number of bits than this sequence then they are not equal
-		if(bits.size() != other.bits.size())
+		if(bits.size() != ((CFBitSeq) other).bits.size())
 			return false;
-		for(CFBit b : other.bits)
+		for(CFBit b : ((CFBitSeq) other).bits)
 			if(!bits.contains(b))
 				return false;
 		return true;
@@ -124,12 +128,12 @@ public class CFBitSeq {
 
 	public String toString() {
 		Iterator<CFBit> d = bits.iterator();
-		String str = "";
+		StringBuilder strb = new StringBuilder();
 		while(d.hasNext()) {
-			str = str + d.next().toString();
+			strb.append(d.next().toString());
 			if(d.hasNext())
-				str = str + ", ";
+				strb.append(", ");
 		}
-		return str;
+		return strb.toString();
 	}
 }

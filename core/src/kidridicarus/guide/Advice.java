@@ -29,6 +29,6 @@ public class Advice {
 	}
 
 	public void clear() {
-		moveRight = moveUp = moveLeft = moveRight = run = jump = shoot = false; 
+		moveRight = moveUp = moveLeft = run = jump = shoot = false; 
 	}
 }

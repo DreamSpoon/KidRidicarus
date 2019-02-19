@@ -26,9 +26,9 @@ public class GameInfo {
 	 * If order is NONE then layer is not drawn.
 	 * Usually, the player sprite is drawn TOP order, turtles and goombas are drawn MIDDLE order.
 	 */
-	public enum SpriteDrawOrder { NONE, BOTTOM, MIDDLE, TOP };
+	public enum SpriteDrawOrder { NONE, BOTTOM, MIDDLE, TOP }
 
-	public enum LayerDrawOrder { NONE, BOTTOM, MIDDLE, TOP };
+	public enum LayerDrawOrder { NONE, BOTTOM, MIDDLE, TOP }
 
 	public enum Direction4 {
 		RIGHT, UP, LEFT, DOWN;
@@ -67,7 +67,7 @@ public class GameInfo {
 					return Direction4.RIGHT;
 			}
 		}
-	};
+	}
 
 	public enum DiagonalDir4 { TOPRIGHT, TOPLEFT, BOTTOMLEFT, BOTTOMRIGHT }
 

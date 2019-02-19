@@ -36,7 +36,7 @@ public class SpinCoin extends Agent {
 		stateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {

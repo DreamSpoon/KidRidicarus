@@ -1,6 +1,6 @@
 package kidridicarus.agent.SMB.NPC;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
@@ -40,7 +40,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 	private static final float WAKE_UP_DELAY = 1.7f;
 	private static final float DIE_FALL_TIME = 6f;
 
-	public enum MoveState { NONE, WALK, HIDE, WAKE_UP, SLIDE, DEAD };
+	public enum MoveState { NONE, WALK, HIDE, WAKE_UP, SLIDE, DEAD }
 
 	private TurtleBody turtleBody;
 	private TurtleSprite turtleSprite;
@@ -81,7 +81,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		moveStateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 	}
 
 	public void update(float delta) {
@@ -105,7 +105,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 				isHiding = true;
 		}
 
-		LinkedList<Agent> contBeginAgents = turtleBody.getAndResetContactBeginAgents();
+		List<Agent> contBeginAgents = turtleBody.getAndResetContactBeginAgents();
 		boolean nowDead = false;
 		if(isSliding) {
 			// check the list of contacting agents, if there are damageable agents then slide damage them
@@ -134,7 +134,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 
 		// if not dead then check if move is blocked and reverse direction if necessary
 		if(!nowDead && ((isSliding  && turtleBody.isMoveBlocked(getConstVelocity().x > 0f)) ||
-				(!isHiding && turtleBody.isMoveBlockedByAgent(getPosition(), getConstVelocity().x > 0f)))) {
+				(!isHiding && turtleBody.isMoveBlockedByAgent(getConstVelocity().x > 0f)))) {
 			bounceOffThing();
 		}
 

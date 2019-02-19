@@ -48,7 +48,7 @@ public class MainGuide implements Disposable {
 		spawnTrigger = null;
 	}
 
-	public void preUpdate(float delta) {
+	public void preUpdate() {
 		// check for music change (music may change due to respawn)
 		if(getCurrentRoom() != null) {
 			if(!getCurrentRoom().getRoommusic().equals(currentMusicName)) {
@@ -64,18 +64,16 @@ public class MainGuide implements Disposable {
 			}
 		}
 
-		smbHud.update(delta);
+		smbHud.update();
 		((AdvisableAgent) agent).setFrameAdvice(advice);
 	}
 
 	public void postUpdate() {
 		// if player is not dead then use their current room to determine the gamecam position
-		if(!((PlayerAgent) agent).isDead()) {
-			if(getCurrentRoom() != null) {
-				// set view cam position according to room
-				gamecam.position.set(getViewPosition(), 0f);
-				gamecam.update();
-			}
+		if(!((PlayerAgent) agent).isDead() && getCurrentRoom() != null) {
+			// set view cam position according to room
+			gamecam.position.set(getViewPosition(), 0f);
+			gamecam.update();
 		}
 
 		// if mario received a maru mari then switch to samus

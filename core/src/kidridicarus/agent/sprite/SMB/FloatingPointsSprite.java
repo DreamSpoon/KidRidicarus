@@ -13,7 +13,7 @@ public class FloatingPointsSprite {
 	private static final float DIGIT_W = UInfo.P2M(4);
 	private static final float DIGIT_H = UInfo.P2M(8);
 
-	private enum PDigit { DIGIT_0, DIGIT_1, DIGIT_2, DIGIT_4, DIGIT_5, DIGIT_8 };
+	private enum PDigit { DIGIT_0, DIGIT_1, DIGIT_2, DIGIT_4, DIGIT_5, DIGIT_8 }
 
 	private Sprite[] dSprites;
 	private Vector2[] drawOffsets;
@@ -105,7 +105,7 @@ public class FloatingPointsSprite {
 		}
 	}
 
-	public void update(float delta, Vector2 position) {
+	public void update(Vector2 position) {
 		this.position = position;
 	}
 

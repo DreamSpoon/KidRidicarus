@@ -2,6 +2,7 @@ package kidridicarus.agencydirector.space;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -75,15 +76,11 @@ public class SpaceTemplate {
 		return tiledMap;
 	}
 
-	public void addAgentDef(AgentDef rd) {
-		agentDefs.add(rd);
-	}
-
-	public LinkedList<AgentDef> getAgentDefs() {
+	public List<AgentDef> getAgentDefs() {
 		return agentDefs;
 	}
 
-	public void addAgentDefs(LinkedList<AgentDef> moreAgentDefs) {
+	public void addAgentDefs(List<AgentDef> moreAgentDefs) {
 		agentDefs.addAll(moreAgentDefs);
 	}
 }

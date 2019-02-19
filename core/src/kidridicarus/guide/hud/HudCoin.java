@@ -11,7 +11,8 @@ public class HudCoin extends Image {
 	public HudCoin(Agency agency) {
 		super();
 		this.agency = agency;
-		setDrawable(drawable = new CoinHudDrawable(agency.getAtlas()));
+		drawable = new CoinHudDrawable(agency.getAtlas());
+		setDrawable(drawable);
 	}
 
 	@Override

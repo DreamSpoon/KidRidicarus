@@ -24,7 +24,7 @@ public class ZoomerBody extends MobileAgentBody {
 
 	private Zoomer parent;
 	private SolidBoundSensor[] crawlSense;
-	int[] contactCounts;
+	private int[] contactCounts;
 
 	public ZoomerBody(Zoomer parent, World world, Vector2 position) {
 		this.parent = parent;
@@ -102,7 +102,7 @@ public class ZoomerBody extends MobileAgentBody {
 	}
 
 	public boolean isSensorContacting(DiagonalDir4 quad) {
-		return crawlSense[quad.ordinal()].getContacts().size() > 0;
+		return !crawlSense[quad.ordinal()].getContacts().isEmpty();
 	}
 
 	@Override

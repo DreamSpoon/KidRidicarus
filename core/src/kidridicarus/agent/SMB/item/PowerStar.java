@@ -26,7 +26,7 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 	private static final float SPROUT_TIME = 0.5f;
 	private static final Vector2 START_BOUNCE_VEL = new Vector2(0.5f, 2f); 
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
-	private enum StarState { SPROUT, WALK };
+	private enum StarState { SPROUT, WALK }
 
 	private PowerStarBody starBody;
 	private PowerStarSprite starSprite;
@@ -50,7 +50,7 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 		stateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawLayer(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
 	}
 
 	private StarState getState() {
@@ -92,7 +92,7 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 			case SPROUT:
 				if(stateTimer > SPROUT_TIME) {
 					isSprouting = false;
-					agency.setAgentDrawLayer(this, SpriteDrawOrder.MIDDLE);
+					agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
 					starBody = new PowerStarBody(this, agency.getWorld(), sproutingPosition);
 				}
 				break;
