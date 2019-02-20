@@ -43,22 +43,22 @@ public class SpaceTemplate {
 	private void sortLayers() {
 		for(MapLayer layer : tiledMap.getLayers()) {
 			// is solid layer property set to true and the layer is a tiled layer?
-			if(layer instanceof TiledMapTileLayer && layer.getProperties().get(KVInfo.KEY_SOLIDLAYER,
+			if(layer instanceof TiledMapTileLayer && layer.getProperties().get(KVInfo.Layer.KEY_SOLIDLAYER,
 					KVInfo.VAL_FALSE, String.class).equals(KVInfo.VAL_TRUE)) {
 				TiledMapTileLayer tmtl = (TiledMapTileLayer) layer;
 				solidTileLayers.add(tmtl);
 			}
 			// is draw order property set?
-			String drawOrder = layer.getProperties().get(KVInfo.KEY_DRAWORDER, "", String.class);
+			String drawOrder = layer.getProperties().get(KVInfo.Layer.KEY_DRAWORDER, "", String.class);
 			if(!drawOrder.equals("")) {
 				// add the layer to the draw order layer array
-				if(drawOrder.equals(KVInfo.VAL_BOTTOM))
+				if(drawOrder.equals(KVInfo.Layer.VAL_BOTTOM))
 					drawLayers[GameInfo.LayerDrawOrder.BOTTOM.ordinal()].add(layer);
-				else if(drawOrder.equals(KVInfo.VAL_MIDDLE))
+				else if(drawOrder.equals(KVInfo.Layer.VAL_MIDDLE))
 					drawLayers[GameInfo.LayerDrawOrder.MIDDLE.ordinal()].add(layer);
-				else if(drawOrder.equals(KVInfo.VAL_TOP))
+				else if(drawOrder.equals(KVInfo.Layer.VAL_TOP))
 					drawLayers[GameInfo.LayerDrawOrder.TOP.ordinal()].add(layer);
-				else if(drawOrder.equals(KVInfo.VAL_NONE))
+				else if(drawOrder.equals(KVInfo.Layer.VAL_NONE))
 					drawLayers[GameInfo.LayerDrawOrder.NONE.ordinal()].add(layer);
 			}
 		}

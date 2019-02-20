@@ -32,7 +32,7 @@ public class SamusShot extends Agent {
 		parent = (Samus) adef.userData;
 
 		// check the definition properties, maybe the shot needs to expire immediately
-		isExploding = properties.containsKey(KVInfo.KEY_EXPIRE);
+		isExploding = properties.containsKey(KVInfo.Spawn.KEY_EXPIRE);
 		if(isExploding)
 			curMoveState = MoveState.EXPLODE;
 		else

@@ -31,8 +31,8 @@ public class GuideSpawner extends Agent {
 		name = "";
 		if(adef.properties.containsKey(KVInfo.Spawn.KEY_SPAWNMAIN))
 			isMain = true;
-		else if(adef.properties.containsKey(KVInfo.KEY_NAME))
-			name = adef.properties.get(KVInfo.KEY_NAME, String.class);
+		else if(adef.properties.containsKey(KVInfo.Spawn.KEY_NAME))
+			name = adef.properties.get(KVInfo.Spawn.KEY_NAME, String.class);
 
 		// immediate is the default spawn case
 		spawntype = SpawnType.IMMEDIATE;

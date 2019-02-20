@@ -33,8 +33,8 @@ public class BrickPiece extends Agent {
 		defineBody(pos, adef.velocity);
 
 		int startFrame = 0;
-		if(properties.containsKey(KVInfo.KEY_STARTFRAME))
-			startFrame = properties.get(KVInfo.KEY_STARTFRAME, Integer.class);
+		if(properties.containsKey(KVInfo.Sprite.KEY_STARTFRAME))
+			startFrame = properties.get(KVInfo.Sprite.KEY_STARTFRAME, Integer.class);
 		bpSprite = new BrickPieceSprite(agency.getAtlas(), pos, startFrame);
 
 		stateTimer = 0f;

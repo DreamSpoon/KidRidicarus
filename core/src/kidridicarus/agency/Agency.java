@@ -87,34 +87,34 @@ public class Agency implements Disposable {
 	private AgencyEventListener agencyEventListener;
 
 	private Object[] agentClassList = new Object[] {
-			KVInfo.SMB.VAL_BUMPTILE, BumpTile.class,
-			KVInfo.SMB.VAL_GOOMBA, Goomba.class,
-			KVInfo.SMB.VAL_TURTLE, Turtle.class,
-			KVInfo.SMB.VAL_COIN, StaticCoin.class,
 			KVInfo.Spawn.VAL_AGENTSPAWNER, AgentSpawner.class,
+			KVInfo.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
+			KVInfo.Spawn.VAL_DESPAWN, DespawnBox.class,
 			KVInfo.Spawn.VAL_SPAWNGUIDE, GuideSpawner.class,
 			KVInfo.Room.VAL_ROOM, Room.class,
-			KVInfo.SMB.VAL_FLAGPOLE, Flagpole.class,
-			KVInfo.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
-			KVInfo.SMB.VAL_PIPEWARP, WarpPipe.class,
-			KVInfo.Spawn.VAL_DESPAWN, DespawnBox.class,
-			KVInfo.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
-			KVInfo.SMB.VAL_CASTLEFLAG, CastleFlag.class,
-			KVInfo.SMB.VAL_MUSHROOM, PowerMushroom.class,
-			KVInfo.SMB.VAL_FIREFLOWER, FireFlower.class,
-			KVInfo.SMB.VAL_MUSH1UP, Mush1UP.class,
-			KVInfo.SMB.VAL_POWERSTAR, PowerStar.class,
+			KVInfo.Level.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
 			KVInfo.SMB.VAL_BRICKPIECE, BrickPiece.class,
-			KVInfo.SMB.VAL_SPINCOIN, SpinCoin.class,
-			KVInfo.SMB.VAL_MARIOFIREBALL, MarioFireball.class,
+			KVInfo.SMB.VAL_BUMPTILE, BumpTile.class,
+			KVInfo.SMB.VAL_CASTLEFLAG, CastleFlag.class,
+			KVInfo.SMB.VAL_COIN, StaticCoin.class,
+			KVInfo.SMB.VAL_FIREFLOWER, FireFlower.class,
+			KVInfo.SMB.VAL_FLAGPOLE, Flagpole.class,
 			KVInfo.SMB.VAL_FLOATINGPOINTS, FloatingPoints.class,
+			KVInfo.SMB.VAL_GOOMBA, Goomba.class,
 			KVInfo.SMB.VAL_MARIO, Mario.class,
-			KVInfo.Metroid.VAL_ZOOMER, Zoomer.class,
+			KVInfo.SMB.VAL_MARIOFIREBALL, MarioFireball.class,
+			KVInfo.SMB.VAL_MUSHROOM, PowerMushroom.class,
+			KVInfo.SMB.VAL_MUSH1UP, Mush1UP.class,
+			KVInfo.SMB.VAL_PIPEWARP, WarpPipe.class,
+			KVInfo.SMB.VAL_POWERSTAR, PowerStar.class,
+			KVInfo.SMB.VAL_SPINCOIN, SpinCoin.class,
+			KVInfo.SMB.VAL_TURTLE, Turtle.class,
+			KVInfo.Metroid.VAL_MARUMARI, MaruMari.class,
 			KVInfo.Metroid.VAL_SKREE, Skree.class,
 			KVInfo.Metroid.VAL_SKREE_EXP, SkreeExp.class,
-			KVInfo.Metroid.VAL_MARUMARI, MaruMari.class,
 			KVInfo.Metroid.VAL_SAMUS, Samus.class,
-			KVInfo.Metroid.VAL_SAMUS_SHOT, SamusShot.class
+			KVInfo.Metroid.VAL_SAMUS_SHOT, SamusShot.class,
+			KVInfo.Metroid.VAL_ZOOMER, Zoomer.class
 		};
 
 	public Agency() {
@@ -378,7 +378,7 @@ public class Agency implements Disposable {
 	 * Returns null if guide spawner is not found.
 	 */
 	public GuideSpawner getGuideSpawnerByName(String name) {
-		Agent agent = getFirstAgentByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.KEY_NAME },
+		Agent agent = getFirstAgentByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.Spawn.KEY_NAME },
 				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, name });
 		if(agent instanceof GuideSpawner)
 			return (GuideSpawner) agent;

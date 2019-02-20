@@ -15,7 +15,7 @@ import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.NPC.Turtle;
 import kidridicarus.agent.body.MobileAgentBody;
-import kidridicarus.agent.body.option.BumpableBody;
+import kidridicarus.agent.body.optional.BumpableBody;
 import kidridicarus.agent.body.sensor.AgentContactBeginSensor;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.OnGroundSensor;

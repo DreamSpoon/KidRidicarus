@@ -12,7 +12,7 @@ import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.BumpTile;
 import kidridicarus.agent.body.AgentBody;
-import kidridicarus.agent.body.option.BumpableTileBody;
+import kidridicarus.agent.body.optional.BumpableTileBody;
 
 public class BumpTileBody extends AgentBody implements BumpableTileBody {
 	private BumpTile parent;

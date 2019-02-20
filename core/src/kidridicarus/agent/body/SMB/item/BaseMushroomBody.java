@@ -13,7 +13,7 @@ import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.item.BaseMushroom;
 import kidridicarus.agent.body.MobileAgentBody;
-import kidridicarus.agent.body.option.BumpableBody;
+import kidridicarus.agent.body.optional.BumpableBody;
 import kidridicarus.agent.body.sensor.OnGroundSensor;
 import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.UInfo;

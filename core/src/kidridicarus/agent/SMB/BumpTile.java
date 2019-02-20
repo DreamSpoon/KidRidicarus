@@ -74,8 +74,8 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 			isQ = true;
 
 		blockItem = BlockItem.NONE;
-		if(adef.properties.containsKey(KVInfo.Spawn.KEY_SPAWNITEM)) {
-			String spawnItem = adef.properties.get(KVInfo.Spawn.KEY_SPAWNITEM, String.class);
+		if(adef.properties.containsKey(KVInfo.SMB.KEY_SPAWNITEM)) {
+			String spawnItem = adef.properties.get(KVInfo.SMB.KEY_SPAWNITEM, String.class);
 			if(spawnItem.equals(KVInfo.SMB.VAL_COIN))
 				blockItem = BlockItem.COIN;
 			else if(spawnItem.equals(KVInfo.SMB.VAL_COIN10)) {
@@ -289,7 +289,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 	private void makeBrickPieceDef(Vector2 position, Vector2 velocity, int startFrame) {
 		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_BRICKPIECE, position);
 		adef.velocity.set(velocity);
-		adef.properties.put(KVInfo.KEY_STARTFRAME, startFrame);
+		adef.properties.put(KVInfo.Sprite.KEY_STARTFRAME, startFrame);
 		agency.createAgent(adef);
 	}
 
