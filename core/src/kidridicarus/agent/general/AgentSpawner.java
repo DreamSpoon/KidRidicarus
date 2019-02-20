@@ -18,7 +18,7 @@ public class AgentSpawner extends Agent {
 	public AgentSpawner(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
-		sClass = adef.properties.get(KVInfo.KEY_SPAWNAGENTCLASS, String.class);
+		sClass = adef.properties.get(KVInfo.Spawn.KEY_SPAWNAGENTCLASS, String.class);
 
 		isUsed = false;
 

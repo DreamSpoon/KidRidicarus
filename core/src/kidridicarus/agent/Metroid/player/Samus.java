@@ -15,6 +15,7 @@ import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.agent.sprite.Metroid.player.SamusSprite;
 import kidridicarus.guide.Advice;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.info.KVInfo;
 import kidridicarus.info.PowerupInfo.PowType;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.UInfo;
@@ -66,21 +67,21 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		super(agency, adef);
 
 		advice = new Advice();
-		curMoveState = MoveState.STAND;
-		moveStateTimer = 0f;
 		curContactState = ContactState.REGULAR;
 		contactStateTimer = 0f;
+		curMoveState = MoveState.STAND;
+		moveStateTimer = 0f;
 		isFacingRight = true;
 		isFacingUp = false;
 		isJumpForceEnabled = true;
 		isLastJumpLandable = true;
 		isNextJumpEnabled = true;
 		isDrawnLastFrame = false;
-		shootCooldownTime = agency.getGlobalTimer();
 		startJumpY = 0;
 		isJumpSpinAvailable = false;
 		isAutoContinueRightAirMove = false;
 		isAutoContinueLeftAirMove = false;
+		shootCooldownTime = agency.getGlobalTimer();
 
 		sBody = new SamusBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
@@ -430,8 +431,14 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 			velocity.set(-SHOT_VEL, 0f);
 			position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(sBody.getPosition());
 		}
-		// create shot
+
+		// create shot def
 		AgentDef adef = SamusShot.makeSamusShotDef(position, velocity, this);
+		// check spawn point of shot, if it is in a solid tile then the shot immediately explodes
+		if(agency.isMapPointSolid(position)) {
+			// add the immediate explode property to the properties list
+			adef.properties.put(KVInfo.KEY_EXPIRE, true);
+		}
 		agency.createAgent(adef);
 		agency.playSound(AudioInfo.Sound.Metroid.SHOOT);
 

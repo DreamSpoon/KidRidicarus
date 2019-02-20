@@ -25,14 +25,14 @@ public class AgentDef {
 
 	public static AgentDef makePointBoundsDef(String agentClass, Vector2 position) {
 		AgentDef adef = new AgentDef();
-		adef.properties.put(KVInfo.KEY_AGENTCLASS, agentClass);
+		adef.properties.put(KVInfo.Spawn.KEY_AGENTCLASS, agentClass);
 		adef.bounds.set(position.x, position.y, 0f, 0f);
 		return adef;
 	}
 
 	public static AgentDef makeBoxBoundsDef(String agentClass, Vector2 position, float width, float height) {
 		AgentDef adef = new AgentDef();
-		adef.properties.put(KVInfo.KEY_AGENTCLASS, agentClass);
+		adef.properties.put(KVInfo.Spawn.KEY_AGENTCLASS, agentClass);
 		adef.bounds.set(position.x, position.y, width, height);
 		return adef;
 	}

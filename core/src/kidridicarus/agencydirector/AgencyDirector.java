@@ -82,9 +82,9 @@ public class AgencyDirector implements Disposable {
 		Vector2 startPos = getMainSpawnPosition();
 		smbGuide = new MainGuide(agency, batch, gamecam);
 		if(pc == PowChar.MARIO)
-			smbGuide.setAdviseAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_MARIO, startPos)));
+			smbGuide.setAdviseAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_MARIO, startPos)));
 		else if(pc == PowChar.SAMUS)
-			smbGuide.setAdviseAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_SAMUS, startPos)));
+			smbGuide.setAdviseAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_SAMUS, startPos)));
 
 		return smbGuide;
 	}
@@ -92,8 +92,8 @@ public class AgencyDirector implements Disposable {
 	private Vector2 getMainSpawnPosition() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
 		Collection<Agent> list = agency.getAgentsByProperties(
-				new String[] { KVInfo.KEY_AGENTCLASS, KVInfo.KEY_SPAWNMAIN },
-				new String[] { KVInfo.VAL_SPAWNGUIDE, KVInfo.VAL_TRUE });
+				new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.Spawn.KEY_SPAWNMAIN },
+				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, KVInfo.VAL_TRUE });
 		if(!list.isEmpty())
 			return list.iterator().next().getPosition();
 		else
@@ -102,10 +102,10 @@ public class AgencyDirector implements Disposable {
 
 	private void preloadSpaceMusic() {
 		LinkedList<String> musicCatalog = new LinkedList<String>();
-		Collection<Agent> roomList = agency.getAgentsByProperties(new String[] { KVInfo.KEY_AGENTCLASS },
-				new String[] { KVInfo.VAL_ROOM });
+		Collection<Agent> roomList = agency.getAgentsByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS },
+				new String[] { KVInfo.Room.VAL_ROOM });
 		for(Agent agent : roomList) {
-			String music = agent.getProperties().get(KVInfo.KEY_ROOMMUSIC, "", String.class);
+			String music = agent.getProperties().get(KVInfo.Room.KEY_ROOMMUSIC, "", String.class);
 			if(music.equals("") || musicCatalog.contains(music))
 				continue;
 			musicCatalog.add(music);

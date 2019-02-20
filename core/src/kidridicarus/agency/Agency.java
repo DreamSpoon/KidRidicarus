@@ -51,6 +51,7 @@ import kidridicarus.agent.general.AgentSpawner;
 import kidridicarus.agent.general.Room;
 import kidridicarus.collisionmap.TileCollisionMap;
 import kidridicarus.info.KVInfo;
+import kidridicarus.info.UInfo;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
 /*
@@ -86,34 +87,34 @@ public class Agency implements Disposable {
 	private AgencyEventListener agencyEventListener;
 
 	private Object[] agentClassList = new Object[] {
-			KVInfo.VAL_BUMPTILE, BumpTile.class,
-			KVInfo.VAL_GOOMBA, Goomba.class,
-			KVInfo.VAL_TURTLE, Turtle.class,
-			KVInfo.VAL_COIN, StaticCoin.class,
-			KVInfo.VAL_AGENTSPAWNER, AgentSpawner.class,
-			KVInfo.VAL_SPAWNGUIDE, GuideSpawner.class,
-			KVInfo.VAL_ROOM, Room.class,
-			KVInfo.VAL_FLAGPOLE, Flagpole.class,
+			KVInfo.SMB.VAL_BUMPTILE, BumpTile.class,
+			KVInfo.SMB.VAL_GOOMBA, Goomba.class,
+			KVInfo.SMB.VAL_TURTLE, Turtle.class,
+			KVInfo.SMB.VAL_COIN, StaticCoin.class,
+			KVInfo.Spawn.VAL_AGENTSPAWNER, AgentSpawner.class,
+			KVInfo.Spawn.VAL_SPAWNGUIDE, GuideSpawner.class,
+			KVInfo.Room.VAL_ROOM, Room.class,
+			KVInfo.SMB.VAL_FLAGPOLE, Flagpole.class,
 			KVInfo.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
-			KVInfo.VAL_PIPEWARP, WarpPipe.class,
-			KVInfo.VAL_DESPAWN, DespawnBox.class,
-			KVInfo.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
-			KVInfo.VAL_CASTLEFLAG, CastleFlag.class,
-			KVInfo.VAL_MUSHROOM, PowerMushroom.class,
-			KVInfo.VAL_FIREFLOWER, FireFlower.class,
-			KVInfo.VAL_MUSH1UP, Mush1UP.class,
-			KVInfo.VAL_POWERSTAR, PowerStar.class,
-			KVInfo.VAL_BRICKPIECE, BrickPiece.class,
-			KVInfo.VAL_SPINCOIN, SpinCoin.class,
-			KVInfo.VAL_MARIOFIREBALL, MarioFireball.class,
-			KVInfo.VAL_FLOATINGPOINTS, FloatingPoints.class,
-			KVInfo.VAL_MARIO, Mario.class,
-			KVInfo.VAL_ZOOMER, Zoomer.class,
-			KVInfo.VAL_SKREE, Skree.class,
-			KVInfo.VAL_SKREE_EXP, SkreeExp.class,
-			KVInfo.VAL_MARUMARI, MaruMari.class,
-			KVInfo.VAL_SAMUS, Samus.class,
-			KVInfo.VAL_SAMUS_SHOT, SamusShot.class
+			KVInfo.SMB.VAL_PIPEWARP, WarpPipe.class,
+			KVInfo.Spawn.VAL_DESPAWN, DespawnBox.class,
+			KVInfo.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
+			KVInfo.SMB.VAL_CASTLEFLAG, CastleFlag.class,
+			KVInfo.SMB.VAL_MUSHROOM, PowerMushroom.class,
+			KVInfo.SMB.VAL_FIREFLOWER, FireFlower.class,
+			KVInfo.SMB.VAL_MUSH1UP, Mush1UP.class,
+			KVInfo.SMB.VAL_POWERSTAR, PowerStar.class,
+			KVInfo.SMB.VAL_BRICKPIECE, BrickPiece.class,
+			KVInfo.SMB.VAL_SPINCOIN, SpinCoin.class,
+			KVInfo.SMB.VAL_MARIOFIREBALL, MarioFireball.class,
+			KVInfo.SMB.VAL_FLOATINGPOINTS, FloatingPoints.class,
+			KVInfo.SMB.VAL_MARIO, Mario.class,
+			KVInfo.Metroid.VAL_ZOOMER, Zoomer.class,
+			KVInfo.Metroid.VAL_SKREE, Skree.class,
+			KVInfo.Metroid.VAL_SKREE_EXP, SkreeExp.class,
+			KVInfo.Metroid.VAL_MARUMARI, MaruMari.class,
+			KVInfo.Metroid.VAL_SAMUS, Samus.class,
+			KVInfo.Metroid.VAL_SAMUS_SHOT, SamusShot.class
 		};
 
 	public Agency() {
@@ -165,7 +166,7 @@ public class Agency implements Disposable {
 	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
 	 */
 	public Agent createAgent(AgentDef adef) {
-		String desiredAgentClass = adef.properties.get(KVInfo.KEY_AGENTCLASS, String.class);
+		String desiredAgentClass = adef.properties.get(KVInfo.Spawn.KEY_AGENTCLASS, String.class);
 
 		Class<?> agentClass = null;
 		for(int i=0; i<agentClassList.length; i+=2) {
@@ -254,6 +255,15 @@ public class Agency implements Disposable {
 		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
 	}
 
+	/*
+	 * Returns solid status of a point in collision map (solid = true).
+	 */
+	public boolean isMapPointSolid(Vector2 pointPos) {
+		// convert the point position to a tile position
+		Vector2 tilePos = UInfo.getM2PTileForPos(pointPos);
+		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
+	}
+
 	public void enableAgentUpdate(Agent agent) {
 		agentChangeQ.enableAgentUpdate(new AgentPlaceholder(agent));
 	}
@@ -268,10 +278,6 @@ public class Agency implements Disposable {
 
 	public World getWorld() {
 		return world;
-	}
-
-	public TileCollisionMap getCollisionMap() {
-		return collisionMap;
 	}
 
 	/*
@@ -372,8 +378,8 @@ public class Agency implements Disposable {
 	 * Returns null if guide spawner is not found.
 	 */
 	public GuideSpawner getGuideSpawnerByName(String name) {
-		Agent agent = getFirstAgentByProperties(new String[] { KVInfo.KEY_AGENTCLASS, KVInfo.KEY_NAME },
-				new String[] { KVInfo.VAL_SPAWNGUIDE, name });
+		Agent agent = getFirstAgentByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.KEY_NAME },
+				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, name });
 		if(agent instanceof GuideSpawner)
 			return (GuideSpawner) agent;
 		return null;
@@ -384,8 +390,8 @@ public class Agency implements Disposable {
 	 */
 	public GuideSpawner getGuideMainSpawner() {
 		Agent agent = getFirstAgentByProperties(
-				new String[] { KVInfo.KEY_AGENTCLASS, KVInfo.KEY_SPAWNMAIN },
-				new String[] { KVInfo.VAL_SPAWNGUIDE, null });
+				new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.Spawn.KEY_SPAWNMAIN },
+				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, null });
 		if(agent instanceof GuideSpawner)
 			return (GuideSpawner) agent;
 		return null;

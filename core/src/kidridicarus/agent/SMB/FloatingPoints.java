@@ -42,14 +42,14 @@ public class FloatingPoints extends Agent {
 		// default to zero points
 		PointAmount amount = PointAmount.ZERO;
 		// check for point amount property
-		if(adef.properties.containsKey(KVInfo.KEY_POINTAMOUNT))
-			amount = SMBInfo.strToPointAmount(adef.properties.get(KVInfo.KEY_POINTAMOUNT, String.class));
+		if(adef.properties.containsKey(KVInfo.SMB.KEY_POINTAMOUNT))
+			amount = SMBInfo.strToPointAmount(adef.properties.get(KVInfo.SMB.KEY_POINTAMOUNT, String.class));
 
 		// give points to player and get the actual amount awarded (since player may have points multiplier)
 		if(adef.userData != null) {
 			// relative points can stack, absolute points can not
 			amount = ((Mario) adef.userData).givePoints(amount, adef.properties.get(
-					KVInfo.KEY_RELPOINTAMOUNT, "", String.class).equals(KVInfo.VAL_TRUE));
+					KVInfo.SMB.KEY_RELPOINTAMOUNT, "", String.class).equals(KVInfo.VAL_TRUE));
 			if(amount == PointAmount.P1UP)
 				agency.playSound(AudioInfo.Sound.SMB.UP1);
 		}
@@ -91,10 +91,10 @@ public class FloatingPoints extends Agent {
 
 	public static AgentDef makeFloatingPointsDef(PointAmount amt, boolean relative, Vector2 position,
 			float yOffset, Agent parentAgent) {
-		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
-		adef.properties.put(KVInfo.KEY_POINTAMOUNT, SMBInfo.pointAmountToStr(amt));
+		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
+		adef.properties.put(KVInfo.SMB.KEY_POINTAMOUNT, SMBInfo.pointAmountToStr(amt));
 		if(relative)
-			adef.properties.put(KVInfo.KEY_RELPOINTAMOUNT, KVInfo.VAL_TRUE);
+			adef.properties.put(KVInfo.SMB.KEY_RELPOINTAMOUNT, KVInfo.VAL_TRUE);
 		adef.userData = parentAgent;
 		return adef;
 	}

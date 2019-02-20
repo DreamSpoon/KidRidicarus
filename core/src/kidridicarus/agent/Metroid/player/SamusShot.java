@@ -15,21 +15,29 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
 public class SamusShot extends Agent {
 	private static final float LIVE_TIME = 0.217f;
+	private static final float EXPLODE_TIME = 3f/60f;
+
+	public enum MoveState { LIVE, EXPLODE, DEAD }
 
 	private Samus parent;
 	private SamusShotBody shotBody;
 	private SamusShotSprite shotSprite;
+	private MoveState curMoveState;
 	private boolean isExploding;
 	private float stateTimer;
 
-	// TODO: check if shot is being created inside solid area, and change to shot explosion if so
 	public SamusShot(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
 		parent = (Samus) adef.userData;
 
+		// check the definition properties, maybe the shot needs to expire immediately
+		isExploding = properties.containsKey(KVInfo.KEY_EXPIRE);
+		if(isExploding)
+			curMoveState = MoveState.EXPLODE;
+		else
+			curMoveState = MoveState.LIVE;
 		stateTimer = 0f;
-		isExploding = false;
 
 		shotBody = new SamusShotBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()), adef.velocity);
 		shotSprite = new SamusShotSprite(agency.getAtlas(), shotBody.getPosition());
@@ -42,40 +50,66 @@ public class SamusShot extends Agent {
 	public void update(float delta) {
 		processContacts();
 		processMove(delta);
-		processSprite();
+		processSprite(delta);
 	}
 
 	private void processContacts() {
-		// if hit a wall
-		if(shotBody.isHitBound())
-			isExploding = true;
-
 		// check for agents needing damage, and damage the first one
 		for(Agent a : shotBody.getContactAgentsByClass(DamageableAgent.class)) {
 			// do not hit parent
 			if(a == parent)
 				continue;
 			((DamageableAgent) a).onDamage(parent, 1f, shotBody.getPosition());
-			agency.disposeAgent(this);
+			isExploding = true;
 			return;
 		}
+
+		// if hit a wall then explode
+		if(shotBody.isHitBound())
+			isExploding = true;
 	}
 
 	private void processMove(float delta) {
-		// dispose if dead
-		if(stateTimer > LIVE_TIME || isExploding)
-			agency.disposeAgent(this);
+		MoveState nextMoveState = getNextMoveState();
+		switch(nextMoveState) {
+			case LIVE:
+				break;
+			case EXPLODE:
+				shotBody.disableAllContacts();
+				shotBody.zeroVelocity(true, true);
+				break;
+			case DEAD:
+				// call disable contacts, just to be safe
+				shotBody.disableAllContacts();
+				agency.disposeAgent(this);
+				break;
+		}
 
-		stateTimer += delta;
+		stateTimer = curMoveState == nextMoveState ? stateTimer+delta : 0f;
+		curMoveState = nextMoveState;
 	}
 
-	private void processSprite() {
-		shotSprite.update(shotBody.getPosition());
+	private MoveState getNextMoveState() {
+		// is it dead?
+		if(curMoveState == MoveState.DEAD ||
+				(curMoveState == MoveState.EXPLODE && stateTimer > EXPLODE_TIME) ||
+				(curMoveState == MoveState.LIVE && stateTimer > LIVE_TIME))
+			return MoveState.DEAD;
+		// if not dead, then is it exploding?
+		else if(isExploding || curMoveState == MoveState.EXPLODE)
+			return MoveState.EXPLODE;
+		// alive by deduction
+		return MoveState.LIVE;
+	}
+
+	private void processSprite(float delta) {
+		shotSprite.update(delta, shotBody.getPosition(), curMoveState);
 	}
 
 	@Override
 	public void draw(Batch batch) {
-		shotSprite.draw(batch);
+		if(curMoveState != MoveState.DEAD)
+			shotSprite.draw(batch);
 	}
 
 	@Override
@@ -99,7 +133,7 @@ public class SamusShot extends Agent {
 	}
 
 	public static AgentDef makeSamusShotDef(Vector2 position, Vector2 velocity, Samus parentAgent) {
-		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.VAL_SAMUS_SHOT, position);
+		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_SAMUS_SHOT, position);
 		adef.velocity.set(velocity);
 		adef.userData = parentAgent;
 		return adef;

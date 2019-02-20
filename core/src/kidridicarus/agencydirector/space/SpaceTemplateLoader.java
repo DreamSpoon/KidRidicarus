@@ -42,7 +42,7 @@ public class SpaceTemplateLoader {
 
 	private static LinkedList<AgentDef> makeAgentDefsFromTileLayer(TiledMapTileLayer layer) {
 		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
-		if(!layer.getProperties().containsKey(KVInfo.KEY_AGENTCLASS))
+		if(!layer.getProperties().containsKey(KVInfo.Spawn.KEY_AGENTCLASS))
 			return agentDefs;	// if no agentclass then return empty list of agent defs
 
 		// create list of agent defs

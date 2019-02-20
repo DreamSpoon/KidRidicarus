@@ -77,7 +77,7 @@ public class AgentSpawnTrigger extends Agent {
 
 	public static AgentDef makeAgentSpawnTriggerDef(MainGuide parentGuide, Vector2 position, float width,
 			float height) {
-		AgentDef adef = AgentDef.makeBoxBoundsDef(KVInfo.VAL_AGENTSPAWN_TRIGGER, position, width, height);
+		AgentDef adef = AgentDef.makeBoxBoundsDef(KVInfo.Spawn.VAL_AGENTSPAWN_TRIGGER, position, width, height);
 		adef.userData = parentGuide;
 		return adef;
 	}

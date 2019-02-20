@@ -10,9 +10,9 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 
 /*
- * Best Box2D analogy is the Body class. The agent can interact with other agents.
- * Also, the agent can have "contacts" (equivalent to Fixture in Box2D).
- * The "contacts" are used to detect when agent is on ground, collisions between agents, etc.
+ * The Agent can interact with other Agents (like Body in Box2D).
+ * The Agent can have ContactSensors (equivalent to Fixture in Box2D).
+ * The ContactSensors are used to detect when Agent is on ground, collisions between Agents, etc.
  */
 public abstract class Agent implements Disposable {
 	protected Agency agency;

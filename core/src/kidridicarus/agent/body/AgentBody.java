@@ -18,6 +18,7 @@ public abstract class AgentBody implements Disposable {
 	private float bodyWidth = 0f;
 	private float bodyHeight = 0f;
 	protected Body b2body = null;
+
 	public abstract Agent getParent();
 
 	public Vector2 getPosition() {

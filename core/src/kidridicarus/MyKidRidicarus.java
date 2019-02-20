@@ -31,6 +31,7 @@ public class MyKidRidicarus extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		sr = new ShapeRenderer();
+
 		manager = new AssetManager();
 		// other music files may be loaded later when a space is loaded
 		manager.load(AudioInfo.Music.SMB.LEVELEND, Music.class);

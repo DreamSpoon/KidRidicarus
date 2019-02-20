@@ -70,25 +70,25 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		coin10EndTimer = 0;
 
 		isQ = false;
-		if(adef.properties.containsKey(KVInfo.KEY_QBLOCK))
+		if(adef.properties.containsKey(KVInfo.SMB.KEY_QBLOCK))
 			isQ = true;
 
 		blockItem = BlockItem.NONE;
-		if(adef.properties.containsKey(KVInfo.KEY_SPAWNITEM)) {
-			String spawnItem = adef.properties.get(KVInfo.KEY_SPAWNITEM, String.class);
-			if(spawnItem.equals(KVInfo.VAL_COIN))
+		if(adef.properties.containsKey(KVInfo.Spawn.KEY_SPAWNITEM)) {
+			String spawnItem = adef.properties.get(KVInfo.Spawn.KEY_SPAWNITEM, String.class);
+			if(spawnItem.equals(KVInfo.SMB.VAL_COIN))
 				blockItem = BlockItem.COIN;
-			else if(spawnItem.equals(KVInfo.VAL_COIN10)) {
+			else if(spawnItem.equals(KVInfo.SMB.VAL_COIN10)) {
 				blockItem = BlockItem.COIN10;
 				coin10Coins = 10;
 				coin10BumpResetTimer = 0f;
 				coin10EndTimer = 0f;
 			}
-			else if(spawnItem.equals(KVInfo.VAL_MUSHROOM))
+			else if(spawnItem.equals(KVInfo.SMB.VAL_MUSHROOM))
 				blockItem = BlockItem.MUSHROOM;
-			else if(spawnItem.equals(KVInfo.VAL_POWERSTAR))
+			else if(spawnItem.equals(KVInfo.SMB.VAL_POWERSTAR))
 				blockItem = BlockItem.STAR;
-			else if(spawnItem.equals(KVInfo.VAL_MUSH1UP))
+			else if(spawnItem.equals(KVInfo.SMB.VAL_MUSH1UP))
 				blockItem = BlockItem.MUSH1UP;
 		}
 		isItemAvailable = blockItem != BlockItem.NONE;
@@ -98,7 +98,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		btSprite = new BumpTileSprite(agency.getAtlas(), adef.tileTexRegion);
 
 		// make the tile solid in the tile physics layer if it is not a secret block 
-		if(!adef.properties.get(KVInfo.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))
+		if(!adef.properties.get(KVInfo.SMB.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))
 			agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
 
 		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
@@ -170,7 +170,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 			startBreakBrick();
 		else {
 			// if the tile was a secret block then it was not solid, so make it solid 
-			if(properties.get(KVInfo.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))
+			if(properties.get(KVInfo.SMB.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))
 				agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
 
 			switch(blockItem) {
@@ -246,19 +246,19 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		switch(blockItem) {
 			case MUSH1UP:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
-				agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_MUSH1UP, pos));
+				agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_MUSH1UP, pos));
 				break;
 			case MUSHROOM:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
 				// big mario pops a fireflower?
 				if(wasHitByBig)
-					agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_FIREFLOWER, pos));
+					agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_FIREFLOWER, pos));
 				else
-					agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_MUSHROOM, pos));
+					agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_MUSHROOM, pos));
 				break;
 			case STAR:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
-				agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_POWERSTAR, pos));
+				agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_POWERSTAR, pos));
 				break;
 			default:
 				break;
@@ -287,7 +287,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 	}
 
 	private void makeBrickPieceDef(Vector2 position, Vector2 velocity, int startFrame) {
-		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.VAL_BRICKPIECE, position);
+		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_BRICKPIECE, position);
 		adef.velocity.set(velocity);
 		adef.properties.put(KVInfo.KEY_STARTFRAME, startFrame);
 		agency.createAgent(adef);
@@ -299,7 +299,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 				UInfo.P2M(UInfo.TILEPIX_Y * 2f), (Mario) bumpingAgent));
 
 		// spawn a coin one tile's height above the current tile position
-		agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_SPINCOIN, btBody.getPosition().cpy().add(0f,
+		agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_SPINCOIN, btBody.getPosition().cpy().add(0f,
 				UInfo.P2M(UInfo.TILEPIX_Y))));
 	}
 

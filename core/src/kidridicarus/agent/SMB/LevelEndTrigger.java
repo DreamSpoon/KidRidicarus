@@ -30,8 +30,8 @@ public class LevelEndTrigger extends Agent {
 	 * Usually called when player contacts the level end box.
 	 */
 	public void trigger() {
-		Agent agent = agency.getFirstAgentByProperties(new String[] { KVInfo.KEY_AGENTCLASS },
-				new String[] { KVInfo.VAL_CASTLEFLAG});
+		Agent agent = agency.getFirstAgentByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS },
+				new String[] { KVInfo.SMB.VAL_CASTLEFLAG});
 		if(agent instanceof CastleFlag)
 			((CastleFlag) agent).trigger();
 	}

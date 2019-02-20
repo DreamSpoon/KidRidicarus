@@ -30,21 +30,21 @@ public class SMBInfo {
 	}
 
 	public static PointAmount strToPointAmount(String strAmt) {
-		if(strAmt.equals(KVInfo.VAL_POINTS0))
+		if(strAmt.equals(KVInfo.SMB.VAL_POINTS0))
 			return PointAmount.ZERO;
-		else if(strAmt.equals(KVInfo.VAL_POINTS100))
+		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS100))
 			return PointAmount.P100;
-		else if(strAmt.equals(KVInfo.VAL_POINTS200))
+		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS200))
 			return PointAmount.P200;
-		else if(strAmt.equals(KVInfo.VAL_POINTS400))
+		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS400))
 			return PointAmount.P400;
-		else if(strAmt.equals(KVInfo.VAL_POINTS500))
+		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS500))
 			return PointAmount.P500;
-		else if(strAmt.equals(KVInfo.VAL_POINTS800))
+		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS800))
 			return PointAmount.P800;
-		else if(strAmt.equals(KVInfo.VAL_POINTS1000))
+		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS1000))
 			return PointAmount.P1000;
-		else if(strAmt.equals(KVInfo.VAL_POINTS1UP))
+		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS1UP))
 			return PointAmount.P1UP;
 		return PointAmount.ZERO;
 	}
@@ -53,29 +53,29 @@ public class SMBInfo {
 		switch(amt) {
 			default:
 			case ZERO:
-				return KVInfo.VAL_POINTS0;
+				return KVInfo.SMB.VAL_POINTS0;
 			case P100:
-				return KVInfo.VAL_POINTS100;
+				return KVInfo.SMB.VAL_POINTS100;
 			case P200:
-				return KVInfo.VAL_POINTS200;
+				return KVInfo.SMB.VAL_POINTS200;
 			case P400:
-				return KVInfo.VAL_POINTS400;
+				return KVInfo.SMB.VAL_POINTS400;
 			case P500:
-				return KVInfo.VAL_POINTS500;
+				return KVInfo.SMB.VAL_POINTS500;
 			case P800:
-				return KVInfo.VAL_POINTS800;
+				return KVInfo.SMB.VAL_POINTS800;
 			case P1000:
-				return KVInfo.VAL_POINTS1000;
+				return KVInfo.SMB.VAL_POINTS1000;
 			case P2000:
-				return KVInfo.VAL_POINTS2000;
+				return KVInfo.SMB.VAL_POINTS2000;
 			case P4000:
-				return KVInfo.VAL_POINTS4000;
+				return KVInfo.SMB.VAL_POINTS4000;
 			case P5000:
-				return KVInfo.VAL_POINTS5000;
+				return KVInfo.SMB.VAL_POINTS5000;
 			case P8000:
-				return KVInfo.VAL_POINTS8000;
+				return KVInfo.SMB.VAL_POINTS8000;
 			case P1UP:
-				return KVInfo.VAL_POINTS1UP;
+				return KVInfo.SMB.VAL_POINTS1UP;
 		}
 	}
 }

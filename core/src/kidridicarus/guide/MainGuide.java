@@ -94,10 +94,10 @@ public class MainGuide implements Disposable {
 		switch(pc) {
 			default:
 			case MARIO:
-				agent = agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_MARIO, currentPos));
+				agent = agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_MARIO, currentPos));
 				break;
 			case SAMUS:
-				agent = agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.VAL_SAMUS, currentPos));
+				agent = agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_SAMUS, currentPos));
 				break;
 			case NONE:
 				break;

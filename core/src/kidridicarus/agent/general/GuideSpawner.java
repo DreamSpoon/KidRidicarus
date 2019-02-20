@@ -29,16 +29,16 @@ public class GuideSpawner extends Agent {
 
 		isMain = false;
 		name = "";
-		if(adef.properties.containsKey(KVInfo.KEY_SPAWNMAIN))
+		if(adef.properties.containsKey(KVInfo.Spawn.KEY_SPAWNMAIN))
 			isMain = true;
 		else if(adef.properties.containsKey(KVInfo.KEY_NAME))
 			name = adef.properties.get(KVInfo.KEY_NAME, String.class);
 
 		// immediate is the default spawn case
 		spawntype = SpawnType.IMMEDIATE;
-		if(adef.properties.containsKey(KVInfo.KEY_SPAWNTYPE)) {
-			String str = adef.properties.get(KVInfo.KEY_SPAWNTYPE, String.class);
-			if(str.equals(KVInfo.VAL_PIPEWARP) &&
+		if(adef.properties.containsKey(KVInfo.Spawn.KEY_SPAWNTYPE)) {
+			String str = adef.properties.get(KVInfo.Spawn.KEY_SPAWNTYPE, String.class);
+			if(str.equals(KVInfo.SMB.VAL_PIPEWARP) &&
 					adef.properties.containsKey(KVInfo.KEY_DIRECTION)) {
 				spawntype = SpawnType.PIPEWARP;
 				str = adef.properties.get(KVInfo.KEY_DIRECTION, String.class);

@@ -25,17 +25,17 @@ public class Room extends Agent {
 
 		// default to CENTER roomtype
 		roomtype = RoomType.CENTER;
-		if(adef.properties.get(KVInfo.KEY_ROOMTYPE, "", String.class).equals(KVInfo.VAL_ROOMTYPE_HSCROLL)) {
+		if(adef.properties.get(KVInfo.Room.KEY_ROOMTYPE, "", String.class).equals(KVInfo.Room.VAL_ROOMTYPE_HSCROLL)) {
 			roomtype = RoomType.HSCROLL;
 		}
 		// default to no music
 		roommusic = "";
-		if(adef.properties.containsKey(KVInfo.KEY_ROOMMUSIC))
-			roommusic = adef.properties.get(KVInfo.KEY_ROOMMUSIC, String.class);
+		if(adef.properties.containsKey(KVInfo.Room.KEY_ROOMMUSIC))
+			roommusic = adef.properties.get(KVInfo.Room.KEY_ROOMMUSIC, String.class);
 
 		vOffset = 0f;
-		if(adef.properties.containsKey(KVInfo.KEY_VIEWOFFSET_Y))
-			vOffset = UInfo.P2M(Float.valueOf(adef.properties.get(KVInfo.KEY_VIEWOFFSET_Y, String.class)));
+		if(adef.properties.containsKey(KVInfo.Room.KEY_VIEWOFFSET_Y))
+			vOffset = UInfo.P2M(Float.valueOf(adef.properties.get(KVInfo.Room.KEY_VIEWOFFSET_Y, String.class)));
 	}
 
 	@Override

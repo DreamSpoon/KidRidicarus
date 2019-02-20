@@ -148,7 +148,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 			throw new IllegalStateException("The Skree explosion offset array length does not equal the " +
 					"explode velocity array length.");
 		for(int i=0; i<EXPLODE_OFFSET.length; i++) {
-			AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.VAL_SKREE_EXP, sBody.getPosition().cpy().add(
+			AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_SKREE_EXP, sBody.getPosition().cpy().add(
 					EXPLODE_OFFSET[i]));
 			adef.velocity.set(EXPLODE_VEL[i]);
 			agency.createAgent(adef);

@@ -148,7 +148,7 @@ public class MarioFireball extends BasicWalkAgent {
 
 	public static AgentDef makeMarioFireballDef(Vector2 position, boolean right,
 			Mario parentAgent) {
-		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.VAL_MARIOFIREBALL, position);
+		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_MARIOFIREBALL, position);
 		adef.userData = parentAgent;
 		if(right)
 			adef.properties.put(KVInfo.KEY_DIRECTION, KVInfo.VAL_RIGHT);
