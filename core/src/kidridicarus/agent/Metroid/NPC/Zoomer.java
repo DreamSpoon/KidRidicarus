@@ -11,6 +11,7 @@ import kidridicarus.agent.body.Metroid.NPC.ZoomerBody;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.DamageableAgent;
 import kidridicarus.agent.sprite.Metroid.NPC.ZoomerSprite;
+import kidridicarus.info.KVInfo;
 import kidridicarus.info.GameInfo.Direction4;
 import kidridicarus.info.GameInfo.SpriteDrawOrder;
 
@@ -19,15 +20,12 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
  * and the 4 sensor states, and the fact that the zoomer moves left or right. But, this can all be
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then
  * check the sensors.
- * 
- * NOTE:
- * -zoomer is immune for 10/60 second after being hit by Samus' shot
- * -zoomer changes colors when immunity starts and ends
  */
 public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
+	private static final float INJURY_TIME = 10f/60f;
 
-	public enum MoveState { WALK, DEAD }
+	public enum MoveState { WALK, INJURY, DEAD }
 
 	private ZoomerBody zBody;
 	private ZoomerSprite zSprite;
@@ -37,21 +35,23 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	// the moveDir can be derived from upDir and isWalkingRight
 	private Direction4 upDir;
 	private float upDirChangeTimer;
-
-	private boolean isDead;
-
 	private Vector2 prevBodyPosition;
 
-	private MoveState curState;
+	private boolean isInjured;
+	private float health;
+	private boolean isDead;
 
-	private CrawlNerve crawlNerve;
+	private MoveState curState;
+	private float stateTimer;
 
 	public Zoomer(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
 		isWalkingRight = false;
 		upDir = null;
-		upDirChangeTimer = 0;
+		upDirChangeTimer = 0f;
+		isInjured = false;
+		health = 2f;
 		isDead = false;
 		curState = MoveState.WALK;
 
@@ -60,8 +60,6 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 
 		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
 
-		crawlNerve = new CrawlNerve();
-
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
 	}
@@ -69,40 +67,61 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	@Override
 	public void update(float delta) {
 		processContacts(delta);
-		processMove();
+		processMove(delta);
 		processSprite(delta);
 	}
 
 	private void processContacts(float delta) {
+		// don't change up direction during injury
+		if(isInjured) {
+			upDirChangeTimer = 0f;
+			return;
+		}
+
 		Direction4 newUpDir = upDir;
 		// need to get initial up direction?
 		if(upDir == null)
-			newUpDir = crawlNerve.getInitialUpDir(isWalkingRight, zBody);
+			newUpDir = CrawlNerve.getInitialUpDir(isWalkingRight, zBody);
 		// check for change in up direction if enough time has elapsed
 		else if(upDirChangeTimer > UPDIR_CHANGE_MINTIME)
-			newUpDir = crawlNerve.checkUp(upDir, isWalkingRight, zBody.getPosition(), prevBodyPosition);
+			newUpDir = CrawlNerve.checkUp(upDir, isWalkingRight, zBody.getPosition(), prevBodyPosition);
 
 		upDirChangeTimer = upDir == newUpDir ? upDirChangeTimer+delta : 0f;
 		upDir = newUpDir;
 	}
 
-	private void processMove() {
+	private void processMove(float delta) {
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case WALK:
-				zBody.setVelocity(crawlNerve.getMoveVec(isWalkingRight, upDir));
+				zBody.setVelocity(CrawlNerve.getMoveVec(isWalkingRight, upDir));
+				break;
+			case INJURY:
+				zBody.zeroVelocity(true, true);
+				if(curState == nextMoveState && stateTimer > INJURY_TIME)
+					isInjured = false;
 				break;
 			case DEAD:
-				agency.disposeAgent(this);
+				doDeathPop();
 				break;
 		}
+		stateTimer = curState == nextMoveState ? stateTimer+delta : 0f;
 		curState = nextMoveState;
 		prevBodyPosition = zBody.getPosition().cpy();
+	}
+
+	private void doDeathPop() {
+		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_DEATH_POP, zBody.getPosition());
+		agency.createAgent(adef);
+
+		agency.disposeAgent(this);
 	}
 
 	private MoveState getNextMoveState() {
 		if(isDead)
 			return MoveState.DEAD;
+		else if(isInjured)
+			return MoveState.INJURY;
 		else
 			return MoveState.WALK;
 	}
@@ -118,12 +137,21 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 
 	@Override
 	public void onDamage(Agent agent, float amount, Vector2 fromCenter) {
-		isDead = true;
+		if(isInjured || isDead)
+			return;
+
+		health -= amount;
+		if(health <= 0f) {
+			health = 0f;
+			isDead = true;
+		}
+		else
+			isInjured = true;
 	}
 
 	@Override
 	public boolean isContactDamage() {
-		return true;
+		return !isDead;
 	}
 
 	@Override

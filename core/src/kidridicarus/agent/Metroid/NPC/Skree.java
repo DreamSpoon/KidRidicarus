@@ -18,6 +18,7 @@ import kidridicarus.info.UInfo;
 public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
 
+	private static final float INJURY_TIME = 10f/60f;
 	private static final float FALL_IMPULSE = 0.07f;
 	private static final float FALL_SPEED_MAX = 2f;
 	private static final float SIDE_IMPULSE_MAX = 0.07f;
@@ -31,25 +32,33 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 			UInfo.P2MVector(-4f, 8f), UInfo.P2MVector(4f, 8f),
 			UInfo.P2MVector(-8f, 0f), UInfo.P2MVector(8f, 0f) };
 
-	public enum SkreeState { SLEEP, FALL, ONGROUND, EXPLODE, DEAD }
+	public enum MoveState { SLEEP, FALL, ONGROUND, INJURY, EXPLODE, DEAD }
 
 	private SkreeBody sBody;
 	private SkreeSprite sSprite;
 
-	private SkreeState curState;
-	private float stateTimer;
-
+	private boolean isInjured;
+	private float health;
+	private boolean isDead;
 	// TODO: what if agent is removed/disposed while being targeted? Agent.isDisposed()?
 	private Agent target;
 
-	private boolean isDead;
+	private MoveState curMoveState;
+	private float stateTimer;
+
+	private MoveState moveStateBeforeInjury;
+	private Vector2 velocityBeforeInjury;
 
 	public Skree(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
+		isInjured = false;
+		moveStateBeforeInjury = null;
+		velocityBeforeInjury = null;
+		health = 2f;
 		isDead = false;
 		target = null;
-		curState = SkreeState.SLEEP;
+		curMoveState = MoveState.SLEEP;
 		stateTimer = 0f;
 
 		sBody = new SkreeBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()).add(SPECIAL_OFFSET));
@@ -72,12 +81,26 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 	}
 
 	private void processMove(float delta) {
-		SkreeState nextState = getNextState();
-		switch(nextState) {
+		MoveState nextMoveState = getNextMoveState();
+		switch(nextMoveState) {
 			case SLEEP:
 				break;
 			case FALL:
 				doFall();
+				break;
+			case INJURY:
+				// first frame of injury?
+				if(curMoveState != nextMoveState) {
+					moveStateBeforeInjury = curMoveState;
+					velocityBeforeInjury = sBody.getVelocity().cpy();
+					sBody.zeroVelocity(true, true);
+				}
+				else if(stateTimer > INJURY_TIME) {
+					isInjured = false;
+					sBody.setVelocity(velocityBeforeInjury);
+					// return to state before injury started
+					nextMoveState = moveStateBeforeInjury;
+				}
 				break;
 			case ONGROUND:
 				sBody.setVelocity(0f, 0f);
@@ -86,30 +109,32 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 				doExplode();
 				break;
 			case DEAD:
-				agency.disposeAgent(this);
+				doDeathPop();
 				break;
 		}
 
-		stateTimer = nextState == curState ? stateTimer+delta : 0f;
-		curState = nextState;
+		stateTimer = nextMoveState == curMoveState ? stateTimer+delta : 0f;
+		curMoveState = nextMoveState;
 	}
 
 	private void processSprite(float delta) {
-		sSprite.update(delta, sBody.getPosition(), curState);
+		sSprite.update(delta, sBody.getPosition(), curMoveState);
 	}
 
-	private SkreeState getNextState() {
+	private MoveState getNextMoveState() {
 		if(isDead)
-			return SkreeState.DEAD;
-		else if(curState == SkreeState.EXPLODE)
-			return SkreeState.EXPLODE;
-		else if(curState == SkreeState.ONGROUND && stateTimer > EXPLODE_WAIT)
-			return SkreeState.EXPLODE;
+			return MoveState.DEAD;
+		else if(curMoveState == MoveState.EXPLODE)
+			return MoveState.EXPLODE;
+		else if(curMoveState == MoveState.ONGROUND && stateTimer > EXPLODE_WAIT)
+			return MoveState.EXPLODE;
+		else if(isInjured)
+			return MoveState.INJURY;
 		else if(sBody.isOnGround())
-			return SkreeState.ONGROUND;
+			return MoveState.ONGROUND;
 		else if(target != null)
-			return SkreeState.FALL;
-		return SkreeState.SLEEP;
+			return MoveState.FALL;
+		return MoveState.SLEEP;
 	}
 
 	private void doFall() {
@@ -156,6 +181,13 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 		agency.disposeAgent(this);
 	}
 
+	private void doDeathPop() {
+		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_DEATH_POP, sBody.getPosition());
+		agency.createAgent(adef);
+
+		agency.disposeAgent(this);
+	}
+
 	@Override
 	public void draw(Batch batch) {
 		sSprite.draw(batch);
@@ -173,12 +205,24 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 
 	@Override
 	public void onDamage(Agent agent, float amount, Vector2 fromCenter) {
-		isDead = true;
+		if(isInjured || isDead)
+			return;
+
+		health -= amount;
+		if(health <= 0f) {
+			isDead = true;
+			health = 0f;
+		}
+		else
+			isInjured = true;
 	}
 
+	/*
+	 * Contact damage is enabled when Skree is not injured and not dead.
+	 */
 	@Override
 	public boolean isContactDamage() {
-		return true;
+		return !(isInjured | isDead);
 	}
 
 	@Override

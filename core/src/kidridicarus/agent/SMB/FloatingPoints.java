@@ -46,7 +46,7 @@ public class FloatingPoints extends Agent {
 			amount = SMBInfo.strToPointAmount(adef.properties.get(KVInfo.SMB.KEY_POINTAMOUNT, String.class));
 
 		// give points to player and get the actual amount awarded (since player may have points multiplier)
-		if(adef.userData != null) {
+		if(adef.userData != null && adef.userData instanceof Mario) {
 			// relative points can stack, absolute points can not
 			amount = ((Mario) adef.userData).givePoints(amount, adef.properties.get(
 					KVInfo.SMB.KEY_RELPOINTAMOUNT, "", String.class).equals(KVInfo.VAL_TRUE));

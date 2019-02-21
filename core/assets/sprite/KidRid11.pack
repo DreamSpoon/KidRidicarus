@@ -403,6 +403,27 @@ KidRid114.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+NPC/metroid/explode_big
+  rotate: false
+  xy: 1, 27
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+NPC/metroid/explode_big
+  rotate: false
+  xy: 35, 27
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+NPC/metroid/explode_big
+  rotate: false
+  xy: 69, 27
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
 NPC/metroid/skree
   rotate: false
   xy: 1, 1
@@ -412,84 +433,84 @@ NPC/metroid/skree
   index: 1
 NPC/metroid/skree
   rotate: false
-  xy: 19, 1
+  xy: 103, 35
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 2
 NPC/metroid/skree
   rotate: false
+  xy: 19, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+NPC/metroid/skree_hit
+  rotate: false
+  xy: 121, 35
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+NPC/metroid/skree_hit
+  rotate: false
   xy: 37, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
-  index: 3
-NPC/metroid/skree_hit
-  rotate: false
-  xy: 55, 1
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
-  index: 1
-NPC/metroid/skree_hit
-  rotate: false
-  xy: 73, 1
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
   index: 2
 NPC/metroid/skree_hit
   rotate: false
-  xy: 91, 1
+  xy: 139, 35
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 3
 NPC/metroid/zoomer_hit
   rotate: false
-  xy: 109, 9
+  xy: 55, 9
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 NPC/metroid/zoomer_hit
   rotate: false
-  xy: 127, 9
+  xy: 157, 43
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
 NPC/metroid/zoomer_orange
   rotate: false
-  xy: 145, 9
+  xy: 73, 9
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 NPC/metroid/zoomer_orange
   rotate: false
-  xy: 163, 9
+  xy: 175, 43
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
 NPC/metroid/zoomer_pink
   rotate: false
-  xy: 181, 9
+  xy: 193, 43
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 NPC/metroid/zoomer_pink
   rotate: false
-  xy: 199, 9
+  xy: 211, 43
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
 NPC/metroid/skree_exp
   rotate: false
-  xy: 217, 17
+  xy: 91, 17
   size: 8, 8
   orig: 8, 8
   offset: 0, 0

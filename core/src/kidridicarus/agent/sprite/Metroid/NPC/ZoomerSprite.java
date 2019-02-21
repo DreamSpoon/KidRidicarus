@@ -18,11 +18,14 @@ public class ZoomerSprite extends Sprite {
 	private static final float ANIM_SPEED = 0.05f;
 
 	private Animation<TextureRegion> walkAnim;
+	private Animation<TextureRegion> injuryAnim;
 	private float stateTimer;
 
 	public ZoomerSprite(TextureAtlas atlas, Vector2 position) {
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidAnim.NPC.ZOOMER), PlayMode.LOOP);
+		injuryAnim = new Animation<TextureRegion>(ANIM_SPEED,
+				atlas.findRegions(MetroidAnim.NPC.ZOOMER_HIT), PlayMode.LOOP);
 
 		stateTimer = 0;
 
@@ -37,6 +40,9 @@ public class ZoomerSprite extends Sprite {
 		switch(curState) {
 			case WALK:
 				setRegion(walkAnim.getKeyFrame(stateTimer, true));
+				break;
+			case INJURY:
+				setRegion(injuryAnim.getKeyFrame(stateTimer, true));
 				break;
 			case DEAD:
 				break;

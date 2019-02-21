@@ -21,6 +21,7 @@ import kidridicarus.agency.helper.AgentChangeQueue.AgentChange;
 import kidridicarus.agency.helper.AgentChangeQueue.AgentChangeCallback;
 import kidridicarus.agency.helper.AgentIndex.AgentIter;
 import kidridicarus.agent.Agent;
+import kidridicarus.agent.Metroid.NPC.DeathPop;
 import kidridicarus.agent.Metroid.NPC.Skree;
 import kidridicarus.agent.Metroid.NPC.SkreeExp;
 import kidridicarus.agent.Metroid.NPC.Zoomer;
@@ -109,11 +110,12 @@ public class Agency implements Disposable {
 			KVInfo.SMB.VAL_POWERSTAR, PowerStar.class,
 			KVInfo.SMB.VAL_SPINCOIN, SpinCoin.class,
 			KVInfo.SMB.VAL_TURTLE, Turtle.class,
+			KVInfo.Metroid.VAL_DEATH_POP, DeathPop.class,
 			KVInfo.Metroid.VAL_MARUMARI, MaruMari.class,
-			KVInfo.Metroid.VAL_SKREE, Skree.class,
-			KVInfo.Metroid.VAL_SKREE_EXP, SkreeExp.class,
 			KVInfo.Metroid.VAL_SAMUS, Samus.class,
 			KVInfo.Metroid.VAL_SAMUS_SHOT, SamusShot.class,
+			KVInfo.Metroid.VAL_SKREE, Skree.class,
+			KVInfo.Metroid.VAL_SKREE_EXP, SkreeExp.class,
 			KVInfo.Metroid.VAL_ZOOMER, Zoomer.class
 		};
 
@@ -192,6 +194,7 @@ public class Agency implements Disposable {
 			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { this, adef });
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalStateException("Unable to create Agent.");
 		}
 
