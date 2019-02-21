@@ -6,7 +6,8 @@ public class MetroidAnim {
 
 		public static final String SKREE =		DIR+"skree";
 		public static final String SKREE_EXP =	DIR+"skree_exp";
-		public static final String ZOOMER =		DIR+"zoomer";
+		public static final String ZOOMER =		DIR+"zoomer_orange";
+		public static final String ZOOMER_HIT =		DIR+"zoomer_hit";
 	}
 
 	public class Item {

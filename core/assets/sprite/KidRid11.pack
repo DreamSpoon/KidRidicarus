@@ -1,5 +1,5 @@
 
-KidRid10.png
+KidRid11.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -249,7 +249,7 @@ general/SMB/digit8
   offset: 0, 0
   index: -1
 
-KidRid102.png
+KidRid112.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -282,7 +282,7 @@ item/metroid/marumari
   offset: 0, 0
   index: 4
 
-KidRid103.png
+KidRid113.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -399,7 +399,7 @@ item/SMB/powerstar
   offset: 0, 0
   index: 4
 
-KidRid104.png
+KidRid114.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -424,29 +424,78 @@ NPC/metroid/skree
   orig: 16, 24
   offset: 0, 0
   index: 3
-NPC/metroid/zoomer
+NPC/metroid/skree_hit
   rotate: false
-  xy: 55, 9
+  xy: 55, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+NPC/metroid/skree_hit
+  rotate: false
+  xy: 73, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+NPC/metroid/skree_hit
+  rotate: false
+  xy: 91, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+NPC/metroid/zoomer_hit
+  rotate: false
+  xy: 109, 9
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
-NPC/metroid/zoomer
+NPC/metroid/zoomer_hit
   rotate: false
-  xy: 73, 9
+  xy: 127, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+NPC/metroid/zoomer_orange
+  rotate: false
+  xy: 145, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+NPC/metroid/zoomer_orange
+  rotate: false
+  xy: 163, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+NPC/metroid/zoomer_pink
+  rotate: false
+  xy: 181, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+NPC/metroid/zoomer_pink
+  rotate: false
+  xy: 199, 9
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
 NPC/metroid/skree_exp
   rotate: false
-  xy: 91, 17
+  xy: 217, 17
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 
-KidRid105.png
+KidRid115.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -507,7 +556,7 @@ NPC/SMB/goomba_walk
   offset: 0, 0
   index: 2
 
-KidRid106.png
+KidRid116.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -925,7 +974,7 @@ player/mario/big/mario_reg_run
   offset: 0, 0
   index: 3
 
-KidRid107.png
+KidRid117.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1161,7 +1210,7 @@ player/mario/sml/mario_reg_stand
   offset: 0, 0
   index: -1
 
-KidRid108.png
+KidRid118.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1325,10 +1374,24 @@ player/metroid/shot_explode
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: -1
-player/metroid/shot_regular
+  index: 1
+player/metroid/shot_explode
+  rotate: false
+  xy: 171, 67
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+player/metroid/shot_explode
   rotate: false
   xy: 241, 119
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+player/metroid/shot_regular
+  rotate: false
+  xy: 171, 57
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
