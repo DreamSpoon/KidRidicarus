@@ -34,7 +34,7 @@
    <property name="spawnagentclass" value="zoomer"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt1sEJADAIA0DH6P6TOoAvoYK0d8/8ExIBwBanmQMAf/MRgBfZNgCAykeCe/QJgAkJngUAkQ==
+   eJzt1jsKACAIANCO0f1PGq3R0JdC3hsdUgS1lAD4RZ6MAwBU/gpAJHbaHv0DgJjceDjn5Ty1uW/UMvrmam77CKCvANvhASE=
   </data>
  </layer>
  <layer id="6" name="skree" width="160" height="15">
@@ -43,7 +43,7 @@
    <property name="spawnagentclass" value="skree"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0jENAAAIwDB84N8nFjgIHLQKdiwCmJLXAdDgUzb4DAAAAAAAAPiiACbeAFI=
+   eJzt0YkJACAMBMH0Yf99WoEI4kPiTAW3SQSwS3s94JJR5y/92WX604mtmfozq3Ln1Y4q/QAAAAAAAMBcB5jXAPQ=
   </data>
  </layer>
  <layer id="9" name="marumari" width="160" height="15">
