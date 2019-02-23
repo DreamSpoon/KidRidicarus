@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-import kidridicarus.agent.body.sensor.ContactSensor;
+import kidridicarus.agency.agent.body.sensor.ContactSensor;
 
 /*
  * Use a custom filtering (AgentBodyFilter) method to determine contact. When contact occurs, invoke the

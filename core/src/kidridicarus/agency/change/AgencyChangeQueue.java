@@ -2,7 +2,7 @@ package kidridicarus.agency.change;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import kidridicarus.tool.DrawOrder;
+import kidridicarus.agency.tool.DrawOrder;
 
 public class AgencyChangeQueue {
 	private LinkedBlockingQueue<Object> changeQ;

@@ -10,9 +10,9 @@ import java.util.TreeMap;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
+import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.change.AgentWrapper;
-import kidridicarus.agent.Agent;
-import kidridicarus.tool.DrawOrder;
+import kidridicarus.agency.tool.DrawOrder;
 
 /*
  * A list of all agents in the agency, with sub-lists available for draw order, agents receiving updates, etc.

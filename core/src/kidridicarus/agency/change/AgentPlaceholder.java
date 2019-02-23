@@ -1,6 +1,6 @@
 package kidridicarus.agency.change;
 
-import kidridicarus.agent.Agent;
+import kidridicarus.agency.agent.Agent;
 
 /*
  * Using this class allows references to agents to be added to a list before the agent reference is available.

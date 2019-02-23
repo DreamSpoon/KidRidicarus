@@ -5,7 +5,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.info.KVInfo;
+import kidridicarus.game.info.KVInfo;
 
 public class AgentDef {
 	public Rectangle bounds;

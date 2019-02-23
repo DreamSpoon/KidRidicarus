@@ -1,6 +1,6 @@
 package kidridicarus.agency.change;
 
-import kidridicarus.tool.DrawOrder;
+import kidridicarus.agency.tool.DrawOrder;
 
 /*
  * Extra info about an individual agent. This information is to be used exclusively by the Agency class. 
