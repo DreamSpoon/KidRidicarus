@@ -17,6 +17,9 @@ import kidridicarus.agency.AgentDef;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
 
+/*
+ * Load .tmx files, basically.
+ */
 public class SpaceTemplateLoader {
 	public static SpaceTemplate loadMap(String spaceFilename) {
 		SpaceTemplate ret = new SpaceTemplate();

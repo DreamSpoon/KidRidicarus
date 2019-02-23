@@ -13,8 +13,8 @@ import kidridicarus.agent.general.BasicWalkAgent;
 import kidridicarus.agent.optional.BumpableAgent;
 import kidridicarus.agent.optional.ItemAgent;
 import kidridicarus.agent.sprite.SMB.item.PowerStarSprite;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.PowerupInfo.PowType;
+import kidridicarus.tool.DrawOrder;
 import kidridicarus.info.UInfo;
 
 /*
@@ -50,7 +50,7 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 		stateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
 	}
 
 	private StarState getState() {
@@ -92,7 +92,7 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 			case SPROUT:
 				if(stateTimer > SPROUT_TIME) {
 					isSprouting = false;
-					agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+					agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 					starBody = new PowerStarBody(this, agency.getWorld(), sproutingPosition);
 				}
 				break;

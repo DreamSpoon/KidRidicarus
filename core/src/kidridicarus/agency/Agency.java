@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -11,15 +12,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.contact.WorldContactFilter;
-import kidridicarus.agency.contact.WorldContactListener;
-import kidridicarus.agency.helper.AgentChangeQueue;
-import kidridicarus.agency.helper.AgentIndex;
-import kidridicarus.agency.helper.AgentPlaceholder;
-import kidridicarus.agency.helper.SolidTileChangeQueue;
-import kidridicarus.agency.helper.AgentChangeQueue.AgentChange;
-import kidridicarus.agency.helper.AgentChangeQueue.AgentChangeCallback;
-import kidridicarus.agency.helper.AgentIndex.AgentIter;
+import kidridicarus.agency.AgencyIndex.AgentIter;
+import kidridicarus.agency.AgencyIndex.DrawObjectIter;
+import kidridicarus.agency.change.AgencyChangeQueue;
+import kidridicarus.agency.change.AgentPlaceholder;
+import kidridicarus.agency.change.DrawOrderChange;
+import kidridicarus.agency.change.TileChange;
+import kidridicarus.agency.change.UpdateChange;
+import kidridicarus.agency.change.AgencyChangeQueue.AgencyChangeCallback;
+import kidridicarus.agency.change.AgentListChange;
+import kidridicarus.agency.contact.AgencyContactFilter;
+import kidridicarus.agency.contact.AgencyContactListener;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.Metroid.NPC.DeathPop;
 import kidridicarus.agent.Metroid.NPC.Skree;
@@ -53,7 +56,7 @@ import kidridicarus.agent.general.Room;
 import kidridicarus.collisionmap.TileCollisionMap;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.tool.DrawOrder;
 
 /*
  * Desc:
@@ -80,9 +83,8 @@ import kidridicarus.info.GameInfo.SpriteDrawOrder;
 public class Agency implements Disposable {
 	private World world;
 	private TileCollisionMap collisionMap;
-	private SolidTileChangeQueue tileChangeQ;
-	private AgentChangeQueue agentChangeQ;
-	private AgentIndex agentIndex;
+	private AgencyChangeQueue agencyChangeQ;
+	private AgencyIndex agencyIndex;
 	private TextureAtlas atlas;
 	private float globalTimer;
 	private AgencyEventListener agencyEventListener;
@@ -122,17 +124,90 @@ public class Agency implements Disposable {
 	public Agency() {
 		atlas = null;
 		globalTimer = 0f;
-		tileChangeQ = new SolidTileChangeQueue();
 
-		agentChangeQ = new AgentChangeQueue();
-		agentIndex = new AgentIndex();
 		world = new World(new Vector2(0, -10f), true);
-		world.setContactListener(new WorldContactListener());
-		world.setContactFilter(new WorldContactFilter());
+		world.setContactListener(new AgencyContactListener());
+		world.setContactFilter(new AgencyContactFilter());
+
+		agencyChangeQ = new AgencyChangeQueue();
+		agencyIndex = new AgencyIndex();
 	}
 
-	public void setAtlas(TextureAtlas atlas) {
-		this.atlas = atlas;
+	public void update(float delta) {
+		world.step(delta, 6, 2);
+		updateAgents(delta);
+		globalTimer += delta;
+	}
+
+	private void updateAgents(float delta) {
+		// loop through list of agents receiving updates, calling each agent's update method
+		for(Agent a : agencyIndex.getAgentsToUpdate())
+			a.update(delta);
+		processChangeQ();
+	}
+
+	/*
+	 * During the update, agents may have been added/removed from lists:
+	 * -list of all agents
+	 * -list of agents receiving updates
+	 * -agent draw order lists
+	 * And tiles may have changed solid status.
+	 * Process these queues.
+	 */
+	public void processChangeQ() {
+		agencyChangeQ.process(new AgencyChangeCallback() {
+				@Override
+				public void change(Object change) {
+					if(change instanceof AgentListChange)
+						handleAgentListChange((AgentListChange) change);
+					else if(change instanceof UpdateChange)
+						handleUpdateChange((UpdateChange) change);
+					else if(change instanceof DrawOrderChange)
+						handleDrawOrderChange((DrawOrderChange) change);
+					else if(change instanceof TileChange)
+						handleTileChange((TileChange) change);
+					else {
+						throw new IllegalArgumentException(
+								"Cannot process agency change; unknown agent change class: " + change);
+					}
+				}
+			});
+	}
+
+	private void handleAgentListChange(AgentListChange alc) {
+		if(alc.add)
+			agencyIndex.addAgent(alc.ap.agent);
+		else
+			agencyIndex.removeAgent(alc.ap.agent);
+	}
+
+	private void handleUpdateChange(UpdateChange uc) {
+		if(uc.enableUpdate)
+			agencyIndex.enableAgentUpdate(uc.ap.agent);
+		else
+			agencyIndex.disableAgentUpdate(uc.ap.agent);
+	}
+
+	private void handleDrawOrderChange(DrawOrderChange doc) {
+		agencyIndex.setAgentDrawOrder(doc.ap.agent, doc.drawOrder);
+	}
+
+	private void handleTileChange(TileChange change) {
+		if(change.solid) {
+			if(collisionMap.isTileExist(change.x, change.y)) {
+				throw new IllegalStateException(
+						"Cannot add solid tile where solid tile already exists in collision map.");
+			}
+			collisionMap.addTile(change.x, change.y);
+		}
+		// change from to solid non-solid
+		else {
+			if(!collisionMap.isTileExist(change.x, change.y)) {
+				throw new IllegalStateException(
+						"Cannot remove solid tile where solid tile does not already exist in collision map.");
+			}
+			collisionMap.removeTile(change.x, change.y);
+		}
 	}
 
 	/*
@@ -142,16 +217,8 @@ public class Agency implements Disposable {
 		collisionMap = new TileCollisionMap(world, solidLayers);
 	}
 
-	public void update(float delta) {
-		world.step(delta, 6, 2);
-		updateAgents(delta);
-		// agent updates may have modified collision map, so process the changes
-		tileChangeQ.processUpdates(collisionMap);
-		globalTimer += delta;
-	}
-
-	public void disposeAgent(Agent agent) {
-		agentChangeQ.removeAgent(new AgentPlaceholder(agent));
+	public void setDrawLayers(TreeMap<DrawOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
+		agencyIndex.addMapDrawLayers(drawLayers);
 	}
 
 	public void createAgents(Collection<AgentDef> agentDefs) {
@@ -188,7 +255,7 @@ public class Agency implements Disposable {
 		// so a placeholder must be inserted before creating the object - then the object's reference is put into the
 		// placeholder after the object is created.  
 		AgentPlaceholder agentPlaceholder = new AgentPlaceholder(null);
-		agentChangeQ.addAgent(agentPlaceholder);
+		agencyChangeQ.addAgent(agentPlaceholder);
 		try {
 			constructor = agentClass.getConstructor(new Class[] { Agency.class, AgentDef.class });
 			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { this, adef });
@@ -202,57 +269,32 @@ public class Agency implements Disposable {
 		return newlyCreatedAgent;
 	}
 
-	private void updateAgents(float delta) {
-		// loop through list of agents receiving updates, calling each agent's update method
-		for(Agent a : agentIndex.getUpdateList())
-			a.update(delta);
-		// During the update, agents may have been added/removed from queues:
-		//   -agents to add/remove from queues
-		//   -update agents
-		//   -draw order agents
-		// Process these queues.
-		processAgentChangeQ();
+	public void disposeAgent(Agent agent) {
+		agencyChangeQ.removeAgent(new AgentPlaceholder(agent));
+	}
+
+	public void enableAgentUpdate(Agent agent) {
+		agencyChangeQ.enableAgentUpdate(new AgentPlaceholder(agent));
+	}
+
+	public void disableAgentUpdate(Agent agent) {
+		agencyChangeQ.disableAgentUpdate(new AgentPlaceholder(agent));
+	}
+
+	public void setAgentDrawOrder(Agent agent, DrawOrder order) {
+		agencyChangeQ.setAgentDrawOrder(new AgentPlaceholder(agent), order);
 	}
 
 	/*
-	 * Process the queue of changes to perform the following:
-	 *   -add an agent to list of all agents
-	 *   -remove an agent from list of all agents
-	 *   -enable updates of an agent
-	 *   -disable updates of an agent
-	 *   -set the draw order of an agent
-	 */
-	public void processAgentChangeQ() {
-		agentChangeQ.process(new AgentChangeCallback() {
-				@Override
-				public void change(AgentChange ac) {
-					if(ac.addAgent != null) {
-						if(ac.addAgent == true)
-							agentIndex.addAgent(ac.ap.agent);
-						else
-							agentIndex.removeAgent(ac.ap.agent);
-					}
-					if(ac.enableUpdate != null) {
-						if(ac.enableUpdate == true)
-							agentIndex.enableAgentUpdate(ac.ap.agent);
-						else
-							agentIndex.disableAgentUpdate(ac.ap.agent);
-					}
-					if(ac.drawOrder != null)
-						agentIndex.setAgentDrawOrder(ac.ap.agent, ac.drawOrder);
-				}
-			});
-	}
-
-	/*
-	 * Add a collision map tile change to the tile change queue.
+	 * Add item to change queue for change in a tile's "solid" state.
 	 */
 	public void setPhysicTile(Vector2 t, boolean solid) {
-		tileChangeQ.add((int) t.x, (int) t.y, solid);
+		agencyChangeQ.setPhysicTile((int) t.x, (int) t.y, solid);
 	}
 
 	/*
 	 * Returns solid status of a tile in collision map (solid = true).
+	 * Note: Does not take into account any changes that may be scheduled in the agency change queue.
 	 */
 	public boolean isMapTileSolid(Vector2 tilePos) {
 		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
@@ -260,6 +302,7 @@ public class Agency implements Disposable {
 
 	/*
 	 * Returns solid status of a point in collision map (solid = true).
+	 * Note: Does not take into account any changes that may be scheduled in the agency change queue.
 	 */
 	public boolean isMapPointSolid(Vector2 pointPos) {
 		// convert the point position to a tile position
@@ -267,31 +310,16 @@ public class Agency implements Disposable {
 		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
 	}
 
-	public void enableAgentUpdate(Agent agent) {
-		agentChangeQ.enableAgentUpdate(new AgentPlaceholder(agent));
-	}
-
-	public void disableAgentUpdate(Agent agent) {
-		agentChangeQ.disableAgentUpdate(new AgentPlaceholder(agent));
-	}
-
-	public void setAgentDrawOrder(Agent agent, SpriteDrawOrder order) {
-		agentChangeQ.setAgentDrawOrder(new AgentPlaceholder(agent), order);
-	}
-
-	public World getWorld() {
-		return world;
-	}
-
-	/*
-	 * WorldRenderer will call this method to get and render the drawable agents.
-	 */
-	public Collection<Agent>[] getAgentsToDraw() {
-		return agentIndex.getAgentsToDraw();
+	public void setAtlas(TextureAtlas atlas) {
+		this.atlas = atlas;
 	}
 
 	public TextureAtlas getAtlas() {
 		return atlas;
+	}
+
+	public World getWorld() {
+		return world;
 	}
 
 	public void setEventListener(AgencyEventListener listener) {
@@ -352,7 +380,7 @@ public class Agency implements Disposable {
 			throw new IllegalArgumentException("keys[] and vals[] arrays are not of equal length.");
 
 		// loop through list of all agents, ignoring agents that have any wrong key/value pairs 
-		agentIndex.iterateThroughAllAgents(new AgentIter() {
+		agencyIndex.iterateThroughAllAgents(new AgentIter() {
 				@Override
 				public boolean iterate(Agent agent) {
 					boolean ignore = false;
@@ -400,6 +428,10 @@ public class Agency implements Disposable {
 		return null;
 	}
 
+	public void iterateThroughDrawObjects(DrawObjectIter objIter) {
+		agencyIndex.iterateThroughDrawObjects(objIter);
+	}
+
 	/*
 	 * How much time has passed since this agency was constructed?
 	 */
@@ -414,7 +446,16 @@ public class Agency implements Disposable {
 		world.dispose();
 	}
 
+	/*
+	 * Call dispose method of each agent in the all agents list.
+	 */
 	private void disposeAllAgents() {
-		agentIndex.dispose();
+		agencyIndex.iterateThroughAllAgents(new AgentIter() {
+			@Override
+			public boolean iterate(Agent agent) {
+				agent.dispose();
+				return false;
+			}
+		});
 	}
 }

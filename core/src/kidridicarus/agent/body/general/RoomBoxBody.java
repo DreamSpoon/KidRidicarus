@@ -8,9 +8,9 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.body.AgentBody;
 import kidridicarus.agent.general.Room;
+import kidridicarus.tool.B2DFactory;
 
 public class RoomBoxBody extends AgentBody {
 	private Room parent;

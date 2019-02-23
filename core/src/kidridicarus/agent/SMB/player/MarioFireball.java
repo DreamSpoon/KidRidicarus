@@ -13,7 +13,7 @@ import kidridicarus.agent.optional.DamageableAgent;
 import kidridicarus.agent.sprite.SMB.player.MarioFireballSprite;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.tool.DrawOrder;
 
 public class MarioFireball extends BasicWalkAgent {
 	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
@@ -57,7 +57,7 @@ public class MarioFireball extends BasicWalkAgent {
 		contactState = ContactState.NONE;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 	}
 
 	private FireballState getState() {

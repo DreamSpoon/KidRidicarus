@@ -11,8 +11,8 @@ import kidridicarus.agent.body.Metroid.item.MaruMariBody;
 import kidridicarus.agent.optional.ItemAgent;
 import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.agent.sprite.Metroid.item.MaruMariSprite;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.PowerupInfo.PowType;
+import kidridicarus.tool.DrawOrder;
 
 public class MaruMari extends Agent implements ItemAgent {
 	private MaruMariBody mmBody;
@@ -23,7 +23,7 @@ public class MaruMari extends Agent implements ItemAgent {
 
 		mmBody = new MaruMariBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		mmSprite = new MaruMariSprite(agency.getAtlas(), mmBody.getPosition());
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

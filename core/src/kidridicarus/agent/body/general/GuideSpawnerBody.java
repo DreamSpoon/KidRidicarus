@@ -7,10 +7,10 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.body.AgentBody;
 import kidridicarus.agent.general.GuideSpawner;
+import kidridicarus.tool.B2DFactory;
 
 public class GuideSpawnerBody extends AgentBody {
 	private GuideSpawner parent;

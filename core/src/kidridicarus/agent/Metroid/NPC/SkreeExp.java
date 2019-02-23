@@ -10,7 +10,7 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.body.Metroid.NPC.SkreeExpBody;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.sprite.Metroid.NPC.SkreeExpSprite;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.tool.DrawOrder;
 
 public class SkreeExp extends Agent implements ContactDmgAgent {
 	private static final float LIVE_TIME = 0.167f;
@@ -28,13 +28,14 @@ public class SkreeExp extends Agent implements ContactDmgAgent {
 		seSprite = new SkreeExpSprite(agency.getAtlas(), seBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override
 	public void update(float delta) {
-		if(stateTimer > LIVE_TIME)
+		if(stateTimer > LIVE_TIME) {
 			agency.disposeAgent(this);
+		}
 		else {
 			seSprite.update(seBody.getPosition());
 			stateTimer += delta;

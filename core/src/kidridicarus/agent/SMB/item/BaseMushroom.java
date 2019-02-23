@@ -14,8 +14,8 @@ import kidridicarus.agent.general.BasicWalkAgent;
 import kidridicarus.agent.optional.BumpableAgent;
 import kidridicarus.agent.optional.ItemAgent;
 import kidridicarus.agent.sprite.SMB.item.MushroomSprite;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.DrawOrder;
 
 public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, BumpableAgent {
 	private static final float SPROUT_TIME = 1f;
@@ -53,7 +53,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 		moveStateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 				// wait a short time to finish sprouting, then spawn the body when sprout finishes
 				if(moveStateTimer > SPROUT_TIME) {
 					isSprouting = false;
-					agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+					agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 					bmBody = new BaseMushroomBody(this, agency.getWorld(), sproutingPosition);
 				}
 				break;

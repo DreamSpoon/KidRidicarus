@@ -18,9 +18,9 @@ import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.agent.sprite.SMB.player.MarioSprite;
 import kidridicarus.guide.Advice;
 import kidridicarus.info.AudioInfo;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.PowerupInfo.PowType;
 import kidridicarus.info.SMBInfo.PointAmount;
+import kidridicarus.tool.DrawOrder;
 import kidridicarus.info.UInfo;
 
 /*
@@ -111,7 +111,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 				curPowerState);
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.TOP);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_TOP);
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
 
 					// Mario disappears behind the pipe as he moves into it
-					agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
+					agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
 
 					mBody.disableAllContacts();
 
@@ -278,7 +278,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
 					if(stateTimer > PIPE_WARPENTRYTIME) {
 						// Mario reappears in front of the pipe as he moves out of it
-						agency.setAgentDrawOrder(this, SpriteDrawOrder.TOP);
+						agency.setAgentDrawOrder(this, DrawOrder.SPRITE_TOP);
 
 						exitingSpawnpoint = null;
 						marioSpriteOffset.set(0f, 0f);

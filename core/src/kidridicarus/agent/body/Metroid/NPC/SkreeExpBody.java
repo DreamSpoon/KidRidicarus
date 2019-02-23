@@ -8,11 +8,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.Metroid.NPC.SkreeExp;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.B2DFactory;
 
 public class SkreeExpBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(6);

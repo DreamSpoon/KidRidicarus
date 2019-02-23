@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.Metroid.NPC.Skree;
 import kidridicarus.agent.body.MobileAgentBody;
@@ -19,6 +18,7 @@ import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.OnGroundSensor;
 import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.B2DFactory;
 
 public class SkreeBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(16);

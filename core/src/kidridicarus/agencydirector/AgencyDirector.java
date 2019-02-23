@@ -178,10 +178,6 @@ public class AgencyDirector implements Disposable {
 			currentMainMusic.play();
 	}
 
-	public Collection<Agent>[] getAgentsToDraw() {
-		return agency.getAgentsToDraw();
-	}
-
 	public void draw(MainGuide guide) {
 		spaceRenderer.draw(smbSpace, guide);
 	}

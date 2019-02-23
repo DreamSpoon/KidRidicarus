@@ -12,13 +12,13 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.Metroid.player.SamusShot;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.B2DFactory;
 
 public class SamusShotBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(1);

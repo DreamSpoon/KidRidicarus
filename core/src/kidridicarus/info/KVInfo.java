@@ -14,14 +14,16 @@ public class KVInfo {
 	public static final String VAL_UP = "up";
 	public static final String VAL_DOWN = "down";
 
-	public class Layer {
-		public static final String KEY_SOLIDLAYER = "solidlayer";
-
+	public class DrawOrder {
 		public static final String KEY_DRAWORDER = "draworder";
+		public static final String VAL_NONE = "none";
 		public static final String VAL_BOTTOM = "bottom";
 		public static final String VAL_MIDDLE = "middle";
 		public static final String VAL_TOP = "top";
-		public static final String VAL_NONE = "none";
+	}
+
+	public class Layer {
+		public static final String KEY_SOLIDLAYER = "solidlayer";
 	}
 
 	public class Sprite {

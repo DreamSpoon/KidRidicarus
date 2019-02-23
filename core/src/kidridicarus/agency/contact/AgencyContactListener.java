@@ -11,7 +11,7 @@ import kidridicarus.agent.body.sensor.ContactSensor;
  * Use a custom filtering (AgentBodyFilter) method to determine contact. When contact occurs, invoke the
  * sensor contact methods. 
  */
-public class WorldContactListener implements ContactListener {
+public class AgencyContactListener implements ContactListener {
 	@Override
 	public void beginContact(Contact contact) {
 		if(!(contact.getFixtureA().getUserData() instanceof AgentBodyFilter))

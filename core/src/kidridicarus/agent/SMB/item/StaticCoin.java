@@ -11,7 +11,7 @@ import kidridicarus.agent.SMB.player.Mario;
 import kidridicarus.agent.body.SMB.item.StaticCoinBody;
 import kidridicarus.agent.optional.ItemAgent;
 import kidridicarus.agent.sprite.SMB.item.StaticCoinSprite;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.tool.DrawOrder;
 
 public class StaticCoin extends Agent implements ItemAgent {
 	private StaticCoinSprite coinSprite;
@@ -24,7 +24,7 @@ public class StaticCoin extends Agent implements ItemAgent {
 		coinBody = new StaticCoinBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override

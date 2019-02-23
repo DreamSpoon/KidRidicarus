@@ -20,8 +20,8 @@ import kidridicarus.agent.optional.BumpableTileAgent;
 import kidridicarus.agent.sprite.SMB.BumpTileSprite;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
+import kidridicarus.tool.DrawOrder;
 import kidridicarus.info.UInfo;
 
 public class BumpTile extends Agent implements BumpableTileAgent {
@@ -101,7 +101,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		if(!adef.properties.get(KVInfo.SMB.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))
 			agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
 
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

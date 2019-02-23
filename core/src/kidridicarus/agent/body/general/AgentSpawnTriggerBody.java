@@ -13,13 +13,13 @@ import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.body.AgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.general.AgentSpawnTrigger;
 import kidridicarus.agent.general.AgentSpawner;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.B2DFactory;
 
 public class AgentSpawnTriggerBody extends AgentBody {
 	// if the target position is at least this far away from the current position then reset the b2body

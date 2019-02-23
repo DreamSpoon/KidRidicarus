@@ -16,8 +16,8 @@ import kidridicarus.agent.optional.DamageableAgent;
 import kidridicarus.agent.optional.HeadBounceAgent;
 import kidridicarus.agent.sprite.SMB.NPC.GoombaSprite;
 import kidridicarus.info.AudioInfo;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
+import kidridicarus.tool.DrawOrder;
 import kidridicarus.info.UInfo;
 
 public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounceAgent, BumpableAgent,
@@ -58,7 +58,7 @@ public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		goombaSprite = new GoombaSprite(agency.getAtlas(), position);
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 	}
 
 	@Override

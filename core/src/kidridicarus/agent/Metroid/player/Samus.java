@@ -14,8 +14,8 @@ import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.agent.sprite.Metroid.player.SamusSprite;
 import kidridicarus.guide.Advice;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.PowerupInfo.PowType;
+import kidridicarus.tool.DrawOrder;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
@@ -86,7 +86,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		sBody = new SamusBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
 
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

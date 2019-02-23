@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 /*
  * Implement an infinite bit contact filter scheme by way of the enum ContactBit and the class CustomFilter.
  */
-public class WorldContactFilter implements ContactFilter {
+public class AgencyContactFilter implements ContactFilter {
 	@Override
 	public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
 		if(!(fixtureA.getUserData() instanceof AgentBodyFilter) ||

@@ -5,7 +5,7 @@
  </tileset>
  <layer id="2" name="background" width="160" height="15">
   <properties>
-   <property name="draworder" value="bottom"/>
+   <property name="draworder" value="map_bottom"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztwzENAAAMBKGb37/gaugOCaumqqqqqqqqqqrq+wEYEV3B
@@ -13,7 +13,7 @@
  </layer>
  <layer id="11" name="doorway" width="160" height="15">
   <properties>
-   <property name="draworder" value="top"/>
+   <property name="draworder" value="map_top"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt0jsKgEAMBNCcwB96/6tqYdh+QWLgPZhyioGJAAAA4M+WJ+ubraDfXe5nzh7jP0dBv7vcz5wzxn+ugn53uR8AAACAb92/9QHp
@@ -21,7 +21,7 @@
  </layer>
  <layer id="1" name="collision" width="160" height="15">
   <properties>
-   <property name="draworder" value="top"/>
+   <property name="draworder" value="map_top"/>
    <property name="solidlayer" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">

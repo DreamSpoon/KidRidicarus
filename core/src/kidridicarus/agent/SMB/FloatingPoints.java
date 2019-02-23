@@ -12,8 +12,8 @@ import kidridicarus.agent.sprite.SMB.FloatingPointsSprite;
 import kidridicarus.info.AudioInfo;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.SMBInfo;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
+import kidridicarus.tool.DrawOrder;
 import kidridicarus.info.UInfo;
 
 /*
@@ -58,7 +58,7 @@ public class FloatingPoints extends Agent {
 
 		stateTimer = 0f;
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.TOP);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_TOP);
 	}
 
 	@Override

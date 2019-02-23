@@ -6,11 +6,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.item.FireFlower;
 import kidridicarus.agent.body.AgentBody;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.B2DFactory;
 
 public class FireFlowerBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);

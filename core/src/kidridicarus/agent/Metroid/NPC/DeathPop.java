@@ -8,7 +8,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.sprite.Metroid.NPC.DeathPopSprite;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.tool.DrawOrder;
 
 public class DeathPop extends Agent {
 	private static final float POP_TIME = 3f/60f;
@@ -23,7 +23,7 @@ public class DeathPop extends Agent {
 		stateTimer = 0f;
 		dpSprite = new DeathPopSprite(agency.getAtlas(), bounds.getCenter(new Vector2()));
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 	}
 
 	@Override

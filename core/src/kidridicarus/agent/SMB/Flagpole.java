@@ -9,8 +9,8 @@ import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.body.SMB.FlagpoleBody;
 import kidridicarus.agent.sprite.SMB.PoleFlagSprite;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.DrawOrder;
 
 public class Flagpole extends Agent {
 	private static final float DROP_TIME = 1.35f;
@@ -34,7 +34,7 @@ public class Flagpole extends Agent {
 		flagPos = initFlagPos;
 		flagSprite = new PoleFlagSprite(agency.getAtlas(), flagPos);
 
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

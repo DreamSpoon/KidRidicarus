@@ -2,17 +2,15 @@ package kidridicarus.agencydirector.space;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
-import kidridicarus.info.GameInfo.LayerDrawOrder;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
-import kidridicarus.tool.QQ;
+import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agent.Agent;
 import kidridicarus.guide.MainGuide;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.QQ;
 
 public class SpaceRenderer {
 	private Box2DDebugRenderer b2dr;
@@ -29,7 +27,7 @@ public class SpaceRenderer {
 	}
 
 	public void draw(PlatformSpace space, MainGuide guide) {
-		Batch batch = guide.getBatch();
+		final Batch batch = guide.getBatch();
 		OrthographicCamera gamecam = guide.getGamecam();
 
 		// TODO: init tileRenderer elsewhere?
@@ -39,31 +37,17 @@ public class SpaceRenderer {
 
 		batch.setProjectionMatrix(gamecam.combined);
 		batch.begin();
-
-		// draw bottom layers
-		for(MapLayer layer : space.getDrawLayers()[LayerDrawOrder.BOTTOM.ordinal()])
-			tileRenderer.renderTileLayer((TiledMapTileLayer) layer);
-
-		// draw bottom agents
-		for(Agent agent : space.getAgentsToDraw()[SpriteDrawOrder.BOTTOM.ordinal()])
-			agent.draw(batch);
-
-		// draw middle layers
-		for(MapLayer layer : space.getDrawLayers()[LayerDrawOrder.MIDDLE.ordinal()])
-			tileRenderer.renderTileLayer((TiledMapTileLayer) layer);
-
-		// draw middle agents
-		for(Agent agent : space.getAgentsToDraw()[SpriteDrawOrder.MIDDLE.ordinal()])
-			agent.draw(batch);
-
-		// draw top layers
-		for(MapLayer layer : space.getDrawLayers()[LayerDrawOrder.TOP.ordinal()])
-			tileRenderer.renderTileLayer((TiledMapTileLayer) layer);
-
-		// draw top agents
-		for(Agent agent : space.getAgentsToDraw()[SpriteDrawOrder.TOP.ordinal()])
-			agent.draw(batch);
-
+		space.iterateThroughDrawObjects(new DrawObjectIter() {
+				@Override
+				public boolean iterate(Object obj) {
+					if(obj instanceof Agent)
+						((Agent) obj).draw(batch);
+					else if(obj instanceof TiledMapTileLayer)
+						tileRenderer.renderTileLayer((TiledMapTileLayer) obj);
+					// return false to continue iterating
+					return false;
+				}
+			});
 		batch.end();
 
 		// DEBUG: draw outlines of Box2D fixtures

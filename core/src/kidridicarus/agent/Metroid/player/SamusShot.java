@@ -11,7 +11,7 @@ import kidridicarus.agent.body.Metroid.player.SamusShotBody;
 import kidridicarus.agent.optional.DamageableAgent;
 import kidridicarus.agent.sprite.Metroid.player.SamusShotSprite;
 import kidridicarus.info.KVInfo;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.tool.DrawOrder;
 
 public class SamusShot extends Agent {
 	private static final float LIVE_TIME = 0.217f;
@@ -43,7 +43,7 @@ public class SamusShot extends Agent {
 		shotSprite = new SamusShotSprite(agency.getAtlas(), shotBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 	}
 
 	@Override

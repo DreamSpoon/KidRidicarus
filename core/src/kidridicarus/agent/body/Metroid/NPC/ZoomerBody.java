@@ -9,12 +9,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Metroid.NPC.Zoomer;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.GameInfo.DiagonalDir4;
+import kidridicarus.tool.B2DFactory;
 import kidridicarus.info.UInfo;
 
 public class ZoomerBody extends MobileAgentBody {

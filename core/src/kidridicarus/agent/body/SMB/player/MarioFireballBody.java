@@ -11,13 +11,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.player.MarioFireball;
 import kidridicarus.agent.body.MobileAgentBody;
 import kidridicarus.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.B2DFactory;
 
 public class MarioFireballBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(7f);

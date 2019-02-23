@@ -4,12 +4,12 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentDef;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.sprite.SMB.CastleFlagSprite;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.DrawOrder;
 
 public class CastleFlag extends Agent {
 	private enum CastleFlagState { DOWN, RISING, UP}
@@ -36,7 +36,7 @@ public class CastleFlag extends Agent {
 		curState = CastleFlagState.DOWN;
 		stateTimer = 0f;
 
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override

@@ -11,9 +11,9 @@ import kidridicarus.agent.body.Metroid.NPC.SkreeBody;
 import kidridicarus.agent.optional.ContactDmgAgent;
 import kidridicarus.agent.optional.DamageableAgent;
 import kidridicarus.agent.sprite.Metroid.NPC.SkreeSprite;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.DrawOrder;
 
 public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
@@ -65,7 +65,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 		sSprite = new SkreeSprite(agency.getAtlas(), sBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.BOTTOM);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override

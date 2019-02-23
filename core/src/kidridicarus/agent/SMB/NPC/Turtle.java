@@ -19,8 +19,8 @@ import kidridicarus.agent.optional.HeadBounceAgent;
 import kidridicarus.agent.optional.PlayerAgent;
 import kidridicarus.agent.sprite.SMB.NPC.TurtleSprite;
 import kidridicarus.info.AudioInfo;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.SMBInfo.PointAmount;
+import kidridicarus.tool.DrawOrder;
 import kidridicarus.info.UInfo;
 
 /*
@@ -81,7 +81,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		moveStateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 	}
 
 	public void update(float delta) {

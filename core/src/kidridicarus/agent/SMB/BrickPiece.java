@@ -14,7 +14,7 @@ import kidridicarus.agent.Agent;
 import kidridicarus.agent.sprite.SMB.BrickPieceSprite;
 import kidridicarus.info.KVInfo;
 import kidridicarus.info.UInfo;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
+import kidridicarus.tool.DrawOrder;
 
 public class BrickPiece extends Agent {
 	private static final float BODY_WIDTH = UInfo.P2M(8);
@@ -40,7 +40,7 @@ public class BrickPiece extends Agent {
 		stateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {

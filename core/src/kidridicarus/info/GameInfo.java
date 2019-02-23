@@ -6,8 +6,8 @@ public class GameInfo {
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v4.tmx";
-	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v4.tmx";
+	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v5.tmx";
+	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v5.tmx";
 
 	public static final String TA_MAIN_FILENAME = "sprite/KidRid11.pack";
 
@@ -26,9 +26,9 @@ public class GameInfo {
 	 * If order is NONE then layer is not drawn.
 	 * Usually, the player sprite is drawn TOP order, turtles and goombas are drawn MIDDLE order.
 	 */
-	public enum SpriteDrawOrder { NONE, BOTTOM, MIDDLE, TOP }
+//	public enum SpriteDrawOrder { NONE, BOTTOM, MIDDLE, TOP }
 
-	public enum LayerDrawOrder { NONE, BOTTOM, MIDDLE, TOP }
+//	public enum LayerDrawOrder { NONE, BOTTOM, MIDDLE, TOP }
 
 	public enum Direction4 {
 		RIGHT, UP, LEFT, DOWN;

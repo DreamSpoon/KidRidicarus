@@ -8,11 +8,11 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.helper.B2DFactory;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.SMB.BumpTile;
 import kidridicarus.agent.body.AgentBody;
 import kidridicarus.agent.body.optional.BumpableTileBody;
+import kidridicarus.tool.B2DFactory;
 
 public class BumpTileBody extends AgentBody implements BumpableTileBody {
 	private BumpTile parent;

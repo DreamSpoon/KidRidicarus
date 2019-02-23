@@ -14,8 +14,8 @@ import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agent.Agent;
 import kidridicarus.agent.sprite.SMB.BounceCoinSprite;
-import kidridicarus.info.GameInfo.SpriteDrawOrder;
 import kidridicarus.info.UInfo;
+import kidridicarus.tool.DrawOrder;
 
 public class SpinCoin extends Agent {
 	private static final float BODY_WIDTH = UInfo.P2M(7f);
@@ -36,7 +36,7 @@ public class SpinCoin extends Agent {
 		stateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, SpriteDrawOrder.MIDDLE);
+		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {
