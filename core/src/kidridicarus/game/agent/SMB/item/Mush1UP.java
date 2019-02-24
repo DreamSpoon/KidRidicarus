@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.game.agent.SMB.player.Mario;
 import kidridicarus.game.info.SMBAnim;
 import kidridicarus.game.info.PowerupInfo.PowType;

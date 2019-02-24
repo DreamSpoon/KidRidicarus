@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 
 /*
  * The Agent can interact with other Agents (like Body in Box2D).

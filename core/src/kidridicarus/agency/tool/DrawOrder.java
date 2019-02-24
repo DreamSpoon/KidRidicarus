@@ -5,14 +5,6 @@ package kidridicarus.agency.tool;
  * And when?
  */
 public class DrawOrder implements Comparable<DrawOrder> {
-	public static final DrawOrder NONE = new DrawOrder(false, 0f);
-	public static final DrawOrder MAP_BOTTOM = new DrawOrder(true, 1f);
-	public static final DrawOrder MAP_MIDDLE = new DrawOrder(true, 3f);
-	public static final DrawOrder MAP_TOP = new DrawOrder(true, 5f);
-	public static final DrawOrder SPRITE_BOTTOM = new DrawOrder(true, 2f);
-	public static final DrawOrder SPRITE_MIDDLE = new DrawOrder(true, 4f);
-	public static final DrawOrder SPRITE_TOP = new DrawOrder(true, 6f);
-
 	public boolean draw;	// if true then draw
 	public float order;		// if least then draw first
 

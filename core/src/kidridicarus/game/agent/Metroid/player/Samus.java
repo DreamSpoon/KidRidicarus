@@ -5,18 +5,18 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.general.Room;
 import kidridicarus.agency.agent.optional.AdvisableAgent;
 import kidridicarus.agency.agent.optional.ContactDmgAgent;
 import kidridicarus.agency.agent.optional.PlayerAgent;
 import kidridicarus.agency.guide.Advice;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.body.Metroid.player.SamusBody;
 import kidridicarus.game.agent.sprite.Metroid.player.SamusSprite;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.KVInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
@@ -86,7 +86,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		sBody = new SamusBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
 
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

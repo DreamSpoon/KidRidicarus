@@ -5,10 +5,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.tool.DrawOrder;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.game.agent.sprite.Metroid.NPC.DeathPopSprite;
+import kidridicarus.game.info.GfxInfo;
 
 public class DeathPop extends Agent {
 	private static final float POP_TIME = 3f/60f;
@@ -23,7 +23,7 @@ public class DeathPop extends Agent {
 		stateTimer = 0f;
 		dpSprite = new DeathPopSprite(agency.getAtlas(), bounds.getCenter(new Vector2()));
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
 	@Override

@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.general.BasicWalkAgent;
 import kidridicarus.agency.agent.optional.BumpableAgent;
 import kidridicarus.agency.agent.optional.ContactDmgAgent;
@@ -16,11 +16,11 @@ import kidridicarus.agency.agent.optional.DamageableAgent;
 import kidridicarus.agency.agent.optional.HeadBounceAgent;
 import kidridicarus.agency.agent.optional.PlayerAgent;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.SMB.FloatingPoints;
 import kidridicarus.game.agent.body.SMB.NPC.TurtleBody;
 import kidridicarus.game.agent.sprite.SMB.NPC.TurtleSprite;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
 /*
@@ -81,7 +81,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		moveStateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
 	public void update(float delta) {

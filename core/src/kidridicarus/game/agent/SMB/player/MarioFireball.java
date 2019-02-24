@@ -5,14 +5,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.general.BasicWalkAgent;
 import kidridicarus.agency.agent.optional.DamageableAgent;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.body.SMB.player.MarioFireballBody;
 import kidridicarus.game.agent.sprite.SMB.player.MarioFireballSprite;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.KVInfo;
 
 public class MarioFireball extends BasicWalkAgent {
@@ -57,7 +57,7 @@ public class MarioFireball extends BasicWalkAgent {
 		contactState = ContactState.NONE;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
 	private FireballState getState() {

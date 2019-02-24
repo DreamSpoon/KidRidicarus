@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.general.AgentSpawnTrigger;
 import kidridicarus.agency.agent.general.AgentSpawner;
 import kidridicarus.agency.agent.general.DespawnBox;
@@ -32,30 +33,6 @@ import kidridicarus.agency.contact.AgencyContactFilter;
 import kidridicarus.agency.contact.AgencyContactListener;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.DrawOrder;
-import kidridicarus.game.agent.Metroid.NPC.DeathPop;
-import kidridicarus.game.agent.Metroid.NPC.Skree;
-import kidridicarus.game.agent.Metroid.NPC.SkreeExp;
-import kidridicarus.game.agent.Metroid.NPC.Zoomer;
-import kidridicarus.game.agent.Metroid.item.MaruMari;
-import kidridicarus.game.agent.Metroid.player.Samus;
-import kidridicarus.game.agent.Metroid.player.SamusShot;
-import kidridicarus.game.agent.SMB.BrickPiece;
-import kidridicarus.game.agent.SMB.BumpTile;
-import kidridicarus.game.agent.SMB.CastleFlag;
-import kidridicarus.game.agent.SMB.Flagpole;
-import kidridicarus.game.agent.SMB.FloatingPoints;
-import kidridicarus.game.agent.SMB.LevelEndTrigger;
-import kidridicarus.game.agent.SMB.SpinCoin;
-import kidridicarus.game.agent.SMB.WarpPipe;
-import kidridicarus.game.agent.SMB.NPC.Goomba;
-import kidridicarus.game.agent.SMB.NPC.Turtle;
-import kidridicarus.game.agent.SMB.item.FireFlower;
-import kidridicarus.game.agent.SMB.item.Mush1UP;
-import kidridicarus.game.agent.SMB.item.PowerMushroom;
-import kidridicarus.game.agent.SMB.item.PowerStar;
-import kidridicarus.game.agent.SMB.item.StaticCoin;
-import kidridicarus.game.agent.SMB.player.Mario;
-import kidridicarus.game.agent.SMB.player.MarioFireball;
 import kidridicarus.game.info.KVInfo;
 
 /*
@@ -81,6 +58,13 @@ import kidridicarus.game.info.KVInfo;
  *   transactions between two other parties."
  */
 public class Agency implements Disposable {
+	private static final AgentClassList CORE_AGENT_CLASS_LSIT = new AgentClassList( 
+			KVInfo.Spawn.VAL_AGENTSPAWNER, AgentSpawner.class,
+			KVInfo.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
+			KVInfo.Spawn.VAL_DESPAWN, DespawnBox.class,
+			KVInfo.Spawn.VAL_SPAWNGUIDE, GuideSpawner.class,
+			KVInfo.Room.VAL_ROOM, Room.class);
+
 	private World world;
 	private TileCollisionMap collisionMap;
 	private AgencyChangeQueue agencyChangeQ;
@@ -88,40 +72,9 @@ public class Agency implements Disposable {
 	private TextureAtlas atlas;
 	private float globalTimer;
 	private AgencyEventListener agencyEventListener;
+	private AgentClassList allAgentsClassList; 
 
-	private Object[] agentClassList = new Object[] {
-			KVInfo.Spawn.VAL_AGENTSPAWNER, AgentSpawner.class,
-			KVInfo.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
-			KVInfo.Spawn.VAL_DESPAWN, DespawnBox.class,
-			KVInfo.Spawn.VAL_SPAWNGUIDE, GuideSpawner.class,
-			KVInfo.Room.VAL_ROOM, Room.class,
-			KVInfo.Level.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
-			KVInfo.SMB.VAL_BRICKPIECE, BrickPiece.class,
-			KVInfo.SMB.VAL_BUMPTILE, BumpTile.class,
-			KVInfo.SMB.VAL_CASTLEFLAG, CastleFlag.class,
-			KVInfo.SMB.VAL_COIN, StaticCoin.class,
-			KVInfo.SMB.VAL_FIREFLOWER, FireFlower.class,
-			KVInfo.SMB.VAL_FLAGPOLE, Flagpole.class,
-			KVInfo.SMB.VAL_FLOATINGPOINTS, FloatingPoints.class,
-			KVInfo.SMB.VAL_GOOMBA, Goomba.class,
-			KVInfo.SMB.VAL_MARIO, Mario.class,
-			KVInfo.SMB.VAL_MARIOFIREBALL, MarioFireball.class,
-			KVInfo.SMB.VAL_MUSHROOM, PowerMushroom.class,
-			KVInfo.SMB.VAL_MUSH1UP, Mush1UP.class,
-			KVInfo.SMB.VAL_PIPEWARP, WarpPipe.class,
-			KVInfo.SMB.VAL_POWERSTAR, PowerStar.class,
-			KVInfo.SMB.VAL_SPINCOIN, SpinCoin.class,
-			KVInfo.SMB.VAL_TURTLE, Turtle.class,
-			KVInfo.Metroid.VAL_DEATH_POP, DeathPop.class,
-			KVInfo.Metroid.VAL_MARUMARI, MaruMari.class,
-			KVInfo.Metroid.VAL_SAMUS, Samus.class,
-			KVInfo.Metroid.VAL_SAMUS_SHOT, SamusShot.class,
-			KVInfo.Metroid.VAL_SKREE, Skree.class,
-			KVInfo.Metroid.VAL_SKREE_EXP, SkreeExp.class,
-			KVInfo.Metroid.VAL_ZOOMER, Zoomer.class
-		};
-
-	public Agency() {
+	public Agency(AgentClassList additionalAgents) {
 		atlas = null;
 		globalTimer = 0f;
 
@@ -131,6 +84,8 @@ public class Agency implements Disposable {
 
 		agencyChangeQ = new AgencyChangeQueue();
 		agencyIndex = new AgencyIndex();
+
+		allAgentsClassList = new AgentClassList(CORE_AGENT_CLASS_LSIT, additionalAgents);
 	}
 
 	public void update(float delta) {
@@ -237,17 +192,9 @@ public class Agency implements Disposable {
 	public Agent createAgent(AgentDef adef) {
 		String desiredAgentClass = adef.properties.get(KVInfo.Spawn.KEY_AGENTCLASS, String.class);
 
-		Class<?> agentClass = null;
-		for(int i=0; i<agentClassList.length; i+=2) {
-			String agentClassName = (String) agentClassList[i+0];
-			if(agentClassName.equals(desiredAgentClass)) {
-				agentClass = (Class<?>) agentClassList[i+1];
-				break;
-			}
-		}
-		if(agentClass == null) {
+		Class<?> agentClass = allAgentsClassList.get(desiredAgentClass);
+		if(agentClass == null)
 			return null;
-		}
 
 		Constructor<?> constructor;
 		Agent newlyCreatedAgent = null;

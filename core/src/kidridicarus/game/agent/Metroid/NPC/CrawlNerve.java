@@ -4,8 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.body.Metroid.NPC.ZoomerBody;
-import kidridicarus.game.info.GameInfo.DiagonalDir4;
-import kidridicarus.game.info.GameInfo.Direction4;
+import kidridicarus.agency.tool.DiagonalDir4;
+import kidridicarus.agency.tool.Direction4;
 
 /*
  * Used by Zoomer class to figure out this whole crawling thing.

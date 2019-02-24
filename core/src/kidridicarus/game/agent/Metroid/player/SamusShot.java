@@ -5,12 +5,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.DamageableAgent;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.body.Metroid.player.SamusShotBody;
 import kidridicarus.game.agent.sprite.Metroid.player.SamusShotSprite;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.KVInfo;
 
 public class SamusShot extends Agent {
@@ -43,7 +43,7 @@ public class SamusShot extends Agent {
 		shotSprite = new SamusShotSprite(agency.getAtlas(), shotBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
 	@Override

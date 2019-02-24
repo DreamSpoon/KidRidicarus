@@ -5,12 +5,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.body.general.GuideSpawnerBody;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.Direction4;
 import kidridicarus.game.info.KVInfo;
-import kidridicarus.game.info.GameInfo.Direction4;
 
 public class GuideSpawner extends Agent {
 	private static final float SPAWN_SAFETYDIST = UInfo.P2M(1);

@@ -5,12 +5,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.body.SMB.FlagpoleBody;
 import kidridicarus.game.agent.sprite.SMB.PoleFlagSprite;
+import kidridicarus.game.info.GfxInfo;
 
 public class Flagpole extends Agent {
 	private static final float DROP_TIME = 1.35f;
@@ -34,7 +34,7 @@ public class Flagpole extends Agent {
 		flagPos = initFlagPos;
 		flagSprite = new PoleFlagSprite(agency.getAtlas(), flagPos);
 
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

@@ -7,15 +7,15 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.general.BasicWalkAgent;
 import kidridicarus.agency.agent.optional.BumpableAgent;
 import kidridicarus.agency.agent.optional.ItemAgent;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.body.SMB.item.BaseMushroomBody;
 import kidridicarus.game.agent.sprite.SMB.item.MushroomSprite;
+import kidridicarus.game.info.GfxInfo;
 
 public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, BumpableAgent {
 	private static final float SPROUT_TIME = 1f;
@@ -53,7 +53,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 		moveStateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 				// wait a short time to finish sprouting, then spawn the body when sprout finishes
 				if(moveStateTimer > SPROUT_TIME) {
 					isSprouting = false;
-					agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+					agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 					bmBody = new BaseMushroomBody(this, agency.getWorld(), sproutingPosition);
 				}
 				break;

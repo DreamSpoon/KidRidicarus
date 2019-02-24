@@ -14,8 +14,8 @@ import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
+import kidridicarus.agency.tool.DiagonalDir4;
 import kidridicarus.game.agent.Metroid.NPC.Zoomer;
-import kidridicarus.game.info.GameInfo.DiagonalDir4;
 
 public class ZoomerBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);

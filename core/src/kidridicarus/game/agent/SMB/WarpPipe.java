@@ -5,14 +5,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.body.AgentBody;
 import kidridicarus.agency.agent.general.GuideSpawner;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.Direction4;
 import kidridicarus.game.agent.body.SMB.WarpPipeBody;
 import kidridicarus.game.info.KVInfo;
-import kidridicarus.game.info.GameInfo.Direction4;
 
 public class WarpPipe extends Agent {
 	private WarpPipeBody pwbody;

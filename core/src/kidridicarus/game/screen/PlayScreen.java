@@ -13,6 +13,7 @@ import kidridicarus.agency.guide.MainGuide;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.MyKidRidicarus;
 import kidridicarus.game.info.GameInfo;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowChar;
 import kidridicarus.game.tool.KeyboardMapping;
 import kidridicarus.game.tool.QQ;
@@ -63,7 +64,7 @@ public class PlayScreen implements Screen {
 		atlas = new TextureAtlas(GameInfo.TA_MAIN_FILENAME);
 
 		gamecam = new OrthographicCamera();
-		gameport = new FitViewport(UInfo.P2M(GameInfo.V_WIDTH), UInfo.P2M(GameInfo.V_HEIGHT), gamecam);
+		gameport = new FitViewport(UInfo.P2M(GfxInfo.V_WIDTH), UInfo.P2M(GfxInfo.V_HEIGHT), gamecam);
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 

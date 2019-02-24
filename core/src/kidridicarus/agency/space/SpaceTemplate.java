@@ -9,9 +9,10 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
-import kidridicarus.agency.AgentDef;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.agency.tool.DrawOrderAlias;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.KVInfo;
 
 public class SpaceTemplate {
@@ -106,10 +107,9 @@ public class SpaceTemplate {
 				return null;
 			}
 			// check draw order aliases to translate to draw order object
-			DrawOrderAlias doa = DrawOrderAlias.getByString(drawOrderStr);
-			if(doa == null) {
+			DrawOrderAlias doa = GfxInfo.LayerDrawOrderAlias.getByString(drawOrderStr);
+			if(doa == null)
 				return null;
-			}
 			return doa.myDO;
 		}
 		if(drawOrderFloat == null)

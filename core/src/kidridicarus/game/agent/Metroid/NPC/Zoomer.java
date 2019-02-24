@@ -5,15 +5,15 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.ContactDmgAgent;
 import kidridicarus.agency.agent.optional.DamageableAgent;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.body.Metroid.NPC.ZoomerBody;
 import kidridicarus.game.agent.sprite.Metroid.NPC.ZoomerSprite;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.KVInfo;
-import kidridicarus.game.info.GameInfo.Direction4;
+import kidridicarus.agency.tool.Direction4;
 
 /*
  * The sensor code. It seems like a million cases due to the 4 possible "up" directions of the zoomer,
@@ -61,7 +61,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override

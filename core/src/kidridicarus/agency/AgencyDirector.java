@@ -14,13 +14,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.guide.MainGuide;
 import kidridicarus.agency.space.PlatformSpace;
 import kidridicarus.agency.space.SpaceRenderer;
 import kidridicarus.agency.space.SpaceTemplateLoader;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.KVInfo;
+import kidridicarus.game.info.MetroidInfo;
 import kidridicarus.game.info.PowerupInfo.PowChar;
+import kidridicarus.game.info.SMBInfo;
 
 /*
  * Run the agency, insert guides (players) into the agency, and take direction from the agency to
@@ -47,7 +50,7 @@ public class AgencyDirector implements Disposable {
 		isMainMusicPlaying = false;
 		currentSinglePlayMusic = null;
 
-		agency = new Agency();
+		agency = new Agency(new AgentClassList(SMBInfo.SMB_AgentClassList, MetroidInfo.metroidAgentClassList));
 		agency.setEventListener(new AgencyEventListener() {
 			@Override
 			public void onPlaySound(String soundName) { playSound(soundName); }

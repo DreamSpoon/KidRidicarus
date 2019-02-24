@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.game.MyKidRidicarus;
-import kidridicarus.game.info.GameInfo;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowChar;
 
 public class GameOverScreen implements Screen {
@@ -32,7 +32,7 @@ public class GameOverScreen implements Screen {
 		Table table;
 
 		this.game = game;
-		viewport = new FitViewport(GameInfo.V_WIDTH, GameInfo.V_HEIGHT, new OrthographicCamera());
+		viewport = new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera());
 		stage = new Stage(viewport, ((MyKidRidicarus) game).batch);
 
 		font = new LabelStyle(new BitmapFont(), Color.WHITE);

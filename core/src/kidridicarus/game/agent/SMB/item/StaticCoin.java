@@ -5,13 +5,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.ItemAgent;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.SMB.player.Mario;
 import kidridicarus.game.agent.body.SMB.item.StaticCoinBody;
 import kidridicarus.game.agent.sprite.SMB.item.StaticCoinSprite;
+import kidridicarus.game.info.GfxInfo;
 
 public class StaticCoin extends Agent implements ItemAgent {
 	private StaticCoinSprite coinSprite;
@@ -24,7 +24,7 @@ public class StaticCoin extends Agent implements ItemAgent {
 		coinBody = new StaticCoinBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override

@@ -5,21 +5,21 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.general.GuideSpawner;
 import kidridicarus.agency.agent.general.Room;
 import kidridicarus.agency.agent.optional.AdvisableAgent;
 import kidridicarus.agency.agent.optional.PlayerAgent;
 import kidridicarus.agency.guide.Advice;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.SMB.FloatingPoints;
 import kidridicarus.game.agent.SMB.WarpPipe;
 import kidridicarus.game.agent.body.SMB.player.MarioBody;
 import kidridicarus.game.agent.body.SMB.player.MarioBody.MarioBodyState;
 import kidridicarus.game.agent.sprite.SMB.player.MarioSprite;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
@@ -111,7 +111,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 				curPowerState);
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_TOP);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
 
 					// Mario disappears behind the pipe as he moves into it
-					agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
+					agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 
 					mBody.disableAllContacts();
 
@@ -278,7 +278,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 					marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
 					if(stateTimer > PIPE_WARPENTRYTIME) {
 						// Mario reappears in front of the pipe as he moves out of it
-						agency.setAgentDrawOrder(this, DrawOrder.SPRITE_TOP);
+						agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
 
 						exitingSpawnpoint = null;
 						marioSpriteOffset.set(0f, 0f);

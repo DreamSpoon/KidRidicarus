@@ -5,13 +5,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.ItemAgent;
 import kidridicarus.agency.agent.optional.PlayerAgent;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.body.Metroid.item.MaruMariBody;
 import kidridicarus.game.agent.sprite.Metroid.item.MaruMariSprite;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
 public class MaruMari extends Agent implements ItemAgent {
@@ -23,7 +23,7 @@ public class MaruMari extends Agent implements ItemAgent {
 
 		mmBody = new MaruMariBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		mmSprite = new MaruMariSprite(agency.getAtlas(), mmBody.getPosition());
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

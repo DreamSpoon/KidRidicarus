@@ -10,17 +10,17 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.BumpableAgent;
 import kidridicarus.agency.agent.optional.BumpableTileAgent;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.SMB.player.Mario;
 import kidridicarus.game.agent.body.SMB.BumpTileBody;
 import kidridicarus.game.agent.sprite.SMB.BumpTileSprite;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.KVInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
@@ -101,7 +101,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		if(!adef.properties.get(KVInfo.SMB.KEY_SECRETBLOCK, "", String.class).equals(KVInfo.VAL_TRUE))
 			agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
 
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
 

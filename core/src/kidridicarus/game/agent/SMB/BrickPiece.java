@@ -9,11 +9,11 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.sprite.SMB.BrickPieceSprite;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.KVInfo;
 
 public class BrickPiece extends Agent {
@@ -40,7 +40,7 @@ public class BrickPiece extends Agent {
 		stateTimer = 0f;
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {

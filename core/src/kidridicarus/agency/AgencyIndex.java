@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.change.AgentWrapper;
 import kidridicarus.agency.tool.DrawOrder;
+import kidridicarus.game.info.GfxInfo;
 
 /*
  * A list of all agents in the agency, with sub-lists available for draw order, agents receiving updates, etc.
@@ -33,14 +34,14 @@ public class AgencyIndex {
 	 * New agents are created with enableUpdate set to false and drawOrder set to none.
 	 */
 	public void addAgent(Agent agent) {
-		allAgents.put(agent, new AgentWrapper(false, DrawOrder.NONE));
+		allAgents.put(agent, new AgentWrapper(false, GfxInfo.LayerDrawOrder.NONE));
 	}
 
 	public void removeAgent(Agent agent) {
 		// remove agent from updates list
 		disableAgentUpdate(agent);
 		// remove agent from draw order list
-		setAgentDrawOrder(agent, DrawOrder.NONE);
+		setAgentDrawOrder(agent, GfxInfo.LayerDrawOrder.NONE);
 		// remove agent
 		allAgents.remove(agent);
 		agent.dispose();
@@ -86,10 +87,10 @@ public class AgencyIndex {
 		//   the agent is in a draw order list and must be removed, or
 		//   the agent is in a draw order list and must be moved to a different list.
 
-		if(aw.drawOrder.equals(DrawOrder.NONE))
+		if(aw.drawOrder.equals(GfxInfo.LayerDrawOrder.NONE))
 			// the agent is not in a draw order list and must be added
 			addToDrawObjects(agent, drawOrder);
-		else if(drawOrder.equals(DrawOrder.NONE))
+		else if(drawOrder.equals(GfxInfo.LayerDrawOrder.NONE))
 			// the agent is in a draw order list and must be removed
 			removeFromDrawObjects(agent, aw.drawOrder);
 		else

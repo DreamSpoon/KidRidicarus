@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.Metroid.NPC.Zoomer.MoveState;
 import kidridicarus.game.info.MetroidAnim;
-import kidridicarus.game.info.GameInfo.Direction4;
+import kidridicarus.agency.tool.Direction4;
 
 public class ZoomerSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);

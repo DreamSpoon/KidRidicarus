@@ -5,14 +5,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.ContactDmgAgent;
 import kidridicarus.agency.agent.optional.DamageableAgent;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.body.Metroid.NPC.SkreeBody;
 import kidridicarus.game.agent.sprite.Metroid.NPC.SkreeSprite;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.KVInfo;
 
 public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
@@ -65,7 +65,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 		sSprite = new SkreeSprite(agency.getAtlas(), sBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override

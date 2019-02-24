@@ -12,7 +12,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 
-import kidridicarus.agency.AgentDef;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.info.KVInfo;
 

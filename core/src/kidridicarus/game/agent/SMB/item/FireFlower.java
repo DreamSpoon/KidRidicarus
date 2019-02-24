@@ -5,14 +5,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.ItemAgent;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.SMB.player.Mario;
 import kidridicarus.game.agent.body.SMB.item.FireFlowerBody;
 import kidridicarus.game.agent.sprite.SMB.item.FireFlowerSprite;
+import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
 public class FireFlower extends Agent implements ItemAgent {
@@ -34,7 +34,7 @@ public class FireFlower extends Agent implements ItemAgent {
 		stateTimer = 0f;
 		isSprouting = true;
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class FireFlower extends Agent implements ItemAgent {
 			float yOffset = 0f;
 			if(stateTimer > SPROUT_TIME) {
 				isSprouting = false;
-				agency.setAgentDrawOrder(this, DrawOrder.SPRITE_MIDDLE);
+				agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 				ffBody = new FireFlowerBody(this, agency.getWorld(), sproutingPosition);
 			}
 			else

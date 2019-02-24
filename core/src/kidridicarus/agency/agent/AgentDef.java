@@ -1,4 +1,4 @@
-package kidridicarus.agency;
+package kidridicarus.agency.agent;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;

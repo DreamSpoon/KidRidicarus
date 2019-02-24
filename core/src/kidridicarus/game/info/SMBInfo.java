@@ -1,5 +1,24 @@
 package kidridicarus.game.info;
 
+import kidridicarus.agency.AgentClassList;
+import kidridicarus.game.agent.SMB.BrickPiece;
+import kidridicarus.game.agent.SMB.BumpTile;
+import kidridicarus.game.agent.SMB.CastleFlag;
+import kidridicarus.game.agent.SMB.Flagpole;
+import kidridicarus.game.agent.SMB.FloatingPoints;
+import kidridicarus.game.agent.SMB.LevelEndTrigger;
+import kidridicarus.game.agent.SMB.SpinCoin;
+import kidridicarus.game.agent.SMB.WarpPipe;
+import kidridicarus.game.agent.SMB.NPC.Goomba;
+import kidridicarus.game.agent.SMB.NPC.Turtle;
+import kidridicarus.game.agent.SMB.item.FireFlower;
+import kidridicarus.game.agent.SMB.item.Mush1UP;
+import kidridicarus.game.agent.SMB.item.PowerMushroom;
+import kidridicarus.game.agent.SMB.item.PowerStar;
+import kidridicarus.game.agent.SMB.item.StaticCoin;
+import kidridicarus.game.agent.SMB.player.Mario;
+import kidridicarus.game.agent.SMB.player.MarioFireball;
+
 /*
  * Title: Super Mario Bros. Info
  * Desc: Info specific to Super Mario Bros.
@@ -78,4 +97,23 @@ public class SMBInfo {
 				return KVInfo.SMB.VAL_POINTS1UP;
 		}
 	}
+
+	public static final AgentClassList SMB_AgentClassList = new AgentClassList( 
+			KVInfo.Level.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
+			KVInfo.SMB.VAL_BRICKPIECE, BrickPiece.class,
+			KVInfo.SMB.VAL_BUMPTILE, BumpTile.class,
+			KVInfo.SMB.VAL_CASTLEFLAG, CastleFlag.class,
+			KVInfo.SMB.VAL_COIN, StaticCoin.class,
+			KVInfo.SMB.VAL_FIREFLOWER, FireFlower.class,
+			KVInfo.SMB.VAL_FLAGPOLE, Flagpole.class,
+			KVInfo.SMB.VAL_FLOATINGPOINTS, FloatingPoints.class,
+			KVInfo.SMB.VAL_GOOMBA, Goomba.class,
+			KVInfo.SMB.VAL_MARIO, Mario.class,
+			KVInfo.SMB.VAL_MARIOFIREBALL, MarioFireball.class,
+			KVInfo.SMB.VAL_MUSHROOM, PowerMushroom.class,
+			KVInfo.SMB.VAL_MUSH1UP, Mush1UP.class,
+			KVInfo.SMB.VAL_PIPEWARP, WarpPipe.class,
+			KVInfo.SMB.VAL_POWERSTAR, PowerStar.class,
+			KVInfo.SMB.VAL_SPINCOIN, SpinCoin.class,
+			KVInfo.SMB.VAL_TURTLE, Turtle.class);
 }

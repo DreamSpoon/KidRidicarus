@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.guide.MainGuide;
 import kidridicarus.game.info.GameInfo;
+import kidridicarus.game.info.GfxInfo;
 
 public class SMB_Hud implements Disposable {
 	private MainGuide guide;
@@ -31,7 +32,7 @@ public class SMB_Hud implements Disposable {
 	public SMB_Hud(Agency agency, Batch batch, MainGuide guide) {
 		this.guide = guide;
 
-		viewport = new FitViewport(GameInfo.V_WIDTH, GameInfo.V_HEIGHT, new OrthographicCamera());
+		viewport = new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera());
 		stage = new Stage(viewport, batch);
 
 		Table table = new Table();

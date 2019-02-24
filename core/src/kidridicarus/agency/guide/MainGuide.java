@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.general.AgentSpawnTrigger;
 import kidridicarus.agency.agent.general.Room;
 import kidridicarus.agency.agent.optional.AdvisableAgent;

@@ -5,12 +5,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentDef;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.ContactDmgAgent;
-import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.game.agent.body.Metroid.NPC.SkreeExpBody;
 import kidridicarus.game.agent.sprite.Metroid.NPC.SkreeExpSprite;
+import kidridicarus.game.info.GfxInfo;
 
 public class SkreeExp extends Agent implements ContactDmgAgent {
 	private static final float LIVE_TIME = 0.167f;
@@ -28,7 +28,7 @@ public class SkreeExp extends Agent implements ContactDmgAgent {
 		seSprite = new SkreeExpSprite(agency.getAtlas(), seBody.getPosition());
 
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, DrawOrder.SPRITE_BOTTOM);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override
