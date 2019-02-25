@@ -22,9 +22,9 @@ public class MyKidRidicarus extends Game {
 
 	public AssetManager manager;
 
-	private PowChar initPowChar = PowChar.MARIO;
+	private PowChar initPowChar = PowChar.SAMUS;
 	private String[] levelFilenames = new String[] {
-			GameInfo.GAMEMAP_FILENAME1,
+			GameInfo.GAMEMAP_FILENAME2,
 			GameInfo.GAMEMAP_FILENAME2 };
 
 	@Override

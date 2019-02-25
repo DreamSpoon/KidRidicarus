@@ -107,5 +107,6 @@ public class KVInfo {
 		public static final String VAL_SKREE = "skree";
 		public static final String VAL_SKREE_EXP = "skree_exp";
 		public static final String VAL_ZOOMER = "zoomer";
+		public static final String VAL_DOOR = "metroid_door";
 	}
 }

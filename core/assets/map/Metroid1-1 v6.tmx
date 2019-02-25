@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="6">
+ <tileset firstgid="1" name="MetroidTilesetV3" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="40" columns="8">
+  <image source="MetroidTilesetV3.png" width="144" height="90"/>
+ </tileset>
+ <layer id="2" name="background" width="160" height="15">
+  <properties>
+   <property name="draworder" value="map_bottom"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztwzENAAAMBKGb37/gaugOCaumqqqqqqqqqqrq+wEYEV3B
+  </data>
+ </layer>
+ <layer id="11" name="doorway" width="160" height="15">
+  <properties>
+   <property name="draworder" value="map_top"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt0sEJwCAQRNGpQBHSf625WIGIMex7sMc9fJgEAACA2/V5X/3/WUvd9l3sb91I3fZd7G/dk7rtAAAAACe9df4BFQ==
+  </data>
+ </layer>
+ <layer id="1" name="collision" width="160" height="15">
+  <properties>
+   <property name="draworder" value="map_top"/>
+   <property name="solidlayer" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztWmFPxDAI7dx5zqifTOb//6e6RCK+QCktXat3LyG3wtEC6cq73ZaU0sOXLEw84xVsh1zA9gjCdZb/SHsu9iuTmjWuAXNcAvLHHJ8Mwfla68fn2CrHx3rP358EjAlrwa8t/9F2KfY1/c7Duwb6t8TZmh/Pi/YYXeMY52ut3wbf9Y6X1AbLf7Q958dr4V2D+2/Kd6w5cvpSOwL3IB+/CPNF1S93rmL/5fYeeHXqR2ADOdu/F2ivYc+l6yhQ3tL+wjGeldxeCo/fm1M/Aq09ILKHRMLif1HI7S8+lvott3vWK/Ujbmrp7oiHxf+iUcLvpD3qvW89Z6fU23v2+0hQrd5B/kr8Of63dlivhO9F8D/P2SnZveftHXU4i/8RSvheBP9LDn+Jk4/m6RQ3xU58APkRnnsomD9/Dkb6kejF/7T6WXwviv9RDCX+0t6cjadTDl5+hPnP1pfP4n8an5P6cQ3/2xV9LX+cDXz/SPwIzz2CVO+ZeMVZ/E/rpy38jz+f2xV9LX+cDdQrsA9bwL47mlcgRjz/8/7fpvG3Pf3suw9BV4o9I7Og9T7C/nJr0Pidl/8dn7n3C27BXnN+zVI/6/fGGfHl+J7F/7hde7/gP9u1/qnxPwL+1hsVf8n7Bj3X/wStAg92
+  </data>
+ </layer>
+ <layer id="5" name="zoomer" width="160" height="15">
+  <properties>
+   <property name="agentclass" value="agentspawner"/>
+   <property name="spawnagentclass" value="zoomer"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1jsOABAMANAew/1PKgaLGBBC5L2xQ9ulnwgAXpEm4wAAhV8BgMpNAIA/ufGwz815amuf6GU052pt+wigLwMX8gEJ
+  </data>
+ </layer>
+ <layer id="6" name="skree" width="160" height="15">
+  <properties>
+   <property name="agentclass" value="agentspawner"/>
+   <property name="spawnagentclass" value="skree"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt0YkJACAMBMH0Yf99WoEI4kPiTAW3SQSwS3s94JJR5y/92WX604mtmfozq3Ln1Y4q/QAAAAAAAMBcB5jXAPQ=
+  </data>
+ </layer>
+ <layer id="9" name="marumari" width="160" height="15">
+  <properties>
+   <property name="agentclass" value="marumari"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAIA7AJwb9O3jkgJK2CJgAAAAAA8MdcBwAAAKAsv+8AHQ==
+  </data>
+ </layer>
+ <layer id="10" name="playerstart" width="160" height="15">
+  <properties>
+   <property name="agentclass" value="spawnguide"/>
+   <property name="spawnmain" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjEBAAAIA6AVsX9NK+zTAxKQAAAA8MlcBwAAAAAAgNoC2RYAHg==
+  </data>
+ </layer>
+ <objectgroup id="12" name="blue door">
+  <properties>
+   <property name="agentclass" value="metroid_door"/>
+  </properties>
+  <object id="4" x="1256" y="80" width="8" height="48">
+   <properties>
+    <property name="direction" value="left"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="rooms" visible="0">
+  <properties>
+   <property name="agentclass" value="room"/>
+  </properties>
+  <object id="2" x="0" y="0" width="2560" height="240">
+   <properties>
+    <property name="roommusic" value="audio/music/Metroid/03_-_Metroid_-_NES_-_Brinstar_(Rock_Stage).ogg"/>
+    <property name="roomtype" value="hscroll"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

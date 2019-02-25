@@ -47,7 +47,7 @@ public abstract class AgentBody implements Disposable {
 		b2body.setActive(active);
 	}
 
-	// body can pass through everything, to fall off screen
+	// body can pass through everything, maybe to fall off screen
 	public void disableAllContacts() {
 		CFBitSeq catBits = new CFBitSeq();
 		CFBitSeq maskBits = new CFBitSeq();
