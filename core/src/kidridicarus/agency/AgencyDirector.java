@@ -182,14 +182,6 @@ public class AgencyDirector implements Disposable {
 		spaceRenderer.draw(smbSpace, guide);
 	}
 
-	public boolean isGameOver() {
-		return smbGuide.isGameOver();
-	}
-
-	public boolean isGameWon() {
-		return smbGuide.isGameWon();
-	}
-
 	@Override
 	public void dispose() {
 		if(spaceRenderer != null)

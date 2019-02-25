@@ -58,7 +58,7 @@ import kidridicarus.game.info.KVInfo;
  *   transactions between two other parties."
  */
 public class Agency implements Disposable {
-	private static final AgentClassList CORE_AGENT_CLASS_LSIT = new AgentClassList( 
+	private static final AgentClassList CORE_AGENT_CLASS_LIST = new AgentClassList( 
 			KVInfo.Spawn.VAL_AGENTSPAWNER, AgentSpawner.class,
 			KVInfo.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
 			KVInfo.Spawn.VAL_DESPAWN, DespawnBox.class,
@@ -85,7 +85,7 @@ public class Agency implements Disposable {
 		agencyChangeQ = new AgencyChangeQueue();
 		agencyIndex = new AgencyIndex();
 
-		allAgentsClassList = new AgentClassList(CORE_AGENT_CLASS_LSIT, additionalAgents);
+		allAgentsClassList = new AgentClassList(CORE_AGENT_CLASS_LIST, additionalAgents);
 	}
 
 	public void update(float delta) {
@@ -114,13 +114,13 @@ public class Agency implements Disposable {
 				@Override
 				public void change(Object change) {
 					if(change instanceof AgentListChange)
-						handleAgentListChange((AgentListChange) change);
+						doAgentListChange((AgentListChange) change);
 					else if(change instanceof UpdateChange)
-						handleUpdateChange((UpdateChange) change);
+						doUpdateChange((UpdateChange) change);
 					else if(change instanceof DrawOrderChange)
-						handleDrawOrderChange((DrawOrderChange) change);
+						doDrawOrderChange((DrawOrderChange) change);
 					else if(change instanceof TileChange)
-						handleTileChange((TileChange) change);
+						doTileChange((TileChange) change);
 					else {
 						throw new IllegalArgumentException(
 								"Cannot process agency change; unknown agent change class: " + change);
@@ -129,25 +129,25 @@ public class Agency implements Disposable {
 			});
 	}
 
-	private void handleAgentListChange(AgentListChange alc) {
+	private void doAgentListChange(AgentListChange alc) {
 		if(alc.add)
 			agencyIndex.addAgent(alc.ap.agent);
 		else
 			agencyIndex.removeAgent(alc.ap.agent);
 	}
 
-	private void handleUpdateChange(UpdateChange uc) {
+	private void doUpdateChange(UpdateChange uc) {
 		if(uc.enableUpdate)
 			agencyIndex.enableAgentUpdate(uc.ap.agent);
 		else
 			agencyIndex.disableAgentUpdate(uc.ap.agent);
 	}
 
-	private void handleDrawOrderChange(DrawOrderChange doc) {
+	private void doDrawOrderChange(DrawOrderChange doc) {
 		agencyIndex.setAgentDrawOrder(doc.ap.agent, doc.drawOrder);
 	}
 
-	private void handleTileChange(TileChange change) {
+	private void doTileChange(TileChange change) {
 		if(change.solid) {
 			if(collisionMap.isTileExist(change.x, change.y)) {
 				throw new IllegalStateException(
@@ -358,18 +358,6 @@ public class Agency implements Disposable {
 	public GuideSpawner getGuideSpawnerByName(String name) {
 		Agent agent = getFirstAgentByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.Spawn.KEY_NAME },
 				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, name });
-		if(agent instanceof GuideSpawner)
-			return (GuideSpawner) agent;
-		return null;
-	}
-
-	/*
-	 * Returns null if guide spawner is not found
-	 */
-	public GuideSpawner getGuideMainSpawner() {
-		Agent agent = getFirstAgentByProperties(
-				new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.Spawn.KEY_SPAWNMAIN },
-				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, null });
 		if(agent instanceof GuideSpawner)
 			return (GuideSpawner) agent;
 		return null;

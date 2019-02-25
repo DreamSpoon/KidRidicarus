@@ -9,10 +9,14 @@ import kidridicarus.agency.agent.Agent;
  * somewhere in their superclass hierarchy, an equal to Agent.Class .
  */
 public class AgentClassList {
-	private HashMap<String, Object> classIndex;
+	private HashMap<String, Class<?>> classIndex;
 
+	/*
+	 * Take a list of AgentClassList objects and copy them into this list, or take pairs of { String, Class }
+	 * and create the list.
+	 */
 	public AgentClassList(Object... args) {
-		classIndex = new HashMap<String, Object>();
+		classIndex = new HashMap<String, Class<?>>();
 		if(args.length == 0)
 			return;
 		if(args[0] instanceof AgentClassList)
@@ -21,6 +25,9 @@ public class AgentClassList {
 			createFromPairArgs(args);
 	}
 
+	/*
+	 * Create this list by copying from a list, or lists, passed to this method as arguments.
+	 */
 	private void createFromClassListArgs(Object[] args) {
 		for(int i=0; i<args.length; i++) {
 			if(!(args[0] instanceof AgentClassList))
@@ -30,7 +37,8 @@ public class AgentClassList {
 	}
 
 	/*
-	 * The number of arguments passed to this method must be a multiple of 2 beacuse:
+	 * Create this AgentClassList from { String, Class } pairs passed to this method by args.
+	 * The number of arguments passed to this method must be a multiple of 2 because:
 	 * Arguments must be pairs of: String and Class
 	 * e.g. Call method with something like this:
 	 *   AgentClassList acl = new AgentClassList("zebra", Zebra.Class, "Apple", Apple.Class);
@@ -38,7 +46,7 @@ public class AgentClassList {
 	 * The String is the alias name of the Agent.
 	 * The Class is the Agent class, for instantiation constructor purposes.
 	 */
-	private void createFromPairArgs(Object... args) {
+	private void createFromPairArgs(Object[] args) {
 		// Check for correct number of args here? Or allow the wrong number of args so long as the args that
 		// are passed are the correct type? be harsh, and quit if the args count is not divisible by 2.
 		if((int) ((int) args.length / 2) * 2 != args.length)
@@ -55,32 +63,26 @@ public class AgentClassList {
 						"Agent class alias name argument is not instance of Class, args["+(i*2+1)+"]="+args[i*2+1]);
 			}
 
-			// exit if the Class argument does not have Agent.Class in its hierarchy (superwise)  
-			if(!isSuperAgent(args[i*2+1]))
-				return;
+			// error if the Class argument does not have Agent.Class in it's superclasses
+			if(!isSuperAgent((Class<?>) args[i*2+1]))
+				throw new IllegalArgumentException("Class does not have Agent.Class in super classes: " + args[i*2+1]);
 
-			putToClassIndex((String) args[i*2], (Class<?>) args[i*2+1]);
+			classIndex.put((String) args[i*2], (Class<?>) args[i*2+1]);
 		}
 	}
 
 	/*
-	 * Returns true if testClass is a Class object and either is Agent.Class or one of its superclasses in
-	 * the class hierarchy is Agent.Class .
+	 * Returns true if testClass is a Class object, and either testClass equals Agent.Class or a superclass
+	 * of testClass equals Agent.Class .
 	 */
-	private boolean isSuperAgent(Object testClass) {
-		if(!(testClass instanceof Class))
-			return false;
+	private boolean isSuperAgent(Class<?> testClass) {
 		Class<?> sup = (Class<?>) testClass;
-		while(sup != null) {
+		while(sup != null && !sup.equals(Object.class)) {
 			if(sup.equals(Agent.class))
 				return true;
 			sup = sup.getSuperclass();
 		}
 		return false;
-	}
-
-	private void putToClassIndex(String key, Class<?> value) {
-		classIndex.put(key, value);
 	}
 
 	/*

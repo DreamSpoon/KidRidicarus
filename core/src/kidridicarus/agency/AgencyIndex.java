@@ -26,7 +26,6 @@ public class AgencyIndex {
 	public AgencyIndex() {
 		allAgents = new HashMap<Agent, AgentWrapper>();
 		updateAgents = new LinkedList<Agent>();
-
 		drawObjects = new TreeMap<Float, LinkedList<Object>>();
 	}
 
