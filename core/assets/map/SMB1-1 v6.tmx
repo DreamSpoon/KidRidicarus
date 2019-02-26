@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="230" height="46" tilewidth="16" tileheight="16" infinite="0" nextlayerid="95" nextobjectid="305">
+ <tileset firstgid="1" name="SMBTilesetV3" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="48" columns="8">
+  <image source="SMBTilesetV3.png" width="144" height="108"/>
+ </tileset>
+ <layer id="82" name="background" width="230" height="46">
+  <properties>
+   <property name="draworder" value="map_bottom"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt0zENwDAQwMAURfgz7dy5GRz9nWQIXgsAAAAAAAAAAAAAAIBJHkmSJEmSJEmSJEmSJEmSJEmSJEmSJH26yf4ZcJ4voceX0ONL6PEl9PgSenwJPb6EHl9Cjy+hx5fQ40vo8SX0+BJ6fAk9vmSKF3jbJWE=
+  </data>
+ </layer>
+ <layer id="83" name="scenery" width="230" height="46">
+  <properties>
+   <property name="draworder" value="map_middle"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1dFKwzAUBuCgV9Mrt6moF6Li9Mr3fzwjGAhh7dalTev8PjhQaJvzk3DaEAAAAAAAAAAAAAAAAAAAAP6Ph1iPsZ5GWKN2nZre8st/WfHu0rzEeo311nE/37OufUtr9K0zxJCzll/+ZF30bP2Nainfs7HO/dieY/SS//Sefy1/mssx8wN11ocfARozl7A85hKWZ99cPmcFtLdvLt9j7WJ9NMxx0bDXFOSf17nlL+fy5x/5lVWLf+Yq1k2s6xPfn/tM5J/XOeYv53L3W5/ZdTJF/pTpKtYm9O/tNtZtVneh/0y22XM18r7lWvJPnz9kPUtl/iFa5u9y7P6nWbzPrg/lBwAAAAAAAAAAAAAAAAAAAGjpGw6BF7Y=
+  </data>
+ </layer>
+ <layer id="84" name="collision" width="230" height="46">
+  <properties>
+   <property name="draworder" value="map_top"/>
+   <property name="solidlayer" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt27tOwzAUgGEP3IZyGRlQ1Pd/ynqgUmid2CQ2nML3SUcCKY5S458OVVMCAAAAAAAAAAAAAAAAAAAAAACA7abPAWKYki4hkinpEiK5bFKX49zluR9wLdemhZ9b1m1d20upyUhd3trZrD3vIc9z472+cy1fldpqOdelBn66iaUmI3UZ5Wy2/n+oPa8ux1tra+1sLzVQW7v3vWO+fq3JCF0+5HnM85RinM3WRnT5u1raKp3vtQZqa/f+nc7ra022vt+P9JLnNc9bKr/mD3M1PfbGHvfdT2POetxj733+wtiH7XsGAACM8V74fWkuHcY+Gvxbpd5a6RLG0CXEo0uIR5cQjy4hHl1CPLqEeHx+CfFs6XL+PTegvy1dzr/nBvR33DlAf8edA7fiBFrzRVQ=
+  </data>
+ </layer>
+ <layer id="85" name="bumptilereg" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="bumptile"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1zsKwCAMAFAvkvtf07VL1IqtIu9BMEPIZ7QUAAAAAAAAAAAAAAAAAAAAAACAs0Qnsto/teZGkgMAAOwWyXuTL29b1fNNnx1/3lHP3U7dEQAAAAAAAAAAAAAAAAAAAAAAAJhTAaAgAy0=
+  </data>
+ </layer>
+ <layer id="86" name="bumptilestar" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="bumptile"/>
+   <property name="spawnitem" value="powerstar"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjEBAAAIA6AVsX9NK+zSBxKQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI35DgAAAAAAAAAAAAAAAAAAAAAAAAAcWGzjAB4=
+  </data>
+ </layer>
+ <layer id="87" name="bumptilemushroom" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="bumptile"/>
+   <property name="qblock" value=""/>
+   <property name="spawnitem" value="mushroom"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1zEBAAAIwzDs4N8gKoBjiYLuXBUAAAAAAAAAAAAAAAAAAAAAAAD9HQAAAHAk4f8kbAQAAAAAAAAAAAAAAAAAAAAAAADYNGx4AHw=
+  </data>
+ </layer>
+ <layer id="88" name="bumptilecoin10" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="bumptile"/>
+   <property name="spawnitem" value="coin10"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjEBAAAMAiCLrH/NXWbwgQQkAAAAAAAAAAAAAAAAAAAAAAAAAAAAQN06AAAAAAAAAAAAAAAAAAAAAAAAADD2cA8AHg==
+  </data>
+ </layer>
+ <layer id="89" name="bumptilecoin" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="bumptile"/>
+   <property name="qblock" value=""/>
+   <property name="spawnitem" value="coin"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt17ENACAIBEDWYf8F3cBYmAhyV1H+030EAAAAAAAAAAAAAAAAAAAAAADQRb4OUFyl/2TUygMAAMy02yU2yz15cP9sSk8AAAAAAAAAAAAAAAAAAAAAAACYZAE6rgGb
+  </data>
+ </layer>
+ <layer id="90" name="goombatiles" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="agentspawner"/>
+   <property name="spawnagentclass" value="goomba"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt2TEKACAIBVDv4/3v1x4EBRKR7y0u8hVXIwAAAAAAAAAAAAAAAAAAAAAAesupAgAAAAAAAO+p/OedZmXx/Bsqdt7JWPV0vRkAAAAAAAAAAAAAAAAAAADALwaZRwKx
+  </data>
+ </layer>
+ <layer id="91" name="turtletiles" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="agentspawner"/>
+   <property name="spawnagentclass" value="turtle"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6AHsn8+Y9xNSEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAN9MOAAAAAAAAAAAAAAAAAAAAAHDWAhjUAC0=
+  </data>
+ </layer>
+ <layer id="92" name="cointiles" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="coin"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1bEJAAAIwDAf8v/3HEUQdyGB3tAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAuuQQAtO2VngkAk18CAAAAAJ8UjQ0DWA==
+  </data>
+ </layer>
+ <layer id="94" name="playerstart" width="230" height="46">
+  <properties>
+   <property name="agentclass" value="spawnguide"/>
+   <property name="playeragentclass" value="mario"/>
+   <property name="spawnmain" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6DnsX9AY3w6SEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPDPtAMAAAAAAAAAAAAAAAAAAAAAAHDUAmwsACs=
+  </data>
+ </layer>
+ <objectgroup id="20" name="spawnplayer">
+  <properties>
+   <property name="agentclass" value="spawnguide"/>
+  </properties>
+  <object id="232" x="720" y="560" width="16" height="16">
+   <properties>
+    <property name="name" value="level1coins"/>
+   </properties>
+  </object>
+  <object id="234" x="2608" y="416" width="32" height="16">
+   <properties>
+    <property name="direction" value="up"/>
+    <property name="name" value="level1coinsexit"/>
+    <property name="spawntype" value="pipewarp"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="29" name="rooms" visible="0">
+  <properties>
+   <property name="agentclass" value="room"/>
+  </properties>
+  <object id="238" x="0" y="0" width="3680" height="480">
+   <properties>
+    <property name="roommusic" value="audio/music/SMB/01_-_Super_Mario_Bros._-_NES_-_Above_Ground_BGM.ogg"/>
+    <property name="roomtype" value="hscroll"/>
+    <property name="viewoffset_y" value="-112"/>
+   </properties>
+  </object>
+  <object id="239" x="688" y="480" width="256" height="256">
+   <properties>
+    <property name="roommusic" value="audio/music/SMB/03_-_Super_Mario_Bros._-_NES_-_Underground_BGM.ogg"/>
+    <property name="roomtype" value="center"/>
+    <property name="viewoffset_y" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="23" name="pipewarp" visible="0">
+  <properties>
+   <property name="agentclass" value="pipewarp"/>
+  </properties>
+  <object id="231" x="912" y="384" width="32" height="16">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="exitname" value="level1coins"/>
+   </properties>
+  </object>
+  <object id="233" x="896" y="672" width="16" height="32">
+   <properties>
+    <property name="direction" value="right"/>
+    <property name="exitname" value="level1coinsexit"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="35" name="castleflag" visible="0">
+  <properties>
+   <property name="agentclass" value="castleflag"/>
+  </properties>
+  <object id="293" x="3264" y="384" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="22" name="levelend" visible="0">
+  <properties>
+   <property name="agentclass" value="levelend_trigger"/>
+  </properties>
+  <object id="227" x="3280" y="416" width="16" height="32"/>
+ </objectgroup>
+ <objectgroup id="21" name="flagpole" visible="0">
+  <properties>
+   <property name="agentclass" value="flagpole"/>
+  </properties>
+  <object id="226" x="3172" y="280" width="8" height="152"/>
+ </objectgroup>
+ <objectgroup id="93" name="hidden1up" visible="0">
+  <properties>
+   <property name="agentclass" value="bumptile"/>
+   <property name="secretblock" value="true"/>
+   <property name="spawnitem" value="mushroom1up"/>
+  </properties>
+  <object id="304" x="1040" y="368" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="31" name="despawn" visible="0">
+  <properties>
+   <property name="agentclass" value="despawn"/>
+  </properties>
+  <object id="269" x="1040" y="480" width="1504" height="48"/>
+ </objectgroup>
+</map>

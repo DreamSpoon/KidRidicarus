@@ -1,23 +1,23 @@
 package kidridicarus.game.guide.hud;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-import kidridicarus.agency.Agency;
-
 public class HudCoin extends Image {
-	private Agency agency;
 	private CoinHudDrawable drawable;
+	private float stateTimer;
 
-	public HudCoin(Agency agency) {
+	public HudCoin(TextureAtlas atlas) {
 		super();
-		this.agency = agency;
-		drawable = new CoinHudDrawable(agency.getAtlas());
+		drawable = new CoinHudDrawable(atlas);
 		setDrawable(drawable);
+		stateTimer = 0f;
 	}
-
+	
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		drawable.act(agency.getGlobalTimer());
+		drawable.act(stateTimer);
+		stateTimer += delta;
 	}
 }

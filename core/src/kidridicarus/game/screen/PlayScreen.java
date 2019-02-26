@@ -5,16 +5,16 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.agency.AgencyDirector;
-import kidridicarus.agency.guide.MainGuide;
+import kidridicarus.agency.PlayCoordinator;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.MyKidRidicarus;
 import kidridicarus.game.info.GameInfo;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.PowerupInfo.PowChar;
 import kidridicarus.game.tool.KeyboardMapping;
 import kidridicarus.game.tool.QQ;
 
@@ -44,16 +44,17 @@ public class PlayScreen implements Screen {
 	private MyKidRidicarus game;
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
+	private Stage stageHUD;
 	private TextureAtlas atlas;
 	private AgencyDirector director;
-	private MainGuide guide;	// "player"
+	private PlayCoordinator playCo;
 	private int level;
 
 	private boolean useForcedUpdateFramerate;
 	private float forcedUpdateFPS;
 	private float forcedUpdateFrameTimer;
 
-	public PlayScreen(MyKidRidicarus game, int level, PowChar initPowChar) {
+	public PlayScreen(MyKidRidicarus game, int level) {
 		this.game = game;
 		this.level = level;
 
@@ -70,49 +71,53 @@ public class PlayScreen implements Screen {
 
 		director = new AgencyDirector(game.manager, atlas);
 		director.createSpace(game.getLevelFilename(level));
-		guide = director.createGuide(game.batch, gamecam, initPowChar);
+
+		stageHUD = new Stage(new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera()),
+				game.batch);
+
+		playCo = new PlayCoordinator(director.getAgency(), gamecam, stageHUD);
+		playCo.setPlayAgent(director.createInitialPlayerAgent());
 	}
 
 	@Override
 	public void render(float delta) {
-		// if use forced update frame rate is enabled...
-		if(processForcedUpdateFramerate()) {
-			// and if an update frame is allowed then run the update
-			if(pollForcedUpdateFrame(delta))
-				update(FF_DELTA);
-			// ... else no update until allowed
-		}
-		else {
-			// If not using forced update frame rate then let the frame rate float between min and max fps
-			// (the fps may get low when user moves the screen, something loads in the background, etc.)
-			// This range of fps is needed by the game world to maintain regularity - e.g. the zoomer might
-			//  'lurch' from one place to another.
-			// TODO: Switch to constant 60 udpate fps and skip updates if render fps goes higher than 60 fps? 
-			float d = delta;
-			if(d > 1f/MIN_FPS)
-				d = 1f/MIN_FPS;
-			else if(d < 1f/MAX_FPS)
-				d = 1f/MAX_FPS;
-			update(d);
-		}
+		update(delta);
 
 		// clear screen
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		playCo.updateCamera();
+
 		// draw screen
-		director.draw(guide);
+		director.draw(game.batch, gamecam);
+
+		// draw HUD last
+		playCo.drawHUD();
 
 		// change to next level?
-		if(guide.isGameWon()) {
+		if(playCo.isGameWon()) {
 			game.setScreen(new LevelTransitScreen(game, level+1));
 			dispose();
 		}
 		// change to game over screen?
-		else if(guide.isGameOver()) {
+		else if(playCo.isGameOver()) {
 			game.setScreen(new GameOverScreen(game, false));
 			dispose();
 		}
+	}
+
+	private float clampFrameDelta(float delta) {
+		// If not using forced update frame rate then let the frame rate float between min and max fps
+		// (the fps may get low when user moves the screen, something loads in the background, etc.)
+		// This range of fps is needed by the game world to maintain regularity - e.g. the zoomer might
+		//  'lurch' from one place to another.
+		// TODO: Switch to constant 60 udpate fps and skip updates if render fps goes higher than 60 fps? 
+		if(delta > 1f/MIN_FPS)
+			return 1f/MIN_FPS;
+		else if(delta < 1f/MAX_FPS)
+			return 1f/MAX_FPS;
+		return delta;
 	}
 
 	private boolean processForcedUpdateFramerate() {
@@ -150,18 +155,27 @@ public class PlayScreen implements Screen {
 
 	// Update the game world.
 	private void update(float delta) {
-		guide.handleInput();
-		director.update(delta);
+		float newDelta;
+		// if use forced update frame rate is enabled...
+		if(processForcedUpdateFramerate()) {
+			// ... and if an update frame is allowed then run the update
+			if(pollForcedUpdateFrame(delta))
+				newDelta = FF_DELTA;
+			// ... else no update until allowed
+			else
+				return;
+		}
+		else
+			newDelta = clampFrameDelta(delta);
+
+		playCo.handleInput();
+		playCo.update();
+		director.update(newDelta);
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		gameport.update(width, height);
-	}
-
-	@Override
-	public void dispose() {
-		director.dispose();
 	}
 
 	@Override
@@ -178,5 +192,12 @@ public class PlayScreen implements Screen {
 
 	@Override
 	public void hide() {
+	}
+
+	@Override
+	public void dispose() {
+		playCo.dispose();
+		stageHUD.dispose();
+		director.dispose();
 	}
 }

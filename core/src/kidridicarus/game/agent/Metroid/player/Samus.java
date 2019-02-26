@@ -62,7 +62,7 @@ public class Samus extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	private float lastStepSoundTime = 0f;
 	private boolean isAutoContinueRightAirMove;
 	private boolean isAutoContinueLeftAirMove;
-	private AgentObserver observer;
+	private SamusObserver observer;
 	private SamusSupervisor supervisor;
 
 	public Samus(Agency agency, AgentDef adef) {
@@ -86,9 +86,8 @@ public class Samus extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 
 		sBody = new SamusBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
-		observer = new AgentObserver(this);
+		observer = new SamusObserver(this, agency.getAtlas());
 		supervisor = new SamusSupervisor(this);
-
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
 	}
@@ -517,5 +516,17 @@ public class Samus extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	@Override
 	public void dispose() {
 		sBody.dispose();
+	}
+
+	public int getPointTotal() {
+		return 0;
+	}
+
+	public int getLevelTimeRemaining() {
+		return 0;
+	}
+
+	public int getCoinTotal() {
+		return 0;
 	}
 }

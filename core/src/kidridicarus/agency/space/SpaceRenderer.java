@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.guide.MainGuide;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.tool.QQ;
 
@@ -21,18 +20,10 @@ public class SpaceRenderer {
 		tileRenderer = null;
 	}
 
-	public void dispose() {
-		tileRenderer.dispose();
-		b2dr.dispose();
-	}
-
-	public void draw(PlatformSpace space, MainGuide guide) {
-		final Batch batch = guide.getBatch();
-		OrthographicCamera gamecam = guide.getGamecam();
-
+	public void draw(PlatformSpace space, final Batch batch, OrthographicCamera gamecam) {
 		// TODO: init tileRenderer elsewhere?
 		if(tileRenderer == null)
-			tileRenderer = new OrthogonalTiledMapRenderer(space.getTiledMap(), UInfo.P2M(1f), guide.getBatch());
+			tileRenderer = new OrthogonalTiledMapRenderer(space.getTiledMap(), UInfo.P2M(1f), batch);
 		tileRenderer.setView(gamecam);
 
 		batch.setProjectionMatrix(gamecam.combined);
@@ -52,14 +43,11 @@ public class SpaceRenderer {
 
 		// DEBUG: draw outlines of Box2D fixtures
 		if(QQ.isOn())
-			drawB2DebugRenderer(space, gamecam);
-
-		// draw the HUD last, so it's on top of everything else
-		guide.drawHUD();
+			b2dr.render(space.getWorld(), gamecam.combined);
 	}
 
-	public void drawB2DebugRenderer(PlatformSpace space, OrthographicCamera gamecam) {
-		// draw debug lines for physics of world
-		b2dr.render(space.getWorld(), gamecam.combined);
+	public void dispose() {
+		tileRenderer.dispose();
+		b2dr.dispose();
 	}
 }

@@ -1,7 +1,7 @@
 package kidridicarus.game.guide;
 
-import kidridicarus.agency.guide.BasicAdvice;
-import kidridicarus.agency.guide.SuperAdvice;
+import kidridicarus.agency.tool.BasicAdvice;
+import kidridicarus.agency.tool.SuperAdvice;
 
 public class GameAdvice extends BasicAdvice {
 	public boolean jump;

@@ -98,7 +98,7 @@ public class SMBInfo {
 		}
 	}
 
-	public static final AgentClassList SMB_AgentClassList = new AgentClassList( 
+	public static final AgentClassList SMB_AGENT_CLASSLIST = new AgentClassList( 
 			KVInfo.Level.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
 			KVInfo.SMB.VAL_BRICKPIECE, BrickPiece.class,
 			KVInfo.SMB.VAL_BUMPTILE, BumpTile.class,

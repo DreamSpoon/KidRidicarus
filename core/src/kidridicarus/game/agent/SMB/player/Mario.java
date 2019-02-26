@@ -111,7 +111,7 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 		marioSprite = new MarioSprite(agency.getAtlas(), adef.bounds.getCenter(new Vector2()),
 				curPowerState);
 
-		observer = new AgentObserver(this);
+		observer = new MarioObserver(this, agency.getAtlas());
 		supervisor = new MarioSupervisor(this);
 
 		agency.enableAgentUpdate(this);

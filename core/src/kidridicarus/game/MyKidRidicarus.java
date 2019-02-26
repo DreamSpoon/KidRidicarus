@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameInfo;
-import kidridicarus.game.info.PowerupInfo.PowChar;
 import kidridicarus.game.screen.PlayScreen;
 
 /*
@@ -22,7 +21,6 @@ public class MyKidRidicarus extends Game {
 
 	public AssetManager manager;
 
-	private PowChar initPowChar = PowChar.SAMUS;
 	private String[] levelFilenames = new String[] {
 			GameInfo.GAMEMAP_FILENAME2,
 			GameInfo.GAMEMAP_FILENAME2 };
@@ -58,7 +56,7 @@ public class MyKidRidicarus extends Game {
 		manager.finishLoading();
 
 		// start playing first level 
-		setScreen(new PlayScreen(this, 0, initPowChar));
+		setScreen(new PlayScreen(this, 0));
 	}
 
 	@Override

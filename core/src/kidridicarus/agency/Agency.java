@@ -72,7 +72,7 @@ public class Agency implements Disposable {
 	private TextureAtlas atlas;
 	private float globalTimer;
 	private AgencyEventListener agencyEventListener;
-	private AgentClassList allAgentsClassList; 
+	private AgentClassList allAgentsClassList;
 
 	public Agency(AgentClassList additionalAgents) {
 		atlas = null;

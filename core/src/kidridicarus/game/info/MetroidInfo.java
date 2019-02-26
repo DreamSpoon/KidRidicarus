@@ -11,7 +11,7 @@ import kidridicarus.game.agent.Metroid.player.Samus;
 import kidridicarus.game.agent.Metroid.player.SamusShot;
 
 public class MetroidInfo {
-	public static final AgentClassList metroidAgentClassList = new AgentClassList( 
+	public static final AgentClassList METROID_AGENT_CLASSLIST = new AgentClassList( 
 			KVInfo.Metroid.VAL_DEATH_POP, DeathPop.class,
 			KVInfo.Metroid.VAL_DOOR, MetroidDoor.class,
 			KVInfo.Metroid.VAL_MARUMARI, MaruMari.class,

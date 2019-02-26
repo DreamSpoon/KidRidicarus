@@ -10,19 +10,16 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.guide.MainGuide;
 import kidridicarus.agency.space.PlatformSpace;
 import kidridicarus.agency.space.SpaceRenderer;
 import kidridicarus.agency.space.SpaceTemplateLoader;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.KVInfo;
 import kidridicarus.game.info.MetroidInfo;
-import kidridicarus.game.info.PowerupInfo.PowChar;
 import kidridicarus.game.info.SMBInfo;
 
 /*
@@ -33,7 +30,6 @@ public class AgencyDirector implements Disposable {
 	private AssetManager manager;
 	private TextureAtlas atlas;
 	private PlatformSpace smbSpace;
-	private MainGuide smbGuide;
 	private SpaceRenderer spaceRenderer;
 	private Agency agency;
 
@@ -44,13 +40,12 @@ public class AgencyDirector implements Disposable {
 	public AgencyDirector(AssetManager manager, TextureAtlas atlas) {
 		this.manager = manager;
 		this.atlas = atlas;
-		smbGuide = null;
 
 		currentMainMusic = null;
 		isMainMusicPlaying = false;
 		currentSinglePlayMusic = null;
 
-		agency = new Agency(new AgentClassList(SMBInfo.SMB_AgentClassList, MetroidInfo.metroidAgentClassList));
+		agency = new Agency(new AgentClassList(SMBInfo.SMB_AGENT_CLASSLIST, MetroidInfo.METROID_AGENT_CLASSLIST));
 		agency.setEventListener(new AgencyEventListener() {
 			@Override
 			public void onPlaySound(String soundName) { playSound(soundName); }
@@ -75,31 +70,6 @@ public class AgencyDirector implements Disposable {
 		return smbSpace;
 	}
 
-	public MainGuide createGuide(Batch batch, OrthographicCamera gamecam, PowChar pc) {
-		if(smbGuide != null)
-			throw new IllegalStateException("Guide already created. Cannot create again.");
-
-		Vector2 startPos = getMainSpawnPosition();
-		smbGuide = new MainGuide(agency, batch, gamecam);
-		if(pc == PowChar.MARIO)
-			smbGuide.setAdviseAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_MARIO, startPos)));
-		else if(pc == PowChar.SAMUS)
-			smbGuide.setAdviseAgent(agency.createAgent(AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_SAMUS, startPos)));
-
-		return smbGuide;
-	}
-
-	private Vector2 getMainSpawnPosition() {
-		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
-		Collection<Agent> list = agency.getAgentsByProperties(
-				new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.Spawn.KEY_SPAWNMAIN },
-				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, KVInfo.VAL_TRUE });
-		if(!list.isEmpty())
-			return list.iterator().next().getPosition();
-		else
-			return new Vector2(0f, 0f);
-	}
-
 	private void preloadSpaceMusic() {
 		LinkedList<String> musicCatalog = new LinkedList<String>();
 		Collection<Agent> roomList = agency.getAgentsByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS },
@@ -117,9 +87,7 @@ public class AgencyDirector implements Disposable {
 	}
 
 	public void update(float delta) {
-		smbGuide.preUpdate();
 		agency.update(delta);
-		smbGuide.postUpdate();
 	}
 
 	private void playSound(String sound) {
@@ -178,16 +146,39 @@ public class AgencyDirector implements Disposable {
 			currentMainMusic.play();
 	}
 
-	public void draw(MainGuide guide) {
-		spaceRenderer.draw(smbSpace, guide);
+	public void draw(final Batch batch, OrthographicCamera gamecam) {
+		spaceRenderer.draw(smbSpace, batch, gamecam);
+	}
+
+	public Agency getAgency() {
+		return agency;
+	}
+
+	public Agent createInitialPlayerAgent() {
+		Agent spawner = getMainGuideSpawn();
+		if(spawner == null)
+			return null;
+		String initPlayClass = spawner.getProperties().get("playeragentclass", "", String.class);
+		if(initPlayClass.equals(""))
+			return null;
+		return agency.createAgent(AgentDef.makePointBoundsDef(initPlayClass, spawner.getPosition()));
+	}
+
+	private Agent getMainGuideSpawn() {
+		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
+		Collection<Agent> list = agency.getAgentsByProperties(
+				new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.Spawn.KEY_SPAWNMAIN },
+				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, KVInfo.VAL_TRUE });
+		if(!list.isEmpty())
+			return list.iterator().next();
+		else
+			return null;
 	}
 
 	@Override
 	public void dispose() {
 		if(spaceRenderer != null)
 			spaceRenderer.dispose();
-		if(smbGuide != null)
-			smbGuide.dispose();
 		if(smbSpace != null)
 			smbSpace.dispose();
 		if(agency != null)

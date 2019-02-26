@@ -1,4 +1,4 @@
-package kidridicarus.agency.guide;
+package kidridicarus.agency.tool;
 
 public class BasicAdvice {
 	public boolean moveRight;
