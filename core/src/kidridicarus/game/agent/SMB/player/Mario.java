@@ -7,17 +7,18 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentObserver;
+import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agent.general.GuideSpawner;
 import kidridicarus.agency.agent.general.Room;
-import kidridicarus.agency.agent.optional.AdvisableAgent;
 import kidridicarus.agency.agent.optional.PlayerAgent;
-import kidridicarus.agency.guide.Advice;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.SMB.FloatingPoints;
 import kidridicarus.game.agent.SMB.WarpPipe;
 import kidridicarus.game.agent.body.SMB.player.MarioBody;
 import kidridicarus.game.agent.body.SMB.player.MarioBody.MarioBodyState;
 import kidridicarus.game.agent.sprite.SMB.player.MarioSprite;
+import kidridicarus.game.guide.GameAdvice;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
@@ -28,7 +29,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
  * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe - fix this
  */
-public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
+public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	public enum MarioState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
 		END6_RUN, END99, PIPE_ENTRYH, PIPE_EXITH, PIPE_ENTRYV, PIPE_EXITV }
 
@@ -54,7 +55,6 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	private MarioPowerState curPowerState;
 	private MarioState curState;
 	private float stateTimer;
-	private Advice advice;
 
 	private Vector2 marioSpriteOffset;
 	private GuideSpawner exitingSpawnpoint;
@@ -73,6 +73,9 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	private PowType powerupRec;
 	// non-character powerup received
 	private PowType nonCharPowerupRec;
+
+	private AgentObserver observer;
+	private MarioSupervisor supervisor;
 
 	public Mario(Agency agency, AgentDef adef) {
 		super(agency, adef);
@@ -94,8 +97,6 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 
 		levelTimeRemaining = LEVEL_MAX_TIME;
 
-		advice = new Advice();
-
 		curState = MarioState.PLAY;
 		stateTimer = 0f;
 
@@ -110,6 +111,9 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 		marioSprite = new MarioSprite(agency.getAtlas(), adef.bounds.getCenter(new Vector2()),
 				curPowerState);
 
+		observer = new AgentObserver(this);
+		supervisor = new MarioSupervisor(this);
+
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
 	}
@@ -119,6 +123,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 		MarioBodyState bodyState;
 		MarioState nextState;
 		boolean isStarPowered;
+		GameAdvice advice = supervisor.pollFrameAdvice(); 
 
 		levelTimeRemaining -= delta;
 
@@ -130,7 +135,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 			consecBouncePoints = PointAmount.ZERO;
 
 		bodyState = MarioBodyState.STAND;
-		nextState = processMarioState(delta);
+		nextState = processMarioState(delta, advice);
 		// mario special states (e.g. end level script) override regular body states (e.g. mario use powerup) 
 		if(nextState == MarioState.PLAY || nextState == MarioState.FIREBALL) {
 			processDamage(delta);
@@ -150,13 +155,11 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 		marioSprite.update(delta, mBody.getPosition().cpy().add(marioSpriteOffset), curState, bodyState,
 				curPowerState, mBody.isFacingRight(), isDmgInvincible, isStarPowered, mBody.isBigBody());
 
-		prevFrameAdvisedShoot = advice.shoot;
-		
-		advice.clear();
+		prevFrameAdvisedShoot = advice.runShoot;
 	}
 
 	// Process the body and return a character state based on the findings.
-	private MarioState processMarioState(float delta) {
+	private MarioState processMarioState(float delta, GameAdvice advice) {
 		// scripted level end sequence
 		if(mBody.getLevelEndContacted() != null) {
 			mBody.zeroVelocity(true, true);
@@ -298,7 +301,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 		}
 		// otherwise the player has control, because no script is runnning
 		else {
-			if(processFireball(delta))
+			if(processFireball(delta, advice.runShoot))
 				return MarioState.FIREBALL;
 			else
 				return MarioState.PLAY;
@@ -306,7 +309,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	}
 
 	// mario can shoot fireballs two at a time, but must wait if his "fireball timer" runs low
-	private boolean processFireball(float delta) {
+	private boolean processFireball(float delta, boolean shoot) {
 		if(curState != MarioState.PLAY)
 			return false;
 
@@ -315,7 +318,7 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 			fireballTimer = TIME_PER_FIREBALL;
 
 		// fire a ball?
-		if(curPowerState == MarioPowerState.FIRE && advice.shoot && !prevFrameAdvisedShoot && fireballTimer > 0f) {
+		if(curPowerState == MarioPowerState.FIRE && shoot && !prevFrameAdvisedShoot && fireballTimer > 0f) {
 			fireballTimer -= TIME_PER_FIREBALL;
 			throwFireball();
 			return true;
@@ -433,11 +436,6 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	public void draw(Batch batch) {
 		if(mBody.getLevelEndContacted() == null)
 			marioSprite.draw(batch);
-	}
-
-	@Override
-	public void setFrameAdvice(Advice advice) {
-		this.advice = advice.cpy();
 	}
 
 	public void die() {
@@ -612,6 +610,16 @@ public class Mario extends Agent implements AdvisableAgent, PlayerAgent {
 	@Override
 	public Vector2 getVelocity() {
 		return mBody.getVelocity();
+	}
+
+	@Override
+	public AgentObserver getObserver() {
+		return observer;
+	}
+
+	@Override
+	public AgentSupervisor getSupervisor() {
+		return supervisor;
 	}
 
 	@Override

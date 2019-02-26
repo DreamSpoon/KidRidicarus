@@ -11,11 +11,10 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.general.AgentSpawnTrigger;
 import kidridicarus.agency.agent.general.Room;
-import kidridicarus.agency.agent.optional.AdvisableAgent;
 import kidridicarus.agency.agent.optional.PlayerAgent;
-import kidridicarus.agency.guide.hud.SMB_Hud;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.SMB.player.Mario;
+import kidridicarus.game.guide.hud.SMB_Hud;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.KVInfo;
 import kidridicarus.game.info.SMBInfo;
@@ -34,7 +33,7 @@ public class MainGuide implements Disposable {
 	private OrthographicCamera gamecam;
 	private SMB_Hud smbHud;
 	private String currentMusicName;
-	private Advice advice;
+	private SuperAdvice superAdvice;
 	private AgentSpawnTrigger spawnTrigger;
 
 	public MainGuide(Agency agency, Batch batch, OrthographicCamera gamecam) {
@@ -43,9 +42,15 @@ public class MainGuide implements Disposable {
 		this.gamecam = gamecam;
 		currentMusicName = "";
 		smbHud = new SMB_Hud(agency, batch, this);
-		advice = new Advice();
+		superAdvice = new SuperAdvice();
 		agent = null;
 		spawnTrigger = null;
+	}
+
+	public void setAdviseAgent(Agent agent) {
+		if(!(agent instanceof PlayerAgent))
+			throw new IllegalArgumentException("agent is not an instanceof PlayerAgent: " + agent);
+		this.agent = agent;
 	}
 
 	public void preUpdate() {
@@ -65,7 +70,7 @@ public class MainGuide implements Disposable {
 		}
 
 		smbHud.update();
-		((AdvisableAgent) agent).setFrameAdvice(advice);
+		((PlayerAgent) agent).getSupervisor().setFrameAdvice(superAdvice);
 	}
 
 	public void postUpdate() {
@@ -109,13 +114,12 @@ public class MainGuide implements Disposable {
 	}
 
 	public void handleInput() {
-		advice.moveRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
-		advice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
-		advice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
-		advice.moveDown = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_DOWN);
-		// run and shoot share a key temporarily
-		advice.run = advice.shoot = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUNSHOOT);
-		advice.jump = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
+		superAdvice.moveRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
+		superAdvice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
+		superAdvice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
+		superAdvice.moveDown = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_DOWN);
+		superAdvice.action0 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
+		superAdvice.action1 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUNSHOOT);
 
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
 			QQ.toggleOn();
@@ -126,24 +130,14 @@ public class MainGuide implements Disposable {
 		}
 	}
 
-	public void setAdviseAgent(Agent agent) {
-		if(!(agent instanceof PlayerAgent) || !(agent instanceof AdvisableAgent)) {
-			throw new IllegalArgumentException("setAgent method must be given only instances of PlayerAgent "+
-					"combined with AdvisableAgent.");
-		}
-		this.agent = agent;
-	}
-
-	public Room getCurrentRoom() {
+	private Room getCurrentRoom() {
 		if(agent == null)
 			return null;
 		return ((PlayerAgent) agent).getCurrentRoom();
 	}
 
 	public Vector2 getViewPosition() {
-		if(getCurrentRoom() == null)
-			return null;
-		return getCurrentRoom().getViewCenterForPos(agent.getPosition());
+		return ((PlayerAgent) agent).getObserver().getViewCenter();
 	}
 
 	public float getLevelTimeRemaining() {

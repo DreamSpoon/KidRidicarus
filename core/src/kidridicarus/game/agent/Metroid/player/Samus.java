@@ -7,14 +7,15 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentObserver;
+import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agent.general.Room;
-import kidridicarus.agency.agent.optional.AdvisableAgent;
 import kidridicarus.agency.agent.optional.ContactDmgAgent;
 import kidridicarus.agency.agent.optional.PlayerAgent;
-import kidridicarus.agency.guide.Advice;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.body.Metroid.player.SamusBody;
 import kidridicarus.game.agent.sprite.Metroid.player.SamusSprite;
+import kidridicarus.game.guide.GameAdvice;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.KVInfo;
@@ -24,7 +25,7 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
+public class Samus extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
@@ -39,7 +40,6 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 	public enum ContactState { REGULAR, DAMAGE }
 	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT }
 
-	private Advice advice;
 	private SamusBody sBody;
 	private SamusSprite sSprite;
 
@@ -62,11 +62,12 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 	private float lastStepSoundTime = 0f;
 	private boolean isAutoContinueRightAirMove;
 	private boolean isAutoContinueLeftAirMove;
+	private AgentObserver observer;
+	private SamusSupervisor supervisor;
 
 	public Samus(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
-		advice = new Advice();
 		curContactState = ContactState.REGULAR;
 		contactStateTimer = 0f;
 		curMoveState = MoveState.STAND;
@@ -85,6 +86,8 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 
 		sBody = new SamusBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
 		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
+		observer = new AgentObserver(this);
+		supervisor = new SamusSupervisor(this);
 
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);
@@ -93,9 +96,8 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 	@Override
 	public void update(float delta) {
 		processContacts(delta);
-		processMove(delta);
+		processMove(delta, supervisor.pollFrameAdvice());
 		processSprite(delta);
-		advice.clear();
 	}
 
 	private void processContacts(float delta) {
@@ -142,12 +144,12 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		agency.playSound(AudioInfo.Sound.Metroid.HURT);
 	}
 
-	private void processMove(float delta) {
+	private void processMove(float delta, GameAdvice advice) {
 		MoveState nextMoveState = null;
 		boolean jumpStart = false;
 		// XOR the moveleft and moveright, becuase can't move left and right at same time
 		boolean isMoveHorizontal = advice.moveRight^advice.moveLeft;
-		
+
 		switch(curMoveState) {
 			case BALL:
 				if(advice.moveUp) {
@@ -195,7 +197,7 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 					nextMoveState = MoveState.JUMP;
 				}
 				else {
-					boolean didShoot = checkAndDoShoot();
+					boolean didShoot = checkAndDoShoot(advice.runShoot);
 
 					// stand/run on ground?
 					if(sBody.isOnGround()) {
@@ -276,14 +278,14 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 				// still mid-air
 				else {
 					// do shoot?
-					if(checkAndDoShoot())
+					if(checkAndDoShoot(advice.runShoot))
 						nextMoveState = MoveState.JUMPSHOOT;
 					// already shooting?
 					else if(curMoveState == MoveState.JUMPSHOOT) {
 						// If delay is finished, and not advised to shoot, and moving horizontally, and spin
 						// is available, and body is moving upward, and samus is at least 2 tiles higher than
 						// jump start position, then switch back to jumpspin.
-						if(moveStateTimer > JUMPSHOOT_RESPIN_DELAY && !advice.shoot && isMoveHorizontal &&
+						if(moveStateTimer > JUMPSHOOT_RESPIN_DELAY && !advice.runShoot && isMoveHorizontal &&
 								isJumpSpinAvailable && sBody.getVelocity().y > 0f &&
 								sBody.getPosition().y > startJumpY + 2f*UInfo.P2M(UInfo.TILEPIX_Y)) {
 							nextMoveState = MoveState.JUMPSPIN;
@@ -393,10 +395,6 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		curMoveState = nextMoveState;
 	}
 
-	private void processSprite(float delta) {
-		sSprite.update(delta, sBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
-	}
-
 	private void checkDoStepSound() {
 		if(curMoveState != MoveState.RUN)
 			lastStepSoundTime = 0;
@@ -406,9 +404,9 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		}
 	}
 
-	private boolean checkAndDoShoot() {
+	private boolean checkAndDoShoot(boolean shoot) {
 		// can't shoot if not advised to shoot or cooldown has not finished
-		if(!advice.shoot || shootCooldownTime > agency.getGlobalTimer())
+		if(!shoot || shootCooldownTime > agency.getGlobalTimer())
 			return false;
 
 		shootCooldownTime = agency.getGlobalTimer() + SHOOT_COOLDOWN;
@@ -446,6 +444,10 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 		return true;
 	}
 
+	private void processSprite(float delta) {
+		sSprite.update(delta, sBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
+	}
+
 	@Override
 	public void draw(Batch batch) {
 		// toggle sprite on/off each frame while in contact damage state
@@ -455,11 +457,6 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 			sSprite.draw(batch);
 			isDrawnLastFrame = true;
 		}
-	}
-
-	@Override
-	public void setFrameAdvice(Advice advice) {
-		this.advice = advice.cpy();
 	}
 
 	@Override
@@ -505,6 +502,16 @@ public class Samus extends Agent implements AdvisableAgent, PlayerAgent {
 	@Override
 	public void applyPowerup(PowType pt) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public AgentObserver getObserver() {
+		return observer;
+	}
+
+	@Override
+	public AgentSupervisor getSupervisor() {
+		return supervisor;
 	}
 
 	@Override

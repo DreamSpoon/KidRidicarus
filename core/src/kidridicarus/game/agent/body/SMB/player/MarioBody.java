@@ -26,7 +26,6 @@ import kidridicarus.agency.agent.optional.ItemAgent;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
-import kidridicarus.agency.guide.Advice;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.agency.tool.Direction4;
@@ -35,6 +34,7 @@ import kidridicarus.game.agent.SMB.LevelEndTrigger;
 import kidridicarus.game.agent.SMB.WarpPipe;
 import kidridicarus.game.agent.SMB.player.Mario;
 import kidridicarus.game.agent.SMB.player.Mario.MarioPowerState;
+import kidridicarus.game.guide.GameAdvice;
 import kidridicarus.game.info.AudioInfo;
 
 /*
@@ -236,7 +236,7 @@ public class MarioBody extends MobileAgentBody {
 		acSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, acBeginSensor));
 	}
 
-	public MarioBodyState update(float delta, Advice advice, MarioPowerState curPowerState) {
+	public MarioBodyState update(float delta, GameAdvice advice, MarioPowerState curPowerState) {
 		MarioBodyState nextState;
 		boolean isVelocityLeft, isVelocityRight;
 		boolean doDuckSlideMove;
@@ -370,7 +370,7 @@ public class MarioBody extends MobileAgentBody {
 			nextState = MarioBodyState.BRAKE;
 		}
 		else if(doWalkRunMove) {
-			moveBodyLeftRight(advice.moveRight, advice.run);
+			moveBodyLeftRight(advice.moveRight, advice.runShoot);
 			nextState = MarioBodyState.WALKRUN;
 		}
 		else if(doDecelMove) {
@@ -451,7 +451,7 @@ public class MarioBody extends MobileAgentBody {
 		return nextState;
 	}
 
-	private void processPipes(Advice advice) {
+	private void processPipes(GameAdvice advice) {
 		// check for pipe entry 
 		Direction4 dir;
 		if(advice.moveRight)
