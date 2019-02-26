@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.body.general.RoomBoxBody;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.agency.info.AgencyKV;
 
 public class Room extends Agent {
 	private RoomBoxBody rbody;
@@ -24,20 +24,20 @@ public class Room extends Agent {
 		rbody = new RoomBoxBody(this, agency.getWorld(), adef.bounds);
 
 		roomtype = RoomType.CENTER;
-		String roomTypeStr = adef.properties.get(KVInfo.Room.KEY_ROOMTYPE, "", String.class);
-		if(roomTypeStr.equals(KVInfo.Room.VAL_ROOMTYPE_HSCROLL))
+		String roomTypeStr = adef.properties.get(AgencyKV.Room.KEY_ROOMTYPE, "", String.class);
+		if(roomTypeStr.equals(AgencyKV.Room.VAL_ROOMTYPE_HSCROLL))
 			roomtype = RoomType.HSCROLL;
-		else if(roomTypeStr.equals(KVInfo.Room.VAL_ROOMTYPE_CENTER))
+		else if(roomTypeStr.equals(AgencyKV.Room.VAL_ROOMTYPE_CENTER))
 			roomtype = RoomType.CENTER;
 
 		// default to no music
 		roommusic = "";
-		if(adef.properties.containsKey(KVInfo.Room.KEY_ROOMMUSIC))
-			roommusic = adef.properties.get(KVInfo.Room.KEY_ROOMMUSIC, String.class);
+		if(adef.properties.containsKey(AgencyKV.Room.KEY_ROOMMUSIC))
+			roommusic = adef.properties.get(AgencyKV.Room.KEY_ROOMMUSIC, String.class);
 
 		vOffset = 0f;
-		if(adef.properties.containsKey(KVInfo.Room.KEY_VIEWOFFSET_Y))
-			vOffset = UInfo.P2M(Float.valueOf(adef.properties.get(KVInfo.Room.KEY_VIEWOFFSET_Y, String.class)));
+		if(adef.properties.containsKey(AgencyKV.Room.KEY_VIEWOFFSET_Y))
+			vOffset = UInfo.P2M(Float.valueOf(adef.properties.get(AgencyKV.Room.KEY_VIEWOFFSET_Y, String.class)));
 	}
 
 	@Override

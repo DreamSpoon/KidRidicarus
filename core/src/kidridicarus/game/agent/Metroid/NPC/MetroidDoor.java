@@ -8,10 +8,10 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.DamageableAgent;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.game.agent.body.Metroid.NPC.MetroidDoorBody;
 import kidridicarus.game.agent.sprite.Metroid.NPC.MetroidDoorSprite;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.KVInfo;
 
 public class MetroidDoor extends Agent implements DamageableAgent {
 	private static final float REMAIN_OPEN_DELAY = 77/30f;
@@ -31,7 +31,7 @@ public class MetroidDoor extends Agent implements DamageableAgent {
 		super(agency, adef);
 
 		isFacingRight = false;
-		if(adef.properties.get(KVInfo.KEY_DIRECTION, "", String.class).equals(KVInfo.VAL_RIGHT))
+		if(adef.properties.get(AgencyKV.KEY_DIRECTION, "", String.class).equals(AgencyKV.VAL_RIGHT))
 			isFacingRight = true;
 		isOpening = false;
 		moveState = MoveState.CLOSED;

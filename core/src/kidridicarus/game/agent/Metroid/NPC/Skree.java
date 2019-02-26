@@ -13,7 +13,7 @@ import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.body.Metroid.NPC.SkreeBody;
 import kidridicarus.game.agent.sprite.Metroid.NPC.SkreeSprite;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.game.info.GameKV;
 
 public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
@@ -173,7 +173,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 			throw new IllegalStateException("The Skree explosion offset array length does not equal the " +
 					"explode velocity array length.");
 		for(int i=0; i<EXPLODE_OFFSET.length; i++) {
-			AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_SKREE_EXP, sBody.getPosition().cpy().add(
+			AgentDef adef = AgentDef.makePointBoundsDef(GameKV.Metroid.VAL_SKREE_EXP, sBody.getPosition().cpy().add(
 					EXPLODE_OFFSET[i]));
 			adef.velocity.set(EXPLODE_VEL[i]);
 			agency.createAgent(adef);
@@ -182,7 +182,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 	}
 
 	private void doDeathPop() {
-		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_DEATH_POP, sBody.getPosition());
+		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.Metroid.VAL_DEATH_POP, sBody.getPosition());
 		agency.createAgent(adef);
 
 		agency.disposeAgent(this);

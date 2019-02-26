@@ -6,10 +6,10 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.body.AgentBody;
+import kidridicarus.agency.agent.general.WarpPipe;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.tool.B2DFactory;
-import kidridicarus.game.agent.SMB.WarpPipe;
 
 public class WarpPipeBody extends AgentBody {
 	private WarpPipe parent;

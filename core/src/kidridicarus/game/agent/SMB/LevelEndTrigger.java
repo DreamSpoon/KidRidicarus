@@ -7,8 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.game.agent.body.SMB.LevelEndBody;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.game.info.GameKV;
 
 public class LevelEndTrigger extends Agent {
 	private LevelEndBody leBody;
@@ -30,8 +31,9 @@ public class LevelEndTrigger extends Agent {
 	 * Usually called when player contacts the level end box.
 	 */
 	public void trigger() {
-		Agent agent = agency.getFirstAgentByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS },
-				new String[] { KVInfo.SMB.VAL_CASTLEFLAG});
+		Agent agent = agency.getFirstAgentByProperties(
+				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS },
+				new String[] { GameKV.SMB.VAL_CASTLEFLAG});
 		if(agent instanceof CastleFlag)
 			((CastleFlag) agent).trigger();
 	}

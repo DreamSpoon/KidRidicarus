@@ -8,7 +8,6 @@ import kidridicarus.game.agent.SMB.Flagpole;
 import kidridicarus.game.agent.SMB.FloatingPoints;
 import kidridicarus.game.agent.SMB.LevelEndTrigger;
 import kidridicarus.game.agent.SMB.SpinCoin;
-import kidridicarus.game.agent.SMB.WarpPipe;
 import kidridicarus.game.agent.SMB.NPC.Goomba;
 import kidridicarus.game.agent.SMB.NPC.Turtle;
 import kidridicarus.game.agent.SMB.item.FireFlower;
@@ -49,21 +48,21 @@ public class SMBInfo {
 	}
 
 	public static PointAmount strToPointAmount(String strAmt) {
-		if(strAmt.equals(KVInfo.SMB.VAL_POINTS0))
+		if(strAmt.equals(GameKV.SMB.VAL_POINTS0))
 			return PointAmount.ZERO;
-		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS100))
+		else if(strAmt.equals(GameKV.SMB.VAL_POINTS100))
 			return PointAmount.P100;
-		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS200))
+		else if(strAmt.equals(GameKV.SMB.VAL_POINTS200))
 			return PointAmount.P200;
-		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS400))
+		else if(strAmt.equals(GameKV.SMB.VAL_POINTS400))
 			return PointAmount.P400;
-		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS500))
+		else if(strAmt.equals(GameKV.SMB.VAL_POINTS500))
 			return PointAmount.P500;
-		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS800))
+		else if(strAmt.equals(GameKV.SMB.VAL_POINTS800))
 			return PointAmount.P800;
-		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS1000))
+		else if(strAmt.equals(GameKV.SMB.VAL_POINTS1000))
 			return PointAmount.P1000;
-		else if(strAmt.equals(KVInfo.SMB.VAL_POINTS1UP))
+		else if(strAmt.equals(GameKV.SMB.VAL_POINTS1UP))
 			return PointAmount.P1UP;
 		return PointAmount.ZERO;
 	}
@@ -72,48 +71,47 @@ public class SMBInfo {
 		switch(amt) {
 			default:
 			case ZERO:
-				return KVInfo.SMB.VAL_POINTS0;
+				return GameKV.SMB.VAL_POINTS0;
 			case P100:
-				return KVInfo.SMB.VAL_POINTS100;
+				return GameKV.SMB.VAL_POINTS100;
 			case P200:
-				return KVInfo.SMB.VAL_POINTS200;
+				return GameKV.SMB.VAL_POINTS200;
 			case P400:
-				return KVInfo.SMB.VAL_POINTS400;
+				return GameKV.SMB.VAL_POINTS400;
 			case P500:
-				return KVInfo.SMB.VAL_POINTS500;
+				return GameKV.SMB.VAL_POINTS500;
 			case P800:
-				return KVInfo.SMB.VAL_POINTS800;
+				return GameKV.SMB.VAL_POINTS800;
 			case P1000:
-				return KVInfo.SMB.VAL_POINTS1000;
+				return GameKV.SMB.VAL_POINTS1000;
 			case P2000:
-				return KVInfo.SMB.VAL_POINTS2000;
+				return GameKV.SMB.VAL_POINTS2000;
 			case P4000:
-				return KVInfo.SMB.VAL_POINTS4000;
+				return GameKV.SMB.VAL_POINTS4000;
 			case P5000:
-				return KVInfo.SMB.VAL_POINTS5000;
+				return GameKV.SMB.VAL_POINTS5000;
 			case P8000:
-				return KVInfo.SMB.VAL_POINTS8000;
+				return GameKV.SMB.VAL_POINTS8000;
 			case P1UP:
-				return KVInfo.SMB.VAL_POINTS1UP;
+				return GameKV.SMB.VAL_POINTS1UP;
 		}
 	}
 
 	public static final AgentClassList SMB_AGENT_CLASSLIST = new AgentClassList( 
-			KVInfo.Level.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
-			KVInfo.SMB.VAL_BRICKPIECE, BrickPiece.class,
-			KVInfo.SMB.VAL_BUMPTILE, BumpTile.class,
-			KVInfo.SMB.VAL_CASTLEFLAG, CastleFlag.class,
-			KVInfo.SMB.VAL_COIN, StaticCoin.class,
-			KVInfo.SMB.VAL_FIREFLOWER, FireFlower.class,
-			KVInfo.SMB.VAL_FLAGPOLE, Flagpole.class,
-			KVInfo.SMB.VAL_FLOATINGPOINTS, FloatingPoints.class,
-			KVInfo.SMB.VAL_GOOMBA, Goomba.class,
-			KVInfo.SMB.VAL_MARIO, Mario.class,
-			KVInfo.SMB.VAL_MARIOFIREBALL, MarioFireball.class,
-			KVInfo.SMB.VAL_MUSHROOM, PowerMushroom.class,
-			KVInfo.SMB.VAL_MUSH1UP, Mush1UP.class,
-			KVInfo.SMB.VAL_PIPEWARP, WarpPipe.class,
-			KVInfo.SMB.VAL_POWERSTAR, PowerStar.class,
-			KVInfo.SMB.VAL_SPINCOIN, SpinCoin.class,
-			KVInfo.SMB.VAL_TURTLE, Turtle.class);
+			GameKV.Level.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
+			GameKV.SMB.VAL_BRICKPIECE, BrickPiece.class,
+			GameKV.SMB.VAL_BUMPTILE, BumpTile.class,
+			GameKV.SMB.VAL_CASTLEFLAG, CastleFlag.class,
+			GameKV.SMB.VAL_COIN, StaticCoin.class,
+			GameKV.SMB.VAL_FIREFLOWER, FireFlower.class,
+			GameKV.SMB.VAL_FLAGPOLE, Flagpole.class,
+			GameKV.SMB.VAL_FLOATINGPOINTS, FloatingPoints.class,
+			GameKV.SMB.VAL_GOOMBA, Goomba.class,
+			GameKV.SMB.VAL_MARIO, Mario.class,
+			GameKV.SMB.VAL_MARIOFIREBALL, MarioFireball.class,
+			GameKV.SMB.VAL_MUSHROOM, PowerMushroom.class,
+			GameKV.SMB.VAL_MUSH1UP, Mush1UP.class,
+			GameKV.SMB.VAL_POWERSTAR, PowerStar.class,
+			GameKV.SMB.VAL_SPINCOIN, SpinCoin.class,
+			GameKV.SMB.VAL_TURTLE, Turtle.class);
 }

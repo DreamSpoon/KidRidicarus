@@ -21,6 +21,7 @@ import kidridicarus.agency.agent.general.AgentSpawner;
 import kidridicarus.agency.agent.general.DespawnBox;
 import kidridicarus.agency.agent.general.GuideSpawner;
 import kidridicarus.agency.agent.general.Room;
+import kidridicarus.agency.agent.general.WarpPipe;
 import kidridicarus.agency.change.AgencyChangeQueue;
 import kidridicarus.agency.change.AgentPlaceholder;
 import kidridicarus.agency.change.DrawOrderChange;
@@ -31,9 +32,9 @@ import kidridicarus.agency.collisionmap.TileCollisionMap;
 import kidridicarus.agency.change.AgentListChange;
 import kidridicarus.agency.contact.AgencyContactFilter;
 import kidridicarus.agency.contact.AgencyContactListener;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.DrawOrder;
-import kidridicarus.game.info.KVInfo;
 
 /*
  * Desc:
@@ -59,11 +60,12 @@ import kidridicarus.game.info.KVInfo;
  */
 public class Agency implements Disposable {
 	private static final AgentClassList CORE_AGENT_CLASS_LIST = new AgentClassList( 
-			KVInfo.Spawn.VAL_AGENTSPAWNER, AgentSpawner.class,
-			KVInfo.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
-			KVInfo.Spawn.VAL_DESPAWN, DespawnBox.class,
-			KVInfo.Spawn.VAL_SPAWNGUIDE, GuideSpawner.class,
-			KVInfo.Room.VAL_ROOM, Room.class);
+			AgencyKV.Spawn.VAL_AGENTSPAWNER, AgentSpawner.class,
+			AgencyKV.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
+			AgencyKV.Spawn.VAL_DESPAWN, DespawnBox.class,
+			AgencyKV.Spawn.VAL_PIPEWARP, WarpPipe.class,
+			AgencyKV.Spawn.VAL_SPAWNGUIDE, GuideSpawner.class,
+			AgencyKV.Room.VAL_ROOM, Room.class);
 
 	private World world;
 	private TileCollisionMap collisionMap;
@@ -190,7 +192,7 @@ public class Agency implements Disposable {
 	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
 	 */
 	public Agent createAgent(AgentDef adef) {
-		String desiredAgentClass = adef.properties.get(KVInfo.Spawn.KEY_AGENTCLASS, String.class);
+		String desiredAgentClass = adef.properties.get(AgencyKV.Spawn.KEY_AGENTCLASS, String.class);
 
 		Class<?> agentClass = allAgentsClassList.get(desiredAgentClass);
 		if(agentClass == null)
@@ -356,8 +358,8 @@ public class Agency implements Disposable {
 	 * Returns null if guide spawner is not found.
 	 */
 	public GuideSpawner getGuideSpawnerByName(String name) {
-		Agent agent = getFirstAgentByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.Spawn.KEY_NAME },
-				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, name });
+		Agent agent = getFirstAgentByProperties(new String[] { AgencyKV.Spawn.KEY_AGENTCLASS,
+				AgencyKV.Spawn.KEY_NAME }, new String[] { AgencyKV.Spawn.VAL_SPAWNGUIDE, name });
 		if(agent instanceof GuideSpawner)
 			return (GuideSpawner) agent;
 		return null;

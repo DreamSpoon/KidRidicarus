@@ -12,13 +12,13 @@ import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agent.general.Room;
 import kidridicarus.agency.agent.optional.ContactDmgAgent;
 import kidridicarus.agency.agent.optional.PlayerAgent;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.body.Metroid.player.SamusBody;
 import kidridicarus.game.agent.sprite.Metroid.player.SamusSprite;
 import kidridicarus.game.guide.GameAdvice;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.KVInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
 /*
@@ -434,7 +434,7 @@ public class Samus extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 		// check spawn point of shot, if it is in a solid tile then the shot immediately explodes
 		if(agency.isMapPointSolid(position)) {
 			// add the immediate explode property to the properties list
-			adef.properties.put(KVInfo.Spawn.KEY_EXPIRE, true);
+			adef.properties.put(AgencyKV.Spawn.KEY_EXPIRE, true);
 		}
 		agency.createAgent(adef);
 		agency.playSound(AudioInfo.Sound.Metroid.SHOOT);

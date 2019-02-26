@@ -12,7 +12,7 @@ import kidridicarus.agency.agent.optional.DamageableAgent;
 import kidridicarus.game.agent.body.Metroid.NPC.ZoomerBody;
 import kidridicarus.game.agent.sprite.Metroid.NPC.ZoomerSprite;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.game.info.GameKV;
 import kidridicarus.agency.tool.Direction4;
 
 /*
@@ -111,7 +111,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	}
 
 	private void doDeathPop() {
-		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_DEATH_POP, zBody.getPosition());
+		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.Metroid.VAL_DEATH_POP, zBody.getPosition());
 		agency.createAgent(adef);
 
 		agency.disposeAgent(this);

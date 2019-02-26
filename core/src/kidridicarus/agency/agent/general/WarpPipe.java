@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.SMB;
+package kidridicarus.agency.agent.general;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
@@ -8,11 +8,10 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.body.AgentBody;
-import kidridicarus.agency.agent.general.GuideSpawner;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
 import kidridicarus.game.agent.body.SMB.WarpPipeBody;
-import kidridicarus.game.info.KVInfo;
 
 public class WarpPipe extends Agent {
 	private WarpPipeBody pwbody;
@@ -22,8 +21,8 @@ public class WarpPipe extends Agent {
 		super(agency, adef);
 
 		direction = null;
-		if(adef.properties.containsKey(KVInfo.KEY_DIRECTION)) {
-			String dir = adef.properties.get(KVInfo.KEY_DIRECTION, String.class);
+		if(adef.properties.containsKey(AgencyKV.KEY_DIRECTION)) {
+			String dir = adef.properties.get(AgencyKV.KEY_DIRECTION, String.class);
 			if(dir.equals("right"))
 				direction = Direction4.RIGHT;
 			else if(dir.equals("up"))
@@ -72,10 +71,10 @@ public class WarpPipe extends Agent {
 	}
 
 	public GuideSpawner getWarpExit() {
-		if(!properties.containsKey(KVInfo.Spawn.KEY_EXITNAME))
+		if(!properties.containsKey(AgencyKV.Spawn.KEY_EXITNAME))
 			return null;
 
-		return agency.getGuideSpawnerByName(properties.get(KVInfo.Spawn.KEY_EXITNAME, String.class));
+		return agency.getGuideSpawnerByName(properties.get(AgencyKV.Spawn.KEY_EXITNAME, String.class));
 	}
 
 	public Direction4 getDirection() {

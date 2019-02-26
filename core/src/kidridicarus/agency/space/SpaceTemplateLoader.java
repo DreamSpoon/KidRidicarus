@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.agency.info.AgencyKV;
 
 /*
  * Load .tmx files, basically.
@@ -44,7 +44,7 @@ public class SpaceTemplateLoader {
 
 	private static LinkedList<AgentDef> makeAgentDefsFromTileLayer(TiledMapTileLayer layer) {
 		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
-		if(!layer.getProperties().containsKey(KVInfo.Spawn.KEY_AGENTCLASS))
+		if(!layer.getProperties().containsKey(AgencyKV.Spawn.KEY_AGENTCLASS))
 			return agentDefs;	// if no agentclass then return empty list of agent defs
 
 		// create list of agent defs

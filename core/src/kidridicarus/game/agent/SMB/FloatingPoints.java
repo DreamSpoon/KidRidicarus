@@ -7,12 +7,13 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.SMB.player.Mario;
 import kidridicarus.game.agent.sprite.SMB.FloatingPointsSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.SMBInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
@@ -42,14 +43,14 @@ public class FloatingPoints extends Agent {
 		// default to zero points
 		PointAmount amount = PointAmount.ZERO;
 		// check for point amount property
-		if(adef.properties.containsKey(KVInfo.SMB.KEY_POINTAMOUNT))
-			amount = SMBInfo.strToPointAmount(adef.properties.get(KVInfo.SMB.KEY_POINTAMOUNT, String.class));
+		if(adef.properties.containsKey(GameKV.SMB.KEY_POINTAMOUNT))
+			amount = SMBInfo.strToPointAmount(adef.properties.get(GameKV.SMB.KEY_POINTAMOUNT, String.class));
 
 		// give points to player and get the actual amount awarded (since player may have points multiplier)
 		if(adef.userData != null && adef.userData instanceof Mario) {
 			// relative points can stack, absolute points can not
 			amount = ((Mario) adef.userData).givePoints(amount, adef.properties.get(
-					KVInfo.SMB.KEY_RELPOINTAMOUNT, "", String.class).equals(KVInfo.VAL_TRUE));
+					GameKV.SMB.KEY_RELPOINTAMOUNT, "", String.class).equals(AgencyKV.VAL_TRUE));
 			if(amount == PointAmount.P1UP)
 				agency.playSound(AudioInfo.Sound.SMB.UP1);
 		}
@@ -91,10 +92,10 @@ public class FloatingPoints extends Agent {
 
 	public static AgentDef makeFloatingPointsDef(PointAmount amt, boolean relative, Vector2 position,
 			float yOffset, Agent parentAgent) {
-		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
-		adef.properties.put(KVInfo.SMB.KEY_POINTAMOUNT, SMBInfo.pointAmountToStr(amt));
+		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.SMB.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
+		adef.properties.put(GameKV.SMB.KEY_POINTAMOUNT, SMBInfo.pointAmountToStr(amt));
 		if(relative)
-			adef.properties.put(KVInfo.SMB.KEY_RELPOINTAMOUNT, KVInfo.VAL_TRUE);
+			adef.properties.put(GameKV.SMB.KEY_RELPOINTAMOUNT, AgencyKV.VAL_TRUE);
 		adef.userData = parentAgent;
 		return adef;
 	}

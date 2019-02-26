@@ -14,11 +14,11 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.space.PlatformSpace;
 import kidridicarus.agency.space.SpaceRenderer;
 import kidridicarus.agency.space.SpaceTemplateLoader;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.KVInfo;
 import kidridicarus.game.info.MetroidInfo;
 import kidridicarus.game.info.SMBInfo;
 
@@ -72,10 +72,11 @@ public class AgencyDirector implements Disposable {
 
 	private void preloadSpaceMusic() {
 		LinkedList<String> musicCatalog = new LinkedList<String>();
-		Collection<Agent> roomList = agency.getAgentsByProperties(new String[] { KVInfo.Spawn.KEY_AGENTCLASS },
-				new String[] { KVInfo.Room.VAL_ROOM });
+		Collection<Agent> roomList = agency.getAgentsByProperties(
+				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS },
+				new String[] { AgencyKV.Room.VAL_ROOM });
 		for(Agent agent : roomList) {
-			String music = agent.getProperties().get(KVInfo.Room.KEY_ROOMMUSIC, "", String.class);
+			String music = agent.getProperties().get(AgencyKV.Room.KEY_ROOMMUSIC, "", String.class);
 			if(music.equals("") || musicCatalog.contains(music))
 				continue;
 			musicCatalog.add(music);
@@ -167,8 +168,8 @@ public class AgencyDirector implements Disposable {
 	private Agent getMainGuideSpawn() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
 		Collection<Agent> list = agency.getAgentsByProperties(
-				new String[] { KVInfo.Spawn.KEY_AGENTCLASS, KVInfo.Spawn.KEY_SPAWNMAIN },
-				new String[] { KVInfo.Spawn.VAL_SPAWNGUIDE, KVInfo.VAL_TRUE });
+				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, AgencyKV.Spawn.KEY_SPAWNMAIN },
+				new String[] { AgencyKV.Spawn.VAL_SPAWNGUIDE, AgencyKV.VAL_TRUE });
 		if(!list.isEmpty())
 			return list.iterator().next();
 		else

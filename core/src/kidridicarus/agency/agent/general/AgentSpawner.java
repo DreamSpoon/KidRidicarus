@@ -8,7 +8,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.body.general.AgentSpawnerBody;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.agency.info.AgencyKV;
 
 public class AgentSpawner extends Agent {
 	private AgentSpawnerBody sbody;
@@ -18,7 +18,7 @@ public class AgentSpawner extends Agent {
 	public AgentSpawner(Agency agency, AgentDef adef) {
 		super(agency, adef);
 
-		sClass = adef.properties.get(KVInfo.Spawn.KEY_SPAWNAGENTCLASS, String.class);
+		sClass = adef.properties.get(AgencyKV.Spawn.KEY_SPAWNAGENTCLASS, String.class);
 
 		isUsed = false;
 

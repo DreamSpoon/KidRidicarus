@@ -10,7 +10,7 @@ import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.body.general.GuideSpawnerBody;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.agency.info.AgencyKV;
 
 public class GuideSpawner extends Agent {
 	private static final float SPAWN_SAFETYDIST = UInfo.P2M(1);
@@ -29,26 +29,26 @@ public class GuideSpawner extends Agent {
 
 		isMain = false;
 		name = "";
-		if(adef.properties.containsKey(KVInfo.Spawn.KEY_SPAWNMAIN))
+		if(adef.properties.containsKey(AgencyKV.Spawn.KEY_SPAWNMAIN))
 			isMain = true;
-		else if(adef.properties.containsKey(KVInfo.Spawn.KEY_NAME))
-			name = adef.properties.get(KVInfo.Spawn.KEY_NAME, String.class);
+		else if(adef.properties.containsKey(AgencyKV.Spawn.KEY_NAME))
+			name = adef.properties.get(AgencyKV.Spawn.KEY_NAME, String.class);
 
 		// immediate is the default spawn case
 		spawntype = SpawnType.IMMEDIATE;
-		if(adef.properties.containsKey(KVInfo.Spawn.KEY_SPAWNTYPE)) {
-			String str = adef.properties.get(KVInfo.Spawn.KEY_SPAWNTYPE, String.class);
-			if(str.equals(KVInfo.SMB.VAL_PIPEWARP) &&
-					adef.properties.containsKey(KVInfo.KEY_DIRECTION)) {
+		if(adef.properties.containsKey(AgencyKV.Spawn.KEY_SPAWNTYPE)) {
+			String str = adef.properties.get(AgencyKV.Spawn.KEY_SPAWNTYPE, String.class);
+			if(str.equals(AgencyKV.Spawn.VAL_PIPEWARP) &&
+					adef.properties.containsKey(AgencyKV.KEY_DIRECTION)) {
 				spawntype = SpawnType.PIPEWARP;
-				str = adef.properties.get(KVInfo.KEY_DIRECTION, String.class);
-				if(str.equals(KVInfo.VAL_RIGHT))
+				str = adef.properties.get(AgencyKV.KEY_DIRECTION, String.class);
+				if(str.equals(AgencyKV.VAL_RIGHT))
 					direction = Direction4.RIGHT;
-				else if(str.equals(KVInfo.VAL_UP))
+				else if(str.equals(AgencyKV.VAL_UP))
 					direction = Direction4.UP;
-				else if(str.equals(KVInfo.VAL_LEFT))
+				else if(str.equals(AgencyKV.VAL_LEFT))
 					direction = Direction4.LEFT;
-				else if(str.equals(KVInfo.VAL_DOWN))
+				else if(str.equals(AgencyKV.VAL_DOWN))
 					direction = Direction4.DOWN;
 			}
 		}

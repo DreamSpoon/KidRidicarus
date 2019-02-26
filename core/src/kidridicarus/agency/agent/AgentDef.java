@@ -5,7 +5,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.agency.info.AgencyKV;
 
 public class AgentDef {
 	public Rectangle bounds;
@@ -25,14 +25,14 @@ public class AgentDef {
 
 	public static AgentDef makePointBoundsDef(String agentClass, Vector2 position) {
 		AgentDef adef = new AgentDef();
-		adef.properties.put(KVInfo.Spawn.KEY_AGENTCLASS, agentClass);
+		adef.properties.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClass);
 		adef.bounds.set(position.x, position.y, 0f, 0f);
 		return adef;
 	}
 
 	public static AgentDef makeBoxBoundsDef(String agentClass, Vector2 position, float width, float height) {
 		AgentDef adef = new AgentDef();
-		adef.properties.put(KVInfo.Spawn.KEY_AGENTCLASS, agentClass);
+		adef.properties.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClass);
 		adef.bounds.set(position.x, position.y, width, height);
 		return adef;
 	}

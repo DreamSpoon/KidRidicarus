@@ -14,7 +14,7 @@ import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.sprite.SMB.BrickPieceSprite;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.game.info.GameKV;
 
 public class BrickPiece extends Agent {
 	private static final float BODY_WIDTH = UInfo.P2M(8);
@@ -33,8 +33,8 @@ public class BrickPiece extends Agent {
 		defineBody(pos, adef.velocity);
 
 		int startFrame = 0;
-		if(properties.containsKey(KVInfo.Sprite.KEY_STARTFRAME))
-			startFrame = properties.get(KVInfo.Sprite.KEY_STARTFRAME, Integer.class);
+		if(properties.containsKey(GameKV.Sprite.KEY_STARTFRAME))
+			startFrame = properties.get(GameKV.Sprite.KEY_STARTFRAME, Integer.class);
 		bpSprite = new BrickPieceSprite(agency.getAtlas(), pos, startFrame);
 
 		stateTimer = 0f;

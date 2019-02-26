@@ -10,6 +10,7 @@ public class MarioSupervisor implements AgentSupervisor {
 
 	public MarioSupervisor(Mario mario) {
 		this.mario = mario;
+		advice = new GameAdvice();
 	}
 
 	@Override

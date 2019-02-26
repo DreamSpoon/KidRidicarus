@@ -8,10 +8,11 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.DamageableAgent;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.game.agent.body.Metroid.player.SamusShotBody;
 import kidridicarus.game.agent.sprite.Metroid.player.SamusShotSprite;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.game.info.GameKV;
 
 public class SamusShot extends Agent {
 	private static final float LIVE_TIME = 0.217f;
@@ -32,7 +33,7 @@ public class SamusShot extends Agent {
 		parent = (Samus) adef.userData;
 
 		// check the definition properties, maybe the shot needs to expire immediately
-		isExploding = properties.containsKey(KVInfo.Spawn.KEY_EXPIRE);
+		isExploding = properties.containsKey(AgencyKV.Spawn.KEY_EXPIRE);
 		if(isExploding)
 			curMoveState = MoveState.EXPLODE;
 		else
@@ -133,7 +134,7 @@ public class SamusShot extends Agent {
 	}
 
 	public static AgentDef makeSamusShotDef(Vector2 position, Vector2 velocity, Samus parentAgent) {
-		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.Metroid.VAL_SAMUS_SHOT, position);
+		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.Metroid.VAL_SAMUS_SHOT, position);
 		adef.velocity.set(velocity);
 		adef.userData = parentAgent;
 		return adef;

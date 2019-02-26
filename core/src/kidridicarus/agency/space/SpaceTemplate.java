@@ -12,8 +12,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.agency.tool.DrawOrderAlias;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.KVInfo;
 
 public class SpaceTemplate {
 	private LinkedList<AgentDef> agentDefs;
@@ -58,8 +58,8 @@ public class SpaceTemplate {
 		if(!(layer instanceof TiledMapTileLayer))
 			return;
 		// is solid layer property set to true and the layer is a tiled layer?
-		if(layer.getProperties().get(KVInfo.Layer.KEY_SOLIDLAYER,
-				KVInfo.VAL_FALSE, String.class).equals(KVInfo.VAL_TRUE)) {
+		if(layer.getProperties().get(AgencyKV.Layer.KEY_SOLIDLAYER,
+				AgencyKV.VAL_FALSE, String.class).equals(AgencyKV.VAL_TRUE)) {
 			TiledMapTileLayer tmtl = (TiledMapTileLayer) layer;
 			solidTileLayers.add(tmtl);
 		}
@@ -94,13 +94,13 @@ public class SpaceTemplate {
 		// does the layer contain a draw order key with a float value?
 		Float drawOrderFloat = null;
 		try {
-			drawOrderFloat = layer.getProperties().get(KVInfo.DrawOrder.KEY_DRAWORDER, null, Float.class);
+			drawOrderFloat = layer.getProperties().get(AgencyKV.DrawOrder.KEY_DRAWORDER, null, Float.class);
 		}
 		catch(ClassCastException cce1) {
 			// no float value, does the layer contain a draw order key with a string value?
 			String drawOrderStr = null;
 			try {
-				drawOrderStr = layer.getProperties().get(KVInfo.DrawOrder.KEY_DRAWORDER, null, String.class);
+				drawOrderStr = layer.getProperties().get(AgencyKV.DrawOrder.KEY_DRAWORDER, null, String.class);
 			}
 			catch(ClassCastException cce2) {
 				// return null because no float value and no string found to indicate draw order for layer

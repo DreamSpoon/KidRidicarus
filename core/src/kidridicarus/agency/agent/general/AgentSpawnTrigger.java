@@ -8,7 +8,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.body.general.AgentSpawnTriggerBody;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.agency.info.AgencyKV;
 
 public class AgentSpawnTrigger extends Agent {
 	private AgentSpawnTriggerBody stBody;
@@ -76,7 +76,8 @@ public class AgentSpawnTrigger extends Agent {
 
 	public static AgentDef makeAgentSpawnTriggerDef(Vector2 position, float width,
 			float height) {
-		AgentDef adef = AgentDef.makeBoxBoundsDef(KVInfo.Spawn.VAL_AGENTSPAWN_TRIGGER, position, width, height);
+		AgentDef adef = AgentDef.makeBoxBoundsDef(AgencyKV.Spawn.VAL_AGENTSPAWN_TRIGGER,
+				position, width, height);
 		return adef;
 	}
 }

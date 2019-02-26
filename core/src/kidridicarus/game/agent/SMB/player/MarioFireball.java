@@ -9,11 +9,12 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.general.BasicWalkAgent;
 import kidridicarus.agency.agent.optional.DamageableAgent;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.game.agent.body.SMB.player.MarioFireballBody;
 import kidridicarus.game.agent.sprite.SMB.player.MarioFireballSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
-import kidridicarus.game.info.KVInfo;
+import kidridicarus.game.info.GameKV;
 
 public class MarioFireball extends BasicWalkAgent {
 	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
@@ -41,8 +42,8 @@ public class MarioFireball extends BasicWalkAgent {
 		fireballSprite = new MarioFireballSprite(agency.getAtlas(), position);
 
 		// fireball on right?
-		if(properties.containsKey(KVInfo.KEY_DIRECTION) &&
-				properties.get(KVInfo.KEY_DIRECTION, String.class).equals(KVInfo.VAL_RIGHT)) {
+		if(properties.containsKey(AgencyKV.KEY_DIRECTION) &&
+				properties.get(AgencyKV.KEY_DIRECTION, String.class).equals(AgencyKV.VAL_RIGHT)) {
 			isMovingRight = true;
 			fbBody = new MarioFireballBody(this, agency.getWorld(), position, MOVE_VEL.cpy().scl(1, 1));
 		}
@@ -148,12 +149,12 @@ public class MarioFireball extends BasicWalkAgent {
 
 	public static AgentDef makeMarioFireballDef(Vector2 position, boolean right,
 			Mario parentAgent) {
-		AgentDef adef = AgentDef.makePointBoundsDef(KVInfo.SMB.VAL_MARIOFIREBALL, position);
+		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.SMB.VAL_MARIOFIREBALL, position);
 		adef.userData = parentAgent;
 		if(right)
-			adef.properties.put(KVInfo.KEY_DIRECTION, KVInfo.VAL_RIGHT);
+			adef.properties.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT);
 		else
-			adef.properties.put(KVInfo.KEY_DIRECTION, KVInfo.VAL_LEFT);
+			adef.properties.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_LEFT);
 		return adef;
 	}
 }
