@@ -30,10 +30,6 @@ public class AgencyDirector implements Disposable {
 	private Agency agency;
 	private float soundVolume;
 
-//	private Music currentMainMusic;
-//	private boolean isMainMusicPlaying;
-//	private Music currentSinglePlayMusic;
-
 	/*
 	 * The soundVolume paramater is a hack, TODO put it in a better place
 	 */
@@ -43,22 +39,10 @@ public class AgencyDirector implements Disposable {
 		this.atlas = atlas;
 		this.soundVolume = soundVolume;
 
-//		currentMainMusic = null;
-//		isMainMusicPlaying = false;
-//		currentSinglePlayMusic = null;
-
 		agency = new Agency(additionalAgents);
 		agency.setEventListener(new AgencyEventListener() {
 			@Override
 			public void onPlaySound(String soundName) { playSound(soundName); }
-//			@Override
-//			public void onStartMusic() { startMusic(); }
-//			@Override
-//			public void onStopMusic() { stopMusic(); }
-//			@Override
-//			public void onStartSinglePlayMusic(String musicName) { startSinglePlayMusic(musicName); }
-//			@Override
-//			public void onChangeAndStartMusic(String musicName) { changeAndStartMusic(musicName); }
 		});
 	}
 
@@ -97,58 +81,6 @@ public class AgencyDirector implements Disposable {
 		manager.get(sound, Sound.class).play(soundVolume);
 	}
 
-/*	private void changeAndStartMusic(String musicname) {
-		if(currentMainMusic != null)
-			currentMainMusic.stop();
-
-		currentMainMusic = manager.get(musicname, Music.class);
-		startMusic();
-		isMainMusicPlaying = true;
-	}
-
-	private void startMusic() {
-		if(currentMainMusic != null) {
-			currentMainMusic.setLooping(true);
-			currentMainMusic.setVolume(AudioInfo.MUSIC_VOLUME);
-			currentMainMusic.play();
-			isMainMusicPlaying = true;
-		}
-	}
-
-	private void stopMusic() {
-		if(currentMainMusic != null) {
-			currentMainMusic.stop();
-			isMainMusicPlaying = false;
-		}
-	}
-
-	// play music, no loop (for things like mario powerstar)
-	private void startSinglePlayMusic(String musicName) {
-		// pause the current music
-		if(currentMainMusic != null)
-			currentMainMusic.pause();
-
-		// if single play music is already playing, then stop it before starting new single play music
-		if(currentSinglePlayMusic != null)
-			currentSinglePlayMusic.stop();
-
-		currentSinglePlayMusic = manager.get(musicName, Music.class);
-		currentSinglePlayMusic.setLooping(false);
-		currentSinglePlayMusic.setVolume(AudioInfo.MUSIC_VOLUME);
-		currentSinglePlayMusic.play();
-		currentSinglePlayMusic.setOnCompletionListener(new OnCompletionListener() {
-			@Override
-			public void onCompletion(Music music) {
-				finishSinglePlayMusic();
-			}});
-	}
-
-	// resume the current music
-	private void finishSinglePlayMusic() {
-		if(currentMainMusic != null && isMainMusicPlaying)
-			currentMainMusic.play();
-	}
-*/
 	public void draw(final Batch batch, OrthographicCamera camera) {
 		spaceRenderer.draw(smbSpace, batch, camera);
 	}

@@ -1,6 +1,5 @@
 package kidridicarus.agency.agent;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import kidridicarus.agency.agent.general.Room;
@@ -18,14 +17,8 @@ import kidridicarus.agency.agent.optional.PlayerAgent;
  *   This would help with the server/client code separation. 
  */
 public abstract class AgentObserver {
-	public interface AgentObserverListener {
-		public void startRoomMusic(String musicName);
-		public void startSinglePlayMusic(String musicName);
-		public void stopAllMusic();
-	}
-	private AgentObserverListener listener; 
-
 	protected Agent playerAgent;
+	private Room currentRoom;
 
 	public abstract void setStageHUD(Stage stageHUD);
 	public abstract void drawHUD();
@@ -34,35 +27,7 @@ public abstract class AgentObserver {
 		if(!(agent instanceof PlayerAgent))
 			throw new IllegalArgumentException("agent is not instanceof PlayerAgent: " + agent);
 		this.playerAgent = agent;
-	}
-
-	/*
-	 * Set listener to null to stop listening to this observer.
-	 */
-	public void setListener(AgentObserverListener listener) {
-		this.listener = listener;
-	}
-
-	public Vector2 getViewCenter() {
-		Room room = ((PlayerAgent) playerAgent).getCurrentRoom();
-		if(room == null)
-			return new Vector2(0f, 0f);
-		return ((PlayerAgent) playerAgent).getCurrentRoom().getViewCenterForPos(playerAgent.getPosition());
-	}
-
-	public void startRoomMusic(String musicName) {
-		if(listener != null)
-			listener.startRoomMusic(musicName);
-	}
-
-	public void startSinglePlayMusic(String musicName) {
-		if(listener != null)
-			listener.startSinglePlayMusic(musicName);
-	}
-
-	public void stopAllMusic() {
-		if(listener != null)
-			listener.stopAllMusic();
+		currentRoom = null;
 	}
 
 	/*
@@ -70,5 +35,14 @@ public abstract class AgentObserver {
 	 */
 	public void postUpdateAgency() {
 		// check if player changed room, and if so, did the room music change?
+		Room nextRoom = ((PlayerAgent) playerAgent).getCurrentRoom();
+		if(currentRoom != nextRoom) {
+			roomChange(nextRoom);
+			currentRoom = nextRoom;
+		}
 	}
+
+	public abstract void roomChange(Room newRoom);
+	public abstract void startSinglePlayMusic(String musicName);
+	public abstract void stopAllMusic();
 }

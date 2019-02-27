@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.AgentObserver;
+import kidridicarus.agency.agent.AgentObserverPlus;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agent.general.GuideSpawner;
 import kidridicarus.agency.agent.general.Room;
@@ -618,7 +618,7 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	}
 
 	@Override
-	public AgentObserver getObserver() {
+	public AgentObserverPlus getObserver() {
 		return observer;
 	}
 

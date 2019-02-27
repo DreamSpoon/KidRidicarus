@@ -81,7 +81,7 @@ public class PlayScreen implements Screen {
 		stageHUD = new Stage(new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera()),
 				game.batch);
 
-		playCo = new PlayCoordinator(director.getAgency(), gamecam, stageHUD);
+		playCo = new PlayCoordinator(director.getAgency(), game.manager, gamecam, stageHUD);
 		playCo.setPlayAgent(director.createInitialPlayerAgent());
 	}
 

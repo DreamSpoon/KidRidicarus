@@ -1,18 +1,22 @@
 package kidridicarus.game.play;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Music.OnCompletionListener;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentObserver.AgentObserverListener;
+import kidridicarus.agency.agent.AgentObserverPlus.AgentObserverListener;
 import kidridicarus.agency.agent.general.AgentSpawnTrigger;
 import kidridicarus.agency.agent.optional.PlayerAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.SuperAdvice;
 import kidridicarus.game.agent.SMB.player.Mario;
+import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo;
 import kidridicarus.game.tool.KeyboardMapping;
@@ -34,13 +38,24 @@ public class PlayCoordinator implements Disposable {
 	private OrthographicCamera gamecam;
 	private Stage stageHUD;
 
-	public PlayCoordinator(Agency agency, OrthographicCamera gamecam, Stage stageHUD) {
+	private String currentMainMusicName;
+	private Music currentMainMusic;
+	private boolean isMainMusicPlaying;
+	private Music currentSinglePlayMusic;
+	private AssetManager manager;
+
+	public PlayCoordinator(Agency agency, AssetManager manager, OrthographicCamera gamecam, Stage stageHUD) {
 		this.agency = agency;
+		this.manager = manager;
 		this.gamecam = gamecam;
 		this.stageHUD = stageHUD;
 		spawnTrigger = null;
 		playAgent = null;
 		superAdvice = new SuperAdvice();
+		currentMainMusicName = "";
+		currentMainMusic = null;
+		isMainMusicPlaying = false;
+		currentSinglePlayMusic = null;
 	}
 
 	public void setPlayAgent(Agent agent) {
@@ -56,18 +71,19 @@ public class PlayCoordinator implements Disposable {
 		playAgent.getObserver().setStageHUD(stageHUD);
 		playAgent.getObserver().setListener(new AgentObserverListener() {
 				@Override
-				public void startRoomMusic(String musicName) {
-QQ.pr("start room music");
-				}
-
-				@Override
 				public void startSinglePlayMusic(String musicName) {
-QQ.pr("start single play music");
+					doStartSinglePlayMusic(musicName);
 				}
-
+	
 				@Override
 				public void stopAllMusic() {
-QQ.pr("stop all music");				}
+					doStopMainMusic();
+				}
+	
+				@Override
+				public void roomMusicUpdate(String musicName) {
+					doChangeAndStartMainMusic(musicName);
+				}
 			});
 	}
 
@@ -119,6 +135,63 @@ QQ.pr("stop all music");				}
 		if(playAgent.isDead() && playAgent.getStateTimer() > SMBInfo.MARIO_DEAD_TIME)
 			return true;
 		return false;
+	}
+
+	private void doChangeAndStartMainMusic(String musicName) {
+		// exit if no name given or if already playing given music
+		if(musicName == null || currentMainMusicName.equals(musicName))
+			return;
+
+		// stop main music if it is playing
+		if(currentMainMusic != null)
+			currentMainMusic.stop();
+
+		currentMainMusic = manager.get(musicName, Music.class);
+		startMainMusic();
+		currentMainMusicName = musicName;
+	}
+
+	private void startMainMusic() {
+		if(currentMainMusic != null) {
+			currentMainMusic.setLooping(true);
+			currentMainMusic.setVolume(AudioInfo.MUSIC_VOLUME);
+			currentMainMusic.play();
+			isMainMusicPlaying = true;
+		}
+	}
+
+	private void doStopMainMusic() {
+		if(currentMainMusic != null) {
+			currentMainMusic.stop();
+			isMainMusicPlaying = false;
+		}
+	}
+
+	// play music, no loop (for things like mario powerstar)
+	private void doStartSinglePlayMusic(String musicName) {
+		// pause the current music
+		if(currentMainMusic != null)
+			currentMainMusic.pause();
+
+		// if single play music is already playing, then stop it before starting new single play music
+		if(currentSinglePlayMusic != null)
+			currentSinglePlayMusic.stop();
+
+		currentSinglePlayMusic = manager.get(musicName, Music.class);
+		currentSinglePlayMusic.setLooping(false);
+		currentSinglePlayMusic.setVolume(AudioInfo.MUSIC_VOLUME);
+		currentSinglePlayMusic.play();
+		currentSinglePlayMusic.setOnCompletionListener(new OnCompletionListener() {
+			@Override
+			public void onCompletion(Music music) {
+				returnToMainMusic();
+			}});
+	}
+
+	// resume the current music if it was playing
+	private void returnToMainMusic() {
+		if(currentMainMusic != null && isMainMusicPlaying)
+			currentMainMusic.play();
 	}
 
 	@Override
