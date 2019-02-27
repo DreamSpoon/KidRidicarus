@@ -2,7 +2,7 @@ package kidridicarus.game.agent.Metroid.player;
 
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.tool.SuperAdvice;
-import kidridicarus.game.guide.GameAdvice;
+import kidridicarus.game.play.GameAdvice;
 
 public class SamusSupervisor implements AgentSupervisor {
 	private Samus samus;

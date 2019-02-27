@@ -34,8 +34,8 @@ import kidridicarus.game.agent.SMB.Flagpole;
 import kidridicarus.game.agent.SMB.LevelEndTrigger;
 import kidridicarus.game.agent.SMB.player.Mario;
 import kidridicarus.game.agent.SMB.player.Mario.MarioPowerState;
-import kidridicarus.game.guide.GameAdvice;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.play.GameAdvice;
 
 /*
  * Major TODO: Move a lot of the code out of this class and push it somewhere else like Mario class. There is

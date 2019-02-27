@@ -1,7 +1,7 @@
 package kidridicarus.agency.info;
 
 /*
- * Game Key Value Info
+ * Agency Key Value Info
  */
 public class AgencyKV {
 	public static final String VAL_TRUE = "true";

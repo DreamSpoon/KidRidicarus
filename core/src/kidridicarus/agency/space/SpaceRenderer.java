@@ -20,13 +20,13 @@ public class SpaceRenderer {
 		tileRenderer = null;
 	}
 
-	public void draw(PlatformSpace space, final Batch batch, OrthographicCamera gamecam) {
+	public void draw(PlatformSpace space, final Batch batch, OrthographicCamera camera) {
 		// TODO: init tileRenderer elsewhere?
 		if(tileRenderer == null)
 			tileRenderer = new OrthogonalTiledMapRenderer(space.getTiledMap(), UInfo.P2M(1f), batch);
-		tileRenderer.setView(gamecam);
+		tileRenderer.setView(camera);
 
-		batch.setProjectionMatrix(gamecam.combined);
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		space.iterateThroughDrawObjects(new DrawObjectIter() {
 				@Override
@@ -43,7 +43,7 @@ public class SpaceRenderer {
 
 		// DEBUG: draw outlines of Box2D fixtures
 		if(QQ.isOn())
-			b2dr.render(space.getWorld(), gamecam.combined);
+			b2dr.render(space.getWorld(), camera.combined);
 	}
 
 	public void dispose() {

@@ -2,7 +2,7 @@ package kidridicarus.game.agent.SMB.player;
 
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.tool.SuperAdvice;
-import kidridicarus.game.guide.GameAdvice;
+import kidridicarus.game.play.GameAdvice;
 
 public class MarioSupervisor implements AgentSupervisor {
 	private Mario mario;

@@ -8,10 +8,10 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.body.AgentBody;
+import kidridicarus.agency.agent.body.general.WarpPipeBody;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
-import kidridicarus.game.agent.body.SMB.WarpPipeBody;
 
 public class WarpPipe extends Agent {
 	private WarpPipeBody pwbody;

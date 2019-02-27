@@ -10,11 +10,15 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.agency.AgencyDirector;
-import kidridicarus.agency.PlayCoordinator;
+import kidridicarus.agency.AgentClassList;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.MyKidRidicarus;
+import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameInfo;
 import kidridicarus.game.info.GfxInfo;
+import kidridicarus.game.info.MetroidInfo;
+import kidridicarus.game.info.SMBInfo;
+import kidridicarus.game.play.PlayCoordinator;
 import kidridicarus.game.tool.KeyboardMapping;
 import kidridicarus.game.tool.QQ;
 
@@ -69,7 +73,9 @@ public class PlayScreen implements Screen {
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
-		director = new AgencyDirector(game.manager, atlas);
+		director = new AgencyDirector(game.manager, atlas,
+				new AgentClassList(SMBInfo.SMB_AGENT_CLASSLIST, MetroidInfo.METROID_AGENT_CLASSLIST),
+				AudioInfo.SOUND_VOLUME);
 		director.createSpace(game.getLevelFilename(level));
 
 		stageHUD = new Stage(new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera()),
@@ -169,8 +175,9 @@ public class PlayScreen implements Screen {
 			newDelta = clampFrameDelta(delta);
 
 		playCo.handleInput();
-		playCo.update();
+		playCo.preUpdateAgency();
 		director.update(newDelta);
+		playCo.postUpdateAgency();
 	}
 
 	@Override

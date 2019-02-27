@@ -7,18 +7,16 @@ import kidridicarus.agency.agent.AgentObserver;
 
 public class MarioObserver extends AgentObserver {
 	private MarioHUD marioHUD;
-	private Mario mario;
 	private TextureAtlas atlas;
 
 	public MarioObserver(Mario mario, TextureAtlas atlas) {
 		super(mario);
-		this.mario = mario;
 		this.atlas = atlas;
 	}
 
 	@Override
 	public void setStageHUD(Stage stageHUD) {
-		marioHUD = new MarioHUD(mario, atlas, stageHUD);
+		marioHUD = new MarioHUD((Mario) playerAgent, atlas, stageHUD);
 	}
 
 	@Override

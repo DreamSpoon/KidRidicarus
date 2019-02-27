@@ -16,10 +16,10 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.body.Metroid.player.SamusBody;
 import kidridicarus.game.agent.sprite.Metroid.player.SamusSprite;
-import kidridicarus.game.guide.GameAdvice;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
+import kidridicarus.game.play.GameAdvice;
 
 /*
  * TODO:

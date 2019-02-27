@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.body.SMB;
+package kidridicarus.agency.agent.body.general;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;

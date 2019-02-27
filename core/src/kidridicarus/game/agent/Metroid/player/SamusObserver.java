@@ -7,18 +7,16 @@ import kidridicarus.agency.agent.AgentObserver;
 
 public class SamusObserver extends AgentObserver {
 	private SamusHUD samusHUD;
-	private Samus samus;
 	private TextureAtlas atlas;
 
 	public SamusObserver(Samus samus, TextureAtlas atlas) {
 		super(samus);
-		this.samus = samus;
 		this.atlas = atlas;
 	}
 
 	@Override
 	public void setStageHUD(Stage stageHUD) {
-		samusHUD = new SamusHUD(samus, atlas, stageHUD);
+		samusHUD = new SamusHUD((Samus) playerAgent, atlas, stageHUD);
 	}
 
 	@Override

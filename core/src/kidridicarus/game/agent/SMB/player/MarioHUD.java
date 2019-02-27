@@ -11,8 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.game.guide.hud.HudCoin;
 import kidridicarus.game.info.GameInfo;
+import kidridicarus.game.play.hud.HudCoin;
 
 public class MarioHUD implements Disposable {
 	private Mario guide;

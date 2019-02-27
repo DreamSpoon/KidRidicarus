@@ -1,4 +1,4 @@
-package kidridicarus.game.guide;
+package kidridicarus.game.play;
 
 import kidridicarus.agency.tool.BasicAdvice;
 import kidridicarus.agency.tool.SuperAdvice;

@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Music.OnCompletionListener;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -18,9 +17,6 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.space.PlatformSpace;
 import kidridicarus.agency.space.SpaceRenderer;
 import kidridicarus.agency.space.SpaceTemplateLoader;
-import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.MetroidInfo;
-import kidridicarus.game.info.SMBInfo;
 
 /*
  * Run the agency, insert guides (players) into the agency, and take direction from the agency to
@@ -32,31 +28,37 @@ public class AgencyDirector implements Disposable {
 	private PlatformSpace smbSpace;
 	private SpaceRenderer spaceRenderer;
 	private Agency agency;
+	private float soundVolume;
 
-	private Music currentMainMusic;
-	private boolean isMainMusicPlaying;
-	private Music currentSinglePlayMusic;
+//	private Music currentMainMusic;
+//	private boolean isMainMusicPlaying;
+//	private Music currentSinglePlayMusic;
 
-	public AgencyDirector(AssetManager manager, TextureAtlas atlas) {
+	/*
+	 * The soundVolume paramater is a hack, TODO put it in a better place
+	 */
+	public AgencyDirector(AssetManager manager, TextureAtlas atlas, AgentClassList additionalAgents,
+			float soundVolume) {
 		this.manager = manager;
 		this.atlas = atlas;
+		this.soundVolume = soundVolume;
 
-		currentMainMusic = null;
-		isMainMusicPlaying = false;
-		currentSinglePlayMusic = null;
+//		currentMainMusic = null;
+//		isMainMusicPlaying = false;
+//		currentSinglePlayMusic = null;
 
-		agency = new Agency(new AgentClassList(SMBInfo.SMB_AGENT_CLASSLIST, MetroidInfo.METROID_AGENT_CLASSLIST));
+		agency = new Agency(additionalAgents);
 		agency.setEventListener(new AgencyEventListener() {
 			@Override
 			public void onPlaySound(String soundName) { playSound(soundName); }
-			@Override
-			public void onStartMusic() { startMusic(); }
-			@Override
-			public void onStopMusic() { stopMusic(); }
-			@Override
-			public void onStartSinglePlayMusic(String musicName) { startSinglePlayMusic(musicName); }
-			@Override
-			public void onChangeAndStartMusic(String musicName) { changeAndStartMusic(musicName); }
+//			@Override
+//			public void onStartMusic() { startMusic(); }
+//			@Override
+//			public void onStopMusic() { stopMusic(); }
+//			@Override
+//			public void onStartSinglePlayMusic(String musicName) { startSinglePlayMusic(musicName); }
+//			@Override
+//			public void onChangeAndStartMusic(String musicName) { changeAndStartMusic(musicName); }
 		});
 	}
 
@@ -92,10 +94,10 @@ public class AgencyDirector implements Disposable {
 	}
 
 	private void playSound(String sound) {
-		manager.get(sound, Sound.class).play(AudioInfo.SOUND_VOLUME);
+		manager.get(sound, Sound.class).play(soundVolume);
 	}
 
-	private void changeAndStartMusic(String musicname) {
+/*	private void changeAndStartMusic(String musicname) {
 		if(currentMainMusic != null)
 			currentMainMusic.stop();
 
@@ -146,9 +148,9 @@ public class AgencyDirector implements Disposable {
 		if(currentMainMusic != null && isMainMusicPlaying)
 			currentMainMusic.play();
 	}
-
-	public void draw(final Batch batch, OrthographicCamera gamecam) {
-		spaceRenderer.draw(smbSpace, batch, gamecam);
+*/
+	public void draw(final Batch batch, OrthographicCamera camera) {
+		spaceRenderer.draw(smbSpace, batch, camera);
 	}
 
 	public Agency getAgency() {

@@ -1,4 +1,4 @@
-package kidridicarus.game.guide.hud;
+package kidridicarus.game.play.hud;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;

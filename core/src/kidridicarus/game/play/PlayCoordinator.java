@@ -1,11 +1,13 @@
-package kidridicarus.agency;
+package kidridicarus.game.play;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentObserver.AgentObserverListener;
 import kidridicarus.agency.agent.general.AgentSpawnTrigger;
 import kidridicarus.agency.agent.optional.PlayerAgent;
 import kidridicarus.agency.info.UInfo;
@@ -52,19 +54,21 @@ public class PlayCoordinator implements Disposable {
 		spawnTrigger.setEnabled(true);
 
 		playAgent.getObserver().setStageHUD(stageHUD);
-	}
+		playAgent.getObserver().setListener(new AgentObserverListener() {
+				@Override
+				public void startRoomMusic(String musicName) {
+QQ.pr("start room music");
+				}
 
-	public void update() {
-		spawnTrigger.setTarget(playAgent.getObserver().getViewCenter());
-		playAgent.getSupervisor().setFrameAdvice(superAdvice);
-	}
+				@Override
+				public void startSinglePlayMusic(String musicName) {
+QQ.pr("start single play music");
+				}
 
-	public void updateCamera() {
-		// if player is not dead then use their current room to determine the gamecam position
-		if(!((PlayerAgent) agent).isDead()) {
-			gamecam.position.set(playAgent.getObserver().getViewCenter(), 0f);
-			gamecam.update();
-		}
+				@Override
+				public void stopAllMusic() {
+QQ.pr("stop all music");				}
+			});
 	}
 
 	public void handleInput() {
@@ -81,6 +85,23 @@ public class PlayCoordinator implements Disposable {
 			if(agent instanceof Mario) {
 				((Mario) agent).applyPowerup(PowType.FIREFLOWER);
 			}
+		}
+	}
+
+	public void preUpdateAgency() {
+		spawnTrigger.setTarget(playAgent.getObserver().getViewCenter());
+		playAgent.getSupervisor().setFrameAdvice(superAdvice);
+	}
+
+	public void postUpdateAgency() {
+		playAgent.getObserver().postUpdateAgency();
+	}
+
+	public void updateCamera() {
+		// if player is not dead then use their current room to determine the gamecam position
+		if(!((PlayerAgent) agent).isDead()) {
+			gamecam.position.set(playAgent.getObserver().getViewCenter(), 0f);
+			gamecam.update();
 		}
 	}
 

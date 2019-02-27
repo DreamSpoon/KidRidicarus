@@ -18,11 +18,11 @@ import kidridicarus.game.agent.SMB.FloatingPoints;
 import kidridicarus.game.agent.body.SMB.player.MarioBody;
 import kidridicarus.game.agent.body.SMB.player.MarioBody.MarioBodyState;
 import kidridicarus.game.agent.sprite.SMB.player.MarioSprite;
-import kidridicarus.game.guide.GameAdvice;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo.PointAmount;
+import kidridicarus.game.play.GameAdvice;
 
 /*
  * TODO:
@@ -74,7 +74,7 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	// non-character powerup received
 	private PowType nonCharPowerupRec;
 
-	private AgentObserver observer;
+	private MarioObserver observer;
 	private MarioSupervisor supervisor;
 
 	public Mario(Agency agency, AgentDef adef) {
@@ -168,7 +168,8 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 		// scripted dead sequence
 		else if(marioIsDead) {
 			if(curState != MarioState.DEAD) {
-				agency.stopMusic();
+//				agency.stopMusic();
+				observer.stopAllMusic();
 				agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
 
 				mBody.disableAllContacts();
@@ -224,7 +225,9 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 				case END5_BRAKE:
 					if(stateTimer > END_BRAKETIME) {
 						mBody.setFacingRight(true);
-						agency.startSinglePlayMusic(AudioInfo.Music.SMB.LEVELEND);
+//						agency.startSinglePlayMusic(AudioInfo.Music.SMB.LEVELEND);
+						observer.startSinglePlayMusic(AudioInfo.Music.SMB.LEVELEND);
+						
 						mBody.resetFlagpoleContacted();
 						return MarioState.END6_RUN;
 					}
@@ -239,7 +242,8 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 					mBody.disableGravity();
 					mBody.zeroVelocity(true, true);
 
-					agency.stopMusic();
+//					agency.stopMusic();
+					observer.stopAllMusic();
 					agency.playSound(AudioInfo.Sound.SMB.FLAGPOLE);
 
 					return MarioState.END1_SLIDE;
@@ -372,7 +376,8 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 			case POWERSTAR:
 				powerStarTimer = POWERSTAR_TIME;
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
-				agency.startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
+//				agency.startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
+				observer.startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
 				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
 						mBody.getPosition(), UInfo.P2M(16), this));
 				break;

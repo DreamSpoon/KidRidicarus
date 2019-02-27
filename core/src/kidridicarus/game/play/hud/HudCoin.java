@@ -1,4 +1,4 @@
-package kidridicarus.game.guide.hud;
+package kidridicarus.game.play.hud;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
