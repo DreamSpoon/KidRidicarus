@@ -17,6 +17,7 @@ import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.SMB.FloatingPoints;
 import kidridicarus.game.agent.body.SMB.player.MarioBody;
 import kidridicarus.game.agent.body.SMB.player.MarioBody.MarioBodyState;
+import kidridicarus.game.agent.optional.ReceivePowerupAgent;
 import kidridicarus.game.agent.sprite.SMB.player.MarioSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
@@ -29,7 +30,7 @@ import kidridicarus.game.play.GameAdvice;
  * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
  * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe - fix this
  */
-public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
+public class Mario extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	public enum MarioState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
 		END6_RUN, END99, PIPE_ENTRYH, PIPE_EXITH, PIPE_ENTRYV, PIPE_EXITV }
 
@@ -71,8 +72,6 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	private PointAmount consecBouncePoints;
 	// powerup received
 	private PowType powerupRec;
-	// non-character powerup received
-	private PowType nonCharPowerupRec;
 
 	private MarioObserver observer;
 	private MarioSupervisor supervisor;
@@ -91,7 +90,6 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 		curPowerState = MarioPowerState.SMALL;
 
 		powerupRec = PowType.NONE;
-		nonCharPowerupRec = PowType.NONE;
 
 		exitingSpawnpoint = null;
 
@@ -168,7 +166,6 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 		// scripted dead sequence
 		else if(marioIsDead) {
 			if(curState != MarioState.DEAD) {
-//				agency.stopMusic();
 				observer.stopAllMusic();
 				agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
 
@@ -225,7 +222,6 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 				case END5_BRAKE:
 					if(stateTimer > END_BRAKETIME) {
 						mBody.setFacingRight(true);
-//						agency.startSinglePlayMusic(AudioInfo.Music.SMB.LEVELEND);
 						observer.startSinglePlayMusic(AudioInfo.Music.SMB.LEVELEND);
 						
 						mBody.resetFlagpoleContacted();
@@ -242,7 +238,6 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 					mBody.disableGravity();
 					mBody.zeroVelocity(true, true);
 
-//					agency.stopMusic();
 					observer.stopAllMusic();
 					agency.playSound(AudioInfo.Sound.SMB.FLAGPOLE);
 
@@ -376,7 +371,6 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 			case POWERSTAR:
 				powerStarTimer = POWERSTAR_TIME;
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
-//				agency.startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
 				observer.startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
 				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
 						mBody.getPosition(), UInfo.P2M(16), this));
@@ -385,7 +379,8 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 				break;
 			// did mario receive a powerup that's not for his character?
 			default:
-				nonCharPowerupRec = powerupRec;
+				// tell supervisor!
+				supervisor.applyNonMarioPowerup(powerupRec);
 				break;
 		}
 
@@ -428,13 +423,6 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	private void endDmgInvincibility() {
 		isDmgInvincible = false;
 		dmgInvincibleTime = 0f;
-	}
-
-
-	@Override
-	public void applyPowerup(PowType pt) {
-		// TODO: check if already received powerup, and check for rank
-		powerupRec = pt;
 	}
 
 	@Override
@@ -594,14 +582,6 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 		return mBody.isOnGround();
 	}
 
-	// get and reset the non character powerup received (if any)
-	@Override
-	public PowType pollNonCharPowerup() {
-		PowType ret = nonCharPowerupRec;
-		nonCharPowerupRec = PowType.NONE;
-		return ret;
-	}
-
 	@Override
 	public Vector2 getPosition() {
 		return mBody.getPosition();
@@ -625,6 +605,11 @@ public class Mario extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	@Override
 	public AgentSupervisor getSupervisor() {
 		return supervisor;
+	}
+
+	@Override
+	public void applyPowerup(PowType pt) {
+		powerupRec = pt;
 	}
 
 	@Override

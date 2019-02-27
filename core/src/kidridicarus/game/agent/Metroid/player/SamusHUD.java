@@ -54,15 +54,15 @@ public class SamusHUD implements Disposable {
 		stage.addActor(table);
 	}
 
-	public void update() {
+/*	public void update() {
 		scoreVarLabel.setText(String.format("%06d", guide.getPointTotal()));
 		timeVarLabel.setText(String.format("%03d", (int) guide.getLevelTimeRemaining()));
 		coinVarLabel.setText(String.format("×%02d", guide.getCoinTotal()));
 		stage.act();
 	}
-
+*/
 	public void draw() {
-		update();
+//		update();
 		stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
 		stage.draw();
 	}

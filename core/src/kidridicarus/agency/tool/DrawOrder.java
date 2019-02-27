@@ -13,6 +13,10 @@ public class DrawOrder implements Comparable<DrawOrder> {
 		this.order = order;
 	}
 
+	public DrawOrder cpy() {
+		return new DrawOrder(this.draw, this.order);
+	}
+
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof DrawOrder && this.draw == ((DrawOrder) other).draw &&
@@ -38,10 +42,5 @@ public class DrawOrder implements Comparable<DrawOrder> {
 			return 1;
 		else
 			return -1;
-	}
-
-	@Override
-	public String toString() {
-		return "[this="+this.hashCode()+", draw="+this.draw+", order="+this.order+"]";
 	}
 }

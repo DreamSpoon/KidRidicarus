@@ -14,16 +14,17 @@ import com.badlogic.gdx.math.Rectangle;
 
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.DrawOrderAlias;
 import kidridicarus.agency.info.AgencyKV;
 
 /*
  * Load .tmx files, basically.
  */
 public class SpaceTemplateLoader {
-	public static SpaceTemplate loadMap(String spaceFilename) {
+	public static SpaceTemplate loadMap(String spaceFilename, DrawOrderAlias[] drawOrderAliasList) {
 		SpaceTemplate ret = new SpaceTemplate();
 		TiledMap tiledMap = (new TmxMapLoader()).load(spaceFilename);
-		ret.setMap(tiledMap);
+		ret.setMap(tiledMap, drawOrderAliasList);
 		ret.addAgentDefs(makeAgentDefsFromLayers(tiledMap.getLayers()));
 		return ret;
 	}

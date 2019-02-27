@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -57,6 +58,7 @@ public class PlayScreen implements Screen {
 	private boolean useForcedUpdateFramerate;
 	private float forcedUpdateFPS;
 	private float forcedUpdateFrameTimer;
+	private Box2DDebugRenderer b2dr;
 
 	public PlayScreen(MyKidRidicarus game, int level) {
 		this.game = game;
@@ -73,13 +75,15 @@ public class PlayScreen implements Screen {
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
-		director = new AgencyDirector(game.manager, atlas,
+		director = new AgencyDirector(game.manager, atlas, GfxInfo.KIDRID_DRAWORDER_ALIAS,
 				new AgentClassList(SMBInfo.SMB_AGENT_CLASSLIST, MetroidInfo.METROID_AGENT_CLASSLIST),
 				AudioInfo.SOUND_VOLUME);
 		director.createSpace(game.getLevelFilename(level));
 
 		stageHUD = new Stage(new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera()),
 				game.batch);
+
+		b2dr = new Box2DDebugRenderer();
 
 		playCo = new PlayCoordinator(director.getAgency(), game.manager, gamecam, stageHUD);
 		playCo.setPlayAgent(director.createInitialPlayerAgent());
@@ -97,6 +101,10 @@ public class PlayScreen implements Screen {
 
 		// draw screen
 		director.draw(game.batch, gamecam);
+
+		// DEBUG: draw outlines of Box2D fixtures
+		if(QQ.isOn())
+			b2dr.render(director.getAgency().getWorld(), gamecam.combined);
 
 		// draw HUD last
 		playCo.drawHUD();
@@ -206,5 +214,6 @@ public class PlayScreen implements Screen {
 		playCo.dispose();
 		stageHUD.dispose();
 		director.dispose();
+		b2dr.dispose();
 	}
 }

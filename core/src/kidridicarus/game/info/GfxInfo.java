@@ -19,33 +19,13 @@ public class GfxInfo {
 		public static final DrawOrder SPRITE_TOP = new DrawOrder(true, 6f);
 	}
 
-	public static class LayerDrawOrderAlias {
-		public static final String NONE = "none";
-		public static final String MAP_BOTTOM = "map_bottom";
-		public static final String MAP_MIDDLE = "map_middle";
-		public static final String MAP_TOP = "map_top";
-		public static final String SPRITE_BOTTOM = "sprite_bottom";
-		public static final String SPRITE_MIDDLE = "sprite_middle";
-		public static final String SPRITE_TOP = "sprite_top";
-
-		private static final DrawOrderAlias[] aliasMasterList = new DrawOrderAlias[] {
-				new DrawOrderAlias(NONE, LayerDrawOrder.NONE),
-				new DrawOrderAlias(MAP_BOTTOM, LayerDrawOrder.MAP_BOTTOM),
-				new DrawOrderAlias(MAP_MIDDLE, LayerDrawOrder.MAP_MIDDLE),
-				new DrawOrderAlias(MAP_TOP, LayerDrawOrder.MAP_TOP),
-				new DrawOrderAlias(SPRITE_BOTTOM, LayerDrawOrder.SPRITE_BOTTOM),
-				new DrawOrderAlias(SPRITE_MIDDLE, LayerDrawOrder.SPRITE_MIDDLE),
-				new DrawOrderAlias(SPRITE_TOP, LayerDrawOrder.SPRITE_TOP)
-			};
-
-		public static DrawOrderAlias getByString(String aliasStr) {
-			// find the enum value with matching alias string
-			for(int i=0; i<aliasMasterList.length; i++) {
-				if(aliasStr.equals(aliasMasterList[i].alias))
-					return aliasMasterList[i];
-			}
-			// no enum value found, so return null
-			return null;
-		}
-	}
+	public static final DrawOrderAlias[] KIDRID_DRAWORDER_ALIAS = new DrawOrderAlias[] {
+			new DrawOrderAlias("none", LayerDrawOrder.NONE),
+			new DrawOrderAlias("map_bottom", LayerDrawOrder.MAP_BOTTOM),
+			new DrawOrderAlias("map_middle", LayerDrawOrder.MAP_MIDDLE),
+			new DrawOrderAlias("map_top", LayerDrawOrder.MAP_TOP),
+			new DrawOrderAlias("sprite_bottom", LayerDrawOrder.SPRITE_BOTTOM),
+			new DrawOrderAlias("sprite_middle", LayerDrawOrder.SPRITE_MIDDLE),
+			new DrawOrderAlias("sprite_top", LayerDrawOrder.SPRITE_TOP)
+		};
 }

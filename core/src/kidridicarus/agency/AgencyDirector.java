@@ -17,6 +17,7 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.space.PlatformSpace;
 import kidridicarus.agency.space.SpaceRenderer;
 import kidridicarus.agency.space.SpaceTemplateLoader;
+import kidridicarus.agency.tool.DrawOrderAlias;
 
 /*
  * Run the agency, insert guides (players) into the agency, and take direction from the agency to
@@ -29,14 +30,16 @@ public class AgencyDirector implements Disposable {
 	private SpaceRenderer spaceRenderer;
 	private Agency agency;
 	private float soundVolume;
+	private DrawOrderAlias[] drawOrderAliasList;
 
 	/*
 	 * The soundVolume paramater is a hack, TODO put it in a better place
 	 */
-	public AgencyDirector(AssetManager manager, TextureAtlas atlas, AgentClassList additionalAgents,
-			float soundVolume) {
+	public AgencyDirector(AssetManager manager, TextureAtlas atlas, DrawOrderAlias[] drawOrderAliasList,
+			AgentClassList additionalAgents, float soundVolume) {
 		this.manager = manager;
 		this.atlas = atlas;
+		this.drawOrderAliasList = drawOrderAliasList;
 		this.soundVolume = soundVolume;
 
 		agency = new Agency(additionalAgents);
@@ -50,7 +53,8 @@ public class AgencyDirector implements Disposable {
 		if(smbSpace != null)
 			throw new IllegalStateException("Space already created. Cannot create again.");
 
-		smbSpace = new PlatformSpace(agency, atlas, SpaceTemplateLoader.loadMap(spaceTemplateFilename));
+		smbSpace = new PlatformSpace(agency, atlas, SpaceTemplateLoader.loadMap(
+				spaceTemplateFilename, drawOrderAliasList));
 		preloadSpaceMusic();
 		spaceRenderer = new SpaceRenderer();
 		return smbSpace;

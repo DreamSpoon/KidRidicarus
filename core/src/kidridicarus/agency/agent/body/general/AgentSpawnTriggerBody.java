@@ -38,7 +38,7 @@ public class AgentSpawnTriggerBody extends AgentBody {
 	}
 
 	private void defineBody(World world, Rectangle bounds) {
-		// destory the old bodies if necessary
+		// destroy the old bodies if necessary
 		if(mj != null && mj.getBodyA() != null)
 			world.destroyBody(mj.getBodyA());	// destroy the temp bodyA used by mouse joint
 		if(b2body != null)

@@ -15,6 +15,7 @@ import kidridicarus.agency.agent.optional.PlayerAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.body.Metroid.player.SamusBody;
+import kidridicarus.game.agent.optional.ReceivePowerupAgent;
 import kidridicarus.game.agent.sprite.Metroid.player.SamusSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
@@ -25,7 +26,7 @@ import kidridicarus.game.play.GameAdvice;
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
+public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
@@ -459,11 +460,6 @@ public class Samus extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	}
 
 	@Override
-	public PowType pollNonCharPowerup() {
-		return PowType.NONE;
-	}
-
-	@Override
 	public boolean isDead() {
 		return false;
 	}
@@ -499,11 +495,6 @@ public class Samus extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	}
 
 	@Override
-	public void applyPowerup(PowType pt) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public AgentObserverPlus getObserver() {
 		return observer;
 	}
@@ -514,19 +505,12 @@ public class Samus extends Agent implements /*AdvisableAgent,*/ PlayerAgent {
 	}
 
 	@Override
+	public void applyPowerup(PowType pt) {
+		// TODO: powerups!
+	}
+
+	@Override
 	public void dispose() {
 		sBody.dispose();
-	}
-
-	public int getPointTotal() {
-		return 0;
-	}
-
-	public int getLevelTimeRemaining() {
-		return 0;
-	}
-
-	public int getCoinTotal() {
-		return 0;
 	}
 }

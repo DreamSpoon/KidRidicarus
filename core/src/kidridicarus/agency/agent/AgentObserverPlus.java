@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.general.Room;
 import kidridicarus.agency.agent.optional.PlayerAgent;
-import kidridicarus.game.tool.QQ;
 
 public abstract class AgentObserverPlus extends AgentObserver {
 	public interface AgentObserverListener {
@@ -31,7 +30,6 @@ public abstract class AgentObserverPlus extends AgentObserver {
 
 	@Override
 	public void roomChange(Room newRoom) {
-QQ.pr("room change, newRoom="+newRoom);
 		if(newRoom != null)
 			listener.roomMusicUpdate(newRoom.getRoommusic());
 	}

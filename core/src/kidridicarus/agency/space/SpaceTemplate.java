@@ -13,7 +13,6 @@ import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.agency.tool.DrawOrderAlias;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.game.info.GfxInfo;
 
 public class SpaceTemplate {
 	private LinkedList<AgentDef> agentDefs;
@@ -45,12 +44,12 @@ public class SpaceTemplate {
 	 *   -a layer may start with draw order none, and the draw order may change later - so add all layers
 	 *    regardless of current draw order 
 	 */
-	public void setMap(TiledMap tiledMap) {
+	public void setMap(TiledMap tiledMap, DrawOrderAlias[] drawOrderAliasList) {
 		this.tiledMap = tiledMap;
 		// sort the layers
 		for(MapLayer layer : tiledMap.getLayers()) {
 			checkAndAddSolidLayer(layer);
-			checkAndAddDrawLayer(layer);
+			checkAndAddDrawLayer(layer, drawOrderAliasList);
 		}
 	}
 
@@ -69,10 +68,10 @@ public class SpaceTemplate {
 	 * If layer is a tiled map type, and it has a draw order, then add it to the draw order list based
 	 * on it's draw order.
 	 */
-	private void checkAndAddDrawLayer(MapLayer layer) {
+	private void checkAndAddDrawLayer(MapLayer layer, DrawOrderAlias[] drawOrderAliasList) {
 		if(!(layer instanceof TiledMapTileLayer))
 			return;
-		DrawOrder layerDO = getDrawOrderForLayer(layer);
+		DrawOrder layerDO = getDrawOrderForLayer(layer, drawOrderAliasList);
 		if(layerDO == null)
 			return;
 
@@ -90,7 +89,7 @@ public class SpaceTemplate {
 	 * Returns null if draw order not found for given layer,
 	 * otherwise returns a draw order object based on the layer's draw order property.
 	 */
-	private DrawOrder getDrawOrderForLayer(MapLayer layer) {
+	private DrawOrder getDrawOrderForLayer(MapLayer layer, DrawOrderAlias[] drawOrderAliasList) {
 		// does the layer contain a draw order key with a float value?
 		Float drawOrderFloat = null;
 		try {
@@ -107,14 +106,21 @@ public class SpaceTemplate {
 				return null;
 			}
 			// check draw order aliases to translate to draw order object
-			DrawOrderAlias doa = GfxInfo.LayerDrawOrderAlias.getByString(drawOrderStr);
-			if(doa == null)
-				return null;
-			return doa.myDO;
+			return getDrawOrderForAlias(drawOrderAliasList, drawOrderStr);
 		}
 		if(drawOrderFloat == null)
 			return null;
 		return new DrawOrder(true, drawOrderFloat);
+	}
+
+	private DrawOrder getDrawOrderForAlias(DrawOrderAlias[] drawOrderAliasList, String drawOrderStr) {
+		// find the enum value with matching alias string
+		for(int i=0; i<drawOrderAliasList.length; i++) {
+			if(drawOrderStr.equals(drawOrderAliasList[i].alias))
+				return drawOrderAliasList[i].myDO;
+		}
+		// no enum value found, so return null
+		return null;
 	}
 
 	public Collection<TiledMapTileLayer> getSolidLayers() {

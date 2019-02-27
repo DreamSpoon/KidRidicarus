@@ -4,19 +4,15 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.tool.QQ;
 
 public class SpaceRenderer {
-	private Box2DDebugRenderer b2dr;
 	private OrthogonalTiledMapRenderer tileRenderer;
 
 	public SpaceRenderer() {
-		b2dr = new Box2DDebugRenderer();
 		tileRenderer = null;
 	}
 
@@ -40,14 +36,9 @@ public class SpaceRenderer {
 				}
 			});
 		batch.end();
-
-		// DEBUG: draw outlines of Box2D fixtures
-		if(QQ.isOn())
-			b2dr.render(space.getWorld(), camera.combined);
 	}
 
 	public void dispose() {
 		tileRenderer.dispose();
-		b2dr.dispose();
 	}
 }

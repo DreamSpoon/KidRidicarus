@@ -1,10 +1,10 @@
 package kidridicarus.game.agent.Metroid.player;
 
-import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.tool.SuperAdvice;
+import kidridicarus.game.agent.GameAgentSupervisor;
 import kidridicarus.game.play.GameAdvice;
 
-public class SamusSupervisor implements AgentSupervisor {
+public class SamusSupervisor implements GameAgentSupervisor {
 	private Samus samus;
 	private GameAdvice advice;
 
@@ -18,9 +18,6 @@ public class SamusSupervisor implements AgentSupervisor {
 		advice.fromSuperAdvice(superAdvice);
 	}
 
-	/*
-	 * Advise (pull)
-	 */
 	@Override
 	public GameAdvice pollFrameAdvice() {
 		GameAdvice adv = advice.cpy();
@@ -28,8 +25,8 @@ public class SamusSupervisor implements AgentSupervisor {
 		return adv;
 	}
 
-	/*
-	 * TODO: Supervise (push).
-	 * (e.g. scripted actions)
-	 */
+	@Override
+	public boolean isSwitchToOtherChar() {
+		return false;
+	}
 }

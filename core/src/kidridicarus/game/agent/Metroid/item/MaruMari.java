@@ -8,8 +8,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.agent.optional.ItemAgent;
-import kidridicarus.agency.agent.optional.PlayerAgent;
 import kidridicarus.game.agent.body.Metroid.item.MaruMariBody;
+import kidridicarus.game.agent.optional.ReceivePowerupAgent;
 import kidridicarus.game.agent.sprite.Metroid.item.MaruMariSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
@@ -39,9 +39,9 @@ public class MaruMari extends Agent implements ItemAgent {
 
 	@Override
 	public void use(Agent agent) {
-		Object d = agent;
-		if(d instanceof PlayerAgent) {
-			((PlayerAgent) d).applyPowerup(PowType.MARUMARI);
+		// if the other agent can receive this powerup then apply 
+		if(agent instanceof ReceivePowerupAgent) {
+			((ReceivePowerupAgent) agent).applyPowerup(PowType.MARUMARI);
 			agency.disposeAgent(this);
 		}
 	}
@@ -57,12 +57,12 @@ public class MaruMari extends Agent implements ItemAgent {
 	}
 
 	@Override
-	public void dispose() {
-		mmBody.dispose();
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
+	public void dispose() {
+		mmBody.dispose();
 	}
 }

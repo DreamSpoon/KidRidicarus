@@ -280,26 +280,6 @@ public class Agency implements Disposable {
 			agencyEventListener.onPlaySound(soundName);
 	}
 
-/*	public void changeAndStartMusic(String musicName) {
-		if(agencyEventListener != null)
-			agencyEventListener.onChangeAndStartMusic(musicName);
-	}
-
-	public void startMusic() {
-		if(agencyEventListener != null)
-			agencyEventListener.onStartMusic();
-	}
-
-	public void stopMusic() {
-		if(agencyEventListener != null)
-			agencyEventListener.onStopMusic();
-	}
-
-	public void startSinglePlayMusic(String musicName) {
-		if(agencyEventListener != null)
-			agencyEventListener.onStartSinglePlayMusic(musicName);
-	}
-*/
 	/*
 	 * Find agents in list which contain map properties equal to the given keys/vals data.
 	 * Note: A value in the vals[] array can be set to null if the value of it's key is to be ignored (in this case,
