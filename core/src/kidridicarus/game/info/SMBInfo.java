@@ -1,22 +1,22 @@
 package kidridicarus.game.info;
 
 import kidridicarus.agency.AgentClassList;
-import kidridicarus.game.agent.SMB.BrickPiece;
-import kidridicarus.game.agent.SMB.BumpTile;
-import kidridicarus.game.agent.SMB.CastleFlag;
-import kidridicarus.game.agent.SMB.Flagpole;
-import kidridicarus.game.agent.SMB.FloatingPoints;
-import kidridicarus.game.agent.SMB.LevelEndTrigger;
-import kidridicarus.game.agent.SMB.SpinCoin;
-import kidridicarus.game.agent.SMB.NPC.Goomba;
-import kidridicarus.game.agent.SMB.NPC.Turtle;
-import kidridicarus.game.agent.SMB.item.FireFlower;
-import kidridicarus.game.agent.SMB.item.Mush1UP;
-import kidridicarus.game.agent.SMB.item.PowerMushroom;
-import kidridicarus.game.agent.SMB.item.PowerStar;
-import kidridicarus.game.agent.SMB.item.StaticCoin;
-import kidridicarus.game.agent.SMB.player.Mario;
-import kidridicarus.game.agent.SMB.player.MarioFireball;
+import kidridicarus.game.SMB.agent.NPC.Goomba;
+import kidridicarus.game.SMB.agent.NPC.Turtle;
+import kidridicarus.game.SMB.agent.item.FireFlower;
+import kidridicarus.game.SMB.agent.item.Mush1UP;
+import kidridicarus.game.SMB.agent.item.PowerMushroom;
+import kidridicarus.game.SMB.agent.item.PowerStar;
+import kidridicarus.game.SMB.agent.item.StaticCoin;
+import kidridicarus.game.SMB.agent.other.BrickPiece;
+import kidridicarus.game.SMB.agent.other.BumpTile;
+import kidridicarus.game.SMB.agent.other.CastleFlag;
+import kidridicarus.game.SMB.agent.other.Flagpole;
+import kidridicarus.game.SMB.agent.other.FloatingPoints;
+import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
+import kidridicarus.game.SMB.agent.other.SpinCoin;
+import kidridicarus.game.SMB.agent.player.Mario;
+import kidridicarus.game.SMB.agent.player.MarioFireball;
 
 /*
  * Title: Super Mario Bros. Info

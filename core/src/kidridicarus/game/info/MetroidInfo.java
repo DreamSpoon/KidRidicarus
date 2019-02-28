@@ -1,14 +1,14 @@
 package kidridicarus.game.info;
 
 import kidridicarus.agency.AgentClassList;
-import kidridicarus.game.agent.Metroid.NPC.DeathPop;
-import kidridicarus.game.agent.Metroid.NPC.MetroidDoor;
-import kidridicarus.game.agent.Metroid.NPC.Skree;
-import kidridicarus.game.agent.Metroid.NPC.SkreeExp;
-import kidridicarus.game.agent.Metroid.NPC.Zoomer;
-import kidridicarus.game.agent.Metroid.item.MaruMari;
-import kidridicarus.game.agent.Metroid.player.Samus;
-import kidridicarus.game.agent.Metroid.player.SamusShot;
+import kidridicarus.game.Metroid.agent.NPC.DeathPop;
+import kidridicarus.game.Metroid.agent.NPC.MetroidDoor;
+import kidridicarus.game.Metroid.agent.NPC.Skree;
+import kidridicarus.game.Metroid.agent.NPC.SkreeExp;
+import kidridicarus.game.Metroid.agent.NPC.Zoomer;
+import kidridicarus.game.Metroid.agent.item.MaruMari;
+import kidridicarus.game.Metroid.agent.player.Samus;
+import kidridicarus.game.Metroid.agent.player.SamusShot;
 
 public class MetroidInfo {
 	public static final AgentClassList METROID_AGENT_CLASSLIST = new AgentClassList( 

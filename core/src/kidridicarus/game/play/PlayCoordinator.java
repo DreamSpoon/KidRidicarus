@@ -18,7 +18,7 @@ import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.common.agent.AgentObserverPlus.AgentObserverListener;
 import kidridicarus.common.agent.general.AgentSpawnTrigger;
 import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.game.agent.SMB.player.Mario;
+import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.PowerupInfo.PowChar;

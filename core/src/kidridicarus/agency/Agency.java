@@ -53,14 +53,14 @@ import kidridicarus.agency.tool.DrawOrder;
  *   transactions between two other parties."
  */
 public class Agency implements Disposable {
-	private World world;
-	private TileCollisionMap collisionMap;
+	private AgentClassList allAgentsClassList;
+	private AgencyEventListener agencyEventListener;
 	private AgencyChangeQueue agencyChangeQ;
 	private AgencyIndex agencyIndex;
+	private World world;
 	private TextureAtlas atlas;
+	private TileCollisionMap collisionMap;
 	private float globalTimer;
-	private AgencyEventListener agencyEventListener;
-	private AgentClassList allAgentsClassList;
 
 	public Agency(AgentClassList allAgentsClassList) {
 		atlas = null;

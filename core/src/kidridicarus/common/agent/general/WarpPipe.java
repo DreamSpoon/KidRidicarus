@@ -11,7 +11,7 @@ import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
-import kidridicarus.game.agentbody.SMB.WarpPipeBody;
+import kidridicarus.game.SMB.agentbody.other.WarpPipeBody;
 
 public class WarpPipe extends Agent {
 	private WarpPipeBody pwbody;
