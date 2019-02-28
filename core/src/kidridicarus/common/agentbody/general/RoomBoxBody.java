@@ -10,9 +10,12 @@ import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 
 public class RoomBoxBody extends AgentBody {
+	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
+	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
+
 	private Room parent;
 
 	public RoomBoxBody(Room parent, World world, Rectangle bounds) {
@@ -27,11 +30,8 @@ public class RoomBoxBody extends AgentBody {
 		bdef.position.set(bounds.getCenter(new Vector2()));
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.ROOM_BIT);
-		// room can contact anything
-		CFBitSeq maskBits = new CFBitSeq(true);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width,
-				bounds.height);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CFCAT_BITS, CFMASK_BITS,
+				bounds.width, bounds.height);
 	}
 
 	@Override

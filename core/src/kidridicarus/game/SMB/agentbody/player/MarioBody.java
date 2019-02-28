@@ -27,7 +27,7 @@ import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactBeginSensor;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agent.BumpableTileAgent;
 import kidridicarus.game.SMB.agent.HeadBounceAgent;
 import kidridicarus.game.SMB.agent.other.Flagpole;
@@ -156,10 +156,9 @@ public class MarioBody extends MobileAgentBody {
 		bdef.linearVelocity.set(velocity);
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0.01f;	// (default is 0.2f)
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		Vector2 size = getBodySize();
-		b2body = B2DFactory.makeSpecialBoxBody(agency.getWorld(), bdef, fdef, null, catBits, maskBits, size.x, size.y);
+		b2body = B2DFactory.makeSpecialBoxBody(agency.getWorld(), bdef, fdef, null, CommonCF.SOLID_BODY_CFCAT,
+				CommonCF.SOLID_BODY_CFMASK, size.x, size.y);
 	}
 
 	// "bottom" sensors
@@ -174,8 +173,8 @@ public class MarioBody extends MobileAgentBody {
 			boxShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-16)), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT, CommonInfo.CFBits.PIPE_BIT);
+		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.PIPE_BIT);
 		ogSensor = new OnGroundSensor(null);
 		// the og chains to the wp sensor, because the wp sensor will be attached to other fixtures
 		ogSensor.chainTo(wpSensor);
@@ -190,8 +189,8 @@ public class MarioBody extends MobileAgentBody {
 		boxShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), UInfo.P2MVector(7, 0), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.PIPE_BIT);
+		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, wpSensor));
 
 		// left side sensor for detecting warp pipes
@@ -213,8 +212,8 @@ public class MarioBody extends MobileAgentBody {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(16f)), 0f);
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.BUMPABLE_BIT, CommonInfo.CFBits.PIPE_BIT);
+		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT, CommonCF.Alias.PIPE_BIT);
 		btSensor = new AgentContactSensor(this);
 		btSensor.chainTo(wpSensor);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, btSensor));
@@ -227,9 +226,9 @@ public class MarioBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT, CommonInfo.CFBits.ROOM_BIT,
-				CommonInfo.CFBits.ITEM_BIT, CommonInfo.CFBits.DESPAWN_BIT);
+		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT,
+				CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT);
 		acSensor = new AgentContactSensor(this);
 		acBeginSensor = new AgentContactBeginSensor(this);
 		acBeginSensor.chainTo(acSensor);

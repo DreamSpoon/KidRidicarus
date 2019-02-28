@@ -10,13 +10,12 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agent.player.MarioFireball;
 
 public class MarioFireballBody extends MobileAgentBody {
@@ -48,11 +47,9 @@ public class MarioFireballBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0f;		// slippery
 		fdef.restitution = 1f;	// bouncy
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hmSensor, catBits, maskBits,
-				BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hmSensor, CommonCF.SOLID_BODY_CFCAT,
+				CommonCF.SOLID_BODY_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	private void createAgentSensor() {
@@ -61,10 +58,9 @@ public class MarioFireballBody extends MobileAgentBody {
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.isSensor = true;
 		fdef.shape = boxShape;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
 		acSensor = new AgentContactSensor(this);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
+				CommonCF.AGENT_SENSOR_CFMASK, acSensor));
 	}
 
 	public List<Agent> getContactAgents() {

@@ -16,7 +16,7 @@ import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agent.NPC.Goomba;
 
 public class GoombaBody extends MobileAgentBody {
@@ -44,11 +44,9 @@ public class GoombaBody extends MobileAgentBody {
 	}
 
 	private void createBody(World world, Vector2 position) {
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, catBits, maskBits, position,
-				BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, CommonCF.SOLID_BODY_CFCAT,
+				CommonCF.SOLID_BODY_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	private void createAgentSensor() {
@@ -57,11 +55,10 @@ public class GoombaBody extends MobileAgentBody {
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
 		acSensor = new AgentContactSensor(this);
 		acSensorFixture = b2body.createFixture(fdef);
-		acSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
+		acSensorFixture.setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
+				CommonCF.AGENT_SENSOR_CFMASK, acSensor));
 	}
 
 	// create the foot sensor for detecting onGround
@@ -72,10 +69,9 @@ public class GoombaBody extends MobileAgentBody {
 		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		ogSensor = new OnGroundSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.GROUND_SENSOR_CFCAT,
+				CommonCF.GROUND_SENSOR_CFMASK, ogSensor));
 	}
 
 	public boolean isMoveBlocked(boolean moveRight) {

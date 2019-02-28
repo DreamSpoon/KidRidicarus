@@ -9,7 +9,7 @@ import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agent.item.FireFlower;
 
 public class FireFlowerBody extends AgentBody {
@@ -26,8 +26,8 @@ public class FireFlowerBody extends AgentBody {
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		// items contact mario but can pass through goombas, turtles, etc.
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.ITEM_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT, CommonInfo.CFBits.SOLID_BOUND_BIT);
+		CFBitSeq catBits = new CFBitSeq(CommonCF.SOLID_ITEM_CFCAT);
+		CFBitSeq maskBits = new CFBitSeq(CommonCF.SOLID_ITEM_CFMASK);
 		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, catBits, maskBits, position,
 				BODY_WIDTH, BODY_HEIGHT);
 	}

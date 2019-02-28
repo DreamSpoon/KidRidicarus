@@ -19,9 +19,11 @@ import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agent.general.AgentSpawnTrigger;
 import kidridicarus.common.agent.general.AgentSpawner;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 
 public class AgentSpawnTriggerBody extends AgentBody {
+	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SPAWNTRIGGER_BIT);
+	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.SPAWNBOX_BIT);
 	// if the target position is at least this far away from the current position then reset the b2body
 	// TODO: is 50 pixels right?
 	private static final float RESET_DIST = UInfo.P2M(50);
@@ -56,10 +58,8 @@ public class AgentSpawnTriggerBody extends AgentBody {
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.SPAWNTRIGGER_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SPAWNBOX_BIT);
 		acSensor = new AgentContactSensor(this);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, acSensor, catBits, maskBits,
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, acSensor, CFCAT_BITS, CFMASK_BITS,
 				bounds.width, bounds.height);
 	}
 
@@ -78,6 +78,7 @@ public class AgentSpawnTriggerBody extends AgentBody {
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
+		// the fake body does not contact anything
 		CFBitSeq catBits = new CFBitSeq();
 		CFBitSeq maskBits = new CFBitSeq();
 		// TODO: find a better place to stick this temp body 

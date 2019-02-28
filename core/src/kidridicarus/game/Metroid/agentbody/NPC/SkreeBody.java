@@ -17,7 +17,7 @@ import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.Metroid.agent.NPC.Skree;
 
 public class SkreeBody extends MobileAgentBody {
@@ -25,6 +25,15 @@ public class SkreeBody extends MobileAgentBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(16);
 	private static final float FOOT_WIDTH = UInfo.P2M(18);
 	private static final float FOOT_HEIGHT = UInfo.P2M(2);
+	private static final float[] PLAYER_DETECTOR_SHAPE = new float[] {
+			UInfo.P2M(24), UInfo.P2M(16),
+			UInfo.P2M(-24), UInfo.P2M(16),
+			UInfo.P2M(-80), UInfo.P2M(-176),
+			UInfo.P2M(80), UInfo.P2M(-176) };
+
+	// player sensor - to detect if player is close enough to trigger drop
+	private static final CFBitSeq PS_CFCAT_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq PS_CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 
 	private Skree parent;
 	private AgentContactSensor playerSensor;
@@ -49,9 +58,8 @@ public class SkreeBody extends MobileAgentBody {
 		bdef.position.set(position);
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CommonCF.SOLID_BODY_CFCAT,
+				CommonCF.SOLID_BODY_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	// same size as main body, for detecting agents
@@ -61,10 +69,8 @@ public class SkreeBody extends MobileAgentBody {
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits,
-				new AgentContactSensor(this)));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
+				CommonCF.AGENT_SENSOR_CFMASK, new AgentContactSensor(this)));
 	}
 
 	// cone shaped sensor extending down below skree to check for player target 
@@ -72,18 +78,11 @@ public class SkreeBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape;
 		boxShape = new PolygonShape();
-		float[] shapeVerts = new float[] {
-				UInfo.P2M(24), UInfo.P2M(16),
-				UInfo.P2M(-24), UInfo.P2M(16),
-				UInfo.P2M(-80), UInfo.P2M(-176),
-				UInfo.P2M(80), UInfo.P2M(-176) };
-		boxShape.set(shapeVerts);
+		boxShape.set(PLAYER_DETECTOR_SHAPE);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
 		playerSensor = new AgentContactSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, playerSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(PS_CFCAT_BITS, PS_CFMASK_BITS, playerSensor));
 	}
 
 	public Agent getPlayerContact() {
@@ -98,14 +97,12 @@ public class SkreeBody extends MobileAgentBody {
 		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		ogSensor = new OnGroundSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.GROUND_SENSOR_CFCAT,
+				CommonCF.GROUND_SENSOR_CFMASK, ogSensor));
 	}
 
 	public boolean isOnGround() {
-		// return true if the on ground contacts list contains at least 1 floor
 		return ogSensor.isOnGround();
 	}
 

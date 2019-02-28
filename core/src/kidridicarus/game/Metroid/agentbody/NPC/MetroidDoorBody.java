@@ -11,14 +11,14 @@ import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.Metroid.agent.NPC.MetroidDoor;
 
 public class MetroidDoorBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(8f);
 	private static final float BODY_HEIGHT = UInfo.P2M(48f);
 	private static final CFBitSeq CFCAT_BITS =
-			new CFBitSeq(CommonInfo.CFBits.AGENT_BIT, CommonInfo.CFBits.SOLID_BOUND_BIT);
+			new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.SOLID_BOUND_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
 	private MetroidDoor parent;

@@ -62,6 +62,7 @@ public class MarioHUD implements Disposable {
 	}
 
 	public void draw() {
+		update();
 		stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
 		stage.draw();
 	}

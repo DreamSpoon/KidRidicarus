@@ -10,9 +10,12 @@ import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agent.general.DespawnBox;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 
 public class DespawnBody extends AgentBody {
+	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.DESPAWN_BIT);
+	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+
 	private DespawnBox parent;
 
 	public DespawnBody(DespawnBox parent, World world, Rectangle bounds) {
@@ -27,10 +30,8 @@ public class DespawnBody extends AgentBody {
 		bdef.position.set(bounds.getCenter(new Vector2()));
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.DESPAWN_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width,
-				bounds.height);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CFCAT_BITS, CFMASK_BITS,
+				bounds.width, bounds.height);
 	}
 
 	@Override

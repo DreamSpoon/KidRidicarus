@@ -17,7 +17,7 @@ import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.Metroid.agent.player.SamusShot;
 
 public class SamusShotBody extends MobileAgentBody {
@@ -49,8 +49,8 @@ public class SamusShotBody extends MobileAgentBody {
 		bdef.linearVelocity.set(velocity);
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
+		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
 		boundSensor = new SolidBoundSensor(parent);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, boundSensor, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
@@ -61,8 +61,8 @@ public class SamusShotBody extends MobileAgentBody {
 		boxShape.setAsBox(SENSOR_WIDTH/2f, SENSOR_HEIGHT/2f);
 		fdef.isSensor = true;
 		fdef.shape = boxShape;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
+		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 		acSensor = new AgentContactSensor(this);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
 	}

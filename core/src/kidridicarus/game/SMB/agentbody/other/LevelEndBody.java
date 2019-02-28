@@ -6,9 +6,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.tool.B2DFactory;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 
 public class LevelEndBody extends AgentBody {
@@ -21,9 +20,8 @@ public class LevelEndBody extends AgentBody {
 
 	private void defineBody(World world, Rectangle bounds) {
 		setBodySize(bounds.width, bounds.height);
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, catBits, maskBits, bounds);
+		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, CommonCF.AGENT_SENSOR_CFCAT,
+				CommonCF.AGENT_SENSOR_CFMASK, bounds);
 	}
 
 	@Override

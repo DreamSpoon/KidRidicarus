@@ -8,13 +8,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agent.item.BaseMushroom;
 import kidridicarus.game.SMB.agentbody.BumpableBody;
 
@@ -35,24 +34,21 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.ITEM_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT, CommonInfo.CFBits.AGENT_BIT);
 		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, catBits, maskBits, position,
-				BODY_WIDTH, BODY_HEIGHT);
-		createBottomSensor();
+		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, CommonCF.SOLID_ITEM_CFCAT,
+				CommonCF.SOLID_ITEM_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
+		createGroundSensor();
 	}
 
-	private void createBottomSensor() {
+	private void createGroundSensor() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		ogSensor = new OnGroundSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.GROUND_SENSOR_CFCAT,
+				CommonCF.GROUND_SENSOR_CFMASK, ogSensor));
 	}
 
 	public boolean isOnGround() {

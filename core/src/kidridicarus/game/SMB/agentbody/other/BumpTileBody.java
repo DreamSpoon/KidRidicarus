@@ -8,9 +8,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.tool.B2DFactory;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agent.other.BumpTile;
 import kidridicarus.game.SMB.agentbody.BumpableTileBody;
 
@@ -30,10 +29,8 @@ public class BumpTileBody extends AgentBody implements BumpableTileBody {
 		bdef.position.set(bounds.getCenter(new Vector2()));
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.BUMPABLE_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width,
-				bounds.height);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CommonCF.BUMPTILE_CFCAT,
+				CommonCF.BUMPTILE_CFMASK, bounds.width, bounds.height);
 	}
 
 	@Override

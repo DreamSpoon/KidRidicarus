@@ -18,7 +18,7 @@ import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.Metroid.agent.player.Samus;
 
 public class SamusBody extends MobileAgentBody {
@@ -30,6 +30,11 @@ public class SamusBody extends MobileAgentBody {
 
 	private static final float FOOT_WIDTH = UInfo.P2M(4f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
+
+	// agent sensor
+	private static final CFBitSeq AS_CFCAT_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
+			CommonCF.Alias.ROOM_BIT, CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT);
 
 	private static final float MIN_MOVE_VEL = 0.1f;
 	private static final Vector2 STOPMOVE_IMP = new Vector2(0.15f, 0f);
@@ -92,11 +97,9 @@ public class SamusBody extends MobileAgentBody {
 		bdef.gravityScale = 0.5f;	// floaty
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0.001f;	// (default is 0.2f)
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		sbSensor = new SolidBoundSensor(this);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, sbSensor, catBits, maskBits,
-				getBodyWidth(), getBodyHeight());
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, sbSensor, CommonCF.SOLID_BODY_CFCAT,
+				CommonCF.SOLID_BODY_CFMASK, getBodyWidth(), getBodyHeight());
 	}
 
 	public boolean isContactingWall(boolean isRightWall) {
@@ -109,11 +112,8 @@ public class SamusBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT, CommonInfo.CFBits.ROOM_BIT,
-				CommonInfo.CFBits.ITEM_BIT, CommonInfo.CFBits.DESPAWN_BIT);
 		acSensor = new AgentContactSensor(this);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(AS_CFCAT_BITS, AS_CFMASK_BITS, acSensor));
 	}
 
 	// create the sensor for detecting onGround
@@ -124,10 +124,9 @@ public class SamusBody extends MobileAgentBody {
 		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBodyHeight()/2f), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		ogSensor = new OnGroundSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.GROUND_SENSOR_CFCAT,
+				CommonCF.GROUND_SENSOR_CFMASK, ogSensor));
 	}
 
 	public boolean isOnGround() {

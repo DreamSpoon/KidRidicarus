@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agentbody.MobileAgentBody;
@@ -18,7 +17,7 @@ import kidridicarus.common.agentbody.sensor.AgentContactBeginSensor;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
-import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agent.NPC.Turtle;
 import kidridicarus.game.SMB.agentbody.BumpableBody;
 
@@ -47,11 +46,9 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 	}
 
 	private void createSolidBody(World world, Vector2 position) {
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, catBits, maskBits, position,
-				BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, CommonCF.SOLID_BODY_CFCAT,
+				CommonCF.SOLID_BODY_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	private void createAgentSensor() {
@@ -60,12 +57,11 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.isSensor = true;
 		fdef.shape = boxShape;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
 		acSensor = new AgentContactSensor(this);
 		kickSensor = new AgentContactBeginSensor(this);
 		kickSensor.chainTo(acSensor);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, kickSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
+				CommonCF.AGENT_SENSOR_CFMASK, kickSensor));
 	}
 
 	private void createGroundSensor() {
@@ -74,10 +70,9 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
 		fdef.isSensor = true;
 		fdef.shape = boxShape;
-		CFBitSeq catBits = new CFBitSeq(CommonInfo.CFBits.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT);
 		ogSensor = new OnGroundSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.GROUND_SENSOR_CFCAT,
+				CommonCF.GROUND_SENSOR_CFMASK, ogSensor));
 	}
 
 	@Override
