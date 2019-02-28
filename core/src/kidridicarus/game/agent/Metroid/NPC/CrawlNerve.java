@@ -3,9 +3,9 @@ package kidridicarus.game.agent.Metroid.NPC;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.agent.body.Metroid.NPC.ZoomerBody;
 import kidridicarus.agency.tool.DiagonalDir4;
 import kidridicarus.agency.tool.Direction4;
+import kidridicarus.game.agentbody.Metroid.NPC.ZoomerBody;
 
 /*
  * Used by Zoomer class to figure out this whole crawling thing.

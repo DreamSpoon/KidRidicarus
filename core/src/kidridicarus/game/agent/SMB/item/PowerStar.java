@@ -7,13 +7,13 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.general.BasicWalkAgent;
-import kidridicarus.agency.agent.optional.BumpableAgent;
-import kidridicarus.agency.agent.optional.ItemAgent;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.common.agent.general.BasicWalkAgent;
+import kidridicarus.common.agent.optional.BumpableAgent;
+import kidridicarus.common.agent.optional.ItemAgent;
 import kidridicarus.game.agent.SMB.player.Mario;
-import kidridicarus.game.agent.body.SMB.item.PowerStarBody;
-import kidridicarus.game.agent.sprite.SMB.item.PowerStarSprite;
+import kidridicarus.game.agentbody.SMB.item.PowerStarBody;
+import kidridicarus.game.agentsprite.SMB.item.PowerStarSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 

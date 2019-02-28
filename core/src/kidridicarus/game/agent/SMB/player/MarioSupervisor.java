@@ -1,7 +1,7 @@
 package kidridicarus.game.agent.SMB.player;
 
 import kidridicarus.agency.tool.SuperAdvice;
-import kidridicarus.game.agent.GameAgentSupervisor;
+import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.play.GameAdvice;
 

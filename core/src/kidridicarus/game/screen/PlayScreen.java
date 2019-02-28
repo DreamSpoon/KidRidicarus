@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import kidridicarus.agency.AgencyDirector;
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.MyKidRidicarus;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameInfo;
@@ -76,8 +77,8 @@ public class PlayScreen implements Screen {
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
 		director = new AgencyDirector(game.manager, atlas, GfxInfo.KIDRID_DRAWORDER_ALIAS,
-				new AgentClassList(SMBInfo.SMB_AGENT_CLASSLIST, MetroidInfo.METROID_AGENT_CLASSLIST),
-				AudioInfo.SOUND_VOLUME);
+				new AgentClassList(CommonInfo.CORE_AGENT_CLASS_LIST, SMBInfo.SMB_AGENT_CLASSLIST,
+						MetroidInfo.METROID_AGENT_CLASSLIST), AudioInfo.SOUND_VOLUME);
 		director.createSpace(game.getLevelFilename(level));
 
 		stageHUD = new Stage(new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera()),

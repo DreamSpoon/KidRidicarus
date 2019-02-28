@@ -7,13 +7,13 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.optional.ContactDmgAgent;
-import kidridicarus.agency.agent.optional.DamageableAgent;
-import kidridicarus.game.agent.body.Metroid.NPC.ZoomerBody;
-import kidridicarus.game.agent.sprite.Metroid.NPC.ZoomerSprite;
+import kidridicarus.game.agentbody.Metroid.NPC.ZoomerBody;
+import kidridicarus.game.agentsprite.Metroid.NPC.ZoomerSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.agency.tool.Direction4;
+import kidridicarus.common.agent.optional.ContactDmgAgent;
+import kidridicarus.common.agent.optional.DamageableAgent;
 
 /*
  * The sensor code. It seems like a million cases due to the 4 possible "up" directions of the zoomer,

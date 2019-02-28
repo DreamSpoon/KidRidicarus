@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.game.agent.sprite.Metroid.NPC.DeathPopSprite;
+import kidridicarus.game.agentsprite.Metroid.NPC.DeathPopSprite;
 import kidridicarus.game.info.GfxInfo;
 
 public class DeathPop extends Agent {

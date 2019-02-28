@@ -14,7 +14,7 @@ import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.agent.sprite.SMB.BounceCoinSprite;
+import kidridicarus.game.agentsprite.SMB.BounceCoinSprite;
 import kidridicarus.game.info.GfxInfo;
 
 public class SpinCoin extends Agent {

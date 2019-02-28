@@ -8,7 +8,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.game.agent.body.SMB.LevelEndBody;
+import kidridicarus.game.agentbody.SMB.LevelEndBody;
 import kidridicarus.game.info.GameKV;
 
 public class LevelEndTrigger extends Agent {

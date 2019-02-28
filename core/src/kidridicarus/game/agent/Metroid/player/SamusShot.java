@@ -7,10 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.optional.DamageableAgent;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.game.agent.body.Metroid.player.SamusShotBody;
-import kidridicarus.game.agent.sprite.Metroid.player.SamusShotSprite;
+import kidridicarus.common.agent.optional.DamageableAgent;
+import kidridicarus.game.agentbody.Metroid.player.SamusShotBody;
+import kidridicarus.game.agentsprite.Metroid.player.SamusShotSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 

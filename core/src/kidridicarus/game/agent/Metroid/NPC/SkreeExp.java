@@ -7,9 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.optional.ContactDmgAgent;
-import kidridicarus.game.agent.body.Metroid.NPC.SkreeExpBody;
-import kidridicarus.game.agent.sprite.Metroid.NPC.SkreeExpSprite;
+import kidridicarus.common.agent.optional.ContactDmgAgent;
+import kidridicarus.game.agentbody.Metroid.NPC.SkreeExpBody;
+import kidridicarus.game.agentsprite.Metroid.NPC.SkreeExpSprite;
 import kidridicarus.game.info.GfxInfo;
 
 public class SkreeExp extends Agent implements ContactDmgAgent {

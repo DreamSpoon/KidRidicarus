@@ -7,10 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.optional.DamageableAgent;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.game.agent.body.Metroid.NPC.MetroidDoorBody;
-import kidridicarus.game.agent.sprite.Metroid.NPC.MetroidDoorSprite;
+import kidridicarus.common.agent.optional.DamageableAgent;
+import kidridicarus.game.agentbody.Metroid.NPC.MetroidDoorBody;
+import kidridicarus.game.agentsprite.Metroid.NPC.MetroidDoorSprite;
 import kidridicarus.game.info.GfxInfo;
 
 public class MetroidDoor extends Agent implements DamageableAgent {

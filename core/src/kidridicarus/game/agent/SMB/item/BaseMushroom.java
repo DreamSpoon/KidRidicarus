@@ -9,12 +9,12 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.general.BasicWalkAgent;
-import kidridicarus.agency.agent.optional.BumpableAgent;
-import kidridicarus.agency.agent.optional.ItemAgent;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.agent.body.SMB.item.BaseMushroomBody;
-import kidridicarus.game.agent.sprite.SMB.item.MushroomSprite;
+import kidridicarus.common.agent.general.BasicWalkAgent;
+import kidridicarus.common.agent.optional.BumpableAgent;
+import kidridicarus.common.agent.optional.ItemAgent;
+import kidridicarus.game.agentbody.SMB.item.BaseMushroomBody;
+import kidridicarus.game.agentsprite.SMB.item.MushroomSprite;
 import kidridicarus.game.info.GfxInfo;
 
 public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, BumpableAgent {

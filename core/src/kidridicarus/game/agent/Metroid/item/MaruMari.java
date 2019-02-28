@@ -7,10 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.optional.ItemAgent;
-import kidridicarus.game.agent.body.Metroid.item.MaruMariBody;
-import kidridicarus.game.agent.optional.ReceivePowerupAgent;
-import kidridicarus.game.agent.sprite.Metroid.item.MaruMariSprite;
+import kidridicarus.common.agent.optional.ItemAgent;
+import kidridicarus.common.agent.optional.ReceivePowerupAgent;
+import kidridicarus.game.agentbody.Metroid.item.MaruMariBody;
+import kidridicarus.game.agentsprite.Metroid.item.MaruMariSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 

@@ -8,7 +8,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.agent.sprite.SMB.CastleFlagSprite;
+import kidridicarus.game.agentsprite.SMB.CastleFlagSprite;
 import kidridicarus.game.info.GfxInfo;
 
 public class CastleFlag extends Agent {

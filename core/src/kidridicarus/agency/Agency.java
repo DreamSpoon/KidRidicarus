@@ -16,12 +16,6 @@ import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.general.AgentSpawnTrigger;
-import kidridicarus.agency.agent.general.AgentSpawner;
-import kidridicarus.agency.agent.general.DespawnBox;
-import kidridicarus.agency.agent.general.GuideSpawner;
-import kidridicarus.agency.agent.general.Room;
-import kidridicarus.agency.agent.general.WarpPipe;
 import kidridicarus.agency.change.AgencyChangeQueue;
 import kidridicarus.agency.change.AgentPlaceholder;
 import kidridicarus.agency.change.DrawOrderChange;
@@ -59,14 +53,6 @@ import kidridicarus.agency.tool.DrawOrder;
  *   transactions between two other parties."
  */
 public class Agency implements Disposable {
-	private static final AgentClassList CORE_AGENT_CLASS_LIST = new AgentClassList( 
-			AgencyKV.Spawn.VAL_AGENTSPAWNER, AgentSpawner.class,
-			AgencyKV.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
-			AgencyKV.Spawn.VAL_DESPAWN, DespawnBox.class,
-			AgencyKV.Spawn.VAL_PIPEWARP, WarpPipe.class,
-			AgencyKV.Spawn.VAL_SPAWNGUIDE, GuideSpawner.class,
-			AgencyKV.Room.VAL_ROOM, Room.class);
-
 	private World world;
 	private TileCollisionMap collisionMap;
 	private AgencyChangeQueue agencyChangeQ;
@@ -76,7 +62,7 @@ public class Agency implements Disposable {
 	private AgencyEventListener agencyEventListener;
 	private AgentClassList allAgentsClassList;
 
-	public Agency(AgentClassList additionalAgents) {
+	public Agency(AgentClassList allAgentsClassList) {
 		atlas = null;
 		globalTimer = 0f;
 
@@ -87,7 +73,7 @@ public class Agency implements Disposable {
 		agencyChangeQ = new AgencyChangeQueue();
 		agencyIndex = new AgencyIndex();
 
-		allAgentsClassList = new AgentClassList(CORE_AGENT_CLASS_LIST, additionalAgents);
+		this.allAgentsClassList = allAgentsClassList;
 	}
 
 	public void update(float delta) {
@@ -332,17 +318,6 @@ public class Agency implements Disposable {
 				}
 			});
 		return ret;
-	}
-
-	/*
-	 * Returns null if guide spawner is not found.
-	 */
-	public GuideSpawner getGuideSpawnerByName(String name) {
-		Agent agent = getFirstAgentByProperties(new String[] { AgencyKV.Spawn.KEY_AGENTCLASS,
-				AgencyKV.Spawn.KEY_NAME }, new String[] { AgencyKV.Spawn.VAL_SPAWNGUIDE, name });
-		if(agent instanceof GuideSpawner)
-			return (GuideSpawner) agent;
-		return null;
 	}
 
 	public void iterateThroughDrawObjects(DrawObjectIter objIter) {

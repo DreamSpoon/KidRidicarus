@@ -12,8 +12,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.agent.sprite.SMB.BrickPieceSprite;
 import kidridicarus.game.info.GfxInfo;
+import kidridicarus.game.agentsprite.SMB.BrickPieceSprite;
 import kidridicarus.game.info.GameKV;
 
 public class BrickPiece extends Agent {

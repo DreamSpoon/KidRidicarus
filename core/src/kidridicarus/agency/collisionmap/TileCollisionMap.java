@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.info.GameInfo;
+import kidridicarus.common.info.CommonInfo;
 
 public class TileCollisionMap {
 	private World world;
@@ -235,7 +235,7 @@ public class TileCollisionMap {
 		edgeShape.set(0f, 0f, UInfo.P2M((endX - startX) * tileWidth), UInfo.P2M((endY - startY) * tileHeight));
 
 		fdef.shape = edgeShape;
-		body.createFixture(fdef).setUserData(new AgentBodyFilter(new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT),
+		body.createFixture(fdef).setUserData(new AgentBodyFilter(new CFBitSeq(CommonInfo.CFBits.SOLID_BOUND_BIT),
 				new CFBitSeq(true), seg));
 
 		return body;

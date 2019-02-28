@@ -1,8 +1,8 @@
 package kidridicarus.agency.contact;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.body.AgentBody;
-import kidridicarus.agency.agent.body.sensor.ContactSensor;
+import kidridicarus.agency.agentbody.AgentBody;
+import kidridicarus.agency.agentbody.sensor.ContactSensor;
 
 public class AgentBodyFilter {
 	public CFBitSeq categoryBits;

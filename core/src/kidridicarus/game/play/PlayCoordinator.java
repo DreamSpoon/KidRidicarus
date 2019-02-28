@@ -12,12 +12,12 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.AgentObserverPlus.AgentObserverListener;
-import kidridicarus.agency.agent.general.AgentSpawnTrigger;
-import kidridicarus.agency.agent.optional.PlayerAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.SuperAdvice;
-import kidridicarus.game.agent.GameAgentSupervisor;
+import kidridicarus.common.agent.GameAgentSupervisor;
+import kidridicarus.common.agent.AgentObserverPlus.AgentObserverListener;
+import kidridicarus.common.agent.general.AgentSpawnTrigger;
+import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.game.agent.SMB.player.Mario;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
@@ -72,10 +72,10 @@ public class PlayCoordinator implements Disposable {
 		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(AgentSpawnTrigger.makeAgentSpawnTriggerDef(
 				playAgent.getObserver().getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 		spawnTrigger.setEnabled(true);
-		
+
 		setPlayAgentHUD();
 	}
-	
+
 	private void setPlayAgentHUD() {
 		playAgent.getObserver().setStageHUD(stageHUD);
 		playAgent.getObserver().setListener(new AgentObserverListener() {
@@ -83,12 +83,12 @@ public class PlayCoordinator implements Disposable {
 				public void startSinglePlayMusic(String musicName) {
 					doStartSinglePlayMusic(musicName);
 				}
-	
+
 				@Override
 				public void stopAllMusic() {
 					doStopMainMusic();
 				}
-	
+
 				@Override
 				public void roomMusicUpdate(String musicName) {
 					doChangeAndStartMainMusic(musicName);

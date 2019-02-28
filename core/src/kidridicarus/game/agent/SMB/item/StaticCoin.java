@@ -7,10 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
-import kidridicarus.agency.agent.optional.ItemAgent;
+import kidridicarus.common.agent.optional.ItemAgent;
 import kidridicarus.game.agent.SMB.player.Mario;
-import kidridicarus.game.agent.body.SMB.item.StaticCoinBody;
-import kidridicarus.game.agent.sprite.SMB.item.StaticCoinSprite;
+import kidridicarus.game.agentbody.SMB.item.StaticCoinBody;
+import kidridicarus.game.agentsprite.SMB.item.StaticCoinSprite;
 import kidridicarus.game.info.GfxInfo;
 
 public class StaticCoin extends Agent implements ItemAgent {

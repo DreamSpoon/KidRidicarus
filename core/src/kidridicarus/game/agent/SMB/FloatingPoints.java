@@ -10,7 +10,7 @@ import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.agent.SMB.player.Mario;
-import kidridicarus.game.agent.sprite.SMB.FloatingPointsSprite;
+import kidridicarus.game.agentsprite.SMB.FloatingPointsSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
