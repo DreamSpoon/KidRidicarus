@@ -45,6 +45,21 @@ public class MarioBody extends MobileAgentBody {
 	private static final Vector2 BIG_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(26f));
 	private static final Vector2 SML_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(12f));
 
+	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFMASK =
+			new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.PIPE_BIT);
+
+	private static final CFBitSeq SIDE_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq SIDE_PIPE_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
+
+	private static final CFBitSeq BUMPTILE_AND_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq BUMPTILE_AND_PIPE_SENSOR_CFMASK =
+			new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT, CommonCF.Alias.PIPE_BIT);
+
+	private static final CFBitSeq AGENT_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AGENT_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT,
+			CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT);
+
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 	private static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
 	private static final float MARIO_RUNMOVE_XIMP = MARIO_WALKMOVE_XIMP * 1.5f;
@@ -173,12 +188,11 @@ public class MarioBody extends MobileAgentBody {
 			boxShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-16)), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.PIPE_BIT);
 		ogSensor = new OnGroundSensor(null);
 		// the og chains to the wp sensor, because the wp sensor will be attached to other fixtures
 		ogSensor.chainTo(wpSensor);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(GROUND_AND_PIPE_SENSOR_CFCAT,
+				GROUND_AND_PIPE_SENSOR_CFMASK, ogSensor));
 	}
 
 	private void createSidePipeSensors() {
@@ -189,15 +203,15 @@ public class MarioBody extends MobileAgentBody {
 		boxShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), UInfo.P2MVector(7, 0), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, wpSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(SIDE_PIPE_SENSOR_CFCAT,
+				SIDE_PIPE_SENSOR_CFMASK, wpSensor));
 
 		// left side sensor for detecting warp pipes
 		boxShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), UInfo.P2MVector(-7, 0), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, wpSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(SIDE_PIPE_SENSOR_CFCAT,
+				SIDE_PIPE_SENSOR_CFMASK, wpSensor));
 	}
 
 	// "top" sensors
@@ -212,11 +226,10 @@ public class MarioBody extends MobileAgentBody {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(16f)), 0f);
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT, CommonCF.Alias.PIPE_BIT);
 		btSensor = new AgentContactSensor(this);
 		btSensor.chainTo(wpSensor);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, btSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(BUMPTILE_AND_PIPE_SENSOR_CFCAT,
+				BUMPTILE_AND_PIPE_SENSOR_CFMASK, btSensor));
 	}
 
 	private void createAgentSensor() {
@@ -226,14 +239,11 @@ public class MarioBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT,
-				CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT);
 		acSensor = new AgentContactSensor(this);
 		acBeginSensor = new AgentContactBeginSensor(this);
 		acBeginSensor.chainTo(acSensor);
 		acSensorFixture = b2body.createFixture(fdef);
-		acSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, acBeginSensor));
+		acSensorFixture.setUserData(new AgentBodyFilter(AGENT_SENSOR_CFCAT, AGENT_SENSOR_CFMASK, acBeginSensor));
 	}
 
 	public MarioBodyState update(float delta, GameAdvice advice, MarioPowerState curPowerState) {

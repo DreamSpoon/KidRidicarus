@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agentbody.MobileAgentBody;
@@ -91,8 +90,8 @@ public class GoombaBody extends MobileAgentBody {
 	public void disableAgentContact() {
 		if(!(acSensorFixture.getUserData() instanceof AgentBodyFilter))
 			return;
-		((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = new CFBitSeq();
-		((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = new CFBitSeq();
+		((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
+		((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
 		// the contact filters were changed, so let Box2D know to update contacts here
 		acSensorFixture.refilter();
 	}

@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agent.optional.PlayerAgent;
@@ -30,10 +29,6 @@ public class SkreeBody extends MobileAgentBody {
 			UInfo.P2M(-24), UInfo.P2M(16),
 			UInfo.P2M(-80), UInfo.P2M(-176),
 			UInfo.P2M(80), UInfo.P2M(-176) };
-
-	// player sensor - to detect if player is close enough to trigger drop
-	private static final CFBitSeq PS_CFCAT_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq PS_CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 
 	private Skree parent;
 	private AgentContactSensor playerSensor;
@@ -82,7 +77,8 @@ public class SkreeBody extends MobileAgentBody {
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		playerSensor = new AgentContactSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(PS_CFCAT_BITS, PS_CFMASK_BITS, playerSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
+				CommonCF.AGENT_SENSOR_CFMASK, playerSensor));
 	}
 
 	public Agent getPlayerContact() {

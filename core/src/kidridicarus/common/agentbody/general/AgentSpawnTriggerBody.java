@@ -79,10 +79,9 @@ public class AgentSpawnTriggerBody extends AgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		// the fake body does not contact anything
-		CFBitSeq catBits = new CFBitSeq();
-		CFBitSeq maskBits = new CFBitSeq();
 		// TODO: find a better place to stick this temp body 
-		tempB = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, 0.01f, 0.01f);
+		tempB = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CommonCF.NO_CONTACT_CFCAT,
+				CommonCF.NO_CONTACT_CFMASK, 0.01f, 0.01f);
 
 		MouseJointDef mjdef = new MouseJointDef();
 		// this body is supposedly ignored by box2d, but needs to be a valid non-static body (non-sensor also?)

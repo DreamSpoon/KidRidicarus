@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.agency.tool.DiagonalDir4;
@@ -21,10 +20,6 @@ public class ZoomerBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float SENSORSIZEFACTOR = 1.2f;
-
-	// crawl sensor
-	private static final CFBitSeq CS_CFCAT_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq CS_CFMASK_BITS = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
 
 	private Zoomer parent;
 	private SolidBoundSensor[] crawlSense;
@@ -95,7 +90,8 @@ public class ZoomerBody extends MobileAgentBody {
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		SolidBoundSensor sensor = new SolidBoundSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CS_CFCAT_BITS, CS_CFMASK_BITS, sensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.SOLID_BODY_CFCAT,
+				CommonCF.SOLID_BODY_CFMASK, sensor));
 		return sensor;
 	}
 

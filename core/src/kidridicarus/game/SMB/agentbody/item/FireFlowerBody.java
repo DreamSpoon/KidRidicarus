@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.info.CommonCF;
@@ -26,10 +25,8 @@ public class FireFlowerBody extends AgentBody {
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		// items contact mario but can pass through goombas, turtles, etc.
-		CFBitSeq catBits = new CFBitSeq(CommonCF.SOLID_ITEM_CFCAT);
-		CFBitSeq maskBits = new CFBitSeq(CommonCF.SOLID_ITEM_CFMASK);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, catBits, maskBits, position,
-				BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, this, CommonCF.SOLID_ITEM_CFCAT,
+				CommonCF.SOLID_ITEM_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override

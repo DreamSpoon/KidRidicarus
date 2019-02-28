@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agentbody.MobileAgentBody;
@@ -49,10 +48,9 @@ public class SamusShotBody extends MobileAgentBody {
 		bdef.linearVelocity.set(velocity);
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
-		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
 		boundSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, boundSensor, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, boundSensor, CommonCF.SOLID_BODY_CFCAT,
+				CommonCF.SOLID_BODY_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	private void createAgentSensor() {
@@ -61,10 +59,9 @@ public class SamusShotBody extends MobileAgentBody {
 		boxShape.setAsBox(SENSOR_WIDTH/2f, SENSOR_HEIGHT/2f);
 		fdef.isSensor = true;
 		fdef.shape = boxShape;
-		CFBitSeq catBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 		acSensor = new AgentContactSensor(this);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
+				CommonCF.AGENT_SENSOR_CFMASK, acSensor));
 	}
 
 	public boolean isHitBound() {

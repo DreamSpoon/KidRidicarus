@@ -16,6 +16,9 @@ public class CommonCF {
 		public static final String ITEM_BIT = "bit_item";
 	}
 
+	public static final CFBitSeq NO_CONTACT_CFCAT = new CFBitSeq();
+	public static final CFBitSeq NO_CONTACT_CFMASK = new CFBitSeq();
+
 	public static final CFBitSeq AGENT_SENSOR_CFCAT = new CFBitSeq(Alias.AGENT_BIT);
 	public static final CFBitSeq AGENT_SENSOR_CFMASK = new CFBitSeq(Alias.AGENT_BIT);
 

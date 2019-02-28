@@ -11,6 +11,7 @@ import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agent.general.GuideSpawner;
+import kidridicarus.common.info.CommonCF;
 
 public class GuideSpawnerBody extends AgentBody {
 	private GuideSpawner parent;
@@ -27,8 +28,8 @@ public class GuideSpawnerBody extends AgentBody {
 		bdef.position.set(bounds.getCenter(new Vector2()));
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, new CFBitSeq(), new CFBitSeq(),
-				bounds.width, bounds.height);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CommonCF.NO_CONTACT_CFCAT,
+				CommonCF.NO_CONTACT_CFMASK, bounds.width, bounds.height);
 	}
 
 	@Override

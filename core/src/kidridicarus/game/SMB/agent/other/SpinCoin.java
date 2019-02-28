@@ -12,8 +12,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agentsprite.other.BounceCoinSprite;
 import kidridicarus.game.info.GfxInfo;
 
@@ -55,7 +55,8 @@ public class SpinCoin extends Agent {
 		coinShape.setAsBox(BODY_WIDTH/2f,  BODY_HEIGHT/2f);
 		fdef.shape = coinShape;
 		// coin does not touch anything
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(new CFBitSeq(), new CFBitSeq(), this));
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.NO_CONTACT_CFCAT,
+				CommonCF.NO_CONTACT_CFMASK, this));
 	}
 
 	@Override
