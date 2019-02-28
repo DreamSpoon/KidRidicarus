@@ -8,8 +8,8 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.body.AgentBody;
 import kidridicarus.agency.agent.general.WarpPipe;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.tool.B2DFactory;
+import kidridicarus.game.info.GameInfo;
 
 public class WarpPipeBody extends AgentBody {
 	private WarpPipe parent;
@@ -21,8 +21,8 @@ public class WarpPipeBody extends AgentBody {
 
 	private void defineBody(World world, Rectangle bounds) {
 		setBodySize(bounds.width, bounds.height);
-		CFBitSeq catBits = new CFBitSeq(CFBit.PIPE_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.PIPE_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
 		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, catBits, maskBits, bounds);
 	}
 

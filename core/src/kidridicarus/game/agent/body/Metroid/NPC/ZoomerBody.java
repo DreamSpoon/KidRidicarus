@@ -11,11 +11,11 @@ import kidridicarus.agency.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agency.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.agency.tool.DiagonalDir4;
 import kidridicarus.game.agent.Metroid.NPC.Zoomer;
+import kidridicarus.game.info.GameInfo;
 
 public class ZoomerBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
@@ -68,8 +68,8 @@ public class ZoomerBody extends MobileAgentBody {
 		bdef.position.set(position);
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
 
@@ -80,8 +80,8 @@ public class ZoomerBody extends MobileAgentBody {
 		fdef.friction = 0.001f;
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits,
 				new AgentContactSensor(this)));
 	}
@@ -92,8 +92,8 @@ public class ZoomerBody extends MobileAgentBody {
 		PolygonShape boxShape;
 		boxShape = new PolygonShape();
 		boxShape.setAsBox(sizeX/2f, sizeY/2f, new Vector2(posX, posY), 0f);
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		SolidBoundSensor sensor = new SolidBoundSensor(null);

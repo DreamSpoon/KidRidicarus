@@ -9,8 +9,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.agent.body.AgentBody;
 import kidridicarus.agency.agent.general.Room;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.tool.B2DFactory;
+import kidridicarus.game.info.GameInfo;
 
 public class RoomBoxBody extends AgentBody {
 	private Room parent;
@@ -27,8 +27,9 @@ public class RoomBoxBody extends AgentBody {
 		bdef.position.set(bounds.getCenter(new Vector2()));
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.ROOM_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.THE_ONE_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.ROOM_BIT);
+		// room can contact anything
+		CFBitSeq maskBits = new CFBitSeq(true);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width,
 				bounds.height);
 	}

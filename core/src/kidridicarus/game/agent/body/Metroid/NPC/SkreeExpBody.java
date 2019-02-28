@@ -9,10 +9,10 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.body.MobileAgentBody;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.game.agent.Metroid.NPC.SkreeExp;
+import kidridicarus.game.info.GameInfo;
 
 public class SkreeExpBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(6);
@@ -34,8 +34,8 @@ public class SkreeExpBody extends MobileAgentBody {
 		bdef.linearVelocity.set(velocity);
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
 

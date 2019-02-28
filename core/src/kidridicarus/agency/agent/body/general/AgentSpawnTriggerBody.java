@@ -17,9 +17,9 @@ import kidridicarus.agency.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agency.agent.general.AgentSpawnTrigger;
 import kidridicarus.agency.agent.general.AgentSpawner;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
+import kidridicarus.game.info.GameInfo;
 
 public class AgentSpawnTriggerBody extends AgentBody {
 	// if the target position is at least this far away from the current position then reset the b2body
@@ -56,8 +56,8 @@ public class AgentSpawnTriggerBody extends AgentBody {
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.SPAWNTRIGGER_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SPAWNBOX_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.SPAWNTRIGGER_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SPAWNBOX_BIT);
 		acSensor = new AgentContactSensor(this);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, acSensor, catBits, maskBits, bounds.width, bounds.height);
 	}

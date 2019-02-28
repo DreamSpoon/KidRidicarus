@@ -14,10 +14,10 @@ import kidridicarus.agency.agent.body.sensor.AgentContactSensor;
 import kidridicarus.agency.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.game.agent.SMB.player.MarioFireball;
+import kidridicarus.game.info.GameInfo;
 
 public class MarioFireballBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(7f);
@@ -48,8 +48,8 @@ public class MarioFireballBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0f;		// slippery
 		fdef.restitution = 1f;	// bouncy
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT);
 		hmSensor = new SolidBoundSensor(parent);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hmSensor, catBits, maskBits,
 				BODY_WIDTH, BODY_HEIGHT);
@@ -61,8 +61,8 @@ public class MarioFireballBody extends MobileAgentBody {
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.isSensor = true;
 		fdef.shape = boxShape;
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
 		acSensor = new AgentContactSensor(this);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
 	}

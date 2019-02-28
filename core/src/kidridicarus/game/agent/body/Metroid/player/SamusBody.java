@@ -16,10 +16,10 @@ import kidridicarus.agency.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.agency.agent.general.Room;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.game.agent.Metroid.player.Samus;
+import kidridicarus.game.info.GameInfo;
 
 public class SamusBody extends MobileAgentBody {
 	private static final float STAND_BODY_WIDTH = UInfo.P2M(5f);
@@ -92,8 +92,8 @@ public class SamusBody extends MobileAgentBody {
 		bdef.gravityScale = 0.5f;	// floaty
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0.001f;	// (default is 0.2f)
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT);
 		sbSensor = new SolidBoundSensor(this);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, sbSensor, catBits, maskBits,
 				getBodyWidth(), getBodyHeight());
@@ -109,8 +109,9 @@ public class SamusBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT, CFBit.ROOM_BIT, CFBit.ITEM_BIT, CFBit.DESPAWN_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT, GameInfo.CFBits.ROOM_BIT,
+				GameInfo.CFBits.ITEM_BIT, GameInfo.CFBits.DESPAWN_BIT);
 		acSensor = new AgentContactSensor(this);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
 	}
@@ -123,8 +124,8 @@ public class SamusBody extends MobileAgentBody {
 		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBodyHeight()/2f), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT);
 		ogSensor = new OnGroundSensor(null);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
 	}

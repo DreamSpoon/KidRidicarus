@@ -13,10 +13,10 @@ import kidridicarus.agency.agent.body.sensor.OnGroundSensor;
 import kidridicarus.agency.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.game.agent.SMB.item.BaseMushroom;
+import kidridicarus.game.info.GameInfo;
 
 public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
@@ -35,8 +35,8 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		CFBitSeq catBits = new CFBitSeq(CFBit.ITEM_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.AGENT_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.ITEM_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT, GameInfo.CFBits.AGENT_BIT);
 		hmSensor = new SolidBoundSensor(parent);
 		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, catBits, maskBits, position,
 				BODY_WIDTH, BODY_HEIGHT);
@@ -49,8 +49,8 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT);
 		ogSensor = new OnGroundSensor(null);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
 	}

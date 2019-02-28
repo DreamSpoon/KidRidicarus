@@ -8,10 +8,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.body.AgentBody;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.game.agent.SMB.item.StaticCoin;
+import kidridicarus.game.info.GameInfo;
 
 public class StaticCoinBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(16f);
@@ -33,8 +33,8 @@ public class StaticCoinBody extends AgentBody {
 		bdef.type = BodyDef.BodyType.StaticBody;
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.ITEM_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.ITEM_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
 	}
 

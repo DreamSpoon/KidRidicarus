@@ -10,10 +10,10 @@ import kidridicarus.agency.agent.body.MobileAgentBody;
 import kidridicarus.agency.agent.body.optional.BumpableBody;
 import kidridicarus.agency.agent.body.sensor.SolidBoundSensor;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.game.agent.SMB.item.PowerStar;
+import kidridicarus.game.info.GameInfo;
 
 public class PowerStarBody extends MobileAgentBody implements BumpableBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
@@ -38,10 +38,11 @@ public class PowerStarBody extends MobileAgentBody implements BumpableBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.restitution = 1f;	// bouncy
 		// items contact mario but can pass through goombas, turtles, etc.
-		CFBitSeq catBits = new CFBitSeq(CFBit.ITEM_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.AGENT_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.ITEM_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT, GameInfo.CFBits.AGENT_BIT);
 		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hmSensor, catBits, maskBits, BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hmSensor, catBits, maskBits,
+				BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override

@@ -10,9 +10,9 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.body.AgentBody;
 import kidridicarus.agency.agent.body.optional.BumpableTileBody;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.game.agent.SMB.BumpTile;
+import kidridicarus.game.info.GameInfo;
 
 public class BumpTileBody extends AgentBody implements BumpableTileBody {
 	private BumpTile parent;
@@ -30,8 +30,8 @@ public class BumpTileBody extends AgentBody implements BumpableTileBody {
 		bdef.position.set(bounds.getCenter(new Vector2()));
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.BUMPABLE_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.BUMPABLE_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, catBits, maskBits, bounds.width,
 				bounds.height);
 	}

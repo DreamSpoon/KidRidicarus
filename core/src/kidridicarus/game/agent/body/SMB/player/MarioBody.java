@@ -26,7 +26,6 @@ import kidridicarus.agency.agent.optional.HeadBounceAgent;
 import kidridicarus.agency.agent.optional.ItemAgent;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.agency.tool.Direction4;
@@ -35,6 +34,7 @@ import kidridicarus.game.agent.SMB.LevelEndTrigger;
 import kidridicarus.game.agent.SMB.player.Mario;
 import kidridicarus.game.agent.SMB.player.Mario.MarioPowerState;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GameInfo;
 import kidridicarus.game.play.GameAdvice;
 
 /*
@@ -156,8 +156,8 @@ public class MarioBody extends MobileAgentBody {
 		bdef.linearVelocity.set(velocity);
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0.01f;	// (default is 0.2f)
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT);
 		Vector2 size = getBodySize();
 		b2body = B2DFactory.makeSpecialBoxBody(agency.getWorld(), bdef, fdef, null, catBits, maskBits, size.x, size.y);
 	}
@@ -174,8 +174,8 @@ public class MarioBody extends MobileAgentBody {
 			boxShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(2f), new Vector2(0f, UInfo.P2M(-16)), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.SOLID_BOUND_BIT, CFBit.PIPE_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.SOLID_BOUND_BIT, GameInfo.CFBits.PIPE_BIT);
 		ogSensor = new OnGroundSensor(null);
 		// the og chains to the wp sensor, because the wp sensor will be attached to other fixtures
 		ogSensor.chainTo(wpSensor);
@@ -190,8 +190,8 @@ public class MarioBody extends MobileAgentBody {
 		boxShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), UInfo.P2MVector(7, 0), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.PIPE_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.PIPE_BIT);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, wpSensor));
 
 		// left side sensor for detecting warp pipes
@@ -213,8 +213,8 @@ public class MarioBody extends MobileAgentBody {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(16f)), 0f);
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.BUMPABLE_BIT, CFBit.PIPE_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.BUMPABLE_BIT, GameInfo.CFBits.PIPE_BIT);
 		btSensor = new AgentContactSensor(this);
 		btSensor.chainTo(wpSensor);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, btSensor));
@@ -227,8 +227,9 @@ public class MarioBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		CFBitSeq catBits = new CFBitSeq(CFBit.AGENT_BIT);
-		CFBitSeq maskBits = new CFBitSeq(CFBit.AGENT_BIT, CFBit.ROOM_BIT, CFBit.ITEM_BIT, CFBit.DESPAWN_BIT);
+		CFBitSeq catBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT);
+		CFBitSeq maskBits = new CFBitSeq(GameInfo.CFBits.AGENT_BIT, GameInfo.CFBits.ROOM_BIT,
+				GameInfo.CFBits.ITEM_BIT, GameInfo.CFBits.DESPAWN_BIT);
 		acSensor = new AgentContactSensor(this);
 		acBeginSensor = new AgentContactBeginSensor(this);
 		acBeginSensor.chainTo(acSensor);

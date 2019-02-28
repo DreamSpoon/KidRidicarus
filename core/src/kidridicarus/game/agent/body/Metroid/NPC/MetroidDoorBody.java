@@ -9,16 +9,17 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.body.AgentBody;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.contact.CFBitSeq.CFBit;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.game.agent.Metroid.NPC.MetroidDoor;
+import kidridicarus.game.info.GameInfo;
 
 public class MetroidDoorBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(8f);
 	private static final float BODY_HEIGHT = UInfo.P2M(48f);
-	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CFBit.AGENT_BIT, CFBit.SOLID_BOUND_BIT);
-	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CFBit.THE_ONE_BIT);
+	private static final CFBitSeq CFCAT_BITS =
+			new CFBitSeq(GameInfo.CFBits.AGENT_BIT, GameInfo.CFBits.SOLID_BOUND_BIT);
+	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
 	private MetroidDoor parent;
 
