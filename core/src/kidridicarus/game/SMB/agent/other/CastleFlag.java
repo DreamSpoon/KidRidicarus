@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.CastleFlagSprite;
 import kidridicarus.game.info.GfxInfo;
@@ -24,18 +24,15 @@ public class CastleFlag extends Agent {
 	private CastleFlagState curState;
 	private float stateTimer;
 
-	public CastleFlag(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public CastleFlag(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
-		startPosition = new Vector2(adef.bounds.getX() + adef.bounds.getWidth() / 2f,
-				adef.bounds.getY() + adef.bounds.getHeight() / 2f);
-
-		flagSprite = new CastleFlagSprite(agency.getAtlas(), startPosition);
-
+		startPosition = Agent.getStartPoint(properties);
 		isTriggered = false;
 		curState = CastleFlagState.DOWN;
 		stateTimer = 0f;
 
+		flagSprite = new CastleFlagSprite(agency.getAtlas(), startPosition);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
@@ -101,7 +98,8 @@ public class CastleFlag extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		// TODO: return actual position of flag, not just start position
-		return new Rectangle(startPosition.x - BODY_WIDTH/2f, startPosition.y - BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT);
+		return new Rectangle(startPosition.x - BODY_WIDTH/2f, startPosition.y - BODY_HEIGHT/2f,
+				BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override

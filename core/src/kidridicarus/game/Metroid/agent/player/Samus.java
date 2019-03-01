@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
@@ -66,8 +66,8 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	private SamusObserver observer;
 	private SamusSupervisor supervisor;
 
-	public Samus(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public Samus(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		curContactState = ContactState.REGULAR;
 		contactStateTimer = 0f;
@@ -85,7 +85,7 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 		isAutoContinueLeftAirMove = false;
 		shootCooldownTime = agency.getGlobalTimer();
 
-		sBody = new SamusBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
+		sBody = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
 		observer = new SamusObserver(this, agency.getAtlas());
 		supervisor = new SamusSupervisor(this);
@@ -431,13 +431,13 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 		}
 
 		// create shot def
-		AgentDef adef = SamusShot.makeSamusShotDef(position, velocity, this);
+		AgentProperties shotProps = SamusShot.makeAP(this, position, velocity);
 		// check spawn point of shot, if it is in a solid tile then the shot immediately explodes
 		if(agency.isMapPointSolid(position)) {
 			// add the immediate explode property to the properties list
-			adef.properties.put(AgencyKV.Spawn.KEY_EXPIRE, true);
+			shotProps.put(AgencyKV.Spawn.KEY_EXPIRE, true);
 		}
-		agency.createAgent(adef);
+		agency.createAgent(shotProps);
 		agency.playSound(AudioInfo.Sound.Metroid.SHOOT);
 
 		// shot fired, so return true

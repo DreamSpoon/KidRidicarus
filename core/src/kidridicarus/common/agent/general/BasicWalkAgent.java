@@ -4,13 +4,13 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 
 public abstract class BasicWalkAgent extends Agent {
 	private Vector2 constVelocity = new Vector2();
 
-	public BasicWalkAgent(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public BasicWalkAgent(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 	}
 
 	protected void reverseConstVelocity(boolean x, boolean y) {

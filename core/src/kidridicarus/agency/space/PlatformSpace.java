@@ -30,7 +30,7 @@ public class PlatformSpace implements Disposable {
 		// create collision geometry from the layers marked solid in the map
 		agency.createCollisionMap(spaceTemp.getSolidLayers());
 		// create agents from the agent data in the map 
-		agency.createAgents(spaceTemp.getAgentDefs());
+		agency.createAgents(spaceTemp.getAgentProps());
 		// process the agent change queue after creating agents, so that guide (player) spawnpoints can be found
 		agency.processChangeQ();
 	}

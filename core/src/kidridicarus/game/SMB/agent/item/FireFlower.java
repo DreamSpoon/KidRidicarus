@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.agent.optional.ItemAgent;
 import kidridicarus.game.SMB.agent.player.Mario;
@@ -25,10 +25,10 @@ public class FireFlower extends Agent implements ItemAgent {
 	private boolean isSprouting;
 	private Vector2 sproutingPosition;
 
-	public FireFlower(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public FireFlower(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
-		sproutingPosition = adef.bounds.getCenter(new Vector2());
+		sproutingPosition = Agent.getStartPoint(properties);
 		flowerSprite = new FireFlowerSprite(agency.getAtlas(), sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
 
 		stateTimer = 0f;

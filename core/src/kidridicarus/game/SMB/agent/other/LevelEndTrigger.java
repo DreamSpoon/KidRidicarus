@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.game.SMB.agentbody.other.LevelEndBody;
 import kidridicarus.game.info.GameKV;
@@ -14,9 +14,9 @@ import kidridicarus.game.info.GameKV;
 public class LevelEndTrigger extends Agent {
 	private LevelEndBody leBody;
 
-	public LevelEndTrigger(Agency agency, AgentDef adef) {
-		super(agency, adef);
-		leBody = new LevelEndBody(this, agency.getWorld(), adef.bounds);
+	public LevelEndTrigger(Agency agency, AgentProperties properties) {
+		super(agency, properties);
+		leBody = new LevelEndBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 	}
 
 	@Override

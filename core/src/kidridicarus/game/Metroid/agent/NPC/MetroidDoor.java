@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.common.agent.optional.DamageableAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.MetroidDoorBody;
@@ -27,17 +27,16 @@ public class MetroidDoor extends Agent implements DamageableAgent {
 	private MoveState moveState;
 	private float stateTimer;
 
-	public MetroidDoor(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public MetroidDoor(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		isFacingRight = false;
-		if(adef.properties.get(AgencyKV.KEY_DIRECTION, "", String.class).equals(AgencyKV.VAL_RIGHT))
-			isFacingRight = true;
+		isFacingRight = properties.containsKV(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT);
 		isOpening = false;
 		moveState = MoveState.CLOSED;
 		stateTimer = 0f;
 
-		mdBody = new MetroidDoorBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
+		mdBody = new MetroidDoorBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		mdSprite = new MetroidDoorSprite(agency.getAtlas(), mdBody.getPosition(), isFacingRight);
 
 		agency.enableAgentUpdate(this);

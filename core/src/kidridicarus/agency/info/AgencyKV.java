@@ -2,6 +2,7 @@ package kidridicarus.agency.info;
 
 /*
  * Agency Key Value Info
+ * TODO: some of this (all of this?) should be moved to GameKV.
  */
 public class AgencyKV {
 	public static final String VAL_TRUE = "true";
@@ -12,14 +13,6 @@ public class AgencyKV {
 	public static final String VAL_RIGHT = "right";
 	public static final String VAL_UP = "up";
 	public static final String VAL_DOWN = "down";
-
-	public class DrawOrder {
-		public static final String KEY_DRAWORDER = "draworder";
-	}
-
-	public class Layer {
-		public static final String KEY_SOLIDLAYER = "solidlayer";
-	}
 
 	public class Spawn {
 		public static final String KEY_AGENTCLASS = "agentclass";
@@ -40,6 +33,13 @@ public class AgencyKV {
 
 		// passed to something that needs to expire immediately
 		public static final String KEY_EXPIRE = "expire";
+
+		public static final String KEY_START_POINT = "start_position";
+		public static final String KEY_START_BOUNDS = "start_bounds";
+		// used by tile agent constructors (e.g. breakable brick tile blocks)
+		public static final String KEY_START_TEXREGION = "start_texregion";
+		public static final String KEY_START_VELOCITY = "start_velocity";
+		public static final String KEY_START_PARENTAGENT = "start_parentagent";
 	}
 
 	public class Room {
@@ -49,5 +49,13 @@ public class AgencyKV {
 		public static final String KEY_ROOMTYPE = "roomtype";
 		public static final String VAL_ROOMTYPE_CENTER = "center";
 		public static final String VAL_ROOMTYPE_HSCROLL = "hscroll";
+	}
+
+	public class DrawOrder {
+		public static final String KEY_DRAWORDER = "draworder";
+	}
+
+	public class Layer {
+		public static final String KEY_SOLIDLAYER = "solidlayer";
 	}
 }

@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.change.AgencyChangeQueue;
 import kidridicarus.agency.change.AgentPlaceholder;
 import kidridicarus.agency.change.DrawOrderChange;
@@ -164,23 +164,27 @@ public class Agency implements Disposable {
 		agencyIndex.addMapDrawLayers(drawLayers);
 	}
 
-	public void createAgents(Collection<AgentDef> agentDefs) {
-		Iterator<AgentDef> adIter = agentDefs.iterator();
-		while(adIter.hasNext()) {
-			AgentDef aDef = adIter.next();
+//	public void createAgents(Collection<AgentDef> agentDefs) {
+	public void createAgents(Collection<AgentProperties> agentProps) {
+		Iterator<AgentProperties> apIter = agentProps.iterator();
+		while(apIter.hasNext()) {
+			AgentProperties aDef = apIter.next();
 			createAgent(aDef);
 		}
 	}
 
 	/*
-	 * Create an agent based on the adef.
+	 * Create an agent from the given agent properties.
 	 * See website:
 	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
 	 */
-	public Agent createAgent(AgentDef adef) {
-		String desiredAgentClass = adef.properties.get(AgencyKV.Spawn.KEY_AGENTCLASS, String.class);
+//	public Agent createAgent(AgentDef adef) {
+	public Agent createAgent(AgentProperties properties) {
+		String agentClassAlias = properties.get(AgencyKV.Spawn.KEY_AGENTCLASS, null, String.class);
+		if(agentClassAlias == null)
+			throw new IllegalArgumentException("'agentclass' key not found in agent definition.");
 
-		Class<?> agentClass = allAgentsClassList.get(desiredAgentClass);
+		Class<?> agentClass = allAgentsClassList.get(agentClassAlias);
 		if(agentClass == null)
 			return null;
 
@@ -192,8 +196,8 @@ public class Agency implements Disposable {
 		AgentPlaceholder agentPlaceholder = new AgentPlaceholder(null);
 		agencyChangeQ.addAgent(agentPlaceholder);
 		try {
-			constructor = agentClass.getConstructor(new Class[] { Agency.class, AgentDef.class });
-			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { this, adef });
+			constructor = agentClass.getConstructor(new Class[] { Agency.class, AgentProperties.class });
+			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { this, properties });
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -288,7 +292,7 @@ public class Agency implements Disposable {
 	/*
 	 * Never returns null. If no agent(s) are found, returns an empty collection.
 	 */
-	private Collection<Agent> getAgentsByPropertiesInt(final String[] keys, final String[] vals,
+	private Collection<Agent> getAgentsByPropertiesInt(final String[] keys, final Object[] vals,
 			final boolean firstOnly) {
 		final LinkedList<Agent> ret = new LinkedList<Agent>();
 		if(keys.length != vals.length)
@@ -298,7 +302,7 @@ public class Agency implements Disposable {
 		agencyIndex.iterateThroughAllAgents(new AgentIter() {
 				@Override
 				public boolean iterate(Agent agent) {
-					boolean ignore = false;
+/*					boolean ignore = false;
 					for(int i=0; i<keys.length; i++) {
 						// If the key is not found, or the value doesn't match then ignore this agent (if the value 
 						// to match is null then don't check value).
@@ -311,9 +315,10 @@ public class Agency implements Disposable {
 					// continue iterating if the right agent was *almost* found
 					if(ignore)
 						return false;
-					// this agent had all the right keys and values, so return it
-					ret.add(agent);
-					// return only first agent found?
+*/
+					if(agent.containsPropertyKV(keys, vals))
+						ret.add(agent);
+
 					return firstOnly;
 				}
 			});

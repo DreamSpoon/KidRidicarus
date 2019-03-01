@@ -2,7 +2,6 @@ package kidridicarus.agency.space;
 
 import java.util.LinkedList;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapProperties;
@@ -10,9 +9,9 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.Rectangle;
 
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.DrawOrderAlias;
 import kidridicarus.agency.info.AgencyKV;
@@ -25,58 +24,50 @@ public class SpaceTemplateLoader {
 		SpaceTemplate ret = new SpaceTemplate();
 		TiledMap tiledMap = (new TmxMapLoader()).load(spaceFilename);
 		ret.setMap(tiledMap, drawOrderAliasList);
-		ret.addAgentDefs(makeAgentDefsFromLayers(tiledMap.getLayers()));
+		ret.addAgentProps(makeAgentPropsFromLayers(tiledMap.getLayers()));
 		return ret;
 	}
 
-	private static LinkedList<AgentDef> makeAgentDefsFromLayers(MapLayers layers) {
-		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
+	private static LinkedList<AgentProperties> makeAgentPropsFromLayers(MapLayers layers) {
+		LinkedList<AgentProperties> agentProps = new LinkedList<AgentProperties>();
 		for(MapLayer layer : layers)
-			agentDefs.addAll(makeAgentDefsFromLayer(layer));
-		return agentDefs;
+			agentProps.addAll(makeAgentPropsFromLayer(layer));
+		return agentProps;
 	}
 
-	private static LinkedList<AgentDef> makeAgentDefsFromLayer(MapLayer layer) {
+	private static LinkedList<AgentProperties> makeAgentPropsFromLayer(MapLayer layer) {
 		if(layer instanceof TiledMapTileLayer)
-			return makeAgentDefsFromTileLayer((TiledMapTileLayer) layer);
+			return makeAgentPropsFromTileLayer((TiledMapTileLayer) layer);
 		else
-			return makeAgentDefsFromObjLayer(layer);
+			return makeAgentPropsFromObjLayer(layer);
 	}
 
-	private static LinkedList<AgentDef> makeAgentDefsFromTileLayer(TiledMapTileLayer layer) {
-		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
+	private static LinkedList<AgentProperties> makeAgentPropsFromTileLayer(TiledMapTileLayer layer) {
+		LinkedList<AgentProperties> agentProps = new LinkedList<AgentProperties>();
 		if(!layer.getProperties().containsKey(AgencyKV.Spawn.KEY_AGENTCLASS))
-			return agentDefs;	// if no agentclass then return empty list of agent defs
+			return agentProps;	// if no agentclass then return empty list of agent properties
 
-		// create list of agent defs
+		// create list of AgentProperties objects with some tile info and info from the layer's MapProperties
 		for(int y=0; y<layer.getHeight(); y++) {
 			for(int x=0; x<layer.getWidth(); x++) {
 				if(layer.getCell(x, y) == null || layer.getCell(x, y).getTile() == null)
 					continue;
-				agentDefs.add(makeAgentDef(UInfo.getP2MTileRect(x, y), layer.getProperties(),
+				agentProps.add(Agent.createTileAP(layer.getProperties(), UInfo.getP2MTileRect(x, y),
 						layer.getCell(x,  y).getTile().getTextureRegion()));
 			}
 		}
-		return agentDefs;
+		return agentProps;
 	}
 
-	private static LinkedList<AgentDef> makeAgentDefsFromObjLayer(MapLayer layer) {
-		LinkedList<AgentDef> agentDefs = new LinkedList<AgentDef>();
+	private static LinkedList<AgentProperties> makeAgentPropsFromObjLayer(MapLayer layer) {
+		LinkedList<AgentProperties> agentProps = new LinkedList<AgentProperties>();
 		for(RectangleMapObject rect : layer.getObjects().getByType(RectangleMapObject.class)) {
-			// combine the layer and object properties and pass to the agent def creator
+			// combine the layer and object properties and pass to the agent properties creator
 			MapProperties combined = new MapProperties();
 			combined.putAll(layer.getProperties());
 			combined.putAll(rect.getProperties());
-			agentDefs.add(makeAgentDef(UInfo.P2MRect(rect.getRectangle()), combined, null));
+			agentProps.add(Agent.createRectangleAP(combined, UInfo.P2MRect(rect.getRectangle())));
 		}
-		return agentDefs;
-	}
-
-	private static AgentDef makeAgentDef(Rectangle bounds, MapProperties properties, TextureRegion tileTexRegion) {
-		AgentDef adef = new AgentDef();
-		adef.bounds = bounds;
-		adef.properties = properties;
-		adef.tileTexRegion = tileTexRegion;
-		return adef;
+		return agentProps;
 	}
 }

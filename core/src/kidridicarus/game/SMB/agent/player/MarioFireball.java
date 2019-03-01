@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.DamageableAgent;
@@ -20,61 +20,84 @@ public class MarioFireball extends BasicWalkAgent {
 	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
 	private static final float MAX_Y_VEL = 2.0f;
 
-	private Agent parent;
+	private Mario parent;
 
 	private MarioFireballBody fbBody;
 	private MarioFireballSprite fireballSprite;
 
-	public enum FireballState { FLY, EXPLODE }
-	private FireballState prevState;
+	public enum MoveState { FLY, EXPLODE }
+	private MoveState curMoveState;
 	private float stateTimer;
 	private boolean isMovingRight;	
 
 	private enum ContactState { NONE, WALL, AGENT }
 	private ContactState contactState;
 
-	public MarioFireball(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public MarioFireball(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
-		parent = (Agent) adef.userData;
+		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Mario.class);
 
-		Vector2 position = adef.bounds.getCenter(new Vector2());
-		fireballSprite = new MarioFireballSprite(agency.getAtlas(), position);
+		contactState = ContactState.NONE;
+		curMoveState = MoveState.FLY;
+		stateTimer = 0f;
 
 		// fireball on right?
-		if(properties.containsKey(AgencyKV.KEY_DIRECTION) &&
-				properties.get(AgencyKV.KEY_DIRECTION, String.class).equals(AgencyKV.VAL_RIGHT)) {
+		if(properties.containsKV(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT)) {
 			isMovingRight = true;
-			fbBody = new MarioFireballBody(this, agency.getWorld(), position, MOVE_VEL.cpy().scl(1, 1));
+			fbBody = new MarioFireballBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+					MOVE_VEL.cpy().scl(1, 1));
 		}
 		// fireball on left
 		else {
 			isMovingRight = false;
-			fbBody = new MarioFireballBody(this, agency.getWorld(), position, MOVE_VEL.cpy().scl(-1, 1));
+			fbBody = new MarioFireballBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+					MOVE_VEL.cpy().scl(-1, 1));
 		}
 
-		prevState = FireballState.FLY;
-		stateTimer = 0f;
-		contactState = ContactState.NONE;
+		fireballSprite = new MarioFireballSprite(agency.getAtlas(), fbBody.getPosition());
 
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
-	private FireballState getState() {
+	private MoveState getState() {
 		if(contactState == ContactState.NONE)
-			return FireballState.FLY;
-		return FireballState.EXPLODE;
+			return MoveState.FLY;
+		return MoveState.EXPLODE;
 	}
 
 	@Override
 	public void update(float delta) {
 		processContacts();
+		processMove(delta);
+		processSprite(delta);
+	}
 
-		FireballState curState = getState();
-		switch(curState) {
+	private void processContacts() {
+		// if hit a wall or bounced off of something...
+		if(fbBody.isMoveBlocked(isMovingRight) || (fbBody.getVelocity().x <= 0f && isMovingRight) ||
+				(fbBody.getVelocity().x >= 0f && !isMovingRight)) {
+			contactState = ContactState.WALL;
+			return;
+		}
+
+		// check for agents needing damage, and damage the first one
+		for(Agent a : fbBody.getContactAgentsByClass(DamageableAgent.class)) {
+			if(a == parent)
+				continue;
+			((DamageableAgent) a).onDamage(parent, 1f, fbBody.getPosition());
+			// at least one agent contact
+			contactState = ContactState.AGENT;
+			break;
+		}
+	}
+
+	private void processMove(float delta) {
+		MoveState nextMoveState = getState();
+		switch(nextMoveState) {
 			case EXPLODE:
-				if(curState != prevState) {
+				if(nextMoveState != curMoveState) {
 					fbBody.disableAllContacts();
 					fbBody.setVelocity(0f, 0f);
 					fbBody.setGravityScale(0f);
@@ -95,31 +118,14 @@ public class MarioFireball extends BasicWalkAgent {
 		else if(fbBody.getVelocity().y < -MAX_Y_VEL)
 			fbBody.setVelocity(fbBody.getVelocity().x, -MAX_Y_VEL);
 
-		// update sprite position and graphic
-		fireballSprite.update(delta, fbBody.getPosition(), curState);
-
 		// increment state timer if state stayed the same, otherwise reset timer
-		stateTimer = curState == prevState ? stateTimer+delta : 0f;
-		prevState = curState;
+		stateTimer = nextMoveState == curMoveState ? stateTimer+delta : 0f;
+		curMoveState = nextMoveState;
 	}
 
-	private void processContacts() {
-		// if hit a wall or bounced off of something...
-		if(fbBody.isMoveBlocked(isMovingRight) || (fbBody.getVelocity().x <= 0f && isMovingRight) ||
-				(fbBody.getVelocity().x >= 0f && !isMovingRight)) {
-			contactState = ContactState.WALL;
-			return;
-		}
-
-		// check for agents needing damage, and damage the first one
-		for(Agent a : fbBody.getContactAgentsByClass(DamageableAgent.class)) {
-			if(a == parent)
-				continue;
-			((DamageableAgent) a).onDamage(parent, 1f, fbBody.getPosition());
-			// at least one agent contact
-			contactState = ContactState.AGENT;
-			break;
-		}
+	private void processSprite(float delta) {
+		// update sprite position and graphic
+		fireballSprite.update(delta, fbBody.getPosition(), curMoveState);
 	}
 
 	@Override
@@ -147,14 +153,13 @@ public class MarioFireball extends BasicWalkAgent {
 		fbBody.dispose();
 	}
 
-	public static AgentDef makeMarioFireballDef(Vector2 position, boolean right,
-			Mario parentAgent) {
-		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.SMB.VAL_MARIOFIREBALL, position);
-		adef.userData = parentAgent;
+	public static AgentProperties makeAP(Vector2 position, boolean right, Mario parentAgent) {
+		AgentProperties props = Agent.createPointAP(GameKV.SMB.VAL_MARIOFIREBALL, position);
+		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		if(right)
-			adef.properties.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT);
+			props.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT);
 		else
-			adef.properties.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_LEFT);
-		return adef;
+			props.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_LEFT);
+		return props;
 	}
 }

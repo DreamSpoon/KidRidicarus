@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.common.agent.optional.DamageableAgent;
 import kidridicarus.game.Metroid.agentbody.player.SamusShotBody;
@@ -27,10 +27,10 @@ public class SamusShot extends Agent {
 	private boolean isExploding;
 	private float stateTimer;
 
-	public SamusShot(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public SamusShot(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
-		parent = (Samus) adef.userData;
+		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Samus.class);
 
 		// check the definition properties, maybe the shot needs to expire immediately
 		isExploding = properties.containsKey(AgencyKV.Spawn.KEY_EXPIRE);
@@ -40,7 +40,8 @@ public class SamusShot extends Agent {
 			curMoveState = MoveState.LIVE;
 		stateTimer = 0f;
 
-		shotBody = new SamusShotBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()), adef.velocity);
+		shotBody = new SamusShotBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+				Agent.getStartVelocity(properties));
 		shotSprite = new SamusShotSprite(agency.getAtlas(), shotBody.getPosition());
 
 		agency.enableAgentUpdate(this);
@@ -133,10 +134,10 @@ public class SamusShot extends Agent {
 		shotBody.dispose();
 	}
 
-	public static AgentDef makeSamusShotDef(Vector2 position, Vector2 velocity, Samus parentAgent) {
-		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.Metroid.VAL_SAMUS_SHOT, position);
-		adef.velocity.set(velocity);
-		adef.userData = parentAgent;
-		return adef;
+	// make the AgentProperties (AP) for this class of Agent
+	public static AgentProperties makeAP(Samus parentAgent, Vector2 position, Vector2 velocity) {
+		AgentProperties props = Agent.createPointAP(GameKV.Metroid.VAL_SAMUS_SHOT, position, velocity);
+		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
+		return props;
 	}
 }

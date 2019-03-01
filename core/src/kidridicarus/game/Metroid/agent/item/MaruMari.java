@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.common.agent.optional.ItemAgent;
 import kidridicarus.common.agent.optional.ReceivePowerupAgent;
 import kidridicarus.game.Metroid.agentbody.item.MaruMariBody;
@@ -18,10 +18,9 @@ public class MaruMari extends Agent implements ItemAgent {
 	private MaruMariBody mmBody;
 	private MaruMariSprite mmSprite;
 
-	public MaruMari(Agency agency, AgentDef adef) {
-		super(agency, adef);
-
-		mmBody = new MaruMariBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
+	public MaruMari(Agency agency, AgentProperties agentProps) {
+		super(agency, agentProps);
+		mmBody = new MaruMariBody(this, agency.getWorld(), Agent.getStartPoint(agentProps));
 		mmSprite = new MaruMariSprite(agency.getAtlas(), mmBody.getPosition());
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 		agency.enableAgentUpdate(this);

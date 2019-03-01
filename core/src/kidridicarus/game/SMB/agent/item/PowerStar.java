@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.ItemAgent;
@@ -36,14 +36,14 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 	private float stateTimer;
 	private StarState prevState;
 
-	public PowerStar(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public PowerStar(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		// start in the SPROUT state
 		isSprouting = true;
 		setConstVelocity(START_BOUNCE_VEL);
 		starBody = null;
-		sproutingPosition = adef.bounds.getCenter(new Vector2());
+		sproutingPosition = Agent.getStartPoint(properties);
 		starSprite = new PowerStarSprite(agency.getAtlas(), sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
 
 		prevState = StarState.SPROUT;

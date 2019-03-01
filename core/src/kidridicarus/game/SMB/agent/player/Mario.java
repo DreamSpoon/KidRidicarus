@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.agent.AgentObserverPlus;
@@ -76,8 +76,8 @@ public class Mario extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	private MarioObserver observer;
 	private MarioSupervisor supervisor;
 
-	public Mario(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public Mario(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		marioIsDead = false;
 		prevFrameAdvisedShoot = false;
@@ -102,12 +102,8 @@ public class Mario extends Agent implements PlayerAgent, ReceivePowerupAgent {
 		coinTotal = pointTotal = 0;
 		consecBouncePoints = PointAmount.ZERO;
 
-		// physic
-		mBody = new MarioBody(this, agency, adef.bounds.getCenter(new Vector2()), true, false);
-
-		// graphic
-		marioSprite = new MarioSprite(agency.getAtlas(), adef.bounds.getCenter(new Vector2()),
-				curPowerState);
+		mBody = new MarioBody(this, agency, Agent.getStartPoint(properties), true, false);
+		marioSprite = new MarioSprite(agency.getAtlas(), mBody.getPosition(), curPowerState);
 
 		observer = new MarioObserver(this, agency.getAtlas());
 		supervisor = new MarioSupervisor(this);
@@ -333,7 +329,7 @@ public class Mario extends Agent implements PlayerAgent, ReceivePowerupAgent {
 		else
 			offset = mBody.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
-		agency.createAgent(MarioFireball.makeMarioFireballDef(offset, mBody.isFacingRight(), this));
+		agency.createAgent(MarioFireball.makeAP(offset, mBody.isFacingRight(), this));
 		agency.playSound(AudioInfo.Sound.SMB.FIREBALL);
 	}
 
@@ -341,7 +337,7 @@ public class Mario extends Agent implements PlayerAgent, ReceivePowerupAgent {
 		// apply powerup if received
 		switch(powerupRec) {
 			case MUSH1UP:
-				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1UP, false,
+				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1UP, false,
 						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case MUSHROOM:
@@ -351,7 +347,7 @@ public class Mario extends Agent implements PlayerAgent, ReceivePowerupAgent {
 							mBody.getVelocity(), true);
 					agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 				}
-				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
+				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, false,
 						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case FIREFLOWER:
@@ -365,14 +361,14 @@ public class Mario extends Agent implements PlayerAgent, ReceivePowerupAgent {
 					curPowerState = MarioPowerState.FIRE;
 					agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 				}
-				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
+				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, false,
 						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case POWERSTAR:
 				powerStarTimer = POWERSTAR_TIME;
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 				observer.startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
-				agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P1000, false,
+				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, false,
 						mBody.getPosition(), UInfo.P2M(16), this));
 				break;
 			case NONE:

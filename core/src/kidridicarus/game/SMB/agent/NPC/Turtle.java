@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.ContactDmgAgent;
@@ -59,13 +59,9 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 	private Vector2 deadVelocity;
 	private Agent perp;
 
-	public Turtle(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public Turtle(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
-		turtleBody = new TurtleBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
-		turtleSprite = new TurtleSprite(agency.getAtlas(), adef.bounds.getCenter(new Vector2()));
-
-		setConstVelocity(-WALK_VEL, 0f);
 		facingRight = false;
 		isHiding = false;
 		isWaking = false;
@@ -76,10 +72,12 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		perp = null;
 		// the more sequential hits while sliding the higher the points per hit
 		slidingTotal = PointAmount.ZERO;
-
+		setConstVelocity(-WALK_VEL, 0f);
 		moveState = MoveState.NONE;
 		moveStateTimer = 0f;
 
+		turtleBody = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		turtleSprite = new TurtleSprite(agency.getAtlas(), turtleBody.getPosition());
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
@@ -226,7 +224,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		agency.playSound(AudioInfo.Sound.SMB.KICK);
 		slidingTotal = PointAmount.P400;
 		if(perp != null) {
-			agency.createAgent(FloatingPoints.makeFloatingPointsDef(slidingTotal, isHeadBounced,
+			agency.createAgent(FloatingPoints.makeAP(slidingTotal, isHeadBounced,
 					turtleBody.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
@@ -236,7 +234,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		turtleBody.zeroVelocity(true, true);
 		agency.playSound(AudioInfo.Sound.SMB.STOMP);
 		if(perp != null) {
-			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P100, isHeadBounced,
+			agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, isHeadBounced,
 					turtleBody.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
@@ -252,7 +250,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		turtleBody.disableAllContacts();
 		turtleBody.setVelocity(deadVelocity);
 		if(perp != null) {
-			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P500, isHeadBounced,
+			agency.createAgent(FloatingPoints.makeAP(PointAmount.P500, isHeadBounced,
 					turtleBody.getPosition(), UInfo.P2M(16), perp));
 		}
 	}

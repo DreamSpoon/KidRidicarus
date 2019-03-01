@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.ItemAgent;
@@ -38,10 +38,10 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 
 	protected abstract TextureRegion getMushroomTextureRegion(TextureAtlas atlas);
 
-	public BaseMushroom(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public BaseMushroom(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
-		sproutingPosition = adef.bounds.getCenter(new Vector2()); 
+		sproutingPosition = Agent.getStartPoint(properties); 
 		mSprite = new MushroomSprite(getMushroomTextureRegion(agency.getAtlas()),
 				sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
 

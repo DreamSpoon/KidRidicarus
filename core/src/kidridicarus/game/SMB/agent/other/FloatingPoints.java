@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.SMB.agent.player.Mario;
@@ -14,7 +14,6 @@ import kidridicarus.game.SMB.agentsprite.other.FloatingPointsSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
-import kidridicarus.game.info.SMBInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
 /*
@@ -35,22 +34,23 @@ public class FloatingPoints extends Agent {
 	private float stateTimer;
 	private Vector2 originalPosition;
 
-	public FloatingPoints(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public FloatingPoints(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
-		originalPosition = adef.bounds.getCenter(new Vector2());
+		originalPosition = Agent.getStartPoint(properties);
 
 		// default to zero points
 		PointAmount amount = PointAmount.ZERO;
 		// check for point amount property
-		if(adef.properties.containsKey(GameKV.SMB.KEY_POINTAMOUNT))
-			amount = SMBInfo.strToPointAmount(adef.properties.get(GameKV.SMB.KEY_POINTAMOUNT, String.class));
+		if(properties.containsKey(GameKV.SMB.KEY_POINTAMOUNT))
+			amount = properties.get(GameKV.SMB.KEY_POINTAMOUNT, null, PointAmount.class);
 
+		Agent ud = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Agent.class);
 		// give points to player and get the actual amount awarded (since player may have points multiplier)
-		if(adef.userData != null && adef.userData instanceof Mario) {
+		if(ud != null && ud instanceof Mario) {
 			// relative points can stack, absolute points can not
-			amount = ((Mario) adef.userData).givePoints(amount, adef.properties.get(
-					GameKV.SMB.KEY_RELPOINTAMOUNT, "", String.class).equals(AgencyKV.VAL_TRUE));
+			amount = ((Mario) ud).givePoints(amount, properties.containsKV(GameKV.SMB.KEY_RELPOINTAMOUNT,
+					AgencyKV.VAL_TRUE));
 			if(amount == PointAmount.P1UP)
 				agency.playSound(AudioInfo.Sound.SMB.UP1);
 		}
@@ -87,21 +87,21 @@ public class FloatingPoints extends Agent {
 	}
 
 	@Override
-	public void dispose() {
-	}
-
-	public static AgentDef makeFloatingPointsDef(PointAmount amt, boolean relative, Vector2 position,
-			float yOffset, Agent parentAgent) {
-		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.SMB.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
-		adef.properties.put(GameKV.SMB.KEY_POINTAMOUNT, SMBInfo.pointAmountToStr(amt));
-		if(relative)
-			adef.properties.put(GameKV.SMB.KEY_RELPOINTAMOUNT, AgencyKV.VAL_TRUE);
-		adef.userData = parentAgent;
-		return adef;
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
+	public void dispose() {
+	}
+
+	public static AgentProperties makeAP(PointAmount amt, boolean relative, Vector2 position,
+			float yOffset, Agent parentAgent) {
+		AgentProperties props = Agent.createPointAP(GameKV.SMB.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
+		props.put(GameKV.SMB.KEY_POINTAMOUNT, amt);
+		if(relative)
+			props.put(GameKV.SMB.KEY_RELPOINTAMOUNT, AgencyKV.VAL_TRUE);
+		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
+		return props;
 	}
 }

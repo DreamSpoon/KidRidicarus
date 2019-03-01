@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.SuperAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
@@ -69,7 +68,7 @@ public class PlayCoordinator implements Disposable {
 
 		this.agent = agent;
 		this.playAgent = (PlayerAgent) agent;
-		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(AgentSpawnTrigger.makeAgentSpawnTriggerDef(
+		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(AgentSpawnTrigger.makeAP(
 				playAgent.getObserver().getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 		spawnTrigger.setEnabled(true);
 
@@ -139,12 +138,12 @@ public class PlayCoordinator implements Disposable {
 		switch(pc) {
 			default:
 			case MARIO:
-				agent = agency.createAgent(AgentDef.makePointBoundsDef(GameKV.SMB.VAL_MARIO, currentPos));
+				agent = agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_MARIO, currentPos));
 				playAgent = (PlayerAgent) agent;
 				setPlayAgentHUD();
 				break;
 			case SAMUS:
-				agent = agency.createAgent(AgentDef.makePointBoundsDef(GameKV.Metroid.VAL_SAMUS, currentPos));
+				agent = agency.createAgent(Agent.createPointAP(GameKV.Metroid.VAL_SAMUS, currentPos));
 				playAgent = (PlayerAgent) agent;
 				setPlayAgentHUD();
 				break;

@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.common.agent.optional.ContactDmgAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.SkreeExpBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.SkreeExpSprite;
@@ -19,14 +19,12 @@ public class SkreeExp extends Agent implements ContactDmgAgent {
 	private SkreeExpSprite seSprite;
 	private float stateTimer;
 
-	public SkreeExp(Agency agency, AgentDef adef) {
-		super(agency, adef);
-
+	public SkreeExp(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 		stateTimer = 0f;
-
-		seBody = new SkreeExpBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()), adef.velocity);
+		seBody = new SkreeExpBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+				Agent.getStartVelocity(properties));
 		seSprite = new SkreeExpSprite(agency.getAtlas(), seBody.getPosition());
-
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}

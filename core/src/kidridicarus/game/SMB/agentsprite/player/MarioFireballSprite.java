@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.SMB.agent.player.MarioFireball.FireballState;
+import kidridicarus.game.SMB.agent.player.MarioFireball.MoveState;
 import kidridicarus.game.info.SMBAnim;
 
 public class MarioFireballSprite extends Sprite {
@@ -21,7 +21,7 @@ public class MarioFireballSprite extends Sprite {
 	private Animation<TextureRegion> ballAnim;
 	private Animation<TextureRegion> explodeAnim;
 	private float stateTimer;
-	private FireballState prevState;
+	private MoveState prevState;
 
 	public MarioFireballSprite(TextureAtlas atlas, Vector2 position) {
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED_FLY,
@@ -35,12 +35,12 @@ public class MarioFireballSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
 		stateTimer = 0f;
-		prevState = FireballState.FLY;
+		prevState = MoveState.FLY;
 	}
 
-	public void update(float delta, Vector2 position, FireballState curState) {
+	public void update(float delta, Vector2 position, MoveState curState) {
 		// change the size of the sprite when it changes to an explosion
-		if(curState == FireballState.EXPLODE && prevState != FireballState.EXPLODE)
+		if(curState == MoveState.EXPLODE && prevState != MoveState.EXPLODE)
 			setBounds(getX(), getY(), SPR_EXPWIDTH, SPR_EXPHEIGHT);
 
 		stateTimer = curState == prevState ? stateTimer+delta : 0f;
@@ -60,6 +60,6 @@ public class MarioFireballSprite extends Sprite {
 	}
 
 	public boolean isExplodeFinished() {
-		return (explodeAnim.isAnimationFinished(stateTimer) && prevState == FireballState.EXPLODE);
+		return (explodeAnim.isAnimationFinished(stateTimer) && prevState == MoveState.EXPLODE);
 	}
 }

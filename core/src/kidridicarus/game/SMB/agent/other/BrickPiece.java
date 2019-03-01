@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.SMB.agentsprite.other.BrickPieceSprite;
@@ -26,19 +26,14 @@ public class BrickPiece extends Agent {
 	private BrickPieceSprite bpSprite;
 	private float stateTimer;
 
-	public BrickPiece(Agency agency, AgentDef adef) {
-		super(agency, adef);
-
-		Vector2 pos = adef.bounds.getCenter(new Vector2());
-		defineBody(pos, adef.velocity);
-
-		int startFrame = 0;
-		if(properties.containsKey(GameKV.Sprite.KEY_STARTFRAME))
-			startFrame = properties.get(GameKV.Sprite.KEY_STARTFRAME, Integer.class);
-		bpSprite = new BrickPieceSprite(agency.getAtlas(), pos, startFrame);
+	public BrickPiece(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		stateTimer = 0f;
 
+		defineBody(Agent.getStartPoint(properties), Agent.getStartVelocity(properties));
+		bpSprite = new BrickPieceSprite(agency.getAtlas(), b2body.getPosition(),
+				properties.get(GameKV.Sprite.KEY_STARTFRAME, 0, Integer.class));
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
@@ -95,5 +90,11 @@ public class BrickPiece extends Agent {
 	@Override
 	public void dispose() {
 		b2body.getWorld().destroyBody(b2body);
+	}
+
+	public static AgentProperties makeAP(Vector2 position, Vector2 velocity, int startFrame) {
+		AgentProperties props = Agent.createPointAP(GameKV.SMB.VAL_BRICKPIECE, position, velocity);
+		props.put(GameKV.Sprite.KEY_STARTFRAME, startFrame);
+		return props;
 	}
 }

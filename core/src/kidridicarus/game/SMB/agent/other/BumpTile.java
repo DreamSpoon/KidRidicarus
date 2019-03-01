@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
@@ -57,8 +57,8 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 	private Agent bumpingAgent;
 	private boolean wasHitByBig;
 
-	public BumpTile(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public BumpTile(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		isHit = false;
 		bumpingAgent = null;
@@ -70,36 +70,31 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		coin10BumpResetTimer = 0;
 		coin10EndTimer = 0;
 
-		isQ = false;
-		if(adef.properties.containsKey(GameKV.SMB.KEY_QBLOCK))
-			isQ = true;
+		isQ = properties.containsKey(GameKV.SMB.KEY_QBLOCK);
 
 		blockItem = BlockItem.NONE;
-		if(adef.properties.containsKey(GameKV.SMB.KEY_SPAWNITEM)) {
-			String spawnItem = adef.properties.get(GameKV.SMB.KEY_SPAWNITEM, String.class);
-			if(spawnItem.equals(GameKV.SMB.VAL_COIN))
-				blockItem = BlockItem.COIN;
-			else if(spawnItem.equals(GameKV.SMB.VAL_COIN10)) {
-				blockItem = BlockItem.COIN10;
-				coin10Coins = 10;
-				coin10BumpResetTimer = 0f;
-				coin10EndTimer = 0f;
-			}
-			else if(spawnItem.equals(GameKV.SMB.VAL_MUSHROOM))
-				blockItem = BlockItem.MUSHROOM;
-			else if(spawnItem.equals(GameKV.SMB.VAL_POWERSTAR))
-				blockItem = BlockItem.STAR;
-			else if(spawnItem.equals(GameKV.SMB.VAL_MUSH1UP))
-				blockItem = BlockItem.MUSH1UP;
+		String spawnItem = properties.get(GameKV.SMB.KEY_SPAWNITEM, "", String.class);
+		if(spawnItem.equals(GameKV.SMB.VAL_COIN))
+			blockItem = BlockItem.COIN;
+		else if(spawnItem.equals(GameKV.SMB.VAL_COIN10)) {
+			blockItem = BlockItem.COIN10;
+			coin10Coins = 10;
+			coin10BumpResetTimer = 0f;
+			coin10EndTimer = 0f;
 		}
+		else if(spawnItem.equals(GameKV.SMB.VAL_MUSHROOM))
+			blockItem = BlockItem.MUSHROOM;
+		else if(spawnItem.equals(GameKV.SMB.VAL_POWERSTAR))
+			blockItem = BlockItem.STAR;
+		else if(spawnItem.equals(GameKV.SMB.VAL_MUSH1UP))
+			blockItem = BlockItem.MUSH1UP;
 		isItemAvailable = blockItem != BlockItem.NONE;
 
-		btBody = new BumpTileBody(agency.getWorld(), this, adef.bounds);
-
-		btSprite = new BumpTileSprite(agency.getAtlas(), adef.tileTexRegion);
+		btBody = new BumpTileBody(agency.getWorld(), this, Agent.getStartBounds(properties));
+		btSprite = new BumpTileSprite(agency.getAtlas(), Agent.getStartTexRegion(properties));
 
 		// make the tile solid in the tile physics layer if it is not a secret block 
-		if(!adef.properties.get(GameKV.SMB.KEY_SECRETBLOCK, "", String.class).equals(AgencyKV.VAL_TRUE))
+		if(!properties.containsKV(GameKV.SMB.KEY_SECRETBLOCK, AgencyKV.VAL_TRUE))
 			agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
 
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
@@ -247,19 +242,19 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		switch(blockItem) {
 			case MUSH1UP:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
-				agency.createAgent(AgentDef.makePointBoundsDef(GameKV.SMB.VAL_MUSH1UP, pos));
+				agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_MUSH1UP, pos));
 				break;
 			case MUSHROOM:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
 				// big mario pops a fireflower?
 				if(wasHitByBig)
-					agency.createAgent(AgentDef.makePointBoundsDef(GameKV.SMB.VAL_FIREFLOWER, pos));
+					agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_FIREFLOWER, pos));
 				else
-					agency.createAgent(AgentDef.makePointBoundsDef(GameKV.SMB.VAL_MUSHROOM, pos));
+					agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_MUSHROOM, pos));
 				break;
 			case STAR:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
-				agency.createAgent(AgentDef.makePointBoundsDef(GameKV.SMB.VAL_POWERSTAR, pos));
+				agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_POWERSTAR, pos));
 				break;
 			default:
 				break;
@@ -276,31 +271,24 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		float up = btBody.getBounds().height / 4f;
 
 		// replace the tile with 4 brick pieces shooting upward and outward
-		makeBrickPieceDef(btBody.getPosition().cpy().add(right, up),
+		BrickPiece.makeAP(btBody.getPosition().cpy().add(right, up),
 				new Vector2(BREAKRIGHT_VEL1_X, BREAKRIGHT_VEL1_Y), 0);
-		makeBrickPieceDef(btBody.getPosition().cpy().add(right, -up),
+		BrickPiece.makeAP(btBody.getPosition().cpy().add(right, -up),
 				new Vector2(BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0);
-		makeBrickPieceDef(btBody.getPosition().cpy().add(-right, up),
+		BrickPiece.makeAP(btBody.getPosition().cpy().add(-right, up),
 				new Vector2(-BREAKRIGHT_VEL1_X, BREAKRIGHT_VEL1_Y), 0);
-		makeBrickPieceDef(btBody.getPosition().cpy().add(-right, -up),
+		BrickPiece.makeAP(btBody.getPosition().cpy().add(-right, -up),
 				new Vector2(-BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0);
 		agency.disposeAgent(this);
 	}
 
-	private void makeBrickPieceDef(Vector2 position, Vector2 velocity, int startFrame) {
-		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.SMB.VAL_BRICKPIECE, position);
-		adef.velocity.set(velocity);
-		adef.properties.put(GameKV.Sprite.KEY_STARTFRAME, startFrame);
-		agency.createAgent(adef);
-	}
-
 	private void startSpinningCoin() {
 		agency.playSound(AudioInfo.Sound.SMB.COIN);
-		agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P200, false, btBody.getPosition(),
+		agency.createAgent(FloatingPoints.makeAP(PointAmount.P200, false, btBody.getPosition(),
 				UInfo.P2M(UInfo.TILEPIX_Y * 2f), (Mario) bumpingAgent));
 
 		// spawn a coin one tile's height above the current tile position
-		agency.createAgent(AgentDef.makePointBoundsDef(GameKV.SMB.VAL_SPINCOIN, btBody.getPosition().cpy().add(0f,
+		agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_SPINCOIN, btBody.getPosition().cpy().add(0f,
 				UInfo.P2M(UInfo.TILEPIX_Y))));
 	}
 

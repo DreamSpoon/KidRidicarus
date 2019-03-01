@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.ContactDmgAgent;
@@ -41,22 +41,19 @@ public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounc
 	private MoveState moveState;
 	private float moveStateTimer;
 
-	public Goomba(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public Goomba(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		perp = null;
 		isHeadBounced = false;
 		isDead = false;
 		deadVelocity = new Vector2(0f, 0f);
-
 		moveState = MoveState.NONE;
 		moveStateTimer = 0f;
-
 		setConstVelocity(-GOOMBA_WALK_VEL, 0f);
-		Vector2 position = adef.bounds.getCenter(new Vector2());
-		goomBody = new GoombaBody(this, agency.getWorld(), position);
-		goombaSprite = new GoombaSprite(agency.getAtlas(), position);
 
+		goomBody = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		goombaSprite = new GoombaSprite(agency.getAtlas(), goomBody.getPosition());
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
@@ -137,7 +134,7 @@ public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		goomBody.disableAgentContact();
 		agency.playSound(AudioInfo.Sound.SMB.STOMP);
 		if(perp != null) {
-			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P100, true,
+			agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, true,
 					goomBody.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
@@ -146,7 +143,7 @@ public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounc
 		goomBody.disableAllContacts();
 		goomBody.setVelocity(deadVelocity);
 		if(perp != null) {
-			agency.createAgent(FloatingPoints.makeFloatingPointsDef(PointAmount.P100, false,
+			agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, false,
 					goomBody.getPosition(), UInfo.P2M(16), perp));
 		}
 	}

@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.space.PlatformSpace;
 import kidridicarus.agency.space.SpaceRenderer;
@@ -61,17 +60,19 @@ public class AgencyDirector implements Disposable {
 	}
 
 	private void preloadSpaceMusic() {
+		// create a catlog of unique musics
 		LinkedList<String> musicCatalog = new LinkedList<String>();
 		Collection<Agent> roomList = agency.getAgentsByProperties(
 				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS },
 				new String[] { AgencyKV.Room.VAL_ROOM });
 		for(Agent agent : roomList) {
-			String music = agent.getProperties().get(AgencyKV.Room.KEY_ROOMMUSIC, "", String.class);
+			String music = agent.getProperty(AgencyKV.Room.KEY_ROOMMUSIC, "", String.class);
 			if(music.equals("") || musicCatalog.contains(music))
 				continue;
 			musicCatalog.add(music);
 		}
 
+		// load the musics
 		for(String m : musicCatalog)
 			manager.load(m, Music.class);
 		manager.finishLoading();
@@ -97,19 +98,19 @@ public class AgencyDirector implements Disposable {
 		Agent spawner = getMainGuideSpawn();
 		if(spawner == null)
 			return null;
-		String initPlayClass = spawner.getProperties().get("playeragentclass", "", String.class);
-		if(initPlayClass.equals(""))
+		String initPlayClass = spawner.getProperty("playeragentclass", null, String.class);
+		if(initPlayClass == null)
 			return null;
-		return agency.createAgent(AgentDef.makePointBoundsDef(initPlayClass, spawner.getPosition()));
+		return agency.createAgent(Agent.createPointAP(initPlayClass, spawner.getPosition()));
 	}
 
 	private Agent getMainGuideSpawn() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
-		Collection<Agent> list = agency.getAgentsByProperties(
+		Collection<Agent> spawnList = agency.getAgentsByProperties(
 				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, AgencyKV.Spawn.KEY_SPAWNMAIN },
 				new String[] { AgencyKV.Spawn.VAL_SPAWNGUIDE, AgencyKV.VAL_TRUE });
-		if(!list.isEmpty())
-			return list.iterator().next();
+		if(!spawnList.isEmpty())
+			return spawnList.iterator().next();
 		else
 			return null;
 	}

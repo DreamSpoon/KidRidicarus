@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
 import kidridicarus.common.agentbody.general.GuideSpawnerBody;
@@ -24,24 +24,20 @@ public class GuideSpawner extends Agent {
 	private SpawnType spawntype;
 	private Direction4 direction;
 
-	public GuideSpawner(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public GuideSpawner(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
-		isMain = false;
-		name = "";
-		if(adef.properties.containsKey(AgencyKV.Spawn.KEY_SPAWNMAIN))
-			isMain = true;
-		else if(adef.properties.containsKey(AgencyKV.Spawn.KEY_NAME))
-			name = adef.properties.get(AgencyKV.Spawn.KEY_NAME, String.class);
+		isMain = properties.containsKey(AgencyKV.Spawn.KEY_SPAWNMAIN);
+		name = properties.get(AgencyKV.Spawn.KEY_NAME, "", String.class);
 
 		// immediate is the default spawn case
 		spawntype = SpawnType.IMMEDIATE;
-		if(adef.properties.containsKey(AgencyKV.Spawn.KEY_SPAWNTYPE)) {
-			String str = adef.properties.get(AgencyKV.Spawn.KEY_SPAWNTYPE, String.class);
+		if(properties.containsKey(AgencyKV.Spawn.KEY_SPAWNTYPE)) {
+			String str = properties.get(AgencyKV.Spawn.KEY_SPAWNTYPE, "", String.class);
 			if(str.equals(AgencyKV.Spawn.VAL_PIPEWARP) &&
-					adef.properties.containsKey(AgencyKV.KEY_DIRECTION)) {
+					properties.containsKey(AgencyKV.KEY_DIRECTION)) {
 				spawntype = SpawnType.PIPEWARP;
-				str = adef.properties.get(AgencyKV.KEY_DIRECTION, String.class);
+				str = properties.get(AgencyKV.KEY_DIRECTION, "", String.class);
 				if(str.equals(AgencyKV.VAL_RIGHT))
 					direction = Direction4.RIGHT;
 				else if(str.equals(AgencyKV.VAL_UP))
@@ -53,7 +49,7 @@ public class GuideSpawner extends Agent {
 			}
 		}
 
-		psbody = new GuideSpawnerBody(agency.getWorld(), this, adef.bounds);
+		psbody = new GuideSpawnerBody(agency.getWorld(), this, Agent.getStartBounds(properties));
 	}
 
 	@Override

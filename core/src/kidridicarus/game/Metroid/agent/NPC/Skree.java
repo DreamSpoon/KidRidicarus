@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.agent.optional.ContactDmgAgent;
 import kidridicarus.common.agent.optional.DamageableAgent;
@@ -49,8 +49,8 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 	private MoveState moveStateBeforeInjury;
 	private Vector2 velocityBeforeInjury;
 
-	public Skree(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public Skree(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		isInjured = false;
 		moveStateBeforeInjury = null;
@@ -61,7 +61,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 		curMoveState = MoveState.SLEEP;
 		stateTimer = 0f;
 
-		sBody = new SkreeBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()).add(SPECIAL_OFFSET));
+		sBody = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).add(SPECIAL_OFFSET));
 		sSprite = new SkreeSprite(agency.getAtlas(), sBody.getPosition());
 
 		agency.enableAgentUpdate(this);
@@ -173,18 +173,14 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 			throw new IllegalStateException("The Skree explosion offset array length does not equal the " +
 					"explode velocity array length.");
 		for(int i=0; i<EXPLODE_OFFSET.length; i++) {
-			AgentDef adef = AgentDef.makePointBoundsDef(GameKV.Metroid.VAL_SKREE_EXP, sBody.getPosition().cpy().add(
-					EXPLODE_OFFSET[i]));
-			adef.velocity.set(EXPLODE_VEL[i]);
-			agency.createAgent(adef);
+			agency.createAgent(Agent.createPointAP(GameKV.Metroid.VAL_SKREE_EXP,
+					sBody.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
 		}
 		agency.disposeAgent(this);
 	}
 
 	private void doDeathPop() {
-		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.Metroid.VAL_DEATH_POP, sBody.getPosition());
-		agency.createAgent(adef);
-
+		agency.createAgent(Agent.createPointAP(GameKV.Metroid.VAL_DEATH_POP, sBody.getPosition()));
 		agency.disposeAgent(this);
 	}
 

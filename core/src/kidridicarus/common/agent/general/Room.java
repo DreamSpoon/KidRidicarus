@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.agentbody.general.RoomBoxBody;
 import kidridicarus.agency.info.AgencyKV;
@@ -18,26 +18,21 @@ public class Room extends Agent {
 	private String roommusic;
 	private float vOffset;
 
-	public Room(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public Room(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
-		rbody = new RoomBoxBody(this, agency.getWorld(), adef.bounds);
+		rbody = new RoomBoxBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 
 		roomtype = RoomType.CENTER;
-		String roomTypeStr = adef.properties.get(AgencyKV.Room.KEY_ROOMTYPE, "", String.class);
+		String roomTypeStr = properties.get(AgencyKV.Room.KEY_ROOMTYPE, "", String.class);
 		if(roomTypeStr.equals(AgencyKV.Room.VAL_ROOMTYPE_HSCROLL))
 			roomtype = RoomType.HSCROLL;
 		else if(roomTypeStr.equals(AgencyKV.Room.VAL_ROOMTYPE_CENTER))
 			roomtype = RoomType.CENTER;
 
-		// default to no music
-		roommusic = "";
-		if(adef.properties.containsKey(AgencyKV.Room.KEY_ROOMMUSIC))
-			roommusic = adef.properties.get(AgencyKV.Room.KEY_ROOMMUSIC, String.class);
+		roommusic = properties.get(AgencyKV.Room.KEY_ROOMMUSIC, "", String.class);
 
-		vOffset = 0f;
-		if(adef.properties.containsKey(AgencyKV.Room.KEY_VIEWOFFSET_Y))
-			vOffset = UInfo.P2M(Float.valueOf(adef.properties.get(AgencyKV.Room.KEY_VIEWOFFSET_Y, String.class)));
+		vOffset = UInfo.P2M(properties.get(AgencyKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
 	}
 
 	@Override

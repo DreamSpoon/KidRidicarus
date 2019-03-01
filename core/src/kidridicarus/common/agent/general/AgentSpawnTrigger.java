@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.common.agentbody.general.AgentSpawnTriggerBody;
 
@@ -14,12 +14,12 @@ public class AgentSpawnTrigger extends Agent {
 	private AgentSpawnTriggerBody stBody;
 	private boolean enabled;
 
-	public AgentSpawnTrigger(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public AgentSpawnTrigger(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		// begin in the disabled state (will not trigger spawners)
 		enabled = false;
-		stBody = new AgentSpawnTriggerBody(this, agency.getWorld(), adef.bounds);
+		stBody = new AgentSpawnTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 
 		agency.enableAgentUpdate(this);
 	}
@@ -74,10 +74,8 @@ public class AgentSpawnTrigger extends Agent {
 		stBody.dispose();
 	}
 
-	public static AgentDef makeAgentSpawnTriggerDef(Vector2 position, float width,
-			float height) {
-		AgentDef adef = AgentDef.makeBoxBoundsDef(AgencyKV.Spawn.VAL_AGENTSPAWN_TRIGGER,
-				position, width, height);
-		return adef;
+	public static AgentProperties makeAP(Vector2 position, float width, float height) {
+		return Agent.createRectangleAP(AgencyKV.Spawn.VAL_AGENTSPAWN_TRIGGER,
+				new Rectangle(position.x - width/2f, position.y - height/2f, width, height));
 	}
 }

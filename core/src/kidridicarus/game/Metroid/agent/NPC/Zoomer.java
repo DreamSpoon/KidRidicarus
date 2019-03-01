@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.game.Metroid.agentbody.NPC.ZoomerBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.ZoomerSprite;
 import kidridicarus.game.info.GfxInfo;
@@ -44,8 +44,8 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	private MoveState curState;
 	private float stateTimer;
 
-	public Zoomer(Agency agency, AgentDef adef) {
-		super(agency, adef);
+	public Zoomer(Agency agency, AgentProperties properties) {
+		super(agency, properties);
 
 		isWalkingRight = false;
 		upDir = null;
@@ -55,7 +55,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 		isDead = false;
 		curState = MoveState.WALK;
 
-		zBody = new ZoomerBody(this, agency.getWorld(), adef.bounds.getCenter(new Vector2()));
+		zBody = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		prevBodyPosition = zBody.getPosition();
 
 		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
@@ -111,9 +111,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	}
 
 	private void doDeathPop() {
-		AgentDef adef = AgentDef.makePointBoundsDef(GameKV.Metroid.VAL_DEATH_POP, zBody.getPosition());
-		agency.createAgent(adef);
-
+		agency.createAgent(Agent.createPointAP(GameKV.Metroid.VAL_DEATH_POP, zBody.getPosition()));
 		agency.disposeAgent(this);
 	}
 

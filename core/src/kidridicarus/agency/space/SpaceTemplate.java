@@ -9,30 +9,30 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
-import kidridicarus.agency.agent.AgentDef;
+import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.agency.tool.DrawOrderAlias;
 import kidridicarus.agency.info.AgencyKV;
 
 public class SpaceTemplate {
-	private LinkedList<AgentDef> agentDefs;
+	private LinkedList<AgentProperties> agentProps;
 	private TiledMap tiledMap;
 	private Collection<TiledMapTileLayer> solidTileLayers; 
 	private TreeMap<DrawOrder, LinkedList<TiledMapTileLayer>> drawLayers;
 
 	public SpaceTemplate() {
-		agentDefs = new LinkedList<AgentDef>();
+		agentProps = new LinkedList<AgentProperties>();
 		tiledMap = null;
 		solidTileLayers = new LinkedList<TiledMapTileLayer>();
 		drawLayers = new TreeMap<DrawOrder, LinkedList<TiledMapTileLayer>>();
 	}
 
-	public void addAgentDefs(List<AgentDef> moreAgentDefs) {
-		agentDefs.addAll(moreAgentDefs);
+	public void addAgentProps(List<AgentProperties> moreAgentProps) {
+		agentProps.addAll(moreAgentProps);
 	}
 
-	public List<AgentDef> getAgentDefs() {
-		return agentDefs;
+	public List<AgentProperties> getAgentProps() {
+		return agentProps;
 	}
 
 	/*
