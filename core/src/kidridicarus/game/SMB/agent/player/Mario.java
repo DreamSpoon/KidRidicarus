@@ -384,31 +384,37 @@ public class Mario extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	}
 
 	private void processDamage(float delta) {
+		// if invincible then remove incoming damage from the damage queue
 		if(dmgInvincibleTime > 0f)
 			dmgInvincibleTime -= delta;
 		else if(isDmgInvincible)
 			endDmgInvincibility();
 
-		// apply damage if received
-		if(mBody.getAndResetTakeDamage()) {
-			// fire mario becomes small mario
-			// big mario becomes small mario
-			if(curPowerState == MarioPowerState.FIRE || curPowerState == MarioPowerState.BIG) {
-				curPowerState = MarioPowerState.SMALL;
-				if(mBody.isDucking())
-					mBody.setBodyPosVelAndSize(mBody.getPosition(), mBody.getVelocity(), false);
-				else {
-					mBody.setBodyPosVelAndSize(mBody.getPosition().sub(0f, UInfo.P2M(8f)),
-							mBody.getVelocity(), false);
-				}
+		// check for damage, and reset the flag
+		boolean dmg = mBody.getAndResetTakeDamage();
+		// exit because no damage during power star time
+		if(powerStarTimer > 0f)
+			return;
 
-				startDmgInvincibility();
-				agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
-			}
-			// die if small and not invincible
+		// exit if no damage received
+		if(!dmg)
+			return;
+
+		// Apply damage if received:
+		//   Fire mario becomes small mario,
+		//   Big mario becomes small mario,
+		//   Small mario becomes dead mario.
+		if(curPowerState == MarioPowerState.FIRE || curPowerState == MarioPowerState.BIG) {
+			curPowerState = MarioPowerState.SMALL;
+			if(mBody.isDucking())
+				mBody.setBodyPosVelAndSize(mBody.getPosition(), mBody.getVelocity(), false);
 			else
-				marioIsDead = true;
+				mBody.setBodyPosVelAndSize(mBody.getPosition().sub(0f, UInfo.P2M(8f)), mBody.getVelocity(), false);
+			startDmgInvincibility();
+			agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
 		}
+		else
+			marioIsDead = true;
 	}
 
 	private void startDmgInvincibility() {
@@ -419,6 +425,7 @@ public class Mario extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	private void endDmgInvincibility() {
 		isDmgInvincible = false;
 		dmgInvincibleTime = 0f;
+		mBody.getAndResetTakeDamage();
 	}
 
 	@Override

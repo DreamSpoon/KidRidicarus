@@ -269,16 +269,15 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		// create 4 brick pieces in the 4 corners of the original space and blast them upwards
 		float right = btBody.getBounds().width / 4f;
 		float up = btBody.getBounds().height / 4f;
-
 		// replace the tile with 4 brick pieces shooting upward and outward
-		BrickPiece.makeAP(btBody.getPosition().cpy().add(right, up),
-				new Vector2(BREAKRIGHT_VEL1_X, BREAKRIGHT_VEL1_Y), 0);
-		BrickPiece.makeAP(btBody.getPosition().cpy().add(right, -up),
-				new Vector2(BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0);
-		BrickPiece.makeAP(btBody.getPosition().cpy().add(-right, up),
-				new Vector2(-BREAKRIGHT_VEL1_X, BREAKRIGHT_VEL1_Y), 0);
-		BrickPiece.makeAP(btBody.getPosition().cpy().add(-right, -up),
-				new Vector2(-BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0);
+		agency.createAgent(BrickPiece.makeAP(btBody.getPosition().cpy().add(right, up),
+				new Vector2(BREAKRIGHT_VEL1_X, BREAKRIGHT_VEL1_Y), 0));
+		agency.createAgent(BrickPiece.makeAP(btBody.getPosition().cpy().add(right, -up),
+				new Vector2(BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0));
+		agency.createAgent(BrickPiece.makeAP(btBody.getPosition().cpy().add(-right, up),
+				new Vector2(-BREAKRIGHT_VEL1_X, BREAKRIGHT_VEL1_Y), 0));
+		agency.createAgent(BrickPiece.makeAP(btBody.getPosition().cpy().add(-right, -up),
+				new Vector2(-BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0));
 		agency.disposeAgent(this);
 	}
 

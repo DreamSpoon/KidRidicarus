@@ -28,14 +28,13 @@ public class BrickPiece extends Agent {
 
 	public BrickPiece(Agency agency, AgentProperties properties) {
 		super(agency, properties);
-
 		stateTimer = 0f;
 
 		defineBody(Agent.getStartPoint(properties), Agent.getStartVelocity(properties));
 		bpSprite = new BrickPieceSprite(agency.getAtlas(), b2body.getPosition(),
 				properties.get(GameKV.Sprite.KEY_STARTFRAME, 0, Integer.class));
 		agency.enableAgentUpdate(this);
-		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {

@@ -4,7 +4,7 @@ import kidridicarus.agency.tool.DrawOrder;
 import kidridicarus.agency.tool.DrawOrderAlias;
 
 public class GfxInfo {
-	public static final int V_WIDTH = 400;
+	public static final int V_WIDTH = 256;
 	public static final int V_HEIGHT = 240;
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;

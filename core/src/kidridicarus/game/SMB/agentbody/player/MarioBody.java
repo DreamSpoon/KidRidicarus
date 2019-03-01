@@ -521,6 +521,10 @@ public class MarioBody extends MobileAgentBody {
 				agency.playSound(AudioInfo.Sound.SMB.KICK);
 				((DamageableAgent) a).onDamage(parent, 1f, b2body.getPosition());
 			}
+
+			// Remove any agents that accumulate in the begin queue, to prevent begin contacts during
+			// power star time being ignored - which would cause mario to take damage when power star time ends. 
+			acBeginSensor.getAndResetContacts();
 		}
 		else {
 			// check for headbounces
