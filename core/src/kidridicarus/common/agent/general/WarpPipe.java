@@ -71,8 +71,6 @@ public class WarpPipe extends Agent {
 	}
 
 	public GuideSpawner getWarpExit() {
-		if(!properties.containsKey(AgencyKV.Spawn.KEY_EXITNAME))
-			return null;
 		return getGuideSpawnerByName(properties.get(AgencyKV.Spawn.KEY_EXITNAME, "", String.class));
 	}
 

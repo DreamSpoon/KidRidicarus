@@ -302,24 +302,12 @@ public class Agency implements Disposable {
 		agencyIndex.iterateThroughAllAgents(new AgentIter() {
 				@Override
 				public boolean iterate(Agent agent) {
-/*					boolean ignore = false;
-					for(int i=0; i<keys.length; i++) {
-						// If the key is not found, or the value doesn't match then ignore this agent (if the value 
-						// to match is null then don't check value).
-						if(!agent.getProperties().containsKey(keys[i]) ||
-								(vals[i] != null && !agent.getProperties().get(keys[i], String.class).equals(vals[i]))) {
-							ignore = true;
-							break;
-						}
-					}
-					// continue iterating if the right agent was *almost* found
-					if(ignore)
-						return false;
-*/
-					if(agent.containsPropertyKV(keys, vals))
+					if(agent.containsPropertyKV(keys, vals)) {
 						ret.add(agent);
+						return firstOnly;
+					}
 
-					return firstOnly;
+					return false;
 				}
 			});
 		return ret;

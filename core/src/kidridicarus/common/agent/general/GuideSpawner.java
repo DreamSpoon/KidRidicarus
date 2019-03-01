@@ -19,7 +19,6 @@ public class GuideSpawner extends Agent {
 
 	private GuideSpawnerBody psbody;
 
-	private String name;
 	private boolean isMain;
 	private SpawnType spawntype;
 	private Direction4 direction;
@@ -28,7 +27,6 @@ public class GuideSpawner extends Agent {
 		super(agency, properties);
 
 		isMain = properties.containsKey(AgencyKV.Spawn.KEY_SPAWNMAIN);
-		name = properties.get(AgencyKV.Spawn.KEY_NAME, "", String.class);
 
 		// immediate is the default spawn case
 		spawntype = SpawnType.IMMEDIATE;
@@ -80,10 +78,6 @@ public class GuideSpawner extends Agent {
 
 	public boolean isMainSpawn() {
 		return isMain;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public SpawnType getSpawnType() {
