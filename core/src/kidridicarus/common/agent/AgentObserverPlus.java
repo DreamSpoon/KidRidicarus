@@ -14,19 +14,27 @@ public abstract class AgentObserverPlus extends AgentObserver {
 	}
 	private AgentObserverListener listener;
 
+	private Vector2 lastViewCenter;
+
 	public AgentObserverPlus(Agent agent) {
 		super(agent);
+		lastViewCenter = new Vector2(0f, 0f);
 	}
 
 	public void setListener(AgentObserverListener listener) {
 		this.listener = listener;
 	}
 
+	/*
+	 * Check current room to get view center, and retain last known view center if room becomes null.
+	 */
 	public Vector2 getViewCenter() {
 		Room room = ((PlayerAgent) playerAgent).getCurrentRoom();
 		if(room == null)
-			return new Vector2(0f, 0f);
-		return ((PlayerAgent) playerAgent).getCurrentRoom().getViewCenterForPos(playerAgent.getPosition());
+			return lastViewCenter;
+		lastViewCenter.set(((PlayerAgent) playerAgent).getCurrentRoom().getViewCenterForPos(
+				playerAgent.getPosition()));
+		return lastViewCenter;
 	}
 
 	@Override
