@@ -6,6 +6,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentObserver;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.game.tool.QQ;
 
 public abstract class AgentObserverPlus extends AgentObserver {
 	public interface AgentObserverListener {
@@ -31,6 +32,7 @@ public abstract class AgentObserverPlus extends AgentObserver {
 	 */
 	public Vector2 getViewCenter() {
 		Room room = ((PlayerAgent) playerAgent).getCurrentRoom();
+QQ.pr("view center, room =" + room);
 		if(room == null)
 			return lastViewCenter;
 		lastViewCenter.set(((PlayerAgent) playerAgent).getCurrentRoom().getViewCenterForPos(

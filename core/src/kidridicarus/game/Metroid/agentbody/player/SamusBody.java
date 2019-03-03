@@ -146,7 +146,7 @@ public class SamusBody extends MobileAgentBody {
 			maskBits = AS_CFMASK_BITS;
 		}
 //		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
-		agentSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, sbSensor, catBits, maskBits,
+		agentSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, acSensor, catBits, maskBits,
 				getBodyWidth(), getBodyHeight());
 	}
 

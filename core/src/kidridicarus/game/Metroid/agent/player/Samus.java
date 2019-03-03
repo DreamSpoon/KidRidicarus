@@ -26,6 +26,7 @@ import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.play.GameAdvice;
+import kidridicarus.game.tool.QQ;
 
 /*
  * TODO:
