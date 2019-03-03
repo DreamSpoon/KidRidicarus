@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.ObjectProperties;
 
 /*
  * The Agent can interact with other Agents (like Body in Box2D).
@@ -19,9 +20,9 @@ import kidridicarus.agency.info.AgencyKV;
  */
 public abstract class Agent implements Disposable {
 	protected Agency agency;
-	protected AgentProperties properties;
+	protected ObjectProperties properties;
 
-	public Agent(Agency agency, AgentProperties properties) {
+	public Agent(Agency agency, ObjectProperties properties) {
 		this.agency = agency;
 		this.properties = properties;
 	}
@@ -49,47 +50,47 @@ public abstract class Agent implements Disposable {
 		return properties.containsAllKV(keys, vals);
 	}
 
-	public static AgentProperties createPointAP(String agentClassAlias, Vector2 position) {
-		AgentProperties ret = new AgentProperties();
+	public static ObjectProperties createPointAP(String agentClassAlias, Vector2 position) {
+		ObjectProperties ret = new ObjectProperties();
 		ret.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClassAlias);
 		ret.put(AgencyKV.Spawn.KEY_START_POINT, position);
 		return ret;
 	}
 
-	public static AgentProperties createPointAP(String agentClassAlias, Vector2 position, Vector2 velocity) {
-		AgentProperties ret = new AgentProperties();
+	public static ObjectProperties createPointAP(String agentClassAlias, Vector2 position, Vector2 velocity) {
+		ObjectProperties ret = new ObjectProperties();
 		ret.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClassAlias);
 		ret.put(AgencyKV.Spawn.KEY_START_POINT, position);
 		ret.put(AgencyKV.Spawn.KEY_START_VELOCITY, velocity);
 		return ret;
 	}
 
-	public static AgentProperties createRectangleAP(String agentClassAlias, Rectangle bounds) {
-		AgentProperties ret = new AgentProperties();
+	public static ObjectProperties createRectangleAP(String agentClassAlias, Rectangle bounds) {
+		ObjectProperties ret = new ObjectProperties();
 		ret.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClassAlias);
 		ret.put(AgencyKV.Spawn.KEY_START_BOUNDS, bounds);
 		return ret;
 	}
 
-	public static AgentProperties createTileAP(MapProperties mapProps, Rectangle bounds,
+	public static ObjectProperties createTileAP(MapProperties mapProps, Rectangle bounds,
 			TextureRegion tileTexRegion) {
-		AgentProperties agentProps = createRectangleAP(mapProps, bounds);
+		ObjectProperties agentProps = createRectangleAP(mapProps, bounds);
 		// add a reference to the start tile texture region if non-null is given 
 		if(tileTexRegion != null)
 			agentProps.put(AgencyKV.Spawn.KEY_START_TEXREGION, tileTexRegion);
 		return agentProps;
 	}
 
-	public static AgentProperties createRectangleAP(MapProperties mapProps, Rectangle bounds) {
-		AgentProperties agentProps = createMapAP(mapProps);
+	public static ObjectProperties createRectangleAP(MapProperties mapProps, Rectangle bounds) {
+		ObjectProperties agentProps = createMapAP(mapProps);
 		// copy the bounds rectangle to the agent properties
 		agentProps.put(AgencyKV.Spawn.KEY_START_BOUNDS, bounds);
 		return agentProps;
 	}
 
-	private static AgentProperties createMapAP(MapProperties mapProps) {
+	private static ObjectProperties createMapAP(MapProperties mapProps) {
 		// copy the map properties to the agent properties
-		AgentProperties agentProps = new AgentProperties();
+		ObjectProperties agentProps = new ObjectProperties();
 		Iterator<String> keyIter = mapProps.getKeys();
 		while(keyIter.hasNext()) {
 			String key = keyIter.next();
@@ -99,7 +100,7 @@ public abstract class Agent implements Disposable {
 		return agentProps;
 	}
 
-	public static Vector2 getStartPoint(AgentProperties agentProps) {
+	public static Vector2 getStartPoint(ObjectProperties agentProps) {
 		Vector2 point = agentProps.get(AgencyKV.Spawn.KEY_START_POINT, null, Vector2.class);
 		if(point != null)
 			return point;
@@ -109,15 +110,15 @@ public abstract class Agent implements Disposable {
 		return null;
 	}
 
-	public static Rectangle getStartBounds(AgentProperties agentProps) {
+	public static Rectangle getStartBounds(ObjectProperties agentProps) {
 		return agentProps.get(AgencyKV.Spawn.KEY_START_BOUNDS, null, Rectangle.class);
 	}
 
-	public static Vector2 getStartVelocity(AgentProperties agentProps) {
+	public static Vector2 getStartVelocity(ObjectProperties agentProps) {
 		return agentProps.get(AgencyKV.Spawn.KEY_START_VELOCITY, null, Vector2.class);
 	}
 
-	public static TextureRegion getStartTexRegion(AgentProperties agentProps) {
+	public static TextureRegion getStartTexRegion(ObjectProperties agentProps) {
 		return agentProps.get(AgencyKV.Spawn.KEY_START_TEXREGION, null, TextureRegion.class);
 	}
 }

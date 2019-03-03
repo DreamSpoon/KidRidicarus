@@ -6,18 +6,23 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.agent.AgentSupervisor;
+import kidridicarus.agency.agentscript.ScriptAgentStatus;
+import kidridicarus.agency.agentscript.ScriptedSpritState.SpriteState;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.Direction4;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentObserverPlus;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.optional.ContactDmgAgent;
+import kidridicarus.common.agent.general.WarpPipe;
+import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.common.agent.optional.ReceivePowerupAgent;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.game.Metroid.agentbody.player.SamusBody;
 import kidridicarus.game.Metroid.agentsprite.player.SamusSprite;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.play.GameAdvice;
@@ -26,7 +31,7 @@ import kidridicarus.game.play.GameAdvice;
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
+public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
@@ -66,7 +71,7 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	private SamusObserver observer;
 	private SamusSupervisor supervisor;
 
-	public Samus(Agency agency, AgentProperties properties) {
+	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		curContactState = ContactState.REGULAR;
@@ -101,14 +106,18 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	}
 
 	private void processContacts(float delta) {
+		// skip contacts update when script is running
+		if(supervisor.isScriptRunning())
+			return;
+
 		ContactState nextContactState = ContactState.REGULAR;
 		switch(curContactState) {
 			case REGULAR:
-				for(Agent a : sBody.getContactsByClass(ContactDmgAgent.class)) {
-					ContactDmgAgent cda = (ContactDmgAgent) a;
+				for(Agent a : sBody.getContactsByClass(ContactDmgGiveAgent.class)) {
+					ContactDmgGiveAgent cda = (ContactDmgGiveAgent) a;
 					if(cda.isContactDamage()) {
 						nextContactState = ContactState.DAMAGE;
-						doContactDamage(a.getPosition());
+						takeContactDamage(a.getPosition());
 					}
 				}
 				break;
@@ -124,7 +133,7 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 		curContactState = nextContactState;
 	}
 
-	private void doContactDamage(Vector2 position) {
+	private void takeContactDamage(Vector2 position) {
 		damagePos.set(position);
 		// zero the y velocity
 		sBody.setVelocity(sBody.getVelocity().x, 0);
@@ -145,6 +154,42 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	}
 
 	private void processMove(float delta, GameAdvice advice) {
+		// if no script is running then do the normal move stuff
+		if(!supervisor.isScriptRunning()) {
+			// if no pipe move started then do the regular move
+			if(!processPipeMove(advice))
+				processRegularMove(delta, advice);
+		}
+
+		// the previous code might have started a script; if a script is now running then process the script
+		if(supervisor.isScriptRunning())
+			sBody.useScriptedBodyState(supervisor.getScriptAgentStatus().scriptedBodyState);
+	}
+
+	/*
+	 * Should Samus enter a warp pipe? Do it if needed.
+	 * This is not in the processContacts code, even though it relates to a sensor touching a pipe.
+	 * It's here because the player must actively "move" to use a pipe.
+	 */
+	private boolean processPipeMove(GameAdvice advice) {
+		Direction4 adviceDir = advice.getMoveDir4();
+		// if no move advice direction then no pipe move; and exit if move state is similar to jump
+		if(adviceDir == null || curMoveState == MoveState.JUMP || curMoveState == MoveState.JUMPSPIN ||
+				curMoveState == MoveState.JUMPSHOOT)
+			return false;
+		// if no pipe to enter then exit (exit the method, not exit the pipe)
+		WarpPipe wp = sBody.getWarpPipeEntrance(adviceDir);
+		if(wp == null)
+			return false;
+
+		// use the pipe warp, returning the result
+		return wp.use(this);
+	}
+
+	/*
+	 * Run, jump, shoot, etc.
+	 */
+	private void processRegularMove(float delta, GameAdvice advice) {
 		MoveState nextMoveState = null;
 		boolean jumpStart = false;
 		// XOR the moveleft and moveright, becuase can't move left and right at same time
@@ -152,11 +197,14 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 
 		switch(curMoveState) {
 			case BALL:
+				// if advised move up then try to stand
 				if(advice.moveUp) {
-					// if the tile directly above samus is solid then disallow switch to stand
+					// if the tile directly above samus is solid then disallow change to stand
 					Vector2 bodyTilePos = UInfo.getM2PTileForPos(sBody.getPosition());
-					if(agency.isMapTileSolid(bodyTilePos.cpy().add(0, 1)))
+					if(agency.isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
 						nextMoveState = MoveState.BALL;
+						sBody.doBounceCheck();
+					}
 					else {
 						isFacingUp = true;
 						nextMoveState = MoveState.STAND;
@@ -430,8 +478,8 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 			position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(sBody.getPosition());
 		}
 
-		// create shot def
-		AgentProperties shotProps = SamusShot.makeAP(this, position, velocity);
+		// create shot
+		ObjectProperties shotProps = SamusShot.makeAP(this, position, velocity);
 		// check spawn point of shot, if it is in a solid tile then the shot immediately explodes
 		if(agency.isMapPointSolid(position)) {
 			// add the immediate explode property to the properties list
@@ -445,19 +493,48 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	}
 
 	private void processSprite(float delta) {
-		sSprite.update(delta, sBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
+		if(supervisor.isScriptRunning()) {
+			ScriptAgentStatus status = supervisor.getScriptAgentStatus();
+			MoveState parentState;
+			switch(status.scriptedSpriteState.spriteState) {
+				case MOVE:
+					parentState = MoveState.RUN;
+					break;
+				default:
+					parentState = MoveState.STAND;
+					break;
+			}
+			sSprite.update(delta, status.scriptedSpriteState.position, parentState,
+					status.scriptedSpriteState.facingRight, isFacingUp);
+		}
+		else
+			sSprite.update(delta, sBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
 	}
 
 	@Override
 	public void draw(Batch batch) {
-		// toggle sprite on/off each frame while in contact damage state
-		if(curContactState == ContactState.DAMAGE && isDrawnLastFrame)
-			isDrawnLastFrame = false;
+		// if a script is running and the sprite is visible then draw it
+		if(supervisor.isScriptRunning()) {
+			if(supervisor.getScriptAgentStatus().scriptedSpriteState.visible)
+				sSprite.draw(batch);
+		}
+		// no script running, do the normal draw stuff
 		else {
-			sSprite.draw(batch);
-			isDrawnLastFrame = true;
+			// TODO: Move this code into the process move methods, draw should only *check* if the sprite
+			// should be drawn, not *update* when it should be drawn. (i.e. consider "forced frame rate")
+
+			// toggle sprite on/off each frame while in contact damage state
+			if(curContactState == ContactState.DAMAGE && isDrawnLastFrame)
+				isDrawnLastFrame = false;
+			else {
+				isDrawnLastFrame = true;
+				sSprite.draw(batch);
+			}
 		}
 	}
+
+	// TODO implement the general info return with override of the getProperty method of Agent class for
+	// most of the following methods (or all?)
 
 	@Override
 	public boolean isDead() {
@@ -507,6 +584,21 @@ public class Samus extends Agent implements PlayerAgent, ReceivePowerupAgent {
 	@Override
 	public void applyPowerup(PowType pt) {
 		// TODO: powerups!
+	}
+
+	// unchecked cast to T warnings ignored because T is checked with class.equals(poo) 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getProperty(String key, Object defaultValue, Class<T> poo) {
+		if(key.equals(GameKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(poo)) {
+			Boolean he = isFacingRight;
+			return (T) he;
+		}
+		else if(key.equals(GameKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(poo)) {
+			SpriteState he = SpriteState.STAND;
+			return (T) he;
+		}
+		return properties.get(key, defaultValue, poo);
 	}
 
 	@Override

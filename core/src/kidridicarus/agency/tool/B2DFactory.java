@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Fixture;
 
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
@@ -57,4 +58,17 @@ public class B2DFactory {
 
 		return b2body;
 	}
+
+	// TODO: replace the above methods - split into body and fixture creation
+
+	public static Fixture makeBoxFixture(Body b2body, FixtureDef fdef, Object userData,
+			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height) {
+		PolygonShape boxShape = new PolygonShape();
+		boxShape.setAsBox(width/2f, height/2f);
+		fdef.shape = boxShape;
+		Fixture fix = b2body.createFixture(fdef);
+		fix.setUserData(new AgentBodyFilter(categoryBits, maskBits, userData));
+		return fix;
+	}
+
 }

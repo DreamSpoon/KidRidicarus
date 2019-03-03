@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.common.agent.optional.DamageableAgent;
+import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.game.Metroid.agentbody.player.SamusShotBody;
 import kidridicarus.game.Metroid.agentsprite.player.SamusShotSprite;
 import kidridicarus.game.info.GfxInfo;
@@ -27,7 +27,7 @@ public class SamusShot extends Agent {
 	private boolean isExploding;
 	private float stateTimer;
 
-	public SamusShot(Agency agency, AgentProperties properties) {
+	public SamusShot(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Samus.class);
@@ -57,11 +57,11 @@ public class SamusShot extends Agent {
 
 	private void processContacts() {
 		// check for agents needing damage, and damage the first one
-		for(Agent a : shotBody.getContactAgentsByClass(DamageableAgent.class)) {
+		for(Agent a : shotBody.getContactAgentsByClass(ContactDmgTakeAgent.class)) {
 			// do not hit parent
 			if(a == parent)
 				continue;
-			((DamageableAgent) a).onDamage(parent, 1f, shotBody.getPosition());
+			((ContactDmgTakeAgent) a).onDamage(parent, 1f, shotBody.getPosition());
 			isExploding = true;
 			return;
 		}
@@ -135,8 +135,8 @@ public class SamusShot extends Agent {
 	}
 
 	// make the AgentProperties (AP) for this class of Agent
-	public static AgentProperties makeAP(Samus parentAgent, Vector2 position, Vector2 velocity) {
-		AgentProperties props = Agent.createPointAP(GameKV.Metroid.VAL_SAMUS_SHOT, position, velocity);
+	public static ObjectProperties makeAP(Samus parentAgent, Vector2 position, Vector2 velocity) {
+		ObjectProperties props = Agent.createPointAP(GameKV.Metroid.VAL_SAMUS_SHOT, position, velocity);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		return props;
 	}

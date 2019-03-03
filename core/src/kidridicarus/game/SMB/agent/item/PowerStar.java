@@ -6,11 +6,11 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
-import kidridicarus.common.agent.optional.ItemAgent;
-import kidridicarus.game.SMB.agent.BumpableAgent;
+import kidridicarus.common.agent.optional.PowerupGiveAgent;
+import kidridicarus.game.SMB.agent.BumpTakeAgent;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentbody.item.PowerStarBody;
 import kidridicarus.game.SMB.agentsprite.item.PowerStarSprite;
@@ -22,7 +22,7 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  * -allow the star to spawn down-right out of bricks like on level 1-1
  * -test the star's onBump method - I could not bump it, needs precise timing - maybe loosen the timing? 
  */
-public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgent {
+public class PowerStar extends BasicWalkAgent implements PowerupGiveAgent, BumpTakeAgent {
 	private static final float SPROUT_TIME = 0.5f;
 	private static final Vector2 START_BOUNCE_VEL = new Vector2(0.5f, 2f); 
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
@@ -36,7 +36,7 @@ public class PowerStar extends BasicWalkAgent implements ItemAgent, BumpableAgen
 	private float stateTimer;
 	private StarState prevState;
 
-	public PowerStar(Agency agency, AgentProperties properties) {
+	public PowerStar(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		// start in the SPROUT state

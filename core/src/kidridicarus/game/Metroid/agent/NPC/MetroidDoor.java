@@ -6,14 +6,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.common.agent.optional.DamageableAgent;
+import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.MetroidDoorBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.MetroidDoorSprite;
 import kidridicarus.game.info.GfxInfo;
 
-public class MetroidDoor extends Agent implements DamageableAgent {
+public class MetroidDoor extends Agent implements ContactDmgTakeAgent {
 	private static final float REMAIN_OPEN_DELAY = 77/30f;
 	private static final float OPENCLOSE_DELAY1 = 1/5f;
 	private static final float OPENCLOSE_DELAY2 = 1/10f;
@@ -27,7 +27,7 @@ public class MetroidDoor extends Agent implements DamageableAgent {
 	private MoveState moveState;
 	private float stateTimer;
 
-	public MetroidDoor(Agency agency, AgentProperties properties) {
+	public MetroidDoor(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		isFacingRight = false;

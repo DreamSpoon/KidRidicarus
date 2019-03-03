@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.game.Metroid.agentsprite.NPC.DeathPopSprite;
 import kidridicarus.game.info.GfxInfo;
 
@@ -17,7 +17,7 @@ public class DeathPop extends Agent {
 	private float stateTimer;
 	private Vector2 position;
 
-	public DeathPop(Agency agency, AgentProperties properties) {
+	public DeathPop(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		stateTimer = 0f;
 		position = Agent.getStartPoint(properties);

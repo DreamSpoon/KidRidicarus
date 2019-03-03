@@ -20,6 +20,9 @@ public abstract class ContactSensor {
 		return parent;
 	}
 
+	/*
+	 * Add a sensor to the start of this sensor's list of chained sensors.
+	 */
 	public void chainTo(ContactSensor nextInChain) {
 		this.nextInChain = nextInChain;
 	}

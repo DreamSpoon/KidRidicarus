@@ -8,16 +8,16 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
-import kidridicarus.common.agent.optional.ItemAgent;
-import kidridicarus.game.SMB.agent.BumpableAgent;
+import kidridicarus.common.agent.optional.PowerupGiveAgent;
+import kidridicarus.game.SMB.agent.BumpTakeAgent;
 import kidridicarus.game.SMB.agentbody.item.BaseMushroomBody;
 import kidridicarus.game.SMB.agentsprite.item.MushroomSprite;
 import kidridicarus.game.info.GfxInfo;
 
-public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, BumpableAgent {
+public abstract class BaseMushroom extends BasicWalkAgent implements PowerupGiveAgent, BumpTakeAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private static final float WALK_VEL = 0.6f;
@@ -38,7 +38,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements ItemAgent, 
 
 	protected abstract TextureRegion getMushroomTextureRegion(TextureAtlas atlas);
 
-	public BaseMushroom(Agency agency, AgentProperties properties) {
+	public BaseMushroom(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		sproutingPosition = Agent.getStartPoint(properties); 

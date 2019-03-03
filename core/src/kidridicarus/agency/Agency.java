@@ -15,7 +15,6 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.change.AgencyChangeQueue;
 import kidridicarus.agency.change.AgentPlaceholder;
 import kidridicarus.agency.change.DrawOrderChange;
@@ -29,6 +28,7 @@ import kidridicarus.agency.contact.AgencyContactListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.DrawOrder;
+import kidridicarus.agency.tool.ObjectProperties;
 
 /*
  * Desc:
@@ -165,10 +165,10 @@ public class Agency implements Disposable {
 	}
 
 //	public void createAgents(Collection<AgentDef> agentDefs) {
-	public void createAgents(Collection<AgentProperties> agentProps) {
-		Iterator<AgentProperties> apIter = agentProps.iterator();
+	public void createAgents(Collection<ObjectProperties> agentProps) {
+		Iterator<ObjectProperties> apIter = agentProps.iterator();
 		while(apIter.hasNext()) {
-			AgentProperties aDef = apIter.next();
+			ObjectProperties aDef = apIter.next();
 			createAgent(aDef);
 		}
 	}
@@ -179,7 +179,7 @@ public class Agency implements Disposable {
 	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
 	 */
 //	public Agent createAgent(AgentDef adef) {
-	public Agent createAgent(AgentProperties properties) {
+	public Agent createAgent(ObjectProperties properties) {
 		String agentClassAlias = properties.get(AgencyKV.Spawn.KEY_AGENTCLASS, null, String.class);
 		if(agentClassAlias == null)
 			throw new IllegalArgumentException("'agentclass' key not found in agent definition.");
@@ -196,7 +196,7 @@ public class Agency implements Disposable {
 		AgentPlaceholder agentPlaceholder = new AgentPlaceholder(null);
 		agencyChangeQ.addAgent(agentPlaceholder);
 		try {
-			constructor = agentClass.getConstructor(new Class[] { Agency.class, AgentProperties.class });
+			constructor = agentClass.getConstructor(new Class[] { Agency.class, ObjectProperties.class });
 			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { this, properties });
 		}
 		catch (Exception e) {

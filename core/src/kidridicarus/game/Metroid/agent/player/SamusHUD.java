@@ -15,7 +15,6 @@ import kidridicarus.game.info.GameInfo;
 import kidridicarus.game.play.hud.HudCoin;
 
 public class SamusHUD implements Disposable {
-	private Samus samus;
 	private Stage stage;
 
 	private Label scoreVarLabel;
@@ -24,7 +23,6 @@ public class SamusHUD implements Disposable {
 	private Label timeVarLabel;
 
 	public SamusHUD(Samus samus, TextureAtlas atlas, Stage stage) {
-		this.samus = samus;
 		this.stage = stage;
 
 		Table table = new Table();

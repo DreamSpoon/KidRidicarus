@@ -8,14 +8,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
-import kidridicarus.common.agent.optional.ContactDmgAgent;
-import kidridicarus.common.agent.optional.DamageableAgent;
+import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.game.SMB.agent.BumpableAgent;
-import kidridicarus.game.SMB.agent.HeadBounceAgent;
+import kidridicarus.game.SMB.agent.BumpTakeAgent;
+import kidridicarus.game.SMB.agent.HeadBounceTakeAgent;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
 import kidridicarus.game.SMB.agentbody.NPC.TurtleBody;
 import kidridicarus.game.SMB.agentsprite.NPC.TurtleSprite;
@@ -30,8 +30,8 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * -turtle shells do not slide properly when they are kicked while contacting an agent, since the slide kill
  *  agent code is only called when contacting starts
  */
-public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounceAgent, BumpableAgent,
-		ContactDmgAgent {
+public class Turtle extends BasicWalkAgent implements ContactDmgTakeAgent, HeadBounceTakeAgent, BumpTakeAgent,
+		ContactDmgGiveAgent {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 0.4f;
@@ -59,7 +59,7 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 	private Vector2 deadVelocity;
 	private Agent perp;
 
-	public Turtle(Agency agency, AgentProperties properties) {
+	public Turtle(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		facingRight = false;
@@ -110,14 +110,14 @@ public class Turtle extends BasicWalkAgent implements DamageableAgent, HeadBounc
 			for(Agent a : contBeginAgents) {
 				// if hit another sliding turtle, then both die
 				if(a instanceof Turtle && ((Turtle) a).isSliding) {
-					((DamageableAgent) a).onDamage(perp, 1f, turtleBody.getPosition());
+					((ContactDmgTakeAgent) a).onDamage(perp, 1f, turtleBody.getPosition());
 					onDamage(perp, 1f, a.getPosition());
 					nowDead = true;
 					break;
 				}
 				// hit non-turtle, so continue sliding and apply damage to other agent
-				else if(a instanceof DamageableAgent)
-					((DamageableAgent) a).onDamage(perp, 1.0f, turtleBody.getPosition());
+				else if(a instanceof ContactDmgTakeAgent)
+					((ContactDmgTakeAgent) a).onDamage(perp, 1.0f, turtleBody.getPosition());
 			}
 		}
 		else if(!isHeadBounced) {

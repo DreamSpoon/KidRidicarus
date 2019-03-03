@@ -3,6 +3,7 @@ package kidridicarus.common.agent;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentObserver;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
 

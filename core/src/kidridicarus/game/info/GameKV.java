@@ -4,6 +4,11 @@ package kidridicarus.game.info;
  * Game Key Value Info
  */
 public class GameKV {
+	public class Script {
+		public static final String KEY_FACINGRIGHT = "facingright";
+		public static final String KEY_SPRITESTATE = "spritestate";
+	}
+
 	public class Sprite {
 		public static final String KEY_STARTFRAME = "startframe";
 	}

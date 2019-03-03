@@ -10,9 +10,9 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agentsprite.other.BounceCoinSprite;
 import kidridicarus.game.info.GfxInfo;
@@ -27,7 +27,7 @@ public class SpinCoin extends Agent {
 	private BounceCoinSprite coinSprite;
 	private float stateTimer;
 
-	public SpinCoin(Agency agency, AgentProperties properties) {
+	public SpinCoin(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		stateTimer = 0f;

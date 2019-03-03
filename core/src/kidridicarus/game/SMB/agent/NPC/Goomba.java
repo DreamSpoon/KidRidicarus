@@ -6,13 +6,13 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
-import kidridicarus.common.agent.optional.ContactDmgAgent;
-import kidridicarus.common.agent.optional.DamageableAgent;
-import kidridicarus.game.SMB.agent.BumpableAgent;
-import kidridicarus.game.SMB.agent.HeadBounceAgent;
+import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.game.SMB.agent.BumpTakeAgent;
+import kidridicarus.game.SMB.agent.HeadBounceTakeAgent;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
 import kidridicarus.game.SMB.agentbody.NPC.GoombaBody;
 import kidridicarus.game.SMB.agentsprite.NPC.GoombaSprite;
@@ -20,8 +20,8 @@ import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounceAgent, BumpableAgent,
-		ContactDmgAgent {
+public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadBounceTakeAgent, BumpTakeAgent,
+		ContactDmgGiveAgent {
 	private static final float GOOMBA_WALK_VEL = 0.4f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
@@ -41,7 +41,7 @@ public class Goomba extends BasicWalkAgent implements DamageableAgent, HeadBounc
 	private MoveState moveState;
 	private float moveStateTimer;
 
-	public Goomba(Agency agency, AgentProperties properties) {
+	public Goomba(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		perp = null;

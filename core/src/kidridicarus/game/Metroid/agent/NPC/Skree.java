@@ -6,16 +6,16 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.common.agent.optional.ContactDmgAgent;
-import kidridicarus.common.agent.optional.DamageableAgent;
+import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.SkreeBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.SkreeSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 
-public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
+public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeAgent {
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
 
 	private static final float INJURY_TIME = 10f/60f;
@@ -49,7 +49,7 @@ public class Skree extends Agent implements ContactDmgAgent, DamageableAgent {
 	private MoveState moveStateBeforeInjury;
 	private Vector2 velocityBeforeInjury;
 
-	public Skree(Agency agency, AgentProperties properties) {
+	public Skree(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		isInjured = false;

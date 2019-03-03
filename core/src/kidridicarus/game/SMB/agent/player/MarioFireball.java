@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
-import kidridicarus.common.agent.optional.DamageableAgent;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.game.SMB.agentbody.player.MarioFireballBody;
 import kidridicarus.game.SMB.agentsprite.player.MarioFireballSprite;
 import kidridicarus.game.info.AudioInfo;
@@ -33,7 +33,7 @@ public class MarioFireball extends BasicWalkAgent {
 	private enum ContactState { NONE, WALL, AGENT }
 	private ContactState contactState;
 
-	public MarioFireball(Agency agency, AgentProperties properties) {
+	public MarioFireball(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Mario.class);
@@ -83,10 +83,10 @@ public class MarioFireball extends BasicWalkAgent {
 		}
 
 		// check for agents needing damage, and damage the first one
-		for(Agent a : fbBody.getContactAgentsByClass(DamageableAgent.class)) {
+		for(Agent a : fbBody.getContactAgentsByClass(ContactDmgTakeAgent.class)) {
 			if(a == parent)
 				continue;
-			((DamageableAgent) a).onDamage(parent, 1f, fbBody.getPosition());
+			((ContactDmgTakeAgent) a).onDamage(parent, 1f, fbBody.getPosition());
 			// at least one agent contact
 			contactState = ContactState.AGENT;
 			break;
@@ -153,8 +153,8 @@ public class MarioFireball extends BasicWalkAgent {
 		fbBody.dispose();
 	}
 
-	public static AgentProperties makeAP(Vector2 position, boolean right, Mario parentAgent) {
-		AgentProperties props = Agent.createPointAP(GameKV.SMB.VAL_MARIOFIREBALL, position);
+	public static ObjectProperties makeAP(Vector2 position, boolean right, Mario parentAgent) {
+		ObjectProperties props = Agent.createPointAP(GameKV.SMB.VAL_MARIOFIREBALL, position);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		if(right)
 			props.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT);

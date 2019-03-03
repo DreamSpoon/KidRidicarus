@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.RoomBoxBody;
 import kidridicarus.agency.info.AgencyKV;
 
@@ -18,7 +18,7 @@ public class Room extends Agent {
 	private String roommusic;
 	private float vOffset;
 
-	public Room(Agency agency, AgentProperties properties) {
+	public Room(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		rbody = new RoomBoxBody(this, agency.getWorld(), Agent.getStartBounds(properties));

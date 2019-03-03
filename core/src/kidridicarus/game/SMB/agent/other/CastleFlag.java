@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.game.SMB.agentsprite.other.CastleFlagSprite;
 import kidridicarus.game.info.GfxInfo;
 
@@ -24,7 +24,7 @@ public class CastleFlag extends Agent {
 	private CastleFlagState curState;
 	private float stateTimer;
 
-	public CastleFlag(Agency agency, AgentProperties properties) {
+	public CastleFlag(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		startPosition = Agent.getStartPoint(properties);

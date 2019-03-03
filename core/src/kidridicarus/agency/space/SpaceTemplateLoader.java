@@ -11,9 +11,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.DrawOrderAlias;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.agency.info.AgencyKV;
 
 /*
@@ -28,22 +28,22 @@ public class SpaceTemplateLoader {
 		return ret;
 	}
 
-	private static LinkedList<AgentProperties> makeAgentPropsFromLayers(MapLayers layers) {
-		LinkedList<AgentProperties> agentProps = new LinkedList<AgentProperties>();
+	private static LinkedList<ObjectProperties> makeAgentPropsFromLayers(MapLayers layers) {
+		LinkedList<ObjectProperties> agentProps = new LinkedList<ObjectProperties>();
 		for(MapLayer layer : layers)
 			agentProps.addAll(makeAgentPropsFromLayer(layer));
 		return agentProps;
 	}
 
-	private static LinkedList<AgentProperties> makeAgentPropsFromLayer(MapLayer layer) {
+	private static LinkedList<ObjectProperties> makeAgentPropsFromLayer(MapLayer layer) {
 		if(layer instanceof TiledMapTileLayer)
 			return makeAgentPropsFromTileLayer((TiledMapTileLayer) layer);
 		else
 			return makeAgentPropsFromObjLayer(layer);
 	}
 
-	private static LinkedList<AgentProperties> makeAgentPropsFromTileLayer(TiledMapTileLayer layer) {
-		LinkedList<AgentProperties> agentProps = new LinkedList<AgentProperties>();
+	private static LinkedList<ObjectProperties> makeAgentPropsFromTileLayer(TiledMapTileLayer layer) {
+		LinkedList<ObjectProperties> agentProps = new LinkedList<ObjectProperties>();
 		if(!layer.getProperties().containsKey(AgencyKV.Spawn.KEY_AGENTCLASS))
 			return agentProps;	// if no agentclass then return empty list of agent properties
 
@@ -59,8 +59,8 @@ public class SpaceTemplateLoader {
 		return agentProps;
 	}
 
-	private static LinkedList<AgentProperties> makeAgentPropsFromObjLayer(MapLayer layer) {
-		LinkedList<AgentProperties> agentProps = new LinkedList<AgentProperties>();
+	private static LinkedList<ObjectProperties> makeAgentPropsFromObjLayer(MapLayer layer) {
+		LinkedList<ObjectProperties> agentProps = new LinkedList<ObjectProperties>();
 		for(RectangleMapObject rect : layer.getObjects().getByType(RectangleMapObject.class)) {
 			// combine the layer and object properties and pass to the agent properties creator
 			MapProperties combined = new MapProperties();

@@ -1,5 +1,6 @@
 package kidridicarus.common.agent.optional;
 
-public interface ContactDmgAgent {
+// this agent can give contact damage
+public interface ContactDmgGiveAgent {
 	public boolean isContactDamage();
 }

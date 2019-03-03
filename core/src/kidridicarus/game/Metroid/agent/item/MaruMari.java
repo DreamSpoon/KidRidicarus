@@ -6,19 +6,19 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
-import kidridicarus.common.agent.optional.ItemAgent;
-import kidridicarus.common.agent.optional.ReceivePowerupAgent;
+import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.PowerupGiveAgent;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.game.Metroid.agentbody.item.MaruMariBody;
 import kidridicarus.game.Metroid.agentsprite.item.MaruMariSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
-public class MaruMari extends Agent implements ItemAgent {
+public class MaruMari extends Agent implements PowerupGiveAgent {
 	private MaruMariBody mmBody;
 	private MaruMariSprite mmSprite;
 
-	public MaruMari(Agency agency, AgentProperties agentProps) {
+	public MaruMari(Agency agency, ObjectProperties agentProps) {
 		super(agency, agentProps);
 		mmBody = new MaruMariBody(this, agency.getWorld(), Agent.getStartPoint(agentProps));
 		mmSprite = new MaruMariSprite(agency.getAtlas(), mmBody.getPosition());
@@ -39,8 +39,8 @@ public class MaruMari extends Agent implements ItemAgent {
 	@Override
 	public void use(Agent agent) {
 		// if the other agent can receive this powerup then apply 
-		if(agent instanceof ReceivePowerupAgent) {
-			((ReceivePowerupAgent) agent).applyPowerup(PowType.MARUMARI);
+		if(agent instanceof PowerupTakeAgent) {
+			((PowerupTakeAgent) agent).applyPowerup(PowType.MARUMARI);
 			agency.disposeAgent(this);
 		}
 	}

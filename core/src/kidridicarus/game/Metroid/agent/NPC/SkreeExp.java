@@ -6,20 +6,20 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
-import kidridicarus.common.agent.optional.ContactDmgAgent;
+import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.SkreeExpBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.SkreeExpSprite;
 import kidridicarus.game.info.GfxInfo;
 
-public class SkreeExp extends Agent implements ContactDmgAgent {
+public class SkreeExp extends Agent implements ContactDmgGiveAgent {
 	private static final float LIVE_TIME = 0.167f;
 
 	private SkreeExpBody seBody;
 	private SkreeExpSprite seSprite;
 	private float stateTimer;
 
-	public SkreeExp(Agency agency, AgentProperties properties) {
+	public SkreeExp(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		stateTimer = 0f;
 		seBody = new SkreeExpBody(this, agency.getWorld(), Agent.getStartPoint(properties),

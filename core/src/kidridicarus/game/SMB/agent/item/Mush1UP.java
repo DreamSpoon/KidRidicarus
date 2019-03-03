@@ -5,13 +5,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.info.SMBAnim;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
 public class Mush1UP extends BaseMushroom {
-	public Mush1UP(Agency agency, AgentProperties properties) {
+	public Mush1UP(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 	}
 

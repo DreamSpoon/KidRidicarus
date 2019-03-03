@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.AgentSpawnerBody;
 
 public class AgentSpawner extends Agent {
@@ -15,7 +15,7 @@ public class AgentSpawner extends Agent {
 	private boolean isUsed;
 	private String spawnAgentClassAlias;
 
-	public AgentSpawner(Agency agency, AgentProperties properties) {
+	public AgentSpawner(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		spawnAgentClassAlias = properties.get(AgencyKV.Spawn.KEY_SPAWNAGENTCLASS, "", String.class);
 		isUsed = false;

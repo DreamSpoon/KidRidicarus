@@ -6,14 +6,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.game.Metroid.agentbody.NPC.ZoomerBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.ZoomerSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.agency.tool.Direction4;
-import kidridicarus.common.agent.optional.ContactDmgAgent;
-import kidridicarus.common.agent.optional.DamageableAgent;
+import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 
 /*
  * The sensor code. It seems like a million cases due to the 4 possible "up" directions of the zoomer,
@@ -21,7 +21,7 @@ import kidridicarus.common.agent.optional.DamageableAgent;
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then
  * check the sensors.
  */
-public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
+public class Zoomer extends Agent implements ContactDmgGiveAgent, ContactDmgTakeAgent {
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
 	private static final float INJURY_TIME = 10f/60f;
 
@@ -44,7 +44,7 @@ public class Zoomer extends Agent implements ContactDmgAgent, DamageableAgent {
 	private MoveState curState;
 	private float stateTimer;
 
-	public Zoomer(Agency agency, AgentProperties properties) {
+	public Zoomer(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		isWalkingRight = false;

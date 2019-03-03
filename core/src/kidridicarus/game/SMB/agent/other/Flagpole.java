@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.game.SMB.agentbody.other.FlagpoleBody;
 import kidridicarus.game.SMB.agentsprite.other.PoleFlagSprite;
 import kidridicarus.game.info.GfxInfo;
@@ -24,7 +24,7 @@ public class Flagpole extends Agent {
 	private boolean isAtBottom;
 	private float dropTimer;
 
-	public Flagpole(Agency agency, AgentProperties properties) {
+	public Flagpole(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		fpBody = new FlagpoleBody(this, agency.getWorld(), Agent.getStartBounds(properties));

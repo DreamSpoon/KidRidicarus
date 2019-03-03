@@ -93,7 +93,10 @@ public class PlayScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		update(delta);
+		drawScreen();
+	}
 
+	private void drawScreen() {
 		// clear screen
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -108,7 +111,7 @@ public class PlayScreen implements Screen {
 			b2dr.render(director.getAgency().getWorld(), gamecam.combined);
 
 		// draw HUD last
-		playCo.drawHUD();
+		playCo.postRenderFrame();
 
 		// change to next level?
 		if(playCo.isGameWon()) {
@@ -186,7 +189,7 @@ public class PlayScreen implements Screen {
 		playCo.handleInput();
 		playCo.preUpdateAgency();
 		director.update(newDelta);
-		playCo.postUpdateAgency();
+		playCo.postUpdateAgency(newDelta);
 	}
 
 	@Override

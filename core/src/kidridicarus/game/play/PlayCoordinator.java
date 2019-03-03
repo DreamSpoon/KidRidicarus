@@ -117,12 +117,13 @@ public class PlayCoordinator implements Disposable {
 		playAgent.getSupervisor().setFrameAdvice(superAdvice);
 	}
 
-	public void postUpdateAgency() {
+	public void postUpdateAgency(float delta) {
 		if(((GameAgentSupervisor) playAgent.getSupervisor()).isSwitchToOtherChar()) {
 //			agency.startSinglePlayMusic(AudioInfo.Music.Metroid.METROIDITEM);
 			switchAgentType(PowChar.SAMUS);
 		}
 
+		playAgent.getSupervisor().postUpdateAgency(delta);
 		playAgent.getObserver().postUpdateAgency();
 	}
 
@@ -160,7 +161,7 @@ public class PlayCoordinator implements Disposable {
 		}
 	}
 
-	public void drawHUD() {
+	public void postRenderFrame() {
 		playAgent.getObserver().drawHUD();
 	}
 

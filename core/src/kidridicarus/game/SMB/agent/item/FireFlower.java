@@ -6,16 +6,16 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.common.agent.optional.ItemAgent;
+import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.PowerupGiveAgent;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentbody.item.FireFlowerBody;
 import kidridicarus.game.SMB.agentsprite.item.FireFlowerSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
-public class FireFlower extends Agent implements ItemAgent {
+public class FireFlower extends Agent implements PowerupGiveAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 
@@ -25,7 +25,7 @@ public class FireFlower extends Agent implements ItemAgent {
 	private boolean isSprouting;
 	private Vector2 sproutingPosition;
 
-	public FireFlower(Agency agency, AgentProperties properties) {
+	public FireFlower(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		sproutingPosition = Agent.getStartPoint(properties);

@@ -20,16 +20,16 @@ import kidridicarus.agency.tool.Direction4;
 import kidridicarus.common.agent.general.DespawnBox;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.general.WarpPipe;
-import kidridicarus.common.agent.optional.ContactDmgAgent;
-import kidridicarus.common.agent.optional.DamageableAgent;
-import kidridicarus.common.agent.optional.ItemAgent;
+import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.optional.PowerupGiveAgent;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactBeginSensor;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.info.CommonCF;
-import kidridicarus.game.SMB.agent.BumpableTileAgent;
-import kidridicarus.game.SMB.agent.HeadBounceAgent;
+import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
+import kidridicarus.game.SMB.agent.HeadBounceTakeAgent;
 import kidridicarus.game.SMB.agent.other.Flagpole;
 import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.SMB.agent.player.Mario;
@@ -189,7 +189,7 @@ public class MarioBody extends MobileAgentBody {
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		ogSensor = new OnGroundSensor(null);
-		// the og chains to the wp sensor, because the wp sensor will be attached to other fixtures
+		// the og sensor chains to the wp sensor, because the wp sensor will be attached to other fixtures
 		ogSensor.chainTo(wpSensor);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(GROUND_AND_PIPE_SENSOR_CFCAT,
 				GROUND_AND_PIPE_SENSOR_CFMASK, ogSensor));
@@ -508,18 +508,18 @@ public class MarioBody extends MobileAgentBody {
 		processHeadContacts();	// hitting bricks with his head
 
 		// item contact?
-		ItemAgent item = (ItemAgent) acSensor.getFirstContactByClass(ItemAgent.class);
+		PowerupGiveAgent item = (PowerupGiveAgent) acSensor.getFirstContactByClass(PowerupGiveAgent.class);
 		if(item != null)
 			item.use(parent);
 
 		List<Agent> list;
 		if(parent.isPowerStarOn()) {
 			// apply powerstar damage
-			list = acSensor.getContactsByClass(DamageableAgent.class);
+			list = acSensor.getContactsByClass(ContactDmgTakeAgent.class);
 			for(Agent a : list) {
 				// playSound should go in the processBody method, but... this is so much easier!
 				agency.playSound(AudioInfo.Sound.SMB.KICK);
-				((DamageableAgent) a).onDamage(parent, 1f, b2body.getPosition());
+				((ContactDmgTakeAgent) a).onDamage(parent, 1f, b2body.getPosition());
 			}
 
 			// Remove any agents that accumulate in the begin queue, to prevent begin contacts during
@@ -532,7 +532,7 @@ public class MarioBody extends MobileAgentBody {
 			LinkedList<Agent> bouncedAgents = new LinkedList<Agent>();
 			for(Agent a : list) {
 				// skip the agent if not bouncy :)
-				if(!(a instanceof HeadBounceAgent) || !((HeadBounceAgent) a).isBouncy())
+				if(!(a instanceof HeadBounceTakeAgent) || !((HeadBounceTakeAgent) a).isBouncy())
 					continue;
 				// If the bottom of mario's bounds box is at least as high as the middle of the agent then bounce.
 				// (i.e. if mario's foot is at least as high as midway up the other agent...)
@@ -540,7 +540,7 @@ public class MarioBody extends MobileAgentBody {
 				if(b2body.getPosition().y - getBodySize().y/2f >= a.getPosition().y ||
 						prevPosition.y - getBodySize().y/2f >= a.getPosition().y) {
 					bouncedAgents.add(a);
-					((HeadBounceAgent) a).onHeadBounce(parent);
+					((HeadBounceTakeAgent) a).onHeadBounce(parent);
 				}
 			}
 			if(!bouncedAgents.isEmpty()) {
@@ -552,10 +552,10 @@ public class MarioBody extends MobileAgentBody {
 			if(!parent.isDmgInvincibleOn()) {
 				// check for contact damage
 				for(Agent a : list) {
-					if(!(a instanceof ContactDmgAgent))
+					if(!(a instanceof ContactDmgGiveAgent))
 						continue;
 					// if the agent does contact damage and they were not head bounced
-					if(((ContactDmgAgent) a).isContactDamage() && !bouncedAgents.contains(a))
+					if(((ContactDmgGiveAgent) a).isContactDamage() && !bouncedAgents.contains(a))
 						isTakeDamage = true;
 				}
 			}
@@ -575,7 +575,7 @@ public class MarioBody extends MobileAgentBody {
 			// check the list of tiles for the closest to mario
 			float closest = 0;
 			Agent closestTile = null;
-			for(Agent thingHit : btSensor.getContactsByClass(BumpableTileAgent.class)) {
+			for(Agent thingHit : btSensor.getContactsByClass(TileBumpTakeAgent.class)) {
 				float dist = Math.abs(thingHit.getPosition().x - b2body.getPosition().x);
 				if(closestTile == null || dist < closest) {
 					closest = dist;
@@ -586,7 +586,7 @@ public class MarioBody extends MobileAgentBody {
 			// we have a weiner!
 			if(closestTile != null) {
 				canHeadBang = false;
-				((BumpableTileAgent) closestTile).onBumpTile(parent);
+				((TileBumpTakeAgent) closestTile).onBumpTile(parent);
 			}
 		}
 		// mario can headbang once per up/down cycle of movement, so re-enable head bang when mario moves down

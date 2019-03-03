@@ -11,12 +11,12 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.game.SMB.agent.BumpableAgent;
-import kidridicarus.game.SMB.agent.BumpableTileAgent;
+import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.game.SMB.agent.BumpTakeAgent;
+import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentbody.other.BumpTileBody;
 import kidridicarus.game.SMB.agentsprite.other.BumpTileSprite;
@@ -25,7 +25,7 @@ import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class BumpTile extends Agent implements BumpableTileAgent {
+public class BumpTile extends Agent implements TileBumpTakeAgent {
 	private static final float BOUNCE_TIME = 0.175f;
 	private static final float BOUNCE_HEIGHT_FRAC = 0.225f;	// bounce up about 1/5 of tile height
 
@@ -57,7 +57,7 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 	private Agent bumpingAgent;
 	private boolean wasHitByBig;
 
-	public BumpTile(Agency agency, AgentProperties properties) {
+	public BumpTile(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		isHit = false;
@@ -232,8 +232,8 @@ public class BumpTile extends Agent implements BumpableTileAgent {
 		Iterator<Agent> iter = agentsOnMe.iterator();
 		while(iter.hasNext()) {
 			Agent agent = iter.next();
-			if(agent instanceof BumpableAgent)
-				((BumpableAgent) agent).onBump(bumpingAgent);
+			if(agent instanceof BumpTakeAgent)
+				((BumpTakeAgent) agent).onBump(bumpingAgent);
 		}
 	}
 

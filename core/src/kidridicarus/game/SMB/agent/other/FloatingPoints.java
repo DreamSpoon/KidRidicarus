@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentsprite.other.FloatingPointsSprite;
 import kidridicarus.game.info.AudioInfo;
@@ -34,7 +34,7 @@ public class FloatingPoints extends Agent {
 	private float stateTimer;
 	private Vector2 originalPosition;
 
-	public FloatingPoints(Agency agency, AgentProperties properties) {
+	public FloatingPoints(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		originalPosition = Agent.getStartPoint(properties);
@@ -95,9 +95,9 @@ public class FloatingPoints extends Agent {
 	public void dispose() {
 	}
 
-	public static AgentProperties makeAP(PointAmount amt, boolean relative, Vector2 position,
+	public static ObjectProperties makeAP(PointAmount amt, boolean relative, Vector2 position,
 			float yOffset, Agent parentAgent) {
-		AgentProperties props = Agent.createPointAP(GameKV.SMB.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
+		ObjectProperties props = Agent.createPointAP(GameKV.SMB.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
 		props.put(GameKV.SMB.KEY_POINTAMOUNT, amt);
 		if(relative)
 			props.put(GameKV.SMB.KEY_RELPOINTAMOUNT, AgencyKV.VAL_TRUE);

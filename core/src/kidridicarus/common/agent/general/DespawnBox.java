@@ -6,13 +6,13 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.DespawnBody;
 
 public class DespawnBox extends Agent {
 	private DespawnBody dsBody;
 
-	public DespawnBox(Agency agency, AgentProperties properties) {
+	public DespawnBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		dsBody = new DespawnBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 	}

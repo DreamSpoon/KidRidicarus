@@ -1,17 +1,16 @@
 package kidridicarus.game.SMB.agent.player;
 
+import kidridicarus.agency.agentscript.ScriptAgentStatus;
 import kidridicarus.agency.tool.SuperAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.play.GameAdvice;
 
-public class MarioSupervisor implements GameAgentSupervisor {
-	private Mario mario;
+public class MarioSupervisor extends GameAgentSupervisor {
 	private GameAdvice advice;
 	private boolean switchToOtherChar;
 
 	public MarioSupervisor(Mario mario) {
-		this.mario = mario;
 		advice = new GameAdvice();
 		switchToOtherChar = false;
 	}
@@ -38,5 +37,10 @@ public class MarioSupervisor implements GameAgentSupervisor {
 	@Override
 	public boolean isSwitchToOtherChar() {
 		return switchToOtherChar;
+	}
+
+	@Override
+	protected ScriptAgentStatus getCurrentScriptAgentStatus() {
+		return null;
 	}
 }

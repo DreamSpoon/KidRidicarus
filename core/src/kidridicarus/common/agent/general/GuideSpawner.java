@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.GuideSpawnerBody;
 import kidridicarus.agency.info.AgencyKV;
 
@@ -23,7 +23,7 @@ public class GuideSpawner extends Agent {
 	private SpawnType spawntype;
 	private Direction4 direction;
 
-	public GuideSpawner(Agency agency, AgentProperties properties) {
+	public GuideSpawner(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		isMain = properties.containsKey(AgencyKV.Spawn.KEY_SPAWNMAIN);

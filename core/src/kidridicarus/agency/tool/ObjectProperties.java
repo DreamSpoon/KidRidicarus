@@ -1,14 +1,19 @@
-package kidridicarus.agency.agent;
+package kidridicarus.agency.tool;
 
 import java.util.HashMap;
 
 /*
- * Unique keys only, replacements will be made if a non-unique string is given to put.
+ * HashMap based generic properties list, with String keys.
+ * Some conversion may occur when getting properties with certain class return types.
+ * e.g. If a property is stored in the HashMap as a String, and the get method is called with class type Float,
+ *   then the get method will attempt to convert the String to a Float and return a Float.
+ *   TODO implement the visa versa: if property is stored in HashMap as Float, and String return type is requested -
+ *   then convert the Float and return the String equivalent.
  */
-public class AgentProperties {
+public class ObjectProperties {
 	private HashMap<String, Object> properties;
 
-	public AgentProperties() {
+	public ObjectProperties() {
 		properties = new HashMap<String, Object>();
 	}
 

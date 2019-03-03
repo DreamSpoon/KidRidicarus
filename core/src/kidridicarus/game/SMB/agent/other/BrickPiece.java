@@ -10,8 +10,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.SMB.agentsprite.other.BrickPieceSprite;
 import kidridicarus.game.info.GameKV;
@@ -26,7 +26,7 @@ public class BrickPiece extends Agent {
 	private BrickPieceSprite bpSprite;
 	private float stateTimer;
 
-	public BrickPiece(Agency agency, AgentProperties properties) {
+	public BrickPiece(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		stateTimer = 0f;
 
@@ -91,8 +91,8 @@ public class BrickPiece extends Agent {
 		b2body.getWorld().destroyBody(b2body);
 	}
 
-	public static AgentProperties makeAP(Vector2 position, Vector2 velocity, int startFrame) {
-		AgentProperties props = Agent.createPointAP(GameKV.SMB.VAL_BRICKPIECE, position, velocity);
+	public static ObjectProperties makeAP(Vector2 position, Vector2 velocity, int startFrame) {
+		ObjectProperties props = Agent.createPointAP(GameKV.SMB.VAL_BRICKPIECE, position, velocity);
 		props.put(GameKV.Sprite.KEY_STARTFRAME, startFrame);
 		return props;
 	}

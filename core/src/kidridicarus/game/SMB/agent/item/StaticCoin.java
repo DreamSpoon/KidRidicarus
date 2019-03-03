@@ -6,18 +6,18 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentProperties;
-import kidridicarus.common.agent.optional.ItemAgent;
+import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.PowerupGiveAgent;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentbody.item.StaticCoinBody;
 import kidridicarus.game.SMB.agentsprite.item.StaticCoinSprite;
 import kidridicarus.game.info.GfxInfo;
 
-public class StaticCoin extends Agent implements ItemAgent {
+public class StaticCoin extends Agent implements PowerupGiveAgent {
 	private StaticCoinBody coinBody;
 	private StaticCoinSprite coinSprite;
 
-	public StaticCoin(Agency agency, AgentProperties properties) {
+	public StaticCoin(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		coinBody = new StaticCoinBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		coinSprite = new StaticCoinSprite(agency.getAtlas(), coinBody.getPosition());
