@@ -7,6 +7,7 @@ public class GameKV {
 	public class Script {
 		public static final String KEY_FACINGRIGHT = "facingright";
 		public static final String KEY_SPRITESTATE = "spritestate";
+		public static final String KEY_SPRITESIZE = "bodysize";
 	}
 
 	public class Sprite {

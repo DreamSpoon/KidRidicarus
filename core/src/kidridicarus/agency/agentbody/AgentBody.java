@@ -15,9 +15,8 @@ import kidridicarus.agency.contact.CFBitSeq;
  * scenario may be fruitful.
  */
 public abstract class AgentBody implements Disposable {
-	private float bodyWidth = 0f;
-	private float bodyHeight = 0f;
 	protected Body b2body = null;
+	private Vector2 bodySize = new Vector2(0f, 0f);
 
 	public abstract Agent getParent();
 
@@ -26,28 +25,20 @@ public abstract class AgentBody implements Disposable {
 	}
 
 	public void setBodySize(float width, float height) {
-		bodyWidth = width;
-		bodyHeight = height;
+		bodySize.set(width, height);
+	}
+
+	public Vector2 getBodySize() {
+		return bodySize.cpy();
 	}
 
 	public Rectangle getBounds() {
-		return new Rectangle(b2body.getPosition().x - bodyWidth/2f,
-				b2body.getPosition().y - bodyHeight/2f, bodyWidth, bodyHeight);
-	}
-	
-	public float getBodyWidth() {
-		return bodyWidth;
-	}
-
-	public float getBodyHeight() {
-		return bodyHeight;
-	}
-
-	public void setActive(boolean active) {
-		b2body.setActive(active);
+		return new Rectangle(b2body.getPosition().x - bodySize.x/2f, b2body.getPosition().y - bodySize.y/2f,
+				bodySize.x, bodySize.y);
 	}
 
 	// body can pass through everything, maybe to fall off screen
+	// TODO delete this method, implement differently
 	public void disableAllContacts() {
 		CFBitSeq catBits = new CFBitSeq();
 		CFBitSeq maskBits = new CFBitSeq();

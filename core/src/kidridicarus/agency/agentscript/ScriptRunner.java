@@ -24,7 +24,7 @@ QQ.pr("start script return false");
 		isRunning = true;
 
 		currentScript = agentScript;
-		currentScript.setInitAgentStatus(startAgentStatus);
+		currentScript.startScript(startAgentStatus);
 QQ.pr("start script return true");
 		return true;
 	}
@@ -42,6 +42,6 @@ QQ.pr("update script, isRunning = " + isRunning);
 	}
 
 	public ScriptAgentStatus getAgentStatus() {
-		return currentScript.getAgentStatus();
+		return currentScript.getScriptAgentStatus();
 	}
 }

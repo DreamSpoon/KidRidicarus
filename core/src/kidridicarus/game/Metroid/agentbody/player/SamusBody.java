@@ -129,7 +129,7 @@ public class SamusBody extends MobileAgentBody {
 //		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, sbSensor, catBits, maskBits,
 //				getBodyWidth(), getBodyHeight());
 		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, fdef, sbSensor, catBits, maskBits,
-				getBodyWidth(), getBodyHeight());
+				getBodySize().x, getBodySize().y);
 	}
 
 	private void createAgentSensor() {
@@ -147,7 +147,7 @@ public class SamusBody extends MobileAgentBody {
 		}
 //		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
 		agentSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, acSensor, catBits, maskBits,
-				getBodyWidth(), getBodyHeight());
+				getBodySize().x, getBodySize().y);
 	}
 
 	// create the sensor for detecting onGround
@@ -155,7 +155,7 @@ public class SamusBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape;
 		boxShape = new PolygonShape();
-		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBodyHeight()/2f), 0f);
+		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBodySize().y/2f), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		ogSensor = new OnGroundSensor(null);
@@ -305,10 +305,10 @@ public class SamusBody extends MobileAgentBody {
 		return isContactEnabled;
 	}
 
-	public void useScriptedBodyState(ScriptedBodyState bodyScriptState) {
-		setContactEnabled(bodyScriptState.contactEnabled);
-		setPosition(bodyScriptState.position);
-		b2body.setGravityScale(bodyScriptState.gravityFactor);
+	public void useScriptedBodyState(ScriptedBodyState sbState) {
+		setContactEnabled(sbState.contactEnabled);
+		setPosition(sbState.position);
+		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 	}
 
 	private void setContactEnabled(boolean enabled) {

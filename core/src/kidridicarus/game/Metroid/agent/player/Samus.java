@@ -163,8 +163,10 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 		}
 
 		// the previous code might have started a script; if a script is now running then process the script
-		if(supervisor.isScriptRunning())
+		if(supervisor.isScriptRunning()) {
+QQ.pr("use scripted body state");
 			sBody.useScriptedBodyState(supervisor.getScriptAgentStatus().scriptedBodyState);
+		}
 	}
 
 	/*
@@ -597,6 +599,10 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 		}
 		else if(key.equals(GameKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(poo)) {
 			SpriteState he = SpriteState.STAND;
+			return (T) he;
+		}
+		else if(key.equals(GameKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(poo)) {
+			Vector2 he = new Vector2(sSprite.getWidth(), sSprite.getHeight());
 			return (T) he;
 		}
 		return properties.get(key, defaultValue, poo);

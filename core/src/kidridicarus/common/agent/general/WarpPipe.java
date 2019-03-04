@@ -14,6 +14,8 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agentscript.PipeWarpScript;
 import kidridicarus.game.SMB.agentbody.other.WarpPipeBody;
+import kidridicarus.game.info.GameKV;
+import kidridicarus.game.tool.QQ;
 
 public class WarpPipe extends Agent {
 	private WarpPipeBody pwBody;
@@ -110,7 +112,42 @@ public class WarpPipe extends Agent {
 	public boolean use(Agent agent) {
 		if(!(agent instanceof PlayerAgent))
 			return false;
-		return ((PlayerAgent) agent).getSupervisor().startScript(new PipeWarpScript(this));
+
+		GuideSpawner gs = getGuideSpawnerByName(properties.get(AgencyKV.Spawn.KEY_EXITNAME, "", String.class));
+		Vector2 exitPos;
+		if(gs == null) {
+QQ.pr("no exit position given, using 0 0");
+			exitPos = new Vector2(0f, 0f);
+		}
+		else
+			exitPos = gs.getPosition();
+QQ.pr("pipe exit pos = " + exitPos);
+		return ((PlayerAgent) agent).getSupervisor().startScript(
+				new PipeWarpScript(exitPos, direction, getEH_Offset(),
+				agent.getProperty(GameKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
+	}
+
+	/*
+	 * Title: Get Entry Horizon Offset
+	 * Desc: Get the offset of the line at which the agent actually enters the warp pipe. This is usually the line
+	 *   where the sprite disappears as it enters the warp pipe.
+	 */
+	private float getEH_Offset() {
+		switch(direction) {
+			// sprite moves right to enter pipe
+			case RIGHT:
+				return pwBody.getBounds().x;
+			// sprite moves left to enter pipe
+			case LEFT:
+				return pwBody.getBounds().x + pwBody.getBounds().width;
+			// sprite moves up to enter pipe
+			case UP:
+				return pwBody.getBounds().y;
+			// sprite moves down to enter pipe
+//			case DOWN:
+			default:
+				return pwBody.getBounds().y + pwBody.getBounds().height;
+		}
 	}
 
 	@Override

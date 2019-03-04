@@ -70,4 +70,11 @@ public class SolidBoundSensor extends ContactSensor {
 		}
 		return false;
 	}
+
+	/*
+	 * Clear the current contacts list. Call this method after disabling and re-enabling contacts.
+	 */
+	public void reset() {
+		contacts.clear();
+	}
 }
