@@ -12,7 +12,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentObserverPlus;
 import kidridicarus.common.agent.general.GuideSpawner;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.general.WarpPipe;
+import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
@@ -501,7 +501,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent {
 		return null;
 	}
 
-	private Vector2 getPipeEntrySpriteEndOffset(WarpPipe pipeToEnter) {
+	private Vector2 getPipeEntrySpriteEndOffset(PipeWarp pipeToEnter) {
 		switch(pipeToEnter.getDirection()) {
 			case RIGHT:
 				return new Vector2(PIPE_WARPWIDTH, 0f);

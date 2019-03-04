@@ -8,10 +8,20 @@ package kidridicarus.agency.agentscript;
  */
 public class ScriptAgentStatus {
 	public ScriptedBodyState scriptedBodyState;
-	public ScriptedSpritState scriptedSpriteState;
+	public ScriptedSpriteState scriptedSpriteState;
 
 	public ScriptAgentStatus() {
 		scriptedBodyState = new ScriptedBodyState();
-		scriptedSpriteState = new ScriptedSpritState();
+		scriptedSpriteState = new ScriptedSpriteState();
+	}
+
+	public ScriptAgentStatus(ScriptedBodyState scriptedBodyState, ScriptedSpriteState scriptedSpriteState) {
+		this.scriptedBodyState = scriptedBodyState;
+		this.scriptedSpriteState = scriptedSpriteState;
+	}
+
+	public ScriptAgentStatus cpy() {
+		return new ScriptAgentStatus(new ScriptedBodyState(this.scriptedBodyState),
+				new ScriptedSpriteState(this.scriptedSpriteState));
 	}
 }

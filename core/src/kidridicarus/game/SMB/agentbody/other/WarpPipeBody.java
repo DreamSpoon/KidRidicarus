@@ -7,13 +7,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.tool.B2DFactory;
-import kidridicarus.common.agent.general.WarpPipe;
+import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.info.CommonCF;
 
 public class WarpPipeBody extends AgentBody {
-	private WarpPipe parent;
+	private PipeWarp parent;
 
-	public WarpPipeBody(WarpPipe parent, World world, Rectangle bounds) {
+	public WarpPipeBody(PipeWarp parent, World world, Rectangle bounds) {
 		this.parent = parent;
 		defineBody(world, bounds);
 	}

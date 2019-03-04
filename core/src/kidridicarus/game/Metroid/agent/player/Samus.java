@@ -8,14 +8,14 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agentscript.ScriptAgentStatus;
-import kidridicarus.agency.agentscript.ScriptedSpritState.SpriteState;
+import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentObserverPlus;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.general.WarpPipe;
+import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -26,7 +26,6 @@ import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.play.GameAdvice;
-import kidridicarus.game.tool.QQ;
 
 /*
  * TODO:
@@ -163,10 +162,8 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 		}
 
 		// the previous code might have started a script; if a script is now running then process the script
-		if(supervisor.isScriptRunning()) {
-QQ.pr("use scripted body state");
+		if(supervisor.isScriptRunning())
 			sBody.useScriptedBodyState(supervisor.getScriptAgentStatus().scriptedBodyState);
-		}
 	}
 
 	/*
@@ -176,12 +173,13 @@ QQ.pr("use scripted body state");
 	 */
 	private boolean processPipeMove(GameAdvice advice) {
 		Direction4 adviceDir = advice.getMoveDir4();
-		// if no move advice direction then no pipe move; and exit if move state is similar to jump
+		// if no move advice direction then no pipe move so exit; also, exit if move state is similar to jump
 		if(adviceDir == null || curMoveState == MoveState.JUMP || curMoveState == MoveState.JUMPSPIN ||
-				curMoveState == MoveState.JUMPSHOOT)
+				curMoveState == MoveState.JUMPSHOOT) {
 			return false;
+		}
 		// if no pipe to enter then exit (exit the method, not exit the pipe)
-		WarpPipe wp = sBody.getWarpPipeEntrance(adviceDir);
+		PipeWarp wp = sBody.getWarpPipeEntrance(adviceDir);
 		if(wp == null)
 			return false;
 

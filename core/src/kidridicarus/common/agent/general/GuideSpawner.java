@@ -32,18 +32,10 @@ public class GuideSpawner extends Agent {
 		spawntype = SpawnType.IMMEDIATE;
 		if(properties.containsKey(AgencyKV.Spawn.KEY_SPAWNTYPE)) {
 			String str = properties.get(AgencyKV.Spawn.KEY_SPAWNTYPE, "", String.class);
-			if(str.equals(AgencyKV.Spawn.VAL_PIPEWARP) &&
+			if(str.equals(AgencyKV.Spawn.VAL_PIPEWARP_SPAWN) &&
 					properties.containsKey(AgencyKV.KEY_DIRECTION)) {
 				spawntype = SpawnType.PIPEWARP;
-				str = properties.get(AgencyKV.KEY_DIRECTION, "", String.class);
-				if(str.equals(AgencyKV.VAL_RIGHT))
-					direction = Direction4.RIGHT;
-				else if(str.equals(AgencyKV.VAL_UP))
-					direction = Direction4.UP;
-				else if(str.equals(AgencyKV.VAL_LEFT))
-					direction = Direction4.LEFT;
-				else if(str.equals(AgencyKV.VAL_DOWN))
-					direction = Direction4.DOWN;
+				direction = Direction4.fromString(properties.get(AgencyKV.KEY_DIRECTION, "", String.class));
 			}
 		}
 

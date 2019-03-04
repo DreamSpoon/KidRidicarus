@@ -19,7 +19,7 @@ import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.agency.tool.Direction4;
 import kidridicarus.common.agent.general.DespawnBox;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.general.WarpPipe;
+import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
@@ -102,7 +102,7 @@ public class MarioBody extends MobileAgentBody {
 	private Vector2 prevVelocity;
 	private Vector2 prevPosition;
 
-	private WarpPipe pipeToEnter;
+	private PipeWarp pipeToEnter;
 	private Flagpole flagpoleContacted;
 	private LevelEndTrigger levelendContacted;
 
@@ -474,10 +474,10 @@ public class MarioBody extends MobileAgentBody {
 			dir = Direction4.DOWN;
 		else
 			return;
-		for(Agent pw : wpSensor.getContactsByClass(WarpPipe.class)) {
-			if(((WarpPipe) pw).canBodyEnterPipe(this, dir)) {
+		for(Agent pw : wpSensor.getContactsByClass(PipeWarp.class)) {
+			if(((PipeWarp) pw).canBodyEnterPipe(getBounds(), dir)) {
 				// player can enter pipe, so save a ref to the pipe
-				pipeToEnter = (WarpPipe) pw;
+				pipeToEnter = (PipeWarp) pw;
 				return;
 			}
 		}
@@ -659,7 +659,7 @@ public class MarioBody extends MobileAgentBody {
 		return stateTimer;
 	}
 
-	public WarpPipe getPipeToEnter() {
+	public PipeWarp getPipeToEnter() {
 		return pipeToEnter;
 	}
 

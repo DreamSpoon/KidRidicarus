@@ -24,7 +24,7 @@ public class AgencyKV {
 		public static final String VAL_SPAWNGUIDE = "spawnguide";	// "player" spawner
 		public static final String VAL_DESPAWN = "despawn";
 		public static final String VAL_AGENTSPAWN_TRIGGER = "agentspawn_trigger";
-		public static final String VAL_PIPEWARP = "pipewarp";
+		public static final String VAL_PIPEWARP_SPAWN = "pipewarp";
 
 		// spawnpoint needs a name
 		public static final String KEY_NAME = "name";

@@ -1,7 +1,7 @@
 package kidridicarus.game.Metroid.agent.player;
 
 import kidridicarus.agency.agentscript.ScriptAgentStatus;
-import kidridicarus.agency.agentscript.ScriptedSpritState.SpriteState;
+import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.SuperAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.game.info.GameKV;

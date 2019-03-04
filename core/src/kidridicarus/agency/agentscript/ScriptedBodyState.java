@@ -12,4 +12,10 @@ public class ScriptedBodyState {
 		position = new Vector2(0f, 0f);
 		gravityFactor = 1f;	// default regular gravity
 	}
+
+	public ScriptedBodyState(ScriptedBodyState other) {
+		this.contactEnabled = other.contactEnabled;
+		this.position = other.position.cpy();
+		this.gravityFactor = other.gravityFactor;
+	}
 }

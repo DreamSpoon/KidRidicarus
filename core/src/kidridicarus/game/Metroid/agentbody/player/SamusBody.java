@@ -17,7 +17,7 @@ import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.agency.tool.Direction4;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.general.WarpPipe;
+import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
@@ -42,6 +42,9 @@ public class SamusBody extends MobileAgentBody {
 	private static final CFBitSeq AS_CFCAT_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
 			CommonCF.Alias.ROOM_BIT, CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT);
+	// agent sensor with contacts disabled (still need room bit)
+	private static final CFBitSeq NOCONTACT_AS_CFCAT_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq NOCONTACT_AS_CFMASK_BITS = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
 	// ground and pipe sensor
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFMASK =
@@ -74,6 +77,7 @@ public class SamusBody extends MobileAgentBody {
 	private boolean isContactEnabled;
 	private Fixture mainBodyFixture;
 	private Fixture agentSensorFixture;
+	private Fixture ogSensorFixture;
 
 	public SamusBody(Samus parent, World world, Vector2 position) {
 		super();
@@ -126,26 +130,20 @@ public class SamusBody extends MobileAgentBody {
 			catBits = MAINBODY_CFCAT_BITS;
 			maskBits = MAINBODY_CFMASK_BITS;
 		}
-//		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, sbSensor, catBits, maskBits,
-//				getBodyWidth(), getBodyHeight());
 		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, fdef, sbSensor, catBits, maskBits,
 				getBodySize().x, getBodySize().y);
 	}
 
 	private void createAgentSensor() {
-//		PolygonShape boxShape = new PolygonShape();
-//		boxShape.setAsBox(getBodyWidth()/2f, getBodyHeight()/2f);
 		FixtureDef fdef = new FixtureDef();
-//		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		acSensor = new AgentContactSensor(this);
-		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
-		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
+		CFBitSeq catBits = NOCONTACT_AS_CFCAT_BITS;
+		CFBitSeq maskBits = NOCONTACT_AS_CFMASK_BITS;
 		if(isContactEnabled) {
 			catBits = AS_CFCAT_BITS;
 			maskBits = AS_CFMASK_BITS;
 		}
-//		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, acSensor));
 		agentSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, acSensor, catBits, maskBits,
 				getBodySize().x, getBodySize().y);
 	}
@@ -167,7 +165,8 @@ public class SamusBody extends MobileAgentBody {
 			catBits = GROUND_AND_PIPE_SENSOR_CFCAT;
 			maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
 		}
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
+		ogSensorFixture = b2body.createFixture(fdef);
+		ogSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
 	}
 
 	public void doGroundMove(boolean moveRight) {
@@ -275,10 +274,10 @@ public class SamusBody extends MobileAgentBody {
 	 * Returns warp pipe entrance if pipe sensors are contacting a pipe with entrance direction matching adviceDir.
 	 * Returns null otherwise. 
 	 */
-	public WarpPipe getWarpPipeEntrance(Direction4 adviceDir) {
-		for(Agent pw : wpSensor.getContactsByClass(WarpPipe.class)) {
-			if(((WarpPipe) pw).canBodyEnterPipe(this, adviceDir))
-				return (WarpPipe) pw;
+	public PipeWarp getWarpPipeEntrance(Direction4 adviceDir) {
+		for(Agent pw : wpSensor.getContactsByClass(PipeWarp.class)) {
+			if(((PipeWarp) pw).canBodyEnterPipe(getBounds(), adviceDir))
+				return (PipeWarp) pw;
 		}
 		return null;
 	}
@@ -321,23 +320,29 @@ public class SamusBody extends MobileAgentBody {
 			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAINBODY_CFMASK_BITS;
 			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_CFCAT_BITS;
 			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_CFMASK_BITS;
+			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = GROUND_AND_PIPE_SENSOR_CFCAT;
+			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
 		}
 		else {
 			// disable contacts
 			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
 			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = NOCONTACT_AS_CFCAT_BITS;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = NOCONTACT_AS_CFMASK_BITS;
+			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
+			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
 		}
 		// the contact filters were changed, so let Box2D know to update contacts here
 		mainBodyFixture.refilter();
+		agentSensorFixture.refilter();
+		ogSensorFixture.refilter();
 		// update the contacts enabled flag
 		isContactEnabled = enabled;
 	}
 
 	private void setPosition(Vector2 position) {
 		// if the current position is very close to the new position then exit
-		if(b2body.getPosition().epsilonEquals(position))
+		if(b2body.getPosition().epsilonEquals(position, 0.1f))
 			return;
 		defineBody(position);
 	}

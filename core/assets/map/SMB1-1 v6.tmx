@@ -146,7 +146,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="23" name="pipewarp" visible="0">
+ <objectgroup id="23" name="pipewarp">
   <properties>
    <property name="agentclass" value="pipewarp"/>
   </properties>
