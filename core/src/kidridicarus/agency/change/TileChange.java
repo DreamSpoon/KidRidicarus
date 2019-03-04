@@ -1,7 +1,7 @@
 package kidridicarus.agency.change;
 
 /*
- * Change the "solid" status of a tile in a collision map.
+ * Change the "solid" state of a tile in a collision map.
  */
 public class TileChange {
 	public int x;

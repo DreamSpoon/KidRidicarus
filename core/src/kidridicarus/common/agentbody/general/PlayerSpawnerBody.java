@@ -9,13 +9,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.tool.B2DFactory;
-import kidridicarus.common.agent.general.GuideSpawner;
+import kidridicarus.common.agent.general.PlayerSpawner;
 import kidridicarus.common.info.CommonCF;
 
-public class GuideSpawnerBody extends AgentBody {
-	private GuideSpawner parent;
+public class PlayerSpawnerBody extends AgentBody {
+	private PlayerSpawner parent;
 
-	public GuideSpawnerBody(World world, GuideSpawner parent, Rectangle bounds) {
+	public PlayerSpawnerBody(World world, PlayerSpawner parent, Rectangle bounds) {
 		this.parent = parent;
 		setBodySize(bounds.width, bounds.height);
 		defineBody(world, bounds);

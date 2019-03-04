@@ -1,6 +1,6 @@
 package kidridicarus.game.SMB.agent.player;
 
-import kidridicarus.agency.agentscript.ScriptAgentStatus;
+import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.tool.SuperAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.game.info.PowerupInfo.PowType;
@@ -40,7 +40,7 @@ public class MarioSupervisor extends GameAgentSupervisor {
 	}
 
 	@Override
-	protected ScriptAgentStatus getCurrentScriptAgentStatus() {
+	protected ScriptedAgentState getCurrentScriptAgentState() {
 		return null;
 	}
 }

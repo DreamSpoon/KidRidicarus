@@ -1,7 +1,7 @@
 package kidridicarus.agency.change;
 
 /*
- * Change the "updates enabled" status of an agent.
+ * Change the "updates enabled" state of an agent.
  */
 public class UpdateChange {
 	public AgentPlaceholder ap;

@@ -19,8 +19,7 @@ import kidridicarus.agency.space.SpaceTemplateLoader;
 import kidridicarus.agency.tool.DrawOrderAlias;
 
 /*
- * Run the agency, insert guides (players) into the agency, and take direction from the agency to
- * play sounds, music, etc. 
+ * Run the agency, insert players into the agency, and take direction from the agency to play sounds, music, etc. 
  */
 public class AgencyDirector implements Disposable {
 	private AssetManager manager;
@@ -95,7 +94,7 @@ public class AgencyDirector implements Disposable {
 	}
 
 	public Agent createInitialPlayerAgent() {
-		Agent spawner = getMainGuideSpawn();
+		Agent spawner = getMainPlayerSpawner();
 		if(spawner == null)
 			return null;
 		String initPlayClass = spawner.getProperty("playeragentclass", null, String.class);
@@ -104,11 +103,11 @@ public class AgencyDirector implements Disposable {
 		return agency.createAgent(Agent.createPointAP(initPlayClass, spawner.getPosition()));
 	}
 
-	private Agent getMainGuideSpawn() {
+	private Agent getMainPlayerSpawner() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
 		Collection<Agent> spawnList = agency.getAgentsByProperties(
 				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, AgencyKV.Spawn.KEY_SPAWNMAIN },
-				new String[] { AgencyKV.Spawn.VAL_SPAWNGUIDE, AgencyKV.VAL_TRUE });
+				new String[] { AgencyKV.Spawn.VAL_PLAYERSPAWNER, AgencyKV.VAL_TRUE });
 		if(!spawnList.isEmpty())
 			return spawnList.iterator().next();
 		else

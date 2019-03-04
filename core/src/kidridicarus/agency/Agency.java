@@ -94,7 +94,7 @@ public class Agency implements Disposable {
 	 * -list of all agents
 	 * -list of agents receiving updates
 	 * -agent draw order lists
-	 * And tiles may have changed solid status.
+	 * And tiles may have changed solid state.
 	 * Process these queues.
 	 */
 	public void processChangeQ() {
@@ -232,7 +232,7 @@ public class Agency implements Disposable {
 	}
 
 	/*
-	 * Returns solid status of a tile in collision map (solid = true).
+	 * Returns solid state of a tile in collision map (solid = true).
 	 * Note: Does not take into account any changes that may be scheduled in the agency change queue.
 	 */
 	public boolean isMapTileSolid(Vector2 tilePos) {
@@ -240,7 +240,7 @@ public class Agency implements Disposable {
 	}
 
 	/*
-	 * Returns solid status of a point in collision map (solid = true).
+	 * Returns solid state of a point in collision map (solid = true).
 	 * Note: Does not take into account any changes that may be scheduled in the agency change queue.
 	 */
 	public boolean isMapPointSolid(Vector2 pointPos) {

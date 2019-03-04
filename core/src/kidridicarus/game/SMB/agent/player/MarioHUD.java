@@ -15,7 +15,7 @@ import kidridicarus.game.info.GameInfo;
 import kidridicarus.game.play.hud.HudCoin;
 
 public class MarioHUD implements Disposable {
-	private Mario guide;
+	private Mario mario;
 	private Stage stage;
 
 	private Label scoreVarLabel;
@@ -24,7 +24,7 @@ public class MarioHUD implements Disposable {
 	private Label timeVarLabel;
 
 	public MarioHUD(Mario agent, TextureAtlas atlas, Stage stage) {
-		this.guide = agent;
+		this.mario = agent;
 		this.stage = stage;
 
 		Table table = new Table();
@@ -55,9 +55,9 @@ public class MarioHUD implements Disposable {
 	}
 
 	public void update() {
-		scoreVarLabel.setText(String.format("%06d", guide.getPointTotal()));
-		timeVarLabel.setText(String.format("%03d", (int) guide.getLevelTimeRemaining()));
-		coinVarLabel.setText(String.format("×%02d", guide.getCoinTotal()));
+		scoreVarLabel.setText(String.format("%06d", mario.getPointTotal()));
+		timeVarLabel.setText(String.format("%03d", (int) mario.getLevelTimeRemaining()));
+		coinVarLabel.setText(String.format("×%02d", mario.getCoinTotal()));
 		stage.act();
 	}
 

@@ -12,12 +12,11 @@ import kidridicarus.agency.tool.Direction4;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agentscript.PipeWarpScript;
-import kidridicarus.game.SMB.agentbody.other.WarpPipeBody;
+import kidridicarus.game.SMB.agentbody.other.PipeWarpBody;
 import kidridicarus.game.info.GameKV;
-import kidridicarus.game.tool.QQ;
 
 public class PipeWarp extends Agent {
-	private WarpPipeBody pwBody;
+	private PipeWarpBody pwBody;
 	private Direction4 direction;
 
 	public PipeWarp(Agency agency, ObjectProperties properties) {
@@ -35,7 +34,7 @@ public class PipeWarp extends Agent {
 			else if(dir.equals("down"))
 				direction = Direction4.DOWN;
 		}
-		pwBody = new WarpPipeBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		pwBody = new PipeWarpBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 	}
 
 	@Override
@@ -72,38 +71,19 @@ public class PipeWarp extends Agent {
 		return false;
 	}
 
-	public GuideSpawner getWarpExit() {
-		return getGuideSpawnerByName(properties.get(AgencyKV.Spawn.KEY_EXITNAME, "", String.class));
-	}
-
 	/*
-	 * Returns null if guide spawner is not found.
+	 * Returns null if exit spawner is not found.
 	 */
-	private GuideSpawner getGuideSpawnerByName(String name) {
-		Agent agent = agency.getFirstAgentByProperties(new String[] { AgencyKV.Spawn.KEY_AGENTCLASS,
-				AgencyKV.Spawn.KEY_NAME }, new String[] { AgencyKV.Spawn.VAL_SPAWNGUIDE, name });
-		if(agent instanceof GuideSpawner)
-			return (GuideSpawner) agent;
+	public PlayerSpawner getExitAgentSpawner() {
+		String exitName = properties.get(AgencyKV.Spawn.KEY_EXITNAME, "", String.class);
+		if(exitName == null)
+			return null;
+		Agent agent = agency.getFirstAgentByProperties(
+				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, AgencyKV.Spawn.KEY_NAME },
+				new String[] { AgencyKV.Spawn.VAL_PLAYERSPAWNER, exitName });
+		if(agent instanceof PlayerSpawner)
+			return (PlayerSpawner) agent;
 		return null;
-	}
-
-	public Direction4 getDirection() {
-		return direction;
-	}
-
-	@Override
-	public Vector2 getPosition() {
-		return pwBody.getPosition();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return pwBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	// check if the user is a player agent, if so then give the agent's supervisor a PipeWarp script to run 
@@ -111,7 +91,7 @@ public class PipeWarp extends Agent {
 		if(!(agent instanceof PlayerAgent))
 			return false;
 
-		GuideSpawner gs = getGuideSpawnerByName(properties.get(AgencyKV.Spawn.KEY_EXITNAME, "", String.class));
+		PlayerSpawner gs = getExitAgentSpawner();
 		Vector2 exitPos;
 		// if no exit position then default to (0, 0) - TODO throw exception?
 		if(gs == null)
@@ -119,13 +99,9 @@ public class PipeWarp extends Agent {
 		else
 			exitPos = gs.getPosition();
 
-		PipeWarpHorizon entryHorizon = getEntryHorizon();
-		PipeWarpHorizon exitHorizon = getExitHorizon();
-		QQ.pr("entryhorizon bounds= " + entryHorizon.bounds);
-		QQ.pr("exitHorizon= " + exitHorizon);
 		return ((PlayerAgent) agent).getSupervisor().startScript(
-				new PipeWarpScript(exitPos, entryHorizon, exitHorizon,
-						agent.getProperty(GameKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
+				new PipeWarpScript(exitPos, getEntryHorizon(), getExitHorizon(),
+				agent.getProperty(GameKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
 	}
 
 	private PipeWarpHorizon getEntryHorizon() {
@@ -157,7 +133,7 @@ public class PipeWarp extends Agent {
 
 	private PipeWarpHorizon getExitHorizon() {
 		// if this agent doesn't have an exit name key then quit method
-		GuideSpawner gs = getGuideSpawnerByName(properties.get(AgencyKV.Spawn.KEY_EXITNAME, "", String.class));
+		PlayerSpawner gs = getExitAgentSpawner();
 		if(gs == null)
 			return null;
 		// if the exit spawner doesn't have a pipe warp spawn property then quit method
@@ -195,6 +171,25 @@ public class PipeWarp extends Agent {
 		}
 
 		return new PipeWarpHorizon(exitDir, exitBounds); 
+	}
+
+	public Direction4 getDirection() {
+		return direction;
+	}
+
+	@Override
+	public Vector2 getPosition() {
+		return pwBody.getPosition();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return pwBody.getBounds();
+	}
+
+	@Override
+	public Vector2 getVelocity() {
+		return new Vector2(0f, 0f);
 	}
 
 	@Override

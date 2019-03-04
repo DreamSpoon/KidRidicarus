@@ -1,6 +1,6 @@
 package kidridicarus.game.Metroid.agent.player;
 
-import kidridicarus.agency.agentscript.ScriptAgentStatus;
+import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.SuperAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
@@ -34,17 +34,17 @@ public class SamusSupervisor extends GameAgentSupervisor {
 	}
 
 	@Override
-	protected ScriptAgentStatus getCurrentScriptAgentStatus() {
-		ScriptAgentStatus curStatus = new ScriptAgentStatus();
-		curStatus.scriptedBodyState.contactEnabled = true;
-		curStatus.scriptedBodyState.position.set(samus.getPosition());
+	protected ScriptedAgentState getCurrentScriptAgentState() {
+		ScriptedAgentState curState = new ScriptedAgentState();
+		curState.scriptedBodyState.contactEnabled = true;
+		curState.scriptedBodyState.position.set(samus.getPosition());
 
-		curStatus.scriptedSpriteState.position.set(samus.getPosition());
-		curStatus.scriptedSpriteState.visible = true;
-		curStatus.scriptedSpriteState.spriteState =
+		curState.scriptedSpriteState.position.set(samus.getPosition());
+		curState.scriptedSpriteState.visible = true;
+		curState.scriptedSpriteState.spriteState =
 				samus.getProperty(GameKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
-		curStatus.scriptedSpriteState.facingRight = samus.getProperty(GameKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
+		curState.scriptedSpriteState.facingRight = samus.getProperty(GameKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
 
-		return curStatus;
+		return curState;
 	}
 }

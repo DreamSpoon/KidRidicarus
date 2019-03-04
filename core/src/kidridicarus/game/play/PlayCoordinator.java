@@ -35,11 +35,10 @@ public class PlayCoordinator implements Disposable {
 	// * two references to the same player agent - usage depends upon the functionality needed
 	private Agent agent;
 	private PlayerAgent playAgent;
-	// * TODO ?  a private class that  extends Agent implements Playeragent  ?
+	// * TODO ?  a private class that  extends Agent implements PlayerAgent  ?
 
 	private AgentSpawnTrigger spawnTrigger;
 	private SuperAdvice superAdvice;
-	private OrthographicCamera gamecam;
 	private Stage stageHUD;
 
 	private String currentMainMusicName;
@@ -48,10 +47,9 @@ public class PlayCoordinator implements Disposable {
 	private Music currentSinglePlayMusic;
 	private AssetManager manager;
 
-	public PlayCoordinator(Agency agency, AssetManager manager, OrthographicCamera gamecam, Stage stageHUD) {
+	public PlayCoordinator(Agency agency, AssetManager manager, Stage stageHUD) {
 		this.agency = agency;
 		this.manager = manager;
-		this.gamecam = gamecam;
 		this.stageHUD = stageHUD;
 		spawnTrigger = null;
 		playAgent = null;
@@ -112,18 +110,23 @@ public class PlayCoordinator implements Disposable {
 		}
 	}
 
-	public void preUpdateAgency() {
+	public void preUpdateAgency(float delta) {
+		// get user input
+		handleInput();
+
+		// ensure spawn trigger follows view of player
 		spawnTrigger.setTarget(playAgent.getObserver().getViewCenter());
+		// pass user input to player agent's supervisor
 		playAgent.getSupervisor().setFrameAdvice(superAdvice);
+		playAgent.getSupervisor().preUpdateAgency(delta);
 	}
 
-	public void postUpdateAgency(float delta) {
+	public void postUpdateAgency() {
 		if(((GameAgentSupervisor) playAgent.getSupervisor()).isSwitchToOtherChar()) {
 //			agency.startSinglePlayMusic(AudioInfo.Music.Metroid.METROIDITEM);
 			switchAgentType(PowChar.SAMUS);
 		}
-
-		playAgent.getSupervisor().postUpdateAgency(delta);
+		playAgent.getSupervisor().postUpdateAgency();
 		playAgent.getObserver().postUpdateAgency();
 	}
 
@@ -153,7 +156,7 @@ public class PlayCoordinator implements Disposable {
 		}
 	}
 
-	public void updateCamera() {
+	public void updateCamera(OrthographicCamera gamecam) {
 		// if player is not dead then use their current room to determine the gamecam position
 		if(!((PlayerAgent) agent).isDead()) {
 			gamecam.position.set(playAgent.getObserver().getViewCenter(), 0f);

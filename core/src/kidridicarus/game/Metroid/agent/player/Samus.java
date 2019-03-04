@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
-import kidridicarus.agency.agentscript.ScriptAgentStatus;
+import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
@@ -61,7 +61,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 	private boolean isLastJumpLandable;
 	private boolean isNextJumpEnabled;
 	private Vector2 damagePos = new Vector2();
-	private boolean isDrawnLastFrame;
+	private boolean isDrawThisFrame;
 	private float shootCooldownTime;
 	private float startJumpY;
 	private boolean isJumpSpinAvailable;
@@ -83,7 +83,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 		isJumpForceEnabled = true;
 		isLastJumpLandable = true;
 		isNextJumpEnabled = true;
-		isDrawnLastFrame = false;
+		isDrawThisFrame = false;
 		startJumpY = 0;
 		isJumpSpinAvailable = false;
 		isAutoContinueRightAirMove = false;
@@ -163,7 +163,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 
 		// the previous code might have started a script; if a script is now running then process the script
 		if(supervisor.isScriptRunning())
-			sBody.useScriptedBodyState(supervisor.getScriptAgentStatus().scriptedBodyState);
+			sBody.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
 	}
 
 	/*
@@ -179,7 +179,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 			return false;
 		}
 		// if no pipe to enter then exit (exit the method, not exit the pipe)
-		PipeWarp wp = sBody.getWarpPipeEntrance(adviceDir);
+		PipeWarp wp = sBody.getPipeWarpForAdvice(adviceDir);
 		if(wp == null)
 			return false;
 
@@ -495,47 +495,45 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 
 	private void processSprite(float delta) {
 		if(supervisor.isScriptRunning()) {
-			ScriptAgentStatus status = supervisor.getScriptAgentStatus();
-			MoveState parentState;
-			switch(status.scriptedSpriteState.spriteState) {
+			ScriptedSpriteState sss = supervisor.getScriptAgentState().scriptedSpriteState;
+			MoveState ms;
+			switch(sss.spriteState) {
 				case MOVE:
-					parentState = MoveState.RUN;
+					ms = MoveState.RUN;
 					break;
 				default:
-					parentState = MoveState.STAND;
+					ms = MoveState.STAND;
 					break;
 			}
-			sSprite.update(delta, status.scriptedSpriteState.position, parentState,
-					status.scriptedSpriteState.facingRight, isFacingUp);
+			sSprite.update(delta, sss.position, ms, sss.facingRight, isFacingUp);
 		}
-		else
+		else {
 			sSprite.update(delta, sBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
+			// toggle sprite on/off each frame while in contact damage state
+			if(curContactState == ContactState.DAMAGE && isDrawThisFrame)
+				isDrawThisFrame = false;
+			else
+				isDrawThisFrame = true;
+		}
 	}
 
 	@Override
 	public void draw(Batch batch) {
 		// if a script is running and the sprite is visible then draw it
 		if(supervisor.isScriptRunning()) {
-			if(supervisor.getScriptAgentStatus().scriptedSpriteState.visible)
+			if(supervisor.getScriptAgentState().scriptedSpriteState.visible)
 				sSprite.draw(batch);
 		}
 		// no script running, do the normal draw stuff
 		else {
-			// TODO: Move this code into the process move methods, draw should only *check* if the sprite
-			// should be drawn, not *update* when it should be drawn. (i.e. consider "forced frame rate")
-
-			// toggle sprite on/off each frame while in contact damage state
-			if(curContactState == ContactState.DAMAGE && isDrawnLastFrame)
-				isDrawnLastFrame = false;
-			else {
-				isDrawnLastFrame = true;
+			if(isDrawThisFrame)
 				sSprite.draw(batch);
-			}
 		}
 	}
 
 	// TODO implement the general info return with override of the getProperty method of Agent class for
 	// most of the following methods (or all?)
+	// OR, push these events to samus supervisor, so that this Agent info won't need to be polled
 
 	@Override
 	public boolean isDead() {

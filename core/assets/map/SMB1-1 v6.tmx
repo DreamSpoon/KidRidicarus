@@ -102,7 +102,7 @@
  </layer>
  <layer id="94" name="playerstart" width="230" height="46">
   <properties>
-   <property name="agentclass" value="spawnguide"/>
+   <property name="agentclass" value="playerspawner"/>
    <property name="playeragentclass" value="samus"/>
    <property name="spawnmain" value="true"/>
   </properties>
@@ -112,7 +112,7 @@
  </layer>
  <objectgroup id="20" name="spawnplayer">
   <properties>
-   <property name="agentclass" value="spawnguide"/>
+   <property name="agentclass" value="playerspawner"/>
   </properties>
   <object id="232" x="720" y="560" width="16" height="16">
    <properties>

@@ -9,21 +9,21 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agentbody.general.GuideSpawnerBody;
+import kidridicarus.common.agentbody.general.PlayerSpawnerBody;
 import kidridicarus.agency.info.AgencyKV;
 
-public class GuideSpawner extends Agent {
+public class PlayerSpawner extends Agent {
 	private static final float SPAWN_SAFETYDIST = UInfo.P2M(1);
 
 	public enum SpawnType { IMMEDIATE, PIPEWARP }
 
-	private GuideSpawnerBody psbody;
+	private PlayerSpawnerBody psbody;
 
 	private boolean isMain;
 	private SpawnType spawntype;
 	private Direction4 direction;
 
-	public GuideSpawner(Agency agency, ObjectProperties properties) {
+	public PlayerSpawner(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		isMain = properties.containsKey(AgencyKV.Spawn.KEY_SPAWNMAIN);
@@ -39,7 +39,7 @@ public class GuideSpawner extends Agent {
 			}
 		}
 
-		psbody = new GuideSpawnerBody(agency.getWorld(), this, Agent.getStartBounds(properties));
+		psbody = new PlayerSpawnerBody(agency.getWorld(), this, Agent.getStartBounds(properties));
 	}
 
 	@Override

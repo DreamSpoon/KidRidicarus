@@ -35,6 +35,6 @@ public class CommonCF {
 	public static final CFBitSeq BUMPTILE_CFCAT = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 	public static final CFBitSeq BUMPTILE_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 
-	public static final CFBitSeq WARPPIPE_CFCAT = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
-	public static final CFBitSeq WARPPIPE_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	public static final CFBitSeq PIPEWARP_CFCAT = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
+	public static final CFBitSeq PIPEWARP_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 }

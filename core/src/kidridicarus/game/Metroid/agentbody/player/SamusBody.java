@@ -169,6 +169,16 @@ public class SamusBody extends MobileAgentBody {
 		ogSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
 	}
 
+	public void switchToBallForm() {
+		isBallForm = true;
+		defineBody(b2body.getPosition());
+	}
+
+	public void switchToStandForm() {
+		isBallForm = false;
+		defineBody(b2body.getPosition());
+	}
+
 	public void doGroundMove(boolean moveRight) {
 		if(moveRight && getVelocity().x < MAX_GROUNDMOVE_VEL)
 			applyImpulse(GROUNDMOVE_IMP);
@@ -238,20 +248,6 @@ public class SamusBody extends MobileAgentBody {
 			setVelocity(getVelocity().x, -MAX_DOWN_VELOCITY);
 	}
 
-	public void switchToBallForm() {
-		isBallForm = true;
-		defineBody(b2body.getPosition());
-	}
-
-	public void switchToStandForm() {
-		isBallForm = false;
-		defineBody(b2body.getPosition());
-	}
-
-	public <T> List<Agent> getContactsByClass(Class<T> clazz) {
-		return acSensor.getContactsByClass(clazz);
-	}
-
 	public void doBounceCheck() {
 		// Check for bounce up (no left/right bounces, no down bounces).
 		// Since body restitution=0, bounce occurs when current velocity=0 and previous velocity > 0.
@@ -268,40 +264,6 @@ public class SamusBody extends MobileAgentBody {
 
 	public void postUpdate() {
 		prevVelocity.set(getVelocity());
-	}
-
-	/*
-	 * Returns warp pipe entrance if pipe sensors are contacting a pipe with entrance direction matching adviceDir.
-	 * Returns null otherwise. 
-	 */
-	public PipeWarp getWarpPipeEntrance(Direction4 adviceDir) {
-		for(Agent pw : wpSensor.getContactsByClass(PipeWarp.class)) {
-			if(((PipeWarp) pw).canBodyEnterPipe(getBounds(), adviceDir))
-				return (PipeWarp) pw;
-		}
-		return null;
-	}
-
-	public boolean isContactingWall(boolean isRightWall) {
-		return sbSensor.isHMoveBlocked(getBounds(), isRightWall);
-	}
-
-	public boolean isOnGround() {
-		// return true if the on ground contacts list contains at least 1 floor
-		return ogSensor.isOnGround();
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
-	}
-
-	public Room getCurrentRoom() {
-		return (Room) acSensor.getFirstContactByClass(Room.class);
-	}
-
-	public boolean isContactEnabled() {
-		return isContactEnabled;
 	}
 
 	public void useScriptedBodyState(ScriptedBodyState sbState) {
@@ -340,10 +302,48 @@ public class SamusBody extends MobileAgentBody {
 		isContactEnabled = enabled;
 	}
 
+	public boolean isContactEnabled() {
+		return isContactEnabled;
+	}
+
 	private void setPosition(Vector2 position) {
 		// if the current position is very close to the new position then exit
 		if(b2body.getPosition().epsilonEquals(position, 0.1f))
 			return;
 		defineBody(position);
+	}
+
+	/*
+	 * Returns warp pipe entrance if pipe sensors are contacting a pipe with entrance direction matching adviceDir.
+	 * Returns null otherwise. 
+	 */
+	public PipeWarp getPipeWarpForAdvice(Direction4 adviceDir) {
+		for(Agent pw : wpSensor.getContactsByClass(PipeWarp.class)) {
+			if(((PipeWarp) pw).canBodyEnterPipe(getBounds(), adviceDir))
+				return (PipeWarp) pw;
+		}
+		return null;
+	}
+
+	public <T> List<Agent> getContactsByClass(Class<T> clazz) {
+		return acSensor.getContactsByClass(clazz);
+	}
+
+	public boolean isContactingWall(boolean isRightWall) {
+		return sbSensor.isHMoveBlocked(getBounds(), isRightWall);
+	}
+
+	public boolean isOnGround() {
+		// return true if the on ground contacts list contains at least 1 floor
+		return ogSensor.isOnGround();
+	}
+
+	@Override
+	public Agent getParent() {
+		return parent;
+	}
+
+	public Room getCurrentRoom() {
+		return (Room) acSensor.getFirstContactByClass(Room.class);
 	}
 }

@@ -53,9 +53,9 @@ public class SamusHUD implements Disposable {
 	}
 
 /*	public void update() {
-		scoreVarLabel.setText(String.format("%06d", guide.getPointTotal()));
-		timeVarLabel.setText(String.format("%03d", (int) guide.getLevelTimeRemaining()));
-		coinVarLabel.setText(String.format("×%02d", guide.getCoinTotal()));
+		scoreVarLabel.setText(String.format("%06d", samus.getPointTotal()));
+		timeVarLabel.setText(String.format("%03d", (int) samus.getLevelTimeRemaining()));
+		coinVarLabel.setText(String.format("×%02d", samus.getCoinTotal()));
 		stage.act();
 	}
 */

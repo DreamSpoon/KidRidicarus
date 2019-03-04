@@ -10,7 +10,7 @@ import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentObserverPlus;
-import kidridicarus.common.agent.general.GuideSpawner;
+import kidridicarus.common.agent.general.PlayerSpawner;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agent.optional.PlayerAgent;
@@ -58,7 +58,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent {
 	private float stateTimer;
 
 	private Vector2 marioSpriteOffset;
-	private GuideSpawner exitingSpawnpoint;
+	private PlayerSpawner exitingSpawnpoint;
 	private boolean marioIsDead;
 	private boolean prevFrameAdvisedShoot;
 	private boolean isDmgInvincible;
@@ -470,7 +470,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent {
 
 	private void processRespawn() {
 		// check for warp movement and respawn if necessary
-		GuideSpawner sp = getWarpSpawnpoint(); 
+		PlayerSpawner sp = getWarpSpawnpoint(); 
 		if(sp == null)
 			return;
 
@@ -492,11 +492,11 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent {
 	}
 
 	// return null unless mario needs to warp
-	private GuideSpawner getWarpSpawnpoint() {
+	private PlayerSpawner getWarpSpawnpoint() {
 		if(mBody.getPipeToEnter() != null &&
 				(curState == MarioState.PIPE_ENTRYH || curState == MarioState.PIPE_ENTRYV) &&
 				stateTimer > PIPE_WARPENTRYTIME) {
-			return mBody.getPipeToEnter().getWarpExit();
+			return mBody.getPipeToEnter().getExitAgentSpawner();
 		}
 		return null;
 	}

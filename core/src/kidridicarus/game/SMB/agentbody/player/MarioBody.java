@@ -388,7 +388,7 @@ public class MarioBody extends MobileAgentBody {
 			nextState = MarioBodyState.WALKRUN;
 		}
 
-		// Do not check mario's "on ground" status for a short time after mario jumps, because his foot sensor
+		// Do not check mario's "on ground" state for a short time after mario jumps, because his foot sensor
 		// might still be contacting the ground even after his body enters the air.
 		if(jumpGroundCheckTimer > delta)
 			jumpGroundCheckTimer -= delta;
@@ -407,7 +407,7 @@ public class MarioBody extends MobileAgentBody {
 		if(advice.jump && isNewJumpAllowed) {	// do jump
 			isNewJumpAllowed = false;
 			isJumping = true;
-			// start a timer to delay checking for onGround status
+			// start a timer to delay checking for onGround state
 			jumpGroundCheckTimer = MARIO_JUMP_GROUNDCHECK_DELAY;
 			nextState = MarioBodyState.JUMP;
 
