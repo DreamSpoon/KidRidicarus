@@ -233,12 +233,6 @@ public class MarioSprite extends Sprite {
 			switch(agentState) {
 				case DEAD:
 					return MarioSpriteState.DEAD;
-				case PIPE_ENTRYH:
-				case PIPE_EXITH:
-					return MarioSpriteState.RUN;
-				case PIPE_ENTRYV:
-				case PIPE_EXITV:
-					return MarioSpriteState.STAND;
 				case END1_SLIDE:
 					return MarioSpriteState.END_SLIDE;
 				case END2_WAIT1:
@@ -393,6 +387,7 @@ public class MarioSprite extends Sprite {
 	@Override
 	public void draw(Batch batch) {
 		// if isBlinking is true and blink is currently "off", or if isBlinking is false...
+		// TODO move this to the mario agent code
 		if(!(isBlinking && Math.floorMod((int) (blinkTimer / BLINK_DURATION), 2) == 0))
 			super.draw(batch);
 	}

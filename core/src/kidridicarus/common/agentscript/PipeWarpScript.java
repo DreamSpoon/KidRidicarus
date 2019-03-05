@@ -106,13 +106,17 @@ public class PipeWarpScript implements AgentScript {
 		else {
 			switch(exitHorizon.direction) {
 				case RIGHT:
-					return exitPosition.cpy().add(incomingAgentSize.x/2f, 0f);
+					return new Vector2(exitHorizon.bounds.x, exitHorizon.bounds.y+exitHorizon.bounds.height/2f).
+							add(incomingAgentSize.x/2f, 0f);
 				case LEFT:
-					return exitPosition.cpy().add(-incomingAgentSize.x/2f, 0f);
+					return new Vector2(exitHorizon.bounds.x, exitHorizon.bounds.y+exitHorizon.bounds.height/2f).
+							add(-incomingAgentSize.x/2f, 0f);
 				case UP:
-					return exitPosition.cpy().add(0f, incomingAgentSize.y/2f);
+					return new Vector2(exitHorizon.bounds.x+exitHorizon.bounds.width/2f, exitHorizon.bounds.y).
+							add(0f, incomingAgentSize.y/2f);
 				default:
-					return exitPosition.cpy().add(0f, -incomingAgentSize.y/2f);
+					return new Vector2(exitHorizon.bounds.x+exitHorizon.bounds.width/2f, exitHorizon.bounds.y).
+							add(0f, -incomingAgentSize.y/2f);
 			}
 		}
 	}

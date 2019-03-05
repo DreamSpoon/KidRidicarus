@@ -9,12 +9,12 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
+import kidridicarus.agency.agentscript.ScriptedAgentState;
+import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentObserverPlus;
-import kidridicarus.common.agent.general.PlayerSpawner;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
@@ -22,6 +22,7 @@ import kidridicarus.game.SMB.agentbody.player.MarioBody;
 import kidridicarus.game.SMB.agentbody.player.MarioBody.MarioBodyState;
 import kidridicarus.game.SMB.agentsprite.player.MarioSprite;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo.PointAmount;
@@ -34,7 +35,7 @@ import kidridicarus.game.play.GameAdvice;
  */
 public class Mario extends Agent implements UpdatableAgent, DrawableAgent, PlayerAgent, PowerupTakeAgent {
 	public enum MarioState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
-		END6_RUN, END99, PIPE_ENTRYH, PIPE_EXITH, PIPE_ENTRYV, PIPE_EXITV }
+		END6_RUN, END99 }
 
 	private static final float LEVEL_MAX_TIME = 300f;
 
@@ -47,10 +48,6 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	private static final float END_BRAKETIME = 0.02f;
 	private static final Vector2 FLAG_JUMPOFF_VEL = new Vector2(1.0f, 1.0f);
 
-	private static final float PIPE_WARPHEIGHT = UInfo.P2M(32);
-	private static final float PIPE_WARPWIDTH = UInfo.P2M(16);
-	private static final float PIPE_WARPENTRYTIME = 0.7f;
-
 	public enum MarioPowerState { SMALL, BIG, FIRE }
 
 	private MarioSprite marioSprite;
@@ -59,8 +56,6 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	private MarioState curState;
 	private float stateTimer;
 
-	private Vector2 marioSpriteOffset;
-	private PlayerSpawner exitingSpawnpoint;
 	private boolean marioIsDead;
 	private boolean prevFrameAdvisedShoot;
 	private boolean isDmgInvincible;
@@ -87,13 +82,10 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		dmgInvincibleTime = 0f;
 		fireballTimer = TIME_PER_FIREBALL * 2f;
 		powerStarTimer = 0f;
-		marioSpriteOffset = new Vector2(0f, 0f);
 
 		curPowerState = MarioPowerState.SMALL;
 
 		powerupRec = PowType.NONE;
-
-		exitingSpawnpoint = null;
 
 		levelTimeRemaining = LEVEL_MAX_TIME;
 
@@ -123,8 +115,18 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 		levelTimeRemaining -= delta;
 
-		// check for warp movement and respawn if necessary
-		processRespawn();
+		if(supervisor.isScriptRunning()) {
+			ScriptedAgentState def = supervisor.getScriptAgentState();
+			mBody.useScriptedBodyState(def.scriptedBodyState);
+			marioSprite.update(delta, def.scriptedSpriteState.position, curState, MarioBodyState.STAND, curPowerState,
+					def.scriptedSpriteState.facingRight, isDmgInvincible, false, mBody.isBigBody());
+
+			// TODO only run this next line when script ends,
+			//   to prevent mario getting pipe warp contact where there is none
+			mBody.resetPipeToEnter();
+
+			return;
+		}
 
 		// reset consecutive bounce points
 		if(mBody.isOnGround())
@@ -139,7 +141,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			bodyState = mBody.update(delta, advice, curPowerState);
 		}
 
-		stateTimer = nextState == curState ? stateTimer + delta : 0f;
+		stateTimer = nextState == curState ? stateTimer+delta : 0f;
 		curState = nextState;
 
 		isStarPowered = false;
@@ -148,7 +150,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			powerStarTimer -= delta;
 		}
 
-		marioSprite.update(delta, mBody.getPosition().cpy().add(marioSpriteOffset), curState, bodyState,
+		marioSprite.update(delta, mBody.getPosition(), curState, bodyState,
 				curPowerState, mBody.isFacingRight(), isDmgInvincible, isStarPowered, mBody.isBigBody());
 
 		prevFrameAdvisedShoot = advice.runShoot;
@@ -221,7 +223,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 					if(stateTimer > END_BRAKETIME) {
 						mBody.setFacingRight(true);
 						observer.startSinglePlayMusic(AudioInfo.Music.SMB.LEVELEND);
-						
+
 						mBody.resetFlagpoleContacted();
 						return MarioState.END6_RUN;
 					}
@@ -244,57 +246,8 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		}
 		// scripted pipe entrance
 		else if(mBody.getPipeToEnter() != null) {
-			switch(curState) {
-				// continuing pipe entry
-				case PIPE_ENTRYH:
-				case PIPE_ENTRYV:
-					marioSpriteOffset.set(getPipeEntrySpriteEndOffset(mBody.getPipeToEnter()));
-					if(stateTimer < PIPE_WARPENTRYTIME)
-						marioSpriteOffset.scl(stateTimer / PIPE_WARPENTRYTIME);
-					return curState;
-				// first frame of pipe entry
-				default:
-					agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
-
-					// Mario disappears behind the pipe as he moves into it
-					agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
-
-					mBody.disableAllContacts();
-
-					mBody.disableGravity();
-					mBody.zeroVelocity(true, true);
-					if(mBody.getPipeToEnter().getDirection().isHorizontal())
-						return MarioState.PIPE_ENTRYH;
-					else
-						return MarioState.PIPE_ENTRYV;
-			}
-		}
-		// scripted spawnpoint exit
-		else if(exitingSpawnpoint != null) {
-			switch(curState) {
-				// continuing pipe exit
-				case PIPE_EXITH:
-				case PIPE_EXITV:
-					marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
-					if(stateTimer > PIPE_WARPENTRYTIME) {
-						// Mario reappears in front of the pipe as he moves out of it
-						agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
-
-						exitingSpawnpoint = null;
-						marioSpriteOffset.set(0f, 0f);
-						return MarioState.PLAY;
-					}
-					else {
-						marioSpriteOffset.scl((PIPE_WARPENTRYTIME - stateTimer) / PIPE_WARPENTRYTIME);
-						return curState;
-					}
-				// first frame of pipe exit
-				default:
-					if(exitingSpawnpoint.getDirection().isHorizontal())
-						return MarioState.PIPE_EXITH;
-					else
-						return MarioState.PIPE_EXITV;
-			}
+			mBody.getPipeToEnter().use(this);
+			return this.curState;
 		}
 		// otherwise the player has control, because no script is runnning
 		else {
@@ -470,67 +423,6 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		extraLives++;
 	}
 
-	private void processRespawn() {
-		// check for warp movement and respawn if necessary
-		PlayerSpawner sp = getWarpSpawnpoint(); 
-		if(sp == null)
-			return;
-
-		mBody.resetPipeToEnter();
-
-		switch(sp.getSpawnType()) {
-			case PIPEWARP:
-				mBody.setPosAndVel(sp.calcBeginOffsetFromSpawn(mBody.getBodySize()), new Vector2(0f, 0f));
-				exitingSpawnpoint = sp;
-				marioSpriteOffset.set(getSpawnExitSpriteBeginOffset());
-				break;
-			case IMMEDIATE:
-			default:
-				mBody.setPosAndVel(sp.getPosition(), new Vector2(0f, 0f));
-				marioSpriteOffset.set(0f, 0f);
-				exitingSpawnpoint = null;
-				break;
-		}
-	}
-
-	// return null unless mario needs to warp
-	private PlayerSpawner getWarpSpawnpoint() {
-		if(mBody.getPipeToEnter() != null &&
-				(curState == MarioState.PIPE_ENTRYH || curState == MarioState.PIPE_ENTRYV) &&
-				stateTimer > PIPE_WARPENTRYTIME) {
-			return mBody.getPipeToEnter().getExitAgentSpawner();
-		}
-		return null;
-	}
-
-	private Vector2 getPipeEntrySpriteEndOffset(PipeWarp pipeToEnter) {
-		switch(pipeToEnter.getDirection()) {
-			case RIGHT:
-				return new Vector2(PIPE_WARPWIDTH, 0f);
-			case UP:
-				return new Vector2(0f, PIPE_WARPHEIGHT);
-			case LEFT:
-				return new Vector2(-PIPE_WARPWIDTH, 0f);
-			case DOWN:
-			default:
-				return new Vector2(0f, -PIPE_WARPHEIGHT);
-		}
-	}
-
-	private Vector2 getSpawnExitSpriteBeginOffset() {
-		switch(exitingSpawnpoint.getDirection()) {
-			case RIGHT:
-				return new Vector2(-PIPE_WARPWIDTH, 0f);
-			case UP:
-				return new Vector2(0f, -PIPE_WARPHEIGHT);
-			case LEFT:
-				return new Vector2(PIPE_WARPWIDTH, 0f);
-			case DOWN:
-			default:
-				return new Vector2(0f, PIPE_WARPHEIGHT);
-		}
-	}
-
 	public float getStateTimer() {
 		return stateTimer;
 	}
@@ -610,6 +502,25 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	@Override
 	public void applyPowerup(PowType pt) {
 		powerupRec = pt;
+	}
+
+	// unchecked cast to T warnings ignored because T is checked with class.equals(poo) 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getProperty(String key, Object defaultValue, Class<T> poo) {
+		if(key.equals(GameKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(poo)) {
+			Boolean he = mBody.isFacingRight();
+			return (T) he;
+		}
+		else if(key.equals(GameKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(poo)) {
+			SpriteState he = SpriteState.STAND;
+			return (T) he;
+		}
+		else if(key.equals(GameKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(poo)) {
+			Vector2 he = new Vector2(marioSprite.getWidth(), marioSprite.getHeight());
+			return (T) he;
+		}
+		return properties.get(key, defaultValue, poo);
 	}
 
 	@Override

@@ -26,6 +26,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.Metroid.agent.player.Samus;
 
 public class SamusBody extends MobileAgentBody {
+	private static final float POSITION_EPS = 0.1f;
 	private static final float STAND_BODY_WIDTH = UInfo.P2M(5f);
 	private static final float STAND_BODY_HEIGHT = UInfo.P2M(25f);
 	private static final float BALL_BODY_WIDTH = UInfo.P2M(8f);
@@ -35,16 +36,16 @@ public class SamusBody extends MobileAgentBody {
 	private static final float GRAVITY_SCALE = 0.5f;	// floaty
 	private static final float FRICTION = 0.001f;	// (default is 0.2f)
 
-	private static final CFBitSeq MAINBODY_CFCAT_BITS = CommonCF.SOLID_BODY_CFCAT;
-	private static final CFBitSeq MAINBODY_CFMASK_BITS = CommonCF.SOLID_BODY_CFMASK;
+	private static final CFBitSeq MAINBODY_CFCAT = CommonCF.SOLID_BODY_CFCAT;
+	private static final CFBitSeq MAINBODY_CFMASK = CommonCF.SOLID_BODY_CFMASK;
 
 	// agent sensor
-	private static final CFBitSeq AS_CFCAT_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
+	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
 			CommonCF.Alias.ROOM_BIT, CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT);
 	// agent sensor with contacts disabled (still need room bit)
-	private static final CFBitSeq NOCONTACT_AS_CFCAT_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq NOCONTACT_AS_CFMASK_BITS = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
+	private static final CFBitSeq NOCONTACT_AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq NOCONTACT_AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
 	// ground and pipe sensor
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFMASK =
@@ -127,8 +128,8 @@ public class SamusBody extends MobileAgentBody {
 		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
 		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
 		if(isContactEnabled) {
-			catBits = MAINBODY_CFCAT_BITS;
-			maskBits = MAINBODY_CFMASK_BITS;
+			catBits = MAINBODY_CFCAT;
+			maskBits = MAINBODY_CFMASK;
 		}
 		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, fdef, sbSensor, catBits, maskBits,
 				getBodySize().x, getBodySize().y);
@@ -138,11 +139,11 @@ public class SamusBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		acSensor = new AgentContactSensor(this);
-		CFBitSeq catBits = NOCONTACT_AS_CFCAT_BITS;
-		CFBitSeq maskBits = NOCONTACT_AS_CFMASK_BITS;
+		CFBitSeq catBits = NOCONTACT_AS_CFCAT;
+		CFBitSeq maskBits = NOCONTACT_AS_CFMASK;
 		if(isContactEnabled) {
-			catBits = AS_CFCAT_BITS;
-			maskBits = AS_CFMASK_BITS;
+			catBits = AS_CFCAT;
+			maskBits = AS_CFMASK;
 		}
 		agentSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, acSensor, catBits, maskBits,
 				getBodySize().x, getBodySize().y);
@@ -278,10 +279,10 @@ public class SamusBody extends MobileAgentBody {
 			return;
 		if(enabled) {
 			// enable contacts
-			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAINBODY_CFCAT_BITS;
-			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAINBODY_CFMASK_BITS;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_CFCAT_BITS;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_CFMASK_BITS;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAINBODY_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAINBODY_CFMASK;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_CFCAT;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_CFMASK;
 			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = GROUND_AND_PIPE_SENSOR_CFCAT;
 			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
 		}
@@ -289,8 +290,8 @@ public class SamusBody extends MobileAgentBody {
 			// disable contacts
 			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
 			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = NOCONTACT_AS_CFCAT_BITS;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = NOCONTACT_AS_CFMASK_BITS;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = NOCONTACT_AS_CFCAT;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = NOCONTACT_AS_CFMASK;
 			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
 			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
 		}
@@ -302,13 +303,9 @@ public class SamusBody extends MobileAgentBody {
 		isContactEnabled = enabled;
 	}
 
-	public boolean isContactEnabled() {
-		return isContactEnabled;
-	}
-
 	private void setPosition(Vector2 position) {
 		// if the current position is very close to the new position then exit
-		if(b2body.getPosition().epsilonEquals(position, 0.1f))
+		if(b2body.getPosition().epsilonEquals(position, POSITION_EPS))
 			return;
 		defineBody(position);
 	}

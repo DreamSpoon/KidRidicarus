@@ -48,8 +48,8 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	public enum ContactState { REGULAR, DAMAGE }
 	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT }
 
-	private SamusBody sBody;
-	private SamusSprite sSprite;
+	private SamusBody samusBody;
+	private SamusSprite samusSprite;
 
 	private MoveState curMoveState;
 	private float moveStateTimer;
@@ -92,8 +92,8 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		isAutoContinueLeftAirMove = false;
 		shootCooldownTime = agency.getGlobalTimer();
 
-		sBody = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
-		sSprite = new SamusSprite(agency.getAtlas(), sBody.getPosition());
+		samusBody = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		samusSprite = new SamusSprite(agency.getAtlas(), samusBody.getPosition());
 		observer = new SamusObserver(this, agency.getAtlas());
 		supervisor = new SamusSupervisor(this);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
@@ -115,7 +115,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		ContactState nextContactState = ContactState.REGULAR;
 		switch(curContactState) {
 			case REGULAR:
-				for(ContactDmgGiveAgent a : sBody.getContactsByClass(ContactDmgGiveAgent.class)) {
+				for(ContactDmgGiveAgent a : samusBody.getContactsByClass(ContactDmgGiveAgent.class)) {
 					if(a.isContactDamage()) {
 						nextContactState = ContactState.DAMAGE;
 						takeContactDamage(((Agent) a).getPosition());
@@ -137,16 +137,16 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	private void takeContactDamage(Vector2 position) {
 		damagePos.set(position);
 		// zero the y velocity
-		sBody.setVelocity(sBody.getVelocity().x, 0);
+		samusBody.setVelocity(samusBody.getVelocity().x, 0);
 		// apply a kick impulse to the left or right depending on other agent's position
-		if(sBody.getPosition().x < position.x)
-			sBody.applyImpulse(DAMAGE_KICK_SIDE_IMP.cpy().scl(-1f));
+		if(samusBody.getPosition().x < position.x)
+			samusBody.applyImpulse(DAMAGE_KICK_SIDE_IMP.cpy().scl(-1f));
 		else
-			sBody.applyImpulse(DAMAGE_KICK_SIDE_IMP);
+			samusBody.applyImpulse(DAMAGE_KICK_SIDE_IMP);
 
 		// apply kick up impulse if the player is above the other agent
-		if(sBody.getPosition().y > position.y)
-			sBody.applyImpulse(DAMAGE_KICK_UP_IMP);
+		if(samusBody.getPosition().y > position.y)
+			samusBody.applyImpulse(DAMAGE_KICK_UP_IMP);
 
 		if(curMoveState != MoveState.JUMPSPIN)
 			isJumpForceEnabled = false;
@@ -164,7 +164,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 		// the previous code might have started a script; if a script is now running then process the script
 		if(supervisor.isScriptRunning())
-			sBody.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
+			samusBody.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
 	}
 
 	/*
@@ -180,7 +180,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			return false;
 		}
 		// if no pipe to enter then exit (exit the method, not exit the pipe)
-		PipeWarp wp = sBody.getPipeWarpForAdvice(adviceDir);
+		PipeWarp wp = samusBody.getPipeWarpForAdvice(adviceDir);
 		if(wp == null)
 			return false;
 
@@ -202,20 +202,20 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 				// if advised move up then try to stand
 				if(advice.moveUp) {
 					// if the tile directly above samus is solid then disallow change to stand
-					Vector2 bodyTilePos = UInfo.getM2PTileForPos(sBody.getPosition());
+					Vector2 bodyTilePos = UInfo.getM2PTileForPos(samusBody.getPosition());
 					if(agency.isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
 						nextMoveState = MoveState.BALL;
-						sBody.doBounceCheck();
+						samusBody.doBounceCheck();
 					}
 					else {
 						isFacingUp = true;
 						nextMoveState = MoveState.STAND;
-						sBody.switchToStandForm();
+						samusBody.switchToStandForm();
 					}
 				}
 				else {
 					nextMoveState = MoveState.BALL;
-					sBody.doBounceCheck();
+					samusBody.doBounceCheck();
 				}
 				break;
 			case STAND:
@@ -225,24 +225,24 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 					isNextJumpEnabled = true;
 
 				// if body is falling, or is not rising, then enable the next jump
-				if(sBody.getVelocity().y <= UInfo.VEL_EPSILON)
+				if(samusBody.getVelocity().y <= UInfo.VEL_EPSILON)
 					isLastJumpLandable = true;
 
 				isFacingUp = advice.moveUp;
 
 				// switch to ball form?
-				if(advice.moveDown && sBody.isOnGround()) {
-					sBody.switchToBallForm();
+				if(advice.moveDown && samusBody.isOnGround()) {
+					samusBody.switchToBallForm();
 					nextMoveState = MoveState.BALL;
 				}
 				// jump?
-				else if(advice.jump && sBody.isOnGround() && isLastJumpLandable && isNextJumpEnabled) {
+				else if(advice.jump && samusBody.isOnGround() && isLastJumpLandable && isNextJumpEnabled) {
 					isLastJumpLandable = false;
 					isJumpForceEnabled = true;
 					jumpStart = true;
 					if(isMoveHorizontal)
 						isJumpSpinAvailable = true;
-					startJumpY = sBody.getPosition().y;
+					startJumpY = samusBody.getPosition().y;
 					agency.playSound(AudioInfo.Sound.Metroid.JUMP);
 					nextMoveState = MoveState.JUMP;
 				}
@@ -250,11 +250,11 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 					boolean didShoot = checkAndDoShoot(advice.runShoot);
 
 					// stand/run on ground?
-					if(sBody.isOnGround()) {
+					if(samusBody.isOnGround()) {
 						// moving sideways?
 						if(isMoveHorizontal) {
-							if((advice.moveRight && sBody.isContactingWall(true)) ||
-									(advice.moveLeft && sBody.isContactingWall(false)))
+							if((advice.moveRight && samusBody.isContactingWall(true)) ||
+									(advice.moveLeft && samusBody.isContactingWall(false)))
 								nextMoveState = MoveState.STAND;
 							// move is not blocked
 							else {
@@ -290,7 +290,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			case JUMPSPIN:
 			case JUMPSHOOT:
 				// if body is falling then enable the next jump and disable jump up force
-				if(sBody.getVelocity().y <= UInfo.VEL_EPSILON) {
+				if(samusBody.getVelocity().y <= UInfo.VEL_EPSILON) {
 					isLastJumpLandable = true;
 					isJumpForceEnabled = false;
 				}
@@ -300,20 +300,20 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 				// If the body is now onground but jump is still advised then disallow jumping until the
 				// jump advice stops (to prevent bunny hopping)
-				if(sBody.isOnGround() && advice.jump)
+				if(samusBody.isOnGround() && advice.jump)
 					isNextJumpEnabled = false;
 
 				// disallow change to facing up if player is falling and they started jump with spin allowed
-				if(!isFacingUp && advice.moveUp && !(isJumpSpinAvailable && sBody.getVelocity().y <= 0f))
+				if(!isFacingUp && advice.moveUp && !(isJumpSpinAvailable && samusBody.getVelocity().y <= 0f))
 					isFacingUp = true;
 
 				// Change back to facing sideways if already facing up, and not advised to moveUp,
 				// and jump spin is available, and body is moving upward
-				if(isFacingUp && !advice.moveUp && isJumpSpinAvailable && sBody.getVelocity().y > 0f)
+				if(isFacingUp && !advice.moveUp && isJumpSpinAvailable && samusBody.getVelocity().y > 0f)
 					isFacingUp = false;
 
 				// check for landing on ground
-				if(sBody.isOnGround() && !isJumpForceEnabled) {
+				if(samusBody.isOnGround() && !isJumpForceEnabled) {
 					isJumpSpinAvailable = false;
 					isAutoContinueLeftAirMove = false;
 					isAutoContinueRightAirMove = false;
@@ -336,8 +336,8 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 						// is available, and body is moving upward, and samus is at least 2 tiles higher than
 						// jump start position, then switch back to jumpspin.
 						if(moveStateTimer > JUMPSHOOT_RESPIN_DELAY && !advice.runShoot && isMoveHorizontal &&
-								isJumpSpinAvailable && sBody.getVelocity().y > 0f &&
-								sBody.getPosition().y > startJumpY + 2f*UInfo.P2M(UInfo.TILEPIX_Y)) {
+								isJumpSpinAvailable && samusBody.getVelocity().y > 0f &&
+								samusBody.getPosition().y > startJumpY + 2f*UInfo.P2M(UInfo.TILEPIX_Y)) {
 							nextMoveState = MoveState.JUMPSPIN;
 						}
 						// otherwise continue jump shoot
@@ -347,7 +347,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 					// not shooting, just jumping?
 					else if(curMoveState == MoveState.JUMP) {
 						// switch to jumpspin when samus moves at least 2 tiles higher than jump start position 
-						if(sBody.getVelocity().y > 0f && isJumpSpinAvailable && sBody.getPosition().y >
+						if(samusBody.getVelocity().y > 0f && isJumpSpinAvailable && samusBody.getPosition().y >
 								startJumpY + 2f*UInfo.P2M(UInfo.TILEPIX_Y)) {
 							// If move left/right advice is given during change from jump to jumpspin then
 							// auto continue air move in advised direction until user presses other direction
@@ -364,8 +364,8 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 					// not shooting, currently jump spinning
 					else {
 						// switch to regular JUMP state if moving down and below 1 tile height above jump start position
-						if(sBody.getVelocity().y <= 0f &&
-								sBody.getPosition().y <= startJumpY + UInfo.P2M(UInfo.TILEPIX_Y))
+						if(samusBody.getVelocity().y <= 0f &&
+								samusBody.getPosition().y <= startJumpY + UInfo.P2M(UInfo.TILEPIX_Y))
 							nextMoveState = MoveState.JUMP;
 						else
 							nextMoveState = MoveState.JUMPSPIN;
@@ -378,9 +378,9 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		if(nextMoveState == MoveState.JUMP || nextMoveState == MoveState.JUMPSPIN ||
 				nextMoveState == MoveState.JUMPSHOOT) {
 			if(jumpStart)
-				sBody.doJumpStart();
+				samusBody.doJumpStart();
 			if(isJumpForceEnabled)
-				sBody.doJumpContinue(delta);
+				samusBody.doJumpContinue(delta);
 		}
 
 		// check for and apply horizontal movement impulses, forces, etc.
@@ -397,17 +397,17 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 				case STAND:
 				case RUN:
 				case SHOOT:
-					sBody.doGroundMove(advice.moveRight);
+					samusBody.doGroundMove(advice.moveRight);
 					break;
 				case JUMP:
 				case JUMPSHOOT:
 					// samus can airmove if jumping and not in damage state
 					if(curContactState != ContactState.DAMAGE)
-						sBody.doAirMove(advice.moveRight);
+						samusBody.doAirMove(advice.moveRight);
 					break;
 				case JUMPSPIN:
 					// samus can airmove while jump spinning even when in damage state
-					sBody.doAirMove(advice.moveRight);
+					samusBody.doAirMove(advice.moveRight);
 					break;
 			}
 		}
@@ -416,25 +416,25 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			// The spin jump may cause air move to continue even though move left/right advice is not given,
 			// check left...
 			if(isAutoContinueRightAirMove)
-				sBody.doAirMove(true);
+				samusBody.doAirMove(true);
 			// ... and right
 			// Note: Auto left/right air move is cancelled when on-ground.
 			else if(isAutoContinueLeftAirMove)
-				sBody.doAirMove(false);
+				samusBody.doAirMove(false);
 			// if auto move is not continuing, then do stop move
 			else {
 				if(curContactState == ContactState.DAMAGE && contactStateTimer < 0.2f)
-					sBody.doStopMove(true);
+					samusBody.doStopMove(true);
 				else
-					sBody.doStopMove(false);
+					samusBody.doStopMove(false);
 			}
 		}
 
 		// check against maximum velocities, etc.
-		sBody.clampMove();
+		samusBody.clampMove();
 
 		// update prev velocity
-		sBody.postUpdate();
+		samusBody.postUpdate();
 
 		// if advised move left or right (but not both at same time!) then set facing direction accordingly
 		if(advice.moveRight^advice.moveLeft)
@@ -467,17 +467,17 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		if(isFacingUp) {
 			velocity.set(0f, SHOT_VEL);
 			if(isFacingRight)
-				position.set(SHOT_OFFSET_UP).add(sBody.getPosition());
+				position.set(SHOT_OFFSET_UP).add(samusBody.getPosition());
 			else
-				position.set(SHOT_OFFSET_UP).scl(-1, 1).add(sBody.getPosition());
+				position.set(SHOT_OFFSET_UP).scl(-1, 1).add(samusBody.getPosition());
 		}
 		else if(isFacingRight) {
 			velocity.set(SHOT_VEL, 0f);
-			position.set(SHOT_OFFSET_RIGHT).add(sBody.getPosition());
+			position.set(SHOT_OFFSET_RIGHT).add(samusBody.getPosition());
 		}
 		else {
 			velocity.set(-SHOT_VEL, 0f);
-			position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(sBody.getPosition());
+			position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(samusBody.getPosition());
 		}
 
 		// create shot
@@ -506,10 +506,10 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 					ms = MoveState.STAND;
 					break;
 			}
-			sSprite.update(delta, sss.position, ms, sss.facingRight, isFacingUp);
+			samusSprite.update(delta, sss.position, ms, sss.facingRight, isFacingUp);
 		}
 		else {
-			sSprite.update(delta, sBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
+			samusSprite.update(delta, samusBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
 			// toggle sprite on/off each frame while in contact damage state
 			if(curContactState == ContactState.DAMAGE && isDrawThisFrame)
 				isDrawThisFrame = false;
@@ -523,12 +523,12 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		// if a script is running and the sprite is visible then draw it
 		if(supervisor.isScriptRunning()) {
 			if(supervisor.getScriptAgentState().scriptedSpriteState.visible)
-				sSprite.draw(batch);
+				samusSprite.draw(batch);
 		}
 		// no script running, do the normal draw stuff
 		else {
 			if(isDrawThisFrame)
-				sSprite.draw(batch);
+				samusSprite.draw(batch);
 		}
 	}
 
@@ -553,17 +553,17 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 	@Override
 	public Room getCurrentRoom() {
-		return sBody.getCurrentRoom();
+		return samusBody.getCurrentRoom();
 	}
 
 	@Override
 	public Vector2 getPosition() {
-		return sBody.getPosition();
+		return samusBody.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return sBody.getBounds();
+		return samusBody.getBounds();
 	}
 
 	@Override
@@ -594,7 +594,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			return (T) he;
 		}
 		else if(key.equals(GameKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(poo)) {
-			Vector2 he = new Vector2(sSprite.getWidth(), sSprite.getHeight());
+			Vector2 he = new Vector2(samusSprite.getWidth(), samusSprite.getHeight());
 			return (T) he;
 		}
 		return properties.get(key, defaultValue, poo);
@@ -602,6 +602,6 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 	@Override
 	public void dispose() {
-		sBody.dispose();
+		samusBody.dispose();
 	}
 }

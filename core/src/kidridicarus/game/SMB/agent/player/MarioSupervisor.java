@@ -1,16 +1,20 @@
 package kidridicarus.game.SMB.agent.player;
 
 import kidridicarus.agency.agentscript.ScriptedAgentState;
+import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.SuperAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
+import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.play.GameAdvice;
 
 public class MarioSupervisor extends GameAgentSupervisor {
 	private GameAdvice advice;
 	private boolean switchToOtherChar;
+	private Mario mario;
 
 	public MarioSupervisor(Mario mario) {
+		this.mario = mario;
 		advice = new GameAdvice();
 		switchToOtherChar = false;
 	}
@@ -41,6 +45,17 @@ public class MarioSupervisor extends GameAgentSupervisor {
 
 	@Override
 	protected ScriptedAgentState getCurrentScriptAgentState() {
-		return null;
+		ScriptedAgentState curState = new ScriptedAgentState();
+		curState.scriptedBodyState.contactEnabled = true;
+		curState.scriptedBodyState.position.set(mario.getPosition());
+
+		curState.scriptedSpriteState.position.set(mario.getPosition());
+		curState.scriptedSpriteState.visible = true;
+		curState.scriptedSpriteState.spriteState =
+				mario.getProperty(GameKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
+		curState.scriptedSpriteState.facingRight =
+				mario.getProperty(GameKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
+
+		return curState;
 	}
 }

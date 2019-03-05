@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
@@ -42,8 +43,13 @@ import kidridicarus.game.play.GameAdvice;
  * so much stuff here that should NOT be in the agent body class.
  */
 public class MarioBody extends MobileAgentBody {
+	private static final float POSITION_EPS = 0.1f;
+	private static final float GRAVITY_SCALE = 1f;
 	private static final Vector2 BIG_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(26f));
 	private static final Vector2 SML_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(12f));
+
+	private static final CFBitSeq MAINBODY_CFCAT = CommonCF.SOLID_BODY_CFCAT;
+	private static final CFBitSeq MAINBODY_CFMASK = CommonCF.SOLID_BODY_CFMASK;
 
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFMASK =
@@ -56,9 +62,13 @@ public class MarioBody extends MobileAgentBody {
 	private static final CFBitSeq BUMPTILE_AND_PIPE_SENSOR_CFMASK =
 			new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT, CommonCF.Alias.PIPE_BIT);
 
-	private static final CFBitSeq AGENT_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AGENT_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT,
+	// agent sensor
+	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT,
 			CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT);
+	// agent sensor with contacts disabled (still need room bit)
+	private static final CFBitSeq NOCONTACT_AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq NOCONTACT_AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
 
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 	private static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
@@ -111,10 +121,16 @@ public class MarioBody extends MobileAgentBody {
 	private AgentContactSensor btSensor;
 	private AgentContactSensor acSensor;
 	private AgentContactBeginSensor acBeginSensor;
-	private Fixture acSensorFixture;
+	private Fixture agentSensorFixture;
 
 	private MarioBodyState curState;
 	private float stateTimer;
+	private boolean isContactEnabled;
+	private Fixture ogSensorFixture;
+	private Fixture rightSideSensorFixture;
+	private Fixture leftSideSensorFixture;
+	private Fixture topSensorFixture;
+	private Fixture mainBodyFixture;
 
 	public MarioBody(Mario parent, Agency agency, Vector2 position, boolean isFacingRight, boolean isBig) {
 		this.parent = parent;
@@ -134,6 +150,7 @@ public class MarioBody extends MobileAgentBody {
 		isDuckSlideRight = false;
 		isTakeDamage = false;
 		canHeadBang = true;
+		isContactEnabled = true;
 
 		pipeToEnter = null;
 		flagpoleContacted = null;
@@ -169,11 +186,20 @@ public class MarioBody extends MobileAgentBody {
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		bdef.position.set(position);
 		bdef.linearVelocity.set(velocity);
+		b2body = agency.getWorld().createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0.01f;	// (default is 0.2f)
-		Vector2 size = getBodySize();
-		b2body = B2DFactory.makeSpecialBoxBody(agency.getWorld(), bdef, fdef, null, CommonCF.SOLID_BODY_CFCAT,
-				CommonCF.SOLID_BODY_CFMASK, size.x, size.y);
+		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
+		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
+		if(isContactEnabled) {
+			catBits = MAINBODY_CFCAT;
+			maskBits = MAINBODY_CFMASK;
+		}
+
+//		b2body = B2DFactory.makeSpecialBoxBody(agency.getWorld(), bdef, fdef, null, catBits, maskBits, size.x, size.y);
+		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, fdef, null, catBits, maskBits,
+				getBodySize().x, getBodySize().y);
 	}
 
 	// "bottom" sensors
@@ -191,8 +217,14 @@ public class MarioBody extends MobileAgentBody {
 		ogSensor = new OnGroundSensor(null);
 		// the og sensor chains to the wp sensor, because the wp sensor will be attached to other fixtures
 		ogSensor.chainTo(wpSensor);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(GROUND_AND_PIPE_SENSOR_CFCAT,
-				GROUND_AND_PIPE_SENSOR_CFMASK, ogSensor));
+		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
+		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
+		if(isContactEnabled) {
+			catBits = GROUND_AND_PIPE_SENSOR_CFCAT;
+			maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
+		}
+		ogSensorFixture = b2body.createFixture(fdef);
+		ogSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
 	}
 
 	private void createSidePipeSensors() {
@@ -203,15 +235,22 @@ public class MarioBody extends MobileAgentBody {
 		boxShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), UInfo.P2MVector(7, 0), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(SIDE_PIPE_SENSOR_CFCAT,
+		rightSideSensorFixture = b2body.createFixture(fdef);
+		rightSideSensorFixture.setUserData(new AgentBodyFilter(SIDE_PIPE_SENSOR_CFCAT,
 				SIDE_PIPE_SENSOR_CFMASK, wpSensor));
 
 		// left side sensor for detecting warp pipes
 		boxShape.setAsBox(UInfo.P2M(1f), UInfo.P2M(5f), UInfo.P2MVector(-7, 0), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(SIDE_PIPE_SENSOR_CFCAT,
-				SIDE_PIPE_SENSOR_CFMASK, wpSensor));
+		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
+		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
+		if(isContactEnabled) {
+			catBits = SIDE_PIPE_SENSOR_CFCAT;
+			maskBits = SIDE_PIPE_SENSOR_CFMASK;
+		}
+		leftSideSensorFixture = b2body.createFixture(fdef);
+		leftSideSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, wpSensor));
 	}
 
 	// "top" sensors
@@ -228,8 +267,14 @@ public class MarioBody extends MobileAgentBody {
 		fdef.isSensor = true;
 		btSensor = new AgentContactSensor(this);
 		btSensor.chainTo(wpSensor);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(BUMPTILE_AND_PIPE_SENSOR_CFCAT,
-				BUMPTILE_AND_PIPE_SENSOR_CFMASK, btSensor));
+		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
+		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
+		if(isContactEnabled) {
+			catBits = BUMPTILE_AND_PIPE_SENSOR_CFCAT;
+			maskBits = BUMPTILE_AND_PIPE_SENSOR_CFMASK;
+		}
+		topSensorFixture = b2body.createFixture(fdef);
+		topSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, btSensor));
 	}
 
 	private void createAgentSensor() {
@@ -242,8 +287,14 @@ public class MarioBody extends MobileAgentBody {
 		acSensor = new AgentContactSensor(this);
 		acBeginSensor = new AgentContactBeginSensor(this);
 		acBeginSensor.chainTo(acSensor);
-		acSensorFixture = b2body.createFixture(fdef);
-		acSensorFixture.setUserData(new AgentBodyFilter(AGENT_SENSOR_CFCAT, AGENT_SENSOR_CFMASK, acBeginSensor));
+		CFBitSeq catBits = NOCONTACT_AS_CFCAT;
+		CFBitSeq maskBits = NOCONTACT_AS_CFMASK;
+		if(isContactEnabled) {
+			catBits = AS_CFCAT;
+			maskBits = AS_CFMASK;
+		}
+		agentSensorFixture = b2body.createFixture(fdef);
+		agentSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, acBeginSensor));
 	}
 
 	public MarioBodyState update(float delta, GameAdvice advice, MarioPowerState curPowerState) {
@@ -701,11 +752,63 @@ public class MarioBody extends MobileAgentBody {
 	}
 
 	public void enableGravity() {
-		b2body.setGravityScale(1f);
+		b2body.setGravityScale(GRAVITY_SCALE);
 	}
 
 	public void disableGravity() {
 		b2body.setGravityScale(0f);
+	}
+
+	public void useScriptedBodyState(ScriptedBodyState sbState) {
+		setContactEnabled(sbState.contactEnabled);
+		if(!sbState.position.epsilonEquals(b2body.getPosition(), POSITION_EPS))
+			setPosAndVel(sbState.position, new Vector2(0f, 0f));
+		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
+	}
+
+	private void setContactEnabled(boolean enabled) {
+		// exit if no change necessary
+		if((isContactEnabled && enabled) || (!isContactEnabled && !enabled))
+			return;
+		if(enabled) {
+			// enable contacts
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAINBODY_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAINBODY_CFMASK;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_CFCAT;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_CFMASK;
+			((AgentBodyFilter) topSensorFixture.getUserData()).categoryBits = BUMPTILE_AND_PIPE_SENSOR_CFCAT;
+			((AgentBodyFilter) topSensorFixture.getUserData()).maskBits = BUMPTILE_AND_PIPE_SENSOR_CFMASK;
+			((AgentBodyFilter) rightSideSensorFixture.getUserData()).categoryBits = SIDE_PIPE_SENSOR_CFCAT;
+			((AgentBodyFilter) rightSideSensorFixture.getUserData()).maskBits = SIDE_PIPE_SENSOR_CFMASK;
+			((AgentBodyFilter) leftSideSensorFixture.getUserData()).categoryBits = SIDE_PIPE_SENSOR_CFCAT;
+			((AgentBodyFilter) leftSideSensorFixture.getUserData()).maskBits = SIDE_PIPE_SENSOR_CFMASK;
+			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = GROUND_AND_PIPE_SENSOR_CFCAT;
+			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
+		}
+		else {
+			// disable contacts
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = NOCONTACT_AS_CFCAT;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = NOCONTACT_AS_CFMASK;
+			((AgentBodyFilter) topSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
+			((AgentBodyFilter) topSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
+			((AgentBodyFilter) rightSideSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
+			((AgentBodyFilter) rightSideSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
+			((AgentBodyFilter) leftSideSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
+			((AgentBodyFilter) leftSideSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
+			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
+			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
+		}
+		// the contact filters were changed, so let Box2D know to update contacts here
+		mainBodyFixture.refilter();
+		topSensorFixture.refilter();
+		rightSideSensorFixture.refilter();
+		leftSideSensorFixture.refilter();
+		agentSensorFixture.refilter();
+		ogSensorFixture.refilter();
+		// update the contacts enabled flag
+		isContactEnabled = enabled;
 	}
 
 	public boolean isDucking() {
