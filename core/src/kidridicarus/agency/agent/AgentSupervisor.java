@@ -29,11 +29,11 @@ public abstract class AgentSupervisor {
 	}
 
 	public void preUpdateAgency(float delta) {
-		scriptRunner.update(delta);
+		scriptRunner.preUpdateAgency(delta);
 	}
 
 	public void postUpdateAgency() {
-		scriptRunner.postUpdate();
+		scriptRunner.postUpdateAgency();
 	}
 
 	/*

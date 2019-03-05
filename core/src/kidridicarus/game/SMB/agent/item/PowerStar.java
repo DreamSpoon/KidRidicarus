@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -22,7 +24,8 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  * -allow the star to spawn down-right out of bricks like on level 1-1
  * -test the star's onBump method - I could not bump it, needs precise timing - maybe loosen the timing? 
  */
-public class PowerStar extends BasicWalkAgent implements PowerupGiveAgent, BumpTakeAgent {
+public class PowerStar extends BasicWalkAgent implements UpdatableAgent, DrawableAgent, PowerupGiveAgent,
+		BumpTakeAgent {
 	private static final float SPROUT_TIME = 0.5f;
 	private static final Vector2 START_BOUNCE_VEL = new Vector2(0.5f, 2f); 
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
@@ -150,11 +153,6 @@ public class PowerStar extends BasicWalkAgent implements PowerupGiveAgent, BumpT
 	@Override
 	public Rectangle getBounds() {
 		return starBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return starBody.getVelocity();
 	}
 
 	@Override

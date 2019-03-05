@@ -512,14 +512,13 @@ public class MarioBody extends MobileAgentBody {
 		if(item != null)
 			item.use(parent);
 
-		List<Agent> list;
 		if(parent.isPowerStarOn()) {
 			// apply powerstar damage
-			list = acSensor.getContactsByClass(ContactDmgTakeAgent.class);
-			for(Agent a : list) {
+			List<ContactDmgTakeAgent> list = acSensor.getContactsByClass(ContactDmgTakeAgent.class);
+			for(ContactDmgTakeAgent agent : list) {
 				// playSound should go in the processBody method, but... this is so much easier!
 				agency.playSound(AudioInfo.Sound.SMB.KICK);
-				((ContactDmgTakeAgent) a).onDamage(parent, 1f, b2body.getPosition());
+				agent.onDamage(parent, 1f, b2body.getPosition());
 			}
 
 			// Remove any agents that accumulate in the begin queue, to prevent begin contacts during
@@ -528,19 +527,19 @@ public class MarioBody extends MobileAgentBody {
 		}
 		else {
 			// check for headbounces
-			list = acBeginSensor.getAndResetContacts();
+			List<Agent> list = acBeginSensor.getAndResetContacts();
 			LinkedList<Agent> bouncedAgents = new LinkedList<Agent>();
-			for(Agent a : list) {
+			for(Agent agent : list) {
 				// skip the agent if not bouncy :)
-				if(!(a instanceof HeadBounceTakeAgent) || !((HeadBounceTakeAgent) a).isBouncy())
+				if(!(agent instanceof HeadBounceTakeAgent) || !((HeadBounceTakeAgent) agent).isBouncy())
 					continue;
 				// If the bottom of mario's bounds box is at least as high as the middle of the agent then bounce.
 				// (i.e. if mario's foot is at least as high as midway up the other agent...)
 				// Note: check this frame postiion and previous frame postiion in case mario is travelling quickly...
-				if(b2body.getPosition().y - getBodySize().y/2f >= a.getPosition().y ||
-						prevPosition.y - getBodySize().y/2f >= a.getPosition().y) {
-					bouncedAgents.add(a);
-					((HeadBounceTakeAgent) a).onHeadBounce(parent);
+				if(b2body.getPosition().y - getBodySize().y/2f >= agent.getPosition().y ||
+						prevPosition.y - getBodySize().y/2f >= agent.getPosition().y) {
+					bouncedAgents.add(agent);
+					((HeadBounceTakeAgent) agent).onHeadBounce(parent);
 				}
 			}
 			if(!bouncedAgents.isEmpty()) {
@@ -574,9 +573,9 @@ public class MarioBody extends MobileAgentBody {
 		if(canHeadBang && (b2body.getLinearVelocity().y > MIN_HEADBANG_VEL || prevVelocity.y > MIN_HEADBANG_VEL)) {
 			// check the list of tiles for the closest to mario
 			float closest = 0;
-			Agent closestTile = null;
-			for(Agent thingHit : btSensor.getContactsByClass(TileBumpTakeAgent.class)) {
-				float dist = Math.abs(thingHit.getPosition().x - b2body.getPosition().x);
+			TileBumpTakeAgent closestTile = null;
+			for(TileBumpTakeAgent thingHit : btSensor.getContactsByClass(TileBumpTakeAgent.class)) {
+				float dist = Math.abs(((Agent) thingHit).getPosition().x - b2body.getPosition().x);
 				if(closestTile == null || dist < closest) {
 					closest = dist;
 					closestTile = thingHit;

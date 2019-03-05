@@ -10,13 +10,15 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.SMB.agentsprite.other.BrickPieceSprite;
 import kidridicarus.game.info.GameKV;
 
-public class BrickPiece extends Agent {
+public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent {
 	private static final float BODY_WIDTH = UInfo.P2M(8);
 	private static final float BODY_HEIGHT = UInfo.P2M(8);
 	// bricks should be auto-removed when off screen, use this timeout for other cases
@@ -79,11 +81,6 @@ public class BrickPiece extends Agent {
 	public Rectangle getBounds() {
 		return new Rectangle(b2body.getPosition().x - BODY_WIDTH/2f, b2body.getPosition().y - BODY_HEIGHT/2f,
 				BODY_WIDTH, BODY_HEIGHT);
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return b2body.getLinearVelocity();
 	}
 
 	@Override

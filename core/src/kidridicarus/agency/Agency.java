@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.change.AgencyChangeQueue;
 import kidridicarus.agency.change.AgentPlaceholder;
 import kidridicarus.agency.change.DrawOrderChange;
@@ -84,7 +85,7 @@ public class Agency implements Disposable {
 
 	private void updateAgents(float delta) {
 		// loop through list of agents receiving updates, calling each agent's update method
-		for(Agent a : agencyIndex.getAgentsToUpdate())
+		for(UpdatableAgent a : agencyIndex.getAgentsToUpdate())
 			a.update(delta);
 		processChangeQ();
 	}

@@ -38,13 +38,13 @@ public class AgentScriptRunner {
 		return true;
 	}
 
-	public void update(float delta) {
+	public void preUpdateAgency(float delta) {
 		if(!isRunning)
 			return;
 		continueRunning = currentScript.update(delta); 
 	}
 
-	public void postUpdate() {
+	public void postUpdateAgency() {
 		if(!isRunning)
 			return;
 		isRunning = continueRunning;

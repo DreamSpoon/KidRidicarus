@@ -11,13 +11,12 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agent.general.AgentSpawnTrigger;
-import kidridicarus.common.agent.general.AgentSpawner;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.info.CommonCF;
 
@@ -63,8 +62,8 @@ public class AgentSpawnTriggerBody extends AgentBody {
 				bounds.width, bounds.height);
 	}
 
-	public List<Agent> getSpawnerContacts() {
-		return acSensor.getContactsByClass(AgentSpawner.class);
+	public List<UpdatableAgent> getSpawnerContacts() {
+		return acSensor.getContactsByClass(UpdatableAgent.class);
 	}
 
 	// mouse joint allows us to quickly change the position of the spawn trigger body without breaking Box2D

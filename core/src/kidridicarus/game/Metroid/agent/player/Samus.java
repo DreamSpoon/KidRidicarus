@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.AgencyKV;
@@ -31,7 +33,7 @@ import kidridicarus.game.play.GameAdvice;
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
+public class Samus extends Agent implements UpdatableAgent, DrawableAgent, PlayerAgent, PowerupTakeAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
@@ -113,11 +115,10 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 		ContactState nextContactState = ContactState.REGULAR;
 		switch(curContactState) {
 			case REGULAR:
-				for(Agent a : sBody.getContactsByClass(ContactDmgGiveAgent.class)) {
-					ContactDmgGiveAgent cda = (ContactDmgGiveAgent) a;
-					if(cda.isContactDamage()) {
+				for(ContactDmgGiveAgent a : sBody.getContactsByClass(ContactDmgGiveAgent.class)) {
+					if(a.isContactDamage()) {
 						nextContactState = ContactState.DAMAGE;
-						takeContactDamage(a.getPosition());
+						takeContactDamage(((Agent) a).getPosition());
 					}
 				}
 				break;
@@ -563,11 +564,6 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent {
 	@Override
 	public Rectangle getBounds() {
 		return sBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return sBody.getVelocity();
 	}
 
 	@Override

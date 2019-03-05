@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -14,7 +16,7 @@ import kidridicarus.game.Metroid.agentsprite.item.MaruMariSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
-public class MaruMari extends Agent implements PowerupGiveAgent {
+public class MaruMari extends Agent implements UpdatableAgent, DrawableAgent, PowerupGiveAgent {
 	private MaruMariBody mmBody;
 	private MaruMariSprite mmSprite;
 
@@ -53,11 +55,6 @@ public class MaruMari extends Agent implements PowerupGiveAgent {
 	@Override
 	public Rectangle getBounds() {
 		return mmBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

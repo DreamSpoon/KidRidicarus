@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -16,7 +18,7 @@ import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 
-public class MarioFireball extends BasicWalkAgent {
+public class MarioFireball extends BasicWalkAgent implements UpdatableAgent, DrawableAgent {
 	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
 	private static final float MAX_Y_VEL = 2.0f;
 
@@ -83,10 +85,10 @@ public class MarioFireball extends BasicWalkAgent {
 		}
 
 		// check for agents needing damage, and damage the first one
-		for(Agent a : fbBody.getContactAgentsByClass(ContactDmgTakeAgent.class)) {
-			if(a == parent)
+		for(ContactDmgTakeAgent agent : fbBody.getContactAgentsByClass(ContactDmgTakeAgent.class)) {
+			if(agent == parent)
 				continue;
-			((ContactDmgTakeAgent) a).onDamage(parent, 1f, fbBody.getPosition());
+			agent.onDamage(parent, 1f, fbBody.getPosition());
 			// at least one agent contact
 			contactState = ContactState.AGENT;
 			break;
@@ -141,11 +143,6 @@ public class MarioFireball extends BasicWalkAgent {
 	@Override
 	public Rectangle getBounds() {
 		return fbBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return fbBody.getVelocity();
 	}
 
 	@Override

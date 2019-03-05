@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -30,8 +32,8 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * -turtle shells do not slide properly when they are kicked while contacting an agent, since the slide kill
  *  agent code is only called when contacting starts
  */
-public class Turtle extends BasicWalkAgent implements ContactDmgTakeAgent, HeadBounceTakeAgent, BumpTakeAgent,
-		ContactDmgGiveAgent {
+public class Turtle extends BasicWalkAgent implements UpdatableAgent, DrawableAgent, ContactDmgTakeAgent,
+		HeadBounceTakeAgent, BumpTakeAgent, ContactDmgGiveAgent {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 0.4f;
@@ -82,6 +84,7 @@ public class Turtle extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
+	@Override
 	public void update(float delta) {
 		processContacts();
 		processMove(delta);
@@ -330,11 +333,6 @@ public class Turtle extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 	@Override
 	public Rectangle getBounds() {
 		return turtleBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return turtleBody.getVelocity();
 	}
 
 	@Override

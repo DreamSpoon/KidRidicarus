@@ -6,11 +6,13 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.game.Metroid.agentsprite.NPC.DeathPopSprite;
 import kidridicarus.game.info.GfxInfo;
 
-public class DeathPop extends Agent {
+public class DeathPop extends Agent implements UpdatableAgent, DrawableAgent {
 	private static final float POP_TIME = 3f/60f;
 
 	private DeathPopSprite dpSprite;
@@ -47,11 +49,6 @@ public class DeathPop extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(position.x, position.y, 0f, 0f);
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

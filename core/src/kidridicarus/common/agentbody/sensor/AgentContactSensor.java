@@ -51,11 +51,11 @@ public class AgentContactSensor extends ContactSensor {
 		return null;
 	}
 
-	public <T> List<Agent> getContactsByClass(Class<T> clazz) {
-		List<Agent> aList = new LinkedList<Agent>();
+	public <T> List<T> getContactsByClass(Class<T> clazz) {
+		List<T> aList = new LinkedList<T>();
 		for(Agent a : contacts) {
 			if(clazz.isAssignableFrom(a.getClass()))
-				aList.add(a);
+				aList.add((T) a);
 		}
 		return aList;
 	}

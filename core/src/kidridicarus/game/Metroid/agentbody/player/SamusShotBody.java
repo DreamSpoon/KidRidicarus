@@ -68,7 +68,7 @@ public class SamusShotBody extends MobileAgentBody {
 		return !boundSensor.getContacts().isEmpty();
 	}
 
-	public <T> List<Agent> getContactAgentsByClass(Class<T> clazz) {
+	public <T> List<T> getContactAgentsByClass(Class<T> clazz) {
 		return acSensor.getContactsByClass(clazz);
 	}
 

@@ -56,7 +56,7 @@
  </layer>
  <layer id="10" name="playerstart" width="160" height="15">
   <properties>
-   <property name="agentclass" value="spawnguide"/>
+   <property name="agentclass" value="playerspawner"/>
    <property name="playeragentclass" value="mario"/>
    <property name="spawnmain" value="true"/>
   </properties>

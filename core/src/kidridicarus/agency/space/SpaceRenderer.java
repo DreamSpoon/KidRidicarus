@@ -4,12 +4,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.AgencyIndex.DrawObjectIter;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.info.UInfo;
 
-public class SpaceRenderer {
+public class SpaceRenderer implements Disposable {
 	private OrthogonalTiledMapRenderer tileRenderer;
 
 	public SpaceRenderer() {
@@ -27,8 +28,8 @@ public class SpaceRenderer {
 		space.iterateThroughDrawObjects(new DrawObjectIter() {
 				@Override
 				public boolean iterate(Object obj) {
-					if(obj instanceof Agent)
-						((Agent) obj).draw(batch);
+					if(obj instanceof DrawableAgent)
+						((DrawableAgent) obj).draw(batch);
 					else if(obj instanceof TiledMapTileLayer)
 						tileRenderer.renderTileLayer((TiledMapTileLayer) obj);
 					// return false to continue iterating
@@ -38,6 +39,7 @@ public class SpaceRenderer {
 		batch.end();
 	}
 
+	@Override
 	public void dispose() {
 		tileRenderer.dispose();
 	}

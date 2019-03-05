@@ -325,7 +325,7 @@ public class SamusBody extends MobileAgentBody {
 		return null;
 	}
 
-	public <T> List<Agent> getContactsByClass(Class<T> clazz) {
+	public <T> List<T> getContactsByClass(Class<T> clazz) {
 		return acSensor.getContactsByClass(clazz);
 	}
 

@@ -1,6 +1,5 @@
 package kidridicarus.common.agent.general;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -16,6 +15,16 @@ import kidridicarus.game.SMB.agentbody.other.PipeWarpBody;
 import kidridicarus.game.info.GameKV;
 
 public class PipeWarp extends Agent {
+	public class PipeWarpHorizon {
+		public Direction4 direction;
+		public Rectangle bounds; 
+
+		public PipeWarpHorizon(Direction4 direction, Rectangle bounds) {
+			this.direction = direction;
+			this.bounds = bounds;
+		}
+	}
+
 	private PipeWarpBody pwBody;
 	private Direction4 direction;
 
@@ -35,14 +44,6 @@ public class PipeWarp extends Agent {
 				direction = Direction4.DOWN;
 		}
 		pwBody = new PipeWarpBody(this, agency.getWorld(), Agent.getStartBounds(properties));
-	}
-
-	@Override
-	public void update(float delta) {
-	}
-
-	@Override
-	public void draw(Batch batch) {
 	}
 
 	public boolean canBodyEnterPipe(Rectangle otherBounds, Direction4 moveDir) {
@@ -185,11 +186,6 @@ public class PipeWarp extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return pwBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package kidridicarus.common.agent.general;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -42,14 +41,6 @@ public class PlayerSpawner extends Agent {
 		psbody = new PlayerSpawnerBody(agency.getWorld(), this, Agent.getStartBounds(properties));
 	}
 
-	@Override
-	public void update(float delta) {
-	}
-
-	@Override
-	public void draw(Batch batch) {
-	}
-
 	public Vector2 calcBeginOffsetFromSpawn(Vector2 agentSize) {
 		switch(direction) {
 			case RIGHT:
@@ -88,11 +79,6 @@ public class PlayerSpawner extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return psbody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

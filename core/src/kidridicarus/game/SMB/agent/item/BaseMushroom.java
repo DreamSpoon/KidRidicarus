@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -17,7 +19,8 @@ import kidridicarus.game.SMB.agentbody.item.BaseMushroomBody;
 import kidridicarus.game.SMB.agentsprite.item.MushroomSprite;
 import kidridicarus.game.info.GfxInfo;
 
-public abstract class BaseMushroom extends BasicWalkAgent implements PowerupGiveAgent, BumpTakeAgent {
+public abstract class BaseMushroom extends BasicWalkAgent implements UpdatableAgent, DrawableAgent,
+		PowerupGiveAgent, BumpTakeAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private static final float WALK_VEL = 0.6f;
@@ -146,11 +149,6 @@ public abstract class BaseMushroom extends BasicWalkAgent implements PowerupGive
 	@Override
 	public Rectangle getBounds() {
 		return bmBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return bmBody.getVelocity();
 	}
 
 	@Override

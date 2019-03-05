@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
@@ -15,7 +17,7 @@ import kidridicarus.game.Metroid.agentsprite.NPC.SkreeSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 
-public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeAgent {
+public class Skree extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgGiveAgent, ContactDmgTakeAgent {
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
 
 	private static final float INJURY_TIME = 10f/60f;
@@ -219,11 +221,6 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 	@Override
 	public boolean isContactDamage() {
 		return !(isInjured | isDead);
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return sBody.getVelocity();
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -26,7 +28,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * The sliding turtle shell awards only absolute points, and head bounces award only relative points.
  * Currently, mario fireball strikes award only absolute points.
  */
-public class FloatingPoints extends Agent {
+public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAgent {
 	private static final float FLOAT_TIME = 1f;
 	private static final float FLOAT_HEIGHT = UInfo.P2M(48);
 
@@ -84,11 +86,6 @@ public class FloatingPoints extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(originalPosition.x, originalPosition.y, 0f, 0f);
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

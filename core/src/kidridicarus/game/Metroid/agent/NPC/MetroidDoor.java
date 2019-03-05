@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -13,7 +15,7 @@ import kidridicarus.game.Metroid.agentbody.NPC.MetroidDoorBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.MetroidDoorSprite;
 import kidridicarus.game.info.GfxInfo;
 
-public class MetroidDoor extends Agent implements ContactDmgTakeAgent {
+public class MetroidDoor extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgTakeAgent {
 	private static final float REMAIN_OPEN_DELAY = 77/30f;
 	private static final float OPENCLOSE_DELAY1 = 1/5f;
 	private static final float OPENCLOSE_DELAY2 = 1/10f;
@@ -135,11 +137,6 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent {
 	@Override
 	public Rectangle getBounds() {
 		return mdBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

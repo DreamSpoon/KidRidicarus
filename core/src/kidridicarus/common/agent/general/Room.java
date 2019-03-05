@@ -1,6 +1,5 @@
 package kidridicarus.common.agent.general;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -35,14 +34,6 @@ public class Room extends Agent {
 		vOffset = UInfo.P2M(properties.get(AgencyKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
 	}
 
-	@Override
-	public void update(float delta) {
-	}
-
-	@Override
-	public void draw(Batch batch) {
-	}
-
 	public Vector2 getViewCenterForPos(Vector2 pos) {
 		Vector2 center = new Vector2();
 		switch(roomtype) {
@@ -71,11 +62,6 @@ public class Room extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return rbody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

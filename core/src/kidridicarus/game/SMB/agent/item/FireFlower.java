@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
@@ -15,7 +17,7 @@ import kidridicarus.game.SMB.agentsprite.item.FireFlowerSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
-public class FireFlower extends Agent implements PowerupGiveAgent {
+public class FireFlower extends Agent implements UpdatableAgent, DrawableAgent, PowerupGiveAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 
@@ -83,11 +85,6 @@ public class FireFlower extends Agent implements PowerupGiveAgent {
 	@Override
 	public Rectangle getBounds() {
 		return ffBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentObserverPlus;
@@ -30,7 +32,7 @@ import kidridicarus.game.play.GameAdvice;
  * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
  * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe - fix this
  */
-public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent {
+public class Mario extends Agent implements UpdatableAgent, DrawableAgent, PlayerAgent, PowerupTakeAgent {
 	public enum MarioState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
 		END6_RUN, END99, PIPE_ENTRYH, PIPE_EXITH, PIPE_ENTRYV, PIPE_EXITV }
 
@@ -593,11 +595,6 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent {
 	@Override
 	public Rectangle getBounds() {
 		return mBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return mBody.getVelocity();
 	}
 
 	@Override

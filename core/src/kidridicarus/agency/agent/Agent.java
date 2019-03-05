@@ -2,7 +2,6 @@ package kidridicarus.agency.agent;
 
 import java.util.Iterator;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
@@ -27,11 +26,8 @@ public abstract class Agent implements Disposable {
 		this.properties = properties;
 	}
 
-	public abstract void update(float delta);
-	public abstract void draw(Batch batch);
-	public abstract Vector2 getPosition(); 
+	public abstract Vector2 getPosition();
 	public abstract Rectangle getBounds();
-	public abstract Vector2 getVelocity();
 
 	/*
 	 * Agents keep an internal list of properties that they can share.

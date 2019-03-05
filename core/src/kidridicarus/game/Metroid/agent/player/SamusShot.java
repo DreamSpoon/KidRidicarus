@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -14,7 +16,7 @@ import kidridicarus.game.Metroid.agentsprite.player.SamusShotSprite;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 
-public class SamusShot extends Agent {
+public class SamusShot extends Agent implements UpdatableAgent, DrawableAgent {
 	private static final float LIVE_TIME = 0.217f;
 	private static final float EXPLODE_TIME = 3f/60f;
 
@@ -57,15 +59,14 @@ public class SamusShot extends Agent {
 
 	private void processContacts() {
 		// check for agents needing damage, and damage the first one
-		for(Agent a : shotBody.getContactAgentsByClass(ContactDmgTakeAgent.class)) {
+		for(ContactDmgTakeAgent agent : shotBody.getContactAgentsByClass(ContactDmgTakeAgent.class)) {
 			// do not hit parent
-			if(a == parent)
+			if(agent == parent)
 				continue;
-			((ContactDmgTakeAgent) a).onDamage(parent, 1f, shotBody.getPosition());
+			agent.onDamage(parent, 1f, shotBody.getPosition());
 			isExploding = true;
 			return;
 		}
-
 		// if hit a wall then explode
 		if(shotBody.isHitBound())
 			isExploding = true;
@@ -122,11 +123,6 @@ public class SamusShot extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return shotBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return shotBody.getVelocity();
 	}
 
 	@Override

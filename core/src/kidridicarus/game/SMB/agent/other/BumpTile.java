@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
@@ -25,7 +27,7 @@ import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class BumpTile extends Agent implements TileBumpTakeAgent {
+public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, TileBumpTakeAgent {
 	private static final float BOUNCE_TIME = 0.175f;
 	private static final float BOUNCE_HEIGHT_FRAC = 0.225f;	// bounce up about 1/5 of tile height
 
@@ -312,11 +314,6 @@ public class BumpTile extends Agent implements TileBumpTakeAgent {
 	@Override
 	public Rectangle getBounds() {
 		return btBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

@@ -6,13 +6,15 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.game.SMB.agentbody.other.FlagpoleBody;
 import kidridicarus.game.SMB.agentsprite.other.PoleFlagSprite;
 import kidridicarus.game.info.GfxInfo;
 
-public class Flagpole extends Agent {
+public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent {
 	private static final float DROP_TIME = 1.35f;
 
 	// offset is from top-left of flagpole bounds
@@ -77,11 +79,6 @@ public class Flagpole extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return fpBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override

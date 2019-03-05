@@ -11,6 +11,8 @@ import java.util.TreeMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.change.AgentWrapper;
 import kidridicarus.agency.tool.DrawOrder;
 
@@ -21,12 +23,12 @@ public class AgencyIndex {
 	private static final DrawOrder DEFAULT_DRAWORDER = new DrawOrder(false, 0f);
 
 	private HashMap<Agent, AgentWrapper> allAgents;
-	private List<Agent> updateAgents;
+	private List<UpdatableAgent> updateAgents;
 	private TreeMap<Float, LinkedList<Object>> drawObjects;
 
 	public AgencyIndex() {
 		allAgents = new HashMap<Agent, AgentWrapper>();
-		updateAgents = new LinkedList<Agent>();
+		updateAgents = new LinkedList<UpdatableAgent>();
 		drawObjects = new TreeMap<Float, LinkedList<Object>>();
 	}
 
@@ -48,30 +50,37 @@ public class AgencyIndex {
 	}
 
 	public void enableAgentUpdate(Agent agent) {
+		if(!(agent instanceof UpdatableAgent))
+			throw new IllegalArgumentException("Cannot enable update; agent is not instance of UpdatableAgent: " + agent);
 		AgentWrapper aw = allAgents.get(agent);
 		if(aw == null)
 			throw new IllegalArgumentException("Cannot enable update; agent not in list of all agents: " + agent);
 		if(aw.receiveUpdates == false) {
 			aw.receiveUpdates = true;
-			updateAgents.add(agent);
+			updateAgents.add((UpdatableAgent) agent);
 		}
 	}
 
 	public void disableAgentUpdate(Agent agent) {
+		if(!(agent instanceof UpdatableAgent))
+			throw new IllegalArgumentException("Cannot disable update; agent is not instance of UpdatableAgent: " + agent);
 		AgentWrapper aw = allAgents.get(agent);
 		if(aw == null)
 			throw new IllegalArgumentException("Cannot disable update; agent not in list of all agents: " + agent);
 		if(aw.receiveUpdates == true) {
 			aw.receiveUpdates = false;
-			updateAgents.remove(agent);
+			updateAgents.remove((UpdatableAgent) agent);
 		}
 	}
 
-	public List<Agent> getAgentsToUpdate() {
+	public List<UpdatableAgent> getAgentsToUpdate() {
 		return updateAgents;
 	}
 
 	public void setAgentDrawOrder(Agent agent, DrawOrder drawOrder) {
+		if(!(agent instanceof DrawableAgent)) {
+			throw new IllegalArgumentException("Cannot set draw order; agent not instance of DrawableAgent: " + agent);
+		}
 		AgentWrapper aw = allAgents.get(agent);
 		if(aw == null)
 			throw new IllegalArgumentException("Cannot set draw order; agent not in list of all agents: " + agent);

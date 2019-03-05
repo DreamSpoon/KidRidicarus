@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -20,8 +22,8 @@ import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadBounceTakeAgent, BumpTakeAgent,
-		ContactDmgGiveAgent {
+public class Goomba extends BasicWalkAgent implements UpdatableAgent, DrawableAgent, ContactDmgTakeAgent,
+		HeadBounceTakeAgent, BumpTakeAgent, ContactDmgGiveAgent {
 	private static final float GOOMBA_WALK_VEL = 0.4f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
@@ -201,11 +203,6 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 	@Override
 	public Rectangle getBounds() {
 		return goomBody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return goomBody.getVelocity();
 	}
 
 	@Override

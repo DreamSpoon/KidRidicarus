@@ -5,8 +5,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
-import kidridicarus.common.agent.general.PipeWarpHorizon;
+import kidridicarus.common.agent.general.PipeWarp.PipeWarpHorizon;
 
+/*
+ * Pipe Warp Script:
+ * 1) Animate agent sprite entering pipe warp.
+ * 2) Warp the agent body to pipe warp exit position.
+ * 3) Animate the agent sprite exiting a pipe warp (or the agent immediately appears at the non-pipe warp exit).
+ */
 public class PipeWarpScript implements AgentScript {
 	private static final float ENTRY_TIME = 1f;
 	private static final float EXIT_TIME = ENTRY_TIME;
@@ -38,6 +44,8 @@ public class PipeWarpScript implements AgentScript {
 		this.beginAgentState = beginAgentState.cpy();
 		this.curScriptAgentState = beginAgentState.cpy();
 
+		// Disable contacts so body won't interact with other agents while warping, and
+		// disable gravity so the body doesn't fall out of the level. 
 		curScriptAgentState.scriptedBodyState.contactEnabled = false;
 		curScriptAgentState.scriptedBodyState.gravityFactor = 0f;
 	}
@@ -46,17 +54,22 @@ public class PipeWarpScript implements AgentScript {
 	public boolean update(float delta) {
 		ScriptState nextScriptState = getNextScriptState();
 		switch(nextScriptState) {
+			// sprite entering pipe
 			case ENTRY:
 				curScriptAgentState.scriptedSpriteState.position.set(getSpriteEntryPosition(stateTimer));
 				break;
+			// body position warp
 			case WARP:
 				curScriptAgentState.scriptedBodyState.position.set(getBodyExitPosition());
 				break;
+			// sprite leaving pipe
 			case EXIT:
 				if(exitHorizon != null)
 					curScriptAgentState.scriptedSpriteState.position.set(getSpriteExitPosition(stateTimer));
 				break;
+			// script complete, return false to end script
 			case COMPLETE:
+				// contacts and gravity were disabled at the start of script, so re-enable here
 				curScriptAgentState.scriptedBodyState.contactEnabled = true;
 				curScriptAgentState.scriptedBodyState.gravityFactor = 1f;
 				return false;
@@ -84,9 +97,12 @@ public class PipeWarpScript implements AgentScript {
 			return ScriptState.ENTRY;
 	}
 
+	// where to position the body when the warp exit completes? 
 	private Vector2 getBodyExitPosition() {
+		// if no exit horizon then return exit position with no offset
 		if(exitHorizon == null)
 			return exitPosition;
+		// return the exit position with offset to place body at outer edge of horizon
 		else {
 			switch(exitHorizon.direction) {
 				case RIGHT:

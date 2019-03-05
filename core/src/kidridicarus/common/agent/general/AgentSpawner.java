@@ -1,16 +1,16 @@
 package kidridicarus.common.agent.general;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.AgentSpawnerBody;
 
-public class AgentSpawner extends Agent {
+public class AgentSpawner extends Agent implements UpdatableAgent {
 	private AgentSpawnerBody sbody;
 	private boolean isUsed;
 	private String spawnAgentClassAlias;
@@ -32,10 +32,6 @@ public class AgentSpawner extends Agent {
 	}
 
 	@Override
-	public void draw(Batch batch) {
-	}
-
-	@Override
 	public Vector2 getPosition() {
 		return sbody.getPosition();
 	}
@@ -43,11 +39,6 @@ public class AgentSpawner extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return sbody.getBounds();
-	}
-
-	@Override
-	public Vector2 getVelocity() {
-		return new Vector2(0f, 0f);
 	}
 
 	@Override
