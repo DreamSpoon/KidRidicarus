@@ -24,13 +24,13 @@ public class BounceCoinSprite extends Sprite {
 
 		stateTimer = 0;
 
-		setRegion(spinAnim.getKeyFrame(stateTimer, true));
+		setRegion(spinAnim.getKeyFrame(stateTimer));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position) {
-		setRegion(spinAnim.getKeyFrame(stateTimer, true));
+		setRegion(spinAnim.getKeyFrame(stateTimer));
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 		stateTimer += delta;
 	}

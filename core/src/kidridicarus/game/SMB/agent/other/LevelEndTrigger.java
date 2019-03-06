@@ -9,6 +9,7 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agentscript.LevelEndScript;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.SMB.agentbody.other.LevelEndBody;
 import kidridicarus.game.info.GameKV;
 
@@ -28,7 +29,7 @@ public class LevelEndTrigger extends Agent {
 		trigger();
 		// start player script with name of next level
 		return ((PlayerAgent) agent).getSupervisor().startScript(new LevelEndScript(
-				getProperty(GameKV.Level.VAL_NEXTLEVEL_NAME, "", String.class)));
+				getProperty(CommonKV.Level.VAL_NEXTLEVEL_NAME, "", String.class)));
 	}
 
 	/*

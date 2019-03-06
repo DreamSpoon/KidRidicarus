@@ -39,14 +39,14 @@ public class TurtleSprite extends Sprite {
 		switch(curState) {
 			case NONE:
 			case WALK:
-				setRegion(walkAnim.getKeyFrame(stateTimer, true));
+				setRegion(walkAnim.getKeyFrame(stateTimer));
 				break;
 			case HIDE:
 			case SLIDE:
 				setRegion(insideShell);
 				break;
 			case WAKE_UP:
-				setRegion(wakeUpAnim.getKeyFrame(stateTimer, true));
+				setRegion(wakeUpAnim.getKeyFrame(stateTimer));
 				break;
 			case DEAD:
 				setRegion(insideShell);

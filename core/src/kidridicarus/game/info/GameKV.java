@@ -4,23 +4,6 @@ package kidridicarus.game.info;
  * Game Key Value Info
  */
 public class GameKV {
-	public class Script {
-		public static final String KEY_FACINGRIGHT = "facingright";
-		public static final String KEY_SPRITESTATE = "spritestate";
-		public static final String KEY_SPRITESIZE = "bodysize";
-	}
-
-	public class Sprite {
-		public static final String KEY_STARTFRAME = "startframe";
-	}
-
-	public class Level {
-		// because this is so closely tied to SMB (i.e. the castle flag trigger), this is still here
-		// TODO: unhook from castle flag trigger and move level end trigger to Agency
-		public static final String VAL_LEVELEND_TRIGGER = "levelend_trigger";
-		public static final String VAL_NEXTLEVEL_NAME = "nextlevel_name";
-	}
-
 	public class SMB {
 		public static final String VAL_BRICKPIECE = "brickpiece";
 		public static final String VAL_BUMPTILE = "bumptile";

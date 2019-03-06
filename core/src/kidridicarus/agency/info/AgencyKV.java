@@ -26,11 +26,6 @@ public class AgencyKV {
 		public static final String VAL_AGENTSPAWN_TRIGGER = "agentspawn_trigger";
 		public static final String VAL_PIPEWARP_SPAWN = "pipewarp";
 
-		// name of agent, so agent can be targeted
-		public static final String KEY_NAME = "name";
-		// name of targeted agent
-		public static final String KEY_TARGETNAME = "targetname";
-
 		// passed to something that needs to expire immediately
 		public static final String KEY_EXPIRE = "expire";
 

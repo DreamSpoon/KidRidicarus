@@ -69,7 +69,7 @@ public class SamusSprite extends Sprite {
 		climbAnimTimer = 0f;
 		curParentState = null;
 		stateTimer = 0f;
-		setRegion(aimRightAnim.getKeyFrame(0));
+		setRegion(aimRightAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}

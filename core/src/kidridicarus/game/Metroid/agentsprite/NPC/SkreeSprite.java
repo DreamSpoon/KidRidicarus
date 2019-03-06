@@ -46,14 +46,14 @@ public class SkreeSprite extends Sprite {
 		switch(curState) {
 			case SLEEP:
 			default:
-				setRegion(spinAnim.getKeyFrame(stateTimer, true));
+				setRegion(spinAnim.getKeyFrame(stateTimer));
 				break;
 			case FALL:
 			case ONGROUND:
-				setRegion(spinFastAnim.getKeyFrame(stateTimer, true));
+				setRegion(spinFastAnim.getKeyFrame(stateTimer));
 				break;
 			case INJURY:
-				setRegion(injuryAnim.getKeyFrame(stateTimer, true));
+				setRegion(injuryAnim.getKeyFrame(stateTimer));
 				break;
 			case DEAD:
 				break;

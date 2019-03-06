@@ -22,12 +22,12 @@ import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.Metroid.agentbody.player.SamusBody;
 import kidridicarus.game.Metroid.agentsprite.player.SamusSprite;
 import kidridicarus.game.SMB.agent.other.Flagpole;
 import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
@@ -106,7 +106,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	@Override
 	public void update(float delta) {
 		processContacts(delta);
-		processMove(delta, supervisor.pollFrameAdvice());
+		processMove(delta, supervisor.pollMoveAdvice());
 		processSprite(delta);
 	}
 
@@ -610,15 +610,15 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
-		if(key.equals(GameKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
+		if(key.equals(CommonKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
 			Boolean he = isFacingRight;
 			return (T) he;
 		}
-		else if(key.equals(GameKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(cls)) {
+		else if(key.equals(CommonKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(cls)) {
 			SpriteState he = SpriteState.STAND;
 			return (T) he;
 		}
-		else if(key.equals(GameKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
+		else if(key.equals(CommonKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
 			Vector2 he = new Vector2(samusSprite.getWidth(), samusSprite.getHeight());
 			return (T) he;
 		}

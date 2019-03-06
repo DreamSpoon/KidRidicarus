@@ -5,28 +5,28 @@ import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.common.info.CommonKV;
 
 public class SamusSupervisor extends GameAgentSupervisor {
-	private MoveAdvice advice;
+	private MoveAdvice curMoveAdvice;
 	private Samus samus;
 	private String nextLevelName;
 
 	public SamusSupervisor(Samus samus) {
-		advice = new MoveAdvice();
+		curMoveAdvice = new MoveAdvice();
 		this.samus = samus;
 		nextLevelName = null;
 	}
 
 	@Override
-	public void setFrameAdvice(MoveAdvice superAdvice) {
-		advice.set(superAdvice);
+	public void setMoveAdvice(MoveAdvice moveAdvice) {
+		curMoveAdvice.set(moveAdvice);
 	}
 
 	@Override
-	public MoveAdvice pollFrameAdvice() {
-		MoveAdvice adv = advice.cpy();
-		advice.clear();
+	public MoveAdvice pollMoveAdvice() {
+		MoveAdvice adv = curMoveAdvice.cpy();
+		curMoveAdvice.clear();
 		return adv;
 	}
 
@@ -49,8 +49,9 @@ public class SamusSupervisor extends GameAgentSupervisor {
 		curState.scriptedSpriteState.position.set(samus.getPosition());
 		curState.scriptedSpriteState.visible = true;
 		curState.scriptedSpriteState.spriteState =
-				samus.getProperty(GameKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
-		curState.scriptedSpriteState.facingRight = samus.getProperty(GameKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
+				samus.getProperty(CommonKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
+		curState.scriptedSpriteState.facingRight = samus.getProperty(CommonKV.Script.KEY_FACINGRIGHT, false,
+				Boolean.class);
 		return curState;
 	}
 

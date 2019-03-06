@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.info.UInfo;
@@ -99,64 +100,64 @@ public class MarioSprite extends Sprite {
 		// brake
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[BRAKE_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_brake"));
+					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_brake"), PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[BRAKE_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_brake"));
+					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_brake"), PlayMode.LOOP);
 
 		// climb
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[CLIMB_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_climb"));
+					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_climb"), PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[CLIMB_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_climb"));
+					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_climb"), PlayMode.LOOP);
 
 		// dead
 		smlAnim[DEAD_POSE][SML_REG_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_reg_dead"));
+					atlas.findRegions("player/mario/sml/mario_reg_dead"), PlayMode.LOOP);
 
 		// duck
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[DUCK_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_duck"));
+					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_duck"), PlayMode.LOOP);
 
 		// grow
 		bigAnim[GROW_POSE][BIG_REG_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-				atlas.findRegions("player/mario/big/mario_reg_grow"));
+				atlas.findRegions("player/mario/big/mario_reg_grow"), PlayMode.NORMAL);
 
 		// jump
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[JUMP_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_jump"));
+					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_jump"), PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[JUMP_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_jump"));
+					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_jump"), PlayMode.LOOP);
 
 		// run
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[RUN_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_run"));
+					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_run"), PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[RUN_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_run"));
+					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_run"), PlayMode.LOOP);
 
 		// shrink
 		bigAnim[SHRINK_POSE][BIG_REG_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-				atlas.findRegions("player/mario/big/mario_reg_shrink"));
+				atlas.findRegions("player/mario/big/mario_reg_shrink"), PlayMode.NORMAL);
 
 		// stand
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[STAND_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_stand"));
+					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_stand"), PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[STAND_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_stand"));
+					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_stand"), PlayMode.LOOP);
 
 		// throw fireball
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[THROW_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_throw"));
+					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_throw"), PlayMode.LOOP);
 	}
 
 	public void update(float delta, Vector2 position, MarioState agentState, MarioBodyState bodyState,
@@ -312,47 +313,47 @@ public class MarioSprite extends Sprite {
 		// set region to an animation based on the current state
 		switch(curState) {
 			case END_SLIDE_FALL:
-				region = sizeAnim[RUN_POSE][grp].getKeyFrame(0f, false);
+				region = sizeAnim[RUN_POSE][grp].getKeyFrame(0f);
 				break;
 			case END_SLIDE_DONE:
-				region = sizeAnim[CLIMB_POSE][grp].getKeyFrame(sizeAnim[CLIMB_POSE][grp].getAnimationDuration(), false);
+				region = sizeAnim[CLIMB_POSE][grp].getKeyFrame(sizeAnim[CLIMB_POSE][grp].getAnimationDuration());
 				break;
 			case END_SLIDE:
-				region = sizeAnim[CLIMB_POSE][grp].getKeyFrame(stateTimer, true);
+				region = sizeAnim[CLIMB_POSE][grp].getKeyFrame(stateTimer);
 				break;
 			case DUCK:
-				region = bigAnim[DUCK_POSE][grp].getKeyFrame(stateTimer, false);
+				region = bigAnim[DUCK_POSE][grp].getKeyFrame(stateTimer);
 				break;
 			case FIREBALL:
-				region = bigAnim[THROW_POSE][grp].getKeyFrame(stateTimer, false);
+				region = bigAnim[THROW_POSE][grp].getKeyFrame(stateTimer);
 				break;
 			case RUN:
-				region = sizeAnim[RUN_POSE][grp].getKeyFrame(stateTimer, true);
+				region = sizeAnim[RUN_POSE][grp].getKeyFrame(stateTimer);
 				break;
 			case JUMP:
-				region = sizeAnim[JUMP_POSE][grp].getKeyFrame(stateTimer, false);
+				region = sizeAnim[JUMP_POSE][grp].getKeyFrame(stateTimer);
 				break;
 			case FALL:
 				// mario maintains his current frame of run animation if he was running when started to fall
 				if(fallStartStateTime == -1)
-					region = sizeAnim[STAND_POSE][grp].getKeyFrame(stateTimer, false);
+					region = sizeAnim[STAND_POSE][grp].getKeyFrame(stateTimer);
 				else
-					region = sizeAnim[RUN_POSE][grp].getKeyFrame(fallStartStateTime, true);
+					region = sizeAnim[RUN_POSE][grp].getKeyFrame(fallStartStateTime);
 				break;
 			case BRAKE:
-				region = sizeAnim[BRAKE_POSE][grp].getKeyFrame(stateTimer, false);
+				region = sizeAnim[BRAKE_POSE][grp].getKeyFrame(stateTimer);
 				break;
 			case DEAD:
-				region = smlAnim[DEAD_POSE][SML_REG_GRP].getKeyFrame(stateTimer, false);
+				region = smlAnim[DEAD_POSE][SML_REG_GRP].getKeyFrame(stateTimer);
 				break;
 			case GROW:
-				region = bigAnim[GROW_POSE][BIG_REG_GRP].getKeyFrame(stateTimer, false);
+				region = bigAnim[GROW_POSE][BIG_REG_GRP].getKeyFrame(stateTimer);
 				break;
 			case SHRINK:
-				region = bigAnim[SHRINK_POSE][BIG_REG_GRP].getKeyFrame(stateTimer, false);
+				region = bigAnim[SHRINK_POSE][BIG_REG_GRP].getKeyFrame(stateTimer);
 				break;
 			case STAND:
-				region = sizeAnim[STAND_POSE][grp].getKeyFrame(stateTimer, false);
+				region = sizeAnim[STAND_POSE][grp].getKeyFrame(stateTimer);
 				break;
 		}
 

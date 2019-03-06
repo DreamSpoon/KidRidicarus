@@ -14,6 +14,7 @@ import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.SMB.agentsprite.other.BrickPieceSprite;
 import kidridicarus.game.info.GameKV;
@@ -34,7 +35,7 @@ public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent {
 
 		defineBody(Agent.getStartPoint(properties), Agent.getStartVelocity(properties));
 		bpSprite = new BrickPieceSprite(agency.getAtlas(), b2body.getPosition(),
-				properties.get(GameKV.Sprite.KEY_STARTFRAME, 0, Integer.class));
+				properties.get(CommonKV.Sprite.KEY_STARTFRAME, 0, Integer.class));
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
 	}
@@ -90,7 +91,7 @@ public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent {
 
 	public static ObjectProperties makeAP(Vector2 position, Vector2 velocity, int startFrame) {
 		ObjectProperties props = Agent.createPointAP(GameKV.SMB.VAL_BRICKPIECE, position, velocity);
-		props.put(GameKV.Sprite.KEY_STARTFRAME, startFrame);
+		props.put(CommonKV.Sprite.KEY_STARTFRAME, startFrame);
 		return props;
 	}
 }

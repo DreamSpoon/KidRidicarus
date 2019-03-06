@@ -34,7 +34,7 @@ public class MetroidDoorSprite extends Sprite {
 				atlas.findRegions(MetroidAnim.NPC.DOOR_OPENING), PlayMode.NORMAL);
 
 		this.isFacingRight = isFacingRight;
-		setRegion(closedAnim.getKeyFrame(0));
+		setRegion(closedAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 		// if facing left then flip the texture region horizontally

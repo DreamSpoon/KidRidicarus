@@ -38,7 +38,7 @@ public class PlayCoordinator implements Disposable {
 	// * TODO ?  a private class that  extends Agent implements PlayerAgent  ?
 
 	private AgentSpawnTrigger spawnTrigger;
-	private MoveAdvice superAdvice;
+	private MoveAdvice inputMoveAdvice;
 	private Stage stageHUD;
 
 	private String currentMainMusicName;
@@ -53,7 +53,7 @@ public class PlayCoordinator implements Disposable {
 		this.stageHUD = stageHUD;
 		spawnTrigger = null;
 		playAgent = null;
-		superAdvice = new MoveAdvice();
+		inputMoveAdvice = new MoveAdvice();
 		currentMainMusicName = "";
 		currentMainMusic = null;
 		isMainMusicPlaying = false;
@@ -94,12 +94,12 @@ public class PlayCoordinator implements Disposable {
 	}
 
 	public void handleInput() {
-		superAdvice.moveRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
-		superAdvice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
-		superAdvice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
-		superAdvice.moveDown = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_DOWN);
-		superAdvice.action0 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUNSHOOT);
-		superAdvice.action1 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
+		inputMoveAdvice.moveRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
+		inputMoveAdvice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
+		inputMoveAdvice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
+		inputMoveAdvice.moveDown = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_DOWN);
+		inputMoveAdvice.action0 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUNSHOOT);
+		inputMoveAdvice.action1 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
 
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
 			QQ.toggleOn();
@@ -117,7 +117,7 @@ public class PlayCoordinator implements Disposable {
 		// ensure spawn trigger follows view of player
 		spawnTrigger.setTarget(playAgent.getObserver().getViewCenter());
 		// pass user input to player agent's supervisor
-		playAgent.getSupervisor().setFrameAdvice(superAdvice);
+		playAgent.getSupervisor().setMoveAdvice(inputMoveAdvice);
 		playAgent.getSupervisor().preUpdateAgency(delta);
 	}
 

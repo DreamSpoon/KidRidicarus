@@ -39,13 +39,13 @@ public class GoombaSprite extends Sprite {
 				break;
 			case BUMP:
 				// no walking after bopping
-				setRegion(walkAnim.getKeyFrame(0, true));
+				setRegion(walkAnim.getKeyFrame(0f));
 				// upside down when bopped
 				if(!isFlipY())
 					flip(false,  true);
 				break;
 			default:
-				setRegion(walkAnim.getKeyFrame(stateTimer, true));
+				setRegion(walkAnim.getKeyFrame(stateTimer));
 				break;
 		}
 

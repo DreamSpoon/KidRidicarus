@@ -18,12 +18,12 @@ import kidridicarus.common.agent.AgentObserverPlus;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
 import kidridicarus.game.SMB.agentbody.player.MarioBody;
 import kidridicarus.game.SMB.agentbody.player.MarioBody.MarioBodyState;
 import kidridicarus.game.SMB.agentsprite.player.MarioSprite;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo.PointAmount;
@@ -111,7 +111,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		MarioBodyState bodyState;
 		MarioState nextState;
 		boolean isStarPowered;
-		MoveAdvice advice = supervisor.pollFrameAdvice(); 
+		MoveAdvice advice = supervisor.pollMoveAdvice(); 
 
 		levelTimeRemaining -= delta;
 
@@ -508,15 +508,15 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
-		if(key.equals(GameKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
+		if(key.equals(CommonKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
 			Boolean he = mBody.isFacingRight();
 			return (T) he;
 		}
-		else if(key.equals(GameKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(cls)) {
+		else if(key.equals(CommonKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(cls)) {
 			SpriteState he = SpriteState.STAND;
 			return (T) he;
 		}
-		else if(key.equals(GameKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
+		else if(key.equals(CommonKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
 			Vector2 he = new Vector2(marioSprite.getWidth(), marioSprite.getHeight());
 			return (T) he;
 		}

@@ -28,7 +28,7 @@ public class MarioFireballSprite extends Sprite {
 				atlas.findRegions(SMBAnim.General.FIREBALL), PlayMode.LOOP);
 
 		explodeAnim = new Animation<TextureRegion>(ANIM_SPEED_EXP,
-				atlas.findRegions(SMBAnim.General.FIREBALL_EXP), PlayMode.LOOP);
+				atlas.findRegions(SMBAnim.General.FIREBALL_EXP), PlayMode.NORMAL);
 
 		setRegion(ballAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPR_BALLWIDTH, SPR_BALLHEIGHT);
@@ -48,10 +48,10 @@ public class MarioFireballSprite extends Sprite {
 
 		switch(curState) {
 			case FLY:
-				setRegion(ballAnim.getKeyFrame(stateTimer, true));
+				setRegion(ballAnim.getKeyFrame(stateTimer));
 				break;
 			case EXPLODE:
-				setRegion(explodeAnim.getKeyFrame(stateTimer, false));
+				setRegion(explodeAnim.getKeyFrame(stateTimer));
 				break;
 		}
 

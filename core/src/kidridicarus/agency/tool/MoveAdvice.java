@@ -1,6 +1,10 @@
 package kidridicarus.agency.tool;
 
-public class MoveAdvice extends BasicMoveAdvice {
+public class MoveAdvice {
+	public boolean moveRight;
+	public boolean moveUp;
+	public boolean moveLeft;
+	public boolean moveDown;
 	public boolean action0;
 	public boolean action1;
 
@@ -12,11 +16,26 @@ public class MoveAdvice extends BasicMoveAdvice {
 		set(moveAdvice);
 	}
 
-	@Override
 	public void clear() {
-		super.clear();
+		moveRight = false;
+		moveUp = false;
+		moveLeft = false;
+		moveDown = false;
 		action0 = false;
 		action1 = false;
+	}
+
+	public void set(MoveAdvice other) {
+		this.moveRight = other.moveRight;
+		this.moveUp = other.moveUp;
+		this.moveLeft = other.moveLeft;
+		this.moveDown = other.moveDown;
+		this.action0 = other.action0;
+		this.action1 = other.action1;
+	}
+
+	public MoveAdvice cpy() {
+		return new MoveAdvice(this);
 	}
 
 	/*
@@ -49,18 +68,5 @@ public class MoveAdvice extends BasicMoveAdvice {
 			else
 				return Direction4.DOWN;
 		}
-	}
-
-	public void set(MoveAdvice other) {
-		this.moveRight = other.moveRight;
-		this.moveUp = other.moveUp;
-		this.moveLeft = other.moveLeft;
-		this.moveDown = other.moveDown;
-		this.action0 = other.action0;
-		this.action1 = other.action1;
-	}
-
-	public MoveAdvice cpy() {
-		return new MoveAdvice(this);
 	}
 }

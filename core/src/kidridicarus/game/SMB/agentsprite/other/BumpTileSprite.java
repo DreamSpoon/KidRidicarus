@@ -41,12 +41,12 @@ public class BumpTileSprite extends Sprite {
 
 	public void update(float delta, float globalTimer, Vector2 position, boolean isQ, boolean isEmpty) {
 		if(isEmpty) {
-			setRegion(emptyblockTex.getKeyFrame(totalTime, true));
+			setRegion(emptyblockTex.getKeyFrame(totalTime));
 			doNotDraw = false;
 		}
 		// q block?
 		else if(isQ)
-			setRegion(qBlockAnim.getKeyFrame(globalTimer, true));
+			setRegion(qBlockAnim.getKeyFrame(globalTimer));
 		// has a texture?
 		else if(prebumpTex != null) {
 			doNotDraw = false;

@@ -39,10 +39,10 @@ public class ZoomerSprite extends Sprite {
 	public void update(float delta, Vector2 position, MoveState curState, Direction4 upDir) {
 		switch(curState) {
 			case WALK:
-				setRegion(walkAnim.getKeyFrame(stateTimer, true));
+				setRegion(walkAnim.getKeyFrame(stateTimer));
 				break;
 			case INJURY:
-				setRegion(injuryAnim.getKeyFrame(stateTimer, true));
+				setRegion(injuryAnim.getKeyFrame(stateTimer));
 				break;
 			case DEAD:
 				break;

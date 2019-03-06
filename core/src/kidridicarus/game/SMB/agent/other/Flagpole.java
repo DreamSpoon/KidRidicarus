@@ -12,9 +12,9 @@ import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agentscript.FlagpoleScript;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.SMB.agentbody.other.FlagpoleBody;
 import kidridicarus.game.SMB.agentsprite.other.PoleFlagSprite;
-import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 
 public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent {
@@ -83,7 +83,7 @@ public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent {
 
 		// if the supervisor starts (uses) the script then start the flag drop
 		if(((PlayerAgent) agent).getSupervisor().startScript(new FlagpoleScript(fpBody.getBounds(),
-				agent.getProperty(GameKV.Script.KEY_SPRITESIZE, null, Vector2.class)))) {
+				agent.getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)))) {
 			startDrop();
 			return true;
 		}

@@ -12,8 +12,8 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agentscript.PipeWarpScript;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.SMB.agentbody.other.PipeWarpBody;
-import kidridicarus.game.info.GameKV;
 
 public class PipeWarp extends Agent {
 	public class PipeWarpHorizon {
@@ -77,7 +77,7 @@ public class PipeWarp extends Agent {
 	 * Returns null if exit spawner is not found.
 	 */
 	public PlayerSpawner getExitAgentSpawner() {
-		Agent agent = CommonInfo.getTargetAgent(agency, properties.get(AgencyKV.Spawn.KEY_TARGETNAME, "",
+		Agent agent = CommonInfo.getTargetAgent(agency, properties.get(CommonKV.Script.KEY_TARGETNAME, "",
 				String.class));
 		if(agent instanceof PlayerSpawner)
 			return (PlayerSpawner) agent;
@@ -99,7 +99,7 @@ public class PipeWarp extends Agent {
 
 		return ((PlayerAgent) agent).getSupervisor().startScript(
 				new PipeWarpScript(exitPos, getEntryHorizon(), getExitHorizon(),
-				agent.getProperty(GameKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
+				agent.getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
 	}
 
 	private PipeWarpHorizon getEntryHorizon() {

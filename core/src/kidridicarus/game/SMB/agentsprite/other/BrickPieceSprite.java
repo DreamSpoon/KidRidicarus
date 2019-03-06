@@ -29,7 +29,7 @@ public class BrickPieceSprite extends Sprite {
 	}
 
 	public void update(Vector2 position, float delta) {
-		setRegion(spinAnim.getKeyFrame(stateTimer, true));
+		setRegion(spinAnim.getKeyFrame(stateTimer));
 		stateTimer += delta;
 
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);

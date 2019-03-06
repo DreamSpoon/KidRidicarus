@@ -9,6 +9,7 @@ import kidridicarus.common.agent.general.AgentSpawner;
 import kidridicarus.common.agent.general.DespawnBox;
 import kidridicarus.common.agent.general.PlayerSpawner;
 import kidridicarus.common.agent.general.Room;
+import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.common.agent.general.PipeWarp;
 
 public class CommonInfo {
@@ -18,7 +19,8 @@ public class CommonInfo {
 			AgencyKV.Spawn.VAL_DESPAWN, DespawnBox.class,
 			AgencyKV.Spawn.VAL_PIPEWARP_SPAWN, PipeWarp.class,
 			AgencyKV.Spawn.VAL_PLAYERSPAWNER, PlayerSpawner.class,
-			AgencyKV.Room.VAL_ROOM, Room.class);
+			AgencyKV.Room.VAL_ROOM, Room.class,
+			CommonKV.Level.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class);
 
 	/*
 	 * Returns null if target is not found.
@@ -26,6 +28,7 @@ public class CommonInfo {
 	public static Agent getTargetAgent(Agency agency, String targetName) {
 		if(targetName == null || targetName.equals(""))
 			return null;
-		return agency.getFirstAgentByProperties(new String[] { AgencyKV.Spawn.KEY_NAME }, new String[] { targetName });
+		return agency.getFirstAgentByProperties(
+				new String[] { CommonKV.Script.KEY_NAME }, new String[] { targetName });
 	}
 }

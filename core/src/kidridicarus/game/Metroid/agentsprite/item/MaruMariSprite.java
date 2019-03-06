@@ -23,13 +23,13 @@ public class MaruMariSprite extends Sprite {
 				atlas.findRegions(MetroidAnim.Item.MARUMARI), PlayMode.LOOP);
 
 		stateTimer = 0f;
-		setRegion(mmAnim.getKeyFrame(0));
+		setRegion(mmAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position) {
-		setRegion(mmAnim.getKeyFrame(stateTimer, true));
+		setRegion(mmAnim.getKeyFrame(stateTimer));
 
 		// update sprite position
 		setPosition(position.x - getWidth()/2, position.y - getHeight()/2);

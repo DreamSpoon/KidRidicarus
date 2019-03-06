@@ -21,13 +21,13 @@ public class StaticCoinSprite extends Sprite {
 		coinAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMBAnim.Item.COIN_STATIC), PlayMode.LOOP);
 
-		setRegion(coinAnim.getKeyFrame(0));
+		setRegion(coinAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float globalTimer) {
-		setRegion(coinAnim.getKeyFrame(globalTimer, true));
+		setRegion(coinAnim.getKeyFrame(globalTimer));
 	}
 }
 

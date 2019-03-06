@@ -4,7 +4,6 @@ import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.AgentScriptRunner;
-import kidridicarus.agency.tool.BasicMoveAdvice;
 import kidridicarus.agency.tool.MoveAdvice;
 
 /*
@@ -16,8 +15,8 @@ import kidridicarus.agency.tool.MoveAdvice;
 public abstract class AgentSupervisor {
 	private AgentScriptRunner scriptRunner;
 
-	public abstract void setFrameAdvice(MoveAdvice superAdvice);
-	public abstract BasicMoveAdvice pollFrameAdvice();
+	public abstract void setMoveAdvice(MoveAdvice moveAdvice);
+	public abstract MoveAdvice pollMoveAdvice();
 
 	/*
 	 * Convert the Player agent information into a simpler script agent state format, which will be used to

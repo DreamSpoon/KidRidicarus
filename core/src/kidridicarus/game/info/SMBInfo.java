@@ -13,7 +13,6 @@ import kidridicarus.game.SMB.agent.other.BumpTile;
 import kidridicarus.game.SMB.agent.other.CastleFlag;
 import kidridicarus.game.SMB.agent.other.Flagpole;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
-import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.SMB.agent.other.SpinCoin;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agent.player.MarioFireball;
@@ -98,7 +97,6 @@ public class SMBInfo {
 	}
 
 	public static final AgentClassList SMB_AGENT_CLASSLIST = new AgentClassList( 
-			GameKV.Level.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
 			GameKV.SMB.VAL_BRICKPIECE, BrickPiece.class,
 			GameKV.SMB.VAL_BUMPTILE, BumpTile.class,
 			GameKV.SMB.VAL_CASTLEFLAG, CastleFlag.class,
