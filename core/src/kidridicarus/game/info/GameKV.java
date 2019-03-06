@@ -18,6 +18,7 @@ public class GameKV {
 		// because this is so closely tied to SMB (i.e. the castle flag trigger), this is still here
 		// TODO: unhook from castle flag trigger and move level end trigger to Agency
 		public static final String VAL_LEVELEND_TRIGGER = "levelend_trigger";
+		public static final String VAL_NEXTLEVEL_NAME = "nextlevel_name";
 	}
 
 	public class SMB {

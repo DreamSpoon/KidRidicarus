@@ -1,5 +1,6 @@
 package kidridicarus.game.SMB.agent.player;
 
+import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.MoveAdvice;
@@ -56,5 +57,20 @@ public class MarioSupervisor extends GameAgentSupervisor {
 				mario.getProperty(GameKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
 
 		return curState;
+	}
+
+	@Override
+	public String getNextLevelName() {
+		return null;
+	}
+
+	@Override
+	protected AgentScriptHooks getAgentScriptHooks() {
+		return new AgentScriptHooks() {
+				@Override
+				public void gotoNextLevel(String nextLevelName) {
+					// TODO more code here
+				}
+			};
 	}
 }

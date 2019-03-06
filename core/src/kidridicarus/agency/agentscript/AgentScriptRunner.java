@@ -1,5 +1,7 @@
 package kidridicarus.agency.agentscript;
 
+import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
+
 /*
  * *Basic* order of operations for game loop and scripts:
  *   1) Get user input and call script update methods
@@ -28,13 +30,16 @@ public class AgentScriptRunner {
 	 * Returns true if script was started, otherwise returns false.
 	 * Takes the beginning state of the agent.
 	 */
-	public boolean startScript(AgentScript agentScript, ScriptedAgentState startAgentState) {
-		if(isRunning)
+	public boolean startScript(AgentScript agentScript, AgentScriptHooks asHooks,
+			ScriptedAgentState startAgentState) {
+		// if a script is already running and cannot be overridden then return false
+		if(isRunning && !currentScript.isOverridable())
 			return false;
+		// start the script
 		isRunning = true;
 		continueRunning = true;
 		currentScript = agentScript;
-		currentScript.startScript(startAgentState);
+		currentScript.startScript(asHooks, startAgentState);
 		return true;
 	}
 

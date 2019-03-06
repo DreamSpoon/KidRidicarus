@@ -169,7 +169,7 @@ public class PlayCoordinator implements Disposable {
 	}
 
 	public boolean isGameWon() {
-		if(playAgent.isAtLevelEnd() && playAgent.getStateTimer() > SMBInfo.MARIO_LEVELEND_TIME)
+		if(playAgent.isAtLevelEnd())
 			return true;
 		return false;
 	}

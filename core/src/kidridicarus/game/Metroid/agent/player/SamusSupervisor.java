@@ -1,5 +1,6 @@
 package kidridicarus.game.Metroid.agent.player;
 
+import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.MoveAdvice;
@@ -9,10 +10,12 @@ import kidridicarus.game.info.GameKV;
 public class SamusSupervisor extends GameAgentSupervisor {
 	private MoveAdvice advice;
 	private Samus samus;
+	private String nextLevelName;
 
 	public SamusSupervisor(Samus samus) {
 		advice = new MoveAdvice();
 		this.samus = samus;
+		nextLevelName = null;
 	}
 
 	@Override
@@ -33,6 +36,11 @@ public class SamusSupervisor extends GameAgentSupervisor {
 	}
 
 	@Override
+	public String getNextLevelName() {
+		return nextLevelName;
+	}
+
+	@Override
 	protected ScriptedAgentState getCurrentScriptAgentState() {
 		ScriptedAgentState curState = new ScriptedAgentState();
 		curState.scriptedBodyState.contactEnabled = true;
@@ -44,5 +52,15 @@ public class SamusSupervisor extends GameAgentSupervisor {
 				samus.getProperty(GameKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
 		curState.scriptedSpriteState.facingRight = samus.getProperty(GameKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
 		return curState;
+	}
+
+	@Override
+	protected AgentScriptHooks getAgentScriptHooks() {
+		return new AgentScriptHooks() {
+				@Override
+				public void gotoNextLevel(String name) {
+					nextLevelName = name;
+				}
+			};
 	}
 }

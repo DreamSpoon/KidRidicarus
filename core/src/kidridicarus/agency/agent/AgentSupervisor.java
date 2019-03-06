@@ -1,6 +1,7 @@
 package kidridicarus.agency.agent;
 
 import kidridicarus.agency.agentscript.AgentScript;
+import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.AgentScriptRunner;
 import kidridicarus.agency.tool.BasicMoveAdvice;
@@ -24,6 +25,8 @@ public abstract class AgentSupervisor {
 	 */
 	protected abstract ScriptedAgentState getCurrentScriptAgentState();
 
+	protected abstract AgentScriptHooks getAgentScriptHooks();
+
 	public AgentSupervisor() {
 		scriptRunner = new AgentScriptRunner();
 	}
@@ -41,7 +44,7 @@ public abstract class AgentSupervisor {
 	 * Otherwise start using the given script and return true. 
 	 */
 	public boolean startScript(AgentScript agentScript) {
-		return scriptRunner.startScript(agentScript, getCurrentScriptAgentState());
+		return scriptRunner.startScript(agentScript, getAgentScriptHooks(), getCurrentScriptAgentState());
 	}
 
 	public ScriptedAgentState getScriptAgentState() {

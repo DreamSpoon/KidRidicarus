@@ -12,14 +12,16 @@ import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.game.SMB.agent.other.Flagpole;
 
 /*
- * SMB end of level flagpole script
+ * SMB end of level flagpole script.
+ * The script ends with character moving right, with expectation that level end will be triggered and
+ * level end script will override this script.
  */
 public class FlagpoleScript implements AgentScript {
 	private static final float SLIDE_SPEED = UInfo.P2M(64f);
 	private static final float SLIDE_WAIT_TIME = 0.4f;
-	private static final float MOVERIGHT_TIME = 2f;
+	private static final float MOVERIGHT_MAXTIME = 4f;
 
-	private enum ScriptState { SLIDE, SLIDE_STOP, SLIDE_FLIPRIGHT, SLIDE_WAIT, SLIDE_RELEASE, COMPLETE, MOVERIGHT }
+	private enum ScriptState { SLIDE, SLIDE_STOP, SLIDE_FLIPRIGHT, SLIDE_WAIT, SLIDE_RELEASE, MOVERIGHT, COMPLETE }
 
 	private ScriptedAgentState beginAgentState;
 	private ScriptedAgentState curScriptAgentState;
@@ -43,7 +45,7 @@ public class FlagpoleScript implements AgentScript {
 	}
 
 	@Override
-	public void startScript(ScriptedAgentState beginScriptAgentState) {
+	public void startScript(AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
 		this.beginAgentState = beginScriptAgentState.cpy();
 		this.curScriptAgentState = beginScriptAgentState.cpy();
 
@@ -87,12 +89,15 @@ public class FlagpoleScript implements AgentScript {
 				curScriptAgentState.scriptedBodyState.gravityFactor = 1f;
 				break;
 			case MOVERIGHT:
-				if(curScriptState != ScriptState.MOVERIGHT) {
+				// if first frame of this state then start character moving right
+				if(curScriptState != nextScriptState) {
 					curScriptAgentState.scriptedMoveAdvice = new MoveAdvice();
 					curScriptAgentState.scriptedMoveAdvice.moveRight = true;
 				}
 				break;
 			case COMPLETE:
+				// Character will walk right towards the level end trigger, and level end script will start when
+				// level end is contacted by character
 				return false;
 		}
 
@@ -120,7 +125,7 @@ public class FlagpoleScript implements AgentScript {
 			case SLIDE_RELEASE:
 				return ScriptState.MOVERIGHT;
 			case MOVERIGHT:
-				if(stateTimer > MOVERIGHT_TIME)
+				if(stateTimer > MOVERIGHT_MAXTIME)
 					return ScriptState.COMPLETE;
 				return ScriptState.MOVERIGHT;
 			case COMPLETE:
@@ -176,5 +181,13 @@ public class FlagpoleScript implements AgentScript {
 	@Override
 	public ScriptedAgentState getScriptAgentState() {
 		return curScriptAgentState;
+	}
+
+	@Override
+	public boolean isOverridable() {
+		// override allowed if script is in final states
+		if(curScriptState == ScriptState.MOVERIGHT || curScriptState == ScriptState.COMPLETE)
+			return true;
+		return false;
 	}
 }

@@ -25,6 +25,7 @@ import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.game.Metroid.agentbody.player.SamusBody;
 import kidridicarus.game.Metroid.agentsprite.player.SamusSprite;
 import kidridicarus.game.SMB.agent.other.Flagpole;
+import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
@@ -110,8 +111,8 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	}
 
 	private void processContacts(float delta) {
-		// skip contacts update when script is running
-		if(supervisor.isRunningScript())
+		// skip contacts update when script is running without move advice provided
+		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice())
 			return;
 
 		ContactState nextContactState = ContactState.REGULAR;
@@ -127,6 +128,11 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 				// check for end level flagpole contact, and use flagpole if found
 				for(Flagpole flagpole : samusBody.getContactsByClass(Flagpole.class)) {
 					flagpole.use(this);
+					break;
+				}
+				// check for level end trigger contact, and use level end if found
+				for(LevelEndTrigger leTrigger : samusBody.getContactsByClass(LevelEndTrigger.class)) {
+					leTrigger.use(this);
 					break;
 				}
 				break;
@@ -562,7 +568,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 	@Override
 	public boolean isAtLevelEnd() {
-		return false;
+		return supervisor.getNextLevelName() != null;
 	}
 
 	@Override

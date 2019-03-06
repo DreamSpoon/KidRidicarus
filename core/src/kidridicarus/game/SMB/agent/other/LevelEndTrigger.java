@@ -7,6 +7,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agentscript.LevelEndScript;
 import kidridicarus.game.SMB.agentbody.other.LevelEndBody;
 import kidridicarus.game.info.GameKV;
 
@@ -16,6 +18,17 @@ public class LevelEndTrigger extends Agent {
 	public LevelEndTrigger(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		leBody = new LevelEndBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+	}
+
+	public boolean use(Agent agent) {
+		if(!(agent instanceof PlayerAgent))
+			return false;
+
+		// trigger the castle flag
+		trigger();
+		// start player script with name of next level
+		return ((PlayerAgent) agent).getSupervisor().startScript(new LevelEndScript(
+				getProperty(GameKV.Level.VAL_NEXTLEVEL_NAME, "", String.class)));
 	}
 
 	/*

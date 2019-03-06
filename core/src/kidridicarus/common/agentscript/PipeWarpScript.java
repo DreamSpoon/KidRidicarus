@@ -41,7 +41,7 @@ public class PipeWarpScript implements AgentScript {
 	}
 
 	@Override
-	public void startScript(ScriptedAgentState beginAgentState) {
+	public void startScript(AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
 		this.beginAgentState = beginAgentState.cpy();
 		this.curScriptAgentState = beginAgentState.cpy();
 
@@ -172,5 +172,10 @@ public class PipeWarpScript implements AgentScript {
 	@Override
 	public ScriptedAgentState getScriptAgentState() {
 		return curScriptAgentState;
+	}
+
+	@Override
+	public boolean isOverridable() {
+		return false;
 	}
 }
