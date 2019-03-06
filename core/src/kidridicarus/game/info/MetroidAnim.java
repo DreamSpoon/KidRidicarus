@@ -35,6 +35,7 @@ public class MetroidAnim {
 		public static final String JUMP_AIMUP = DIR+"samus_jump_aimup";
 		public static final String JUMPSPIN = DIR+"samus_jumpspin";
 		public static final String BALL = DIR+"samus_ball";
+		public static final String CLIMB = DIR+"samus_climb";
 
 		public static final String SHOT = DIR+"shot_regular";
 		public static final String SHOT_EXP = DIR+"shot_explode";

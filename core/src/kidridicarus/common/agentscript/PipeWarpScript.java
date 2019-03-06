@@ -19,12 +19,12 @@ public class PipeWarpScript implements AgentScript {
 
 	private enum ScriptState { ENTRY, WARP, EXIT, COMPLETE }
 
-	private ScriptedAgentState beginAgentState;
-	private ScriptedAgentState curScriptAgentState;
 	private Vector2 exitPosition;
 	private PipeWarpHorizon entryHorizon;
 	private PipeWarpHorizon exitHorizon;
 	private Vector2 incomingAgentSize;
+	private ScriptedAgentState beginAgentState;
+	private ScriptedAgentState curScriptAgentState;
 	private float stateTimer;
 	private ScriptState curScriptState;
 
@@ -33,7 +33,8 @@ public class PipeWarpScript implements AgentScript {
 		this.exitPosition = exitPosition;
 		this.entryHorizon = entryHorizon;
 		this.exitHorizon = exitHorizon;
-		this.incomingAgentSize = new Vector2(incomingAgentSize);
+		this.incomingAgentSize = incomingAgentSize.cpy();
+		beginAgentState = null;
 		curScriptAgentState = null;
 		stateTimer = 0f;
 		curScriptState = ScriptState.ENTRY;

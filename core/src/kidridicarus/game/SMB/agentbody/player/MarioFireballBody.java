@@ -67,8 +67,8 @@ public class MarioFireballBody extends MobileAgentBody {
 		return acSensor.getContacts();
 	}
 
-	public <T> List<T> getContactAgentsByClass(Class<T> clazz) {
-		return acSensor.getContactsByClass(clazz);
+	public <T> List<T> getContactAgentsByClass(Class<T> cls) {
+		return acSensor.getContactsByClass(cls);
 	}
 
 	public boolean isMoveBlocked(boolean movingRight) {

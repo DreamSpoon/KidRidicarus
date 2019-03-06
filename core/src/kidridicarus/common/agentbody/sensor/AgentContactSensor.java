@@ -43,34 +43,36 @@ public class AgentContactSensor extends ContactSensor {
 		return contacts;
 	}
 
-	public <T> Agent getFirstContactByClass(Class<T> clazz) {
-		for(Agent a : contacts) {
-			if(clazz.isAssignableFrom(a.getClass()))
-				return a;
+	public <T> Agent getFirstContactByClass(Class<T> cls) {
+		for(Agent agent : contacts) {
+			if(cls.isAssignableFrom(agent.getClass()))
+				return agent;
 		}
 		return null;
 	}
 
-	public <T> List<T> getContactsByClass(Class<T> clazz) {
-		List<T> aList = new LinkedList<T>();
-		for(Agent a : contacts) {
-			if(clazz.isAssignableFrom(a.getClass()))
-				aList.add((T) a);
+	// ignore unchecked cast because isAssignableFrom method is used
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getContactsByClass(Class<T> cls) {
+		List<T> cList = new LinkedList<T>();
+		for(Agent agent : contacts) {
+			if(cls.isAssignableFrom(agent.getClass()))
+				cList.add((T) agent);
 		}
-		return aList;
+		return cList;
 	}
 
 	public static boolean isMoveBlockedByAgent(AgentContactSensor theSensor, Vector2 position, boolean moveRight) {
-		for(Agent a : theSensor.getContacts()) {
+		for(Agent agent : theSensor.getContacts()) {
 			// do not check against players
-			if(a instanceof PlayerAgent)
+			if(agent instanceof PlayerAgent)
 				continue;
 
 			// If wants to move right and other agent is on the right side then move is blocked
-			if(moveRight && position.x < a.getPosition().x)
+			if(moveRight && position.x < agent.getPosition().x)
 				return true;
 			// If wants to move left and other agent is on the left side then move is blocked
-			else if(!moveRight && position.x > a.getPosition().x)
+			else if(!moveRight && position.x > agent.getPosition().x)
 				return true;
 		}
 		return false;

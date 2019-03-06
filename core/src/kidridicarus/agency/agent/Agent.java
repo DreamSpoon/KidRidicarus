@@ -38,8 +38,8 @@ public abstract class Agent implements Disposable {
 	 * properties list.
 	 * THINK: dynamic vs static properties?
 	 */
-	public <T> T getProperty(String key, Object defaultValue, Class<T> poo) {
-		return properties.get(key, defaultValue, poo);
+	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
+		return properties.get(key, defaultValue, cls);
 	}
 
 	public boolean containsPropertyKV(String[] keys, Object[] vals) {

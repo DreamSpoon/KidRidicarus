@@ -12,6 +12,7 @@ import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentObserverPlus;
 import kidridicarus.common.agent.general.Room;
@@ -26,7 +27,6 @@ import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo.PointAmount;
-import kidridicarus.game.play.GameAdvice;
 
 /*
  * TODO:
@@ -111,11 +111,11 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		MarioBodyState bodyState;
 		MarioState nextState;
 		boolean isStarPowered;
-		GameAdvice advice = supervisor.pollFrameAdvice(); 
+		MoveAdvice advice = supervisor.pollFrameAdvice(); 
 
 		levelTimeRemaining -= delta;
 
-		if(supervisor.isScriptRunning()) {
+		if(supervisor.isRunningScript()) {
 			ScriptedAgentState def = supervisor.getScriptAgentState();
 			mBody.useScriptedBodyState(def.scriptedBodyState);
 			marioSprite.update(delta, def.scriptedSpriteState.position, curState, MarioBodyState.STAND, curPowerState,
@@ -153,11 +153,11 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		marioSprite.update(delta, mBody.getPosition(), curState, bodyState,
 				curPowerState, mBody.isFacingRight(), isDmgInvincible, isStarPowered, mBody.isBigBody());
 
-		prevFrameAdvisedShoot = advice.runShoot;
+		prevFrameAdvisedShoot = advice.action0;
 	}
 
 	// Process the body and return a character state based on the findings.
-	private MarioState processMarioState(float delta, GameAdvice advice) {
+	private MarioState processMarioState(float delta, MoveAdvice advice) {
 		// scripted level end sequence
 		if(mBody.getLevelEndContacted() != null) {
 			mBody.zeroVelocity(true, true);
@@ -251,7 +251,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		}
 		// otherwise the player has control, because no script is runnning
 		else {
-			if(processFireball(delta, advice.runShoot))
+			if(processFireball(delta, advice.action0))
 				return MarioState.FIREBALL;
 			else
 				return MarioState.PLAY;
@@ -504,23 +504,23 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		powerupRec = pt;
 	}
 
-	// unchecked cast to T warnings ignored because T is checked with class.equals(poo) 
+	// unchecked cast to T warnings ignored because T is checked with class.equals(cls) 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getProperty(String key, Object defaultValue, Class<T> poo) {
-		if(key.equals(GameKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(poo)) {
+	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
+		if(key.equals(GameKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
 			Boolean he = mBody.isFacingRight();
 			return (T) he;
 		}
-		else if(key.equals(GameKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(poo)) {
+		else if(key.equals(GameKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(cls)) {
 			SpriteState he = SpriteState.STAND;
 			return (T) he;
 		}
-		else if(key.equals(GameKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(poo)) {
+		else if(key.equals(GameKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
 			Vector2 he = new Vector2(marioSprite.getWidth(), marioSprite.getHeight());
 			return (T) he;
 		}
-		return properties.get(key, defaultValue, poo);
+		return properties.get(key, defaultValue, cls);
 	}
 
 	@Override

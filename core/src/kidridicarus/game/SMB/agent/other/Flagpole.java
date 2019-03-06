@@ -10,12 +10,15 @@ import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agentscript.FlagpoleScript;
 import kidridicarus.game.SMB.agentbody.other.FlagpoleBody;
 import kidridicarus.game.SMB.agentsprite.other.PoleFlagSprite;
+import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 
 public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent {
-	private static final float DROP_TIME = 1.35f;
+	public static final float FLAGDROP_TIME = 1.35f;
 
 	// offset is from top-left of flagpole bounds
 	private static final Vector2 FLAG_START_OFFSET = new Vector2(UInfo.P2M(-4), UInfo.P2M(-16));
@@ -46,7 +49,8 @@ public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent {
 		if(isAtBottom)
 			return;
 		if(dropTimer > 0f) {
-			flagPos = initFlagPos.cpy().add(0f, -(fpBody.getBounds().height - UInfo.P2M(32)) * (DROP_TIME - dropTimer) / DROP_TIME);
+			flagPos = initFlagPos.cpy().add(0f,
+					-(fpBody.getBounds().height - UInfo.P2M(32)) * (FLAGDROP_TIME - dropTimer) / FLAGDROP_TIME);
 
 			dropTimer -= delta;
 			if(dropTimer <= 0f)
@@ -64,11 +68,27 @@ public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent {
 	}
 
 	public void startDrop() {
-		dropTimer = DROP_TIME;
+		isAtBottom = false;
+		dropTimer = FLAGDROP_TIME;
 	}
 
 	public boolean isAtBottom() {
 		return isAtBottom;
+	}
+
+	// check if the user is a player agent, if so then give the agent's supervisor a Flagpole script to run 
+	public boolean use(Agent agent) {
+		if(!(agent instanceof PlayerAgent))
+			return false;
+
+		// if the supervisor starts (uses) the script then start the flag drop
+		if(((PlayerAgent) agent).getSupervisor().startScript(new FlagpoleScript(fpBody.getBounds(),
+				agent.getProperty(GameKV.Script.KEY_SPRITESIZE, null, Vector2.class)))) {
+			startDrop();
+			return true;
+		}
+		else
+			return false;
 	}
 
 	@Override

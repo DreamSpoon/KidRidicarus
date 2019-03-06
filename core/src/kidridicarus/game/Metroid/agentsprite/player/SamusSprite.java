@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.Direction4;
 import kidridicarus.game.Metroid.agent.player.Samus.MoveState;
 import kidridicarus.game.info.MetroidAnim;
 
@@ -36,6 +37,9 @@ public class SamusSprite extends Sprite {
 	private Animation<TextureRegion> jumpAimUpAnim;
 	private Animation<TextureRegion> jumpSpinAnim;
 	private Animation<TextureRegion> ballAnim;
+	private Animation<TextureRegion> climbAnim;
+	private float climbAnimTimer;
+	private MoveState curParentState;
 	private float stateTimer;
 
 	public SamusSprite(TextureAtlas atlas, Vector2 position) {
@@ -59,63 +63,84 @@ public class SamusSprite extends Sprite {
 				atlas.findRegions(MetroidAnim.Player.JUMPSPIN), PlayMode.LOOP);
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidAnim.Player.BALL), PlayMode.LOOP);
+		climbAnim = new Animation<TextureRegion>(ANIM_SPEED,
+				atlas.findRegions(MetroidAnim.Player.CLIMB), PlayMode.LOOP);
 
+		climbAnimTimer = 0f;
+		curParentState = null;
 		stateTimer = 0f;
 		setRegion(aimRightAnim.getKeyFrame(0));
 		setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, MoveState parentState, boolean isFacingRight, boolean isFacingUp) {
+	public void update(float delta, Vector2 position, MoveState nextParentState, boolean isFacingRight,
+			boolean isFacingUp, Direction4 climbDir) {
 		Vector2 offset = new Vector2(0f, 0f);
 
-		switch(parentState) {
+		switch(nextParentState) {
 			case STAND:
 				if(isFacingUp)
-					setRegion(aimUpAnim.getKeyFrame(stateTimer, true));
+					setRegion(aimUpAnim.getKeyFrame(stateTimer));
 				else
-					setRegion(aimRightAnim.getKeyFrame(stateTimer, true));
+					setRegion(aimRightAnim.getKeyFrame(stateTimer));
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case RUN:
 			case SHOOT:
 				if(isFacingUp)
-					setRegion(runAimUpAnim.getKeyFrame(stateTimer, true));
+					setRegion(runAimUpAnim.getKeyFrame(stateTimer));
 				else {
-					if(parentState == MoveState.RUN)
-						setRegion(runAnim.getKeyFrame(stateTimer, true));
+					if(nextParentState == MoveState.RUN)
+						setRegion(runAnim.getKeyFrame(stateTimer));
 					else
-						setRegion(runAimRightAnim.getKeyFrame(stateTimer, true));
+						setRegion(runAimRightAnim.getKeyFrame(stateTimer));
 				}
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case JUMP:
 				if(isFacingUp)
-					setRegion(jumpAimUpAnim.getKeyFrame(stateTimer, true));
+					setRegion(jumpAimUpAnim.getKeyFrame(stateTimer));
 				else
-					setRegion(jumpAnim.getKeyFrame(stateTimer, true));
+					setRegion(jumpAnim.getKeyFrame(stateTimer));
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case JUMPSPIN:
-				setRegion(jumpSpinAnim.getKeyFrame(stateTimer, true));
+				setRegion(jumpSpinAnim.getKeyFrame(stateTimer));
 				setBounds(getX(), getY(), MED_SPRITE_WIDTH, MED_SPRITE_HEIGHT);
 				offset.set(MED_SPRITE_OFFSET);
 				break;
 			case JUMPSHOOT:
 				if(isFacingUp)
-					setRegion(jumpAimUpAnim.getKeyFrame(stateTimer, true));
+					setRegion(jumpAimUpAnim.getKeyFrame(stateTimer));
 				else
-					setRegion(jumpAimRightAnim.getKeyFrame(stateTimer, true));
+					setRegion(jumpAimRightAnim.getKeyFrame(stateTimer));
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case BALL:
-				setRegion(ballAnim.getKeyFrame(stateTimer, true));
+				setRegion(ballAnim.getKeyFrame(stateTimer));
 				setBounds(getX(), getY(), SML_SPRITE_WIDTH, SML_SPRITE_HEIGHT);
 				offset.set(SML_SPRITE_OFFSET);
+				break;
+			case CLIMB:
+				// if this is first frame of climb animation then reset clim anim timer
+				if(curParentState != MoveState.CLIMB)
+					climbAnimTimer = 0f;
+				if(climbDir != null) {
+					// if climbing up then forward the animation
+					if(climbDir == Direction4.UP)
+						climbAnimTimer += delta;
+					// if climbing down then reverse the animation
+					else if(climbDir == Direction4.DOWN)
+						climbAnimTimer = ensurePositiveAnimTimer(climbAnimTimer - delta, climbAnim);
+				}
+				setRegion(climbAnim.getKeyFrame(climbAnimTimer));
+				setBounds(getX(), getY(), MED_SPRITE_WIDTH, MED_SPRITE_HEIGHT);
+				offset.set(MED_SPRITE_OFFSET);
 				break;
 		}
 
@@ -126,6 +151,20 @@ public class SamusSprite extends Sprite {
 		// update sprite position
 		setPosition(position.x - getWidth()/2 + offset.x, position.y - getHeight()/2 + offset.y);
 
-		stateTimer += delta;
+		stateTimer = curParentState == nextParentState ? stateTimer+delta : 0f;
+		curParentState = nextParentState;
+	}
+
+	/*
+	 * Returns 0 or a positive value.
+	 */
+	private float ensurePositiveAnimTimer(float animTimer, Animation<TextureRegion> animation) {
+		if(animTimer >= 0f)
+			return animTimer;
+
+		float duration = animation.getAnimationDuration();
+		if(duration == 0f)
+			return 0f;
+		return (float) (animTimer + (-Math.floor(animTimer / duration))*duration);
 	}
 }

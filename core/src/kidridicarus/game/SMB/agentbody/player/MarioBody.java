@@ -18,6 +18,7 @@ import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.agency.tool.Direction4;
+import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.common.agent.general.DespawnBox;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.general.PipeWarp;
@@ -36,7 +37,6 @@ import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agent.player.Mario.MarioPowerState;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.play.GameAdvice;
 
 /*
  * Major TODO: Move a lot of the code out of this class and push it somewhere else like Mario class. There is
@@ -297,7 +297,7 @@ public class MarioBody extends MobileAgentBody {
 		agentSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, acBeginSensor));
 	}
 
-	public MarioBodyState update(float delta, GameAdvice advice, MarioPowerState curPowerState) {
+	public MarioBodyState update(float delta, MoveAdvice advice, MarioPowerState curPowerState) {
 		MarioBodyState nextState;
 		boolean isVelocityLeft, isVelocityRight;
 		boolean doDuckSlideMove;
@@ -431,7 +431,7 @@ public class MarioBody extends MobileAgentBody {
 			nextState = MarioBodyState.BRAKE;
 		}
 		else if(doWalkRunMove) {
-			moveBodyLeftRight(advice.moveRight, advice.runShoot);
+			moveBodyLeftRight(advice.moveRight, advice.action0);
 			nextState = MarioBodyState.WALKRUN;
 		}
 		else if(doDecelMove) {
@@ -449,13 +449,13 @@ public class MarioBody extends MobileAgentBody {
 			// button but, they need to be on the ground with the button released.
 			if(ogSensor.isOnGround()) {
 				isJumping = false;
-				if(!advice.jump)
+				if(!advice.action1)
 					isNewJumpAllowed = true;
 			}
 		}
 
 		// jump?
-		if(advice.jump && isNewJumpAllowed) {	// do jump
+		if(advice.action1 && isNewJumpAllowed) {	// do jump
 			isNewJumpAllowed = false;
 			isJumping = true;
 			// start a timer to delay checking for onGround state
@@ -483,7 +483,7 @@ public class MarioBody extends MobileAgentBody {
 		else if(isJumping) {	// jumped and is mid-air
 			nextState = MarioBodyState.JUMP;
 			// jump force stops, and cannot be restarted, if the player releases the jump key
-			if(!advice.jump)
+			if(!advice.action1)
 				jumpForceTimer = 0f;
 			// The longer the player holds the jump key, the higher they go,
 			// if mario is moving up (no jump force allowed while mario is moving down)
@@ -512,7 +512,7 @@ public class MarioBody extends MobileAgentBody {
 		return nextState;
 	}
 
-	private void processPipes(GameAdvice advice) {
+	private void processPipes(MoveAdvice advice) {
 		// check for pipe entry 
 		Direction4 dir;
 		if(advice.moveRight)

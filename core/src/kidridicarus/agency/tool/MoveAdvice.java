@@ -1,45 +1,22 @@
-package kidridicarus.game.play;
+package kidridicarus.agency.tool;
 
-import kidridicarus.agency.tool.BasicAdvice;
-import kidridicarus.agency.tool.Direction4;
-import kidridicarus.agency.tool.SuperAdvice;
+public class MoveAdvice extends BasicMoveAdvice {
+	public boolean action0;
+	public boolean action1;
 
-public class GameAdvice extends BasicAdvice {
-	public boolean jump;
-	public boolean runShoot;
-
-	public GameAdvice() {
+	public MoveAdvice() {
 		clear();
 	}
 
-	public GameAdvice(boolean moveRight, boolean moveUp, boolean moveLeft, boolean moveDown, boolean jump,
-			boolean runShoot) {
-		this.moveRight = moveRight;
-		this.moveUp = moveUp;
-		this.moveLeft = moveLeft;
-		this.moveDown = moveDown;
-		this.jump = jump;
-		this.runShoot = runShoot;
+	public MoveAdvice(MoveAdvice moveAdvice) {
+		set(moveAdvice);
 	}
 
 	@Override
 	public void clear() {
 		super.clear();
-		jump = false;
-		runShoot = false;
-	}
-
-	public GameAdvice cpy() {
-		return new GameAdvice(moveRight, moveUp, moveLeft, moveDown, jump, runShoot);
-	}
-
-	public void fromSuperAdvice(SuperAdvice superAdvice) {
-		moveRight = superAdvice.moveRight;
-		moveUp = superAdvice.moveUp;
-		moveLeft = superAdvice.moveLeft;
-		moveDown = superAdvice.moveDown;
-		jump = superAdvice.action0;
-		runShoot = superAdvice.action1;
+		action0 = false;
+		action1 = false;
 	}
 
 	/*
@@ -72,5 +49,18 @@ public class GameAdvice extends BasicAdvice {
 			else
 				return Direction4.DOWN;
 		}
+	}
+
+	public void set(MoveAdvice other) {
+		this.moveRight = other.moveRight;
+		this.moveUp = other.moveUp;
+		this.moveLeft = other.moveLeft;
+		this.moveDown = other.moveDown;
+		this.action0 = other.action0;
+		this.action1 = other.action1;
+	}
+
+	public MoveAdvice cpy() {
+		return new MoveAdvice(this);
 	}
 }

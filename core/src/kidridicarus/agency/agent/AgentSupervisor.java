@@ -3,8 +3,8 @@ package kidridicarus.agency.agent;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.AgentScriptRunner;
-import kidridicarus.agency.tool.BasicAdvice;
-import kidridicarus.agency.tool.SuperAdvice;
+import kidridicarus.agency.tool.BasicMoveAdvice;
+import kidridicarus.agency.tool.MoveAdvice;
 
 /*
  * Supervisor is expected to handle stuff for PlayerAgents:
@@ -15,8 +15,8 @@ import kidridicarus.agency.tool.SuperAdvice;
 public abstract class AgentSupervisor {
 	private AgentScriptRunner scriptRunner;
 
-	public abstract void setFrameAdvice(SuperAdvice superAdvice);
-	public abstract BasicAdvice pollFrameAdvice();
+	public abstract void setFrameAdvice(MoveAdvice superAdvice);
+	public abstract BasicMoveAdvice pollFrameAdvice();
 
 	/*
 	 * Convert the Player agent information into a simpler script agent state format, which will be used to
@@ -48,7 +48,11 @@ public abstract class AgentSupervisor {
 		return scriptRunner.getScriptAgentState();
 	}
 
-	public boolean isScriptRunning() {
+	public boolean isRunningScript() {
 		return scriptRunner.isRunning();
+	}
+
+	public boolean isRunningScriptMoveAdvice() {
+		return scriptRunner.isRunningMoveAdvice();
 	}
 }

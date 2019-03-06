@@ -1,12 +1,15 @@
 package kidridicarus.agency.tool;
 
-public class BasicAdvice {
+/*
+ * Move, as in chess move. The advice is intended to come from the player to be used by an agent.
+ */
+public class BasicMoveAdvice {
 	public boolean moveRight;
 	public boolean moveUp;
 	public boolean moveLeft;
 	public boolean moveDown;
 
-	public BasicAdvice() {
+	public BasicMoveAdvice() {
 		clear();
 	}
 

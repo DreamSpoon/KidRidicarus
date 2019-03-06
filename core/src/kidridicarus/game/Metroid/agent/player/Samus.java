@@ -14,6 +14,7 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
+import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentObserverPlus;
 import kidridicarus.common.agent.general.Room;
@@ -23,11 +24,11 @@ import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.game.Metroid.agentbody.player.SamusBody;
 import kidridicarus.game.Metroid.agentsprite.player.SamusSprite;
+import kidridicarus.game.SMB.agent.other.Flagpole;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
-import kidridicarus.game.play.GameAdvice;
 
 /*
  * TODO:
@@ -46,7 +47,8 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	private static final float POSTPONE_RUN_DELAY = 0.15f;
 
 	public enum ContactState { REGULAR, DAMAGE }
-	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT }
+	// TODO implement samus CLIMB (e.g. climbing SMB vines, or Kid Icarus ladders)
+	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT, CLIMB }
 
 	private SamusBody samusBody;
 	private SamusSprite samusSprite;
@@ -109,20 +111,27 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 	private void processContacts(float delta) {
 		// skip contacts update when script is running
-		if(supervisor.isScriptRunning())
+		if(supervisor.isRunningScript())
 			return;
 
 		ContactState nextContactState = ContactState.REGULAR;
 		switch(curContactState) {
 			case REGULAR:
-				for(ContactDmgGiveAgent a : samusBody.getContactsByClass(ContactDmgGiveAgent.class)) {
-					if(a.isContactDamage()) {
+				// check for incoming damage
+				for(ContactDmgGiveAgent agent : samusBody.getContactsByClass(ContactDmgGiveAgent.class)) {
+					if(agent.isContactDamage()) {
 						nextContactState = ContactState.DAMAGE;
-						takeContactDamage(((Agent) a).getPosition());
+						takeContactDamage(((Agent) agent).getPosition());
 					}
+				}
+				// check for end level flagpole contact, and use flagpole if found
+				for(Flagpole flagpole : samusBody.getContactsByClass(Flagpole.class)) {
+					flagpole.use(this);
+					break;
 				}
 				break;
 			case DAMAGE:
+				// check for return to regular contact state
 				if(contactStateTimer > DAMAGE_INV_TIME)
 					nextContactState = ContactState.REGULAR;
 				else
@@ -154,17 +163,22 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		agency.playSound(AudioInfo.Sound.Metroid.HURT);
 	}
 
-	private void processMove(float delta, GameAdvice advice) {
+	private void processMove(float delta, MoveAdvice advice) {
+		if(supervisor.isRunningScriptMoveAdvice())
+			advice = supervisor.getScriptAgentState().scriptedMoveAdvice;
 		// if no script is running then do the normal move stuff
-		if(!supervisor.isScriptRunning()) {
+		if(!supervisor.isRunningScript() || supervisor.isRunningScriptMoveAdvice()) {
+			
 			// if no pipe move started then do the regular move
 			if(!processPipeMove(advice))
 				processRegularMove(delta, advice);
 		}
 
 		// the previous code might have started a script; if a script is now running then process the script
-		if(supervisor.isScriptRunning())
+		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice()) {
 			samusBody.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
+			isFacingRight = supervisor.getScriptAgentState().scriptedSpriteState.facingRight;
+		}
 	}
 
 	/*
@@ -172,7 +186,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	 * This is not in the processContacts code, even though it relates to a sensor touching a pipe.
 	 * It's here because the player must actively "move" to use a pipe.
 	 */
-	private boolean processPipeMove(GameAdvice advice) {
+	private boolean processPipeMove(MoveAdvice advice) {
 		Direction4 adviceDir = advice.getMoveDir4();
 		// if no move advice direction then no pipe move so exit; also, exit if move state is similar to jump
 		if(adviceDir == null || curMoveState == MoveState.JUMP || curMoveState == MoveState.JUMPSPIN ||
@@ -191,7 +205,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	/*
 	 * Run, jump, shoot, etc.
 	 */
-	private void processRegularMove(float delta, GameAdvice advice) {
+	private void processRegularMove(float delta, MoveAdvice advice) {
 		MoveState nextMoveState = null;
 		boolean jumpStart = false;
 		// XOR the moveleft and moveright, becuase can't move left and right at same time
@@ -221,7 +235,8 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			case STAND:
 			case RUN:
 			case SHOOT:
-				if(!isNextJumpEnabled && !advice.jump)
+			default:
+				if(!isNextJumpEnabled && !advice.action1)
 					isNextJumpEnabled = true;
 
 				// if body is falling, or is not rising, then enable the next jump
@@ -236,7 +251,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 					nextMoveState = MoveState.BALL;
 				}
 				// jump?
-				else if(advice.jump && samusBody.isOnGround() && isLastJumpLandable && isNextJumpEnabled) {
+				else if(advice.action1 && samusBody.isOnGround() && isLastJumpLandable && isNextJumpEnabled) {
 					isLastJumpLandable = false;
 					isJumpForceEnabled = true;
 					jumpStart = true;
@@ -247,7 +262,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 					nextMoveState = MoveState.JUMP;
 				}
 				else {
-					boolean didShoot = checkAndDoShoot(advice.runShoot);
+					boolean didShoot = checkAndDoShoot(advice.action0);
 
 					// stand/run on ground?
 					if(samusBody.isOnGround()) {
@@ -295,12 +310,12 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 					isJumpForceEnabled = false;
 				}
 				// else if body is not being advised to jump then disable jump up force
-				else if(!advice.jump)
+				else if(!advice.action1)
 					isJumpForceEnabled = false;
 
 				// If the body is now onground but jump is still advised then disallow jumping until the
 				// jump advice stops (to prevent bunny hopping)
-				if(samusBody.isOnGround() && advice.jump)
+				if(samusBody.isOnGround() && advice.action1)
 					isNextJumpEnabled = false;
 
 				// disallow change to facing up if player is falling and they started jump with spin allowed
@@ -328,14 +343,14 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 				// still mid-air
 				else {
 					// do shoot?
-					if(checkAndDoShoot(advice.runShoot))
+					if(checkAndDoShoot(advice.action0))
 						nextMoveState = MoveState.JUMPSHOOT;
 					// already shooting?
 					else if(curMoveState == MoveState.JUMPSHOOT) {
 						// If delay is finished, and not advised to shoot, and moving horizontally, and spin
 						// is available, and body is moving upward, and samus is at least 2 tiles higher than
 						// jump start position, then switch back to jumpspin.
-						if(moveStateTimer > JUMPSHOOT_RESPIN_DELAY && !advice.runShoot && isMoveHorizontal &&
+						if(moveStateTimer > JUMPSHOOT_RESPIN_DELAY && !advice.action0 && isMoveHorizontal &&
 								isJumpSpinAvailable && samusBody.getVelocity().y > 0f &&
 								samusBody.getPosition().y > startJumpY + 2f*UInfo.P2M(UInfo.TILEPIX_Y)) {
 							nextMoveState = MoveState.JUMPSPIN;
@@ -397,6 +412,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 				case STAND:
 				case RUN:
 				case SHOOT:
+				default:
 					samusBody.doGroundMove(advice.moveRight);
 					break;
 				case JUMP:
@@ -495,21 +511,24 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	}
 
 	private void processSprite(float delta) {
-		if(supervisor.isScriptRunning()) {
+		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice()) {
 			ScriptedSpriteState sss = supervisor.getScriptAgentState().scriptedSpriteState;
 			MoveState ms;
 			switch(sss.spriteState) {
 				case MOVE:
 					ms = MoveState.RUN;
 					break;
+				case CLIMB:
+					ms = MoveState.CLIMB;
+					break;
 				default:
 					ms = MoveState.STAND;
 					break;
 			}
-			samusSprite.update(delta, sss.position, ms, sss.facingRight, isFacingUp);
+			samusSprite.update(delta, sss.position, ms, sss.facingRight, isFacingUp, sss.moveDir);
 		}
 		else {
-			samusSprite.update(delta, samusBody.getPosition(), curMoveState, isFacingRight, isFacingUp);
+			samusSprite.update(delta, samusBody.getPosition(), curMoveState, isFacingRight, isFacingUp, null);
 			// toggle sprite on/off each frame while in contact damage state
 			if(curContactState == ContactState.DAMAGE && isDrawThisFrame)
 				isDrawThisFrame = false;
@@ -521,7 +540,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	@Override
 	public void draw(Batch batch) {
 		// if a script is running and the sprite is visible then draw it
-		if(supervisor.isScriptRunning()) {
+		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice()) {
 			if(supervisor.getScriptAgentState().scriptedSpriteState.visible)
 				samusSprite.draw(batch);
 		}
@@ -532,8 +551,8 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		}
 	}
 
-	// TODO implement the general info return with override of the getProperty method of Agent class for
-	// most of the following methods (or all?)
+	// TODO implement the general info return functionality by override of the getProperty method of Agent class
+	// for most of the following methods (or all?)
 	// OR, push these events to samus supervisor, so that this Agent info won't need to be polled
 
 	@Override
@@ -581,23 +600,23 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		// TODO: powerups!
 	}
 
-	// unchecked cast to T warnings ignored because T is checked with class.equals(poo) 
+	// unchecked cast to T warnings ignored because T is checked with class.equals(cls) 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getProperty(String key, Object defaultValue, Class<T> poo) {
-		if(key.equals(GameKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(poo)) {
+	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
+		if(key.equals(GameKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
 			Boolean he = isFacingRight;
 			return (T) he;
 		}
-		else if(key.equals(GameKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(poo)) {
+		else if(key.equals(GameKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(cls)) {
 			SpriteState he = SpriteState.STAND;
 			return (T) he;
 		}
-		else if(key.equals(GameKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(poo)) {
+		else if(key.equals(GameKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
 			Vector2 he = new Vector2(samusSprite.getWidth(), samusSprite.getHeight());
 			return (T) he;
 		}
-		return properties.get(key, defaultValue, poo);
+		return properties.get(key, defaultValue, cls);
 	}
 
 	@Override

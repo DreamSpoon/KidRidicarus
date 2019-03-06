@@ -2,28 +2,27 @@ package kidridicarus.game.Metroid.agent.player;
 
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.agency.tool.SuperAdvice;
+import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.game.info.GameKV;
-import kidridicarus.game.play.GameAdvice;
 
 public class SamusSupervisor extends GameAgentSupervisor {
-	private GameAdvice advice;
+	private MoveAdvice advice;
 	private Samus samus;
 
 	public SamusSupervisor(Samus samus) {
-		advice = new GameAdvice();
+		advice = new MoveAdvice();
 		this.samus = samus;
 	}
 
 	@Override
-	public void setFrameAdvice(SuperAdvice superAdvice) {
-		advice.fromSuperAdvice(superAdvice);
+	public void setFrameAdvice(MoveAdvice superAdvice) {
+		advice.set(superAdvice);
 	}
 
 	@Override
-	public GameAdvice pollFrameAdvice() {
-		GameAdvice adv = advice.cpy();
+	public MoveAdvice pollFrameAdvice() {
+		MoveAdvice adv = advice.cpy();
 		advice.clear();
 		return adv;
 	}
@@ -44,7 +43,6 @@ public class SamusSupervisor extends GameAgentSupervisor {
 		curState.scriptedSpriteState.spriteState =
 				samus.getProperty(GameKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
 		curState.scriptedSpriteState.facingRight = samus.getProperty(GameKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
-
 		return curState;
 	}
 }

@@ -322,8 +322,8 @@ public class SamusBody extends MobileAgentBody {
 		return null;
 	}
 
-	public <T> List<T> getContactsByClass(Class<T> clazz) {
-		return acSensor.getContactsByClass(clazz);
+	public <T> List<T> getContactsByClass(Class<T> cls) {
+		return acSensor.getContactsByClass(cls);
 	}
 
 	public boolean isContactingWall(boolean isRightWall) {
@@ -335,12 +335,12 @@ public class SamusBody extends MobileAgentBody {
 		return ogSensor.isOnGround();
 	}
 
+	public Room getCurrentRoom() {
+		return (Room) acSensor.getFirstContactByClass(Room.class);
+	}
+
 	@Override
 	public Agent getParent() {
 		return parent;
-	}
-
-	public Room getCurrentRoom() {
-		return (Room) acSensor.getFirstContactByClass(Room.class);
 	}
 }

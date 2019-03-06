@@ -57,4 +57,13 @@ public class AgentScriptRunner {
 	public boolean isRunning() {
 		return isRunning;
 	}
+
+	public boolean isRunningMoveAdvice() {
+		if(!isRunning)
+			return false;
+		ScriptedAgentState sas = currentScript.getScriptAgentState();
+		if(sas == null)
+			return false;
+		return sas.scriptedMoveAdvice != null;
+	}
 }

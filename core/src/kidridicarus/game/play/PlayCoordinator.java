@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.SuperAdvice;
+import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.common.agent.AgentObserverPlus.AgentObserverListener;
 import kidridicarus.common.agent.general.AgentSpawnTrigger;
@@ -38,7 +38,7 @@ public class PlayCoordinator implements Disposable {
 	// * TODO ?  a private class that  extends Agent implements PlayerAgent  ?
 
 	private AgentSpawnTrigger spawnTrigger;
-	private SuperAdvice superAdvice;
+	private MoveAdvice superAdvice;
 	private Stage stageHUD;
 
 	private String currentMainMusicName;
@@ -53,7 +53,7 @@ public class PlayCoordinator implements Disposable {
 		this.stageHUD = stageHUD;
 		spawnTrigger = null;
 		playAgent = null;
-		superAdvice = new SuperAdvice();
+		superAdvice = new MoveAdvice();
 		currentMainMusicName = "";
 		currentMainMusic = null;
 		isMainMusicPlaying = false;
@@ -98,8 +98,8 @@ public class PlayCoordinator implements Disposable {
 		superAdvice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
 		superAdvice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
 		superAdvice.moveDown = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_DOWN);
-		superAdvice.action0 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
-		superAdvice.action1 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUNSHOOT);
+		superAdvice.action0 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RUNSHOOT);
+		superAdvice.action1 = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_JUMP);
 
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
 			QQ.toggleOn();

@@ -22,9 +22,9 @@ public class ObjectProperties {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T get(String key, Object defaultValue, Class<T> poo) {
+	public <T> T get(String key, Object defaultValue, Class<T> cls) {
 		// if the requested return type is Float
-		if(Float.class.equals(poo)) {
+		if(Float.class.equals(cls)) {
 			Object test = properties.getOrDefault(key, defaultValue);
 			if(test == null)
 				return null;

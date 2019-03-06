@@ -2,31 +2,30 @@ package kidridicarus.game.SMB.agent.player;
 
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.agency.tool.SuperAdvice;
+import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.PowerupInfo.PowType;
-import kidridicarus.game.play.GameAdvice;
 
 public class MarioSupervisor extends GameAgentSupervisor {
-	private GameAdvice advice;
+	private MoveAdvice advice;
 	private boolean switchToOtherChar;
 	private Mario mario;
 
 	public MarioSupervisor(Mario mario) {
 		this.mario = mario;
-		advice = new GameAdvice();
+		advice = new MoveAdvice();
 		switchToOtherChar = false;
 	}
 
 	@Override
-	public void setFrameAdvice(SuperAdvice superAdvice) {
-		advice.fromSuperAdvice(superAdvice);
+	public void setFrameAdvice(MoveAdvice superAdvice) {
+		advice.set(superAdvice);
 	}
 
 	@Override
-	public GameAdvice pollFrameAdvice() {
-		GameAdvice adv = advice.cpy();
+	public MoveAdvice pollFrameAdvice() {
+		MoveAdvice adv = advice.cpy();
 		advice.clear();
 		return adv;
 	}
