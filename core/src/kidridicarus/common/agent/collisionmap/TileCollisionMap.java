@@ -1,4 +1,4 @@
-package kidridicarus.agency.collisionmap;
+package kidridicarus.common.agent.collisionmap;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,8 +12,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.info.UInfo;
 
 /*
  * The forest and the trees:

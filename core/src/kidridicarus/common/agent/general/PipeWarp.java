@@ -5,17 +5,18 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.Direction4;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agentscript.PipeWarpScript;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.SMB.agentbody.other.PipeWarpBody;
 
-public class PipeWarp extends Agent {
+public class PipeWarp extends Agent implements DisposableAgent {
 	public class PipeWarpHorizon {
 		public Direction4 direction;
 		public Rectangle bounds; 
@@ -186,7 +187,7 @@ public class PipeWarp extends Agent {
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		pwBody.dispose();
 	}
 }

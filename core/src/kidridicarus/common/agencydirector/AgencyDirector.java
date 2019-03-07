@@ -1,4 +1,4 @@
-package kidridicarus.agency;
+package kidridicarus.common.agencydirector;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -11,12 +11,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyEventListener;
+import kidridicarus.agency.AgentClassList;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.space.PlatformSpace;
-import kidridicarus.agency.space.SpaceRenderer;
-import kidridicarus.agency.space.SpaceTemplateLoader;
-import kidridicarus.agency.tool.DrawOrderAlias;
+import kidridicarus.common.agencydirector.space.PlatformSpace;
+import kidridicarus.common.agencydirector.space.SpaceRenderer;
+import kidridicarus.common.agencydirector.space.SpaceTemplateLoader;
+import kidridicarus.common.tool.DrawOrderAlias;
 
 /*
  * Run the agency, insert players into the agency, and take direction from the agency to play sounds, music, etc. 

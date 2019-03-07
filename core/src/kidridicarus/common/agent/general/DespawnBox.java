@@ -5,10 +5,11 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.DespawnBody;
 
-public class DespawnBox extends Agent {
+public class DespawnBox extends Agent implements DisposableAgent {
 	private DespawnBody dsBody;
 
 	public DespawnBox(Agency agency, ObjectProperties properties) {
@@ -27,7 +28,7 @@ public class DespawnBox extends Agent {
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		dsBody.dispose();
 	}
 }

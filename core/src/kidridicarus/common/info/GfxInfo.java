@@ -1,7 +1,7 @@
-package kidridicarus.game.info;
+package kidridicarus.common.info;
 
-import kidridicarus.agency.tool.DrawOrder;
-import kidridicarus.agency.tool.DrawOrderAlias;
+import kidridicarus.common.tool.AllowOrder;
+import kidridicarus.common.tool.DrawOrderAlias;
 
 public class GfxInfo {
 	public static final int V_WIDTH = 256;
@@ -10,13 +10,13 @@ public class GfxInfo {
 	public static final int DESKTOP_SCALE = 2;
 
 	public static class LayerDrawOrder {
-		public static final DrawOrder NONE = new DrawOrder(false, 0f);
-		public static final DrawOrder MAP_BOTTOM = new DrawOrder(true, 1f);
-		public static final DrawOrder MAP_MIDDLE = new DrawOrder(true, 3f);
-		public static final DrawOrder MAP_TOP = new DrawOrder(true, 5f);
-		public static final DrawOrder SPRITE_BOTTOM = new DrawOrder(true, 2f);
-		public static final DrawOrder SPRITE_MIDDLE = new DrawOrder(true, 4f);
-		public static final DrawOrder SPRITE_TOP = new DrawOrder(true, 6f);
+		public static final AllowOrder NONE = new AllowOrder(false, 0f);
+		public static final AllowOrder MAP_BOTTOM = new AllowOrder(true, 1f);
+		public static final AllowOrder MAP_MIDDLE = new AllowOrder(true, 3f);
+		public static final AllowOrder MAP_TOP = new AllowOrder(true, 5f);
+		public static final AllowOrder SPRITE_BOTTOM = new AllowOrder(true, 2f);
+		public static final AllowOrder SPRITE_MIDDLE = new AllowOrder(true, 4f);
+		public static final AllowOrder SPRITE_TOP = new AllowOrder(true, 6f);
 	}
 
 	public static final DrawOrderAlias[] KIDRID_DRAWORDER_ALIAS = new DrawOrderAlias[] {
@@ -28,4 +28,8 @@ public class GfxInfo {
 			new DrawOrderAlias("sprite_middle", LayerDrawOrder.SPRITE_MIDDLE),
 			new DrawOrderAlias("sprite_top", LayerDrawOrder.SPRITE_TOP)
 		};
+
+	public static class AgentUpdateOrder {
+		public static final AllowOrder NONE = new AllowOrder(false, 0f);
+	}
 }

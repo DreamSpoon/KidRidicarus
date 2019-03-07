@@ -9,12 +9,13 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentsprite.other.FloatingPointsSprite;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
@@ -60,7 +61,7 @@ public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAge
 		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount);
 
 		stateTimer = 0f;
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
@@ -86,10 +87,6 @@ public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAge
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(originalPosition.x, originalPosition.y, 0f, 0f);
-	}
-
-	@Override
-	public void dispose() {
 	}
 
 	public static ObjectProperties makeAP(PointAmount amt, boolean relative, Vector2 position,

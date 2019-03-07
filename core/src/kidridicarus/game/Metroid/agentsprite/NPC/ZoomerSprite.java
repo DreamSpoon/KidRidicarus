@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.game.Metroid.agent.NPC.Zoomer.MoveState;
 import kidridicarus.game.info.MetroidAnim;
-import kidridicarus.agency.tool.Direction4;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
 
 public class ZoomerSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);

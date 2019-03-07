@@ -1,12 +1,12 @@
 package kidridicarus.agency.change;
 
-import kidridicarus.agency.tool.DrawOrder;
+import kidridicarus.common.tool.AllowOrder;
 
 public class DrawOrderChange {
 	public AgentPlaceholder ap;
-	public DrawOrder drawOrder;
+	public AllowOrder drawOrder;
 
-	public DrawOrderChange(AgentPlaceholder agent, DrawOrder newDrawOrder) {
+	public DrawOrderChange(AgentPlaceholder agent, AllowOrder newDrawOrder) {
 		this.ap = agent;
 		this.drawOrder = newDrawOrder;
 	}

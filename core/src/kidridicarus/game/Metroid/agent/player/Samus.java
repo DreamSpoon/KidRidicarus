@@ -6,36 +6,39 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentSupervisor;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.Direction4;
-import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.AgentObserverPlus;
+import kidridicarus.common.agent.GameAgentObserver;
+import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
+import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.Metroid.agentbody.player.SamusBody;
 import kidridicarus.game.Metroid.agentsprite.player.SamusSprite;
 import kidridicarus.game.SMB.agent.other.Flagpole;
 import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
 /*
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements UpdatableAgent, DrawableAgent, PlayerAgent, PowerupTakeAgent {
+public class Samus extends Agent implements UpdatableAgent, DrawableAgent, PlayerAgent, PowerupTakeAgent,
+		DisposableAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
@@ -99,8 +102,8 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		samusSprite = new SamusSprite(agency.getAtlas(), samusBody.getPosition());
 		observer = new SamusObserver(this, agency.getAtlas());
 		supervisor = new SamusSupervisor(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
-		agency.enableAgentUpdate(this);
 	}
 
 	@Override
@@ -592,7 +595,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	}
 
 	@Override
-	public AgentObserverPlus getObserver() {
+	public GameAgentObserver getObserver() {
 		return observer;
 	}
 
@@ -626,7 +629,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		samusBody.dispose();
 	}
 }

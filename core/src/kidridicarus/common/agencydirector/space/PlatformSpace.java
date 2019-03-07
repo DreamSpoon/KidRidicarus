@@ -1,4 +1,4 @@
-package kidridicarus.agency.space;
+package kidridicarus.common.agencydirector.space;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyIndex.DrawObjectIter;
+import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 
 /*
  * Contains an agency with stuff that moves around on a tiled map.
@@ -43,7 +43,7 @@ public class PlatformSpace implements Disposable {
 		return agency.getWorld();
 	}
 
-	public void iterateThroughDrawObjects(DrawObjectIter objIter) {
+	public void iterateThroughDrawObjects(AllowOrderListIter objIter) {
 		agency.iterateThroughDrawObjects(objIter);
 	}
 

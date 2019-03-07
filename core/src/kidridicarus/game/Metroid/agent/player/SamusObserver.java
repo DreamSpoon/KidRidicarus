@@ -3,9 +3,9 @@ package kidridicarus.game.Metroid.agent.player;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import kidridicarus.common.agent.AgentObserverPlus;
+import kidridicarus.common.agent.GameAgentObserver;
 
-public class SamusObserver extends AgentObserverPlus {
+public class SamusObserver extends GameAgentObserver {
 	private SamusHUD samusHUD;
 	private TextureAtlas atlas;
 

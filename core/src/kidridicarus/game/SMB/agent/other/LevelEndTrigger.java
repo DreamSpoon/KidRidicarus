@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
@@ -13,7 +14,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.SMB.agentbody.other.LevelEndBody;
 import kidridicarus.game.info.GameKV;
 
-public class LevelEndTrigger extends Agent {
+public class LevelEndTrigger extends Agent implements DisposableAgent {
 	private LevelEndBody leBody;
 
 	public LevelEndTrigger(Agency agency, ObjectProperties properties) {
@@ -54,7 +55,7 @@ public class LevelEndTrigger extends Agent {
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		leBody.dispose();
 	}
 }

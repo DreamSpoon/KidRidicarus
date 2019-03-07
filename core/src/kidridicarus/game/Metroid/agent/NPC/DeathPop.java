@@ -6,13 +6,15 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
 import kidridicarus.game.Metroid.agentsprite.NPC.DeathPopSprite;
-import kidridicarus.game.info.GfxInfo;
 
-public class DeathPop extends Agent implements UpdatableAgent, DrawableAgent {
+public class DeathPop extends Agent implements UpdatableAgent, DrawableAgent, DisposableAgent {
 	private static final float POP_TIME = 3f/60f;
 
 	private DeathPopSprite dpSprite;
@@ -24,7 +26,7 @@ public class DeathPop extends Agent implements UpdatableAgent, DrawableAgent {
 		stateTimer = 0f;
 		position = Agent.getStartPoint(properties);
 		dpSprite = new DeathPopSprite(agency.getAtlas(), position);
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
@@ -52,6 +54,6 @@ public class DeathPop extends Agent implements UpdatableAgent, DrawableAgent {
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 	}
 }

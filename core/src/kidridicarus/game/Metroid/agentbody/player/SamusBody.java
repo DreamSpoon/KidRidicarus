@@ -13,9 +13,6 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.B2DFactory;
-import kidridicarus.agency.tool.Direction4;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agentbody.MobileAgentBody;
@@ -23,6 +20,9 @@ import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.B2DFactory;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.Metroid.agent.player.Samus;
 
 public class SamusBody extends MobileAgentBody {

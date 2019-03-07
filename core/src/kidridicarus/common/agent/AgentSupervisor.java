@@ -1,10 +1,10 @@
-package kidridicarus.agency.agent;
+package kidridicarus.common.agent;
 
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
+import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.AgentScriptRunner;
-import kidridicarus.agency.tool.MoveAdvice;
 
 /*
  * Supervisor is expected to handle stuff for PlayerAgents:

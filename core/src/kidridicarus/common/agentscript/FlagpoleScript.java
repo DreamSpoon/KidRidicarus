@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.Direction4;
-import kidridicarus.agency.tool.MoveAdvice;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
+import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.SMB.agent.other.Flagpole;
 
 /*

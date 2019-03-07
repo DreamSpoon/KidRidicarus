@@ -6,24 +6,26 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.BumpTakeAgent;
 import kidridicarus.game.SMB.agent.HeadBounceTakeAgent;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
 import kidridicarus.game.SMB.agentbody.NPC.GoombaBody;
 import kidridicarus.game.SMB.agentsprite.NPC.GoombaSprite;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
 public class Goomba extends BasicWalkAgent implements UpdatableAgent, DrawableAgent, ContactDmgTakeAgent,
-		HeadBounceTakeAgent, BumpTakeAgent, ContactDmgGiveAgent {
+		HeadBounceTakeAgent, BumpTakeAgent, ContactDmgGiveAgent, DisposableAgent {
 	private static final float GOOMBA_WALK_VEL = 0.4f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
@@ -56,7 +58,7 @@ public class Goomba extends BasicWalkAgent implements UpdatableAgent, DrawableAg
 
 		goomBody = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		goombaSprite = new GoombaSprite(agency.getAtlas(), goomBody.getPosition());
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
@@ -206,7 +208,7 @@ public class Goomba extends BasicWalkAgent implements UpdatableAgent, DrawableAg
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		goomBody.dispose();
 	}
 }

@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.Direction4;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.SMB.agent.player.Mario.MarioPowerState;
 import kidridicarus.game.SMB.agent.player.Mario.MarioAgentState;
 import kidridicarus.game.SMB.agentbody.player.MarioBody.MarioBodyState;

@@ -5,12 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.AgentSpawnerBody;
 
-public class AgentSpawner extends Agent implements UpdatableAgent {
+public class AgentSpawner extends Agent implements UpdatableAgent, DisposableAgent {
 	private AgentSpawnerBody sbody;
 	private boolean isUsed;
 	private String spawnAgentClassAlias;
@@ -42,7 +43,7 @@ public class AgentSpawner extends Agent implements UpdatableAgent {
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		sbody.dispose();
 	}
 }

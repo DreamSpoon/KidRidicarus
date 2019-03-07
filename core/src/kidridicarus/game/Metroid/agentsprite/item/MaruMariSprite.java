@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.info.UInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.MetroidAnim;
 
 public class MaruMariSprite extends Sprite {

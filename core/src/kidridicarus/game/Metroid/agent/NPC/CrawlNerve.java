@@ -2,9 +2,9 @@ package kidridicarus.game.Metroid.agent.NPC;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DiagonalDir4;
-import kidridicarus.agency.tool.Direction4;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.DiagonalDir4;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.Metroid.agentbody.NPC.ZoomerBody;
 
 /*

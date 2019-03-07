@@ -11,12 +11,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.Metroid.agent.player.SamusShot;
 
 public class SamusShotBody extends MobileAgentBody {

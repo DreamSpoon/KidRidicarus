@@ -2,7 +2,7 @@ package kidridicarus.agency.change;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import kidridicarus.agency.tool.DrawOrder;
+import kidridicarus.common.tool.AllowOrder;
 
 public class AgencyChangeQueue {
 	private LinkedBlockingQueue<Object> changeQ;
@@ -21,15 +21,18 @@ public class AgencyChangeQueue {
 		changeQ.add(new AgentListChange(ap, false));
 	}
 
-	public void enableAgentUpdate(AgentPlaceholder ap) {
-		changeQ.add(new UpdateChange(ap, true));
+//	public void enableAgentUpdate(AgentPlaceholder ap) {
+//		changeQ.add(new UpdateOrderChange(ap, true));
+//	}
+
+//	public void disableAgentUpdate(AgentPlaceholder ap) {
+//		changeQ.add(new UpdateOrderChange(ap, false));
+//	}
+	public void setAgentUpdateOrder(AgentPlaceholder ap, AllowOrder order) {
+		changeQ.add(new UpdateOrderChange(ap, order));
 	}
 
-	public void disableAgentUpdate(AgentPlaceholder ap) {
-		changeQ.add(new UpdateChange(ap, false));
-	}
-
-	public void setAgentDrawOrder(AgentPlaceholder ap, DrawOrder order) {
+	public void setAgentDrawOrder(AgentPlaceholder ap, AllowOrder order) {
 		changeQ.add(new DrawOrderChange(ap, order));
 	}
 

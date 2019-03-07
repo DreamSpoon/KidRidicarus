@@ -11,23 +11,25 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.BumpTakeAgent;
 import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentbody.other.BumpTileBody;
 import kidridicarus.game.SMB.agentsprite.other.BumpTileSprite;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, TileBumpTakeAgent {
+public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, TileBumpTakeAgent, DisposableAgent {
 	private static final float BOUNCE_TIME = 0.175f;
 	private static final float BOUNCE_HEIGHT_FRAC = 0.225f;	// bounce up about 1/5 of tile height
 
@@ -99,8 +101,8 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 		if(!properties.containsKV(GameKV.SMB.KEY_SECRETBLOCK, AgencyKV.VAL_TRUE))
 			agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
 
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
-		agency.enableAgentUpdate(this);
 	}
 
 	private BumpState getState() {
@@ -317,7 +319,7 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		btBody.dispose();
 	}
 }

@@ -3,8 +3,8 @@ package kidridicarus.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import kidridicarus.common.info.GfxInfo;
 import kidridicarus.game.MyKidRidicarus;
-import kidridicarus.game.info.GfxInfo;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

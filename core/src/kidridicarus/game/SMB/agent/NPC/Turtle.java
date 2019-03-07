@@ -8,21 +8,23 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.BumpTakeAgent;
 import kidridicarus.game.SMB.agent.HeadBounceTakeAgent;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
 import kidridicarus.game.SMB.agentbody.NPC.TurtleBody;
 import kidridicarus.game.SMB.agentsprite.NPC.TurtleSprite;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
 /*
@@ -33,7 +35,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  *  agent code is only called when contacting starts
  */
 public class Turtle extends BasicWalkAgent implements UpdatableAgent, DrawableAgent, ContactDmgTakeAgent,
-		HeadBounceTakeAgent, BumpTakeAgent, ContactDmgGiveAgent {
+		HeadBounceTakeAgent, BumpTakeAgent, ContactDmgGiveAgent, DisposableAgent {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 0.4f;
@@ -80,7 +82,7 @@ public class Turtle extends BasicWalkAgent implements UpdatableAgent, DrawableAg
 
 		turtleBody = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		turtleSprite = new TurtleSprite(agency.getAtlas(), turtleBody.getPosition());
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
@@ -336,7 +338,7 @@ public class Turtle extends BasicWalkAgent implements UpdatableAgent, DrawableAg
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		turtleBody.dispose();
 	}
 }

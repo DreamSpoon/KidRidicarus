@@ -1,4 +1,4 @@
-package kidridicarus.agency.space;
+package kidridicarus.common.agencydirector.space;
 
 import java.util.LinkedList;
 
@@ -11,9 +11,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrderAlias;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.DrawOrderAlias;
 import kidridicarus.agency.info.AgencyKV;
 
 /*

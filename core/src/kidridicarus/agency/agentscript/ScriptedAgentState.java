@@ -1,6 +1,6 @@
 package kidridicarus.agency.agentscript;
 
-import kidridicarus.agency.tool.MoveAdvice;
+import kidridicarus.common.tool.MoveAdvice;
 
 /*
  * Basic info about a player agent, that the script can manipulate to achieve an effect.

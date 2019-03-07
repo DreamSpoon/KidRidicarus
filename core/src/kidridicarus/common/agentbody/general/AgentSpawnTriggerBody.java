@@ -14,11 +14,11 @@ import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agent.general.AgentSpawnTrigger;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.B2DFactory;
 
 public class AgentSpawnTriggerBody extends AgentBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SPAWNTRIGGER_BIT);

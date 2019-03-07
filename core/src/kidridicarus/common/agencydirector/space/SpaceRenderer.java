@@ -1,4 +1,4 @@
-package kidridicarus.agency.space;
+package kidridicarus.common.agencydirector.space;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -6,9 +6,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
+import kidridicarus.common.info.UInfo;
 
 public class SpaceRenderer implements Disposable {
 	private OrthogonalTiledMapRenderer tileRenderer;
@@ -25,7 +25,7 @@ public class SpaceRenderer implements Disposable {
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		space.iterateThroughDrawObjects(new DrawObjectIter() {
+		space.iterateThroughDrawObjects(new AllowOrderListIter() {
 				@Override
 				public boolean iterate(Object obj) {
 					if(obj instanceof DrawableAgent)

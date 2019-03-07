@@ -6,16 +6,18 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
 import kidridicarus.game.Metroid.agentbody.NPC.MetroidDoorBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.MetroidDoorSprite;
-import kidridicarus.game.info.GfxInfo;
 
-public class MetroidDoor extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgTakeAgent {
+public class MetroidDoor extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgTakeAgent, DisposableAgent {
 	private static final float REMAIN_OPEN_DELAY = 77/30f;
 	private static final float OPENCLOSE_DELAY1 = 1/5f;
 	private static final float OPENCLOSE_DELAY2 = 1/10f;
@@ -41,7 +43,7 @@ public class MetroidDoor extends Agent implements UpdatableAgent, DrawableAgent,
 		mdBody = new MetroidDoorBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		mdSprite = new MetroidDoorSprite(agency.getAtlas(), mdBody.getPosition(), isFacingRight);
 
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
@@ -145,7 +147,7 @@ public class MetroidDoor extends Agent implements UpdatableAgent, DrawableAgent,
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		mdBody.dispose();
 	}
 }

@@ -6,19 +6,21 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.Metroid.agentbody.NPC.SkreeBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.SkreeSprite;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
 
-public class Skree extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgGiveAgent, ContactDmgTakeAgent {
+public class Skree extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgGiveAgent, ContactDmgTakeAgent, DisposableAgent {
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
 
 	private static final float INJURY_TIME = 10f/60f;
@@ -67,7 +69,7 @@ public class Skree extends Agent implements UpdatableAgent, DrawableAgent, Conta
 		sBody = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).add(SPECIAL_OFFSET));
 		sSprite = new SkreeSprite(agency.getAtlas(), sBody.getPosition());
 
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
@@ -225,7 +227,7 @@ public class Skree extends Agent implements UpdatableAgent, DrawableAgent, Conta
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		sBody.dispose();
 	}
 }

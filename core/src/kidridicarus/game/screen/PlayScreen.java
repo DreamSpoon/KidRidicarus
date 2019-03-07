@@ -10,14 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.agency.AgencyDirector;
 import kidridicarus.agency.AgentClassList;
-import kidridicarus.agency.info.UInfo;
+import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.MyKidRidicarus;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameInfo;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.MetroidInfo;
 import kidridicarus.game.info.SMBInfo;
 import kidridicarus.game.play.PlayCoordinator;

@@ -13,23 +13,24 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.AgencyIndex.AgentIter;
-import kidridicarus.agency.AgencyIndex.DrawObjectIter;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.change.AgencyChangeQueue;
 import kidridicarus.agency.change.AgentPlaceholder;
 import kidridicarus.agency.change.DrawOrderChange;
 import kidridicarus.agency.change.TileChange;
-import kidridicarus.agency.change.UpdateChange;
+import kidridicarus.agency.change.UpdateOrderChange;
 import kidridicarus.agency.change.AgencyChangeQueue.AgencyChangeCallback;
-import kidridicarus.agency.collisionmap.TileCollisionMap;
 import kidridicarus.agency.change.AgentListChange;
 import kidridicarus.agency.contact.AgencyContactFilter;
 import kidridicarus.agency.contact.AgencyContactListener;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.DrawOrder;
+import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.collisionmap.TileCollisionMap;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AllowOrder;
 
 /*
  * Desc:
@@ -48,7 +49,7 @@ import kidridicarus.agency.tool.ObjectProperties;
  *     "A government or state agency, sometimes an appointed commission, is a permanent or semi-permanent organization
  *     in the machinery of government that is responsible for the oversight and administration of specific functions,
  *     such as an intelligence agency."
- * "Agency" Google dictionary definition to complete the picture:
+ * And a Google dictionary definition of "Agency" to complete the picture:
  *   http://www.google.com/search?q=agency+definition
  *   "a business or organization established to provide a particular service, typically one that involves organizing
  *   transactions between two other parties."
@@ -83,10 +84,16 @@ public class Agency implements Disposable {
 		globalTimer += delta;
 	}
 
-	private void updateAgents(float delta) {
+	private void updateAgents(final float delta) {
 		// loop through list of agents receiving updates, calling each agent's update method
-		for(UpdatableAgent a : agencyIndex.getAgentsToUpdate())
-			a.update(delta);
+		agencyIndex.iterateThroughUpdateAgents(new AllowOrderListIter() {
+				@Override
+				public boolean iterate(Object obj) {
+					((UpdatableAgent) obj).update(delta);
+					// continue iterating
+					return false;
+				}
+			});
 		processChangeQ();
 	}
 
@@ -104,8 +111,8 @@ public class Agency implements Disposable {
 				public void change(Object change) {
 					if(change instanceof AgentListChange)
 						doAgentListChange((AgentListChange) change);
-					else if(change instanceof UpdateChange)
-						doUpdateChange((UpdateChange) change);
+					else if(change instanceof UpdateOrderChange)
+						doUpdateChange((UpdateOrderChange) change);
 					else if(change instanceof DrawOrderChange)
 						doDrawOrderChange((DrawOrderChange) change);
 					else if(change instanceof TileChange)
@@ -125,11 +132,8 @@ public class Agency implements Disposable {
 			agencyIndex.removeAgent(alc.ap.agent);
 	}
 
-	private void doUpdateChange(UpdateChange uc) {
-		if(uc.enableUpdate)
-			agencyIndex.enableAgentUpdate(uc.ap.agent);
-		else
-			agencyIndex.disableAgentUpdate(uc.ap.agent);
+	private void doUpdateChange(UpdateOrderChange uoc) {
+		agencyIndex.setAgentUpdateOrder(uoc.ap.agent, uoc.updateOrder);
 	}
 
 	private void doDrawOrderChange(DrawOrderChange doc) {
@@ -161,11 +165,10 @@ public class Agency implements Disposable {
 		collisionMap = new TileCollisionMap(world, solidLayers);
 	}
 
-	public void setDrawLayers(TreeMap<DrawOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
+	public void setDrawLayers(TreeMap<AllowOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
 		agencyIndex.addMapDrawLayers(drawLayers);
 	}
 
-//	public void createAgents(Collection<AgentDef> agentDefs) {
 	public void createAgents(Collection<ObjectProperties> agentProps) {
 		Iterator<ObjectProperties> apIter = agentProps.iterator();
 		while(apIter.hasNext()) {
@@ -179,7 +182,6 @@ public class Agency implements Disposable {
 	 * See website:
 	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
 	 */
-//	public Agent createAgent(AgentDef adef) {
 	public Agent createAgent(ObjectProperties properties) {
 		String agentClassAlias = properties.get(AgencyKV.Spawn.KEY_AGENTCLASS, null, String.class);
 		if(agentClassAlias == null)
@@ -213,15 +215,18 @@ public class Agency implements Disposable {
 		agencyChangeQ.removeAgent(new AgentPlaceholder(agent));
 	}
 
-	public void enableAgentUpdate(Agent agent) {
-		agencyChangeQ.enableAgentUpdate(new AgentPlaceholder(agent));
+//	public void enableAgentUpdate(Agent agent) {
+//		agencyChangeQ.enableAgentUpdate(new AgentPlaceholder(agent));
+//	}
+
+//	public void disableAgentUpdate(Agent agent) {
+//		agencyChangeQ.disableAgentUpdate(new AgentPlaceholder(agent));
+//	}
+	public void setAgentUpdateOrder(Agent agent, AllowOrder order) {
+		agencyChangeQ.setAgentUpdateOrder(new AgentPlaceholder(agent), order);
 	}
 
-	public void disableAgentUpdate(Agent agent) {
-		agencyChangeQ.disableAgentUpdate(new AgentPlaceholder(agent));
-	}
-
-	public void setAgentDrawOrder(Agent agent, DrawOrder order) {
+	public void setAgentDrawOrder(Agent agent, AllowOrder order) {
 		agencyChangeQ.setAgentDrawOrder(new AgentPlaceholder(agent), order);
 	}
 
@@ -314,7 +319,7 @@ public class Agency implements Disposable {
 		return ret;
 	}
 
-	public void iterateThroughDrawObjects(DrawObjectIter objIter) {
+	public void iterateThroughDrawObjects(AllowOrderListIter objIter) {
 		agencyIndex.iterateThroughDrawObjects(objIter);
 	}
 
@@ -336,10 +341,10 @@ public class Agency implements Disposable {
 	 * Call dispose method of each agent in the all agents list.
 	 */
 	private void disposeAllAgents() {
-		agencyIndex.iterateThroughAllAgents(new AgentIter() {
+		agencyIndex.iterateThroughDisposableAgents(new AgentIter() {
 			@Override
 			public boolean iterate(Agent agent) {
-				agent.dispose();
+				((DisposableAgent) agent).disposeAgent();
 				return false;
 			}
 		});

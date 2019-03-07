@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.info.UInfo;
+import kidridicarus.common.info.UInfo;
 
 public class MushroomSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);

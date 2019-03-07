@@ -1,9 +1,9 @@
 package kidridicarus.agency;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -11,45 +11,67 @@ import java.util.TreeMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.change.AgentWrapper;
-import kidridicarus.agency.tool.DrawOrder;
+import kidridicarus.agency.tool.AllowOrderList;
+import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
+import kidridicarus.common.tool.AllowOrder;
 
 /*
- * A list of all agents in the agency, with sub-lists available for draw order, agents receiving updates, etc.
+ * A list of all agents in the agency, with sub-lists available for:
+ *   -agents receiving updates
+ *   -agents to be drawn, by draw order
+ * TODO Implement DisposableAgent list.
+ * TODO Implement setUpdateOrder - so no need for preUpdate or postUpdate, an agent can specify it's update order -
+ *   use aliases for this just like with sprite draw order.
  */
 public class AgencyIndex {
-	private static final DrawOrder DEFAULT_DRAWORDER = new DrawOrder(false, 0f);
-
 	private HashMap<Agent, AgentWrapper> allAgents;
-	private List<UpdatableAgent> updateAgents;
-	private TreeMap<Float, LinkedList<Object>> drawObjects;
+//	private HashSet<UpdatableAgent> updateAgents;
+	private AllowOrderList orderedUpdateAgents;
+	private AllowOrderList drawObjects;
+	private HashSet<DisposableAgent> disposeAgents;
 
 	public AgencyIndex() {
 		allAgents = new HashMap<Agent, AgentWrapper>();
-		updateAgents = new LinkedList<UpdatableAgent>();
-		drawObjects = new TreeMap<Float, LinkedList<Object>>();
+//		updateAgents = new HashSet<UpdatableAgent>();
+		orderedUpdateAgents = new AllowOrderList();
+		drawObjects = new AllowOrderList();
+		disposeAgents = new HashSet<DisposableAgent>();
 	}
 
 	/*
 	 * New agents are created with enableUpdate set to false and drawOrder set to none.
 	 */
 	public void addAgent(Agent agent) {
-		allAgents.put(agent, new AgentWrapper(false, DEFAULT_DRAWORDER.cpy()));
+		allAgents.put(agent, new AgentWrapper());
+		// if disposable, then save to list for disposal on agent remove
+		if(agent instanceof DisposableAgent)
+			disposeAgents.add((DisposableAgent) agent);
 	}
 
+	// ignore unlikely arg type because arg type is checked by instanceof
+	@SuppressWarnings("unlikely-arg-type")
 	public void removeAgent(Agent agent) {
 		// remove agent from updates list
-		disableAgentUpdate(agent);
+//		disableAgentUpdate(agent);
+		setAgentUpdateOrderNone(agent);
 		// remove agent from draw order list
-		setAgentDrawOrder(agent, DEFAULT_DRAWORDER.cpy());
-		// remove agent
+		setAgentDrawOrderNone(agent);
+		// remove agent from all agents list
 		allAgents.remove(agent);
-		agent.dispose();
+		// Dispose agent if needed. Call this last because it removes ambiguity re:
+		//   Should agent set its draw order to none and disable its updates on disposal?
+		//     No, it should not.
+		if(agent instanceof DisposableAgent && disposeAgents.contains(agent)) {
+			((DisposableAgent) agent).disposeAgent();
+			disposeAgents.remove(agent);
+		}
 	}
 
-	public void enableAgentUpdate(Agent agent) {
+/*	public void enableAgentUpdate(Agent agent) {
 		if(!(agent instanceof UpdatableAgent))
 			throw new IllegalArgumentException("Cannot enable update; agent is not instance of UpdatableAgent: " + agent);
 		AgentWrapper aw = allAgents.get(agent);
@@ -73,114 +95,76 @@ public class AgencyIndex {
 		}
 	}
 
-	public List<UpdatableAgent> getAgentsToUpdate() {
+	public HashSet<UpdatableAgent> getAgentsToUpdate() {
 		return updateAgents;
 	}
-
-	public void setAgentDrawOrder(Agent agent, DrawOrder drawOrder) {
-		if(!(agent instanceof DrawableAgent)) {
-			throw new IllegalArgumentException("Cannot set draw order; agent not instance of DrawableAgent: " + agent);
+*/
+	public void setAgentUpdateOrder(Agent agent, AllowOrder newUpdateOrder) {
+		if(!(agent instanceof UpdatableAgent)) {
+			throw new IllegalArgumentException(
+					"Cannot set draw order; agent not instance of UpdatableAgent: " + agent);
 		}
-		AgentWrapper aw = allAgents.get(agent);
-		if(aw == null)
-			throw new IllegalArgumentException("Cannot set draw order; agent not in list of all agents: " + agent);
-
-		// if no change in draw order then exit
-		if(aw.drawOrder.equals(drawOrder))
-			return;
-
-		// Since new agents start with draw order = NONE,
-		// and the preceding if statement would quit this method if draw order isn't changing,
-		// then exactly one of the following is true:
-		//   The agent is not in a draw order list and must be added, or
-		//   the agent is in a draw order list and must be removed, or
-		//   the agent is in a draw order list and must be moved to a different list.
-
-		if(aw.drawOrder.equals(DEFAULT_DRAWORDER.cpy()))
-			// the agent is not in a draw order list and must be added
-			addToDrawObjects(agent, drawOrder);
-		else if(drawOrder.equals(DEFAULT_DRAWORDER.cpy()))
-			// the agent is in a draw order list and must be removed
-			removeFromDrawObjects(agent, aw.drawOrder);
-		else
-			// the agent is in a draw order list and must be moved to a different list
-			switchObjectDrawOrder(agent, aw.drawOrder, drawOrder);
-
+		AgentWrapper aWrapper = allAgents.get(agent);
+		if(aWrapper == null) {
+			throw new IllegalArgumentException(
+					"Cannot set draw order; agent not in list of all agents: " + agent);
+		}
+		orderedUpdateAgents.change(agent, aWrapper.updateOrder, newUpdateOrder);
 		// update the agent wrapper's draw order
-		aw.drawOrder = drawOrder;
+		aWrapper.updateOrder = newUpdateOrder;
 	}
 
-	public void addMapDrawLayers(TreeMap<DrawOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
+	public void setAgentUpdateOrderNone(Agent agent) {
+		setAgentUpdateOrder(agent, new AllowOrder(false, 0f));
+	}
+
+	public void setAgentDrawOrder(Agent agent, AllowOrder newDrawOrder) {
+		if(!(agent instanceof DrawableAgent)) {
+			throw new IllegalArgumentException(
+					"Cannot set draw order; agent not instance of DrawableAgent: " + agent);
+		}
+		AgentWrapper aWrapper = allAgents.get(agent);
+		if(aWrapper == null) {
+			throw new IllegalArgumentException(
+					"Cannot set draw order; agent not in list of all agents: " + agent);
+		}
+
+		drawObjects.change(agent, aWrapper.drawOrder, newDrawOrder);
+		// update the agent wrapper's draw order
+		aWrapper.drawOrder = newDrawOrder;
+	}
+
+	public void setAgentDrawOrderNone(Agent agent) {
+		setAgentDrawOrder(agent, new AllowOrder(false, 0f));
+	}
+
+	public void addMapDrawLayers(TreeMap<AllowOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
 		// iterate through each draw order list
-		Iterator<Entry<DrawOrder, LinkedList<TiledMapTileLayer>>> drawOrderiter = drawLayers.entrySet().iterator();
+		Iterator<Entry<AllowOrder, LinkedList<TiledMapTileLayer>>> drawOrderiter = drawLayers.entrySet().iterator();
 		while(drawOrderiter.hasNext()) {
 			// then iterate through each list
-			Entry<DrawOrder, LinkedList<TiledMapTileLayer>> drawOrderLayerpair = drawOrderiter.next();
+			Entry<AllowOrder, LinkedList<TiledMapTileLayer>> drawOrderLayerpair = drawOrderiter.next();
 			// do not add layers that are not drawn
 			// TODO: put these non-drawn layers somewhere, what if they need to be drawn later?
-			if(!drawOrderLayerpair.getKey().draw)
+			if(!drawOrderLayerpair.getKey().allow)
 				continue;
 
 			Iterator<TiledMapTileLayer> listIter = drawOrderLayerpair.getValue().iterator();
 			while(listIter.hasNext()) {
 				TiledMapTileLayer layer = listIter.next();
-				addToDrawObjects(layer, drawOrderLayerpair.getKey());
+				drawObjects.add(layer, drawOrderLayerpair.getKey());
 			}
 		}
-	}
-
-	private void addToDrawObjects(Object obj, DrawOrder drawOrder) {
-		LinkedList<Object> objList = drawObjects.get(drawOrder.order);
-		// if there is not already an element in the tree for given draw order value then create a list
-		if(objList == null) {
-			objList = new LinkedList<Object>();
-			drawObjects.put(drawOrder.order, objList);
-		}
-		// add the agent to the list for the given draw order  
-		objList.add(obj);
-	}
-
-	private void removeFromDrawObjects(Object obj, DrawOrder drawOrder) {
-		LinkedList<Object> objList = drawObjects.get(drawOrder.order);
-		objList.remove(obj);
-		// if the list is empty after removing the object then delete the list from it's parent
-		if(objList.isEmpty())
-			drawObjects.remove(drawOrder.order);
-	}
-
-	private void switchObjectDrawOrder(Object obj, DrawOrder oldDO, DrawOrder newDO) {
-		// remove agent from it's current list
-		removeFromDrawObjects(obj, oldDO);
-		addToDrawObjects(obj, newDO);
-	}
-
-	public interface DrawObjectIter {
-		// return true to stop iterating after current iteration completes
-		public boolean iterate(Object obj);
-	}
-
-	public void iterateThroughDrawObjects(DrawObjectIter objIter) {
-		Iterator<Entry<Float, LinkedList<Object>>> orderIter = drawObjects.entrySet().iterator();
-		while(orderIter.hasNext()) {
-			Entry<Float, LinkedList<Object>> pair = orderIter.next();
-			Iterator<Object> objListIter = pair.getValue().iterator();
-			while(objListIter.hasNext()) {
-				// call the method passed to this method by way of object iter, stopping iteration if returns true
-				if(objIter.iterate(objListIter.next()))
-					break;
-			}
-		}
-	}
-
-	public interface AgentIter {
-		// return true to stop iterating after current iteration completes
-		public boolean iterate(Agent agent);
 	}
 
 	/*
 	 * See:
 	 * https://stackoverflow.com/questions/1066589/iterate-through-a-hashmap
 	 */
+	public interface AgentIter {
+		// return true to stop iterating after current iteration completes
+		public boolean iterate(Agent agent);
+	}
 	public void iterateThroughAllAgents(AgentIter agentIter) {
 		Iterator<Map.Entry<Agent, AgentWrapper>> iter = allAgents.entrySet().iterator();
 		while(iter.hasNext()) {
@@ -190,5 +174,21 @@ public class AgencyIndex {
 			if(agentIter.iterate(agent))
 				break;
 		}
+	}
+
+	public void iterateThroughDisposableAgents(AgentIter agentIter) {
+		for(DisposableAgent agent : disposeAgents) {
+			// call the method passed to this method by way of agent iter, stopping iteration if returns true
+			if(agentIter.iterate((Agent) agent))
+				break;
+		}
+	}
+
+	public void iterateThroughDrawObjects(AllowOrderListIter doi) {
+		drawObjects.iterateList(doi);
+	}
+
+	public void iterateThroughUpdateAgents(AllowOrderListIter doi) {
+		orderedUpdateAgents.iterateList(doi);
 	}
 }

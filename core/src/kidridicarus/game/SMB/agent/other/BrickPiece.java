@@ -10,16 +10,18 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.game.info.GfxInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.BrickPieceSprite;
 import kidridicarus.game.info.GameKV;
 
-public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent {
+public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent, DisposableAgent {
 	private static final float BODY_WIDTH = UInfo.P2M(8);
 	private static final float BODY_HEIGHT = UInfo.P2M(8);
 	// bricks should be auto-removed when off screen, use this timeout for other cases
@@ -36,7 +38,7 @@ public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent {
 		defineBody(Agent.getStartPoint(properties), Agent.getStartVelocity(properties));
 		bpSprite = new BrickPieceSprite(agency.getAtlas(), b2body.getPosition(),
 				properties.get(CommonKV.Sprite.KEY_STARTFRAME, 0, Integer.class));
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
@@ -85,7 +87,7 @@ public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent {
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		b2body.getWorld().destroyBody(b2body);
 	}
 

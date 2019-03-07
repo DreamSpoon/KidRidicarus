@@ -10,12 +10,12 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.SMB.agent.player.MarioFireball;
 
 public class MarioFireballBody extends MobileAgentBody {

@@ -1,4 +1,4 @@
-package kidridicarus.agency.collisionmap;
+package kidridicarus.common.agent.collisionmap;
 
 import java.util.Comparator;
 
@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.info.UInfo;
+import kidridicarus.common.info.UInfo;
 
 public class LineSeg implements Disposable {
 	// if begin = end, it means the LineSeg is one tile wide

@@ -6,9 +6,9 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.Metroid.agent.item.MaruMari;
 
 public class MaruMariBody extends AgentBody {

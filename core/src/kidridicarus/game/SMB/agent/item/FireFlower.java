@@ -6,18 +6,21 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentbody.item.FireFlowerBody;
 import kidridicarus.game.SMB.agentsprite.item.FireFlowerSprite;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
-public class FireFlower extends Agent implements UpdatableAgent, DrawableAgent, PowerupGiveAgent {
+public class FireFlower extends Agent implements UpdatableAgent, DrawableAgent, PowerupGiveAgent,
+		DisposableAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 
@@ -35,7 +38,7 @@ public class FireFlower extends Agent implements UpdatableAgent, DrawableAgent, 
 
 		stateTimer = 0f;
 		isSprouting = true;
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
@@ -88,7 +91,7 @@ public class FireFlower extends Agent implements UpdatableAgent, DrawableAgent, 
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		ffBody.dispose();
 	}
 }

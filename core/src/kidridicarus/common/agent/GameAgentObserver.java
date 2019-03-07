@@ -3,11 +3,10 @@ package kidridicarus.common.agent;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentObserver;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
 
-public abstract class AgentObserverPlus extends AgentObserver {
+public abstract class GameAgentObserver extends AgentObserver {
 	public interface AgentObserverListener {
 		public void roomMusicUpdate(String musicName);
 		public void startSinglePlayMusic(String musicName);
@@ -17,7 +16,7 @@ public abstract class AgentObserverPlus extends AgentObserver {
 
 	private Vector2 lastViewCenter;
 
-	public AgentObserverPlus(Agent agent) {
+	public GameAgentObserver(Agent agent) {
 		super(agent);
 		lastViewCenter = new Vector2(0f, 0f);
 	}

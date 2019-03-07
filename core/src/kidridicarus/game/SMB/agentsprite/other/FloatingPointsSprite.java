@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.info.UInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.SMBAnim;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 

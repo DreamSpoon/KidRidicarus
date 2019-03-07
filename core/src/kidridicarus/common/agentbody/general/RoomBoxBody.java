@@ -8,9 +8,9 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.tool.B2DFactory;
 
 public class RoomBoxBody extends AgentBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.ROOM_BIT);

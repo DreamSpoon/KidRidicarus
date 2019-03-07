@@ -6,16 +6,18 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.ZoomerBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.ZoomerSprite;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.GameKV;
-import kidridicarus.agency.tool.Direction4;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.tool.Direction4;
 
 /*
  * The sensor code. It seems like a million cases due to the 4 possible "up" directions of the zoomer,
@@ -23,7 +25,8 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then
  * check the sensors.
  */
-public class Zoomer extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgGiveAgent, ContactDmgTakeAgent {
+public class Zoomer extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgGiveAgent,
+		ContactDmgTakeAgent, DisposableAgent {
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
 	private static final float INJURY_TIME = 10f/60f;
 
@@ -62,7 +65,7 @@ public class Zoomer extends Agent implements UpdatableAgent, DrawableAgent, Cont
 
 		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
 
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
@@ -165,7 +168,7 @@ public class Zoomer extends Agent implements UpdatableAgent, DrawableAgent, Cont
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		zBody.dispose();
 	}
 }

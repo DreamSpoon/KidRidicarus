@@ -1,7 +1,8 @@
-package kidridicarus.agency.agent;
+package kidridicarus.common.agent;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
 

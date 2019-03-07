@@ -5,13 +5,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.Direction4;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.PlayerSpawnerBody;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.agency.info.AgencyKV;
 
-public class PlayerSpawner extends Agent {
+public class PlayerSpawner extends Agent implements DisposableAgent {
 	private static final float SPAWN_SAFETYDIST = UInfo.P2M(1);
 
 	public enum SpawnType { IMMEDIATE, PIPEWARP }
@@ -82,7 +83,7 @@ public class PlayerSpawner extends Agent {
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		psbody.dispose();
 	}
 }

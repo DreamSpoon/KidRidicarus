@@ -8,8 +8,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.SMB.agent.other.BumpTile;
 import kidridicarus.game.SMB.agentbody.BumpableTileBody;
 

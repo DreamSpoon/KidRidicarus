@@ -3,9 +3,9 @@ package kidridicarus.game.Metroid.agent.player;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.MoveAdvice;
 
 public class SamusSupervisor extends GameAgentSupervisor {
 	private MoveAdvice curMoveAdvice;

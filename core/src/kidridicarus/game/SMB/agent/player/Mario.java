@@ -6,19 +6,22 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentSupervisor;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.AgentObserverPlus;
+import kidridicarus.common.agent.GameAgentObserver;
+import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.SMB.agent.other.Flagpole;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
 import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
@@ -26,7 +29,6 @@ import kidridicarus.game.SMB.agentbody.player.MarioBody;
 import kidridicarus.game.SMB.agentbody.player.MarioBody.MarioBodyState;
 import kidridicarus.game.SMB.agentsprite.player.MarioSprite;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GfxInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
@@ -35,7 +37,8 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
  * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe - fix this
  */
-public class Mario extends Agent implements UpdatableAgent, DrawableAgent, PlayerAgent, PowerupTakeAgent {
+public class Mario extends Agent implements UpdatableAgent, DrawableAgent, PlayerAgent, PowerupTakeAgent,
+		DisposableAgent {
 	public enum MarioAgentState { PLAY, FIREBALL, DEAD }
 
 	private static final float LEVEL_MAX_TIME = 300f;
@@ -100,7 +103,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		supervisor = new MarioSupervisor(this);
 		observer = new MarioObserver(this, agency.getAtlas());
 
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
@@ -462,7 +465,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	}
 
 	@Override
-	public AgentObserverPlus getObserver() {
+	public GameAgentObserver getObserver() {
 		return observer;
 	}
 
@@ -496,7 +499,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		mBody.dispose();
 	}
 }

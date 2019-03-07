@@ -3,9 +3,9 @@ package kidridicarus.game.SMB.agent.player;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
 public class MarioSupervisor extends GameAgentSupervisor {

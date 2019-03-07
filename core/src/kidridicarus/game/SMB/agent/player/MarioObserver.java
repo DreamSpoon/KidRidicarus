@@ -3,9 +3,9 @@ package kidridicarus.game.SMB.agent.player;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import kidridicarus.common.agent.AgentObserverPlus;
+import kidridicarus.common.agent.GameAgentObserver;
 
-public class MarioObserver extends AgentObserverPlus {
+public class MarioObserver extends GameAgentObserver {
 	private MarioHUD marioHUD;
 	private TextureAtlas atlas;
 

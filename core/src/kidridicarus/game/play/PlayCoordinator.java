@@ -11,12 +11,12 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.MoveAdvice;
 import kidridicarus.common.agent.GameAgentSupervisor;
-import kidridicarus.common.agent.AgentObserverPlus.AgentObserverListener;
+import kidridicarus.common.agent.GameAgentObserver.AgentObserverListener;
 import kidridicarus.common.agent.general.AgentSpawnTrigger;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;

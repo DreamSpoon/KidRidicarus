@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.info.UInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.SMBAnim;
 
 public class BumpTileSprite extends Sprite {

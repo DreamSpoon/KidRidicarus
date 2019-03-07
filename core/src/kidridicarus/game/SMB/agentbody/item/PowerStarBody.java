@@ -6,11 +6,11 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.info.UInfo;
-import kidridicarus.agency.tool.B2DFactory;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.SMB.agent.item.PowerStar;
 import kidridicarus.game.SMB.agentbody.BumpableBody;
 

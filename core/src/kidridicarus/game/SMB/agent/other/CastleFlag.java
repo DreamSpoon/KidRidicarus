@@ -8,10 +8,11 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.CastleFlagSprite;
-import kidridicarus.game.info.GfxInfo;
 
 public class CastleFlag extends Agent implements UpdatableAgent, DrawableAgent {
 	private enum CastleFlagState { DOWN, RISING, UP}
@@ -57,6 +58,8 @@ public class CastleFlag extends Agent implements UpdatableAgent, DrawableAgent {
 				break;
 			case UP:
 				yOffset = RISE_DIST;
+				// disable updates
+				agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.NONE);
 				break;
 		}
 		stateTimer = curState == nextState ? stateTimer+delta : 0f;
@@ -89,7 +92,7 @@ public class CastleFlag extends Agent implements UpdatableAgent, DrawableAgent {
 
 	public void trigger() {
 		isTriggered = true;
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 	}
 
 	@Override
@@ -102,9 +105,5 @@ public class CastleFlag extends Agent implements UpdatableAgent, DrawableAgent {
 		// TODO: return actual position of flag, not just start position
 		return new Rectangle(startPosition.x - BODY_WIDTH/2f, startPosition.y - BODY_HEIGHT/2f,
 				BODY_WIDTH, BODY_HEIGHT);
-	}
-
-	@Override
-	public void dispose() {
 	}
 }

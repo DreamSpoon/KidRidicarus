@@ -8,19 +8,21 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.BumpTakeAgent;
 import kidridicarus.game.SMB.agentbody.item.BaseMushroomBody;
 import kidridicarus.game.SMB.agentsprite.item.MushroomSprite;
-import kidridicarus.game.info.GfxInfo;
 
 public abstract class BaseMushroom extends BasicWalkAgent implements UpdatableAgent, DrawableAgent,
-		PowerupGiveAgent, BumpTakeAgent {
+		PowerupGiveAgent, BumpTakeAgent, DisposableAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private static final float WALK_VEL = 0.6f;
@@ -55,7 +57,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements UpdatableAg
 		prevState = MoveState.WALK;
 		moveStateTimer = 0f;
 
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
@@ -152,7 +154,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements UpdatableAg
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		bmBody.dispose();
 	}
 }

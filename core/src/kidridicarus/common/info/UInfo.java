@@ -1,4 +1,4 @@
-package kidridicarus.agency.info;
+package kidridicarus.common.info;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;

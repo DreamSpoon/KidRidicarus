@@ -6,15 +6,17 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.GfxInfo;
 import kidridicarus.game.Metroid.agentbody.NPC.SkreeExpBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.SkreeExpSprite;
-import kidridicarus.game.info.GfxInfo;
 
-public class SkreeExp extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgGiveAgent {
+public class SkreeExp extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgGiveAgent, DisposableAgent {
 	private static final float LIVE_TIME = 0.167f;
 
 	private SkreeExpBody seBody;
@@ -27,7 +29,7 @@ public class SkreeExp extends Agent implements UpdatableAgent, DrawableAgent, Co
 		seBody = new SkreeExpBody(this, agency.getWorld(), Agent.getStartPoint(properties),
 				Agent.getStartVelocity(properties));
 		seSprite = new SkreeExpSprite(agency.getAtlas(), seBody.getPosition());
-		agency.enableAgentUpdate(this);
+		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
@@ -63,7 +65,7 @@ public class SkreeExp extends Agent implements UpdatableAgent, DrawableAgent, Co
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		seBody.dispose();
 	}
 }

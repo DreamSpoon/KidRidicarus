@@ -5,12 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.RoomBoxBody;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.agency.info.AgencyKV;
 
-public class Room extends Agent {
+public class Room extends Agent implements DisposableAgent {
 	private RoomBoxBody rbody;
 	private enum RoomType { CENTER, HSCROLL }
 	private RoomType roomtype;
@@ -65,7 +66,7 @@ public class Room extends Agent {
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		rbody.dispose();
 	}
 }
