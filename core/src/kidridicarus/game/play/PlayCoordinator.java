@@ -239,6 +239,8 @@ public class PlayCoordinator implements Disposable {
 
 	@Override
 	public void dispose() {
+		doStopMainMusic();
+		stageHUD.clear();
 //		if(spawnTrigger != null)
 //			spawnTrigger.dispose();
 	}
