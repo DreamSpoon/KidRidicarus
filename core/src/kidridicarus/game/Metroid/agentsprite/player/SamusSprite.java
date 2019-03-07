@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.Direction4;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.Metroid.agent.player.Samus.MoveState;
 import kidridicarus.game.info.MetroidAnim;
 
@@ -135,8 +136,10 @@ public class SamusSprite extends Sprite {
 					if(climbDir == Direction4.UP)
 						climbAnimTimer += delta;
 					// if climbing down then reverse the animation
-					else if(climbDir == Direction4.DOWN)
-						climbAnimTimer = ensurePositiveAnimTimer(climbAnimTimer - delta, climbAnim);
+					else if(climbDir == Direction4.DOWN) {
+						climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - delta,
+								climbAnim.getAnimationDuration());
+					}
 				}
 				setRegion(climbAnim.getKeyFrame(climbAnimTimer));
 				setBounds(getX(), getY(), MED_SPRITE_WIDTH, MED_SPRITE_HEIGHT);
@@ -153,18 +156,5 @@ public class SamusSprite extends Sprite {
 
 		stateTimer = curParentState == nextParentState ? stateTimer+delta : 0f;
 		curParentState = nextParentState;
-	}
-
-	/*
-	 * Returns 0 or a positive value.
-	 */
-	private float ensurePositiveAnimTimer(float animTimer, Animation<TextureRegion> animation) {
-		if(animTimer >= 0f)
-			return animTimer;
-
-		float duration = animation.getAnimationDuration();
-		if(duration == 0f)
-			return 0f;
-		return (float) (animTimer + (-Math.floor(animTimer / duration))*duration);
 	}
 }

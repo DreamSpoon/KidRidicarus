@@ -31,4 +31,18 @@ public class CommonInfo {
 		return agency.getFirstAgentByProperties(
 				new String[] { CommonKV.Script.KEY_NAME }, new String[] { targetName });
 	}
+
+	/*
+	 * Returns 0 or a positive value.
+	 * Used to check that the time passed to animation's getKeyFrame is positive, even when the time is
+	 * running backwards.
+	 */
+	public static float ensurePositive(float original, float delta) {
+		if(original >= 0f)
+			return original;
+
+		if(delta == 0f)
+			return 0f;
+		return (float) (original + (-Math.floor(original / delta))*delta);
+	}
 }

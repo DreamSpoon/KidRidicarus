@@ -81,7 +81,7 @@ public class SkreeBody extends MobileAgentBody {
 				CommonCF.AGENT_SENSOR_CFMASK, playerSensor));
 	}
 
-	public Agent getPlayerContact() {
+	public PlayerAgent getPlayerContact() {
 		return playerSensor.getFirstContactByClass(PlayerAgent.class);
 	}
 

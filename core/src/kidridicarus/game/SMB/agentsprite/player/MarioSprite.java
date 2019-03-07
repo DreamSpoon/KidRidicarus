@@ -9,8 +9,10 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.info.UInfo;
+import kidridicarus.agency.tool.Direction4;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.SMB.agent.player.Mario.MarioPowerState;
-import kidridicarus.game.SMB.agent.player.Mario.MarioState;
+import kidridicarus.game.SMB.agent.player.Mario.MarioAgentState;
 import kidridicarus.game.SMB.agentbody.player.MarioBody.MarioBodyState;
 
 public class MarioSprite extends Sprite {
@@ -49,10 +51,9 @@ public class MarioSprite extends Sprite {
 //	private static final int SML_INV2_GRP = 2;
 //	private static final int SML_INV3_GRP = 3;
 
-	public enum MarioSpriteState { STAND, RUN, JUMP, BRAKE, FALL, SHRINK, GROW, DUCK, FIREBALL, DEAD, END_SLIDE,
-		END_SLIDE_DONE, END_SLIDE_FALL }
+	public enum MarioSpriteState { STAND, RUN, JUMP, BRAKE, FALL, SHRINK, GROW, DUCK, FIREBALL, DEAD, CLIMB }
 
-	private MarioSpriteState curState;
+	private MarioSpriteState curSpriteState;
 
 	private Animation<TextureRegion>[][] smlAnim, bigAnim;
 
@@ -65,26 +66,28 @@ public class MarioSprite extends Sprite {
 	private boolean isBlinking;
 	private float blinkTimer;
 	private float starPowerFrameTimer;
+	private float climbStateTimer;
 
-	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioPowerState subState) {
+	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioPowerState powerState) {
 		isBlinking = false;
 		blinkTimer = 0f;
 
 		createAnimations(atlas);
 
 		setRegion(smlAnim[STAND_POSE][BIG_REG_GRP].getKeyFrame(0f));
-		setBounds(0, 0, SMLSPR_WIDTH, SMLSPR_HEIGHT);
+		setBounds(0f, 0f, SMLSPR_WIDTH, SMLSPR_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
-		curState = MarioSpriteState.STAND;
+		curSpriteState = MarioSpriteState.STAND;
 		stateTimer = 0f;
 		fallStartStateTime = 0f;
 
-		wasBigLastFrame = (subState != MarioPowerState.SMALL);
+		wasBigLastFrame = (powerState != MarioPowerState.SMALL);
 		doGrowAnim = false;
 		doShrinkAnim = false;
 		doFireballAnim = false;
 		starPowerFrameTimer = 0f;
+		climbStateTimer = 0f;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -160,10 +163,10 @@ public class MarioSprite extends Sprite {
 					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_throw"), PlayMode.LOOP);
 	}
 
-	public void update(float delta, Vector2 position, MarioState agentState, MarioBodyState bodyState,
+	public void update(float delta, Vector2 position, MarioAgentState agentState, MarioBodyState bodyState,
 			MarioPowerState powerState, boolean facingRight, boolean isDmgInvincible, boolean isStarPowered,
-			boolean isBigBody) {
-		MarioSpriteState prevState;
+			boolean isBigBody, Direction4 moveDir) {
+		MarioSpriteState prevSpriteState;
 
 		// switch from small to big?
 		if(powerState != MarioPowerState.SMALL && !wasBigLastFrame) {
@@ -196,18 +199,18 @@ public class MarioSprite extends Sprite {
 		if(doFireballAnim && bigAnim[THROW_POSE][BIG_FIRE_GRP].isAnimationFinished(stateTimer))
 			doFireballAnim = false;
 
-		prevState = curState;
-		curState = getState(bodyState, agentState);
+		prevSpriteState = curSpriteState;
+		curSpriteState = getState(bodyState, agentState);
 
-		if(prevState == MarioSpriteState.STAND && curState == MarioSpriteState.FALL)
+		if(prevSpriteState == MarioSpriteState.STAND && curSpriteState == MarioSpriteState.FALL)
 			fallStartStateTime = -1;
-		else if(prevState == MarioSpriteState.RUN && curState == MarioSpriteState.FALL)
+		else if(prevSpriteState == MarioSpriteState.RUN && curSpriteState == MarioSpriteState.FALL)
 			fallStartStateTime = stateTimer;
 
-		if(curState == MarioSpriteState.DEAD && curState != prevState)
+		if(curSpriteState == MarioSpriteState.DEAD && curSpriteState != prevSpriteState)
 			setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
 			
-		stateTimer = curState == prevState ? stateTimer+delta : 0f;
+		stateTimer = curSpriteState == prevSpriteState ? stateTimer+delta : 0f;
 		wasBigLastFrame = (powerState != MarioPowerState.SMALL);
 
 		// mario's state (run, walk, etc.) might change while blinking, so a separate timer is needed for blinking
@@ -219,6 +222,17 @@ public class MarioSprite extends Sprite {
 
 		starPowerFrameTimer += delta;
 
+		// if moving up/down then increment/decrement the climb timer, otherwise no change
+		if(moveDir != null) {
+			if(moveDir == Direction4.UP)
+				climbStateTimer += delta;
+			else if(moveDir == Direction4.DOWN) {
+				// defaulting to SML_REG_GRP because climb animation should be same duration for all groups
+				climbStateTimer = CommonInfo.ensurePositive(climbStateTimer - delta,
+						smlAnim[CLIMB_POSE][SML_REG_GRP].getAnimationDuration());
+			}
+		}
+
 		setRegion(getFrame(powerState, facingRight, isStarPowered));
 
 		// if mario's body is small, but his sprite is big (the shrink animation is a big sprite) then offset
@@ -229,23 +243,11 @@ public class MarioSprite extends Sprite {
 			setPosition(position.x - getWidth() / 2f, position.y - getHeight() / 2f);
 	}
 
-	private MarioSpriteState getState(MarioBodyState bodyState, MarioState agentState) {
-		if(agentState != MarioState.PLAY && agentState != MarioState.FIREBALL) {
+	private MarioSpriteState getState(MarioBodyState bodyState, MarioAgentState agentState) {
+		if(agentState != MarioAgentState.PLAY && agentState != MarioAgentState.FIREBALL) {
 			switch(agentState) {
 				case DEAD:
 					return MarioSpriteState.DEAD;
-				case END1_SLIDE:
-					return MarioSpriteState.END_SLIDE;
-				case END2_WAIT1:
-				case END3_WAIT2:
-					return MarioSpriteState.END_SLIDE_DONE;
-				case END4_FALL:
-					return MarioSpriteState.END_SLIDE_FALL;
-				case END5_BRAKE:
-					return MarioSpriteState.BRAKE;
-				case END6_RUN:
-					return MarioSpriteState.RUN;
-				case END99:	// NOTE: mario sprite is not drawn in state END99
 				default:
 					return MarioSpriteState.STAND;
 			}
@@ -253,8 +255,8 @@ public class MarioSprite extends Sprite {
 		else {
 			// some animations override the current mario state, unless mario is dead
 			// (note: the animation might just be one frame, but displayed for a duration)
-			if(agentState != MarioState.DEAD) {
-				if(agentState == MarioState.FIREBALL)
+			if(agentState != MarioAgentState.DEAD) {
+				if(agentState == MarioAgentState.FIREBALL)
 					doFireballAnim = true;
 
 				if(doGrowAnim)
@@ -267,6 +269,8 @@ public class MarioSprite extends Sprite {
 		}
 
 		switch(bodyState) {
+			case CLIMB:
+				return MarioSpriteState.CLIMB;
 			case DUCK:
 				return MarioSpriteState.DUCK;
 			case WALKRUN:
@@ -285,11 +289,11 @@ public class MarioSprite extends Sprite {
 		}
 	}
 
-	private TextureRegion getFrame(MarioPowerState subState, boolean facingRight, boolean isStarPowered) {
+	private TextureRegion getFrame(MarioPowerState powerState, boolean facingRight, boolean isStarPowered) {
 		TextureRegion region = null;
 		int grp;
 
-		switch(subState) {
+		switch(powerState) {
 			case FIRE:
 				grp = BIG_FIRE_GRP;
 				break;
@@ -302,24 +306,18 @@ public class MarioSprite extends Sprite {
 				break;
 		}
 		if(isStarPowered)
-			grp = getStarFrameGrp(subState);
+			grp = getStarFrameGrp(powerState);
 
 		// create an alias to the big or small animation arrays
 		Animation<TextureRegion>[][] sizeAnim;
-		if(subState == MarioPowerState.SMALL)
+		if(powerState == MarioPowerState.SMALL)
 			sizeAnim = smlAnim;
 		else
 			sizeAnim = bigAnim;
 		// set region to an animation based on the current state
-		switch(curState) {
-			case END_SLIDE_FALL:
-				region = sizeAnim[RUN_POSE][grp].getKeyFrame(0f);
-				break;
-			case END_SLIDE_DONE:
-				region = sizeAnim[CLIMB_POSE][grp].getKeyFrame(sizeAnim[CLIMB_POSE][grp].getAnimationDuration());
-				break;
-			case END_SLIDE:
-				region = sizeAnim[CLIMB_POSE][grp].getKeyFrame(stateTimer);
+		switch(curSpriteState) {
+			case CLIMB:
+				region = sizeAnim[CLIMB_POSE][grp].getKeyFrame(climbStateTimer);
 				break;
 			case DUCK:
 				region = bigAnim[DUCK_POSE][grp].getKeyFrame(stateTimer);
@@ -364,10 +362,10 @@ public class MarioSprite extends Sprite {
 		return region;
 	}
 
-	private int getStarFrameGrp(MarioPowerState subState) {
+	private int getStarFrameGrp(MarioPowerState powerState) {
 		switch(Math.floorMod((int) (starPowerFrameTimer / STARPOWER_ANIM_SPEED), NUM_STARPOWER_FRAMES)) {
 			case 3:
-				switch(subState) {
+				switch(powerState) {
 					case FIRE:
 						return BIG_FIRE_GRP;
 					case BIG:

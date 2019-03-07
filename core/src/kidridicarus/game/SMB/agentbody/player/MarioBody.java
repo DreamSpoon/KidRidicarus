@@ -32,8 +32,6 @@ import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
 import kidridicarus.game.SMB.agent.HeadBounceTakeAgent;
-import kidridicarus.game.SMB.agent.other.Flagpole;
-import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agent.player.Mario.MarioPowerState;
 import kidridicarus.game.info.AudioInfo;
@@ -66,7 +64,7 @@ public class MarioBody extends MobileAgentBody {
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT,
 			CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT);
-	// agent sensor with contacts disabled (still need room bit)
+	// agent sensor with contacts disabled (still needs room bit)
 	private static final CFBitSeq NOCONTACT_AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq NOCONTACT_AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
 
@@ -90,7 +88,7 @@ public class MarioBody extends MobileAgentBody {
 	private static final float MARIO_HEADBOUNCE_VEL = 1.75f;	// up velocity
 	private static final float MIN_HEADBANG_VEL = 0.01f;	// TODO: test this with different values to the best
 
-	public enum MarioBodyState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, DEAD }
+	public enum MarioBodyState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, DEAD, CLIMB }
 
 	private Mario parent;
 	private Agency agency;
@@ -113,8 +111,6 @@ public class MarioBody extends MobileAgentBody {
 	private Vector2 prevPosition;
 
 	private PipeWarp pipeToEnter;
-	private Flagpole flagpoleContacted;
-	private LevelEndTrigger levelendContacted;
 
 	private OnGroundSensor ogSensor;
 	private AgentContactSensor wpSensor;
@@ -123,7 +119,7 @@ public class MarioBody extends MobileAgentBody {
 	private AgentContactBeginSensor acBeginSensor;
 	private Fixture agentSensorFixture;
 
-	private MarioBodyState curState;
+	private MarioBodyState curBodyState;
 	private float stateTimer;
 	private boolean isContactEnabled;
 	private Fixture ogSensorFixture;
@@ -153,10 +149,8 @@ public class MarioBody extends MobileAgentBody {
 		isContactEnabled = true;
 
 		pipeToEnter = null;
-		flagpoleContacted = null;
-		levelendContacted = null;
 
-		curState = MarioBodyState.STAND;
+		curBodyState = MarioBodyState.STAND;
 		stateTimer = 0f;
 
 		// physic
@@ -196,8 +190,6 @@ public class MarioBody extends MobileAgentBody {
 			catBits = MAINBODY_CFCAT;
 			maskBits = MAINBODY_CFMASK;
 		}
-
-//		b2body = B2DFactory.makeSpecialBoxBody(agency.getWorld(), bdef, fdef, null, catBits, maskBits, size.x, size.y);
 		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, fdef, null, catBits, maskBits,
 				getBodySize().x, getBodySize().y);
 	}
@@ -504,8 +496,8 @@ public class MarioBody extends MobileAgentBody {
 		if(isDucking)
 			nextState = MarioBodyState.DUCK;
 
-		stateTimer = nextState == curState ? stateTimer + delta : 0f;
-		curState = nextState;
+		stateTimer = nextState == curBodyState ? stateTimer + delta : 0f;
+		curBodyState = nextState;
 		prevVelocity = b2body.getLinearVelocity().cpy();
 		prevPosition = b2body.getPosition().cpy();
 
@@ -541,22 +533,7 @@ public class MarioBody extends MobileAgentBody {
 			return;
 		}
 
-		// end of level flagpole contact?
-		if(flagpoleContacted == null)
-			flagpoleContacted = (Flagpole) acSensor.getFirstContactByClass(Flagpole.class);
-		if(flagpoleContacted != null)
-			return;
-
-		// end of level trigger contact?
-		if(levelendContacted == null)
-			levelendContacted = (LevelEndTrigger) acSensor.getFirstContactByClass(LevelEndTrigger.class);
-		if(levelendContacted != null) {
-			// the level end will trigger the castle flag
-			levelendContacted.trigger();
-			return;
-		}
-
-		processHeadContacts();	// hitting bricks with his head
+		processHeadContacts();	// hitting bricks with head
 
 		// item contact?
 		PowerupGiveAgent item = (PowerupGiveAgent) acSensor.getFirstContactByClass(PowerupGiveAgent.class);
@@ -717,18 +694,6 @@ public class MarioBody extends MobileAgentBody {
 		pipeToEnter = null;
 	}
 
-	public Flagpole getFlagpoleContacted() {
-		return flagpoleContacted;
-	}
-
-	public void resetFlagpoleContacted() {
-		flagpoleContacted = null;
-	}
-
-	public LevelEndTrigger getLevelEndContacted() {
-		return levelendContacted;
-	}
-
 	public boolean isOnGround() {
 		return ogSensor.isOnGround();
 	}
@@ -837,6 +802,14 @@ public class MarioBody extends MobileAgentBody {
 
 	public Room getCurrentRoom() {
 		return (Room) acSensor.getFirstContactByClass(Room.class);
+	}
+
+	public <T> List<T> getContactsByClass(Class<T> cls) {
+		return acSensor.getContactsByClass(cls);
+	}
+
+	public <T> T getFirstContactByClass(Class<T> cls) {
+		return acSensor.getFirstContactByClass(cls);
 	}
 
 	@Override

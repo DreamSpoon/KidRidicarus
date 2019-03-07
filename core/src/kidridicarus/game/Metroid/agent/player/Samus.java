@@ -118,22 +118,24 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		ContactState nextContactState = ContactState.REGULAR;
 		switch(curContactState) {
 			case REGULAR:
-				// check for incoming damage
+				// check for level end trigger contact, and use level end if found
+				LevelEndTrigger leTrigger = samusBody.getFirstContactByClass(LevelEndTrigger.class);
+				if(leTrigger != null) {
+					leTrigger.use(this);
+					break;
+				}
+				// check for level end flagpole contact, and use flagpole if found
+				Flagpole flagpole = samusBody.getFirstContactByClass(Flagpole.class);
+				if(flagpole != null) {
+					flagpole.use(this);
+					break;
+				}
+				// check for incoming damage and apply
 				for(ContactDmgGiveAgent agent : samusBody.getContactsByClass(ContactDmgGiveAgent.class)) {
 					if(agent.isContactDamage()) {
 						nextContactState = ContactState.DAMAGE;
 						takeContactDamage(((Agent) agent).getPosition());
 					}
-				}
-				// check for end level flagpole contact, and use flagpole if found
-				for(Flagpole flagpole : samusBody.getContactsByClass(Flagpole.class)) {
-					flagpole.use(this);
-					break;
-				}
-				// check for level end trigger contact, and use level end if found
-				for(LevelEndTrigger leTrigger : samusBody.getContactsByClass(LevelEndTrigger.class)) {
-					leTrigger.use(this);
-					break;
 				}
 				break;
 			case DAMAGE:
@@ -170,17 +172,17 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	}
 
 	private void processMove(float delta, MoveAdvice advice) {
+		// if a script is running with move advice, then switch advice to the scripted move advice
 		if(supervisor.isRunningScriptMoveAdvice())
 			advice = supervisor.getScriptAgentState().scriptedMoveAdvice;
 		// if no script is running then do the normal move stuff
 		if(!supervisor.isRunningScript() || supervisor.isRunningScriptMoveAdvice()) {
-			
 			// if no pipe move started then do the regular move
 			if(!processPipeMove(advice))
 				processRegularMove(delta, advice);
 		}
-
-		// the previous code might have started a script; if a script is now running then process the script
+		// The previous code might have started a script, or a script may have already been running.
+		// If a script is now running, that doesn't use scripted move advice, then process the scripted state.
 		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice()) {
 			samusBody.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
 			isFacingRight = supervisor.getScriptAgentState().scriptedSpriteState.facingRight;
@@ -189,8 +191,6 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 	/*
 	 * Should Samus enter a warp pipe? Do it if needed.
-	 * This is not in the processContacts code, even though it relates to a sensor touching a pipe.
-	 * It's here because the player must actively "move" to use a pipe.
 	 */
 	private boolean processPipeMove(MoveAdvice advice) {
 		Direction4 adviceDir = advice.getMoveDir4();

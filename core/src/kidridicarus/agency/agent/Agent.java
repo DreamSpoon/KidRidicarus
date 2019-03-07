@@ -26,6 +26,9 @@ public abstract class Agent implements Disposable {
 		this.properties = properties;
 	}
 
+	// TODO Remove these methods, replace with calls to getProperty with something like "current_position",
+	//   or "current_bounds". Thus all queries for agent properties are routed through the getProperty method.
+	// also TODO: check all current agent classes and replace query methods with getProperty queries where possible.
 	public abstract Vector2 getPosition();
 	public abstract Rectangle getBounds();
 

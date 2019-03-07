@@ -12,6 +12,7 @@ import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.SkreeBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.SkreeSprite;
 import kidridicarus.game.info.GfxInfo;
@@ -43,7 +44,7 @@ public class Skree extends Agent implements UpdatableAgent, DrawableAgent, Conta
 	private float health;
 	private boolean isDead;
 	// TODO: what if agent is removed/disposed while being targeted? Agent.isDisposed()?
-	private Agent target;
+	private PlayerAgent target;
 
 	private MoveState curMoveState;
 	private float stateTimer;
@@ -141,7 +142,7 @@ public class Skree extends Agent implements UpdatableAgent, DrawableAgent, Conta
 
 	private void doFall() {
 		// track target on the x axis
-		float xdiff = target.getPosition().x - sBody.getPosition().x;
+		float xdiff = ((Agent) target).getPosition().x - sBody.getPosition().x;
 		if(xdiff > 0) {
 			if(sBody.getVelocity().x < SIDE_SPEED_MAX) {
 				if(xdiff < SIDE_IMPULSE_MAX)

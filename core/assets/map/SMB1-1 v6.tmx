@@ -103,7 +103,7 @@
  <layer id="94" name="playerstart" width="230" height="46">
   <properties>
    <property name="agentclass" value="playerspawner"/>
-   <property name="playeragentclass" value="samus"/>
+   <property name="playeragentclass" value="mario"/>
    <property name="spawnmain" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">

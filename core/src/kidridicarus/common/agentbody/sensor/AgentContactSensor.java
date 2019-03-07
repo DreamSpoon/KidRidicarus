@@ -43,15 +43,17 @@ public class AgentContactSensor extends ContactSensor {
 		return contacts;
 	}
 
-	public <T> Agent getFirstContactByClass(Class<T> cls) {
+	// ignore unchecked cast because isAssignableFrom method is used to check class
+	@SuppressWarnings("unchecked")
+	public <T> T getFirstContactByClass(Class<T> cls) {
 		for(Agent agent : contacts) {
 			if(cls.isAssignableFrom(agent.getClass()))
-				return agent;
+				return (T) agent;
 		}
 		return null;
 	}
 
-	// ignore unchecked cast because isAssignableFrom method is used
+	// ignore unchecked cast because isAssignableFrom method is used to check class
 	@SuppressWarnings("unchecked")
 	public <T> List<T> getContactsByClass(Class<T> cls) {
 		List<T> cList = new LinkedList<T>();

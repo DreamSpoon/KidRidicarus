@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.agentscript.ScriptedAgentState;
+import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.agency.tool.MoveAdvice;
@@ -19,7 +19,9 @@ import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.game.SMB.agent.other.Flagpole;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
+import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.SMB.agentbody.player.MarioBody;
 import kidridicarus.game.SMB.agentbody.player.MarioBody.MarioBodyState;
 import kidridicarus.game.SMB.agentsprite.player.MarioSprite;
@@ -34,8 +36,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe - fix this
  */
 public class Mario extends Agent implements UpdatableAgent, DrawableAgent, PlayerAgent, PowerupTakeAgent {
-	public enum MarioState { PLAY, FIREBALL, DEAD, END1_SLIDE, END2_WAIT1, END3_WAIT2, END4_FALL, END5_BRAKE,
-		END6_RUN, END99 }
+	public enum MarioAgentState { PLAY, FIREBALL, DEAD }
 
 	private static final float LEVEL_MAX_TIME = 300f;
 
@@ -43,17 +44,15 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	private static final float FIREBALL_OFFSET = UInfo.P2M(8f);
 	private static final float TIME_PER_FIREBALL = 0.5f;
 	private static final float POWERSTAR_TIME = 15f;
-	private static final float FLAG_SLIDE_VELOCITY = -0.9f;
-	private static final float END_FLAGWAIT = 0.4f;
-	private static final float END_BRAKETIME = 0.02f;
-	private static final Vector2 FLAG_JUMPOFF_VEL = new Vector2(1.0f, 1.0f);
 
 	public enum MarioPowerState { SMALL, BIG, FIRE }
 
-	private MarioSprite marioSprite;
+	private MarioSupervisor supervisor;
+	private MarioObserver observer;
 	private MarioBody mBody;
+	private MarioSprite marioSprite;
 	private MarioPowerState curPowerState;
-	private MarioState curState;
+	private MarioAgentState curAgentState;
 	private float stateTimer;
 
 	private boolean marioIsDead;
@@ -63,15 +62,13 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	private float fireballTimer;
 	private float powerStarTimer;
 	private float levelTimeRemaining;
+	private boolean isLevelEndContacted;
 	private int extraLives;
 	private int coinTotal;
 	private int pointTotal;
 	private PointAmount consecBouncePoints;
 	// powerup received
 	private PowType powerupRec;
-
-	private MarioObserver observer;
-	private MarioSupervisor supervisor;
 
 	public Mario(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -88,8 +85,9 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		powerupRec = PowType.NONE;
 
 		levelTimeRemaining = LEVEL_MAX_TIME;
+		isLevelEndContacted = false;
 
-		curState = MarioState.PLAY;
+		curAgentState = MarioAgentState.PLAY;
 		stateTimer = 0f;
 
 		extraLives = 2;
@@ -99,8 +97,8 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		mBody = new MarioBody(this, agency, Agent.getStartPoint(properties), true, false);
 		marioSprite = new MarioSprite(agency.getAtlas(), mBody.getPosition(), curPowerState);
 
-		observer = new MarioObserver(this, agency.getAtlas());
 		supervisor = new MarioSupervisor(this);
+		observer = new MarioObserver(this, agency.getAtlas());
 
 		agency.enableAgentUpdate(this);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
@@ -109,23 +107,42 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	@Override
 	public void update(float delta) {
 		MarioBodyState bodyState;
-		MarioState nextState;
+		MarioAgentState nextAgentState;
 		boolean isStarPowered;
 		MoveAdvice advice = supervisor.pollMoveAdvice(); 
 
 		levelTimeRemaining -= delta;
 
 		if(supervisor.isRunningScript()) {
-			ScriptedAgentState def = supervisor.getScriptAgentState();
-			mBody.useScriptedBodyState(def.scriptedBodyState);
-			marioSprite.update(delta, def.scriptedSpriteState.position, curState, MarioBodyState.STAND, curPowerState,
-					def.scriptedSpriteState.facingRight, isDmgInvincible, false, mBody.isBigBody());
+			// if a script is running with move advice, then switch advice to the scripted move advice
+			if(supervisor.isRunningScriptMoveAdvice())
+				advice = supervisor.getScriptAgentState().scriptedMoveAdvice;
+			else {
+				// use the scripted agent state
+				mBody.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
+				MarioBodyState scriptedBodyState;
+				ScriptedSpriteState sss = supervisor.getScriptAgentState().scriptedSpriteState;
+				switch(sss.spriteState) {
+					case CLIMB:
+						scriptedBodyState = MarioBodyState.CLIMB;
+						break;
+					case MOVE:
+						scriptedBodyState = MarioBodyState.WALKRUN;
+						break;
+					case STAND:
+					default:
+						scriptedBodyState = MarioBodyState.STAND;
+						break;
+				}
+				marioSprite.update(delta, sss.position, MarioAgentState.PLAY, scriptedBodyState, curPowerState,
+						sss.facingRight, isDmgInvincible, false, mBody.isBigBody(), sss.moveDir);
 
-			// TODO only run this next line when script ends,
-			//   to prevent mario getting pipe warp contact where there is none
-			mBody.resetPipeToEnter();
+				// TODO only run this next line when script ends,
+				//   to prevent mario getting pipe warp contact where there is none
+				mBody.resetPipeToEnter();
 
-			return;
+				return;
+			}
 		}
 
 		// reset consecutive bounce points
@@ -133,16 +150,16 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			consecBouncePoints = PointAmount.ZERO;
 
 		bodyState = MarioBodyState.STAND;
-		nextState = processMarioState(delta, advice);
+		nextAgentState = processMarioAgentState(delta, advice);
 		// mario special states (e.g. end level script) override regular body states (e.g. mario use powerup) 
-		if(nextState == MarioState.PLAY || nextState == MarioState.FIREBALL) {
+		if(nextAgentState == MarioAgentState.PLAY || nextAgentState == MarioAgentState.FIREBALL) {
 			processDamage(delta);
 			processPowerups();
 			bodyState = mBody.update(delta, advice, curPowerState);
 		}
 
-		stateTimer = nextState == curState ? stateTimer+delta : 0f;
-		curState = nextState;
+		stateTimer = nextAgentState == curAgentState ? stateTimer+delta : 0f;
+		curAgentState = nextAgentState;
 
 		isStarPowered = false;
 		if(powerStarTimer > 0f) {
@@ -150,22 +167,16 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			powerStarTimer -= delta;
 		}
 
-		marioSprite.update(delta, mBody.getPosition(), curState, bodyState,
-				curPowerState, mBody.isFacingRight(), isDmgInvincible, isStarPowered, mBody.isBigBody());
+		marioSprite.update(delta, mBody.getPosition(), curAgentState, bodyState,
+				curPowerState, mBody.isFacingRight(), isDmgInvincible, isStarPowered, mBody.isBigBody(), null);
 
 		prevFrameAdvisedShoot = advice.action0;
 	}
 
 	// Process the body and return a character state based on the findings.
-	private MarioState processMarioState(float delta, MoveAdvice advice) {
-		// scripted level end sequence
-		if(mBody.getLevelEndContacted() != null) {
-			mBody.zeroVelocity(true, true);
-			return MarioState.END99;
-		}
-		// scripted dead sequence
-		else if(marioIsDead) {
-			if(curState != MarioState.DEAD) {
+	private MarioAgentState processMarioAgentState(float delta, MoveAdvice advice) {
+		if(marioIsDead) {
+			if(curAgentState != MarioAgentState.DEAD) {
 				observer.stopAllMusic();
 				agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
 
@@ -176,91 +187,52 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			}
 			// make sure mario doesn't move left or right while dead
 			mBody.zeroVelocity(true, false);
-			return MarioState.DEAD;
+			return MarioAgentState.DEAD;
 		}
-		// scripted flagpole level end sequence
-		else if(mBody.getFlagpoleContacted() != null) {
-			// scripted level end sequence using curCharState and stateTimer
-			switch(curState) {
-				case END1_SLIDE:
-					// switch sides if necessary when hit ground
-					if(mBody.isOnGround())
-						return MarioState.END2_WAIT1;
-					// sliding down
-					else {
-						mBody.setVelocity(0f, FLAG_SLIDE_VELOCITY);
-						return MarioState.END1_SLIDE;
-					}
-				case END2_WAIT1:
-					if(mBody.getFlagpoleContacted().isAtBottom()) {
-						mBody.setFacingRight(false);
-						// if mario is on left side of flagpole, move him to right side
-						if(mBody.getFlagpoleContacted().getPosition().x > mBody.getPosition().x) {
-							mBody.setPosAndVel(mBody.getPosition().cpy().add(2f *
-									(mBody.getFlagpoleContacted().getPosition().x -
-									mBody.getPosition().x), 0f),
-									new Vector2(0f, 0f));
-						}
-						return MarioState.END3_WAIT2;
-					}
-					else
-						return MarioState.END2_WAIT1;
-				case END3_WAIT2:
-					if(stateTimer > END_FLAGWAIT) {
-						// switch to first walk frame and push mario to right
-						mBody.enableGravity();
-						mBody.applyImpulse(FLAG_JUMPOFF_VEL);
-						return MarioState.END4_FALL;
-					}
-					else
-						return MarioState.END3_WAIT2;
-				case END4_FALL:
-					if(mBody.isOnGround())
-						return MarioState.END5_BRAKE;
-					else
-						return MarioState.END4_FALL;
-				case END5_BRAKE:
-					if(stateTimer > END_BRAKETIME) {
-						mBody.setFacingRight(true);
-						observer.startSinglePlayMusic(AudioInfo.Music.SMB.LEVELEND);
-
-						mBody.resetFlagpoleContacted();
-						return MarioState.END6_RUN;
-					}
-					else
-						return MarioState.END5_BRAKE;
-				case END6_RUN:
- 					mBody.moveBodyLeftRight(true, false);
-					return MarioState.END6_RUN;
-				// first frame of level end state
-				default:
-					mBody.getFlagpoleContacted().startDrop();
-					mBody.disableGravity();
-					mBody.zeroVelocity(true, true);
-
-					observer.stopAllMusic();
-					agency.playSound(AudioInfo.Sound.SMB.FLAGPOLE);
-
-					return MarioState.END1_SLIDE;
-			}
+		else if(isUseLevelEndTrigger()) {
+			isLevelEndContacted = true;
+			return curAgentState;
 		}
+		// flagpole contact and use?
+		else if(isUseFlagpole())
+			return curAgentState;
 		// scripted pipe entrance
 		else if(mBody.getPipeToEnter() != null) {
 			mBody.getPipeToEnter().use(this);
-			return this.curState;
+			return curAgentState;
 		}
 		// otherwise the player has control, because no script is runnning
 		else {
 			if(processFireball(delta, advice.action0))
-				return MarioState.FIREBALL;
+				return MarioAgentState.FIREBALL;
 			else
-				return MarioState.PLAY;
+				return MarioAgentState.PLAY;
 		}
+	}
+
+	private boolean isUseLevelEndTrigger() {
+		// check for end level trigger contact, and use it if found
+		LevelEndTrigger leTrigger = mBody.getFirstContactByClass(LevelEndTrigger.class);
+		if(leTrigger != null) {
+			leTrigger.use(this);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isUseFlagpole() {
+		// check for end level flagpole contact, and use it if found
+		Flagpole flagpole = mBody.getFirstContactByClass(Flagpole.class);
+		if(flagpole != null) {
+			flagpole.use(this);
+			return true;
+		}
+		return false;
 	}
 
 	// mario can shoot fireballs two at a time, but must wait if his "fireball timer" runs low
 	private boolean processFireball(float delta, boolean shoot) {
-		if(curState != MarioState.PLAY)
+		if(curAgentState != MarioAgentState.PLAY)
 			return false;
 
 		fireballTimer += delta;
@@ -385,8 +357,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 	@Override
 	public void draw(Batch batch) {
-		if(mBody.getLevelEndContacted() == null)
-			marioSprite.draw(batch);
+		marioSprite.draw(batch);
 	}
 
 	public void die() {
@@ -454,17 +425,13 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	 * This is done so the getStateTimer method returns the correct state time when mario is dead. 
 	 */
 	public boolean isDead() {
-		if(marioIsDead && curState == MarioState.DEAD)
+		if(marioIsDead && curAgentState == MarioAgentState.DEAD)
 			return true;
 		return false;
 	}
 
 	public boolean isBig() {
 		return (curPowerState != MarioPowerState.SMALL);
-	}
-
-	public boolean isAtLevelEnd() {
-		return mBody.getLevelEndContacted() != null;
 	}
 
 	public boolean isPowerStarOn() {
@@ -490,13 +457,13 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	}
 
 	@Override
-	public AgentObserverPlus getObserver() {
-		return observer;
+	public AgentSupervisor getSupervisor() {
+		return supervisor;
 	}
 
 	@Override
-	public AgentSupervisor getSupervisor() {
-		return supervisor;
+	public AgentObserverPlus getObserver() {
+		return observer;
 	}
 
 	@Override
@@ -521,6 +488,11 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			return (T) he;
 		}
 		return properties.get(key, defaultValue, cls);
+	}
+
+	@Override
+	public boolean isAtLevelEnd() {
+		return isLevelEndContacted;
 	}
 
 	@Override

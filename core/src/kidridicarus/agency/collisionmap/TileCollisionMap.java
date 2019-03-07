@@ -15,6 +15,20 @@ import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.agency.info.UInfo;
 import kidridicarus.common.info.CommonCF;
 
+/*
+ * The forest and the trees:
+ *   1) The Forest:
+ *     Collision Map - Picture a bounds box around the entirety of the tiles in the map.
+ *   2) The Trees:
+ *     The individual tiles within the tile collision map. They are abstracted as bound lines. The
+ *     bound lines are a more efficient representation of the tiles, ergo I consider the bounds lines to be Trees.
+ * TODO implement the TileCollisionMap as an Agent, do not keep as a separate reference in Agency.
+ * After all regular updates to Agents are made, call a postUpdate method on TileCollisionMap to make it iterate
+ * through the tile solid state change queue and implements changes.
+ * Also make the tiled map draworder layers agents as well, but they won't need a postUpdate method.
+ * 
+ * Create DisposableAgent method and implement for all of these classes, 
+ */
 public class TileCollisionMap {
 	private World world;
 	private BooleanTileMap bTileMap;
