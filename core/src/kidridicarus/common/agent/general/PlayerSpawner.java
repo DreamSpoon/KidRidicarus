@@ -8,6 +8,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.PlayerSpawnerBody;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.agency.info.AgencyKV;
@@ -32,7 +33,7 @@ public class PlayerSpawner extends Agent implements DisposableAgent {
 		spawntype = SpawnType.IMMEDIATE;
 		if(properties.containsKey(AgencyKV.Spawn.KEY_SPAWNTYPE)) {
 			String str = properties.get(AgencyKV.Spawn.KEY_SPAWNTYPE, "", String.class);
-			if(str.equals(AgencyKV.Spawn.VAL_PIPEWARP_SPAWN) &&
+			if(str.equals(CommonKV.AgentClassAlias.VAL_PIPEWARP_SPAWN) &&
 					properties.containsKey(AgencyKV.KEY_DIRECTION)) {
 				spawntype = SpawnType.PIPEWARP;
 				direction = Direction4.fromString(properties.get(AgencyKV.KEY_DIRECTION, "", String.class));

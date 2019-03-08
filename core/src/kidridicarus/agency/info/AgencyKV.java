@@ -20,12 +20,6 @@ public class AgencyKV {
 		public static final String KEY_SPAWNMAIN = "spawnmain";
 		public static final String KEY_SPAWNAGENTCLASS = "spawnagentclass";
 
-		public static final String VAL_AGENTSPAWNER = "agentspawner";
-		public static final String VAL_PLAYERSPAWNER = "playerspawner";
-		public static final String VAL_DESPAWN = "despawn";
-		public static final String VAL_AGENTSPAWN_TRIGGER = "agentspawn_trigger";
-		public static final String VAL_PIPEWARP_SPAWN = "pipewarp";
-
 		// passed to something that needs to expire immediately
 		public static final String KEY_EXPIRE = "expire";
 
@@ -38,7 +32,6 @@ public class AgencyKV {
 	}
 
 	public class Room {
-		public static final String VAL_ROOM = "room";
 		public static final String KEY_ROOMMUSIC = "roommusic";
 		public static final String KEY_VIEWOFFSET_Y = "viewoffset_y";
 		public static final String KEY_ROOMTYPE = "roomtype";

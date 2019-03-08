@@ -3,7 +3,9 @@ package kidridicarus.common.info;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.common.agent.collisionmap.DrawLayerAgent;
+import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
+import kidridicarus.common.agent.collisionmap.TiledMapMetaAgent;
 import kidridicarus.common.agent.general.AgentSpawnTrigger;
 import kidridicarus.common.agent.general.AgentSpawner;
 import kidridicarus.common.agent.general.DespawnBox;
@@ -15,13 +17,16 @@ import kidridicarus.common.agent.general.PipeWarp;
 
 public class CommonInfo {
 	public static final AgentClassList CORE_AGENT_CLASS_LIST = new AgentClassList( 
-			AgencyKV.Spawn.VAL_AGENTSPAWNER, AgentSpawner.class,
-			AgencyKV.Spawn.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
-			AgencyKV.Spawn.VAL_DESPAWN, DespawnBox.class,
-			AgencyKV.Spawn.VAL_PIPEWARP_SPAWN, PipeWarp.class,
-			AgencyKV.Spawn.VAL_PLAYERSPAWNER, PlayerSpawner.class,
-			AgencyKV.Room.VAL_ROOM, Room.class,
-			CommonKV.Level.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class);
+			CommonKV.AgentClassAlias.VAL_AGENTSPAWNER, AgentSpawner.class,
+			CommonKV.AgentClassAlias.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
+			CommonKV.AgentClassAlias.VAL_DESPAWN, DespawnBox.class,
+			CommonKV.AgentClassAlias.VAL_PIPEWARP_SPAWN, PipeWarp.class,
+			CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, PlayerSpawner.class,
+			CommonKV.AgentClassAlias.VAL_ROOM, Room.class,
+			CommonKV.AgentClassAlias.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
+			CommonKV.AgentClassAlias.VAL_TILEMAP_META, TiledMapMetaAgent.class,
+			CommonKV.AgentClassAlias.VAL_ORTHOCOLLISION_TILEMAP, OrthoCollisionTiledMapAgent.class,
+			CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP, DrawLayerAgent.class);
 
 	public static class AgentUpdateOrder {
 		public static final AllowOrder NONE = new AllowOrder(false, 0f);

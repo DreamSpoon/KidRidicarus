@@ -21,13 +21,6 @@ public class AgencyChangeQueue {
 		changeQ.add(new AgentListChange(ap, false));
 	}
 
-//	public void enableAgentUpdate(AgentPlaceholder ap) {
-//		changeQ.add(new UpdateOrderChange(ap, true));
-//	}
-
-//	public void disableAgentUpdate(AgentPlaceholder ap) {
-//		changeQ.add(new UpdateOrderChange(ap, false));
-//	}
 	public void setAgentUpdateOrder(AgentPlaceholder ap, AllowOrder order) {
 		changeQ.add(new UpdateOrderChange(ap, order));
 	}
@@ -36,9 +29,9 @@ public class AgencyChangeQueue {
 		changeQ.add(new DrawOrderChange(ap, order));
 	}
 
-	public void setPhysicTile(int x, int y, boolean solid) {
-		changeQ.add(new TileChange(x, y, solid));
-	}
+//	public void setPhysicTile(int x, int y, boolean solid) {
+//		changeQ.add(new TileChange(x, y, solid));
+//	}
 
 	/*
 	 * Iterate through each agent change in queue until queue is empty, invoking callback for each agent.

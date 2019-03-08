@@ -39,7 +39,7 @@ public class LevelEndTrigger extends Agent implements DisposableAgent {
 	public void trigger() {
 		Agent agent = agency.getFirstAgentByProperties(
 				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS },
-				new String[] { GameKV.SMB.VAL_CASTLEFLAG});
+				new String[] { GameKV.SMB.AgentClassAlias.VAL_CASTLEFLAG });
 		if(agent instanceof CastleFlag)
 			((CastleFlag) agent).trigger();
 	}

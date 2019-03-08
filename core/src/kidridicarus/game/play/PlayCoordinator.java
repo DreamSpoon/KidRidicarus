@@ -142,12 +142,12 @@ public class PlayCoordinator implements Disposable {
 		switch(pc) {
 			default:
 			case MARIO:
-				agent = agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_MARIO, currentPos));
+				agent = agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIO, currentPos));
 				playAgent = (PlayerAgent) agent;
 				setPlayAgentHUD();
 				break;
 			case SAMUS:
-				agent = agency.createAgent(Agent.createPointAP(GameKV.Metroid.VAL_SAMUS, currentPos));
+				agent = agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS, currentPos));
 				playAgent = (PlayerAgent) agent;
 				setPlayAgentHUD();
 				break;

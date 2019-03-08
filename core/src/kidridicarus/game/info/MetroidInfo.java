@@ -12,12 +12,12 @@ import kidridicarus.game.Metroid.agent.player.SamusShot;
 
 public class MetroidInfo {
 	public static final AgentClassList METROID_AGENT_CLASSLIST = new AgentClassList( 
-			GameKV.Metroid.VAL_DEATH_POP, DeathPop.class,
-			GameKV.Metroid.VAL_DOOR, MetroidDoor.class,
-			GameKV.Metroid.VAL_MARUMARI, MaruMari.class,
-			GameKV.Metroid.VAL_SAMUS, Samus.class,
-			GameKV.Metroid.VAL_SAMUS_SHOT, SamusShot.class,
-			GameKV.Metroid.VAL_SKREE, Skree.class,
-			GameKV.Metroid.VAL_SKREE_EXP, SkreeExp.class,
-			GameKV.Metroid.VAL_ZOOMER, Zoomer.class);
+			GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, DeathPop.class,
+			GameKV.Metroid.AgentClassAlias.VAL_DOOR, MetroidDoor.class,
+			GameKV.Metroid.AgentClassAlias.VAL_MARUMARI, MaruMari.class,
+			GameKV.Metroid.AgentClassAlias.VAL_SAMUS, Samus.class,
+			GameKV.Metroid.AgentClassAlias.VAL_SAMUS_SHOT, SamusShot.class,
+			GameKV.Metroid.AgentClassAlias.VAL_SKREE, Skree.class,
+			GameKV.Metroid.AgentClassAlias.VAL_SKREE_EXP, SkreeExp.class,
+			GameKV.Metroid.AgentClassAlias.VAL_ZOOMER, Zoomer.class);
 }

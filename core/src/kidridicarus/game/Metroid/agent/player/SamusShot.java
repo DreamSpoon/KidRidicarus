@@ -1,10 +1,10 @@
 package kidridicarus.game.Metroid.agent.player;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -112,9 +112,9 @@ public class SamusShot extends Agent implements UpdatableAgent, DrawableAgent, D
 	}
 
 	@Override
-	public void draw(Batch batch) {
+	public void draw(AgencyDrawBatch batch) {
 		if(curMoveState != MoveState.DEAD)
-			shotSprite.draw(batch);
+			batch.draw(shotSprite);
 	}
 
 	@Override
@@ -134,7 +134,8 @@ public class SamusShot extends Agent implements UpdatableAgent, DrawableAgent, D
 
 	// make the AgentProperties (AP) for this class of Agent
 	public static ObjectProperties makeAP(Samus parentAgent, Vector2 position, Vector2 velocity) {
-		ObjectProperties props = Agent.createPointAP(GameKV.Metroid.VAL_SAMUS_SHOT, position, velocity);
+		ObjectProperties props = Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS_SHOT,
+				position, velocity);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		return props;
 	}

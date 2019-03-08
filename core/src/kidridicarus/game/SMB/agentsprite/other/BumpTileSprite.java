@@ -25,7 +25,6 @@ public class BumpTileSprite extends Sprite {
 	// if prebumpTex is null it means this bumpable tile 
 	public BumpTileSprite(TextureAtlas atlas, TextureRegion prebumpTex) {
 		this.prebumpTex = prebumpTex;
-
 		emptyblockTex = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMBAnim.General.QBLOCKEMPTY), PlayMode.LOOP);
 		qBlockAnim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMBAnim.General.QBLOCK), PlayMode.LOOP);
 

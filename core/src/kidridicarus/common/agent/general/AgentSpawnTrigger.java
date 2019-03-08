@@ -7,10 +7,10 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.AgentSpawnTriggerBody;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonKV;
 
 public class AgentSpawnTrigger extends Agent implements UpdatableAgent, DisposableAgent {
 	private AgentSpawnTriggerBody stBody;
@@ -65,7 +65,7 @@ public class AgentSpawnTrigger extends Agent implements UpdatableAgent, Disposab
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, float width, float height) {
-		return Agent.createRectangleAP(AgencyKV.Spawn.VAL_AGENTSPAWN_TRIGGER,
+		return Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_AGENTSPAWN_TRIGGER,
 				new Rectangle(position.x - width/2f, position.y - height/2f, width, height));
 	}
 }

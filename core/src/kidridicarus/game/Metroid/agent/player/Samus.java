@@ -1,10 +1,10 @@
 package kidridicarus.game.Metroid.agent.player;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -14,6 +14,7 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.GameAgentObserver;
+import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
 import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.general.PipeWarp;
@@ -226,7 +227,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 				if(advice.moveUp) {
 					// if the tile directly above samus is solid then disallow change to stand
 					Vector2 bodyTilePos = UInfo.getM2PTileForPos(samusBody.getPosition());
-					if(agency.isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
+					if(isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
 						nextMoveState = MoveState.BALL;
 						samusBody.doBounceCheck();
 					}
@@ -508,7 +509,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		// create shot
 		ObjectProperties shotProps = SamusShot.makeAP(this, position, velocity);
 		// check spawn point of shot, if it is in a solid tile then the shot immediately explodes
-		if(agency.isMapPointSolid(position)) {
+		if(isMapPointSolid(position)) {
 			// add the immediate explode property to the properties list
 			shotProps.put(AgencyKV.Spawn.KEY_EXPIRE, true);
 		}
@@ -547,17 +548,34 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	}
 
 	@Override
-	public void draw(Batch batch) {
+	public void draw(AgencyDrawBatch batch) {
 		// if a script is running and the sprite is visible then draw it
 		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice()) {
 			if(supervisor.getScriptAgentState().scriptedSpriteState.visible)
-				samusSprite.draw(batch);
+				batch.draw(samusSprite);
 		}
 		// no script running, do the normal draw stuff
 		else {
 			if(isDrawThisFrame)
-				samusSprite.draw(batch);
+				batch.draw(samusSprite);
 		}
+	}
+
+	/*
+	 * Check for contact with tiled collision map. If contact then get solid state of tile given by tileCoords.
+	 */
+	private boolean isMapTileSolid(Vector2 tileCoords) {
+		OrthoCollisionTiledMapAgent octMap = samusBody.getFirstContactByClass(OrthoCollisionTiledMapAgent.class);
+		if(octMap == null)
+			return false;
+		return octMap.isMapTileSolid(tileCoords);
+	}
+
+	private boolean isMapPointSolid(Vector2 position) {
+		OrthoCollisionTiledMapAgent octMap = samusBody.getFirstContactByClass(OrthoCollisionTiledMapAgent.class);
+		if(octMap == null)
+			return false;
+		return octMap.isMapPointSolid(position);
 	}
 
 	// TODO implement the general info return functionality by override of the getProperty method of Agent class

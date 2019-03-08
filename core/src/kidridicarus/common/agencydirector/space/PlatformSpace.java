@@ -1,18 +1,18 @@
 package kidridicarus.common.agencydirector.space;
-
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+public class PlatformSpace {}
+/*import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
-
+*/
 /*
  * Contains an agency with stuff that moves around on a tiled map.
  * Easily get stuff that needs to be rendered (e.g. visible agents and map layers). 
  */
-public class PlatformSpace implements Disposable {
+/*public class PlatformSpace implements Disposable {
 	private Agency agency;
 	private TiledMap tiledMap;
 
@@ -51,4 +51,4 @@ public class PlatformSpace implements Disposable {
 	public void dispose() {
 		tiledMap.dispose();
 	}
-}
+}*/

@@ -19,7 +19,6 @@ import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.change.AgencyChangeQueue;
 import kidridicarus.agency.change.AgentPlaceholder;
 import kidridicarus.agency.change.DrawOrderChange;
-import kidridicarus.agency.change.TileChange;
 import kidridicarus.agency.change.UpdateOrderChange;
 import kidridicarus.agency.change.AgencyChangeQueue.AgencyChangeCallback;
 import kidridicarus.agency.change.AgentListChange;
@@ -28,8 +27,6 @@ import kidridicarus.agency.contact.AgencyContactListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.collisionmap.TileCollisionMap;
-import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AllowOrder;
 
 /*
@@ -61,7 +58,7 @@ public class Agency implements Disposable {
 	private AgencyIndex agencyIndex;
 	private World world;
 	private TextureAtlas atlas;
-	private TileCollisionMap collisionMap;
+//	private TileCollisionMap collisionMap;
 	private float globalTimer;
 
 	public Agency(AgentClassList allAgentsClassList) {
@@ -115,8 +112,8 @@ public class Agency implements Disposable {
 						doUpdateChange((UpdateOrderChange) change);
 					else if(change instanceof DrawOrderChange)
 						doDrawOrderChange((DrawOrderChange) change);
-					else if(change instanceof TileChange)
-						doTileChange((TileChange) change);
+//					else if(change instanceof TileChange)
+//						doTileChange((TileChange) change);
 					else {
 						throw new IllegalArgumentException(
 								"Cannot process agency change; unknown agent change class: " + change);
@@ -140,7 +137,7 @@ public class Agency implements Disposable {
 		agencyIndex.setAgentDrawOrder(doc.ap.agent, doc.drawOrder);
 	}
 
-	private void doTileChange(TileChange change) {
+/*	private void doTileChange(TileChange change) {
 		if(change.solid) {
 			if(collisionMap.isTileExist(change.x, change.y)) {
 				throw new IllegalStateException(
@@ -157,13 +154,13 @@ public class Agency implements Disposable {
 			collisionMap.removeTile(change.x, change.y);
 		}
 	}
-
+*/
 	/*
 	 * Use the input layers to find solid (i.e. non-null) tiles and create the collision map.
 	 */
-	public void createCollisionMap(Collection<TiledMapTileLayer> solidLayers) {
-		collisionMap = new TileCollisionMap(world, solidLayers);
-	}
+//	public void createCollisionMap(Collection<TiledMapTileLayer> solidLayers) {
+//		collisionMap = new TileCollisionMap(world, solidLayers);
+//	}
 
 	public void setDrawLayers(TreeMap<AllowOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
 		agencyIndex.addMapDrawLayers(drawLayers);
@@ -191,15 +188,15 @@ public class Agency implements Disposable {
 		if(agentClass == null)
 			return null;
 
-		Constructor<?> constructor;
 		Agent newlyCreatedAgent = null;
-		// when the agent object is constructed, it may invoke calls to enable agent udpates or set agent draw order,
+		// when the agent object is constructed, it may invoke calls to enable agent updates or set agent draw order,
 		// so a placeholder must be inserted before creating the object - then the object's reference is put into the
 		// placeholder after the object is created.  
 		AgentPlaceholder agentPlaceholder = new AgentPlaceholder(null);
 		agencyChangeQ.addAgent(agentPlaceholder);
 		try {
-			constructor = agentClass.getConstructor(new Class[] { Agency.class, ObjectProperties.class });
+			Constructor<?> constructor =
+					agentClass.getConstructor(new Class[] { Agency.class, ObjectProperties.class });
 			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { this, properties });
 		}
 		catch (Exception e) {
@@ -215,13 +212,6 @@ public class Agency implements Disposable {
 		agencyChangeQ.removeAgent(new AgentPlaceholder(agent));
 	}
 
-//	public void enableAgentUpdate(Agent agent) {
-//		agencyChangeQ.enableAgentUpdate(new AgentPlaceholder(agent));
-//	}
-
-//	public void disableAgentUpdate(Agent agent) {
-//		agencyChangeQ.disableAgentUpdate(new AgentPlaceholder(agent));
-//	}
 	public void setAgentUpdateOrder(Agent agent, AllowOrder order) {
 		agencyChangeQ.setAgentUpdateOrder(new AgentPlaceholder(agent), order);
 	}
@@ -233,27 +223,27 @@ public class Agency implements Disposable {
 	/*
 	 * Add item to change queue for change in a tile's "solid" state.
 	 */
-	public void setPhysicTile(Vector2 t, boolean solid) {
-		agencyChangeQ.setPhysicTile((int) t.x, (int) t.y, solid);
-	}
+//	public void setPhysicTile(Vector2 t, boolean solid) {
+//		agencyChangeQ.setPhysicTile((int) t.x, (int) t.y, solid);
+//	}
 
 	/*
 	 * Returns solid state of a tile in collision map (solid = true).
 	 * Note: Does not take into account any changes that may be scheduled in the agency change queue.
 	 */
-	public boolean isMapTileSolid(Vector2 tilePos) {
-		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
-	}
+//	public boolean isMapTileSolid(Vector2 tilePos) {
+//		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
+//	}
 
 	/*
 	 * Returns solid state of a point in collision map (solid = true).
 	 * Note: Does not take into account any changes that may be scheduled in the agency change queue.
 	 */
-	public boolean isMapPointSolid(Vector2 pointPos) {
-		// convert the point position to a tile position
-		Vector2 tilePos = UInfo.getM2PTileForPos(pointPos);
-		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
-	}
+//	public boolean isMapPointSolid(Vector2 pointPos) {
+//		// convert the point position to a tile position
+//		Vector2 tilePos = UInfo.getM2PTileForPos(pointPos);
+//		return collisionMap.isTileExist((int) tilePos.x, (int) tilePos.y);
+//	}
 
 	public void setAtlas(TextureAtlas atlas) {
 		this.atlas = atlas;
@@ -274,6 +264,14 @@ public class Agency implements Disposable {
 	public void playSound(String soundName) {
 		if(agencyEventListener != null)
 			agencyEventListener.onPlaySound(soundName);
+	}
+
+	/*
+	 * Register, as in add to the list of needed music.
+	 */
+	public void registerMusic(String musicName) {
+		if(agencyEventListener != null)
+			agencyEventListener.onRegisterMusic(musicName);
 	}
 
 	/*
@@ -333,7 +331,7 @@ public class Agency implements Disposable {
 	@Override
 	public void dispose() {
 		disposeAllAgents();
-		collisionMap.dispose();
+//		collisionMap.dispose();
 		world.dispose();
 	}
 

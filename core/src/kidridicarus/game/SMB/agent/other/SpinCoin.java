@@ -1,6 +1,5 @@
 package kidridicarus.game.SMB.agent.other;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -71,8 +71,8 @@ public class SpinCoin extends Agent implements UpdatableAgent, DrawableAgent, Di
 	}
 
 	@Override
-	public void draw(Batch batch) {
-		coinSprite.draw(batch);
+	public void draw(AgencyDrawBatch batch) {
+		batch.draw(coinSprite);
 	}
 
 	@Override

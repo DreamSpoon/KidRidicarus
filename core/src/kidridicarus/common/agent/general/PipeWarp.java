@@ -136,7 +136,8 @@ public class PipeWarp extends Agent implements DisposableAgent {
 		if(gs == null)
 			return null;
 		// if the exit spawner doesn't have a pipe warp spawn property then quit method
-		if(!gs.getProperty(AgencyKV.Spawn.KEY_SPAWNTYPE, "", String.class).equals(AgencyKV.Spawn.VAL_PIPEWARP_SPAWN))
+		if(!gs.getProperty(AgencyKV.Spawn.KEY_SPAWNTYPE, "", String.class).
+				equals(CommonKV.AgentClassAlias.VAL_PIPEWARP_SPAWN))
 			return null;
 
 		// if the exit spawner doesn't have a direction property then quit the method

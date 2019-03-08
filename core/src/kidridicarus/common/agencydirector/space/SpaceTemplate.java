@@ -15,7 +15,7 @@ import kidridicarus.common.tool.DrawOrderAlias;
 import kidridicarus.agency.info.AgencyKV;
 
 public class SpaceTemplate {
-	private LinkedList<ObjectProperties> agentProps;
+/*	private LinkedList<ObjectProperties> agentProps;
 	private TiledMap tiledMap;
 	private Collection<TiledMapTileLayer> solidTileLayers; 
 	private TreeMap<AllowOrder, LinkedList<TiledMapTileLayer>> drawLayers;
@@ -34,7 +34,7 @@ public class SpaceTemplate {
 	public List<ObjectProperties> getAgentProps() {
 		return agentProps;
 	}
-
+*/
 	/*
 	 * Set the map for this space template, and
 	 * Sort and keep separate lists of solid and draw layers.
@@ -44,7 +44,7 @@ public class SpaceTemplate {
 	 *   -a layer may start with draw order none, and the draw order may change later - so add all layers
 	 *    regardless of current draw order 
 	 */
-	public void setMap(TiledMap tiledMap, DrawOrderAlias[] drawOrderAliasList) {
+/*	public void setMap(TiledMap tiledMap, DrawOrderAlias[] drawOrderAliasList) {
 		this.tiledMap = tiledMap;
 		// sort the layers
 		for(MapLayer layer : tiledMap.getLayers()) {
@@ -63,12 +63,12 @@ public class SpaceTemplate {
 			solidTileLayers.add(tmtl);
 		}
 	}
-
+*/
 	/*
 	 * If layer is a tiled map type, and it has a draw order, then add it to the draw order list based
 	 * on it's draw order.
 	 */
-	private void checkAndAddDrawLayer(MapLayer layer, DrawOrderAlias[] drawOrderAliasList) {
+/*	private void checkAndAddDrawLayer(MapLayer layer, DrawOrderAlias[] drawOrderAliasList) {
 		if(!(layer instanceof TiledMapTileLayer))
 			return;
 		AllowOrder layerDO = getDrawOrderForLayer(layer, drawOrderAliasList);
@@ -84,12 +84,12 @@ public class SpaceTemplate {
 		}
 		list.add((TiledMapTileLayer) layer);
 	}
-
+*/
 	/*
 	 * Returns null if draw order not found for given layer,
 	 * otherwise returns a draw order object based on the layer's draw order property.
 	 */
-	private AllowOrder getDrawOrderForLayer(MapLayer layer, DrawOrderAlias[] drawOrderAliasList) {
+/*	private AllowOrder getDrawOrderForLayer(MapLayer layer, DrawOrderAlias[] drawOrderAliasList) {
 		// does the layer contain a draw order key with a float value?
 		Float drawOrderFloat = null;
 		try {
@@ -106,21 +106,11 @@ public class SpaceTemplate {
 				return null;
 			}
 			// check draw order aliases to translate to draw order object
-			return getDrawOrderForAlias(drawOrderAliasList, drawOrderStr);
+			return DrawOrderAlias.getDrawOrderForAlias(drawOrderAliasList, drawOrderStr);
 		}
 		if(drawOrderFloat == null)
 			return null;
 		return new AllowOrder(true, drawOrderFloat);
-	}
-
-	private AllowOrder getDrawOrderForAlias(DrawOrderAlias[] drawOrderAliasList, String drawOrderStr) {
-		// find the enum value with matching alias string
-		for(int i=0; i<drawOrderAliasList.length; i++) {
-			if(drawOrderStr.equals(drawOrderAliasList[i].alias))
-				return drawOrderAliasList[i].myDO;
-		}
-		// no enum value found, so return null
-		return null;
 	}
 
 	public Collection<TiledMapTileLayer> getSolidLayers() {
@@ -134,4 +124,5 @@ public class SpaceTemplate {
 	public TiledMap getMap() {
 		return tiledMap;
 	}
+*/
 }

@@ -3,13 +3,13 @@ package kidridicarus.game.SMB.agent.other;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -17,6 +17,7 @@ import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.info.UInfo;
@@ -41,8 +42,8 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 	private static final float COIN_BUMP_RESET_TIME = 0.23f;
 	private static final float MAX_COIN_BUMP_TIME = 3f;
 
-	// only blocks with items can reach the empty state, other blocks only use pre- and mid-bump
-	public enum BumpState { PREBUMP, MIDBUMP, EMPTY }
+	// only blocks with items can reach the empty state
+	public enum MoveState { PRESOLID, PREBUMP, MIDBUMP, EMPTY }
 	public enum BlockItem { NONE, COIN, COIN10, MUSHROOM, STAR, MUSH1UP }
 
 	private BumpTileBody btBody;
@@ -56,10 +57,11 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 	private float coin10BumpResetTimer;
 	private float coin10EndTimer;
 
-	private BumpState curState;
-	private float stateTimer;
 	private Agent bumpingAgent;
 	private boolean wasHitByBig;
+	private OrthoCollisionTiledMapAgent collisionMap; 
+	private MoveState curState;
+	private float stateTimer;
 
 	public BumpTile(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -67,7 +69,7 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 		isHit = false;
 		bumpingAgent = null;
 		wasHitByBig = false;
-		curState = BumpState.PREBUMP;
+		curState = MoveState.PRESOLID;
 		stateTimer = 0f;
 
 		coin10Coins = 10;
@@ -78,7 +80,7 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 
 		blockItem = BlockItem.NONE;
 		String spawnItem = properties.get(GameKV.SMB.KEY_SPAWNITEM, "", String.class);
-		if(spawnItem.equals(GameKV.SMB.VAL_COIN))
+		if(spawnItem.equals(GameKV.SMB.AgentClassAlias.VAL_COIN))
 			blockItem = BlockItem.COIN;
 		else if(spawnItem.equals(GameKV.SMB.VAL_COIN10)) {
 			blockItem = BlockItem.COIN10;
@@ -86,48 +88,39 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 			coin10BumpResetTimer = 0f;
 			coin10EndTimer = 0f;
 		}
-		else if(spawnItem.equals(GameKV.SMB.VAL_MUSHROOM))
+		else if(spawnItem.equals(GameKV.SMB.AgentClassAlias.VAL_MUSHROOM))
 			blockItem = BlockItem.MUSHROOM;
-		else if(spawnItem.equals(GameKV.SMB.VAL_POWERSTAR))
+		else if(spawnItem.equals(GameKV.SMB.AgentClassAlias.VAL_POWERSTAR))
 			blockItem = BlockItem.STAR;
-		else if(spawnItem.equals(GameKV.SMB.VAL_MUSH1UP))
+		else if(spawnItem.equals(GameKV.SMB.AgentClassAlias.VAL_MUSH1UP))
 			blockItem = BlockItem.MUSH1UP;
 		isItemAvailable = blockItem != BlockItem.NONE;
 
 		btBody = new BumpTileBody(agency.getWorld(), this, Agent.getStartBounds(properties));
 		btSprite = new BumpTileSprite(agency.getAtlas(), Agent.getStartTexRegion(properties));
 
-		// make the tile solid in the tile physics layer if it is not a secret block 
-		if(!properties.containsKV(GameKV.SMB.KEY_SECRETBLOCK, AgencyKV.VAL_TRUE))
-			agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
-
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
-	}
-
-	private BumpState getState() {
-		if(curState == BumpState.EMPTY)
-			return BumpState.EMPTY;
-		else if(curState == BumpState.MIDBUMP) {
-			if(stateTimer <= BOUNCE_TIME)
-				return BumpState.MIDBUMP;
-			else if(blockItem != BlockItem.NONE && !isItemAvailable)
-				return BumpState.EMPTY;
-		}
-		else if(isHit)
-			return BumpState.MIDBUMP;
-		return BumpState.PREBUMP;
 	}
 
 	@Override
 	public void update(float delta) {
 		float offsetY = 0f;
-		BumpState nextState = getState();
+		MoveState nextState = getNextMoveState();
 		switch(nextState) {
+			case PRESOLID:
+				// check for first contact with collision map every frame until found
+				collisionMap = btBody.getFirstContactByClass(OrthoCollisionTiledMapAgent.class);
+				if(collisionMap != null) {
+					// make the tile solid in the tile physics layer if it is not a secret block 
+					if(!properties.containsKV(GameKV.SMB.KEY_SECRETBLOCK, AgencyKV.VAL_TRUE))
+						collisionMap.setTileSolidStateAtPos(btBody.getPosition(), true);
+				}
+				break;
 			case PREBUMP:
 			case EMPTY:
 				// last frame was midbump?
-				if(curState == BumpState.MIDBUMP)
+				if(curState == MoveState.MIDBUMP)
 					onBounceEnd();
 				break;
 			case MIDBUMP:
@@ -163,15 +156,34 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 		curState = nextState;
 	}
 
+	private MoveState getNextMoveState() {
+		if(curState == MoveState.EMPTY)
+			return MoveState.EMPTY;
+		else if(curState == MoveState.MIDBUMP) {
+			if(stateTimer <= BOUNCE_TIME)
+				return MoveState.MIDBUMP;
+			else if(blockItem != BlockItem.NONE && !isItemAvailable)
+				return MoveState.EMPTY;
+		}
+		else if(isHit)
+			return MoveState.MIDBUMP;
+		else if(collisionMap != null)
+			return MoveState.PREBUMP;
+		return MoveState.PRESOLID;
+	}
+
+
 	private void onBounceStart() {
 		bopTopGoombas();
 
 		if(blockItem == BlockItem.NONE && wasHitByBig)
-			startBreakBrick();
+			startBreakTile();
 		else {
 			// if the tile was a secret block then it was not solid, so make it solid 
-			if(properties.get(GameKV.SMB.KEY_SECRETBLOCK, "", String.class).equals(AgencyKV.VAL_TRUE))
-				agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
+			if(properties.get(GameKV.SMB.KEY_SECRETBLOCK, "", String.class).equals(AgencyKV.VAL_TRUE)) {
+//				agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), true);
+				collisionMap.setTileSolidStateAtPos(btBody.getPosition(), true);
+			}
 
 			switch(blockItem) {
 				case COIN:
@@ -246,29 +258,27 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 		switch(blockItem) {
 			case MUSH1UP:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
-				agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_MUSH1UP, pos));
+				agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MUSH1UP, pos));
 				break;
 			case MUSHROOM:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
 				// big mario pops a fireflower?
 				if(wasHitByBig)
-					agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_FIREFLOWER, pos));
+					agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_FIREFLOWER, pos));
 				else
-					agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_MUSHROOM, pos));
+					agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MUSHROOM, pos));
 				break;
 			case STAR:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
-				agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_POWERSTAR, pos));
+				agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_POWERSTAR, pos));
 				break;
 			default:
 				break;
 		}
 	}
 
-	private void startBreakBrick() {
-		agency.playSound(AudioInfo.Sound.SMB.BREAK);
-		((Mario) bumpingAgent).givePoints(PointAmount.P200, false);
-		agency.setPhysicTile(UInfo.getM2PTileForPos(btBody.getPosition()), false);
+	private void startBreakTile() {
+		collisionMap.setTileSolidStateAtPos(btBody.getPosition(), false);
 
 		// create 4 brick pieces in the 4 corners of the original space and blast them upwards
 		float right = btBody.getBounds().width / 4f;
@@ -282,6 +292,10 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 				new Vector2(-BREAKRIGHT_VEL1_X, BREAKRIGHT_VEL1_Y), 0));
 		agency.createAgent(BrickPiece.makeAP(btBody.getPosition().cpy().add(-right, -up),
 				new Vector2(-BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0));
+
+		agency.playSound(AudioInfo.Sound.SMB.BREAK);
+		((Mario) bumpingAgent).givePoints(PointAmount.P200, false);
+
 		agency.disposeAgent(this);
 	}
 
@@ -291,13 +305,13 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 				UInfo.P2M(UInfo.TILEPIX_Y * 2f), (Mario) bumpingAgent));
 
 		// spawn a coin one tile's height above the current tile position
-		agency.createAgent(Agent.createPointAP(GameKV.SMB.VAL_SPINCOIN, btBody.getPosition().cpy().add(0f,
-				UInfo.P2M(UInfo.TILEPIX_Y))));
+		agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_SPINCOIN,
+				btBody.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y))));
 	}
 
 	@Override
-	public void draw(Batch batch) {
-		btSprite.draw(batch);
+	public void draw(AgencyDrawBatch batch) {
+		batch.draw(btSprite);
 	}
 
 	@Override

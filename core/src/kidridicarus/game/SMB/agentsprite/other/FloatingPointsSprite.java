@@ -9,7 +9,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.SMBAnim;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class FloatingPointsSprite {
+public class FloatingPointsSprite extends Sprite {
 	private static final float DIGIT_W = UInfo.P2M(4);
 	private static final float DIGIT_H = UInfo.P2M(8);
 
@@ -109,6 +109,7 @@ public class FloatingPointsSprite {
 		this.position = position;
 	}
 
+	@Override
 	public void draw(Batch batch) {
 		if(is1UP) {
 			sprite1UP.setPosition(position.x, position.y);

@@ -21,22 +21,18 @@ import kidridicarus.common.tool.AllowOrder;
 
 /*
  * A list of all agents in the agency, with sub-lists available for:
- *   -agents receiving updates
+ *   -agents receiving updates, by update order
  *   -agents to be drawn, by draw order
- * TODO Implement DisposableAgent list.
- * TODO Implement setUpdateOrder - so no need for preUpdate or postUpdate, an agent can specify it's update order -
- *   use aliases for this just like with sprite draw order.
+ *   -agents which, when removed, will also be disposed
  */
 public class AgencyIndex {
 	private HashMap<Agent, AgentWrapper> allAgents;
-//	private HashSet<UpdatableAgent> updateAgents;
 	private AllowOrderList orderedUpdateAgents;
 	private AllowOrderList drawObjects;
 	private HashSet<DisposableAgent> disposeAgents;
 
 	public AgencyIndex() {
 		allAgents = new HashMap<Agent, AgentWrapper>();
-//		updateAgents = new HashSet<UpdatableAgent>();
 		orderedUpdateAgents = new AllowOrderList();
 		drawObjects = new AllowOrderList();
 		disposeAgents = new HashSet<DisposableAgent>();
@@ -56,7 +52,6 @@ public class AgencyIndex {
 	@SuppressWarnings("unlikely-arg-type")
 	public void removeAgent(Agent agent) {
 		// remove agent from updates list
-//		disableAgentUpdate(agent);
 		setAgentUpdateOrderNone(agent);
 		// remove agent from draw order list
 		setAgentDrawOrderNone(agent);
@@ -71,34 +66,6 @@ public class AgencyIndex {
 		}
 	}
 
-/*	public void enableAgentUpdate(Agent agent) {
-		if(!(agent instanceof UpdatableAgent))
-			throw new IllegalArgumentException("Cannot enable update; agent is not instance of UpdatableAgent: " + agent);
-		AgentWrapper aw = allAgents.get(agent);
-		if(aw == null)
-			throw new IllegalArgumentException("Cannot enable update; agent not in list of all agents: " + agent);
-		if(aw.receiveUpdates == false) {
-			aw.receiveUpdates = true;
-			updateAgents.add((UpdatableAgent) agent);
-		}
-	}
-
-	public void disableAgentUpdate(Agent agent) {
-		if(!(agent instanceof UpdatableAgent))
-			throw new IllegalArgumentException("Cannot disable update; agent is not instance of UpdatableAgent: " + agent);
-		AgentWrapper aw = allAgents.get(agent);
-		if(aw == null)
-			throw new IllegalArgumentException("Cannot disable update; agent not in list of all agents: " + agent);
-		if(aw.receiveUpdates == true) {
-			aw.receiveUpdates = false;
-			updateAgents.remove((UpdatableAgent) agent);
-		}
-	}
-
-	public HashSet<UpdatableAgent> getAgentsToUpdate() {
-		return updateAgents;
-	}
-*/
 	public void setAgentUpdateOrder(Agent agent, AllowOrder newUpdateOrder) {
 		if(!(agent instanceof UpdatableAgent)) {
 			throw new IllegalArgumentException(

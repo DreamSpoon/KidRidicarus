@@ -1,10 +1,10 @@
 package kidridicarus.game.Metroid.agent.NPC;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -178,20 +178,20 @@ public class Skree extends Agent implements UpdatableAgent, DrawableAgent, Conta
 			throw new IllegalStateException("The Skree explosion offset array length does not equal the " +
 					"explode velocity array length.");
 		for(int i=0; i<EXPLODE_OFFSET.length; i++) {
-			agency.createAgent(Agent.createPointAP(GameKV.Metroid.VAL_SKREE_EXP,
+			agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SKREE_EXP,
 					sBody.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
 		}
 		agency.disposeAgent(this);
 	}
 
 	private void doDeathPop() {
-		agency.createAgent(Agent.createPointAP(GameKV.Metroid.VAL_DEATH_POP, sBody.getPosition()));
+		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, sBody.getPosition()));
 		agency.disposeAgent(this);
 	}
 
 	@Override
-	public void draw(Batch batch) {
-		sSprite.draw(batch);
+	public void draw(AgencyDrawBatch batch) {
+		batch.draw(sSprite);
 	}
 
 	@Override

@@ -1,10 +1,10 @@
 package kidridicarus.game.SMB.agent.item;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -118,8 +118,8 @@ public class PowerStar extends BasicWalkAgent implements UpdatableAgent, Drawabl
 	}
 
 	@Override
-	public void draw(Batch batch){
-		starSprite.draw(batch);
+	public void draw(AgencyDrawBatch batch){
+		batch.draw(starSprite);
 	}
 
 	@Override

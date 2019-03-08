@@ -1,6 +1,7 @@
 package kidridicarus.common.agencydirector.space;
-
-import java.util.LinkedList;
+// TODO delete this class
+public class SpaceTemplateLoader {}
+/*import java.util.LinkedList;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
@@ -15,10 +16,11 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.DrawOrderAlias;
 import kidridicarus.agency.info.AgencyKV;
-
+*/
 /*
  * Load .tmx files, basically.
  */
+/*
 public class SpaceTemplateLoader {
 	public static SpaceTemplate loadMap(String spaceFilename, DrawOrderAlias[] drawOrderAliasList) {
 		SpaceTemplate ret = new SpaceTemplate();
@@ -70,4 +72,4 @@ public class SpaceTemplateLoader {
 		}
 		return agentProps;
 	}
-}
+}*/

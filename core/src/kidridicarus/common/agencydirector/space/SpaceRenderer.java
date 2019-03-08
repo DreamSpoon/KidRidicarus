@@ -1,6 +1,7 @@
 package kidridicarus.common.agencydirector.space;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
+public class SpaceRenderer {}
+/*import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -43,4 +44,4 @@ public class SpaceRenderer implements Disposable {
 	public void dispose() {
 		tileRenderer.dispose();
 	}
-}
+}*/

@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agentbody.sensor.ContactSensor;
 import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.common.agent.collisionmap.LineSeg;
+import kidridicarus.common.agent.collisionmap.stuff.LineSeg;
 
 public class SolidBoundSensor extends ContactSensor {
 	private LinkedList<LineSeg> contacts;

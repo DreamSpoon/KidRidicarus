@@ -1,6 +1,5 @@
 package kidridicarus.game.SMB.agent.other;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -71,8 +71,8 @@ public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent, 
 	}
 
 	@Override
-	public void draw(Batch batch) {
-		bpSprite.draw(batch);
+	public void draw(AgencyDrawBatch batch) {
+		batch.draw(bpSprite);
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent, 
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, Vector2 velocity, int startFrame) {
-		ObjectProperties props = Agent.createPointAP(GameKV.SMB.VAL_BRICKPIECE, position, velocity);
+		ObjectProperties props = Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_BRICKPIECE, position, velocity);
 		props.put(CommonKV.Sprite.KEY_STARTFRAME, startFrame);
 		return props;
 	}

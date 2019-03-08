@@ -14,6 +14,7 @@ public class CommonCF {
 		public static final String BUMPABLE_BIT = "bit_bumpable";
 		public static final String PIPE_BIT = "bit_pipe";
 		public static final String ITEM_BIT = "bit_item";
+		public static final String COLLISIONMAP_BIT = "bit_metasolid";
 	}
 
 	public static final CFBitSeq NO_CONTACT_CFCAT = new CFBitSeq();
@@ -31,10 +32,4 @@ public class CommonCF {
 	public static final CFBitSeq SOLID_ITEM_CFCAT = new CFBitSeq(CommonCF.Alias.ITEM_BIT);
 	public static final CFBitSeq SOLID_ITEM_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
 			CommonCF.Alias.AGENT_BIT);
-
-	public static final CFBitSeq BUMPTILE_CFCAT = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
-	public static final CFBitSeq BUMPTILE_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-
-	public static final CFBitSeq PIPEWARP_CFCAT = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
-	public static final CFBitSeq PIPEWARP_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 }

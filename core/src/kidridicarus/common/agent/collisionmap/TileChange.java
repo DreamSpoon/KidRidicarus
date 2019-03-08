@@ -1,4 +1,4 @@
-package kidridicarus.agency.change;
+package kidridicarus.common.agent.collisionmap;
 
 /*
  * Change the "solid" state of a tile in a collision map.

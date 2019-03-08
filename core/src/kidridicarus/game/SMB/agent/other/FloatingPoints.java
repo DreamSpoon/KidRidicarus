@@ -1,10 +1,10 @@
 package kidridicarus.game.SMB.agent.other;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
@@ -75,8 +75,8 @@ public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAge
 	}
 
 	@Override
-	public void draw(Batch batch){
-		pointsSprite.draw(batch);
+	public void draw(AgencyDrawBatch batch){
+		batch.draw(pointsSprite);
 	}
 
 	@Override
@@ -91,7 +91,8 @@ public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAge
 
 	public static ObjectProperties makeAP(PointAmount amt, boolean relative, Vector2 position,
 			float yOffset, Agent parentAgent) {
-		ObjectProperties props = Agent.createPointAP(GameKV.SMB.VAL_FLOATINGPOINTS, position.cpy().add(0f, yOffset));
+		ObjectProperties props = Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_FLOATINGPOINTS,
+				position.cpy().add(0f, yOffset));
 		props.put(GameKV.SMB.KEY_POINTAMOUNT, amt);
 		if(relative)
 			props.put(GameKV.SMB.KEY_RELPOINTAMOUNT, AgencyKV.VAL_TRUE);

@@ -1,7 +1,7 @@
 package kidridicarus.agency.agent;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
+import kidridicarus.agency.AgencyDrawBatch;
 
 public interface DrawableAgent {
-	public void draw(Batch batch);
+	public void draw(AgencyDrawBatch batch);
 }

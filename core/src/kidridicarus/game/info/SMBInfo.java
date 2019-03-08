@@ -97,19 +97,19 @@ public class SMBInfo {
 	}
 
 	public static final AgentClassList SMB_AGENT_CLASSLIST = new AgentClassList( 
-			GameKV.SMB.VAL_BRICKPIECE, BrickPiece.class,
-			GameKV.SMB.VAL_BUMPTILE, BumpTile.class,
-			GameKV.SMB.VAL_CASTLEFLAG, CastleFlag.class,
-			GameKV.SMB.VAL_COIN, StaticCoin.class,
-			GameKV.SMB.VAL_FIREFLOWER, FireFlower.class,
-			GameKV.SMB.VAL_FLAGPOLE, Flagpole.class,
-			GameKV.SMB.VAL_FLOATINGPOINTS, FloatingPoints.class,
-			GameKV.SMB.VAL_GOOMBA, Goomba.class,
-			GameKV.SMB.VAL_MARIO, Mario.class,
-			GameKV.SMB.VAL_MARIOFIREBALL, MarioFireball.class,
-			GameKV.SMB.VAL_MUSHROOM, PowerMushroom.class,
-			GameKV.SMB.VAL_MUSH1UP, Mush1UP.class,
-			GameKV.SMB.VAL_POWERSTAR, PowerStar.class,
-			GameKV.SMB.VAL_SPINCOIN, SpinCoin.class,
-			GameKV.SMB.VAL_TURTLE, Turtle.class);
+			GameKV.SMB.AgentClassAlias.VAL_BRICKPIECE, BrickPiece.class,
+			GameKV.SMB.AgentClassAlias.VAL_BUMPTILE, BumpTile.class,
+			GameKV.SMB.AgentClassAlias.VAL_CASTLEFLAG, CastleFlag.class,
+			GameKV.SMB.AgentClassAlias.VAL_COIN, StaticCoin.class,
+			GameKV.SMB.AgentClassAlias.VAL_FIREFLOWER, FireFlower.class,
+			GameKV.SMB.AgentClassAlias.VAL_FLAGPOLE, Flagpole.class,
+			GameKV.SMB.AgentClassAlias.VAL_FLOATINGPOINTS, FloatingPoints.class,
+			GameKV.SMB.AgentClassAlias.VAL_GOOMBA, Goomba.class,
+			GameKV.SMB.AgentClassAlias.VAL_MARIO, Mario.class,
+			GameKV.SMB.AgentClassAlias.VAL_MARIOFIREBALL, MarioFireball.class,
+			GameKV.SMB.AgentClassAlias.VAL_MUSHROOM, PowerMushroom.class,
+			GameKV.SMB.AgentClassAlias.VAL_MUSH1UP, Mush1UP.class,
+			GameKV.SMB.AgentClassAlias.VAL_POWERSTAR, PowerStar.class,
+			GameKV.SMB.AgentClassAlias.VAL_SPINCOIN, SpinCoin.class,
+			GameKV.SMB.AgentClassAlias.VAL_TURTLE, Turtle.class);
 }

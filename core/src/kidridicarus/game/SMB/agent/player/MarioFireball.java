@@ -1,10 +1,10 @@
 package kidridicarus.game.SMB.agent.player;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -133,8 +133,8 @@ public class MarioFireball extends BasicWalkAgent implements UpdatableAgent, Dra
 	}
 
 	@Override
-	public void draw(Batch batch) {
-		fireballSprite.draw(batch);
+	public void draw(AgencyDrawBatch batch) {
+		batch.draw(fireballSprite);
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class MarioFireball extends BasicWalkAgent implements UpdatableAgent, Dra
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, boolean right, Mario parentAgent) {
-		ObjectProperties props = Agent.createPointAP(GameKV.SMB.VAL_MARIOFIREBALL, position);
+		ObjectProperties props = Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIOFIREBALL, position);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		if(right)
 			props.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT);

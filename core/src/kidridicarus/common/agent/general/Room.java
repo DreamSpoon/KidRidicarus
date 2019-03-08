@@ -31,6 +31,7 @@ public class Room extends Agent implements DisposableAgent {
 			roomtype = RoomType.CENTER;
 
 		roommusic = properties.get(AgencyKV.Room.KEY_ROOMMUSIC, "", String.class);
+		agency.registerMusic(roommusic);
 
 		vOffset = UInfo.P2M(properties.get(AgencyKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
 	}

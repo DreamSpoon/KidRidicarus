@@ -1,4 +1,4 @@
-package kidridicarus.common.agent.collisionmap;
+package kidridicarus.common.agent.collisionmap.stuff;
 
 import java.util.Iterator;
 import java.util.TreeSet;

@@ -76,16 +76,24 @@ public class PlayScreen implements Screen {
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
-		director = new AgencyDirector(game.manager, atlas, GfxInfo.KIDRID_DRAWORDER_ALIAS,
+		director = new AgencyDirector(game.manager, game.batch, atlas, GfxInfo.KIDRID_DRAWORDER_ALIAS,
 				new AgentClassList(CommonInfo.CORE_AGENT_CLASS_LIST, SMBInfo.SMB_AGENT_CLASSLIST,
 						MetroidInfo.METROID_AGENT_CLASSLIST), AudioInfo.SOUND_VOLUME);
-		director.createSpace(game.getLevelFilename(level));
+//		director.createSpace(game.getLevelFilename(level));
 
 		stageHUD = new Stage(new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera()),
 				game.batch);
 
 		b2dr = new Box2DDebugRenderer();
 
+		// load the game map
+		director.createMapAgent(game.getLevelFilename(level));
+		// run one update to let the map create the collision map and draw layer agents
+		director.update(1f/60f);
+		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
+		director.update(1f/60f);
+
+		// create play coordinator and insert the player
 		playCo = new PlayCoordinator(director.getAgency(), game.manager, stageHUD);
 		playCo.setPlayAgent(director.createInitialPlayerAgent());
 	}
@@ -172,7 +180,7 @@ public class PlayScreen implements Screen {
 		playCo.updateCamera(gamecam);
 
 		// draw screen
-		director.draw(game.batch, gamecam);
+		director.draw(gamecam);
 
 		// DEBUG: draw outlines of Box2D fixtures
 		if(QQ.isOn())

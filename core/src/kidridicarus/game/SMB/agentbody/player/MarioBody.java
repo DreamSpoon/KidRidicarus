@@ -15,6 +15,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.agency.contact.AgentBodyFilter;
 import kidridicarus.agency.contact.CFBitSeq;
+import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
 import kidridicarus.common.agent.general.DespawnBox;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.general.PipeWarp;
@@ -63,10 +64,11 @@ public class MarioBody extends MobileAgentBody {
 	// agent sensor
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT,
-			CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT);
+			CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
 	// agent sensor with contacts disabled (still needs room bit)
 	private static final CFBitSeq NOCONTACT_AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq NOCONTACT_AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
+	private static final CFBitSeq NOCONTACT_AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
+			CommonCF.Alias.COLLISIONMAP_BIT);
 
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 	private static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
@@ -345,14 +347,14 @@ public class MarioBody extends MobileAgentBody {
 				// tight spot
 
 				// if the tile above ducking mario is solid ...
-				if(agency.isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
+				if(isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
 					Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(b2body.getPosition());
 					// If the player's last velocity direction was rightward, and their position is in the left half
 					// of the tile, and the tile above and to the left of them is solid, then the player should
 					// duckslide right.
-					if((isLastVelocityRight && subTilePos.x <= 0.5f && agency.isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
-							(subTilePos.x > 0.5f && !agency.isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
-							(isLastVelocityRight && subTilePos.x > 0.5f && agency.isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
+					if((isLastVelocityRight && subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
+							(subTilePos.x > 0.5f && !isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
+							(isLastVelocityRight && subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
 						isDuckSlideRight = true;
 					}
 					// the only other option is to duckslide left
@@ -368,7 +370,7 @@ public class MarioBody extends MobileAgentBody {
 
 			if(isDuckSliding) {
 				// if the player was duck sliding but the space above them is now nonsolid then end duckslide
-				if(!agency.isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
+				if(!isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
 					isDuckSliding = false;
 					defineBody(b2body.getPosition().cpy().add(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
 				}
@@ -774,6 +776,16 @@ public class MarioBody extends MobileAgentBody {
 		ogSensorFixture.refilter();
 		// update the contacts enabled flag
 		isContactEnabled = enabled;
+	}
+
+	/*
+	 * Check for contact with tiled collision map. If contact then get solid state of tile given by tileCoords.
+	 */
+	private boolean isMapTileSolid(Vector2 tileCoords) {
+		OrthoCollisionTiledMapAgent octMap = getFirstContactByClass(OrthoCollisionTiledMapAgent.class);
+		if(octMap == null)
+			return false;
+		return octMap.isMapTileSolid(tileCoords);
 	}
 
 	public boolean isDucking() {
