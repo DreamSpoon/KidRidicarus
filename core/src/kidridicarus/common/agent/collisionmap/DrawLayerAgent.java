@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
@@ -36,13 +35,13 @@ public class DrawLayerAgent extends Agent implements DrawableAgent {
 		// does the layer contain a draw order key with a float value?
 		Float drawOrderFloat = null;
 		try {
-			drawOrderFloat = layer.getProperties().get(AgencyKV.DrawOrder.KEY_DRAWORDER, null, Float.class);
+			drawOrderFloat = layer.getProperties().get(CommonKV.DrawOrder.KEY_DRAWORDER, null, Float.class);
 		}
 		catch(ClassCastException cce1) {
 			// no float value, does the layer contain a draw order key with a string value?
 			String drawOrderStr = null;
 			try {
-				drawOrderStr = layer.getProperties().get(AgencyKV.DrawOrder.KEY_DRAWORDER, null, String.class);
+				drawOrderStr = layer.getProperties().get(CommonKV.DrawOrder.KEY_DRAWORDER, null, String.class);
 			}
 			catch(ClassCastException cce2) {
 				// return null because no float value and no string found to indicate draw order for layer

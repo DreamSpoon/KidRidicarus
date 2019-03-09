@@ -27,7 +27,8 @@ public class GameOverScreen implements Screen {
 
 	public GameOverScreen(Game game, boolean win) {
 		LabelStyle font;
-		Label gameOverLabel, playAgainLabel;
+		Label gameOverLabel;
+		Label playAgainLabel;
 		Table table;
 
 		this.game = game;

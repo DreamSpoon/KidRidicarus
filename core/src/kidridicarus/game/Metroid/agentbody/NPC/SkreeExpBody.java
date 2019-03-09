@@ -32,9 +32,11 @@ public class SkreeExpBody extends MobileAgentBody {
 		bdef.position.set(position);
 		bdef.linearVelocity.set(velocity);
 		bdef.gravityScale = 0f;
+		b2body = world.createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, fdef, this, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
+				BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.SMB.agentbody.player.MarioFireballBody;
 import kidridicarus.game.SMB.agentsprite.player.MarioFireballSprite;
 import kidridicarus.game.info.AudioInfo;
@@ -46,7 +47,7 @@ public class MarioFireball extends BasicWalkAgent implements UpdatableAgent, Dra
 		stateTimer = 0f;
 
 		// fireball on right?
-		if(properties.containsKV(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT)) {
+		if(properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT)) {
 			isMovingRight = true;
 			fbBody = new MarioFireballBody(this, agency.getWorld(), Agent.getStartPoint(properties),
 					MOVE_VEL.cpy().scl(1, 1));
@@ -155,9 +156,9 @@ public class MarioFireball extends BasicWalkAgent implements UpdatableAgent, Dra
 		ObjectProperties props = Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIOFIREBALL, position);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		if(right)
-			props.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT);
+			props.put(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT);
 		else
-			props.put(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_LEFT);
+			props.put(CommonKV.KEY_DIRECTION, CommonKV.VAL_LEFT);
 		return props;
 	}
 }

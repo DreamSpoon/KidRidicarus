@@ -25,10 +25,12 @@ public class PlayerSpawnerBody extends AgentBody {
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyDef.BodyType.StaticBody;
 		bdef.position.set(bounds.getCenter(new Vector2()));
+		b2body = world.createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CommonCF.NO_CONTACT_CFCAT,
-				CommonCF.NO_CONTACT_CFMASK, bounds.width, bounds.height);
+		B2DFactory.makeBoxFixture(b2body, fdef, this, CommonCF.NO_CONTACT_CFCAT, CommonCF.NO_CONTACT_CFMASK,
+				bounds.width, bounds.height);
 	}
 
 	@Override

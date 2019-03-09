@@ -52,9 +52,11 @@ public class SkreeBody extends MobileAgentBody {
 		bdef.type = BodyType.DynamicBody;
 		bdef.position.set(position);
 		bdef.gravityScale = 0f;
+		b2body = world.createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CommonCF.SOLID_BODY_CFCAT,
-				CommonCF.SOLID_BODY_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, fdef, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+				BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	// same size as main body, for detecting agents

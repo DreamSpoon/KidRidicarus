@@ -1,6 +1,6 @@
 package kidridicarus.common.tool;
 
-import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.common.info.CommonKV;
 
 public enum Direction4 {
 	RIGHT, UP, LEFT, DOWN;
@@ -44,13 +44,13 @@ public enum Direction4 {
 	public static Direction4 fromString(String str) {
 		if(str == null)
 			return null;
-		else if(str.equals(AgencyKV.VAL_RIGHT))
+		else if(str.equals(CommonKV.VAL_RIGHT))
 			return Direction4.RIGHT;
-		else if(str.equals(AgencyKV.VAL_UP))
+		else if(str.equals(CommonKV.VAL_UP))
 			return Direction4.UP;
-		else if(str.equals(AgencyKV.VAL_LEFT))
+		else if(str.equals(CommonKV.VAL_LEFT))
 			return Direction4.LEFT;
-		else if(str.equals(AgencyKV.VAL_DOWN))
+		else if(str.equals(CommonKV.VAL_DOWN))
 			return Direction4.DOWN;
 		else
 			return null;

@@ -317,7 +317,7 @@ public class SamusBody extends MobileAgentBody {
 	 * Returns null otherwise. 
 	 */
 	public PipeWarp getPipeWarpForAdvice(Direction4 adviceDir) {
-		for(Agent pw : wpSensor.getContactsByClass(PipeWarp.class)) {
+		for(PipeWarp pw : wpSensor.getContactsByClass(PipeWarp.class)) {
 			if(((PipeWarp) pw).canBodyEnterPipe(getBounds(), adviceDir))
 				return (PipeWarp) pw;
 		}

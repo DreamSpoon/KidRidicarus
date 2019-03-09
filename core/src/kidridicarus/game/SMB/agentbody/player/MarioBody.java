@@ -293,7 +293,8 @@ public class MarioBody extends MobileAgentBody {
 
 	public MarioBodyState update(float delta, MoveAdvice advice, MarioPowerState curPowerState) {
 		MarioBodyState nextState;
-		boolean isVelocityLeft, isVelocityRight;
+		boolean isVelocityLeft;
+		boolean isVelocityRight;
 		boolean doDuckSlideMove;
 		boolean doWalkRunMove;
 		boolean doDecelMove;
@@ -519,7 +520,7 @@ public class MarioBody extends MobileAgentBody {
 			dir = Direction4.DOWN;
 		else
 			return;
-		for(Agent pw : wpSensor.getContactsByClass(PipeWarp.class)) {
+		for(PipeWarp pw : wpSensor.getContactsByClass(PipeWarp.class)) {
 			if(((PipeWarp) pw).canBodyEnterPipe(getBounds(), dir)) {
 				// player can enter pipe, so save a ref to the pipe
 				pipeToEnter = (PipeWarp) pw;
@@ -639,7 +640,8 @@ public class MarioBody extends MobileAgentBody {
 	}
 
 	public void moveBodyLeftRight(boolean right, boolean doRunRun) {
-		float speed, max;
+		float speed;
+		float max;
 		if(ogSensor.isOnGround())
 			speed = doRunRun ? MARIO_RUNMOVE_XIMP : MARIO_WALKMOVE_XIMP;
 		else {

@@ -34,10 +34,6 @@ import kidridicarus.common.info.UInfo;
  *   2) The Trees:
  *     The individual tiles within the tile collision map. They are abstracted as bound lines. The
  *     bound lines are just a representation of the tiles, ergo I consider the bounds lines to be Trees.
- * TODO implement the TileCollisionMap as an Agent, do not keep as a separate reference in Agency.
- * After all regular updates to Agents are made, call a postUpdate method on TileCollisionMap to make it iterate
- * through the tile solid state change queue and implements changes.
- * Also make the tiled map draworder layers agents as well, but they won't need a postUpdate method.
  */
 public class OrthoTileCollisionMap implements Disposable {
 	private World world;

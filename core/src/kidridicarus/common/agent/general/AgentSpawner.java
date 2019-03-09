@@ -7,9 +7,9 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.AgentSpawnerBody;
+import kidridicarus.common.info.CommonKV;
 
 public class AgentSpawner extends Agent implements UpdatableAgent, DisposableAgent {
 	private AgentSpawnerBody sbody;
@@ -18,7 +18,7 @@ public class AgentSpawner extends Agent implements UpdatableAgent, DisposableAge
 
 	public AgentSpawner(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		spawnAgentClassAlias = properties.get(AgencyKV.Spawn.KEY_SPAWNAGENTCLASS, "", String.class);
+		spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWNAGENTCLASS, "", String.class);
 		isUsed = false;
 		sbody = new AgentSpawnerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 	}

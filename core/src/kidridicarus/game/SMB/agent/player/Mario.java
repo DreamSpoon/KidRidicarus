@@ -40,7 +40,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		DisposableAgent {
 	public enum MarioAgentState { PLAY, FIREBALL, DEAD }
 
-	public static final float MARIO_DEAD_TIME = 3f;
+	private static final float MARIO_DEAD_TIME = 3f;
 	private static final float LEVEL_MAX_TIME = 300f;
 
 	private static final float DMG_INVINCIBLE_TIME = 3f;

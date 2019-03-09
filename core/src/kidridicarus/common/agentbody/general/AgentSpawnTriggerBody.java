@@ -55,10 +55,12 @@ public class AgentSpawnTriggerBody extends AgentBody {
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		bdef.position.set(bounds.getCenter(new Vector2()));
 		bdef.gravityScale = 0f;
+		b2body = world.createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		acSensor = new AgentContactHoldSensor(this);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, acSensor, CFCAT_BITS, CFMASK_BITS,
+		B2DFactory.makeBoxFixture(b2body, fdef, acSensor, CFCAT_BITS, CFMASK_BITS,
 				bounds.width, bounds.height);
 	}
 
@@ -75,11 +77,13 @@ public class AgentSpawnTriggerBody extends AgentBody {
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		bdef.position.set(0f, 0f);
 		bdef.gravityScale = 0f;
+		tempB = world.createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		// the fake body does not contact anything
 		// TODO: find a better place to stick this temp body 
-		tempB = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CommonCF.NO_CONTACT_CFCAT,
+		B2DFactory.makeBoxFixture(tempB, fdef, this, CommonCF.NO_CONTACT_CFCAT,
 				CommonCF.NO_CONTACT_CFMASK, 0.01f, 0.01f);
 
 		MouseJointDef mjdef = new MouseJointDef();

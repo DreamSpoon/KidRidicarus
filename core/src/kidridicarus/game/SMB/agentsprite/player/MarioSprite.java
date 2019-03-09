@@ -55,7 +55,8 @@ public class MarioSprite extends Sprite {
 
 	private MarioSpriteState curSpriteState;
 
-	private Animation<TextureRegion>[][] smlAnim, bigAnim;
+	private Animation<TextureRegion>[][] smlAnim;
+	private Animation<TextureRegion>[][] bigAnim;
 
 	private float stateTimer;
 	private float fallStartStateTime;

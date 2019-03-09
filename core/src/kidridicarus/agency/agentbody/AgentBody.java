@@ -38,7 +38,6 @@ public abstract class AgentBody implements Disposable {
 	}
 
 	// body can pass through everything, maybe to fall off screen
-	// TODO delete this method, implement differently
 	public void disableAllContacts() {
 		CFBitSeq catBits = new CFBitSeq();
 		CFBitSeq maskBits = new CFBitSeq();

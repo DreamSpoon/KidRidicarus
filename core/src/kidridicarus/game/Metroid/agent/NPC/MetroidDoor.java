@@ -8,11 +8,11 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.Metroid.agentbody.NPC.MetroidDoorBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.MetroidDoorSprite;
 
@@ -34,7 +34,7 @@ public class MetroidDoor extends Agent implements UpdatableAgent, DrawableAgent,
 		super(agency, properties);
 
 		isFacingRight = false;
-		isFacingRight = properties.containsKV(AgencyKV.KEY_DIRECTION, AgencyKV.VAL_RIGHT);
+		isFacingRight = properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT);
 		isOpening = false;
 		moveState = MoveState.CLOSED;
 		stateTimer = 0f;

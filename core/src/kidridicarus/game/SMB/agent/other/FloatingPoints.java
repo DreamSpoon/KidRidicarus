@@ -11,6 +11,7 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentsprite.other.FloatingPointsSprite;
@@ -52,7 +53,7 @@ public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAge
 		if(ud != null && ud instanceof Mario) {
 			// relative points can stack, absolute points can not
 			amount = ((Mario) ud).givePoints(amount, properties.containsKV(GameKV.SMB.KEY_RELPOINTAMOUNT,
-					AgencyKV.VAL_TRUE));
+					CommonKV.VAL_TRUE));
 			if(amount == PointAmount.P1UP)
 				agency.playSound(AudioInfo.Sound.SMB.UP1);
 		}
@@ -94,7 +95,7 @@ public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAge
 				position.cpy().add(0f, yOffset));
 		props.put(GameKV.SMB.KEY_POINTAMOUNT, amt);
 		if(relative)
-			props.put(GameKV.SMB.KEY_RELPOINTAMOUNT, AgencyKV.VAL_TRUE);
+			props.put(GameKV.SMB.KEY_RELPOINTAMOUNT, CommonKV.VAL_TRUE);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		return props;
 	}

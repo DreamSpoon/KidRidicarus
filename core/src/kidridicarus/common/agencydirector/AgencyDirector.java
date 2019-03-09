@@ -113,8 +113,8 @@ public class AgencyDirector implements Disposable {
 	private Agent getMainPlayerSpawner() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
 		Collection<Agent> spawnList = agency.getAgentsByProperties(
-				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, AgencyKV.Spawn.KEY_SPAWNMAIN },
-				new String[] { CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, AgencyKV.VAL_TRUE });
+				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, CommonKV.Spawn.KEY_SPAWNMAIN },
+				new String[] { CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, CommonKV.VAL_TRUE });
 		if(!spawnList.isEmpty())
 			return spawnList.iterator().next();
 		else

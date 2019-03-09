@@ -35,7 +35,6 @@ public class ZoomerSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	// TODO: change angle of sprite based on upDir
 	public void update(float delta, Vector2 position, MoveState curState, Direction4 upDir) {
 		switch(curState) {
 			case WALK:

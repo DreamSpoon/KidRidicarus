@@ -92,6 +92,11 @@ public class PlayCoordinator implements Disposable {
 			});
 	}
 
+	private void switchPlayAgentHUD() {
+		stageHUD.clear();
+		setPlayAgentHUD();
+	}
+
 	public void handleInput() {
 		inputMoveAdvice.moveRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
 		inputMoveAdvice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
@@ -143,12 +148,12 @@ public class PlayCoordinator implements Disposable {
 			case MARIO:
 				agent = agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIO, currentPos));
 				playAgent = (PlayerAgent) agent;
-				setPlayAgentHUD();
+				switchPlayAgentHUD();
 				break;
 			case SAMUS:
 				agent = agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS, currentPos));
 				playAgent = (PlayerAgent) agent;
-				setPlayAgentHUD();
+				switchPlayAgentHUD();
 				break;
 			case NONE:
 				break;

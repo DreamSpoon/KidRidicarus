@@ -44,10 +44,11 @@ public class BumpTileBody extends AgentBody implements BumpableTileBody {
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		bdef.gravityScale = 0f;
 		bdef.position.set(bounds.getCenter(new Vector2()));
+		b2body = world.createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, AS_CFCAT, AS_CFMASK,
-				bounds.width, bounds.height);
+		B2DFactory.makeBoxFixture(b2body, fdef, this, AS_CFCAT, AS_CFMASK, bounds.width, bounds.height);
 	}
 
 	// only the collision map can contact this fixture

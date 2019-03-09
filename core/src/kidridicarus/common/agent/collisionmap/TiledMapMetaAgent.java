@@ -56,12 +56,12 @@ public class TiledMapMetaAgent extends Agent implements UpdatableAgent, Disposab
 				continue;
 
 			// is solid layer property set to true?
-			if(layer.getProperties().get(AgencyKV.Layer.KEY_SOLIDLAYER,
-					AgencyKV.VAL_FALSE, String.class).equals(AgencyKV.VAL_TRUE)) {
+			if(layer.getProperties().get(CommonKV.Layer.KEY_SOLIDLAYER,
+					CommonKV.VAL_FALSE, String.class).equals(CommonKV.VAL_TRUE)) {
 				solidLayers.add((TiledMapTileLayer) layer);
 			}
 			// does this layer have a draw order?
-			if(layer.getProperties().get(AgencyKV.DrawOrder.KEY_DRAWORDER, null, String.class) != null)
+			if(layer.getProperties().get(CommonKV.DrawOrder.KEY_DRAWORDER, null, String.class) != null)
 				drawLayers.add((TiledMapTileLayer) layer);
 		}
 

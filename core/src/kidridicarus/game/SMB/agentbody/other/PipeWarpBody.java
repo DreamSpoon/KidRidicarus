@@ -12,8 +12,8 @@ import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.SMB.agent.other.PipeWarp;
 
 public class PipeWarpBody extends AgentBody {
-	public static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
-	public static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
+	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private PipeWarp parent;
 
 	public PipeWarpBody(PipeWarp parent, World world, Rectangle bounds) {

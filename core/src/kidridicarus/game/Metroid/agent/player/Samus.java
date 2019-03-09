@@ -10,7 +10,6 @@ import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.GameAgentObserver;
@@ -51,7 +50,6 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	private static final float POSTPONE_RUN_DELAY = 0.15f;
 
 	public enum ContactState { REGULAR, DAMAGE }
-	// TODO implement samus CLIMB (e.g. climbing SMB vines, or Kid Icarus ladders)
 	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT, CLIMB }
 
 	private SamusBody samusBody;
@@ -103,7 +101,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		observer = new SamusObserver(this, agency.getAtlas());
 		supervisor = new SamusSupervisor(this);
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
 	@Override
@@ -510,7 +508,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		// check spawn point of shot, if it is in a solid tile then the shot immediately explodes
 		if(isMapPointSolid(position)) {
 			// add the immediate explode property to the properties list
-			shotProps.put(AgencyKV.Spawn.KEY_EXPIRE, true);
+			shotProps.put(CommonKV.Spawn.KEY_EXPIRE, true);
 		}
 		agency.createAgent(shotProps);
 		agency.playSound(AudioInfo.Sound.Metroid.SHOOT);

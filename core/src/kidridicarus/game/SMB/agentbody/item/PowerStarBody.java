@@ -34,12 +34,14 @@ public class PowerStarBody extends MobileAgentBody implements BumpableBody {
 		bdef.position.set(position);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		bdef.gravityScale = 0.5f;	// floaty
+		b2body = world.createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
 		fdef.restitution = 1f;	// bouncy
 		// items contact mario but can pass through goombas, turtles, etc.
 		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, hmSensor, CommonCF.SOLID_ITEM_CFCAT,
-				CommonCF.SOLID_ITEM_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, fdef, hmSensor, CommonCF.SOLID_ITEM_CFCAT, CommonCF.SOLID_ITEM_CFMASK,
+				BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override

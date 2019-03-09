@@ -121,7 +121,7 @@ public class CFBitSeq {
 		Iterator<String> bitsIter = bits.iterator();
 		StringBuilder strb = new StringBuilder("[\"");
 		while(bitsIter.hasNext()) {
-			strb.append(bitsIter.next().toString());
+			strb.append(bitsIter.next());
 			if(bitsIter.hasNext())
 				strb.append("\", \"");
 		}

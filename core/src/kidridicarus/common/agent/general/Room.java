@@ -8,8 +8,8 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.RoomBoxBody;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.agency.info.AgencyKV;
 
 /*
  * A box with properties applicable to a space, whose properties can be queried.
@@ -30,16 +30,16 @@ public class Room extends Agent implements DisposableAgent {
 		rbody = new RoomBoxBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 
 		roomtype = RoomType.CENTER;
-		String roomTypeStr = properties.get(AgencyKV.Room.KEY_ROOMTYPE, "", String.class);
-		if(roomTypeStr.equals(AgencyKV.Room.VAL_ROOMTYPE_HSCROLL))
+		String roomTypeStr = properties.get(CommonKV.Room.KEY_ROOMTYPE, "", String.class);
+		if(roomTypeStr.equals(CommonKV.Room.VAL_ROOMTYPE_HSCROLL))
 			roomtype = RoomType.HSCROLL;
-		else if(roomTypeStr.equals(AgencyKV.Room.VAL_ROOMTYPE_CENTER))
+		else if(roomTypeStr.equals(CommonKV.Room.VAL_ROOMTYPE_CENTER))
 			roomtype = RoomType.CENTER;
 
-		roommusic = properties.get(AgencyKV.Room.KEY_ROOMMUSIC, "", String.class);
+		roommusic = properties.get(CommonKV.Room.KEY_ROOMMUSIC, "", String.class);
 		agency.registerMusic(roommusic);
 
-		vOffset = UInfo.P2M(properties.get(AgencyKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
+		vOffset = UInfo.P2M(properties.get(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
 	}
 
 	public Vector2 getViewCenterForPos(Vector2 pos) {

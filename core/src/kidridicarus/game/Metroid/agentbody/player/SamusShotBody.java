@@ -47,10 +47,12 @@ public class SamusShotBody extends MobileAgentBody {
 		bdef.position.set(position);
 		bdef.linearVelocity.set(velocity);
 		bdef.gravityScale = 0f;
+		b2body = world.createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
 		boundSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, boundSensor, CommonCF.SOLID_BODY_CFCAT,
-				CommonCF.SOLID_BODY_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, fdef, boundSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+				BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	private void createAgentSensor() {

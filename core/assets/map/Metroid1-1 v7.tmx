@@ -5,7 +5,7 @@
  </tileset>
  <layer id="2" name="background" width="160" height="15">
   <properties>
-   <property name="draworder" value="map_bottom"/>
+   <property name="draworder" value="map_background"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztwzENAAAMBKGb37/gaugOCaumqqqqqqqqqqrq+wEYEV3B

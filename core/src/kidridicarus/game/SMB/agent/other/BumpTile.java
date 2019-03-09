@@ -14,11 +14,11 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
-import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.BumpTakeAgent;
 import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
@@ -114,7 +114,7 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 				collisionMap = btBody.getFirstContactByClass(OrthoCollisionTiledMapAgent.class);
 				if(collisionMap != null) {
 					// make the tile solid in the tile physics layer if it is not a secret block 
-					if(!properties.containsKV(GameKV.SMB.KEY_SECRETBLOCK, AgencyKV.VAL_TRUE))
+					if(!properties.containsKV(GameKV.SMB.KEY_SECRETBLOCK, CommonKV.VAL_TRUE))
 						collisionMap.setTileSolidStateAtPos(btBody.getPosition(), true);
 				}
 				break;
@@ -183,7 +183,7 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 			startBreakTile();
 		else {
 			// if the tile was a secret block then it was not solid, so make it solid 
-			if(properties.get(GameKV.SMB.KEY_SECRETBLOCK, "", String.class).equals(AgencyKV.VAL_TRUE))
+			if(properties.get(GameKV.SMB.KEY_SECRETBLOCK, "", String.class).equals(CommonKV.VAL_TRUE))
 				collisionMap.setTileSolidStateAtPos(btBody.getPosition(), true);
 
 			switch(blockItem) {

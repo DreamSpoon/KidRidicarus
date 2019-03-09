@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.PlayerSpawner;
 import kidridicarus.common.agent.optional.PlayerAgent;
@@ -35,8 +34,8 @@ public class PipeWarp extends Agent implements DisposableAgent {
 		super(agency, properties);
 
 		direction = null;
-		if(properties.containsKey(AgencyKV.KEY_DIRECTION)) {
-			String dir = properties.get(AgencyKV.KEY_DIRECTION, "", String.class);
+		if(properties.containsKey(CommonKV.KEY_DIRECTION)) {
+			String dir = properties.get(CommonKV.KEY_DIRECTION, "", String.class);
 			if(dir.equals("right"))
 				direction = Direction4.RIGHT;
 			else if(dir.equals("up"))
@@ -137,12 +136,12 @@ public class PipeWarp extends Agent implements DisposableAgent {
 		if(gs == null)
 			return null;
 		// if the exit spawner doesn't have a pipe warp spawn property then quit method
-		if(!gs.getProperty(AgencyKV.Spawn.KEY_SPAWNTYPE, "", String.class).
+		if(!gs.getProperty(CommonKV.Spawn.KEY_SPAWNTYPE, "", String.class).
 				equals(CommonKV.AgentClassAlias.VAL_PIPEWARP_SPAWN))
 			return null;
 
 		// if the exit spawner doesn't have a direction property then quit the method
-		Direction4 exitDir = Direction4.fromString(gs.getProperty(AgencyKV.KEY_DIRECTION, "", String.class));
+		Direction4 exitDir = Direction4.fromString(gs.getProperty(CommonKV.KEY_DIRECTION, "", String.class));
 		if(exitDir == null)
 			return null;
 

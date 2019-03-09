@@ -13,6 +13,7 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.Metroid.agentbody.player.SamusShotBody;
 import kidridicarus.game.Metroid.agentsprite.player.SamusShotSprite;
 import kidridicarus.game.info.GameKV;
@@ -36,7 +37,7 @@ public class SamusShot extends Agent implements UpdatableAgent, DrawableAgent, D
 		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Samus.class);
 
 		// check the definition properties, maybe the shot needs to expire immediately
-		isExploding = properties.containsKey(AgencyKV.Spawn.KEY_EXPIRE);
+		isExploding = properties.containsKey(CommonKV.Spawn.KEY_EXPIRE);
 		if(isExploding)
 			curMoveState = MoveState.EXPLODE;
 		else

@@ -30,10 +30,11 @@ public class StaticCoinBody extends AgentBody {
 		bdef = new BodyDef();
 		bdef.position.set(position.x, position.y);
 		bdef.type = BodyDef.BodyType.StaticBody;
+		b2body = world.createBody(bdef);
+
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, this, CommonCF.SOLID_ITEM_CFCAT,
-				CommonCF.SOLID_ITEM_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, fdef, this, CommonCF.SOLID_ITEM_CFCAT, CommonCF.SOLID_ITEM_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override
