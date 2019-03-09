@@ -14,10 +14,6 @@ public class AllowOrder implements Comparable<AllowOrder> {
 		this.order = order;
 	}
 
-	public AllowOrder cpy() {
-		return new AllowOrder(this.allow, this.order);
-	}
-
 	@Override
 	public boolean equals(Object other) {
 		// if both are not allowed then order does not matter

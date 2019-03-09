@@ -1,4 +1,4 @@
-package kidridicarus.agency.contact;
+package kidridicarus.agency.agentcontact;
 
 import java.util.HashSet;
 import java.util.Iterator;

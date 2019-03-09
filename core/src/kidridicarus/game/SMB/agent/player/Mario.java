@@ -4,13 +4,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.AgentSupervisor;
@@ -19,7 +19,6 @@ import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.SMB.agent.other.Flagpole;
@@ -41,6 +40,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		DisposableAgent {
 	public enum MarioAgentState { PLAY, FIREBALL, DEAD }
 
+	public static final float MARIO_DEAD_TIME = 3f;
 	private static final float LEVEL_MAX_TIME = 300f;
 
 	private static final float DMG_INVINCIBLE_TIME = 3f;
@@ -65,7 +65,6 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	private float fireballTimer;
 	private float powerStarTimer;
 	private float levelTimeRemaining;
-	private boolean isLevelEndContacted;
 	private int extraLives;
 	private int coinTotal;
 	private int pointTotal;
@@ -88,7 +87,6 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		powerupRec = PowType.NONE;
 
 		levelTimeRemaining = LEVEL_MAX_TIME;
-		isLevelEndContacted = false;
 
 		curAgentState = MarioAgentState.PLAY;
 		stateTimer = 0f;
@@ -104,7 +102,7 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		observer = new MarioObserver(this, agency.getAtlas());
 
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
-		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
+		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
 	@Override
@@ -160,6 +158,9 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			processPowerups();
 			bodyState = mBody.update(delta, advice, curPowerState);
 		}
+		else if(curAgentState == MarioAgentState.DEAD && stateTimer > MARIO_DEAD_TIME) {
+			supervisor.setGameOver();
+		}
 
 		stateTimer = nextAgentState == curAgentState ? stateTimer+delta : 0f;
 		curAgentState = nextAgentState;
@@ -192,10 +193,8 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			mBody.zeroVelocity(true, false);
 			return MarioAgentState.DEAD;
 		}
-		else if(isUseLevelEndTrigger()) {
-			isLevelEndContacted = true;
+		else if(isUseLevelEndTrigger())
 			return curAgentState;
-		}
 		// flagpole contact and use?
 		else if(isUseFlagpole())
 			return curAgentState;
@@ -360,6 +359,9 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 
 	@Override
 	public void draw(AgencyDrawBatch batch) {
+		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice() &&
+				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
+			return;
 		batch.draw(marioSprite);
 	}
 
@@ -397,10 +399,6 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		extraLives++;
 	}
 
-	public float getStateTimer() {
-		return stateTimer;
-	}
-
 	@Override
 	public Room getCurrentRoom() {
 		return mBody.getCurrentRoom();
@@ -427,11 +425,11 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 	 * Return false otherwise.
 	 * This is done so the getStateTimer method returns the correct state time when mario is dead. 
 	 */
-	public boolean isDead() {
-		if(marioIsDead && curAgentState == MarioAgentState.DEAD)
-			return true;
-		return false;
-	}
+//	public boolean isDead() {
+//		if(marioIsDead && curAgentState == MarioAgentState.DEAD)
+//			return true;
+//		return false;
+//	}
 
 	public boolean isBig() {
 		return (curPowerState != MarioPowerState.SMALL);
@@ -491,11 +489,6 @@ public class Mario extends Agent implements UpdatableAgent, DrawableAgent, Playe
 			return (T) he;
 		}
 		return properties.get(key, defaultValue, cls);
-	}
-
-	@Override
-	public boolean isAtLevelEnd() {
-		return isLevelEndContacted;
 	}
 
 	@Override

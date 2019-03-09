@@ -2,7 +2,7 @@ package kidridicarus.agency.agentscript;
 
 public interface AgentScript {
 	public interface AgentScriptHooks {
-		public void gotoNextLevel(String nextLevelName);
+		public void gotoNextLevel(String levelName);
 		// also include start music, stop music, etc.
 	}
 

@@ -8,7 +8,4 @@ public interface PlayerAgent {
 	public GameAgentObserver getObserver();
 	public AgentSupervisor getSupervisor();
 	public Room getCurrentRoom();
-	public boolean isDead();
-	public boolean isAtLevelEnd();
-	public float getStateTimer();
 }

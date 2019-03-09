@@ -1,10 +1,7 @@
-package kidridicarus.agency.change;
+package kidridicarus.agency.agencychange;
 
 import kidridicarus.common.tool.AllowOrder;
 
-/*
- * Change the "updates enabled" state of an agent.
- */
 public class UpdateOrderChange {
 	public AgentPlaceholder ap;
 	public AllowOrder updateOrder;

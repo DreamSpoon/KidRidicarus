@@ -8,16 +8,15 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.contact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.BounceCoinSprite;
 
@@ -39,7 +38,7 @@ public class SpinCoin extends Agent implements UpdatableAgent, DrawableAgent, Di
 		coinSprite = new BounceCoinSprite(agency.getAtlas(), b2body.getPosition());
 
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
-		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {

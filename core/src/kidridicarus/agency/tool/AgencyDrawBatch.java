@@ -1,4 +1,4 @@
-package kidridicarus.agency;
+package kidridicarus.agency.tool;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
+/*
+ * A wrapper class which enables agents to draw sprites, tiled map layers, etc.
+ */
 public class AgencyDrawBatch {
 	private Batch batch;
 	private OrthogonalTiledMapRenderer tileRenderer;

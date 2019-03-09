@@ -22,9 +22,6 @@ import kidridicarus.game.SMB.agent.player.MarioFireball;
  * Desc: Info specific to Super Mario Bros.
  */
 public class SMBInfo {
-	public static final float MARIO_DEAD_TIME = 3f;
-	public static final float MARIO_LEVELEND_TIME = 5f;
-
 	// https://www.mariowiki.com/Point
 	//   Super Mario Bros. 1
 	//     100 - 200 - 400 - 500 - 800 - 1000 - 2000 - 4000 - 5000 - 8000 - 1UP 
@@ -43,56 +40,6 @@ public class SMBInfo {
 			// when points overflow occurs, the player gets 1-UP
 			else
 				return PointAmount.P1UP;
-		}
-	}
-
-	public static PointAmount strToPointAmount(String strAmt) {
-		if(strAmt.equals(GameKV.SMB.VAL_POINTS0))
-			return PointAmount.ZERO;
-		else if(strAmt.equals(GameKV.SMB.VAL_POINTS100))
-			return PointAmount.P100;
-		else if(strAmt.equals(GameKV.SMB.VAL_POINTS200))
-			return PointAmount.P200;
-		else if(strAmt.equals(GameKV.SMB.VAL_POINTS400))
-			return PointAmount.P400;
-		else if(strAmt.equals(GameKV.SMB.VAL_POINTS500))
-			return PointAmount.P500;
-		else if(strAmt.equals(GameKV.SMB.VAL_POINTS800))
-			return PointAmount.P800;
-		else if(strAmt.equals(GameKV.SMB.VAL_POINTS1000))
-			return PointAmount.P1000;
-		else if(strAmt.equals(GameKV.SMB.VAL_POINTS1UP))
-			return PointAmount.P1UP;
-		return PointAmount.ZERO;
-	}
-
-	public static String pointAmountToStr(PointAmount amt) {
-		switch(amt) {
-			default:
-			case ZERO:
-				return GameKV.SMB.VAL_POINTS0;
-			case P100:
-				return GameKV.SMB.VAL_POINTS100;
-			case P200:
-				return GameKV.SMB.VAL_POINTS200;
-			case P400:
-				return GameKV.SMB.VAL_POINTS400;
-			case P500:
-				return GameKV.SMB.VAL_POINTS500;
-			case P800:
-				return GameKV.SMB.VAL_POINTS800;
-			case P1000:
-				return GameKV.SMB.VAL_POINTS1000;
-			case P2000:
-				return GameKV.SMB.VAL_POINTS2000;
-			case P4000:
-				return GameKV.SMB.VAL_POINTS4000;
-			case P5000:
-				return GameKV.SMB.VAL_POINTS5000;
-			case P8000:
-				return GameKV.SMB.VAL_POINTS8000;
-			case P1UP:
-				return GameKV.SMB.VAL_POINTS1UP;
 		}
 	}
 

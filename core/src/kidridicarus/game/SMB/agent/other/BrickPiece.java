@@ -8,15 +8,14 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.BrickPieceSprite;
 import kidridicarus.game.info.GameKV;
@@ -39,7 +38,7 @@ public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent, 
 		bpSprite = new BrickPieceSprite(agency.getAtlas(), b2body.getPosition(),
 				properties.get(CommonKV.Sprite.KEY_STARTFRAME, 0, Integer.class));
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
-		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
+		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {

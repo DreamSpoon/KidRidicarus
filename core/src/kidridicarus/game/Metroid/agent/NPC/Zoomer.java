@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -12,11 +11,11 @@ import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.ZoomerBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.ZoomerSprite;
 import kidridicarus.game.info.GameKV;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.tool.Direction4;
 
 /*
@@ -66,7 +65,7 @@ public class Zoomer extends Agent implements UpdatableAgent, DrawableAgent, Cont
 		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
 
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
-		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
+		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override

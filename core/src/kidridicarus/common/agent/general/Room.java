@@ -11,6 +11,12 @@ import kidridicarus.common.agentbody.general.RoomBoxBody;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.agency.info.AgencyKV;
 
+/*
+ * A box with properties applicable to a space, whose properties can be queried.
+ * e.g. Create a room and whenever the player is contacting the room, the player can query the room for the
+ * current room music. Also applicable to viewpoint, since the room can specify which way the screen scrolls
+ * and if the view should be offset.
+ */
 public class Room extends Agent implements DisposableAgent {
 	private RoomBoxBody rbody;
 	private enum RoomType { CENTER, HSCROLL }

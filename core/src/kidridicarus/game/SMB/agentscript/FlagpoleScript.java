@@ -1,4 +1,4 @@
-package kidridicarus.common.agentscript;
+package kidridicarus.game.SMB.agentscript;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;

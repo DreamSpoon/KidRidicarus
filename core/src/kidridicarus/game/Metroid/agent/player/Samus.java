@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
@@ -12,18 +11,17 @@ import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
 import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
@@ -31,6 +29,7 @@ import kidridicarus.game.Metroid.agentbody.player.SamusBody;
 import kidridicarus.game.Metroid.agentsprite.player.SamusSprite;
 import kidridicarus.game.SMB.agent.other.Flagpole;
 import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
+import kidridicarus.game.SMB.agent.other.PipeWarp;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
@@ -104,7 +103,7 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		observer = new SamusObserver(this, agency.getAtlas());
 		supervisor = new SamusSupervisor(this);
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
-		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
 	@Override
@@ -576,25 +575,6 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		if(octMap == null)
 			return false;
 		return octMap.isMapPointSolid(position);
-	}
-
-	// TODO implement the general info return functionality by override of the getProperty method of Agent class
-	// for most of the following methods (or all?)
-	// OR, push these events to samus supervisor, so that this Agent info won't need to be polled
-
-	@Override
-	public boolean isDead() {
-		return false;
-	}
-
-	@Override
-	public boolean isAtLevelEnd() {
-		return supervisor.getNextLevelName() != null;
-	}
-
-	@Override
-	public float getStateTimer() {
-		return moveStateTimer;
 	}
 
 	@Override

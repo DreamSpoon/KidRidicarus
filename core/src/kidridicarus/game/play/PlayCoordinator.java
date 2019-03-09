@@ -22,7 +22,6 @@ import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.PowerupInfo.PowChar;
 import kidridicarus.game.info.PowerupInfo.PowType;
-import kidridicarus.game.info.SMBInfo;
 import kidridicarus.game.tool.KeyboardMapping;
 import kidridicarus.game.tool.QQ;
 
@@ -158,7 +157,7 @@ public class PlayCoordinator implements Disposable {
 
 	public void updateCamera(OrthographicCamera gamecam) {
 		// if player is not dead then use their current room to determine the gamecam position
-		if(!((PlayerAgent) agent).isDead()) {
+		if(!playAgent.getSupervisor().isGameOver()) {
 			gamecam.position.set(playAgent.getObserver().getViewCenter(), 0f);
 			gamecam.update();
 		}
@@ -169,13 +168,13 @@ public class PlayCoordinator implements Disposable {
 	}
 
 	public boolean isGameWon() {
-		if(playAgent.isAtLevelEnd())
+		if(playAgent.getSupervisor().isAtLevelEnd())
 			return true;
 		return false;
 	}
 
 	public boolean isGameOver() {
-		if(playAgent.isDead() && playAgent.getStateTimer() > SMBInfo.MARIO_DEAD_TIME)
+		if(playAgent.getSupervisor().isGameOver())
 			return true;
 		return false;
 	}
@@ -241,6 +240,7 @@ public class PlayCoordinator implements Disposable {
 	public void dispose() {
 		doStopMainMusic();
 		stageHUD.clear();
+		// TODO the following code was giving an exception on game exit, where should player spawntrigger be disposed?
 //		if(spawnTrigger != null)
 //			spawnTrigger.dispose();
 	}

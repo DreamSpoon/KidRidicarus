@@ -1,4 +1,4 @@
-package kidridicarus.agency.change;
+package kidridicarus.agency.agencychange;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,11 +14,11 @@ public class AgencyChangeQueue {
 	}
 
 	public void addAgent(AgentPlaceholder ap) {
-		changeQ.add(new AgentListChange(ap, true));
+		changeQ.add(new AllAgentListChange(ap, true));
 	}
 
 	public void removeAgent(AgentPlaceholder ap) {
-		changeQ.add(new AgentListChange(ap, false));
+		changeQ.add(new AllAgentListChange(ap, false));
 	}
 
 	public void setAgentUpdateOrder(AgentPlaceholder ap, AllowOrder order) {
@@ -28,10 +28,6 @@ public class AgencyChangeQueue {
 	public void setAgentDrawOrder(AgentPlaceholder ap, AllowOrder order) {
 		changeQ.add(new DrawOrderChange(ap, order));
 	}
-
-//	public void setPhysicTile(int x, int y, boolean solid) {
-//		changeQ.add(new TileChange(x, y, solid));
-//	}
 
 	/*
 	 * Iterate through each agent change in queue until queue is empty, invoking callback for each agent.

@@ -8,9 +8,9 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.common.agentbody.MobileAgentBody;
-import kidridicarus.common.agentbody.sensor.AgentContactSensor;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.common.agentbody.general.MobileAgentBody;
+import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
@@ -27,7 +27,7 @@ public class GoombaBody extends MobileAgentBody {
 	private Goomba parent;
 	private OnGroundSensor ogSensor;
 	private SolidBoundSensor hmSensor;
-	private AgentContactSensor acSensor;
+	private AgentContactHoldSensor acSensor;
 	private Fixture acSensorFixture;
 
 	public GoombaBody(Goomba parent, World world, Vector2 position) {
@@ -54,7 +54,7 @@ public class GoombaBody extends MobileAgentBody {
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		acSensor = new AgentContactSensor(this);
+		acSensor = new AgentContactHoldSensor(this);
 		acSensorFixture = b2body.createFixture(fdef);
 		acSensorFixture.setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
 				CommonCF.AGENT_SENSOR_CFMASK, acSensor));
@@ -83,7 +83,7 @@ public class GoombaBody extends MobileAgentBody {
 	}
 
 	public boolean isMoveBlockedByAgent(boolean moveRight) {
-		return AgentContactSensor.isMoveBlockedByAgent(acSensor, getPosition(), moveRight);
+		return AgentContactHoldSensor.isMoveBlockedByAgent(acSensor, getPosition(), moveRight);
 	}
 
 	// disable contacts between the agent contact sensor and agents

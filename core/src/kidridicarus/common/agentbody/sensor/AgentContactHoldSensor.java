@@ -6,17 +6,17 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentbody.sensor.ContactSensor;
-import kidridicarus.agency.contact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.AgentContactSensor;
 import kidridicarus.common.agent.optional.PlayerAgent;
 
 /*
- * Keep track of non-Player agents contacted.
+ * Keep track of agents contacted.
  */
-public class AgentContactSensor extends ContactSensor {
+public class AgentContactHoldSensor extends AgentContactSensor {
 	private LinkedList<Agent> contacts;
 
-	public AgentContactSensor(Object parent) {
+	public AgentContactHoldSensor(Object parent) {
 		super(parent);
 		contacts = new LinkedList<Agent>();
 	}
@@ -64,7 +64,7 @@ public class AgentContactSensor extends ContactSensor {
 		return cList;
 	}
 
-	public static boolean isMoveBlockedByAgent(AgentContactSensor theSensor, Vector2 position, boolean moveRight) {
+	public static boolean isMoveBlockedByAgent(AgentContactHoldSensor theSensor, Vector2 position, boolean moveRight) {
 		for(Agent agent : theSensor.getContacts()) {
 			// do not check against players
 			if(agent instanceof PlayerAgent)

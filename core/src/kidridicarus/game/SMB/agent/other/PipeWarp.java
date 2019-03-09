@@ -1,4 +1,4 @@
-package kidridicarus.common.agent.general;
+package kidridicarus.game.SMB.agent.other;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -8,13 +8,14 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlayerSpawner;
 import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.common.agentscript.PipeWarpScript;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.SMB.agentbody.other.PipeWarpBody;
+import kidridicarus.game.SMB.agentscript.PipeWarpScript;
 
 public class PipeWarp extends Agent implements DisposableAgent {
 	public class PipeWarpHorizon {

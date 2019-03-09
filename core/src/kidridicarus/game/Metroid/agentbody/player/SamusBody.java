@@ -10,13 +10,12 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
-import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.general.PipeWarp;
-import kidridicarus.common.agentbody.MobileAgentBody;
-import kidridicarus.common.agentbody.sensor.AgentContactSensor;
+import kidridicarus.common.agentbody.general.MobileAgentBody;
+import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
@@ -24,6 +23,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.Metroid.agent.player.Samus;
+import kidridicarus.game.SMB.agent.other.PipeWarp;
 
 public class SamusBody extends MobileAgentBody {
 	private static final float POSITION_EPS = 0.1f;
@@ -70,10 +70,10 @@ public class SamusBody extends MobileAgentBody {
 
 	private World world;
 	private Samus parent;
-	private AgentContactSensor acSensor;
+	private AgentContactHoldSensor acSensor;
 	private OnGroundSensor ogSensor;
 	private SolidBoundSensor sbSensor;
-	private AgentContactSensor wpSensor;	// warp pipe sensor
+	private AgentContactHoldSensor wpSensor;	// warp pipe sensor
 	private boolean isBallForm;
 	private Vector2 prevVelocity;
 	private float forceTimer;
@@ -101,7 +101,7 @@ public class SamusBody extends MobileAgentBody {
 		createBody(position);
 		createAgentSensor();
 		// the warp pipe sensor is chained to the other sensor, so create it here
-		wpSensor = new AgentContactSensor(this);
+		wpSensor = new AgentContactHoldSensor(this);
 		createGroundAndPipeSensor();
 
 		// reset previous velocity
@@ -140,7 +140,7 @@ public class SamusBody extends MobileAgentBody {
 	private void createAgentSensor() {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		acSensor = new AgentContactSensor(this);
+		acSensor = new AgentContactHoldSensor(this);
 		CFBitSeq catBits = NOCONTACT_AS_CFCAT;
 		CFBitSeq maskBits = NOCONTACT_AS_CFMASK;
 		if(isContactEnabled) {

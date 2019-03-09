@@ -6,9 +6,9 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 
-import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.common.agentbody.MobileAgentBody;
-import kidridicarus.common.agentbody.sensor.AgentContactSensor;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.common.agentbody.general.MobileAgentBody;
+import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
@@ -78,7 +78,7 @@ public class ZoomerBody extends MobileAgentBody {
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, new AgentContactSensor(this)));
+				CommonCF.AGENT_SENSOR_CFMASK, new AgentContactHoldSensor(this)));
 	}
 
 	// create the sensors for detecting walls to crawl on

@@ -9,10 +9,10 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.contact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.common.agentbody.MobileAgentBody;
-import kidridicarus.common.agentbody.sensor.AgentContactSensor;
+import kidridicarus.common.agentbody.general.MobileAgentBody;
+import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
@@ -31,7 +31,7 @@ public class SkreeBody extends MobileAgentBody {
 			UInfo.P2M(80), UInfo.P2M(-176) };
 
 	private Skree parent;
-	private AgentContactSensor playerSensor;
+	private AgentContactHoldSensor playerSensor;
 	private OnGroundSensor ogSensor;
 
 	public SkreeBody(Skree parent, World world, Vector2 position) {
@@ -65,7 +65,7 @@ public class SkreeBody extends MobileAgentBody {
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, new AgentContactSensor(this)));
+				CommonCF.AGENT_SENSOR_CFMASK, new AgentContactHoldSensor(this)));
 	}
 
 	// cone shaped sensor extending down below skree to check for player target 
@@ -76,7 +76,7 @@ public class SkreeBody extends MobileAgentBody {
 		boxShape.set(PLAYER_DETECTOR_SHAPE);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		playerSensor = new AgentContactSensor(null);
+		playerSensor = new AgentContactHoldSensor(null);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
 				CommonCF.AGENT_SENSOR_CFMASK, playerSensor));
 	}

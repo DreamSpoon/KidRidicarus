@@ -1,8 +1,7 @@
-package kidridicarus.agency.contact;
+package kidridicarus.agency.agentcontact;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.agency.agentbody.sensor.ContactSensor;
 
 public class AgentBodyFilter {
 	public CFBitSeq categoryBits;
@@ -21,15 +20,15 @@ public class AgentBodyFilter {
 	}
 
 	/*
-	 * Check the various levels of the chain to see if an Agent can be found.
+	 * Check the various levels of the chain to find a reference to an agent, and return if found. 
 	 */
 	public static Agent getAgentFromFilter(AgentBodyFilter obj) {
 		if(obj.userData instanceof Agent)
 			return (Agent) obj.userData;
 		else if(obj.userData instanceof AgentBody)
 			return ((AgentBody) obj.userData).getParent();
-		else if(obj.userData instanceof ContactSensor) {
-			Object p = ((ContactSensor) obj.userData).getParent();
+		else if(obj.userData instanceof AgentContactSensor) {
+			Object p = ((AgentContactSensor) obj.userData).getParent();
 			if(p instanceof Agent)
 				return (Agent) p;
 			else if(p instanceof AgentBody)

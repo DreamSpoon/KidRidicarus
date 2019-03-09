@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import kidridicarus.common.agent.GameAgentObserver;
+import kidridicarus.game.SMB.agent.player.HUD.MarioHUD;
 
 public class MarioObserver extends GameAgentObserver {
 	private MarioHUD marioHUD;

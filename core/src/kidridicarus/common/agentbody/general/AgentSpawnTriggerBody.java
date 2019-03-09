@@ -13,9 +13,9 @@ import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.agency.contact.CFBitSeq;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agent.general.AgentSpawnTrigger;
-import kidridicarus.common.agentbody.sensor.AgentContactSensor;
+import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -30,7 +30,7 @@ public class AgentSpawnTriggerBody extends AgentBody {
 	private AgentSpawnTrigger parent;
 	private MouseJoint mj;
 	private World world;
-	private AgentContactSensor acSensor;
+	private AgentContactHoldSensor acSensor;
 
 	public AgentSpawnTriggerBody(AgentSpawnTrigger parent, World world, Rectangle bounds) {
 		this.parent = parent;
@@ -57,7 +57,7 @@ public class AgentSpawnTriggerBody extends AgentBody {
 		bdef.gravityScale = 0f;
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		acSensor = new AgentContactSensor(this);
+		acSensor = new AgentContactHoldSensor(this);
 		b2body = B2DFactory.makeSpecialBoxBody(world, bdef, fdef, acSensor, CFCAT_BITS, CFMASK_BITS,
 				bounds.width, bounds.height);
 	}

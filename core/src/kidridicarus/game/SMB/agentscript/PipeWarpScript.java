@@ -1,11 +1,11 @@
-package kidridicarus.common.agentscript;
+package kidridicarus.game.SMB.agentscript;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
-import kidridicarus.common.agent.general.PipeWarp.PipeWarpHorizon;
+import kidridicarus.game.SMB.agent.other.PipeWarp.PipeWarpHorizon;
 
 /*
  * Pipe Warp Script:
@@ -42,8 +42,8 @@ public class PipeWarpScript implements AgentScript {
 
 	@Override
 	public void startScript(AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
-		this.beginAgentState = beginAgentState.cpy();
-		this.curScriptAgentState = beginAgentState.cpy();
+		this.beginAgentState = beginScriptAgentState.cpy();
+		this.curScriptAgentState = beginScriptAgentState.cpy();
 
 		// Disable contacts so body won't interact with other agents while warping, and
 		// disable gravity so the body doesn't fall out of the level. 

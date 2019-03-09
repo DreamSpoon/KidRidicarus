@@ -13,7 +13,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.MyKidRidicarus;
 import kidridicarus.game.info.AudioInfo;
@@ -72,16 +71,16 @@ public class PlayScreen implements Screen {
 		atlas = new TextureAtlas(GameInfo.TA_MAIN_FILENAME);
 
 		gamecam = new OrthographicCamera();
-		gameport = new FitViewport(UInfo.P2M(GfxInfo.V_WIDTH), UInfo.P2M(GfxInfo.V_HEIGHT), gamecam);
+		gameport = new FitViewport(UInfo.P2M(CommonInfo.V_WIDTH), UInfo.P2M(CommonInfo.V_HEIGHT), gamecam);
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
-		director = new AgencyDirector(game.manager, game.batch, atlas, GfxInfo.KIDRID_DRAWORDER_ALIAS,
+		director = new AgencyDirector(game.manager, game.batch, atlas, CommonInfo.KIDRID_DRAWORDER_ALIAS,
 				new AgentClassList(CommonInfo.CORE_AGENT_CLASS_LIST, SMBInfo.SMB_AGENT_CLASSLIST,
 						MetroidInfo.METROID_AGENT_CLASSLIST), AudioInfo.SOUND_VOLUME);
 //		director.createSpace(game.getLevelFilename(level));
 
-		stageHUD = new Stage(new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera()),
+		stageHUD = new Stage(new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera()),
 				game.batch);
 
 		b2dr = new Box2DDebugRenderer();

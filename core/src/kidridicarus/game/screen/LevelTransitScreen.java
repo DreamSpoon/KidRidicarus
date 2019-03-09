@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.common.info.GfxInfo;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.MyKidRidicarus;
 
 public class LevelTransitScreen implements Screen {
@@ -33,7 +33,7 @@ public class LevelTransitScreen implements Screen {
 
 		this.game = game;
 		this.nextLevel = nextLevel;
-		viewport = new FitViewport(GfxInfo.V_WIDTH, GfxInfo.V_HEIGHT, new OrthographicCamera());
+		viewport = new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera());
 		stage = new Stage(viewport, game.batch);
 
 		font = new LabelStyle(new BitmapFont(), Color.WHITE);

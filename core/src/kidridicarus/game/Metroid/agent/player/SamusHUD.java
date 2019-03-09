@@ -11,8 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.game.SMB.agent.player.HUD.HudCoin;
 import kidridicarus.game.info.GameInfo;
-import kidridicarus.game.play.hud.HudCoin;
 
 public class SamusHUD implements Disposable {
 	private Stage stage;

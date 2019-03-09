@@ -1,4 +1,4 @@
-package kidridicarus.game.SMB.agent.player;
+package kidridicarus.game.SMB.agent.player.HUD;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -11,8 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.info.GameInfo;
-import kidridicarus.game.play.hud.HudCoin;
 
 public class MarioHUD implements Disposable {
 	private Mario mario;

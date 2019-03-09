@@ -9,9 +9,9 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.common.agentbody.MobileAgentBody;
-import kidridicarus.common.agentbody.sensor.AgentContactSensor;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.common.agentbody.general.MobileAgentBody;
+import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
@@ -24,7 +24,7 @@ public class MarioFireballBody extends MobileAgentBody {
 
 	private MarioFireball parent;
 	private SolidBoundSensor hmSensor;
-	private AgentContactSensor acSensor;
+	private AgentContactHoldSensor acSensor;
 
 	public MarioFireballBody(MarioFireball parent, World world, Vector2 position, Vector2 velocity) {
 		this.parent = parent;
@@ -58,7 +58,7 @@ public class MarioFireballBody extends MobileAgentBody {
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.isSensor = true;
 		fdef.shape = boxShape;
-		acSensor = new AgentContactSensor(this);
+		acSensor = new AgentContactHoldSensor(this);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
 				CommonCF.AGENT_SENSOR_CFMASK, acSensor));
 	}

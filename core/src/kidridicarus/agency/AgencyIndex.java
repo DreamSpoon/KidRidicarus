@@ -10,11 +10,11 @@ import java.util.TreeMap;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
+import kidridicarus.agency.agencychange.AgentWrapper;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
-import kidridicarus.agency.change.AgentWrapper;
 import kidridicarus.agency.tool.AllowOrderList;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.common.tool.AllowOrder;

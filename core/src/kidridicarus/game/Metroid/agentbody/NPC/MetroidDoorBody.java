@@ -7,8 +7,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;

@@ -4,19 +4,18 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.common.agentscript.FlagpoleScript;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentbody.other.FlagpoleBody;
+import kidridicarus.game.SMB.agentscript.FlagpoleScript;
 import kidridicarus.game.SMB.agentsprite.other.PoleFlagSprite;
 
 public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent, DisposableAgent {
@@ -43,7 +42,7 @@ public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent, Di
 		flagSprite = new PoleFlagSprite(agency.getAtlas(), flagPos);
 
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
-		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
+		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
 	@Override

@@ -6,16 +6,15 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.BumpTakeAgent;
 import kidridicarus.game.SMB.agentbody.item.BaseMushroomBody;
@@ -58,7 +57,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements UpdatableAg
 		moveStateTimer = 0f;
 
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
-		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_BOTTOM);
+		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
 	@Override
@@ -98,7 +97,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements UpdatableAg
 				// wait a short time to finish sprouting, then spawn the body when sprout finishes
 				if(moveStateTimer > SPROUT_TIME) {
 					isSprouting = false;
-					agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_MIDDLE);
+					agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 					bmBody = new BaseMushroomBody(this, agency.getWorld(), sproutingPosition);
 				}
 				break;

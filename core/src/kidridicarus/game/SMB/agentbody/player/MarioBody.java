@@ -12,19 +12,18 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
-import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.agency.contact.CFBitSeq;
 import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
 import kidridicarus.common.agent.general.DespawnBox;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.general.PipeWarp;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
-import kidridicarus.common.agentbody.MobileAgentBody;
+import kidridicarus.common.agentbody.general.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactBeginSensor;
-import kidridicarus.common.agentbody.sensor.AgentContactSensor;
+import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
@@ -32,6 +31,7 @@ import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
+import kidridicarus.game.SMB.agent.other.PipeWarp;
 import kidridicarus.game.SMB.agent.HeadBounceTakeAgent;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agent.player.Mario.MarioPowerState;
@@ -115,9 +115,9 @@ public class MarioBody extends MobileAgentBody {
 	private PipeWarp pipeToEnter;
 
 	private OnGroundSensor ogSensor;
-	private AgentContactSensor wpSensor;
-	private AgentContactSensor btSensor;
-	private AgentContactSensor acSensor;
+	private AgentContactHoldSensor wpSensor;
+	private AgentContactHoldSensor btSensor;
+	private AgentContactHoldSensor acSensor;
 	private AgentContactBeginSensor acBeginSensor;
 	private Fixture agentSensorFixture;
 
@@ -165,7 +165,7 @@ public class MarioBody extends MobileAgentBody {
 		createBody(position, velocity);
 
 		// the warp pipe sensor is chained to other sensors, so create it here
-		wpSensor = new AgentContactSensor(this);
+		wpSensor = new AgentContactHoldSensor(this);
 		createGroundAndPipeSensor();
 		createSidePipeSensors();
 		createBumpTileAndPipeSensor();
@@ -259,7 +259,7 @@ public class MarioBody extends MobileAgentBody {
 			sensorShape.setAsBox(UInfo.P2M(5f), UInfo.P2M(1f), new Vector2(UInfo.P2M(0f), UInfo.P2M(16f)), 0f);
 		fdef.shape = sensorShape;
 		fdef.isSensor = true;
-		btSensor = new AgentContactSensor(this);
+		btSensor = new AgentContactHoldSensor(this);
 		btSensor.chainTo(wpSensor);
 		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
 		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
@@ -278,7 +278,7 @@ public class MarioBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		acSensor = new AgentContactSensor(this);
+		acSensor = new AgentContactHoldSensor(this);
 		acBeginSensor = new AgentContactBeginSensor(this);
 		acBeginSensor.chainTo(acSensor);
 		CFBitSeq catBits = NOCONTACT_AS_CFCAT;
@@ -718,14 +718,6 @@ public class MarioBody extends MobileAgentBody {
 		defineBody(pos, vel);
 	}
 
-	public void enableGravity() {
-		b2body.setGravityScale(GRAVITY_SCALE);
-	}
-
-	public void disableGravity() {
-		b2body.setGravityScale(0f);
-	}
-
 	public void useScriptedBodyState(ScriptedBodyState sbState) {
 		setContactEnabled(sbState.contactEnabled);
 		if(!sbState.position.epsilonEquals(b2body.getPosition(), POSITION_EPS))
@@ -814,10 +806,6 @@ public class MarioBody extends MobileAgentBody {
 
 	public Room getCurrentRoom() {
 		return (Room) acSensor.getFirstContactByClass(Room.class);
-	}
-
-	public <T> List<T> getContactsByClass(Class<T> cls) {
-		return acSensor.getContactsByClass(cls);
 	}
 
 	public <T> T getFirstContactByClass(Class<T> cls) {

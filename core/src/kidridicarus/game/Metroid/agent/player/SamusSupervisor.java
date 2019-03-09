@@ -11,11 +11,13 @@ public class SamusSupervisor extends GameAgentSupervisor {
 	private MoveAdvice curMoveAdvice;
 	private Samus samus;
 	private String nextLevelName;
+	private boolean isGameOver;
 
 	public SamusSupervisor(Samus samus) {
 		curMoveAdvice = new MoveAdvice();
 		this.samus = samus;
 		nextLevelName = null;
+		isGameOver = false;
 	}
 
 	@Override
@@ -28,16 +30,6 @@ public class SamusSupervisor extends GameAgentSupervisor {
 		MoveAdvice adv = curMoveAdvice.cpy();
 		curMoveAdvice.clear();
 		return adv;
-	}
-
-	@Override
-	public boolean isSwitchToOtherChar() {
-		return false;
-	}
-
-	@Override
-	public String getNextLevelName() {
-		return nextLevelName;
 	}
 
 	@Override
@@ -63,5 +55,29 @@ public class SamusSupervisor extends GameAgentSupervisor {
 					nextLevelName = name;
 				}
 			};
+	}
+
+	@Override
+	public boolean isSwitchToOtherChar() {
+		return false;
+	}
+
+	@Override
+	public String getNextLevelName() {
+		return nextLevelName;
+	}
+
+	public void setGameOver() {
+		isGameOver = true;
+	}
+
+	@Override
+	public boolean isAtLevelEnd() {
+		return nextLevelName != null;
+	}
+
+	@Override
+	public boolean isGameOver() {
+		return isGameOver;
 	}
 }

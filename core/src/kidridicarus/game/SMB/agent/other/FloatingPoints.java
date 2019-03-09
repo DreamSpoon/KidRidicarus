@@ -4,14 +4,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyDrawBatch;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.GfxInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agentsprite.other.FloatingPointsSprite;
@@ -62,7 +61,7 @@ public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAge
 
 		stateTimer = 0f;
 		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
-		agency.setAgentDrawOrder(this, GfxInfo.LayerDrawOrder.SPRITE_TOP);
+		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
 	@Override

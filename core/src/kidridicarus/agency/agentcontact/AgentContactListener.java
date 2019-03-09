@@ -1,17 +1,15 @@
-package kidridicarus.agency.contact;
+package kidridicarus.agency.agentcontact;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-import kidridicarus.agency.agentbody.sensor.ContactSensor;
-
 /*
  * Use a custom filtering (AgentBodyFilter) method to determine contact. When contact occurs, invoke the
  * sensor contact methods. 
  */
-public class AgencyContactListener implements ContactListener {
+public class AgentContactListener implements ContactListener {
 	@Override
 	public void beginContact(Contact contact) {
 		if(!(contact.getFixtureA().getUserData() instanceof AgentBodyFilter))
@@ -21,10 +19,10 @@ public class AgencyContactListener implements ContactListener {
 
 		Object objA = ((AgentBodyFilter) contact.getFixtureA().getUserData()).userData;
 		Object objB = ((AgentBodyFilter) contact.getFixtureB().getUserData()).userData;
-		if(objA instanceof ContactSensor)
-			((ContactSensor) objA).onBeginContact((AgentBodyFilter) contact.getFixtureB().getUserData());
-		if(objB instanceof ContactSensor)
-			((ContactSensor) objB).onBeginContact((AgentBodyFilter) contact.getFixtureA().getUserData());
+		if(objA instanceof AgentContactSensor)
+			((AgentContactSensor) objA).onBeginContact((AgentBodyFilter) contact.getFixtureB().getUserData());
+		if(objB instanceof AgentContactSensor)
+			((AgentContactSensor) objB).onBeginContact((AgentBodyFilter) contact.getFixtureA().getUserData());
 	}
 
 	@Override
@@ -36,10 +34,10 @@ public class AgencyContactListener implements ContactListener {
 
 		Object objA = ((AgentBodyFilter) contact.getFixtureA().getUserData()).userData;
 		Object objB = ((AgentBodyFilter) contact.getFixtureB().getUserData()).userData;
-		if(objA instanceof ContactSensor)
-			((ContactSensor) objA).onEndContact((AgentBodyFilter) contact.getFixtureB().getUserData());
-		if(objB instanceof ContactSensor)
-			((ContactSensor) objB).onEndContact((AgentBodyFilter) contact.getFixtureA().getUserData());
+		if(objA instanceof AgentContactSensor)
+			((AgentContactSensor) objA).onEndContact((AgentBodyFilter) contact.getFixtureB().getUserData());
+		if(objB instanceof AgentContactSensor)
+			((AgentContactSensor) objB).onEndContact((AgentBodyFilter) contact.getFixtureA().getUserData());
 	}
 
 	@Override

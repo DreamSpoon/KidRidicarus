@@ -4,10 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentbody.sensor.ContactSensor;
-import kidridicarus.agency.contact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.AgentContactSensor;
 
-public class AgentContactBeginSensor extends ContactSensor {
+public class AgentContactBeginSensor extends AgentContactSensor {
 	private LinkedList<Agent> contacts;
 
 	public AgentContactBeginSensor(Object parent) {

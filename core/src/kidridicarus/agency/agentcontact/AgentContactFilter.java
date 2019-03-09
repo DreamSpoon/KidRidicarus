@@ -1,4 +1,4 @@
-package kidridicarus.agency.contact;
+package kidridicarus.agency.agentcontact;
 
 import com.badlogic.gdx.physics.box2d.ContactFilter;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 /*
  * Implement an infinite bit contact filter scheme by way of the enum ContactBit and the class CustomFilter.
  */
-public class AgencyContactFilter implements ContactFilter {
+public class AgentContactFilter implements ContactFilter {
 	@Override
 	public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
 		if(!(fixtureA.getUserData() instanceof AgentBodyFilter) ||

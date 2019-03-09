@@ -1,4 +1,4 @@
-package kidridicarus.agency.change;
+package kidridicarus.agency.agencychange;
 
 import kidridicarus.common.tool.AllowOrder;
 

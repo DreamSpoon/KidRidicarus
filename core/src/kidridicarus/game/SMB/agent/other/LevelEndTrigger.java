@@ -9,9 +9,9 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.common.agentscript.LevelEndScript;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.SMB.agentbody.other.LevelEndBody;
+import kidridicarus.game.SMB.agentscript.LevelEndScript;
 import kidridicarus.game.info.GameKV;
 
 public class LevelEndTrigger extends Agent implements DisposableAgent {
@@ -27,16 +27,13 @@ public class LevelEndTrigger extends Agent implements DisposableAgent {
 			return false;
 
 		// trigger the castle flag
-		trigger();
+		triggerCastleFlag();
 		// start player script with name of next level
 		return ((PlayerAgent) agent).getSupervisor().startScript(new LevelEndScript(
 				getProperty(CommonKV.Level.VAL_NEXTLEVEL_NAME, "", String.class)));
 	}
 
-	/*
-	 * Usually called when player contacts the level end box.
-	 */
-	public void trigger() {
+	private void triggerCastleFlag() {
 		Agent agent = agency.getFirstAgentByProperties(
 				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS },
 				new String[] { GameKV.SMB.AgentClassAlias.VAL_CASTLEFLAG });

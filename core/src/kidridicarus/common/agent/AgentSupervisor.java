@@ -17,6 +17,8 @@ public abstract class AgentSupervisor {
 
 	public abstract void setMoveAdvice(MoveAdvice moveAdvice);
 	public abstract MoveAdvice pollMoveAdvice();
+	public abstract boolean isAtLevelEnd();
+	public abstract boolean isGameOver();
 
 	/*
 	 * Convert the Player agent information into a simpler script agent state format, which will be used to

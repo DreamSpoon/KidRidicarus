@@ -7,8 +7,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.common.agentbody.MobileAgentBody;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.common.agentbody.general.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;

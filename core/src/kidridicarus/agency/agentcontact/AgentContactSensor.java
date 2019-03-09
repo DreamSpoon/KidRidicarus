@@ -1,15 +1,13 @@
-package kidridicarus.agency.agentbody.sensor;
-
-import kidridicarus.agency.contact.AgentBodyFilter;
+package kidridicarus.agency.agentcontact;
 
 /*
  * Chainable contact sensor.
  */
-public abstract class ContactSensor {
+public abstract class AgentContactSensor {
 	private Object parent;
-	private ContactSensor nextInChain;
+	private AgentContactSensor nextInChain;
 	
-	public ContactSensor(Object parent) {
+	public AgentContactSensor(Object parent) {
 		this.parent = parent;
 		nextInChain = null;
 	}
@@ -23,7 +21,7 @@ public abstract class ContactSensor {
 	/*
 	 * Add a sensor to the start of this sensor's list of chained sensors.
 	 */
-	public void chainTo(ContactSensor nextInChain) {
+	public void chainTo(AgentContactSensor nextInChain) {
 		this.nextInChain = nextInChain;
 	}
 

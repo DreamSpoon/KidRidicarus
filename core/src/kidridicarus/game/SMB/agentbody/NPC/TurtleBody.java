@@ -9,10 +9,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.contact.AgentBodyFilter;
-import kidridicarus.common.agentbody.MobileAgentBody;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.common.agentbody.general.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactBeginSensor;
-import kidridicarus.common.agentbody.sensor.AgentContactSensor;
+import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.agentbody.sensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
@@ -30,7 +30,7 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 	private Turtle parent;
 	private OnGroundSensor ogSensor;
 	private SolidBoundSensor hmSensor;
-	private AgentContactSensor acSensor;
+	private AgentContactHoldSensor acSensor;
 	private AgentContactBeginSensor kickSensor;
 
 	public TurtleBody(Turtle parent, World world, Vector2 position) {
@@ -57,7 +57,7 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.isSensor = true;
 		fdef.shape = boxShape;
-		acSensor = new AgentContactSensor(this);
+		acSensor = new AgentContactHoldSensor(this);
 		kickSensor = new AgentContactBeginSensor(this);
 		kickSensor.chainTo(acSensor);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
@@ -85,7 +85,7 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 	}
 
 	public boolean isMoveBlockedByAgent(boolean moveRight) {
-		return AgentContactSensor.isMoveBlockedByAgent(acSensor, getPosition(), moveRight);
+		return AgentContactHoldSensor.isMoveBlockedByAgent(acSensor, getPosition(), moveRight);
 	}
 
 	public boolean isOnGround() {

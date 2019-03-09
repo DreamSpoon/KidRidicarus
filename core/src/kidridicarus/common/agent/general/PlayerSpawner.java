@@ -9,13 +9,10 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agentbody.general.PlayerSpawnerBody;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.agency.info.AgencyKV;
 
 public class PlayerSpawner extends Agent implements DisposableAgent {
-	private static final float SPAWN_SAFETYDIST = UInfo.P2M(1);
-
 	public enum SpawnType { IMMEDIATE, PIPEWARP }
 
 	private PlayerSpawnerBody psbody;
@@ -41,24 +38,6 @@ public class PlayerSpawner extends Agent implements DisposableAgent {
 		}
 
 		psbody = new PlayerSpawnerBody(agency.getWorld(), this, Agent.getStartBounds(properties));
-	}
-
-	public Vector2 calcBeginOffsetFromSpawn(Vector2 agentSize) {
-		switch(direction) {
-			case RIGHT:
-				return new Vector2(psbody.getBounds().x + psbody.getBounds().width +
-						agentSize.x/2f + SPAWN_SAFETYDIST, psbody.getBounds().y + agentSize.y/2f);
-			case UP:
-				return new Vector2(psbody.getBounds().x + psbody.getBounds().width/2f,
-						psbody.getBounds().y + psbody.getBounds().height + agentSize.y/2f + SPAWN_SAFETYDIST);
-			case LEFT:
-				return new Vector2(psbody.getBounds().x - agentSize.x/2f - SPAWN_SAFETYDIST,
-						psbody.getBounds().y + agentSize.y/2f);
-			case DOWN:
-			default:
-				return new Vector2(psbody.getBounds().x + psbody.getBounds().width/2f,
-						psbody.getBounds().y - agentSize.y/2f - SPAWN_SAFETYDIST);
-		}
 	}
 
 	public boolean isMainSpawn() {

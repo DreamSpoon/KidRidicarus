@@ -2,7 +2,7 @@ package kidridicarus.agency.info;
 
 /*
  * Agency Key Value Info
- * TODO: some of this (all of this?) should be moved to GameKV.
+ * TODO: some of this (all of this?) should be moved to GameKV / CommonKV.
  */
 public class AgencyKV {
 	public static final String VAL_TRUE = "true";

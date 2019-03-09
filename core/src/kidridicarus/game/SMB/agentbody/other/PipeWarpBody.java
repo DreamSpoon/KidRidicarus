@@ -6,10 +6,10 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.agency.contact.CFBitSeq;
-import kidridicarus.common.agent.general.PipeWarp;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
+import kidridicarus.game.SMB.agent.other.PipeWarp;
 
 public class PipeWarpBody extends AgentBody {
 	public static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.PIPE_BIT);

@@ -12,11 +12,15 @@ public class MarioSupervisor extends GameAgentSupervisor {
 	private MoveAdvice curMoveAdvice;
 	private boolean switchToOtherChar;
 	private Mario mario;
+	private String nextLevelName;
+	private boolean isGameOver;
 
 	public MarioSupervisor(Mario mario) {
 		this.mario = mario;
 		curMoveAdvice = new MoveAdvice();
 		switchToOtherChar = false;
+		nextLevelName = null;
+		isGameOver = false;
 	}
 
 	@Override
@@ -68,9 +72,23 @@ public class MarioSupervisor extends GameAgentSupervisor {
 	protected AgentScriptHooks getAgentScriptHooks() {
 		return new AgentScriptHooks() {
 				@Override
-				public void gotoNextLevel(String nextLevelName) {
-					// TODO more code here
+				public void gotoNextLevel(String levelName) {
+					nextLevelName = levelName;
 				}
 			};
+	}
+
+	@Override
+	public boolean isAtLevelEnd() {
+		return nextLevelName != null;
+	}
+
+	public void setGameOver() {
+		isGameOver = true;
+	}
+
+	@Override
+	public boolean isGameOver() {
+		return isGameOver;
 	}
 }

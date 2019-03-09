@@ -1,4 +1,4 @@
-package kidridicarus.game.play.hud;
+package kidridicarus.game.SMB.agent.player.HUD;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;

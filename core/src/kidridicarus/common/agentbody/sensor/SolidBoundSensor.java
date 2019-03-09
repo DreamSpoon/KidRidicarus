@@ -6,11 +6,11 @@ import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agentbody.sensor.ContactSensor;
-import kidridicarus.agency.contact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.AgentContactSensor;
 import kidridicarus.common.agent.collisionmap.stuff.LineSeg;
 
-public class SolidBoundSensor extends ContactSensor {
+public class SolidBoundSensor extends AgentContactSensor {
 	private LinkedList<LineSeg> contacts;
 
 	public SolidBoundSensor(Object parent) {
@@ -69,12 +69,5 @@ public class SolidBoundSensor extends ContactSensor {
 			}
 		}
 		return false;
-	}
-
-	/*
-	 * Clear the current contacts list. Call this method after disabling and re-enabling contacts.
-	 */
-	public void reset() {
-		contacts.clear();
 	}
 }

@@ -1,4 +1,4 @@
-package kidridicarus.common.agentscript;
+package kidridicarus.game.SMB.agentscript;
 
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
