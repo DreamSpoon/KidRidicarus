@@ -35,8 +35,8 @@ public class ZoomerSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, MoveState curState, Direction4 upDir) {
-		switch(curState) {
+	public void update(float delta, Vector2 position, MoveState parentState, Direction4 upDir) {
+		switch(parentState) {
 			case WALK:
 				setRegion(walkAnim.getKeyFrame(stateTimer));
 				break;

@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -20,8 +20,8 @@ import kidridicarus.game.SMB.agent.BumpTakeAgent;
 import kidridicarus.game.SMB.agentbody.item.BaseMushroomBody;
 import kidridicarus.game.SMB.agentsprite.item.MushroomSprite;
 
-public abstract class BaseMushroom extends BasicWalkAgent implements DrawableAgent,
-		PowerupGiveAgent, BumpTakeAgent, DisposableAgent {
+public abstract class BaseMushroom extends BasicWalkAgent implements PowerupGiveAgent, BumpTakeAgent,
+		DisposableAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private static final float WALK_VEL = 0.6f;
@@ -32,13 +32,14 @@ public abstract class BaseMushroom extends BasicWalkAgent implements DrawableAge
 	private BaseMushroomBody bmBody;
 	private MushroomSprite mSprite;
 
-	private MoveState prevState;
+	private MoveState curMoveState;
 	private float moveStateTimer;
 
 	protected boolean isSprouting;
 	private Vector2 sproutingPosition;
 	private boolean isBumped;
 	private Vector2 bumpCenter;
+	private AgentDrawListener myDrawListener;
 
 	protected abstract TextureRegion getMushroomTextureRegion(TextureAtlas atlas);
 
@@ -53,14 +54,19 @@ public abstract class BaseMushroom extends BasicWalkAgent implements DrawableAge
 		isBumped = false;
 		setConstVelocity(new Vector2(WALK_VEL, 0f));
 
-		prevState = MoveState.WALK;
+		curMoveState = MoveState.SPROUT;
 		moveStateTimer = 0f;
 
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
+		// sprout from bottom layer and switch to next layer on finish sprout
+		myDrawListener = new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			};
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, myDrawListener);
 	}
 
 	private void doUpdate(float delta) {
@@ -89,8 +95,8 @@ public abstract class BaseMushroom extends BasicWalkAgent implements DrawableAge
 	}
 
 	private void processMove(float delta) {
-		MoveState curState = getMoveState();
-		switch(curState) {
+		MoveState nextMoveState = getMoveState();
+		switch(nextMoveState) {
 			case WALK:
 				// move if walking
 				bmBody.setVelocity(getConstVelocity().x, bmBody.getVelocity().y);
@@ -99,7 +105,13 @@ public abstract class BaseMushroom extends BasicWalkAgent implements DrawableAge
 				// wait a short time to finish sprouting, then spawn the body when sprout finishes
 				if(moveStateTimer > SPROUT_TIME) {
 					isSprouting = false;
-					agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
+					// change from bottom to middle sprite draw order
+					agency.removeAgentDrawListener(this, myDrawListener);
+					myDrawListener = new AgentDrawListener() {
+							@Override
+							public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+						};
+					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, myDrawListener);
 					bmBody = new BaseMushroomBody(this, agency.getWorld(), sproutingPosition);
 				}
 				break;
@@ -108,8 +120,8 @@ public abstract class BaseMushroom extends BasicWalkAgent implements DrawableAge
 		}
 
 		// increment state timer if state stayed the same, otherwise reset timer
-		moveStateTimer = curState == prevState ? moveStateTimer+delta : 0f;
-		prevState = curState;
+		moveStateTimer = nextMoveState == curMoveState ? moveStateTimer+delta : 0f;
+		curMoveState = nextMoveState;
 	}
 
 	private MoveState getMoveState() {
@@ -130,8 +142,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements DrawableAge
 			mSprite.update(bmBody.getPosition());
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch) {
+	public void doDraw(AgencyDrawBatch batch) {
 		batch.draw(mSprite);
 	}
 

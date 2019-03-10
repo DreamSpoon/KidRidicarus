@@ -18,7 +18,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgencyEventListener;
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
@@ -67,11 +67,11 @@ public class AgencyDirector implements Disposable {
 	public void draw(OrthographicCamera camera) {
 		adBatch.setView(camera);
 		adBatch.begin();
-		agency.iterateThroughDrawObjects(new AllowOrderListIter() {
+		agency.iterateThroughDrawListeners(new AllowOrderListIter() {
 			@Override
 			public boolean iterate(Object obj) {
-				if(obj instanceof DrawableAgent)
-					((DrawableAgent) obj).draw(adBatch);
+				if(obj instanceof AgentDrawListener)
+					((AgentDrawListener) obj).draw(adBatch);
 				else
 					QQ.pr("unknown object in draw list iteration: " + obj);
 				// return false to continue iterating

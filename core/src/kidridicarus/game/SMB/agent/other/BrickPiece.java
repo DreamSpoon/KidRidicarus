@@ -8,10 +8,10 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
@@ -20,7 +20,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.BrickPieceSprite;
 import kidridicarus.game.info.GameKV;
 
-public class BrickPiece extends Agent implements DrawableAgent, DisposableAgent {
+public class BrickPiece extends Agent implements DisposableAgent {
 	private static final float BODY_WIDTH = UInfo.P2M(8);
 	private static final float BODY_HEIGHT = UInfo.P2M(8);
 	// bricks should be auto-removed when off screen, use this timeout for other cases
@@ -41,7 +41,10 @@ public class BrickPiece extends Agent implements DrawableAgent, DisposableAgent 
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			});
 	}
 
 	private void defineBody(Vector2 position, Vector2 velocity) {
@@ -71,8 +74,7 @@ public class BrickPiece extends Agent implements DrawableAgent, DisposableAgent 
 		stateTimer += delta;
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch) {
+	public void doDraw(AgencyDrawBatch batch) {
 		batch.draw(bpSprite);
 	}
 

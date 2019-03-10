@@ -35,8 +35,8 @@ public class TurtleSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, MoveState curState, boolean facingRight) {
-		switch(curState) {
+	public void update(float delta, Vector2 position, MoveState parentState, boolean facingRight) {
+		switch(parentState) {
 			case NONE:
 			case WALK:
 				setRegion(walkAnim.getKeyFrame(stateTimer));

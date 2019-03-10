@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
@@ -36,7 +36,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
  * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe - fix this
  */
-public class Mario extends Agent implements DrawableAgent, PlayerAgent, PowerupTakeAgent,
+public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		DisposableAgent {
 	public enum MarioAgentState { PLAY, FIREBALL, DEAD }
 
@@ -101,12 +101,14 @@ public class Mario extends Agent implements DrawableAgent, PlayerAgent, PowerupT
 		supervisor = new MarioSupervisor(this);
 		observer = new MarioObserver(this, agency.getAtlas());
 
-//		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			});
 	}
 
 	public void doUpdate(float delta) {
@@ -360,8 +362,7 @@ public class Mario extends Agent implements DrawableAgent, PlayerAgent, PowerupT
 		mBody.getAndResetTakeDamage();
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch) {
+	public void doDraw(AgencyDrawBatch batch) {
 		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice() &&
 				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
 			return;

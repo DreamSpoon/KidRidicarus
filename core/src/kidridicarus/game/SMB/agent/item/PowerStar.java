@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -25,12 +25,11 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  * -allow the star to spawn down-right out of bricks like on level 1-1
  * -test the star's onBump method - I could not bump it, needs precise timing - maybe loosen the timing? 
  */
-public class PowerStar extends BasicWalkAgent implements DrawableAgent, PowerupGiveAgent,
-		BumpTakeAgent, DisposableAgent {
+public class PowerStar extends BasicWalkAgent implements PowerupGiveAgent, BumpTakeAgent, DisposableAgent {
 	private static final float SPROUT_TIME = 0.5f;
 	private static final Vector2 START_BOUNCE_VEL = new Vector2(0.5f, 2f); 
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
-	private enum StarState { SPROUT, WALK }
+	private enum MoveState { SPROUT, WALK }
 
 	private PowerStarBody starBody;
 	private PowerStarSprite starSprite;
@@ -38,7 +37,8 @@ public class PowerStar extends BasicWalkAgent implements DrawableAgent, PowerupG
 	private Vector2 sproutingPosition;
 
 	private float stateTimer;
-	private StarState prevState;
+	private MoveState curMoveState;
+	private AgentDrawListener myDrawListener;
 
 	public PowerStar(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -50,22 +50,27 @@ public class PowerStar extends BasicWalkAgent implements DrawableAgent, PowerupG
 		sproutingPosition = Agent.getStartPoint(properties);
 		starSprite = new PowerStarSprite(agency.getAtlas(), sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
 
-		prevState = StarState.SPROUT;
+		curMoveState = MoveState.SPROUT;
 		stateTimer = 0f;
 
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
+		// sprout from bottom layer and switch to next layer on finish sprout
+		myDrawListener = new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			};
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, myDrawListener);
 	}
 
-	private StarState getState() {
+	private MoveState getNextMoveState() {
 		// still sprouting?
 		if(isSprouting)
-			return StarState.SPROUT;
+			return MoveState.SPROUT;
 		else
-			return StarState.WALK;
+			return MoveState.WALK;
 	}
 
 	private void doUpdate(float delta) {
@@ -74,11 +79,11 @@ public class PowerStar extends BasicWalkAgent implements DrawableAgent, PowerupG
 	}
 
 	private void processMove(float delta) {
-		StarState curState = getState();
-		switch(curState) {
+		MoveState nextMoveState = getNextMoveState();
+		switch(nextMoveState) {
 			case WALK:
 				// start bounce to the right if this is first time walking
-				if(prevState == StarState.SPROUT) {
+				if(curMoveState == MoveState.SPROUT) {
 					starBody.applyImpulse(START_BOUNCE_VEL);
 					break;
 				}
@@ -98,15 +103,21 @@ public class PowerStar extends BasicWalkAgent implements DrawableAgent, PowerupG
 			case SPROUT:
 				if(stateTimer > SPROUT_TIME) {
 					isSprouting = false;
-					agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
+					// change from bottom to middle sprite draw order
+					agency.removeAgentDrawListener(this, myDrawListener);
+					myDrawListener = new AgentDrawListener() {
+							@Override
+							public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+						};
+					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, myDrawListener);
 					starBody = new PowerStarBody(this, agency.getWorld(), sproutingPosition);
 				}
 				break;
 		}
 
 		// increment state timer
-		stateTimer = curState == prevState ? stateTimer+delta : 0f;
-		prevState = curState;
+		stateTimer = nextMoveState == curMoveState ? stateTimer+delta : 0f;
+		curMoveState = nextMoveState;
 	}
 
 	private void processSprite(float delta) {
@@ -118,8 +129,7 @@ public class PowerStar extends BasicWalkAgent implements DrawableAgent, PowerupG
 		}
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch){
+	public void doDraw(AgencyDrawBatch batch){
 		batch.draw(starSprite);
 	}
 

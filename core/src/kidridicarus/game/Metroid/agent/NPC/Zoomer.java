@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.ZoomerBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.ZoomerSprite;
 import kidridicarus.game.info.GameKV;
@@ -24,7 +24,7 @@ import kidridicarus.common.tool.Direction4;
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then
  * check the sensors.
  */
-public class Zoomer extends Agent implements DrawableAgent, ContactDmgGiveAgent,
+public class Zoomer extends Agent implements ContactDmgGiveAgent,
 		ContactDmgTakeAgent, DisposableAgent {
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
 	private static final float INJURY_TIME = 10f/60f;
@@ -45,7 +45,7 @@ public class Zoomer extends Agent implements DrawableAgent, ContactDmgGiveAgent,
 	private float health;
 	private boolean isDead;
 
-	private MoveState curState;
+	private MoveState curMoveState;
 	private float stateTimer;
 
 	public Zoomer(Agency agency, ObjectProperties properties) {
@@ -57,7 +57,7 @@ public class Zoomer extends Agent implements DrawableAgent, ContactDmgGiveAgent,
 		isInjured = false;
 		health = 2f;
 		isDead = false;
-		curState = MoveState.WALK;
+		curMoveState = MoveState.WALK;
 
 		zBody = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		prevBodyPosition = zBody.getPosition();
@@ -68,7 +68,10 @@ public class Zoomer extends Agent implements DrawableAgent, ContactDmgGiveAgent,
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
+			@Override
+			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+		});
 	}
 
 	private void doUpdate(float delta) {
@@ -104,15 +107,15 @@ public class Zoomer extends Agent implements DrawableAgent, ContactDmgGiveAgent,
 				break;
 			case INJURY:
 				zBody.zeroVelocity(true, true);
-				if(curState == nextMoveState && stateTimer > INJURY_TIME)
+				if(curMoveState == nextMoveState && stateTimer > INJURY_TIME)
 					isInjured = false;
 				break;
 			case DEAD:
 				doDeathPop();
 				break;
 		}
-		stateTimer = curState == nextMoveState ? stateTimer+delta : 0f;
-		curState = nextMoveState;
+		stateTimer = curMoveState == nextMoveState ? stateTimer+delta : 0f;
+		curMoveState = nextMoveState;
 		prevBodyPosition = zBody.getPosition().cpy();
 	}
 
@@ -131,11 +134,10 @@ public class Zoomer extends Agent implements DrawableAgent, ContactDmgGiveAgent,
 	}
 
 	private void processSprite(float delta) {
-		zSprite.update(delta, zBody.getPosition(), curState, upDir);
+		zSprite.update(delta, zBody.getPosition(), curMoveState, upDir);
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch) {
+	public void doDraw(AgencyDrawBatch batch) {
 		batch.draw(zSprite);
 	}
 

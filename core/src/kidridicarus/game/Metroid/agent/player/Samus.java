@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
@@ -36,7 +36,7 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements DrawableAgent, PlayerAgent, PowerupTakeAgent,
+public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent,
 		DisposableAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
@@ -104,7 +104,10 @@ public class Samus extends Agent implements DrawableAgent, PlayerAgent, PowerupT
 			@Override
 			public void update(float delta) { doUpdate(delta); }
 		});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+			@Override
+			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+		});
 	}
 
 	private void doUpdate(float delta) {
@@ -546,8 +549,7 @@ public class Samus extends Agent implements DrawableAgent, PlayerAgent, PowerupT
 		}
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch) {
+	public void doDraw(AgencyDrawBatch batch) {
 		// if a script is running and the sprite is visible then draw it
 		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice()) {
 			if(supervisor.getScriptAgentState().scriptedSpriteState.visible)

@@ -14,10 +14,12 @@ import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.agencychange.AgencyChangeQueue;
 import kidridicarus.agency.agencychange.AgentPlaceholder;
 import kidridicarus.agency.agencychange.AllAgentListChange;
-import kidridicarus.agency.agencychange.DrawOrderChange;
+import kidridicarus.agency.agencychange.DrawListenerChange;
 import kidridicarus.agency.agencychange.UpdateListenerChange;
 import kidridicarus.agency.agencychange.AgencyChangeQueue.AgencyChangeCallback;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
@@ -78,18 +80,6 @@ public class Agency implements Disposable {
 		globalTimer += delta;
 	}
 
-/*	private void updateAgents(final float delta) {
-		// loop through list of agents receiving updates, calling each agent's update method
-		agencyIndex.iterateThroughUpdateAgents(new AllowOrderListIter() {
-				@Override
-				public boolean iterate(Object obj) {
-					((UpdatableAgent) obj).update(delta);
-					// continue iterating
-					return false;
-				}
-			});
-		processChangeQ();
-	}*/
 	private void updateAgents(final float delta) {
 		// loop through list of agents receiving updates, calling each agent's update method
 		agencyIndex.iterateThroughUpdateAgents(new AllowOrderListIter() {
@@ -97,8 +87,6 @@ public class Agency implements Disposable {
 				public boolean iterate(Object obj) {
 					if(obj instanceof AgentUpdateListener)
 						((AgentUpdateListener) obj).update(delta);
-					else
-QQ.pr("why is a thing thats not an update listener in this list?");
 					// continue iterating
 					return false;
 				}
@@ -119,12 +107,10 @@ QQ.pr("why is a thing thats not an update listener in this list?");
 				public void change(Object change) {
 					if(change instanceof AllAgentListChange)
 						doAgentListChange((AllAgentListChange) change);
-//					else if(change instanceof UpdateOrderChange)
-//						doUpdateChange((UpdateOrderChange) change);
 					else if(change instanceof UpdateListenerChange)
 						doUpdateListenerChange((UpdateListenerChange) change);
-					else if(change instanceof DrawOrderChange)
-						doDrawOrderChange((DrawOrderChange) change);
+					else if(change instanceof DrawListenerChange)
+						doDrawOrderChange((DrawListenerChange) change);
 					else {
 						throw new IllegalArgumentException(
 								"Cannot process agency change; unknown agent change class: " + change);
@@ -140,9 +126,6 @@ QQ.pr("why is a thing thats not an update listener in this list?");
 			agencyIndex.removeAgent(alc.ap.agent);
 	}
 
-//	private void doUpdateChange(UpdateOrderChange uoc) {
-//		agencyIndex.setAgentUpdateOrder(uoc.ap.agent, uoc.updateOrder);
-//	}
 	private void doUpdateListenerChange(UpdateListenerChange ulc) {
 		if(ulc.add)
 			agencyIndex.addUpdateListener(ulc.ap.agent, ulc.updateOrder, ulc.auListener);
@@ -150,13 +133,12 @@ QQ.pr("why is a thing thats not an update listener in this list?");
 			agencyIndex.removeUpdateListener(ulc.ap.agent, ulc.auListener);
 	}
 
-	private void doDrawOrderChange(DrawOrderChange doc) {
-		agencyIndex.setAgentDrawOrder(doc.ap.agent, doc.drawOrder);
+	private void doDrawOrderChange(DrawListenerChange dlc) {
+		if(dlc.add)
+			agencyIndex.addDrawListener(dlc.ap.agent, dlc.drawOrder, dlc.adListener);
+		else
+			agencyIndex.removeDrawListener(dlc.ap.agent, dlc.adListener);
 	}
-
-//	public void setDrawLayers(TreeMap<AllowOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
-//		agencyIndex.addMapDrawLayers(drawLayers);
-//	}
 
 	public void createAgents(Collection<ObjectProperties> agentProps) {
 		Iterator<ObjectProperties> apIter = agentProps.iterator();
@@ -204,12 +186,24 @@ QQ.pr("why is a thing thats not an update listener in this list?");
 		agencyChangeQ.removeAgent(new AgentPlaceholder(agent));
 	}
 
-//	public void setAgentUpdateOrder(Agent agent, AllowOrder order) {
-//		agencyChangeQ.setAgentUpdateOrder(new AgentPlaceholder(agent), order);
-//	}
+	public void addAgentUpdateListener(Agent agent, AllowOrder newUpdateOrder, AgentUpdateListener auListener) {
+		agencyChangeQ.addAgentUpdateListener(new AgentPlaceholder(agent), newUpdateOrder, auListener);
+	}
 
-	public void setAgentDrawOrder(Agent agent, AllowOrder order) {
-		agencyChangeQ.setAgentDrawOrder(new AgentPlaceholder(agent), order);
+	public void removeAgentUpdateListener(Agent agent, AgentUpdateListener auListener) {
+		agencyChangeQ.removeAgentUpdateListener(new AgentPlaceholder(agent), auListener);
+	}
+
+	public void addAgentDrawListener(Agent agent, AllowOrder newDrawOrder, AgentDrawListener adListener) {
+		agencyChangeQ.addAgentDrawListener(new AgentPlaceholder(agent), newDrawOrder, adListener);
+	}
+
+	public void removeAgentDrawListener(Agent agent, AgentDrawListener adListener) {
+		agencyChangeQ.removeAgentDrawListener(new AgentPlaceholder(agent), adListener);
+	}
+
+	public void setEventListener(AgencyEventListener listener) {
+		agencyEventListener = listener;
 	}
 
 	public void setAtlas(TextureAtlas atlas) {
@@ -222,10 +216,6 @@ QQ.pr("why is a thing thats not an update listener in this list?");
 
 	public World getWorld() {
 		return world;
-	}
-
-	public void setEventListener(AgencyEventListener listener) {
-		agencyEventListener = listener;
 	}
 
 	public void playSound(String soundName) {
@@ -284,8 +274,8 @@ QQ.pr("why is a thing thats not an update listener in this list?");
 		return ret;
 	}
 
-	public void iterateThroughDrawObjects(AllowOrderListIter objIter) {
-		agencyIndex.iterateThroughDrawObjects(objIter);
+	public void iterateThroughDrawListeners(AllowOrderListIter doli) {
+		agencyIndex.iterateThroughDrawListeners(doli);
 	}
 
 	/*
@@ -312,13 +302,5 @@ QQ.pr("why is a thing thats not an update listener in this list?");
 				return false;
 			}
 		});
-	}
-
-	public void addAgentUpdateListener(Agent agent, AllowOrder newUpdateOrder, AgentUpdateListener auListener) {
-		agencyChangeQ.addAgentUpdateListener(new AgentPlaceholder(agent), newUpdateOrder, auListener);
-	}
-
-	public void removeAgentUpdateListener(Agent agent, AgentUpdateListener auListener) {
-		agencyChangeQ.removeAgentUpdateListener(new AgentPlaceholder(agent), auListener);
 	}
 }

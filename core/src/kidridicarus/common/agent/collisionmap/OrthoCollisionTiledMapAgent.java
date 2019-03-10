@@ -9,8 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.collisionmap.stuff.OrthoTileCollisionMap;
 import kidridicarus.common.agentbody.general.OrthoTiledMapBody;

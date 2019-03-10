@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -29,7 +29,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * The sliding turtle shell awards only absolute points, and head bounces award only relative points.
  * Currently, mario fireball strikes award only absolute points.
  */
-public class FloatingPoints extends Agent implements DrawableAgent {
+public class FloatingPoints extends Agent {
 	private static final float FLOAT_TIME = 1f;
 	private static final float FLOAT_HEIGHT = UInfo.P2M(48);
 
@@ -65,7 +65,10 @@ public class FloatingPoints extends Agent implements DrawableAgent {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			});
 	}
 
 	private void doUpdate(float delta) {
@@ -76,8 +79,7 @@ public class FloatingPoints extends Agent implements DrawableAgent {
 			agency.disposeAgent(this);
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch){
+	public void doDraw(AgencyDrawBatch batch){
 		batch.draw(pointsSprite);
 	}
 

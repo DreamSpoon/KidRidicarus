@@ -4,27 +4,28 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.CastleFlagSprite;
 
-public class CastleFlag extends Agent implements DrawableAgent {
-	private enum CastleFlagState { DOWN, RISING, UP}
+public class CastleFlag extends Agent {
 	private static final float RISE_DIST = UInfo.P2M(32);
 	private static final float RISE_TIME = 1f;
 	private static final float BODY_WIDTH = UInfo.P2M(16f);
 	private static final float BODY_HEIGHT = UInfo.P2M(16f);
 
+	private enum MoveState { DOWN, RISING, UP}
+
 	private AgentUpdateListener myUpdateListener;
 	private CastleFlagSprite flagSprite;
 	private Vector2 startPosition;
 	private boolean isTriggered;
-	private CastleFlagState curState;
+	private MoveState curMoveState;
 	private float stateTimer;
 
 	public CastleFlag(Agency agency, ObjectProperties properties) {
@@ -33,25 +34,28 @@ public class CastleFlag extends Agent implements DrawableAgent {
 		myUpdateListener = null;
 		startPosition = Agent.getStartPoint(properties);
 		isTriggered = false;
-		curState = CastleFlagState.DOWN;
+		curMoveState = MoveState.DOWN;
 		stateTimer = 0f;
 
 		flagSprite = new CastleFlagSprite(agency.getAtlas(), startPosition);
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			});
 	}
 
 	private void doUpdate(float delta) {
 		float yOffset;
-		CastleFlagState nextState = getState();
-		switch(nextState) {
+		MoveState nextMoveState = getNextMoveState();
+		switch(nextMoveState) {
 			case DOWN:
 			default:
 				yOffset = 0f;
 				if(isTriggered)
-					curState = CastleFlagState.RISING;
+					curMoveState = MoveState.RISING;
 				break;
 			case RISING:
-				if(curState != nextState)
+				if(curMoveState != nextMoveState)
 					yOffset = 0f;
 				else
 					yOffset = RISE_DIST / RISE_TIME * stateTimer;
@@ -62,30 +66,29 @@ public class CastleFlag extends Agent implements DrawableAgent {
 				agency.removeAgentUpdateListener(this, myUpdateListener);
 				break;
 		}
-		stateTimer = curState == nextState ? stateTimer+delta : 0f;
-		curState = nextState;
+		stateTimer = curMoveState == nextMoveState ? stateTimer+delta : 0f;
+		curMoveState = nextMoveState;
 
 		flagSprite.update(startPosition.cpy().add(0f, yOffset));
 	}
 
-	private CastleFlagState getState() {
-		switch(curState) {
+	private MoveState getNextMoveState() {
+		switch(curMoveState) {
 			case DOWN:
 			default:
 				if(isTriggered)
-					return CastleFlagState.RISING;
-				return CastleFlagState.DOWN;
+					return MoveState.RISING;
+				return MoveState.DOWN;
 			case RISING:
 				if(stateTimer > RISE_TIME)
-					return CastleFlagState.UP;
-				return CastleFlagState.RISING;
+					return MoveState.UP;
+				return MoveState.RISING;
 			case UP:
-				return CastleFlagState.UP;
+				return MoveState.UP;
 		}
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch) {
+	public void doDraw(AgencyDrawBatch batch) {
 		if(isTriggered)
 			batch.draw(flagSprite);
 	}

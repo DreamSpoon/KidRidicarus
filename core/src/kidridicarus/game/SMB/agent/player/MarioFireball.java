@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -20,7 +20,7 @@ import kidridicarus.game.SMB.agentsprite.player.MarioFireballSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 
-public class MarioFireball extends BasicWalkAgent implements DrawableAgent, DisposableAgent {
+public class MarioFireball extends BasicWalkAgent implements DisposableAgent {
 	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
 	private static final float MAX_Y_VEL = 2.0f;
 
@@ -65,10 +65,13 @@ public class MarioFireball extends BasicWalkAgent implements DrawableAgent, Disp
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			});
 	}
 
-	private MoveState getState() {
+	private MoveState getNextMoveState() {
 		if(contactState == ContactState.NONE)
 			return MoveState.FLY;
 		return MoveState.EXPLODE;
@@ -100,7 +103,7 @@ public class MarioFireball extends BasicWalkAgent implements DrawableAgent, Disp
 	}
 
 	private void processMove(float delta) {
-		MoveState nextMoveState = getState();
+		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case EXPLODE:
 				if(nextMoveState != curMoveState) {
@@ -134,8 +137,7 @@ public class MarioFireball extends BasicWalkAgent implements DrawableAgent, Disp
 		fireballSprite.update(delta, fbBody.getPosition(), curMoveState);
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch) {
+	public void doDraw(AgencyDrawBatch batch) {
 		batch.draw(fireballSprite);
 	}
 

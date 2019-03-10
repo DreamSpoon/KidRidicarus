@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
@@ -18,8 +18,7 @@ import kidridicarus.game.SMB.agentbody.item.FireFlowerBody;
 import kidridicarus.game.SMB.agentsprite.item.FireFlowerSprite;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
-public class FireFlower extends Agent implements DrawableAgent, PowerupGiveAgent,
-		DisposableAgent {
+public class FireFlower extends Agent implements PowerupGiveAgent, DisposableAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 
@@ -28,6 +27,7 @@ public class FireFlower extends Agent implements DrawableAgent, PowerupGiveAgent
 	private float stateTimer;
 	private boolean isSprouting;
 	private Vector2 sproutingPosition;
+	private AgentDrawListener myDrawListener;
 
 	public FireFlower(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -41,7 +41,12 @@ public class FireFlower extends Agent implements DrawableAgent, PowerupGiveAgent
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
+		// sprout from bottom layer and switch to next layer on finish sprout
+		myDrawListener = new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			};
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, myDrawListener);
 	}
 
 	private void doUpdate(float delta) {
@@ -53,7 +58,13 @@ public class FireFlower extends Agent implements DrawableAgent, PowerupGiveAgent
 			float yOffset = 0f;
 			if(stateTimer > SPROUT_TIME) {
 				isSprouting = false;
-				agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
+				// change from bottom to middle sprite draw order
+				agency.removeAgentDrawListener(this, myDrawListener);
+				myDrawListener = new AgentDrawListener() {
+						@Override
+						public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+					};
+				agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, myDrawListener);
 				ffBody = new FireFlowerBody(this, agency.getWorld(), sproutingPosition);
 			}
 			else
@@ -68,8 +79,7 @@ public class FireFlower extends Agent implements DrawableAgent, PowerupGiveAgent
 		stateTimer += delta;
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch){
+	public void doDraw(AgencyDrawBatch batch){
 		batch.draw(flowerSprite);
 	}
 

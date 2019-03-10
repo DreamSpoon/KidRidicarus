@@ -42,8 +42,8 @@ public class SkreeSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f + SPECIAL_OFFSET.x, position.y - getHeight()/2f + SPECIAL_OFFSET.y);
 	}
 
-	public void update(float delta, Vector2 position, MoveState curState) {
-		switch(curState) {
+	public void update(float delta, Vector2 position, MoveState parentState) {
+		switch(parentState) {
 			case SLEEP:
 			default:
 				setRegion(spinAnim.getKeyFrame(stateTimer));

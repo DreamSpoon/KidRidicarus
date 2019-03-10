@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.DrawableAgent;
+import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -14,7 +14,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.DrawOrderAlias;
 
-public class DrawLayerAgent extends Agent implements DrawableAgent {
+public class DrawLayerAgent extends Agent {
 	private Rectangle bounds;
 	private TiledMapTileLayer drawLayer;
 
@@ -24,7 +24,11 @@ public class DrawLayerAgent extends Agent implements DrawableAgent {
 		drawLayer = properties.get(CommonKV.AgentMapParams.KEY_TILEDMAPTILELAYER, null, TiledMapTileLayer.class);
 		if(drawLayer == null)
 			throw new IllegalArgumentException("Agents needs TiledMapTileLayer in its construction properties.");
-		agency.setAgentDrawOrder(this, getDrawOrderForLayer(drawLayer, CommonInfo.KIDRID_DRAWORDER_ALIAS));
+		agency.addAgentDrawListener(this, getDrawOrderForLayer(drawLayer, CommonInfo.KIDRID_DRAWORDER_ALIAS),
+				new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			});
 	}
 
 	/*
@@ -55,8 +59,7 @@ public class DrawLayerAgent extends Agent implements DrawableAgent {
 		return new AllowOrder(true, drawOrderFloat);
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch) {
+	public void doDraw(AgencyDrawBatch batch) {
 		batch.draw(drawLayer);
 	}
 

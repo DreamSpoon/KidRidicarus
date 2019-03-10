@@ -21,7 +21,7 @@ public class MarioFireballSprite extends Sprite {
 	private Animation<TextureRegion> ballAnim;
 	private Animation<TextureRegion> explodeAnim;
 	private float stateTimer;
-	private MoveState prevState;
+	private MoveState prevParentMoveState;
 
 	public MarioFireballSprite(TextureAtlas atlas, Vector2 position) {
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED_FLY,
@@ -35,18 +35,18 @@ public class MarioFireballSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 
 		stateTimer = 0f;
-		prevState = MoveState.FLY;
+		prevParentMoveState = MoveState.FLY;
 	}
 
-	public void update(float delta, Vector2 position, MoveState curState) {
+	public void update(float delta, Vector2 position, MoveState parentMoveState) {
 		// change the size of the sprite when it changes to an explosion
-		if(curState == MoveState.EXPLODE && prevState != MoveState.EXPLODE)
+		if(parentMoveState == MoveState.EXPLODE && prevParentMoveState != MoveState.EXPLODE)
 			setBounds(getX(), getY(), SPR_EXPWIDTH, SPR_EXPHEIGHT);
 
-		stateTimer = curState == prevState ? stateTimer+delta : 0f;
-		prevState = curState;
+		stateTimer = parentMoveState == prevParentMoveState ? stateTimer+delta : 0f;
+		prevParentMoveState = parentMoveState;
 
-		switch(curState) {
+		switch(parentMoveState) {
 			case FLY:
 				setRegion(ballAnim.getKeyFrame(stateTimer));
 				break;
@@ -60,6 +60,6 @@ public class MarioFireballSprite extends Sprite {
 	}
 
 	public boolean isExplodeFinished() {
-		return (explodeAnim.isAnimationFinished(stateTimer) && prevState == MoveState.EXPLODE);
+		return (explodeAnim.isAnimationFinished(stateTimer) && prevParentMoveState == MoveState.EXPLODE);
 	}
 }

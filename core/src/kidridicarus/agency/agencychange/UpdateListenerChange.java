@@ -1,6 +1,6 @@
 package kidridicarus.agency.agencychange;
 
-import kidridicarus.agency.AgentUpdateListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.AllowOrder;
 
 public class UpdateListenerChange {

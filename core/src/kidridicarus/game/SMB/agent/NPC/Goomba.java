@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -23,8 +23,8 @@ import kidridicarus.game.SMB.agentsprite.NPC.GoombaSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class Goomba extends BasicWalkAgent implements DrawableAgent, ContactDmgTakeAgent,
-		HeadBounceTakeAgent, BumpTakeAgent, ContactDmgGiveAgent, DisposableAgent {
+public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadBounceTakeAgent, BumpTakeAgent,
+		ContactDmgGiveAgent, DisposableAgent {
 	private static final float GOOMBA_WALK_VEL = 0.4f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
@@ -61,7 +61,10 @@ public class Goomba extends BasicWalkAgent implements DrawableAgent, ContactDmgT
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			});
 	}
 
 	private void doUpdate(float delta) {
@@ -153,8 +156,7 @@ public class Goomba extends BasicWalkAgent implements DrawableAgent, ContactDmgT
 		}
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch){
+	public void doDraw(AgencyDrawBatch batch){
 		batch.draw(goombaSprite);
 	}
 

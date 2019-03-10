@@ -201,7 +201,7 @@ public class MarioSprite extends Sprite {
 			doFireballAnim = false;
 
 		prevSpriteState = curSpriteState;
-		curSpriteState = getState(bodyState, agentState);
+		curSpriteState = getNextSpriteState(bodyState, agentState);
 
 		if(prevSpriteState == MarioSpriteState.STAND && curSpriteState == MarioSpriteState.FALL)
 			fallStartStateTime = -1;
@@ -244,7 +244,7 @@ public class MarioSprite extends Sprite {
 			setPosition(position.x - getWidth() / 2f, position.y - getHeight() / 2f);
 	}
 
-	private MarioSpriteState getState(MarioBodyState bodyState, MarioAgentState agentState) {
+	private MarioSpriteState getNextSpriteState(MarioBodyState bodyState, MarioAgentState agentState) {
 		if(agentState != MarioAgentState.PLAY && agentState != MarioAgentState.FIREBALL) {
 			switch(agentState) {
 				case DEAD:

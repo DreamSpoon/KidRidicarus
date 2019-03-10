@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
@@ -18,7 +18,7 @@ import kidridicarus.game.SMB.agentbody.other.FlagpoleBody;
 import kidridicarus.game.SMB.agentscript.FlagpoleScript;
 import kidridicarus.game.SMB.agentsprite.other.PoleFlagSprite;
 
-public class Flagpole extends Agent implements DrawableAgent, DisposableAgent {
+public class Flagpole extends Agent implements DisposableAgent {
 	public static final float FLAGDROP_TIME = 1.35f;
 
 	// offset is from top-left of flagpole bounds
@@ -45,7 +45,10 @@ public class Flagpole extends Agent implements DrawableAgent, DisposableAgent {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			});
 	}
 
 	private void doUpdate(float delta) {
@@ -65,8 +68,7 @@ public class Flagpole extends Agent implements DrawableAgent, DisposableAgent {
 		flagSprite.update(flagPos);
 	}
 
-	@Override
-	public void draw(AgencyDrawBatch batch) {
+	public void doDraw(AgencyDrawBatch batch) {
 		batch.draw(flagSprite);
 	}
 

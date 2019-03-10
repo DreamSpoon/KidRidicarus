@@ -2,7 +2,8 @@ package kidridicarus.agency.agencychange;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import kidridicarus.agency.AgentUpdateListener;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.AllowOrder;
 
 public class AgencyChangeQueue {
@@ -22,14 +23,6 @@ public class AgencyChangeQueue {
 		changeQ.add(new AllAgentListChange(ap, false));
 	}
 
-//	public void setAgentUpdateOrder(AgentPlaceholder ap, AllowOrder order) {
-//		changeQ.add(new UpdateOrderChange(ap, order));
-//	}
-
-	public void setAgentDrawOrder(AgentPlaceholder ap, AllowOrder order) {
-		changeQ.add(new DrawOrderChange(ap, order));
-	}
-
 	/*
 	 * Iterate through each agent change in queue until queue is empty, invoking callback for each agent.
 	 */
@@ -47,5 +40,14 @@ public class AgencyChangeQueue {
 
 	public void removeAgentUpdateListener(AgentPlaceholder ap, AgentUpdateListener auListener) {
 		changeQ.add(new UpdateListenerChange(ap, null, auListener, false));
+	}
+
+	public void addAgentDrawListener(AgentPlaceholder ap, AllowOrder newDrawOrder,
+			AgentDrawListener adListener) {
+		changeQ.add(new DrawListenerChange(ap, newDrawOrder, adListener, true));
+	}
+
+	public void removeAgentDrawListener(AgentPlaceholder ap, AgentDrawListener adListener) {
+		changeQ.add(new DrawListenerChange(ap, null, adListener, false));
 	}
 }
