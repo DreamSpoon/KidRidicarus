@@ -9,8 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.collisionmap.stuff.OrthoTileCollisionMap;
 import kidridicarus.common.agentbody.general.OrthoTiledMapBody;
@@ -18,7 +18,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 
-public class OrthoCollisionTiledMapAgent extends Agent implements UpdatableAgent, Disposable {
+public class OrthoCollisionTiledMapAgent extends Agent implements Disposable {
 	private OrthoTileCollisionMap otcMap;
 	private OrthoTiledMapBody tmBody;
 	private LinkedBlockingQueue<TileChange> tileChangeQ;
@@ -39,11 +39,13 @@ public class OrthoCollisionTiledMapAgent extends Agent implements UpdatableAgent
 		// Agent has post update because:
 		//   -it may receive requests to modify the solid state of tiles inside itself during the regular Agency update
 		//   -it will process these requests in batch format during post-update
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.POST_UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		// process change q
 		while(!tileChangeQ.isEmpty())
 			doChange(tileChangeQ.poll());

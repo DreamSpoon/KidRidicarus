@@ -4,15 +4,16 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.TriggerableAgent;
 import kidridicarus.common.agentbody.general.AgentSpawnTriggerBody;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 
-public class AgentSpawnTrigger extends Agent implements UpdatableAgent, DisposableAgent {
+public class AgentSpawnTrigger extends Agent implements DisposableAgent {
 	private AgentSpawnTriggerBody stBody;
 	private boolean enabled;
 
@@ -23,15 +24,19 @@ public class AgentSpawnTrigger extends Agent implements UpdatableAgent, Disposab
 		enabled = false;
 		stBody = new AgentSpawnTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) {
+					doUpdate(delta);
+				}
+			});
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		if(!enabled)
 			return;
-		for(UpdatableAgent sb : stBody.getSpawnerContacts())
-			sb.update(delta);
+		for(TriggerableAgent agent : stBody.getSpawnerContacts())
+			agent.trigger();
 	}
 
 	/*

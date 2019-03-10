@@ -6,12 +6,12 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.TriggerableAgent;
 import kidridicarus.common.agentbody.general.AgentSpawnerBody;
 import kidridicarus.common.info.CommonKV;
 
-public class AgentSpawner extends Agent implements UpdatableAgent, DisposableAgent {
+public class AgentSpawner extends Agent implements TriggerableAgent, DisposableAgent {
 	private AgentSpawnerBody sbody;
 	private boolean isUsed;
 	private String spawnAgentClassAlias;
@@ -23,9 +23,9 @@ public class AgentSpawner extends Agent implements UpdatableAgent, DisposableAge
 		sbody = new AgentSpawnerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 	}
 
-	// update will only be called when the spawner is contacting a spawn trigger
+	// to be called by a spawn trigger contacting this agent
 	@Override
-	public void update(float delta) {
+	public void trigger() {
 		if(!isUsed) {
 			isUsed = true;
 			agency.createAgent(Agent.createPointAP(spawnAgentClassAlias, sbody.getPosition()));

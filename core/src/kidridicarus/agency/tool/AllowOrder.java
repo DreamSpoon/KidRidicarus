@@ -1,4 +1,4 @@
-package kidridicarus.common.tool;
+package kidridicarus.agency.tool;
 
 /*
  * A wrapper for a boolean and a comparable (in this case 'float' order is used).
@@ -6,6 +6,7 @@ package kidridicarus.common.tool;
  * order is important only when allow == true.
  */
 public class AllowOrder implements Comparable<AllowOrder> {
+	public static final AllowOrder NOT_ALLOWED = new AllowOrder(false, 0f);
 	public boolean allow;
 	public float order;
 

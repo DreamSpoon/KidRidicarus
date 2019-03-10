@@ -12,9 +12,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
@@ -25,7 +25,7 @@ import kidridicarus.common.info.UInfo;
  * A "parent" or "meta" agent that has a collision map, drawable layers, and a batch of initial spawn agents.
  * This agent does not load anything from file, rather it is given a TiledMap object that has been preloaded.
  */
-public class TiledMapMetaAgent extends Agent implements UpdatableAgent, DisposableAgent {
+public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	private TiledMap tiledMap;
 	private OrthoCollisionTiledMapAgent collisionMapAgent;
 	private LinkedList<DrawLayerAgent> drawLayerAgents;
@@ -42,7 +42,13 @@ public class TiledMapMetaAgent extends Agent implements UpdatableAgent, Disposab
 
 		createInitialSubAgents();
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+//		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) {
+					doUpdate(delta);
+				}
+			});
 		otherSpawnDone = false;
 	}
 
@@ -94,8 +100,7 @@ public class TiledMapMetaAgent extends Agent implements UpdatableAgent, Disposab
 	 * So there was previously no solid stuff for the initial spawn agents to land on, so they needed to be
 	 * spawned later.
 	 */
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		if(!otherSpawnDone) {
 			otherSpawnDone = true;
 			// create the other agents (typically spawn boxes, rooms, player start, etc.)

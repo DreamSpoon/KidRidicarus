@@ -9,10 +9,10 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -29,7 +29,7 @@ import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, TileBumpTakeAgent, DisposableAgent {
+public class BumpTile extends Agent implements DrawableAgent, TileBumpTakeAgent, DisposableAgent {
 	private static final float BOUNCE_TIME = 0.175f;
 	private static final float BOUNCE_HEIGHT_FRAC = 0.225f;	// bounce up about 1/5 of tile height
 
@@ -100,12 +100,14 @@ public class BumpTile extends Agent implements UpdatableAgent, DrawableAgent, Ti
 		btBody = new BumpTileBody(agency.getWorld(), this, Agent.getStartBounds(properties));
 		btSprite = new BumpTileSprite(agency.getAtlas(), Agent.getStartTexRegion(properties));
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		float offsetY = 0f;
 		MoveState nextState = getNextMoveState();
 		switch(nextState) {

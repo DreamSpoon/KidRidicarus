@@ -1,6 +1,6 @@
 package kidridicarus.agency.agencychange;
 
-import kidridicarus.common.tool.AllowOrder;
+import kidridicarus.agency.tool.AllowOrder;
 
 public class DrawOrderChange {
 	public AgentPlaceholder ap;

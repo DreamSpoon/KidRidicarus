@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -20,7 +20,7 @@ import kidridicarus.game.SMB.agentsprite.player.MarioFireballSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 
-public class MarioFireball extends BasicWalkAgent implements UpdatableAgent, DrawableAgent, DisposableAgent {
+public class MarioFireball extends BasicWalkAgent implements DrawableAgent, DisposableAgent {
 	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
 	private static final float MAX_Y_VEL = 2.0f;
 
@@ -61,7 +61,10 @@ public class MarioFireball extends BasicWalkAgent implements UpdatableAgent, Dra
 
 		fireballSprite = new MarioFireballSprite(agency.getAtlas(), fbBody.getPosition());
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
@@ -71,8 +74,7 @@ public class MarioFireball extends BasicWalkAgent implements UpdatableAgent, Dra
 		return MoveState.EXPLODE;
 	}
 
-	@Override
-	public void update(float delta) {
+	public void doUpdate(float delta) {
 		processContacts();
 		processMove(delta);
 		processSprite(delta);

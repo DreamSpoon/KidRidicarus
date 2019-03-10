@@ -3,6 +3,7 @@ package kidridicarus.common.info;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.common.agent.collisionmap.DrawLayerAgent;
 import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
 import kidridicarus.common.agent.collisionmap.TiledMapMetaAgent;
@@ -11,7 +12,6 @@ import kidridicarus.common.agent.general.AgentSpawner;
 import kidridicarus.common.agent.general.DespawnBox;
 import kidridicarus.common.agent.general.PlayerSpawner;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.tool.AllowOrder;
 import kidridicarus.common.tool.DrawOrderAlias;
 import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.SMB.agent.other.PipeWarp;
@@ -23,7 +23,7 @@ public class CommonInfo {
 	public static final int DESKTOP_SCALE = 2;
 
 	public static class LayerDrawOrder {
-		public static final AllowOrder NONE = new AllowOrder(false, 0f);
+		public static final AllowOrder NONE = AllowOrder.NOT_ALLOWED;
 		public static final AllowOrder MAP_BACKGROUND = new AllowOrder(true, 0f);
 		public static final AllowOrder MAP_BOTTOM = new AllowOrder(true, 2f);
 		public static final AllowOrder MAP_MIDDLE = new AllowOrder(true, 4f);
@@ -57,7 +57,7 @@ public class CommonInfo {
 			CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP, DrawLayerAgent.class);
 
 	public static class AgentUpdateOrder {
-		public static final AllowOrder NONE = new AllowOrder(false, 0f);
+		public static final AllowOrder NONE = AllowOrder.NOT_ALLOWED;
 		// pre-update is earlier than update
 		public static final AllowOrder PRE_UPDATE = new AllowOrder(true, -1f);
 		// update is earlier than post update

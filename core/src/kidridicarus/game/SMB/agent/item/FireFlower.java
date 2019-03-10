@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
@@ -18,7 +18,7 @@ import kidridicarus.game.SMB.agentbody.item.FireFlowerBody;
 import kidridicarus.game.SMB.agentsprite.item.FireFlowerSprite;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
-public class FireFlower extends Agent implements UpdatableAgent, DrawableAgent, PowerupGiveAgent,
+public class FireFlower extends Agent implements DrawableAgent, PowerupGiveAgent,
 		DisposableAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
@@ -37,12 +37,14 @@ public class FireFlower extends Agent implements UpdatableAgent, DrawableAgent, 
 
 		stateTimer = 0f;
 		isSprouting = true;
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		processSprite(delta);
 	}
 

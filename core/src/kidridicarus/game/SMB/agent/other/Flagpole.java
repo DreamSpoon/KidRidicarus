@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
@@ -18,7 +18,7 @@ import kidridicarus.game.SMB.agentbody.other.FlagpoleBody;
 import kidridicarus.game.SMB.agentscript.FlagpoleScript;
 import kidridicarus.game.SMB.agentsprite.other.PoleFlagSprite;
 
-public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent, DisposableAgent {
+public class Flagpole extends Agent implements DrawableAgent, DisposableAgent {
 	public static final float FLAGDROP_TIME = 1.35f;
 
 	// offset is from top-left of flagpole bounds
@@ -41,12 +41,14 @@ public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent, Di
 		flagPos = initFlagPos;
 		flagSprite = new PoleFlagSprite(agency.getAtlas(), flagPos);
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		if(isAtBottom)
 			return;
 		if(dropTimer > 0f) {
@@ -68,13 +70,9 @@ public class Flagpole extends Agent implements UpdatableAgent, DrawableAgent, Di
 		batch.draw(flagSprite);
 	}
 
-	public void startDrop() {
+	private void startDrop() {
 		isAtBottom = false;
 		dropTimer = FLAGDROP_TIME;
-	}
-
-	public boolean isAtBottom() {
-		return isAtBottom;
 	}
 
 	// check if the user is a player agent, if so then give the agent's supervisor a Flagpole script to run 

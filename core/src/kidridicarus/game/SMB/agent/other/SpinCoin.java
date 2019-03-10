@@ -8,10 +8,10 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -20,7 +20,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.BounceCoinSprite;
 
-public class SpinCoin extends Agent implements UpdatableAgent, DrawableAgent, DisposableAgent {
+public class SpinCoin extends Agent implements DrawableAgent, DisposableAgent {
 	private static final float BODY_WIDTH = UInfo.P2M(7f);
 	private static final float BODY_HEIGHT = UInfo.P2M(7f);
 	private static final float COIN_SPIN_TIME = 0.54f;
@@ -37,7 +37,10 @@ public class SpinCoin extends Agent implements UpdatableAgent, DrawableAgent, Di
 		defineBody(Agent.getStartPoint(properties), START_VELOCITY);
 		coinSprite = new BounceCoinSprite(agency.getAtlas(), b2body.getPosition());
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
@@ -61,8 +64,7 @@ public class SpinCoin extends Agent implements UpdatableAgent, DrawableAgent, Di
 				CommonCF.NO_CONTACT_CFMASK, this));
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		coinSprite.update(delta, b2body.getPosition());
 		stateTimer += delta;
 		if(stateTimer > COIN_SPIN_TIME)

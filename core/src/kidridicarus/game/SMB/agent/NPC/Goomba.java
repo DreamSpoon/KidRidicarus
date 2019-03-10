@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -23,7 +23,7 @@ import kidridicarus.game.SMB.agentsprite.NPC.GoombaSprite;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class Goomba extends BasicWalkAgent implements UpdatableAgent, DrawableAgent, ContactDmgTakeAgent,
+public class Goomba extends BasicWalkAgent implements DrawableAgent, ContactDmgTakeAgent,
 		HeadBounceTakeAgent, BumpTakeAgent, ContactDmgGiveAgent, DisposableAgent {
 	private static final float GOOMBA_WALK_VEL = 0.4f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
@@ -57,12 +57,14 @@ public class Goomba extends BasicWalkAgent implements UpdatableAgent, DrawableAg
 
 		goomBody = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		goombaSprite = new GoombaSprite(agency.getAtlas(), goomBody.getPosition());
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		processContacts();
 		processMove(delta);
 		processSprite(delta);
@@ -189,8 +191,6 @@ public class Goomba extends BasicWalkAgent implements UpdatableAgent, DrawableAg
 			deadVelocity.set(-BUMP_SIDE_VEL, BUMP_UP_VEL);
 	}
 
-	// Contacting goomba does damage to players.
-	// Note: Goomba must have contacts disabled when dead so dead Goomba can't contact live player.
 	@Override
 	public boolean isContactDamage() {
 		return true;

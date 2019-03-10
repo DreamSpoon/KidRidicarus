@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
@@ -36,7 +36,7 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements UpdatableAgent, DrawableAgent, PlayerAgent, PowerupTakeAgent,
+public class Samus extends Agent implements DrawableAgent, PlayerAgent, PowerupTakeAgent,
 		DisposableAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
@@ -100,12 +100,14 @@ public class Samus extends Agent implements UpdatableAgent, DrawableAgent, Playe
 		samusSprite = new SamusSprite(agency.getAtlas(), samusBody.getPosition());
 		observer = new SamusObserver(this, agency.getAtlas());
 		supervisor = new SamusSupervisor(this);
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doUpdate(delta); }
+		});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		processContacts(delta);
 		processMove(delta, supervisor.pollMoveAdvice());
 		processSprite(delta);

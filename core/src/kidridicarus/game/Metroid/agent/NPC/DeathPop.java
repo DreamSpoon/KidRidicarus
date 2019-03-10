@@ -4,16 +4,15 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.Metroid.agentsprite.NPC.DeathPopSprite;
 
-public class DeathPop extends Agent implements UpdatableAgent, DrawableAgent, DisposableAgent {
+public class DeathPop extends Agent implements DrawableAgent {
 	private static final float POP_TIME = 3f/60f;
 
 	private DeathPopSprite dpSprite;
@@ -25,12 +24,14 @@ public class DeathPop extends Agent implements UpdatableAgent, DrawableAgent, Di
 		stateTimer = 0f;
 		position = Agent.getStartPoint(properties);
 		dpSprite = new DeathPopSprite(agency.getAtlas(), position);
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		if(stateTimer > POP_TIME)
 			agency.disposeAgent(this);
 		dpSprite.update(delta);
@@ -50,9 +51,5 @@ public class DeathPop extends Agent implements UpdatableAgent, DrawableAgent, Di
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(position.x, position.y, 0f, 0f);
-	}
-
-	@Override
-	public void disposeAgent() {
 	}
 }

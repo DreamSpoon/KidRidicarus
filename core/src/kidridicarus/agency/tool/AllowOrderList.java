@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import kidridicarus.common.tool.AllowOrder;
-
 /*
  * TreeMap and HashSet based implementation of a list of allowed and order objects, and not allowed objects
  * (order is ignored if object is not allowed).

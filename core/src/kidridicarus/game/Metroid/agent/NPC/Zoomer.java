@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.game.Metroid.agentbody.NPC.ZoomerBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.ZoomerSprite;
 import kidridicarus.game.info.GameKV;
@@ -24,7 +24,7 @@ import kidridicarus.common.tool.Direction4;
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then
  * check the sensors.
  */
-public class Zoomer extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgGiveAgent,
+public class Zoomer extends Agent implements DrawableAgent, ContactDmgGiveAgent,
 		ContactDmgTakeAgent, DisposableAgent {
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
 	private static final float INJURY_TIME = 10f/60f;
@@ -64,12 +64,14 @@ public class Zoomer extends Agent implements UpdatableAgent, DrawableAgent, Cont
 
 		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		processContacts(delta);
 		processMove(delta);
 		processSprite(delta);

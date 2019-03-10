@@ -1,5 +1,7 @@
 package kidridicarus.common.tool;
 
+import kidridicarus.agency.tool.AllowOrder;
+
 public class DrawOrderAlias {
 	public String alias;
 	public AllowOrder drawOrder;

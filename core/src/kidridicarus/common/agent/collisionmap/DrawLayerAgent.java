@@ -8,10 +8,10 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DrawableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.common.tool.AllowOrder;
 import kidridicarus.common.tool.DrawOrderAlias;
 
 public class DrawLayerAgent extends Agent implements DrawableAgent {

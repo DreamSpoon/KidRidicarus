@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -29,7 +29,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * The sliding turtle shell awards only absolute points, and head bounces award only relative points.
  * Currently, mario fireball strikes award only absolute points.
  */
-public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAgent {
+public class FloatingPoints extends Agent implements DrawableAgent {
 	private static final float FLOAT_TIME = 1f;
 	private static final float FLOAT_HEIGHT = UInfo.P2M(48);
 
@@ -61,12 +61,14 @@ public class FloatingPoints extends Agent implements UpdatableAgent, DrawableAge
 		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount);
 
 		stateTimer = 0f;
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		float yOffset = stateTimer <= FLOAT_TIME ? FLOAT_HEIGHT * stateTimer / FLOAT_TIME : FLOAT_HEIGHT;
 		pointsSprite.update(originalPosition.cpy().add(0f, yOffset));
 		stateTimer += delta;

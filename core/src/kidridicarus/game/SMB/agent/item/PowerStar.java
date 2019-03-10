@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -25,7 +25,7 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  * -allow the star to spawn down-right out of bricks like on level 1-1
  * -test the star's onBump method - I could not bump it, needs precise timing - maybe loosen the timing? 
  */
-public class PowerStar extends BasicWalkAgent implements UpdatableAgent, DrawableAgent, PowerupGiveAgent,
+public class PowerStar extends BasicWalkAgent implements DrawableAgent, PowerupGiveAgent,
 		BumpTakeAgent, DisposableAgent {
 	private static final float SPROUT_TIME = 0.5f;
 	private static final Vector2 START_BOUNCE_VEL = new Vector2(0.5f, 2f); 
@@ -53,7 +53,10 @@ public class PowerStar extends BasicWalkAgent implements UpdatableAgent, Drawabl
 		prevState = StarState.SPROUT;
 		stateTimer = 0f;
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
@@ -65,8 +68,7 @@ public class PowerStar extends BasicWalkAgent implements UpdatableAgent, Drawabl
 			return StarState.WALK;
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		processMove(delta);
 		processSprite(delta);
 	}

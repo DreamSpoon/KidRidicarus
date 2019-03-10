@@ -4,22 +4,23 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.CastleFlagSprite;
 
-public class CastleFlag extends Agent implements UpdatableAgent, DrawableAgent {
+public class CastleFlag extends Agent implements DrawableAgent {
 	private enum CastleFlagState { DOWN, RISING, UP}
 	private static final float RISE_DIST = UInfo.P2M(32);
 	private static final float RISE_TIME = 1f;
 	private static final float BODY_WIDTH = UInfo.P2M(16f);
 	private static final float BODY_HEIGHT = UInfo.P2M(16f);
 
+	private AgentUpdateListener myUpdateListener;
 	private CastleFlagSprite flagSprite;
 	private Vector2 startPosition;
 	private boolean isTriggered;
@@ -29,6 +30,7 @@ public class CastleFlag extends Agent implements UpdatableAgent, DrawableAgent {
 	public CastleFlag(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
+		myUpdateListener = null;
 		startPosition = Agent.getStartPoint(properties);
 		isTriggered = false;
 		curState = CastleFlagState.DOWN;
@@ -38,8 +40,7 @@ public class CastleFlag extends Agent implements UpdatableAgent, DrawableAgent {
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		float yOffset;
 		CastleFlagState nextState = getState();
 		switch(nextState) {
@@ -58,7 +59,7 @@ public class CastleFlag extends Agent implements UpdatableAgent, DrawableAgent {
 			case UP:
 				yOffset = RISE_DIST;
 				// disable updates
-				agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.NONE);
+				agency.removeAgentUpdateListener(this, myUpdateListener);
 				break;
 		}
 		stateTimer = curState == nextState ? stateTimer+delta : 0f;
@@ -91,7 +92,11 @@ public class CastleFlag extends Agent implements UpdatableAgent, DrawableAgent {
 
 	public void trigger() {
 		isTriggered = true;
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		// enable updates
+		myUpdateListener = new AgentUpdateListener() {
+				public void update(float delta) { doUpdate(delta); }
+			};
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, myUpdateListener);
 	}
 
 	@Override

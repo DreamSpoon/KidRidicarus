@@ -8,10 +8,10 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
@@ -20,7 +20,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB.agentsprite.other.BrickPieceSprite;
 import kidridicarus.game.info.GameKV;
 
-public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent, DisposableAgent {
+public class BrickPiece extends Agent implements DrawableAgent, DisposableAgent {
 	private static final float BODY_WIDTH = UInfo.P2M(8);
 	private static final float BODY_HEIGHT = UInfo.P2M(8);
 	// bricks should be auto-removed when off screen, use this timeout for other cases
@@ -37,7 +37,10 @@ public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent, 
 		defineBody(Agent.getStartPoint(properties), Agent.getStartVelocity(properties));
 		bpSprite = new BrickPieceSprite(agency.getAtlas(), b2body.getPosition(),
 				properties.get(CommonKV.Sprite.KEY_STARTFRAME, 0, Integer.class));
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_TOP);
 	}
 
@@ -61,8 +64,7 @@ public class BrickPiece extends Agent implements UpdatableAgent, DrawableAgent, 
 		b2body.createFixture(fdef);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		bpSprite.update(b2body.getPosition(), delta);
 		if(b2body.getPosition().y < 0f || stateTimer > BRICK_DIE_TIME)
 			agency.disposeAgent(this);

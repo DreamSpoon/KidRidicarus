@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
@@ -19,7 +19,7 @@ import kidridicarus.game.Metroid.agentbody.NPC.SkreeBody;
 import kidridicarus.game.Metroid.agentsprite.NPC.SkreeSprite;
 import kidridicarus.game.info.GameKV;
 
-public class Skree extends Agent implements UpdatableAgent, DrawableAgent, ContactDmgGiveAgent, ContactDmgTakeAgent, DisposableAgent {
+public class Skree extends Agent implements DrawableAgent, ContactDmgGiveAgent, ContactDmgTakeAgent, DisposableAgent {
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
 
 	private static final float INJURY_TIME = 10f/60f;
@@ -68,12 +68,14 @@ public class Skree extends Agent implements UpdatableAgent, DrawableAgent, Conta
 		sBody = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).add(SPECIAL_OFFSET));
 		sSprite = new SkreeSprite(agency.getAtlas(), sBody.getPosition());
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		processContacts();
 		processMove(delta);
 		processSprite(delta);

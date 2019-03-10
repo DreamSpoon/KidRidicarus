@@ -3,21 +3,15 @@ package kidridicarus.agency;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 import kidridicarus.agency.agencychange.AgentWrapper;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
+import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.AllowOrderList;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
-import kidridicarus.common.tool.AllowOrder;
 
 /*
  * A list of all agents in the agency, with sub-lists available for:
@@ -27,13 +21,17 @@ import kidridicarus.common.tool.AllowOrder;
  */
 public class AgencyIndex {
 	private HashMap<Agent, AgentWrapper> allAgents;
-	private AllowOrderList orderedUpdateAgents;
+//	private AllowOrderList orderedUpdateAgents;
+	private AllowOrderList orderedUpdateListeners;
+	private HashMap<AgentUpdateListener, AllowOrder> allUpdateListeners;
 	private AllowOrderList drawObjects;
 	private HashSet<DisposableAgent> disposeAgents;
 
 	public AgencyIndex() {
 		allAgents = new HashMap<Agent, AgentWrapper>();
-		orderedUpdateAgents = new AllowOrderList();
+//		orderedUpdateAgents = new AllowOrderList();
+		orderedUpdateListeners = new AllowOrderList();
+		allUpdateListeners = new HashMap<AgentUpdateListener, AllowOrder>();
 		drawObjects = new AllowOrderList();
 		disposeAgents = new HashSet<DisposableAgent>();
 	}
@@ -52,7 +50,8 @@ public class AgencyIndex {
 	@SuppressWarnings("unlikely-arg-type")
 	public void removeAgent(Agent agent) {
 		// remove agent from updates list
-		setAgentUpdateOrderNone(agent);
+//		setAgentUpdateOrderNone(agent);
+		removeAgentUpdateListeners(agent);
 		// remove agent from draw order list
 		setAgentDrawOrderNone(agent);
 		// remove agent from all agents list
@@ -66,7 +65,7 @@ public class AgencyIndex {
 		}
 	}
 
-	public void setAgentUpdateOrder(Agent agent, AllowOrder newUpdateOrder) {
+	/*	public void setAgentUpdateOrder(Agent agent, AllowOrder newUpdateOrder) {
 		if(!(agent instanceof UpdatableAgent)) {
 			throw new IllegalArgumentException(
 					"Cannot set draw order; agent not instance of UpdatableAgent: " + agent);
@@ -84,7 +83,7 @@ public class AgencyIndex {
 	public void setAgentUpdateOrderNone(Agent agent) {
 		setAgentUpdateOrder(agent, new AllowOrder(false, 0f));
 	}
-
+*/
 	public void setAgentDrawOrder(Agent agent, AllowOrder newDrawOrder) {
 		if(!(agent instanceof DrawableAgent)) {
 			throw new IllegalArgumentException(
@@ -102,10 +101,10 @@ public class AgencyIndex {
 	}
 
 	public void setAgentDrawOrderNone(Agent agent) {
-		setAgentDrawOrder(agent, new AllowOrder(false, 0f));
+		setAgentDrawOrder(agent, AllowOrder.NOT_ALLOWED);
 	}
 
-	public void addMapDrawLayers(TreeMap<AllowOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
+/*	public void addMapDrawLayers(TreeMap<AllowOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
 		// iterate through each draw order list
 		Iterator<Entry<AllowOrder, LinkedList<TiledMapTileLayer>>> drawOrderiter = drawLayers.entrySet().iterator();
 		while(drawOrderiter.hasNext()) {
@@ -123,7 +122,7 @@ public class AgencyIndex {
 			}
 		}
 	}
-
+*/
 	/*
 	 * See:
 	 * https://stackoverflow.com/questions/1066589/iterate-through-a-hashmap
@@ -155,7 +154,65 @@ public class AgencyIndex {
 		drawObjects.iterateList(doi);
 	}
 
-	public void iterateThroughUpdateAgents(AllowOrderListIter doi) {
-		orderedUpdateAgents.iterateList(doi);
+//	public void iterateThroughUpdateAgents(AllowOrderListIter doi) {
+//		orderedUpdateAgents.iterateList(doi);
+//	}
+
+	public void addUpdateListener(Agent agent, AllowOrder updateOrder, AgentUpdateListener auListener) {
+		AgentWrapper aWrapper = allAgents.get(agent);
+		if(aWrapper == null) {
+			throw new IllegalArgumentException(
+					"Cannot add update listener; agent not in list of all agents: " + agent);
+		}
+		if(allUpdateListeners.containsKey(auListener)) {
+			throw new IllegalArgumentException(
+					"Cannot add update listener; listener has already been added: " + auListener);
+		}
+
+		allUpdateListeners.put(auListener, updateOrder);
+		orderedUpdateListeners.add(auListener, updateOrder);
+
+		// keep track of the agent's update listeners
+		aWrapper.updateListeners.add(auListener);
+	}
+
+	public void removeUpdateListener(Agent agent, AgentUpdateListener auListener) {
+		AgentWrapper aWrapper = allAgents.get(agent);
+		if(aWrapper == null) {
+			throw new IllegalArgumentException(
+					"Cannot remove update listener; agent not in list of all agents: " + agent);
+		}
+		if(!allUpdateListeners.containsKey(auListener)) {
+			throw new IllegalArgumentException(
+					"Cannot remove update listener; listener was not added: " + auListener);
+		}
+
+		// Get the current update order for the listener...
+		AllowOrder currentOrder = allUpdateListeners.get(auListener);
+		// ... to find and remove the listener from the ordered tree/hashsets. 
+		orderedUpdateListeners.change(auListener, currentOrder, AllowOrder.NOT_ALLOWED);
+		// remove the listener from the list of all listeners
+		allUpdateListeners.remove(auListener);
+		// and remove the listener from the agents list of listeners
+		aWrapper.updateListeners.remove(auListener);
+	}
+
+	public void iterateThroughUpdateAgents(AllowOrderListIter uoi) {
+		orderedUpdateListeners.iterateList(uoi);
+	}
+
+	private void removeAgentUpdateListeners(Agent agent) {
+		AgentWrapper aWrapper = allAgents.get(agent);
+		if(aWrapper == null) {
+			throw new IllegalArgumentException(
+					"Cannot remove update listener; agent not in list of all agents: " + agent);
+		}
+		for(AgentUpdateListener aul : aWrapper.updateListeners) {
+			// remove the listener from the ordered treeset/hashsets
+			orderedUpdateListeners.change(aul, allUpdateListeners.get(aul), AllowOrder.NOT_ALLOWED);
+			// remove the listener from the hash map of listeners and draw orders
+			allUpdateListeners.remove(aul);
+		}
+		aWrapper.updateListeners.clear();
 	}
 }

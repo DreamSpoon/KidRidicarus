@@ -4,10 +4,8 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.TreeMap;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
@@ -17,17 +15,17 @@ import kidridicarus.agency.agencychange.AgencyChangeQueue;
 import kidridicarus.agency.agencychange.AgentPlaceholder;
 import kidridicarus.agency.agencychange.AllAgentListChange;
 import kidridicarus.agency.agencychange.DrawOrderChange;
-import kidridicarus.agency.agencychange.UpdateOrderChange;
+import kidridicarus.agency.agencychange.UpdateListenerChange;
 import kidridicarus.agency.agencychange.AgencyChangeQueue.AgencyChangeCallback;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
+import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.tool.AllowOrder;
+import kidridicarus.game.tool.QQ;
 
 /*
  * Desc:
@@ -80,12 +78,27 @@ public class Agency implements Disposable {
 		globalTimer += delta;
 	}
 
-	private void updateAgents(final float delta) {
+/*	private void updateAgents(final float delta) {
 		// loop through list of agents receiving updates, calling each agent's update method
 		agencyIndex.iterateThroughUpdateAgents(new AllowOrderListIter() {
 				@Override
 				public boolean iterate(Object obj) {
 					((UpdatableAgent) obj).update(delta);
+					// continue iterating
+					return false;
+				}
+			});
+		processChangeQ();
+	}*/
+	private void updateAgents(final float delta) {
+		// loop through list of agents receiving updates, calling each agent's update method
+		agencyIndex.iterateThroughUpdateAgents(new AllowOrderListIter() {
+				@Override
+				public boolean iterate(Object obj) {
+					if(obj instanceof AgentUpdateListener)
+						((AgentUpdateListener) obj).update(delta);
+					else
+QQ.pr("why is a thing thats not an update listener in this list?");
 					// continue iterating
 					return false;
 				}
@@ -106,8 +119,10 @@ public class Agency implements Disposable {
 				public void change(Object change) {
 					if(change instanceof AllAgentListChange)
 						doAgentListChange((AllAgentListChange) change);
-					else if(change instanceof UpdateOrderChange)
-						doUpdateChange((UpdateOrderChange) change);
+//					else if(change instanceof UpdateOrderChange)
+//						doUpdateChange((UpdateOrderChange) change);
+					else if(change instanceof UpdateListenerChange)
+						doUpdateListenerChange((UpdateListenerChange) change);
 					else if(change instanceof DrawOrderChange)
 						doDrawOrderChange((DrawOrderChange) change);
 					else {
@@ -125,17 +140,23 @@ public class Agency implements Disposable {
 			agencyIndex.removeAgent(alc.ap.agent);
 	}
 
-	private void doUpdateChange(UpdateOrderChange uoc) {
-		agencyIndex.setAgentUpdateOrder(uoc.ap.agent, uoc.updateOrder);
+//	private void doUpdateChange(UpdateOrderChange uoc) {
+//		agencyIndex.setAgentUpdateOrder(uoc.ap.agent, uoc.updateOrder);
+//	}
+	private void doUpdateListenerChange(UpdateListenerChange ulc) {
+		if(ulc.add)
+			agencyIndex.addUpdateListener(ulc.ap.agent, ulc.updateOrder, ulc.auListener);
+		else
+			agencyIndex.removeUpdateListener(ulc.ap.agent, ulc.auListener);
 	}
 
 	private void doDrawOrderChange(DrawOrderChange doc) {
 		agencyIndex.setAgentDrawOrder(doc.ap.agent, doc.drawOrder);
 	}
 
-	public void setDrawLayers(TreeMap<AllowOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
-		agencyIndex.addMapDrawLayers(drawLayers);
-	}
+//	public void setDrawLayers(TreeMap<AllowOrder, LinkedList<TiledMapTileLayer>> drawLayers) {
+//		agencyIndex.addMapDrawLayers(drawLayers);
+//	}
 
 	public void createAgents(Collection<ObjectProperties> agentProps) {
 		Iterator<ObjectProperties> apIter = agentProps.iterator();
@@ -183,9 +204,9 @@ public class Agency implements Disposable {
 		agencyChangeQ.removeAgent(new AgentPlaceholder(agent));
 	}
 
-	public void setAgentUpdateOrder(Agent agent, AllowOrder order) {
-		agencyChangeQ.setAgentUpdateOrder(new AgentPlaceholder(agent), order);
-	}
+//	public void setAgentUpdateOrder(Agent agent, AllowOrder order) {
+//		agencyChangeQ.setAgentUpdateOrder(new AgentPlaceholder(agent), order);
+//	}
 
 	public void setAgentDrawOrder(Agent agent, AllowOrder order) {
 		agencyChangeQ.setAgentDrawOrder(new AgentPlaceholder(agent), order);
@@ -291,5 +312,13 @@ public class Agency implements Disposable {
 				return false;
 			}
 		});
+	}
+
+	public void addAgentUpdateListener(Agent agent, AllowOrder newUpdateOrder, AgentUpdateListener auListener) {
+		agencyChangeQ.addAgentUpdateListener(new AgentPlaceholder(agent), newUpdateOrder, auListener);
+	}
+
+	public void removeAgentUpdateListener(Agent agent, AgentUpdateListener auListener) {
+		agencyChangeQ.removeAgentUpdateListener(new AgentPlaceholder(agent), auListener);
 	}
 }

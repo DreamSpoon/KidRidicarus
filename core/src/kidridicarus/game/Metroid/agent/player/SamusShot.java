@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -18,7 +18,7 @@ import kidridicarus.game.Metroid.agentbody.player.SamusShotBody;
 import kidridicarus.game.Metroid.agentsprite.player.SamusShotSprite;
 import kidridicarus.game.info.GameKV;
 
-public class SamusShot extends Agent implements UpdatableAgent, DrawableAgent, DisposableAgent {
+public class SamusShot extends Agent implements DrawableAgent, DisposableAgent {
 	private static final float LIVE_TIME = 0.217f;
 	private static final float EXPLODE_TIME = 3f/60f;
 
@@ -48,12 +48,14 @@ public class SamusShot extends Agent implements UpdatableAgent, DrawableAgent, D
 				Agent.getStartVelocity(properties));
 		shotSprite = new SamusShotSprite(agency.getAtlas(), shotBody.getPosition());
 
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doUpdate(delta); }
+		});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		processContacts();
 		processMove(delta);
 		processSprite(delta);

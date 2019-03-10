@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.AgentUpdateListener;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agent.DrawableAgent;
-import kidridicarus.agency.agent.UpdatableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.BasicWalkAgent;
@@ -33,7 +33,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * -turtle shells do not slide properly when they are kicked while contacting an agent, since the slide kill
  *  agent code is only called when contacting starts
  */
-public class Turtle extends BasicWalkAgent implements UpdatableAgent, DrawableAgent, ContactDmgTakeAgent,
+public class Turtle extends BasicWalkAgent implements DrawableAgent, ContactDmgTakeAgent,
 		HeadBounceTakeAgent, BumpTakeAgent, ContactDmgGiveAgent, DisposableAgent {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
@@ -81,12 +81,14 @@ public class Turtle extends BasicWalkAgent implements UpdatableAgent, DrawableAg
 
 		turtleBody = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		turtleSprite = new TurtleSprite(agency.getAtlas(), turtleBody.getPosition());
-		agency.setAgentUpdateOrder(this, CommonInfo.AgentUpdateOrder.UPDATE);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.setAgentDrawOrder(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE);
 	}
 
-	@Override
-	public void update(float delta) {
+	private void doUpdate(float delta) {
 		processContacts();
 		processMove(delta);
 		processSprite(delta);
