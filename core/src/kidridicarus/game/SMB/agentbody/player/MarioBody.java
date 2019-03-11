@@ -1,6 +1,5 @@
 package kidridicarus.game.SMB.agentbody.player;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.math.Rectangle;
@@ -15,12 +14,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
-import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
-import kidridicarus.common.agent.general.DespawnBox;
 import kidridicarus.common.agent.general.Room;
-import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
-import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.optional.PowerupGiveAgent;
 import kidridicarus.common.agentbody.general.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactBeginSensor;
 import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
@@ -29,13 +23,9 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
 import kidridicarus.game.SMB.agent.other.PipeWarp;
-import kidridicarus.game.SMB.agent.HeadBounceTakeAgent;
 import kidridicarus.game.SMB.agent.player.Mario;
-import kidridicarus.game.SMB.agent.player.Mario.MarioPowerState;
-import kidridicarus.game.info.AudioInfo;
 
 /*
  * Major TODO: Move a lot of the code out of this class and push it somewhere else like Mario class. There is
@@ -44,8 +34,8 @@ import kidridicarus.game.info.AudioInfo;
 public class MarioBody extends MobileAgentBody {
 	private static final float POSITION_EPS = 0.1f;
 	private static final float GRAVITY_SCALE = 1f;
-	private static final Vector2 BIG_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(26f));
-	private static final Vector2 SML_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(12f));
+	public static final Vector2 BIG_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(26f));
+	public static final Vector2 SML_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(12f));
 
 	private static final CFBitSeq MAINBODY_CFCAT = CommonCF.SOLID_BODY_CFCAT;
 	private static final CFBitSeq MAINBODY_CFMASK = CommonCF.SOLID_BODY_CFMASK;
@@ -71,48 +61,19 @@ public class MarioBody extends MobileAgentBody {
 			CommonCF.Alias.COLLISIONMAP_BIT);
 
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
-	private static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
+	public static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
 	private static final float MARIO_RUNMOVE_XIMP = MARIO_WALKMOVE_XIMP * 1.5f;
 	private static final float DECEL_XIMP = MARIO_WALKMOVE_XIMP * 1.37f;
 	private static final float MARIO_BRAKE_XIMP = MARIO_WALKMOVE_XIMP * 2.75f;
-	private static final float MARIO_BRAKE_TIME = 0.2f;
+	public static final float MARIO_BRAKE_TIME = 0.2f;
 	private static final float MARIO_MAX_WALKVEL = MARIO_WALKMOVE_XIMP * 42f;
-	private static final float MARIO_MAX_RUNVEL = MARIO_MAX_WALKVEL * 1.65f;
+	public static final float MARIO_MAX_RUNVEL = MARIO_MAX_WALKVEL * 1.65f;
 	private static final float MARIO_MAX_DUCKSLIDE_VEL = MARIO_MAX_WALKVEL * 0.65f;
 	private static final float MARIO_DUCKSLIDE_XIMP = MARIO_WALKMOVE_XIMP * 1f;
-	private static final float MARIO_JUMP_IMPULSE = 1.75f;
-	private static final float MARIO_JUMP_FORCE = 14f;
 	private static final float MARIO_AIRMOVE_XIMP = 0.04f;
-	private static final float MARIO_RUNJUMP_MULT = 0.25f;
-	private static final float MARIO_MAX_RUNJUMPVEL = MARIO_MAX_RUNVEL;
-	private static final float MARIO_JUMP_GROUNDCHECK_DELAY = 0.05f;
-	private static final float MARIO_JUMPFORCE_TIME = 0.5f;
-	private static final float MARIO_HEADBOUNCE_VEL = 1.75f;	// up velocity
-	private static final float MIN_HEADBANG_VEL = 0.01f;	// TODO: test this with different values to the best
-
-	public enum MarioBodyState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, DEAD, CLIMB }
 
 	private Mario parent;
 	private Agency agency;
-
-	private boolean isFacingRight;
-	private boolean isBig;
-	private boolean isBrakeAvailable;
-	private float brakeTimer;
-	private boolean isNewJumpAllowed;
-	private float jumpGroundCheckTimer;
-	private boolean isJumping;
-	private float jumpForceTimer;
-	private boolean isDucking;
-	private boolean isDuckSliding;
-	private boolean isLastVelocityRight;
-	private boolean isDuckSlideRight;
-	private boolean isTakeDamage;
-	private boolean canHeadBang;
-	private Vector2 prevVelocity;
-	private Vector2 prevPosition;
-
-	private PipeWarp pipeToEnter;
 
 	private OnGroundSensor ogSensor;
 	private AgentContactHoldSensor wpSensor;
@@ -121,8 +82,6 @@ public class MarioBody extends MobileAgentBody {
 	private AgentContactBeginSensor acBeginSensor;
 	private Fixture agentSensorFixture;
 
-	private MarioBodyState curBodyState;
-	private float stateTimer;
 	private boolean isContactEnabled;
 	private Fixture ogSensorFixture;
 	private Fixture rightSideSensorFixture;
@@ -130,53 +89,36 @@ public class MarioBody extends MobileAgentBody {
 	private Fixture topSensorFixture;
 	private Fixture mainBodyFixture;
 
-	public MarioBody(Mario parent, Agency agency, Vector2 position, boolean isFacingRight, boolean isBig) {
+	public MarioBody(Mario parent, Agency agency, Vector2 position, boolean isBig, boolean isDucking) {
 		this.parent = parent;
 		this.agency = agency;
 
-		this.isFacingRight = isFacingRight;
-		this.isBig = isBig;
-		isBrakeAvailable = true;
-		brakeTimer = 0f;
-		isNewJumpAllowed = false;
-		jumpGroundCheckTimer = 0f;
-		isJumping = false;
-		jumpForceTimer = 0f;
-		isDucking = false;
-		isLastVelocityRight = false;
-		isDuckSliding = false;
-		isDuckSlideRight = false;
-		isTakeDamage = false;
-		canHeadBang = true;
 		isContactEnabled = true;
 
-		pipeToEnter = null;
-
-		curBodyState = MarioBodyState.STAND;
-		stateTimer = 0f;
-
-		// physic
-		prevVelocity = new Vector2(0f, 0f);
-		prevPosition = position.cpy();
-		defineBody(position, prevVelocity);
+		defineBody(position, new Vector2(0f, 0f), isBig, isDucking);
 	}
 
-	private void defineBody(Vector2 position, Vector2 velocity) {
-		createBody(position, velocity);
+	public void defineBody(Vector2 position, Vector2 velocity, boolean isBig, boolean isDucking) {
+		createBody(position, velocity, isBig, isDucking);
 
 		// the warp pipe sensor is chained to other sensors, so create it here
 		wpSensor = new AgentContactHoldSensor(this);
-		createGroundAndPipeSensor();
+		createGroundAndPipeSensor(isBig, isDucking);
 		createSidePipeSensors();
-		createBumpTileAndPipeSensor();
+		createBumpTileAndPipeSensor(isBig, isDucking);
 
 		// warp pipe sensor is not chained to this sensor
 		createAgentSensor();
 	}
 
-	private void createBody(Vector2 position, Vector2 velocity) {
+	private void createBody(Vector2 position, Vector2 velocity, boolean isBig, boolean isDucking) {
 		if(b2body != null)
 			agency.getWorld().destroyBody(b2body);
+
+		if(isBig && !isDucking)
+			setBodySize(BIG_BODY_SIZE.x, BIG_BODY_SIZE.y);
+		else
+			setBodySize(SML_BODY_SIZE.x, SML_BODY_SIZE.y);
 
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyDef.BodyType.DynamicBody;
@@ -197,7 +139,7 @@ public class MarioBody extends MobileAgentBody {
 	}
 
 	// "bottom" sensors
-	private void createGroundAndPipeSensor() {
+	private void createGroundAndPipeSensor(boolean isBig, boolean isDucking) {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape = new PolygonShape();
 
@@ -248,7 +190,7 @@ public class MarioBody extends MobileAgentBody {
 	}
 
 	// "top" sensors
-	private void createBumpTileAndPipeSensor() {
+	private void createBumpTileAndPipeSensor(boolean isBig, boolean isDucking) {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape sensorShape = new PolygonShape();
 
@@ -291,7 +233,7 @@ public class MarioBody extends MobileAgentBody {
 		agentSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, acBeginSensor));
 	}
 
-	public MarioBodyState update(float delta, MoveAdvice advice, MarioPowerState curPowerState) {
+/*	public MarioBodyState update(float delta, MoveAdvice advice, MarioPowerState curPowerState) {
 		MarioBodyState nextState;
 		boolean isVelocityLeft;
 		boolean isVelocityRight;
@@ -591,7 +533,7 @@ public class MarioBody extends MobileAgentBody {
 			}
 		}
 	}
-
+*/
 	/*
 	 * Process the head contact add and remove queues, then check the list of current contacts for a head bang.
 	 *
@@ -599,7 +541,7 @@ public class MarioBody extends MobileAgentBody {
 	 * sufficient amount. Also, mario can only break one block per head bang - but if his head contacts multiple
 	 * blocks when he hits, then choose the block closest to mario on the x axis.
 	 */
-	private void processHeadContacts() {
+/*	private void processHeadContacts() {
 		// if can head bang and is moving upwards fast enough then ...
 		if(canHeadBang && (b2body.getLinearVelocity().y > MIN_HEADBANG_VEL || prevVelocity.y > MIN_HEADBANG_VEL)) {
 			// check the list of tiles for the closest to mario
@@ -623,8 +565,8 @@ public class MarioBody extends MobileAgentBody {
 		else if(b2body.getLinearVelocity().y < 0f)
 			canHeadBang = true;
 	}
-
-	private void decelLeftRight() {
+*/
+	public void decelLeftRight() {
 		float vx = b2body.getLinearVelocity().x;
 		if(vx == 0f)
 			return;
@@ -639,7 +581,7 @@ public class MarioBody extends MobileAgentBody {
 			b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
 	}
 
-	public void moveBodyLeftRight(boolean right, boolean doRunRun) {
+	public void moveBodyLeftRight(boolean right, boolean doRunRun, boolean isDucking) {
 		float speed;
 		float max;
 		if(ogSensor.isOnGround())
@@ -659,7 +601,7 @@ public class MarioBody extends MobileAgentBody {
 			b2body.applyLinearImpulse(new Vector2(-speed, 0f), b2body.getWorldCenter(), true);
 	}
 
-	private void brakeLeftRight(boolean right) {
+	public void brakeLeftRight(boolean right) {
 		float vx = b2body.getLinearVelocity().x;
 		if(vx == 0f)
 			return;
@@ -674,56 +616,56 @@ public class MarioBody extends MobileAgentBody {
 			b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
 	}
 
-	private void duckSlideLeftRight(boolean right) {
+	public void duckSlideLeftRight(boolean right) {
 		if(right && b2body.getLinearVelocity().x <= MARIO_MAX_DUCKSLIDE_VEL)
 			b2body.applyLinearImpulse(new Vector2(MARIO_DUCKSLIDE_XIMP, 0f), b2body.getWorldCenter(), true);
 		else if(!right && b2body.getLinearVelocity().x >= -MARIO_MAX_DUCKSLIDE_VEL)
 			b2body.applyLinearImpulse(new Vector2(-MARIO_DUCKSLIDE_XIMP, 0f), b2body.getWorldCenter(), true);
 	}
 
-	private void moveBodyY(float value) {
-		b2body.applyLinearImpulse(new Vector2(0, value),
-				b2body.getWorldCenter(), true);
-	}
+//	private void moveBodyY(float value) {
+//		b2body.applyLinearImpulse(new Vector2(0, value),
+//				b2body.getWorldCenter(), true);
+//	}
 
-	public float getStateTimer() {
-		return stateTimer;
-	}
+//	public float getStateTimer() {
+//		return stateTimer;
+//	}
 
-	public PipeWarp getPipeToEnter() {
-		return pipeToEnter;
-	}
+//	public PipeWarp getPipeToEnter() {
+//		return pipeToEnter;
+//	}
 
-	public void resetPipeToEnter() {
-		pipeToEnter = null;
-	}
+//	public void resetPipeToEnter() {
+//		pipeToEnter = null;
+//	}
 
 	public boolean isOnGround() {
 		return ogSensor.isOnGround();
 	}
 
-	public boolean isFacingRight() {
-		return isFacingRight;
-	}
+//	public boolean isFacingRight() {
+//		return isFacingRight;
+//	}
 
-	public void setFacingRight(boolean isFacingRight) {
-		this.isFacingRight = isFacingRight; 
-	}
+//	public void setFacingRight(boolean isFacingRight) {
+//		this.isFacingRight = isFacingRight; 
+//	}
 
-	public void setPosAndVel(Vector2 pos, Vector2 vel) {
-		defineBody(pos, vel);
-	}
+//	public void setPosAndVel(Vector2 pos, Vector2 vel) {
+//		defineBody(pos, vel);
+//	}
 
-	public void setBodyPosVelAndSize(Vector2 pos, Vector2 vel, boolean isBig) {
-		this.isBig = isBig;
-		isDucking = false;
-		defineBody(pos, vel);
-	}
+//	public void setBodyPosVelAndSize(Vector2 pos, Vector2 vel, boolean isBig) {
+//		this.isBig = isBig;
+//		isDucking = false;
+//		defineBody(pos, vel);
+//	}
 
-	public void useScriptedBodyState(ScriptedBodyState sbState) {
+	public void useScriptedBodyState(ScriptedBodyState sbState, boolean isBig, boolean isDucking) {
 		setContactEnabled(sbState.contactEnabled);
 		if(!sbState.position.epsilonEquals(b2body.getPosition(), POSITION_EPS))
-			setPosAndVel(sbState.position, new Vector2(0f, 0f));
+			defineBody(sbState.position, new Vector2(0f, 0f), isBig, isDucking);
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 	}
 
@@ -772,39 +714,9 @@ public class MarioBody extends MobileAgentBody {
 		isContactEnabled = enabled;
 	}
 
-	/*
-	 * Check for contact with tiled collision map. If contact then get solid state of tile given by tileCoords.
-	 */
-	private boolean isMapTileSolid(Vector2 tileCoords) {
-		OrthoCollisionTiledMapAgent octMap = getFirstContactByClass(OrthoCollisionTiledMapAgent.class);
-		if(octMap == null)
-			return false;
-		return octMap.isMapTileSolid(tileCoords);
-	}
-
-	public boolean isDucking() {
-		return isDucking;
-	}
-
-	public boolean isBigBody() {
-		if(!isBig || isDucking || isDuckSliding)
-			return false;
-		else
-			return true;
-	}
-
-	public Vector2 getBodySize() {
-		if(isBigBody())
-			return BIG_BODY_SIZE;
-		else
-			return SML_BODY_SIZE;
-	}
-
-	public boolean getAndResetTakeDamage() {
-		boolean t = isTakeDamage;
-		isTakeDamage = false;
-		return t;
-	}
+//	public boolean isDucking() {
+//		return isDucking;
+//	}
 
 	public Room getCurrentRoom() {
 		return (Room) acSensor.getFirstContactByClass(Room.class);
@@ -812,6 +724,18 @@ public class MarioBody extends MobileAgentBody {
 
 	public <T> T getFirstContactByClass(Class<T> cls) {
 		return acSensor.getFirstContactByClass(cls);
+	}
+
+	public <T> List<T> getContactsByClass(Class<T> cls) {
+		return acSensor.getContactsByClass(cls);
+	}
+
+	public List<Agent> getAndResetBeginContacts() {
+		return acBeginSensor.getAndResetContacts();
+	}
+
+	public List<TileBumpTakeAgent> getBumptileContacts() {
+		return btSensor.getContactsByClass(TileBumpTakeAgent.class);
 	}
 
 	@Override
@@ -828,6 +752,16 @@ public class MarioBody extends MobileAgentBody {
 	public Rectangle getBounds() {
 		Vector2 s = getBodySize();
 		return new Rectangle(b2body.getPosition().x - s.x/2f, b2body.getPosition().y - s.y/2f, s.x, s.y);
+	}
+
+	public PipeWarp getEnterPipeWarp(Direction4 moveDir) {
+		if(moveDir == null)
+			return null;
+		for(PipeWarp pw : wpSensor.getContactsByClass(PipeWarp.class)) {
+			if(pw.canBodyEnterPipe(getBounds(), moveDir))
+				return (PipeWarp) pw;
+		}
+		return null;
 	}
 
 	@Override

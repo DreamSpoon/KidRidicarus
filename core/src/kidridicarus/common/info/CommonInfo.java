@@ -58,12 +58,12 @@ public class CommonInfo {
 
 	public static class AgentUpdateOrder {
 		public static final AllowOrder NONE = AllowOrder.NOT_ALLOWED;
-		// pre-update is earlier than update
-		public static final AllowOrder PRE_UPDATE = new AllowOrder(true, -1f);
+		// contact update is earlier than update
+		public static final AllowOrder CONTACT_UPDATE = new AllowOrder(true, 0f);
 		// update is earlier than post update
-		public static final AllowOrder UPDATE = new AllowOrder(true, 0f);
+		public static final AllowOrder UPDATE = new AllowOrder(true, 1f);
 		// post update is last
-		public static final AllowOrder POST_UPDATE = new AllowOrder(true, 1f);
+		public static final AllowOrder POST_UPDATE = new AllowOrder(true, 2f);
 	}
 	/*
 	 * Returns null if target is not found.

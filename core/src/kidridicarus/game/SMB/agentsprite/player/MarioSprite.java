@@ -1,7 +1,6 @@
 package kidridicarus.game.SMB.agentsprite.player;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,14 +12,13 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.SMB.agent.player.Mario.MarioPowerState;
 import kidridicarus.game.SMB.agent.player.Mario.MarioAgentState;
-import kidridicarus.game.SMB.agentbody.player.MarioBody.MarioBodyState;
+import kidridicarus.game.SMB.agent.player.Mario.MarioBodyState;
 
 public class MarioSprite extends Sprite {
 	private static final float SMLSPR_WIDTH = UInfo.P2M(16);
 	private static final float SMLSPR_HEIGHT = UInfo.P2M(16);
 	private static final float BIGSPR_WIDTH = UInfo.P2M(16);
 	private static final float BIGSPR_HEIGHT = UInfo.P2M(32);
-	private static final float BLINK_DURATION = 0.05f;
 	private static final float STARPOWER_ANIM_SPEED = 0.05f;
 	private static final int NUM_STARPOWER_FRAMES = 4;
 	private static final float REG_ANIM_SPEED = 0.1f;
@@ -59,20 +57,15 @@ public class MarioSprite extends Sprite {
 	private Animation<TextureRegion>[][] bigAnim;
 
 	private float stateTimer;
-	private float fallStartStateTime;
+	private float fallStateStartTime;
 	private boolean wasBigLastFrame;
 	private boolean doGrowAnim;
 	private boolean doShrinkAnim;
 	private boolean doFireballAnim;
-	private boolean isBlinking;
-	private float blinkTimer;
 	private float starPowerFrameTimer;
 	private float climbStateTimer;
 
 	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioPowerState powerState) {
-		isBlinking = false;
-		blinkTimer = 0f;
-
 		createAnimations(atlas);
 
 		setRegion(smlAnim[STAND_POSE][BIG_REG_GRP].getKeyFrame(0f));
@@ -81,7 +74,7 @@ public class MarioSprite extends Sprite {
 
 		curSpriteState = MarioSpriteState.STAND;
 		stateTimer = 0f;
-		fallStartStateTime = 0f;
+		fallStateStartTime = 0f;
 
 		wasBigLastFrame = (powerState != MarioPowerState.SMALL);
 		doGrowAnim = false;
@@ -93,7 +86,7 @@ public class MarioSprite extends Sprite {
 
 	@SuppressWarnings("unchecked")
 	private void createAnimations(TextureAtlas atlas) {
-		// allocate the arrays
+		// allocate the arrays for animations
 		smlAnim = (Animation<TextureRegion>[][]) new Animation[NUM_POSES][];
 		bigAnim = (Animation<TextureRegion>[][]) new Animation[NUM_POSES][];
 		for(int i=0; i<NUM_POSES; i++) {
@@ -165,8 +158,8 @@ public class MarioSprite extends Sprite {
 	}
 
 	public void update(float delta, Vector2 position, MarioAgentState agentState, MarioBodyState bodyState,
-			MarioPowerState powerState, boolean facingRight, boolean isDmgInvincible, boolean isStarPowered,
-			boolean isBigBody, Direction4 moveDir) {
+			MarioPowerState powerState, boolean facingRight, boolean isStarPowered, boolean isBigBody,
+			Direction4 moveDir) {
 		MarioSpriteState prevSpriteState;
 
 		// switch from small to big?
@@ -204,22 +197,15 @@ public class MarioSprite extends Sprite {
 		curSpriteState = getNextSpriteState(bodyState, agentState);
 
 		if(prevSpriteState == MarioSpriteState.STAND && curSpriteState == MarioSpriteState.FALL)
-			fallStartStateTime = -1;
+			fallStateStartTime = -1;
 		else if(prevSpriteState == MarioSpriteState.RUN && curSpriteState == MarioSpriteState.FALL)
-			fallStartStateTime = stateTimer;
+			fallStateStartTime = stateTimer;
 
 		if(curSpriteState == MarioSpriteState.DEAD && curSpriteState != prevSpriteState)
 			setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
-			
+
 		stateTimer = curSpriteState == prevSpriteState ? stateTimer+delta : 0f;
 		wasBigLastFrame = (powerState != MarioPowerState.SMALL);
-
-		// mario's state (run, walk, etc.) might change while blinking, so a separate timer is needed for blinking
-		isBlinking = isDmgInvincible;
-		if(isBlinking)
-			blinkTimer += delta;
-		else
-			blinkTimer = 0f;
 
 		starPowerFrameTimer += delta;
 
@@ -334,10 +320,10 @@ public class MarioSprite extends Sprite {
 				break;
 			case FALL:
 				// mario maintains his current frame of run animation if he was running when started to fall
-				if(fallStartStateTime == -1)
+				if(fallStateStartTime == -1)
 					region = sizeAnim[STAND_POSE][grp].getKeyFrame(stateTimer);
 				else
-					region = sizeAnim[RUN_POSE][grp].getKeyFrame(fallStartStateTime);
+					region = sizeAnim[RUN_POSE][grp].getKeyFrame(fallStateStartTime);
 				break;
 			case BRAKE:
 				region = sizeAnim[BRAKE_POSE][grp].getKeyFrame(stateTimer);
@@ -382,13 +368,5 @@ public class MarioSprite extends Sprite {
 			default:
 				return BIG_INV1_GRP;
 		}
-	}
-
-	@Override
-	public void draw(Batch batch) {
-		// if isBlinking is true and blink is currently "off", or if isBlinking is false...
-		// TODO move this to the mario agent code
-		if(!(isBlinking && Math.floorMod((int) (blinkTimer / BLINK_DURATION), 2) == 0))
-			super.draw(batch);
 	}
 }
