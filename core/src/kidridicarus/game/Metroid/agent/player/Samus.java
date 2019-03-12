@@ -200,7 +200,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	private boolean processPipeMove(MoveAdvice advice) {
 		Direction4 adviceDir = advice.getMoveDir4();
 		// if no move advice direction then no pipe move so exit; also, exit if move state is similar to jump
-		if(adviceDir == null || curMoveState == MoveState.JUMP || curMoveState == MoveState.JUMPSPIN ||
+		if(adviceDir == Direction4.NONE || curMoveState == MoveState.JUMP || curMoveState == MoveState.JUMPSPIN ||
 				curMoveState == MoveState.JUMPSHOOT) {
 			return false;
 		}

@@ -210,14 +210,12 @@ public class MarioSprite extends Sprite {
 		starPowerFrameTimer += delta;
 
 		// if moving up/down then increment/decrement the climb timer, otherwise no change
-		if(moveDir != null) {
-			if(moveDir == Direction4.UP)
-				climbStateTimer += delta;
-			else if(moveDir == Direction4.DOWN) {
-				// defaulting to SML_REG_GRP because climb animation should be same duration for all groups
-				climbStateTimer = CommonInfo.ensurePositive(climbStateTimer - delta,
-						smlAnim[CLIMB_POSE][SML_REG_GRP].getAnimationDuration());
-			}
+		if(moveDir == Direction4.UP)
+			climbStateTimer += delta;
+		else if(moveDir == Direction4.DOWN) {
+			// defaulting to SML_REG_GRP because climb animation should be same duration for all groups
+			climbStateTimer = CommonInfo.ensurePositive(climbStateTimer - delta,
+					smlAnim[CLIMB_POSE][SML_REG_GRP].getAnimationDuration());
 		}
 
 		setRegion(getFrame(powerState, facingRight, isStarPowered));

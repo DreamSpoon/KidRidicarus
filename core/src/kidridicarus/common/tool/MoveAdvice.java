@@ -53,7 +53,7 @@ public class MoveAdvice {
 		// XOR the horizontal/vertical move to disallow move both horizontally and vertically concurrently
 		// return null if no direction available based on this advice
 		if(h ^ v == false)
-			return null;
+			return Direction4.NONE;
 		// is the move horizontal?
 		else if(h) {
 			if(moveRight)

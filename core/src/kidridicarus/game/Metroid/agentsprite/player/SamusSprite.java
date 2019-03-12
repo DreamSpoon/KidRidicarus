@@ -131,15 +131,13 @@ public class SamusSprite extends Sprite {
 				// if this is first frame of climb animation then reset clim anim timer
 				if(curParentState != MoveState.CLIMB)
 					climbAnimTimer = 0f;
-				if(climbDir != null) {
-					// if climbing up then forward the animation
-					if(climbDir == Direction4.UP)
-						climbAnimTimer += delta;
-					// if climbing down then reverse the animation
-					else if(climbDir == Direction4.DOWN) {
-						climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - delta,
-								climbAnim.getAnimationDuration());
-					}
+				// if climbing up then forward the animation
+				if(climbDir == Direction4.UP)
+					climbAnimTimer += delta;
+				// if climbing down then reverse the animation
+				else if(climbDir == Direction4.DOWN) {
+					climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - delta,
+							climbAnim.getAnimationDuration());
 				}
 				setRegion(climbAnim.getKeyFrame(climbAnimTimer));
 				setBounds(getX(), getY(), MED_SPRITE_WIDTH, MED_SPRITE_HEIGHT);

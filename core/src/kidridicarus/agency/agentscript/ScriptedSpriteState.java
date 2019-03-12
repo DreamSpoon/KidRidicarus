@@ -18,7 +18,7 @@ public class ScriptedSpriteState {
 		position = new Vector2(0f, 0f);
 		visible = false;
 		facingRight = false;
-		moveDir = null;
+		moveDir = Direction4.NONE;
 	}
 
 	public ScriptedSpriteState(ScriptedSpriteState other) {

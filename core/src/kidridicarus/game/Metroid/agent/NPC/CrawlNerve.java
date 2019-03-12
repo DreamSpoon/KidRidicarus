@@ -77,9 +77,10 @@ public class CrawlNerve {
 				return new Vector2(notFlipsign ? -pos.x : pos.x, -pos.y);
 			case RIGHT:
 				return new Vector2(notFlipsign ? -pos.y : pos.y, pos.x);
-			// LEFT, by deduction
-			default:
+			case LEFT:
 				return new Vector2(notFlipsign ? pos.y : -pos.y, -pos.x);
+			default:
+				throw new IllegalArgumentException("Unable to get relative position when relUpDir is NONE");
 		}
 	}
 
@@ -101,9 +102,10 @@ public class CrawlNerve {
 				return new Vector2(MOVEVEL.x, MOVEVEL.y*MOVE_REDUCE_FACTOR);
 			case LEFT:
 				return new Vector2(MOVEVEL.x*MOVE_REDUCE_FACTOR, -MOVEVEL.y);
-			// DOWN, by deduction
-			default:
+			case DOWN:
 				return new Vector2(-MOVEVEL.x, -MOVEVEL.y*MOVE_REDUCE_FACTOR);
+			default:
+				throw new IllegalArgumentException("Unable to get move right position when upDir is NONE");
 		}
 	}
 
@@ -115,9 +117,10 @@ public class CrawlNerve {
 				return new Vector2(-MOVEVEL.x, MOVEVEL.y*MOVE_REDUCE_FACTOR);
 			case LEFT:
 				return new Vector2(MOVEVEL.x*MOVE_REDUCE_FACTOR, MOVEVEL.y);
-			// DOWN, by deduction
-			default:
+			case DOWN:
 				return new Vector2(MOVEVEL.x, -MOVEVEL.y*MOVE_REDUCE_FACTOR);
+			default:
+				throw new IllegalArgumentException("Unable to get move left position when upDir is NONE");
 		}
 	}
 

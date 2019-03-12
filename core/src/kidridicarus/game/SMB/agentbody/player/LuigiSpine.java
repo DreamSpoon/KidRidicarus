@@ -35,6 +35,8 @@ public class LuigiSpine {
 
 	private static final float WALKMOVE_XIMP = 0.025f;
 	private static final float DECEL_XIMP = WALKMOVE_XIMP * 1.37f;
+	private static final float MIN_WALKVEL = WALKMOVE_XIMP * 2f;
+	private static final float MAX_WALKVEL = WALKMOVE_XIMP * 42f;
 
 	private AgentContactHoldSensor acSensor;
 	private OnGroundSensor ogSensor;
@@ -65,16 +67,40 @@ public class LuigiSpine {
 				ogSensor));
 	}
 
-	public void applyNerveImpulse(boolean facingRight, boolean decel) {
-		float amt;
-		if(decel)
-			amt = DECEL_XIMP;
-		else
-			amt = WALKMOVE_XIMP;
-		if(facingRight)
+	public void applySimpleMove(boolean moveRight, float amt) {
+		if(moveRight)
 			body.applyBodyImpulse(new Vector2(amt, 0f));
 		else
 			body.applyBodyImpulse(new Vector2(-amt, 0f));
+	}
+
+	/*
+	 * Apply walk impulse and cap horizontal velocity.
+	 */
+	public void applyWalkMove(boolean moveRight) {
+		if(moveRight && body.getVelocity().x < MAX_WALKVEL) {
+			applySimpleMove(moveRight, WALKMOVE_XIMP);
+			if(body.getVelocity().x > MAX_WALKVEL)
+				body.setVelocity(MAX_WALKVEL, body.getVelocity().y);
+		}
+		else if(!moveRight && body.getVelocity().x > -MAX_WALKVEL) {
+			applySimpleMove(moveRight, WALKMOVE_XIMP);
+			if(body.getVelocity().x < -MAX_WALKVEL)
+				body.setVelocity(-MAX_WALKVEL, body.getVelocity().y);
+		}
+	}
+
+	/*
+	 * Apply decel impulse and check for min velocity.
+	 */
+	public void applyDecelMove() {
+		if(body.getVelocity().x > MIN_WALKVEL)
+			applySimpleMove(true, -DECEL_XIMP);
+		else if(body.getVelocity().x < -MIN_WALKVEL)
+			applySimpleMove(false, -DECEL_XIMP);
+		// if not moving fast enough left/right then zero the horizontal velocity
+		else
+			body.setVelocity(0f, body.getVelocity().y);
 	}
 
 	public Room getCurrentRoom() {

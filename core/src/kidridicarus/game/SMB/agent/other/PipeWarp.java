@@ -33,7 +33,7 @@ public class PipeWarp extends Agent implements DisposableAgent {
 	public PipeWarp(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		direction = null;
+		direction = Direction4.NONE;
 		if(properties.containsKey(CommonKV.KEY_DIRECTION)) {
 			String dir = properties.get(CommonKV.KEY_DIRECTION, "", String.class);
 			if(dir.equals("right"))

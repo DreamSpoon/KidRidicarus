@@ -68,21 +68,39 @@ QQ.pr("you made Luigi so happy!");
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
 		Direction4 moveDir = moveAdvice.getMoveDir4();
+		boolean onGround = body.getSpine().isOnGround();
+
+		boolean doHorizontalImpulse = false;
+		boolean doDecelImpulse = false;
+
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		switch(nextMoveState) {
 			case STAND:
-			default:
-				break;
 			case RUN:
+			default:
+				if(onGround) {
+					if(moveDir.isHorizontal())
+						doHorizontalImpulse = true;
+					else
+						doDecelImpulse = true;
+				}
 				break;
 		}
 
-		if(moveDir == Direction4.RIGHT)
-			facingRight = true;
-		else if(moveDir == Direction4.LEFT)
-			facingRight = false;
-		if(body.getSpine().isOnGround() && moveDir != null && moveDir.isHorizontal())
-			body.getSpine().applyNerveImpulse(facingRight, false);
+		if(moveDir != null && moveDir.isHorizontal()) {
+			if(onGround) {
+				// check for change of facing direction
+				if(moveDir == Direction4.RIGHT)
+					facingRight = true;
+				else if(moveDir == Direction4.LEFT)
+					facingRight = false;
+			}
+		}
+
+		if(doHorizontalImpulse)
+			body.getSpine().applyWalkMove(facingRight);
+		if(doDecelImpulse)
+			body.getSpine().applyDecelMove();
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;

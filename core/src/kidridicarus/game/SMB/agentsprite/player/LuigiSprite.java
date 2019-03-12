@@ -182,6 +182,9 @@ public class LuigiSprite extends Sprite {
 			default:
 				pose = STAND_POSE;
 				break;
+			case RUN:
+				pose = RUN_POSE;
+				break;
 		}
 
 		if(parentPowerState.isBigBody())

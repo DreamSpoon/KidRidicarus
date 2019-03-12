@@ -52,7 +52,7 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 		super(agency, properties);
 
 		isWalkingRight = false;
-		upDir = null;
+		upDir = Direction4.NONE;
 		upDirChangeTimer = 0f;
 		isInjured = false;
 		health = 2f;
@@ -89,7 +89,7 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 
 		Direction4 newUpDir = upDir;
 		// need to get initial up direction?
-		if(upDir == null)
+		if(upDir == Direction4.NONE)
 			newUpDir = CrawlNerve.getInitialUpDir(isWalkingRight, zBody);
 		// check for change in up direction if enough time has elapsed
 		else if(upDirChangeTimer > UPDIR_CHANGE_MINTIME)

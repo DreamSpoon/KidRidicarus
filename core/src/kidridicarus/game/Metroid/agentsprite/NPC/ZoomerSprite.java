@@ -59,6 +59,7 @@ public class ZoomerSprite extends Sprite {
 				setRotation(90);
 				break;
 			case DOWN:
+			default:
 				setRotation(180);
 				break;
 		}
