@@ -103,7 +103,7 @@ QQ.pr("you made Luigi so happy!");
 		}
 
 		if(doHorizontalImpulse)
-			body.getSpine().applyWalkMove(facingRight);
+			body.getSpine().applyWalkMove(facingRight, moveAdvice.action0);
 		if(doDecelImpulse)
 			body.getSpine().applyDecelMove(facingRight);
 
@@ -112,11 +112,11 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
-		switch(moveState) {
-			case STAND:
-			case RUN:
-			case BRAKE:
-			case FALL:
+//		switch(moveState) {
+//			case STAND:
+//			case RUN:
+//			case BRAKE:
+//			case FALL:
 				// if not on ground then fall
 				if(!body.getSpine().isOnGround())
 					return MoveState.FALL;
@@ -128,8 +128,8 @@ QQ.pr("you made Luigi so happy!");
 					return MoveState.BRAKE;
 				else
 					return MoveState.RUN;
-		}
-		return MoveState.STAND;	// return default move state
+//		}
+//		return MoveState.STAND;	// return default move state
 	}
 
 	private void processSprite(float delta) {
