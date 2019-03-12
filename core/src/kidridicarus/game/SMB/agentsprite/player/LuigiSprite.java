@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
+import kidridicarus.game.SMB.agent.player.Luigi.MoveState;
 import kidridicarus.game.SMB.agent.player.Luigi.PowerState;
 
 public class LuigiSprite extends Sprite {
@@ -48,8 +49,14 @@ public class LuigiSprite extends Sprite {
 	private Animation<TextureRegion>[][] smlAnim;
 	private Animation<TextureRegion>[][] bigAnim;
 
-	public LuigiSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState) {
+	private MoveState prevParentMoveState;
+	private float stateTimer;
+
+	public LuigiSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean facingRight) {
 		createAnimations(atlas);
+
+		prevParentMoveState = MoveState.STAND;
+		stateTimer = 0f;
 
 		// set the initial texture region and bounds
 		switch(parentPowerState) {
@@ -67,6 +74,9 @@ public class LuigiSprite extends Sprite {
 				break;
 		}
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+		// flip to face left if necessary
+		if(!facingRight && !isFlipX())
+			flip(true, false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -142,21 +152,42 @@ public class LuigiSprite extends Sprite {
 					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_throw"), PlayMode.LOOP);
 	}
 
-	public void update(float delta, Vector2 position, PowerState parentPowerState) {
+	public void update(float delta, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
+			boolean facingRight) {
+		int group;
 		switch(parentPowerState) {
 			case SMALL:
-				setRegion(smlAnim[STAND_POSE][SML_REG_GRP].getKeyFrame(0f));
+			default:
+				group = SML_REG_GRP;
 				setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
 				break;
 			case BIG:
-				setRegion(smlAnim[STAND_POSE][BIG_REG_GRP].getKeyFrame(0f));
+				group = BIG_REG_GRP;
 				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 				break;
 			case FIRE:
-				setRegion(smlAnim[STAND_POSE][BIG_FIRE_GRP].getKeyFrame(0f));
+				group = BIG_FIRE_GRP;
 				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 				break;
 		}
+		int pose;
+		switch(parentMoveState) {
+			case STAND:
+			default:
+				pose = STAND_POSE;
+				break;
+		}
+
+		if(parentPowerState.isBigBody())
+			setRegion(bigAnim[pose][group].getKeyFrame(stateTimer));
+		else
+			setRegion(smlAnim[pose][group].getKeyFrame(stateTimer));
+		// flip to face left if necessary
+		if(!facingRight && !isFlipX())
+			flip(true, false);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+
+		stateTimer = parentMoveState == prevParentMoveState ? stateTimer+delta : 0f;
+		prevParentMoveState = parentMoveState;
 	}
 }

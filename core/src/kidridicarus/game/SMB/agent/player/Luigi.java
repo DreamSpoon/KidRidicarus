@@ -15,6 +15,9 @@ import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.Direction4;
+import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.SMB.agentbody.player.LuigiBody;
 import kidridicarus.game.SMB.agentsprite.player.LuigiSprite;
 import kidridicarus.game.tool.QQ;
@@ -24,28 +27,28 @@ public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 			SMALL, BIG, FIRE;
 			public boolean isBigBody() { return !this.equals(SMALL); }
 		}
-	private enum MoveState { STAND }
+	public enum MoveState { STAND }
 
 	private LuigiSupervisor supervisor;
 	private LuigiObserver observer;
-	private LuigiBody luigiBody;
-	private LuigiSprite luigiSprite;
+	private LuigiBody body;
+	private LuigiSprite sprite;
 
-	private MoveState curMoveState;
+	private MoveState moveState;
 	private float moveStateTimer;
 	private PowerState powerState;
-	private boolean isFacingRight;
+	private boolean facingRight;
 
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 QQ.pr("you made Luigi so happy!");
-		curMoveState = MoveState.STAND;
+		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
-		isFacingRight = false;
+		facingRight = true;
 		powerState = PowerState.SMALL;
 
-		luigiBody = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), powerState.isBigBody());
-		luigiSprite = new LuigiSprite(agency.getAtlas(), luigiBody.getPosition(), powerState);
+		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), powerState.isBigBody());
+		sprite = new LuigiSprite(agency.getAtlas(), body.getPosition(), powerState, facingRight);
 		observer = new LuigiObserver(this);
 		supervisor = new LuigiSupervisor(this);
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
@@ -59,11 +62,44 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void doUpdate(float delta) {
-		luigiSprite.update(delta, luigiBody.getPosition(), powerState);
+		processMove(delta, supervisor.pollMoveAdvice());
+		processSprite(delta);
+	}
+
+	private void processMove(float delta, MoveAdvice moveAdvice) {
+		MoveState nextMoveState = getNextMoveState();
+		switch(nextMoveState) {
+			case STAND:
+			default:
+				break;
+		}
+		
+		Direction4 moveDir = moveAdvice.getMoveDir4();
+		if(moveDir == Direction4.RIGHT) {
+			facingRight = true;
+		}
+		else if(moveDir == Direction4.LEFT) {
+			facingRight = false;
+		}
+
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveState = nextMoveState;
+	}
+
+	private MoveState getNextMoveState() {
+		switch(moveState) {
+			case STAND:
+			default:
+				return MoveState.STAND;
+		}
+	}
+
+	private void processSprite(float delta) {
+		sprite.update(delta, body.getPosition(), moveState, powerState, facingRight);
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(luigiSprite);
+		batch.draw(sprite);
 	}
 
 	@Override
@@ -78,21 +114,32 @@ QQ.pr("you made Luigi so happy!");
 
 	@Override
 	public Room getCurrentRoom() {
-		return luigiBody.getCurrentRoom();
+		return body.getCurrentRoom();
 	}
 
 	@Override
 	public Vector2 getPosition() {
-		return luigiBody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return luigiBody.getBounds();
+		return body.getBounds();
+	}
+
+	// unchecked cast to T warnings ignored because T is checked with class.equals(cls) 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
+		if(key.equals(CommonKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
+			Boolean he = facingRight;
+			return (T) he;
+		}
+		return super.getProperty(key, defaultValue, cls);
 	}
 
 	@Override
 	public void disposeAgent() {
-		luigiBody.dispose();
+		body.dispose();
 	}
 }

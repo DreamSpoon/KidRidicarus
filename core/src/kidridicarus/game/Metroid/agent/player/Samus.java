@@ -624,7 +624,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 			Vector2 he = new Vector2(samusSprite.getWidth(), samusSprite.getHeight());
 			return (T) he;
 		}
-		return properties.get(key, defaultValue, cls);
+		return super.getProperty(key, defaultValue, cls);
 	}
 
 	@Override
