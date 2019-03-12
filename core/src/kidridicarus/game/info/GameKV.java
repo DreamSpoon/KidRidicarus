@@ -14,6 +14,7 @@ public class GameKV {
 			public static final String VAL_FLAGPOLE = "flagpole";
 			public static final String VAL_FLOATINGPOINTS = "floatingpoints";
 			public static final String VAL_GOOMBA = "goomba";
+			public static final String VAL_LUIGI = "luigi";
 			public static final String VAL_MARIO = "mario";
 			public static final String VAL_MARIOFIREBALL = "mariofireball";
 			public static final String VAL_MUSHROOM = "mushroom";

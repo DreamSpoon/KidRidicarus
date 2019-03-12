@@ -27,7 +27,6 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.game.tool.QQ;
 
 /*
  * Desc:

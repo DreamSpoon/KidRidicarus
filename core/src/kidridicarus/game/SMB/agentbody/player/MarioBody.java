@@ -27,10 +27,6 @@ import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
 import kidridicarus.game.SMB.agent.other.PipeWarp;
 import kidridicarus.game.SMB.agent.player.Mario;
 
-/*
- * Major TODO: Move a lot of the code out of this class and push it somewhere else like Mario class. There is
- * so much stuff here that should NOT be in the agent body class.
- */
 public class MarioBody extends MobileAgentBody {
 	private static final float POSITION_EPS = 0.1f;
 	private static final float GRAVITY_SCALE = 1f;
@@ -89,12 +85,14 @@ public class MarioBody extends MobileAgentBody {
 	private Fixture topSensorFixture;
 	private Fixture mainBodyFixture;
 
+	private Vector2 prevPosition;
+	private Vector2 prevVelocity;
+
 	public MarioBody(Mario parent, Agency agency, Vector2 position, boolean isBig, boolean isDucking) {
 		this.parent = parent;
 		this.agency = agency;
 
 		isContactEnabled = true;
-
 		defineBody(position, new Vector2(0f, 0f), isBig, isDucking);
 	}
 
@@ -119,6 +117,9 @@ public class MarioBody extends MobileAgentBody {
 			setBodySize(BIG_BODY_SIZE.x, BIG_BODY_SIZE.y);
 		else
 			setBodySize(SML_BODY_SIZE.x, SML_BODY_SIZE.y);
+
+		prevPosition = position.cpy();
+		prevVelocity = new Vector2(0f, 0f);
 
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyDef.BodyType.DynamicBody;
@@ -233,339 +234,6 @@ public class MarioBody extends MobileAgentBody {
 		agentSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, acBeginSensor));
 	}
 
-/*	public MarioBodyState update(float delta, MoveAdvice advice, MarioPowerState curPowerState) {
-		MarioBodyState nextState;
-		boolean isVelocityLeft;
-		boolean isVelocityRight;
-		boolean doDuckSlideMove;
-		boolean doWalkRunMove;
-		boolean doDecelMove;
-		boolean doBrakeMove;
-
-		processPipes(advice);
-		processOtherContacts();
-
-		nextState = MarioBodyState.STAND;
-		isVelocityRight = b2body.getLinearVelocity().x > MARIO_MIN_WALKSPEED;
-		isVelocityLeft = b2body.getLinearVelocity().x < -MARIO_MIN_WALKSPEED;
-
-		// If mario's velocity is below min walking speed while on ground and he is not duck sliding then
-		// zero his velocity
-		if(ogSensor.isOnGround() && !isDuckSliding && !isVelocityRight && !isVelocityLeft &&
-				!advice.moveRight && !advice.moveLeft)
-			b2body.setLinearVelocity(0f, b2body.getLinearVelocity().y);
-
-		// multiple concurrent body impulses may be necessary
-		doDuckSlideMove = false;
-		doWalkRunMove = false;
-		doDecelMove = false;
-		doBrakeMove = false;
-
-		// make a note of the last direction in which mario was moving, for duck sliding
-		if(isVelocityRight)
-			isLastVelocityRight = true;
-		else if(isVelocityLeft)
-			isLastVelocityRight = false;
-
-		// eligible for duck/unduck?
-		if(curPowerState != MarioPowerState.SMALL && ogSensor.isOnGround()) {
-			Vector2 bodyTilePos = UInfo.getM2PTileForPos(b2body.getPosition());
-
-			// first time duck check
-			if(advice.moveDown && !isDucking) {
-				// quack
-				isDucking = true;
-				if(isDuckSliding)
-					isDuckSliding = false;
-				else {
-					// mario's body's height is reduced when ducking, so recreate the body in a slightly lower pos
-					defineBody(b2body.getPosition().cpy().sub(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
-				}
-			}
-			// first time unduck check
-			else if(!advice.moveDown && isDucking) {
-				isDucking = false;
-
-				// Check the space above and around mario to test if mario can unduck normally, or if he is in a
-				// tight spot
-
-				// if the tile above ducking mario is solid ...
-				if(isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
-					Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(b2body.getPosition());
-					// If the player's last velocity direction was rightward, and their position is in the left half
-					// of the tile, and the tile above and to the left of them is solid, then the player should
-					// duckslide right.
-					if((isLastVelocityRight && subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
-							(subTilePos.x > 0.5f && !isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
-							(isLastVelocityRight && subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
-						isDuckSlideRight = true;
-					}
-					// the only other option is to duckslide left
-					else
-						isDuckSlideRight = false;
-
-					// tile above is solid so must be ducksliding
-					isDuckSliding = true;
-				}
-				else
-					defineBody(b2body.getPosition().cpy().add(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
-			}
-
-			if(isDuckSliding) {
-				// if the player was duck sliding but the space above them is now nonsolid then end duckslide
-				if(!isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
-					isDuckSliding = false;
-					defineBody(b2body.getPosition().cpy().add(0f, UInfo.P2M(8f)), b2body.getLinearVelocity());
-				}
-				else
-					doDuckSlideMove = true;
-			}
-		}
-
-		// want to move left or right? (but not both! because they would cancel each other)
-		if((advice.moveRight && !advice.moveLeft) || (!advice.moveRight && advice.moveLeft)) {
-			doWalkRunMove = true;
-
-			// mario can change facing direction, but not while airborne
-			if(ogSensor.isOnGround()) {
-				// brake becomes available again when facing direction changes
-				if(isFacingRight != advice.moveRight) {
-					isBrakeAvailable = true;
-					brakeTimer = 0f;
-				}
-
-				// can't run/walk on ground while ducking, only slide
-				if(isDucking) {
-					doWalkRunMove = false;
-					doDecelMove = true;
-				}
-				else	// update facing direction
-					isFacingRight = advice.moveRight;
-			}
-		}
-		// decelerate if on ground and not wanting to move left or right
-		else if(ogSensor.isOnGround() && (isVelocityRight || isVelocityLeft))
-			doDecelMove = true;
-
-		// check for brake application
-		if(!isDucking && ogSensor.isOnGround() && isBrakeAvailable &&
-				((isFacingRight && isVelocityLeft) || (!isFacingRight && isVelocityRight))) {
-			isBrakeAvailable = false;
-			brakeTimer = MARIO_BRAKE_TIME;
-		}
-		// this catches brake applications from this update() call and previous update() calls
-		if(brakeTimer > 0f) {
-			doBrakeMove = true;
-			brakeTimer -= delta;
-		}
-
-		// apply impulses if necessary
-		if(doDuckSlideMove) {
-			duckSlideLeftRight(isDuckSlideRight);
-		}
-		else if(doBrakeMove) {
-			brakeLeftRight(isFacingRight);
-			nextState = MarioBodyState.BRAKE;
-		}
-		else if(doWalkRunMove) {
-			moveBodyLeftRight(advice.moveRight, advice.action0);
-			nextState = MarioBodyState.WALKRUN;
-		}
-		else if(doDecelMove) {
-			decelLeftRight();
-			nextState = MarioBodyState.WALKRUN;
-		}
-
-		// Do not check mario's "on ground" state for a short time after mario jumps, because his foot sensor
-		// might still be contacting the ground even after his body enters the air.
-		if(jumpGroundCheckTimer > delta)
-			jumpGroundCheckTimer -= delta;
-		else {
-			jumpGroundCheckTimer = 0f;
-			// The player can jump once per press of the jump key, so let them jump again when they release the
-			// button but, they need to be on the ground with the button released.
-			if(ogSensor.isOnGround()) {
-				isJumping = false;
-				if(!advice.action1)
-					isNewJumpAllowed = true;
-			}
-		}
-
-		// jump?
-		if(advice.action1 && isNewJumpAllowed) {	// do jump
-			isNewJumpAllowed = false;
-			isJumping = true;
-			// start a timer to delay checking for onGround state
-			jumpGroundCheckTimer = MARIO_JUMP_GROUNDCHECK_DELAY;
-			nextState = MarioBodyState.JUMP;
-
-			// the faster mario is moving, the higher he jumps, up to a max
-			float mult = Math.abs(b2body.getLinearVelocity().x) / MARIO_MAX_RUNJUMPVEL;
-			// cap the multiplier
-			if(mult > 1f)
-				mult = 1f;
-
-			mult *= MARIO_RUNJUMP_MULT;
-			mult += 1f;
-
-			// apply initial (and only) jump impulse
-			moveBodyY(MARIO_JUMP_IMPULSE * mult);
-			// the remainder of the jump up velocity is achieved through mid-air up-force
-			jumpForceTimer = MARIO_JUMPFORCE_TIME;
-			if(curPowerState != MarioPowerState.SMALL)
-				agency.playSound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
-			else
-				agency.playSound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
-		}
-		else if(isJumping) {	// jumped and is mid-air
-			nextState = MarioBodyState.JUMP;
-			// jump force stops, and cannot be restarted, if the player releases the jump key
-			if(!advice.action1)
-				jumpForceTimer = 0f;
-			// The longer the player holds the jump key, the higher they go,
-			// if mario is moving up (no jump force allowed while mario is moving down)
-			// TODO: what if mario is initally moving down because he jumped from an elevator?
-			else if(b2body.getLinearVelocity().y > 0f && jumpForceTimer > 0f) {
-				jumpForceTimer -= delta;
-				// the force was strong to begin and tapered off over time - some said it became irrelevant
-				applyForce(new Vector2(0, MARIO_JUMP_FORCE * jumpForceTimer / MARIO_JUMPFORCE_TIME));
-			}
-		}
-		// finally, if mario is not on the ground (for reals) then he is falling since he is not jumping
-		else if(!ogSensor.isOnGround() && jumpGroundCheckTimer <= 0f) {
-			// cannot jump while falling
-			isNewJumpAllowed = false;
-			nextState = MarioBodyState.FALL;
-		}
-
-		if(isDucking)
-			nextState = MarioBodyState.DUCK;
-
-		stateTimer = nextState == curBodyState ? stateTimer + delta : 0f;
-		curBodyState = nextState;
-		prevVelocity = b2body.getLinearVelocity().cpy();
-		prevPosition = b2body.getPosition().cpy();
-
-		return nextState;
-	}
-
-	private void processPipes(MoveAdvice advice) {
-		// check for pipe entry 
-		Direction4 dir;
-		if(advice.moveRight)
-			dir = Direction4.RIGHT;
-		else if(advice.moveUp)
-			dir = Direction4.UP;
-		else if(advice.moveLeft)
-			dir = Direction4.LEFT;
-		else if(advice.moveDown)
-			dir = Direction4.DOWN;
-		else
-			return;
-		for(PipeWarp pw : wpSensor.getContactsByClass(PipeWarp.class)) {
-			if(((PipeWarp) pw).canBodyEnterPipe(getBounds(), dir)) {
-				// player can enter pipe, so save a ref to the pipe
-				pipeToEnter = (PipeWarp) pw;
-				return;
-			}
-		}
-	}
-
-	private void processOtherContacts() {
-		// despawn contact?
-		if(acSensor.getFirstContactByClass(DespawnBox.class) != null) {
-			parent.die();
-			return;
-		}
-
-		processHeadContacts();	// hitting bricks with head
-
-		// item contact?
-		PowerupGiveAgent item = (PowerupGiveAgent) acSensor.getFirstContactByClass(PowerupGiveAgent.class);
-		if(item != null)
-			item.use(parent);
-
-		if(parent.isPowerStarOn()) {
-			// apply powerstar damage
-			List<ContactDmgTakeAgent> list = acSensor.getContactsByClass(ContactDmgTakeAgent.class);
-			for(ContactDmgTakeAgent agent : list) {
-				// playSound should go in the processBody method, but... this is so much easier!
-				agency.playSound(AudioInfo.Sound.SMB.KICK);
-				agent.onDamage(parent, 1f, b2body.getPosition());
-			}
-
-			// Remove any agents that accumulate in the begin queue, to prevent begin contacts during
-			// power star time being ignored - which would cause mario to take damage when power star time ends. 
-			acBeginSensor.getAndResetContacts();
-		}
-		else {
-			// check for headbounces
-			List<Agent> list = acBeginSensor.getAndResetContacts();
-			LinkedList<Agent> bouncedAgents = new LinkedList<Agent>();
-			for(Agent agent : list) {
-				// skip the agent if not bouncy :)
-				if(!(agent instanceof HeadBounceTakeAgent) || !((HeadBounceTakeAgent) agent).isBouncy())
-					continue;
-				// If the bottom of mario's bounds box is at least as high as the middle of the agent then bounce.
-				// (i.e. if mario's foot is at least as high as midway up the other agent...)
-				// Note: check this frame postiion and previous frame postiion in case mario is travelling quickly...
-				if(b2body.getPosition().y - getBodySize().y/2f >= agent.getPosition().y ||
-						prevPosition.y - getBodySize().y/2f >= agent.getPosition().y) {
-					bouncedAgents.add(agent);
-					((HeadBounceTakeAgent) agent).onHeadBounce(parent);
-				}
-			}
-			if(!bouncedAgents.isEmpty()) {
-				b2body.setLinearVelocity(b2body.getLinearVelocity().x, 0f);
-				b2body.applyLinearImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL), b2body.getWorldCenter(), true);
-			}
-
-			// if not invincible then check for incoming damage
-			if(!parent.isDmgInvincibleOn()) {
-				// check for contact damage
-				for(Agent a : list) {
-					if(!(a instanceof ContactDmgGiveAgent))
-						continue;
-					// if the agent does contact damage and they were not head bounced
-					if(((ContactDmgGiveAgent) a).isContactDamage() && !bouncedAgents.contains(a))
-						isTakeDamage = true;
-				}
-			}
-		}
-	}
-*/
-	/*
-	 * Process the head contact add and remove queues, then check the list of current contacts for a head bang.
-	 *
-	 * NOTE: After banging his head while moving up, mario cannot bang his head again until he has moved down a
-	 * sufficient amount. Also, mario can only break one block per head bang - but if his head contacts multiple
-	 * blocks when he hits, then choose the block closest to mario on the x axis.
-	 */
-/*	private void processHeadContacts() {
-		// if can head bang and is moving upwards fast enough then ...
-		if(canHeadBang && (b2body.getLinearVelocity().y > MIN_HEADBANG_VEL || prevVelocity.y > MIN_HEADBANG_VEL)) {
-			// check the list of tiles for the closest to mario
-			float closest = 0;
-			TileBumpTakeAgent closestTile = null;
-			for(TileBumpTakeAgent thingHit : btSensor.getContactsByClass(TileBumpTakeAgent.class)) {
-				float dist = Math.abs(((Agent) thingHit).getPosition().x - b2body.getPosition().x);
-				if(closestTile == null || dist < closest) {
-					closest = dist;
-					closestTile = thingHit;
-				}
-			}
-
-			// we have a weiner!
-			if(closestTile != null) {
-				canHeadBang = false;
-				((TileBumpTakeAgent) closestTile).onBumpTile(parent);
-			}
-		}
-		// mario can headbang once per up/down cycle of movement, so re-enable head bang when mario moves down
-		else if(b2body.getLinearVelocity().y < 0f)
-			canHeadBang = true;
-	}
-*/
 	public void decelLeftRight() {
 		float vx = b2body.getLinearVelocity().x;
 		if(vx == 0f)
@@ -623,44 +291,9 @@ public class MarioBody extends MobileAgentBody {
 			b2body.applyLinearImpulse(new Vector2(-MARIO_DUCKSLIDE_XIMP, 0f), b2body.getWorldCenter(), true);
 	}
 
-//	private void moveBodyY(float value) {
-//		b2body.applyLinearImpulse(new Vector2(0, value),
-//				b2body.getWorldCenter(), true);
-//	}
-
-//	public float getStateTimer() {
-//		return stateTimer;
-//	}
-
-//	public PipeWarp getPipeToEnter() {
-//		return pipeToEnter;
-//	}
-
-//	public void resetPipeToEnter() {
-//		pipeToEnter = null;
-//	}
-
 	public boolean isOnGround() {
 		return ogSensor.isOnGround();
 	}
-
-//	public boolean isFacingRight() {
-//		return isFacingRight;
-//	}
-
-//	public void setFacingRight(boolean isFacingRight) {
-//		this.isFacingRight = isFacingRight; 
-//	}
-
-//	public void setPosAndVel(Vector2 pos, Vector2 vel) {
-//		defineBody(pos, vel);
-//	}
-
-//	public void setBodyPosVelAndSize(Vector2 pos, Vector2 vel, boolean isBig) {
-//		this.isBig = isBig;
-//		isDucking = false;
-//		defineBody(pos, vel);
-//	}
 
 	public void useScriptedBodyState(ScriptedBodyState sbState, boolean isBig, boolean isDucking) {
 		setContactEnabled(sbState.contactEnabled);
@@ -714,10 +347,6 @@ public class MarioBody extends MobileAgentBody {
 		isContactEnabled = enabled;
 	}
 
-//	public boolean isDucking() {
-//		return isDucking;
-//	}
-
 	public Room getCurrentRoom() {
 		return (Room) acSensor.getFirstContactByClass(Room.class);
 	}
@@ -738,6 +367,16 @@ public class MarioBody extends MobileAgentBody {
 		return btSensor.getContactsByClass(TileBumpTakeAgent.class);
 	}
 
+	public PipeWarp getEnterPipeWarp(Direction4 moveDir) {
+		if(moveDir == null)
+			return null;
+		for(PipeWarp pw : wpSensor.getContactsByClass(PipeWarp.class)) {
+			if(pw.canBodyEnterPipe(getBounds(), moveDir))
+				return (PipeWarp) pw;
+		}
+		return null;
+	}
+
 	@Override
 	public Agent getParent() {
 		return parent;
@@ -754,19 +393,16 @@ public class MarioBody extends MobileAgentBody {
 		return new Rectangle(b2body.getPosition().x - s.x/2f, b2body.getPosition().y - s.y/2f, s.x, s.y);
 	}
 
-	public PipeWarp getEnterPipeWarp(Direction4 moveDir) {
-		if(moveDir == null)
-			return null;
-		for(PipeWarp pw : wpSensor.getContactsByClass(PipeWarp.class)) {
-			if(pw.canBodyEnterPipe(getBounds(), moveDir))
-				return (PipeWarp) pw;
-		}
-		return null;
+	public void updatePrevs() {
+		prevVelocity = b2body.getLinearVelocity().cpy();
+		prevPosition = b2body.getPosition().cpy();
 	}
 
-	@Override
-	public void dispose() {
-		b2body.getWorld().destroyBody(b2body);
-		b2body = null;
+	public Vector2 getPrevPosition() {
+		return prevPosition;
+	}
+
+	public Vector2 getPrevVelocity() {
+		return prevVelocity;
 	}
 }

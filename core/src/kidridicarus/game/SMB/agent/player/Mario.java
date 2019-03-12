@@ -48,7 +48,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  */
 public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		DisposableAgent {
-	public enum MarioAgentState { PLAY, FIREBALL, DEAD }
+	public enum MarioAgentState { PLAY, FIREBALL, DEAD }	// TODO merge this with move state
 
 	private static final float MARIO_DEAD_TIME = 3f;
 	private static final float LEVEL_MAX_TIME = 300f;
@@ -78,8 +78,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 	private MarioSprite marioSprite;
 	private MarioPowerState curPowerState;
 	private MarioAgentState curAgentState;
-//	private float stateTimer;
-	private float agentStateTimer;
+	private float stateTimer;
 
 	private boolean marioIsDead;
 	private boolean prevFrameAdvisedShoot;
@@ -111,8 +110,6 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 	private boolean isDuckSliding;
 	private boolean isTakeDamage;
 	private PipeWarp pipeToEnter;
-	private Vector2 prevVelocity;
-	private Vector2 prevPosition;
 
 	public Mario(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -131,8 +128,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		levelTimeRemaining = LEVEL_MAX_TIME;
 
 		curAgentState = MarioAgentState.PLAY;
-//		stateTimer = 0f;
-		agentStateTimer = 0f;
+		stateTimer = 0f;
 
 		extraLives = 2;
 		coinTotal = pointTotal = 0;
@@ -155,8 +151,6 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		curBodyState = MarioBodyState.STAND;
 
 		mBody = new MarioBody(this, agency, Agent.getStartPoint(properties), false, false);
-		prevVelocity = new Vector2(0f, 0f);
-		prevPosition = mBody.getPosition().cpy();
 		marioSprite = new MarioSprite(agency.getAtlas(), mBody.getPosition(), curPowerState);
 
 		supervisor = new MarioSupervisor(this);
@@ -230,14 +224,13 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		if(nextAgentState == MarioAgentState.PLAY || nextAgentState == MarioAgentState.FIREBALL) {
 			processDamage(delta);
 			processPowerups();
-//			bodyState = mBody.update(delta, moveAdvice, curPowerState);
 			bodyState = mBodyUpdate(delta, moveAdvice, curPowerState);
 		}
-		else if(curAgentState == MarioAgentState.DEAD && agentStateTimer > MARIO_DEAD_TIME) {
+		else if(curAgentState == MarioAgentState.DEAD && stateTimer > MARIO_DEAD_TIME) {
 			supervisor.setGameOver();
 		}
 
-		agentStateTimer = nextAgentState == curAgentState ? agentStateTimer+delta : 0f;
+		stateTimer = nextAgentState == curAgentState ? stateTimer+delta : 0f;
 		curAgentState = nextAgentState;
 
 		isStarPowered = false;
@@ -463,10 +456,9 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		if(isDucking)
 			nextState = MarioBodyState.DUCK;
 
-		agentStateTimer = nextState == curBodyState ? agentStateTimer+delta : 0f;
+		stateTimer = nextState == curBodyState ? stateTimer+delta : 0f;
 		curBodyState = nextState;
-		prevVelocity = mBody.getVelocity().cpy();
-		prevPosition = mBody.getPosition().cpy();
+		mBody.updatePrevs();
 
 		return nextState;
 	}
@@ -511,7 +503,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 				// (i.e. if mario's foot is at least as high as midway up the other agent...)
 				// Note: check this frame postiion and previous frame postiion in case mario is travelling quickly...
 				if(mBody.getPosition().y - mBody.getBounds().height/2f >= agent.getPosition().y ||
-						prevPosition.y - mBody.getBounds().height/2f >= agent.getPosition().y) {
+						mBody.getPrevPosition().y - mBody.getBounds().height/2f >= agent.getPosition().y) {
 					bouncedAgents.add(agent);
 					((HeadBounceTakeAgent) agent).onHeadBounce(this);
 				}
@@ -544,7 +536,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 	 */
 	private void processHeadContacts() {
 		// if can head bang and is moving upwards fast enough then ...
-		if(canHeadBang && (mBody.getVelocity().y > MIN_HEADBANG_VEL || prevVelocity.y > MIN_HEADBANG_VEL)) {
+		if(canHeadBang && (mBody.getVelocity().y > MIN_HEADBANG_VEL || mBody.getPrevVelocity().y > MIN_HEADBANG_VEL)) {
 			// check the list of tiles for the closest to mario
 			float closest = 0;
 			TileBumpTakeAgent closestTile = null;
@@ -679,8 +671,6 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 				if(curPowerState == MarioPowerState.SMALL) {
 					curPowerState = MarioPowerState.BIG;
 
-//					mBody.setBodyPosVelAndSize(mBody.getPosition().add(0f, UInfo.P2M(8f)),
-//							mBody.getVelocity(), true);
 					isBig = true;
 					mBody.defineBody(mBody.getPosition().add(0f, UInfo.P2M(8f)), mBody.getVelocity(),
 							isBig, isDucking);
@@ -737,12 +727,10 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		if(curPowerState == MarioPowerState.FIRE || curPowerState == MarioPowerState.BIG) {
 			curPowerState = MarioPowerState.SMALL;
 			if(isDucking) {
-//				mBody.setBodyPosVelAndSize(mBody.getPosition(), mBody.getVelocity(), false);
 				isBig = false;
 				mBody.defineBody(mBody.getPosition(), mBody.getVelocity(), false, isDucking);
 			}
 			else {
-//				mBody.setBodyPosVelAndSize(mBody.getPosition().sub(0f, UInfo.P2M(8f)), mBody.getVelocity(), false);
 				isBig = false;
 				mBody.defineBody(mBody.getPosition().sub(0f, UInfo.P2M(8f)), mBody.getVelocity(), false, isDucking);
 			}
@@ -790,13 +778,6 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		else
 			return true;
 	}
-
-//	private Vector2 getBodySize() {
-//		if(isBigBody())
-//			return MarioBody.BIG_BODY_SIZE;
-//		else
-//			return MarioBody.SML_BODY_SIZE;
-//	}
 
 	private boolean getAndResetTakeDamage() {
 		boolean t = isTakeDamage;
@@ -859,28 +840,9 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		return extraLives;
 	}
 
-	/*
-	 * Return true if marioIsDead flag is set and the update method has been called at least once while marioIsDead.
-	 * Return false otherwise.
-	 * This is done so the getStateTimer method returns the correct state time when mario is dead. 
-	 */
-//	public boolean isDead() {
-//		if(marioIsDead && curAgentState == MarioAgentState.DEAD)
-//			return true;
-//		return false;
-//	}
-
 	public boolean isBig() {
 		return (curPowerState != MarioPowerState.SMALL);
 	}
-
-//	public boolean isPowerStarOn() {
-//		return powerStarTimer > 0f;
-//	}
-
-//	public boolean isDmgInvincibleOn() {
-//		return dmgInvincibleTime > 0f;
-//	}
 
 	@Override
 	public Vector2 getPosition() {

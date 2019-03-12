@@ -36,8 +36,7 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent,
-		DisposableAgent {
+public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, DisposableAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
@@ -52,13 +51,15 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent,
 	public enum ContactState { REGULAR, DAMAGE }
 	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT, CLIMB }
 
+	private SamusSupervisor supervisor;
+	private SamusObserver observer;
 	private SamusBody samusBody;
 	private SamusSprite samusSprite;
 
-	private MoveState curMoveState;
-	private float moveStateTimer;
 	private ContactState curContactState;
 	private float contactStateTimer;
+	private MoveState curMoveState;
+	private float moveStateTimer;
 
 	private boolean isFacingRight;
 	private boolean isFacingUp;
@@ -74,8 +75,6 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent,
 	private float lastStepSoundTime = 0f;
 	private boolean isAutoContinueRightAirMove;
 	private boolean isAutoContinueLeftAirMove;
-	private SamusObserver observer;
-	private SamusSupervisor supervisor;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
