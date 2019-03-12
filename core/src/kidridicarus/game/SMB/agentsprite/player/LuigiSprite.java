@@ -191,10 +191,15 @@ public class LuigiSprite extends Sprite {
 				pose = BRAKE_POSE;
 				break;
 			case DUCK:
+			case DUCKFALL:
 			case DUCKJUMP:
 				offset.set(SPRITE_DUCK_OFFSET);
 				pose = DUCK_POSE;
 				break;
+			case JUMP:
+				pose = JUMP_POSE;
+				break;
+				
 		}
 
 		if(parentPowerState.isBigBody())

@@ -24,6 +24,8 @@ public class LuigiSpine {
 	private static final float RUNMOVE_XIMP = WALKMOVE_XIMP * 1.5f;
 	private static final float MAX_RUNVEL = MAX_WALKVEL * 1.65f;
 
+	private static final float JUMP_IMPULSE = 1.75f;
+
 	private AgentContactHoldSensor acSensor;
 	private OnGroundSensor ogSensor;
 	private LuigiBody body;
@@ -100,6 +102,10 @@ public class LuigiSpine {
 			body.setVelocity(-max, body.getVelocity().y);
 	}
 
+	public void applyJumpImpulse() {
+		body.applyBodyImpulse(new Vector2 (0f, JUMP_IMPULSE));
+	}
+
 	public Room getCurrentRoom() {
 		return (Room) acSensor.getFirstContactByClass(Room.class);
 	}
@@ -118,5 +124,9 @@ public class LuigiSpine {
 		else if(!facingRight && body.getVelocity().x > MIN_WALKVEL)
 			return true;
 		return false;
+	}
+
+	public boolean isMovingUp() {
+		return body.getVelocity().y > 0f;
 	}
 }

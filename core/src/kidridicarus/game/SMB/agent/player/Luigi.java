@@ -1,5 +1,7 @@
 package kidridicarus.game.SMB.agent.player;
 
+import java.util.HashSet;
+
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -30,7 +32,24 @@ public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 			SMALL, BIG, FIRE;
 			public boolean isBigBody() { return !this.equals(SMALL); }
 		}
-	public enum MoveState { STAND, RUN, BRAKE, FALL, DUCK, DUCKJUMP }
+	public enum MoveState { STAND, RUN, BRAKE, FALL, DUCK, DUCKFALL, DUCKJUMP, JUMP;
+			public boolean equalsAny(MoveState ...statesInput) {
+				for(MoveState state : statesInput) if(this.equals(state)) return true;
+				return false;
+			}
+
+			public boolean isDuckType() {
+				return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP);
+			}
+
+			public boolean isJumpType() {
+				return this.equalsAny(JUMP, DUCKJUMP);
+			}
+
+			public boolean isGroundType() {
+				return this.equalsAny(STAND, RUN, BRAKE);
+			}
+		}
 
 	private LuigiSupervisor supervisor;
 	private LuigiObserver observer;
@@ -41,6 +60,8 @@ public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 	private float moveStateTimer;
 	private PowerState powerState;
 	private boolean facingRight;
+	private boolean isNextJumpAllowed;
+	private boolean isNextJumpDelayed;
 
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -48,6 +69,8 @@ QQ.pr("you made Luigi so happy!");
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
 		facingRight = true;
+		isNextJumpAllowed = false;
+		isNextJumpDelayed = false;
 		powerState = PowerState.BIG;
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), powerState.isBigBody(), false);
@@ -78,20 +101,34 @@ QQ.pr("you made Luigi so happy!");
 		// check for body size change due to duck state change
 		switch(nextMoveState) {
 			case DUCK:
+			case DUCKFALL:
 			case DUCKJUMP:
 				// if the move state changed to duck then change body to ducking body
-				if(moveState != MoveState.DUCK && moveState != MoveState.DUCKJUMP)
+				if(!moveState.isDuckType())
 					body.defineBody(body.getPosition().cpy().sub(DUCK_OFFSET), powerState.isBigBody(), true);
 				break;
 			case STAND:
 			case RUN:
 			case BRAKE:
 			case FALL:
+			case JUMP:
 				// if the move state was duck then change body to regular body
-				if(moveState == MoveState.DUCK || moveState == MoveState.DUCKJUMP)
+				if(moveState.isDuckType())
 					body.defineBody(body.getPosition().cpy().add(DUCK_OFFSET), powerState.isBigBody(), false);
 				break;
 		}
+
+		// If current move type is air and next move type is ground and advised to jump then delay jump until
+		// jump advice is released.
+		if(!moveState.isGroundType() && nextMoveState.isGroundType() && moveAdvice.action1)
+			isNextJumpDelayed = true;
+
+		if(onGround && !body.getSpine().isMovingUp()) {
+			isNextJumpAllowed = true;
+			if(!moveAdvice.action1)
+				isNextJumpDelayed = false;
+		}
+
 		// do other changes
 		switch(nextMoveState) {
 			case STAND:
@@ -112,12 +149,19 @@ QQ.pr("you made Luigi so happy!");
 			case FALL:
 				break;
 			case DUCK:
+			case DUCKFALL:
+				break;
+			case JUMP:
 			case DUCKJUMP:
+				if(moveState != nextMoveState) {
+					isNextJumpAllowed = false;
+					body.getSpine().applyJumpImpulse();
+				}
 				break;
 		}
 
 		if(moveDir.isHorizontal()) {
-			if(onGround && moveState != MoveState.DUCK) {
+			if(onGround && !moveState.isDuckType()) {
 				// check for change of facing direction
 				if(moveDir == Direction4.RIGHT)
 					facingRight = true;
@@ -133,6 +177,53 @@ QQ.pr("you made Luigi so happy!");
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
+	}
+
+	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
+		if(body.getSpine().isOnGround())
+			return getNextMoveStateGround(moveAdvice);
+		else
+			return getNextMoveStateAir(moveAdvice);
+	}
+
+	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
+		Direction4 moveDir = getLuigiMoveDir(moveAdvice);
+
+		// if advised to jump and jumping is okay...
+		if(moveAdvice.action1 && isNextJumpAllowed && !isNextJumpDelayed) {
+			// if ducking already then duck jump
+			if(moveState.isDuckType())
+				return MoveState.DUCKJUMP;
+			// otherwise regular jump
+			else
+				return MoveState.JUMP;
+		}
+		// if big body mario and move down is advised then duck
+		else if(powerState.isBigBody() && moveDir == Direction4.DOWN)
+			return MoveState.DUCK;
+		// moving too slowly?
+		else if(body.getSpine().isStandingStill())
+			return MoveState.STAND;
+		// moving in wrong direction?
+		else if(body.getSpine().isBraking(facingRight))
+			return MoveState.BRAKE;
+		else
+			return MoveState.RUN;
+	}
+
+	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {
+		// if in jump state then continue jump state
+		if(moveState.isJumpType())
+			return moveState;
+		// not in jump state
+		else {
+			// if is ducking then do duck fall 
+			if(moveState.isDuckType())
+				return MoveState.DUCKFALL;
+			// not ducking so do regular fall
+			else
+				return MoveState.FALL;
+		}
 	}
 
 	private Direction4 getLuigiMoveDir(MoveAdvice moveAdvice) {
@@ -157,29 +248,6 @@ QQ.pr("you made Luigi so happy!");
 			else
 				return Direction4.LEFT;
 		}
-	}
-
-	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
-		Direction4 moveDir = moveAdvice.getMoveDir4();
-		// if not on ground then fall
-		if(!body.getSpine().isOnGround()) {
-			// if ducking or ducking and jumping then start/maintain duck jump
-			if(moveState == MoveState.DUCK || moveState == MoveState.DUCKJUMP)
-				return MoveState.DUCKJUMP;
-			else
-				return MoveState.FALL;
-		}
-		// if big body mario and move down is advised then duck
-		else if(powerState.isBigBody() && moveDir == Direction4.DOWN)
-			return MoveState.DUCK;
-		// moving too slowly?
-		else if(body.getSpine().isStandingStill())
-			return MoveState.STAND;
-		// moving in wrong direction?
-		else if(body.getSpine().isBraking(facingRight))
-			return MoveState.BRAKE;
-		else
-			return MoveState.RUN;
 	}
 
 	private void processSprite(float delta) {
