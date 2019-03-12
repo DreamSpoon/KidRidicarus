@@ -27,7 +27,7 @@ public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 			SMALL, BIG, FIRE;
 			public boolean isBigBody() { return !this.equals(SMALL); }
 		}
-	public enum MoveState { STAND, RUN }
+	public enum MoveState { STAND, RUN, BRAKE, FALL }
 
 	private LuigiSupervisor supervisor;
 	private LuigiObserver observer;
@@ -69,25 +69,30 @@ QQ.pr("you made Luigi so happy!");
 	private void processMove(float delta, MoveAdvice moveAdvice) {
 		Direction4 moveDir = moveAdvice.getMoveDir4();
 		boolean onGround = body.getSpine().isOnGround();
-
 		boolean doHorizontalImpulse = false;
 		boolean doDecelImpulse = false;
-
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		switch(nextMoveState) {
 			case STAND:
+				if(moveDir.isHorizontal())
+					doHorizontalImpulse = true;
+				else
+					doDecelImpulse = true;
+				break;
 			case RUN:
-			default:
-				if(onGround) {
-					if(moveDir.isHorizontal())
-						doHorizontalImpulse = true;
-					else
-						doDecelImpulse = true;
-				}
+				if(moveDir.isHorizontal())
+					doHorizontalImpulse = true;
+				else
+					doDecelImpulse = true;
+				break;
+			case BRAKE:
+				doDecelImpulse = true;
+				break;
+			case FALL:
 				break;
 		}
 
-		if(moveDir != null && moveDir.isHorizontal()) {
+		if(moveDir.isHorizontal()) {
 			if(onGround) {
 				// check for change of facing direction
 				if(moveDir == Direction4.RIGHT)
@@ -100,27 +105,31 @@ QQ.pr("you made Luigi so happy!");
 		if(doHorizontalImpulse)
 			body.getSpine().applyWalkMove(facingRight);
 		if(doDecelImpulse)
-			body.getSpine().applyDecelMove();
+			body.getSpine().applyDecelMove(facingRight);
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
 	}
 
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
-		Direction4 moveDir = moveAdvice.getMoveDir4();
 		switch(moveState) {
 			case STAND:
-			default:
-				if(moveDir != null && moveDir.isHorizontal())
-					return MoveState.RUN;
-				else
-					return MoveState.STAND;
 			case RUN:
-				if(moveDir != null && moveDir.isHorizontal())
-					return MoveState.RUN;
-				else
+			case BRAKE:
+			case FALL:
+				// if not on ground then fall
+				if(!body.getSpine().isOnGround())
+					return MoveState.FALL;
+				// moving too slowly?
+				else if(body.getSpine().isStandingStill())
 					return MoveState.STAND;
+				// moving in wrong direction?
+				else if(body.getSpine().isBraking(facingRight))
+					return MoveState.BRAKE;
+				else
+					return MoveState.RUN;
 		}
+		return MoveState.STAND;	// return default move state
 	}
 
 	private void processSprite(float delta) {

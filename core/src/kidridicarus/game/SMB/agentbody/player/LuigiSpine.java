@@ -33,10 +33,12 @@ public class LuigiSpine {
 	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
 
-	private static final float WALKMOVE_XIMP = 0.025f;
+	public static final float WALKMOVE_XIMP = 0.025f;
 	private static final float DECEL_XIMP = WALKMOVE_XIMP * 1.37f;
 	private static final float MIN_WALKVEL = WALKMOVE_XIMP * 2f;
 	private static final float MAX_WALKVEL = WALKMOVE_XIMP * 42f;
+	private static final float BRAKE_XIMP = WALKMOVE_XIMP * 2.75f;
+	private static final float MAX_STAND_VEL = LuigiSpine.WALKMOVE_XIMP * 0.01f;
 
 	private AgentContactHoldSensor acSensor;
 	private OnGroundSensor ogSensor;
@@ -67,24 +69,17 @@ public class LuigiSpine {
 				ogSensor));
 	}
 
-	public void applySimpleMove(boolean moveRight, float amt) {
-		if(moveRight)
-			body.applyBodyImpulse(new Vector2(amt, 0f));
-		else
-			body.applyBodyImpulse(new Vector2(-amt, 0f));
-	}
-
 	/*
 	 * Apply walk impulse and cap horizontal velocity.
 	 */
 	public void applyWalkMove(boolean moveRight) {
 		if(moveRight && body.getVelocity().x < MAX_WALKVEL) {
-			applySimpleMove(moveRight, WALKMOVE_XIMP);
+			applyHorizontalImpulse(moveRight, WALKMOVE_XIMP);
 			if(body.getVelocity().x > MAX_WALKVEL)
 				body.setVelocity(MAX_WALKVEL, body.getVelocity().y);
 		}
 		else if(!moveRight && body.getVelocity().x > -MAX_WALKVEL) {
-			applySimpleMove(moveRight, WALKMOVE_XIMP);
+			applyHorizontalImpulse(moveRight, WALKMOVE_XIMP);
 			if(body.getVelocity().x < -MAX_WALKVEL)
 				body.setVelocity(-MAX_WALKVEL, body.getVelocity().y);
 		}
@@ -93,14 +88,29 @@ public class LuigiSpine {
 	/*
 	 * Apply decel impulse and check for min velocity.
 	 */
-	public void applyDecelMove() {
-		if(body.getVelocity().x > MIN_WALKVEL)
-			applySimpleMove(true, -DECEL_XIMP);
-		else if(body.getVelocity().x < -MIN_WALKVEL)
-			applySimpleMove(false, -DECEL_XIMP);
+	public void applyDecelMove(boolean facingRight) {
+		if(body.getVelocity().x > MIN_WALKVEL) {
+			if(facingRight)
+				applyHorizontalImpulse(true, -DECEL_XIMP);
+			else
+				applyHorizontalImpulse(true, -BRAKE_XIMP);
+		}
+		else if(body.getVelocity().x < -MIN_WALKVEL) {
+			if(!facingRight)
+				applyHorizontalImpulse(false, -DECEL_XIMP);
+			else
+				applyHorizontalImpulse(false, -BRAKE_XIMP);
+		}
 		// if not moving fast enough left/right then zero the horizontal velocity
 		else
 			body.setVelocity(0f, body.getVelocity().y);
+	}
+
+	private void applyHorizontalImpulse(boolean moveRight, float amt) {
+		if(moveRight)
+			body.applyBodyImpulse(new Vector2(amt, 0f));
+		else
+			body.applyBodyImpulse(new Vector2(-amt, 0f));
 	}
 
 	public Room getCurrentRoom() {
@@ -109,5 +119,17 @@ public class LuigiSpine {
 
 	public boolean isOnGround() {
 		return ogSensor.isOnGround();
+	}
+
+	public boolean isStandingStill() {
+		return (body.getVelocity().x >= -MAX_STAND_VEL && body.getVelocity().x <= MAX_STAND_VEL);
+	}
+
+	public boolean isBraking(boolean facingRight) {
+		if(facingRight && body.getVelocity().x < -MIN_WALKVEL)
+			return true;
+		else if(!facingRight && body.getVelocity().x > MIN_WALKVEL)
+			return true;
+		return false;
 	}
 }

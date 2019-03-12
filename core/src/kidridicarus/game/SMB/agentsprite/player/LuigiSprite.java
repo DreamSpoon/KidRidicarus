@@ -185,6 +185,9 @@ public class LuigiSprite extends Sprite {
 			case RUN:
 				pose = RUN_POSE;
 				break;
+			case BRAKE:
+				pose = BRAKE_POSE;
+				break;
 		}
 
 		if(parentPowerState.isBigBody())
