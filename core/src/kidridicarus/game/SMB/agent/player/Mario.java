@@ -424,7 +424,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 			mult += 1f;
 
 			// apply initial (and only) jump impulse
-			mBody.applyImpulse(new Vector2(0, MARIO_JUMP_IMPULSE * mult));
+			mBody.applyBodyImpulse(new Vector2(0, MARIO_JUMP_IMPULSE * mult));
 			// the remainder of the jump up velocity is achieved through mid-air up-force
 			jumpForceTimer = MARIO_JUMPFORCE_TIME;
 			if(curPowerState != MarioPowerState.SMALL)
@@ -510,7 +510,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 			}
 			if(!bouncedAgents.isEmpty()) {
 				mBody.setVelocity(mBody.getVelocity().x, 0f);
-				mBody.applyImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL));
+				mBody.applyBodyImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL));
 			}
 
 			// if not invincible then check for incoming damage
@@ -572,7 +572,7 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 				mBody.disableAllContacts();
 
 				mBody.setVelocity(0f, 0f);
-				mBody.applyImpulse(new Vector2(0, 4f));
+				mBody.applyBodyImpulse(new Vector2(0, 4f));
 			}
 			// make sure mario doesn't move left or right while dead
 			mBody.zeroVelocity(true, false);

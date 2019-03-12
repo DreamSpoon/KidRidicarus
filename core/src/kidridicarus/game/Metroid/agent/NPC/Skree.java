@@ -152,9 +152,9 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 		if(xdiff > 0) {
 			if(sBody.getVelocity().x < SIDE_SPEED_MAX) {
 				if(xdiff < SIDE_IMPULSE_MAX)
-					sBody.applyImpulse(new Vector2(xdiff, 0f));
+					sBody.applyBodyImpulse(new Vector2(xdiff, 0f));
 				else
-					sBody.applyImpulse(new Vector2(SIDE_IMPULSE_MAX, 0f));
+					sBody.applyBodyImpulse(new Vector2(SIDE_IMPULSE_MAX, 0f));
 			}
 			else
 				sBody.setVelocity(SIDE_SPEED_MAX, sBody.getVelocity().y);
@@ -162,9 +162,9 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 		else if(xdiff < 0) {
 			if(sBody.getVelocity().x > -SIDE_SPEED_MAX) {
 				if(xdiff > -SIDE_IMPULSE_MAX)
-					sBody.applyImpulse(new Vector2(xdiff, 0f));
+					sBody.applyBodyImpulse(new Vector2(xdiff, 0f));
 				else
-					sBody.applyImpulse(new Vector2(-SIDE_IMPULSE_MAX, 0f));
+					sBody.applyBodyImpulse(new Vector2(-SIDE_IMPULSE_MAX, 0f));
 			}
 			else
 				sBody.setVelocity(-SIDE_SPEED_MAX, sBody.getVelocity().y);
@@ -172,7 +172,7 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 
 		// fall downward
 		if(sBody.getVelocity().y > -FALL_SPEED_MAX)
-			sBody.applyImpulse(new Vector2(0f, -FALL_IMPULSE));
+			sBody.applyBodyImpulse(new Vector2(0f, -FALL_IMPULSE));
 		else
 			sBody.setVelocity(sBody.getVelocity().x, -FALL_SPEED_MAX);
 	}

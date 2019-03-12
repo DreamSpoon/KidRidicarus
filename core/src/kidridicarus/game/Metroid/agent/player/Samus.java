@@ -162,13 +162,13 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 		samusBody.setVelocity(samusBody.getVelocity().x, 0);
 		// apply a kick impulse to the left or right depending on other agent's position
 		if(samusBody.getPosition().x < position.x)
-			samusBody.applyImpulse(DAMAGE_KICK_SIDE_IMP.cpy().scl(-1f));
+			samusBody.applyBodyImpulse(DAMAGE_KICK_SIDE_IMP.cpy().scl(-1f));
 		else
-			samusBody.applyImpulse(DAMAGE_KICK_SIDE_IMP);
+			samusBody.applyBodyImpulse(DAMAGE_KICK_SIDE_IMP);
 
 		// apply kick up impulse if the player is above the other agent
 		if(samusBody.getPosition().y > position.y)
-			samusBody.applyImpulse(DAMAGE_KICK_UP_IMP);
+			samusBody.applyBodyImpulse(DAMAGE_KICK_UP_IMP);
 
 		if(curMoveState != MoveState.JUMPSPIN)
 			isJumpForceEnabled = false;

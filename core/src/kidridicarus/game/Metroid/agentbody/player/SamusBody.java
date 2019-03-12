@@ -184,20 +184,20 @@ public class SamusBody extends MobileAgentBody {
 
 	public void doGroundMove(boolean moveRight) {
 		if(moveRight && getVelocity().x < MAX_GROUNDMOVE_VEL)
-			applyImpulse(GROUNDMOVE_IMP);
+			applyBodyImpulse(GROUNDMOVE_IMP);
 		else if(!moveRight && getVelocity().x > -MAX_GROUNDMOVE_VEL)
-			applyImpulse(GROUNDMOVE_IMP.cpy().scl(-1f));
+			applyBodyImpulse(GROUNDMOVE_IMP.cpy().scl(-1f));
 	}
 
 	public void doAirMove(boolean moveRight) {
 		if(moveRight && getVelocity().x < MAX_AIRMOVE_VEL)
-			applyImpulse(AIRMOVE_IMP);
+			applyBodyImpulse(AIRMOVE_IMP);
 		else if(!moveRight && getVelocity().x > -MAX_AIRMOVE_VEL)
-			applyImpulse(AIRMOVE_IMP.cpy().scl(-1f));
+			applyBodyImpulse(AIRMOVE_IMP.cpy().scl(-1f));
 	}
 
 	public void doJumpStart() {
-		applyImpulse(JUMPUP_IMP);
+		applyBodyImpulse(JUMPUP_IMP);
 		applyForce(JUMPUP_FORCE);
 		forceTimer = 0f;
 	}
@@ -220,12 +220,12 @@ public class SamusBody extends MobileAgentBody {
 
 		// if moving right then apply impulse left
 		if(getVelocity().x > MIN_MOVE_VEL) {
-			applyImpulse(amount.scl(-1f));
+			applyBodyImpulse(amount.scl(-1f));
 			if(getVelocity().x < 0f)
 				setVelocity(0f, getVelocity().y);
 		}
 		else if(getVelocity().x < -MIN_MOVE_VEL) {
-			applyImpulse(amount);
+			applyBodyImpulse(amount);
 			if(getVelocity().x > 0f)
 				setVelocity(0f, getVelocity().y);
 		}

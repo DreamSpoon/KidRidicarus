@@ -67,24 +67,22 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
+		Direction4 moveDir = moveAdvice.getMoveDir4();
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		switch(nextMoveState) {
 			case STAND:
 			default:
 				break;
 			case RUN:
-				if(body.isOnGround())
-					body.doRunMove(facingRight);
 				break;
 		}
 
-		Direction4 moveDir = moveAdvice.getMoveDir4();
-		if(moveDir == Direction4.RIGHT) {
+		if(moveDir == Direction4.RIGHT)
 			facingRight = true;
-		}
-		else if(moveDir == Direction4.LEFT) {
+		else if(moveDir == Direction4.LEFT)
 			facingRight = false;
-		}
+		if(body.getSpine().isOnGround() && moveDir != null && moveDir.isHorizontal())
+			body.getSpine().applyNerveImpulse(facingRight, false);
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
@@ -127,7 +125,7 @@ QQ.pr("you made Luigi so happy!");
 
 	@Override
 	public Room getCurrentRoom() {
-		return body.getCurrentRoom();
+		return body.getSpine().getCurrentRoom();
 	}
 
 	@Override

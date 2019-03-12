@@ -84,7 +84,7 @@ public class PowerStar extends BasicWalkAgent implements PowerupGiveAgent, BumpT
 			case WALK:
 				// start bounce to the right if this is first time walking
 				if(curMoveState == MoveState.SPROUT) {
-					starBody.applyImpulse(START_BOUNCE_VEL);
+					starBody.applyBodyImpulse(START_BOUNCE_VEL);
 					break;
 				}
 

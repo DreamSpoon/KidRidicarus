@@ -23,7 +23,7 @@ public abstract class MobileAgentBody extends AgentBody {
 				zeroY ? 0f : b2body.getLinearVelocity().y);
 	}
 
-	public void applyImpulse(Vector2 impulse) {
+	public void applyBodyImpulse(Vector2 impulse) {
 		b2body.applyLinearImpulse(impulse, b2body.getWorldCenter(), true);
 	}
 

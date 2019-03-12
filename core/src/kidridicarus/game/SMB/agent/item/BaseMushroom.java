@@ -86,7 +86,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements PowerupGive
 						(getConstVelocity().x < 0 && bumpCenter.x < bmBody.getPosition().x)) {
 					reverseConstVelocity(true, false);
 				}
-				bmBody.applyImpulse(new Vector2(0f, BUMP_UPVEL));
+				bmBody.applyBodyImpulse(new Vector2(0f, BUMP_UPVEL));
 			}
 			// bounce off of vertical bounds
 			else if(bmBody.isMoveBlocked(getConstVelocity().x > 0f))
