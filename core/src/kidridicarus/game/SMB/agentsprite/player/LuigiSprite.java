@@ -46,6 +46,8 @@ public class LuigiSprite extends Sprite {
 //	private static final int SML_INV2_GRP = 2;
 //	private static final int SML_INV3_GRP = 3;
 
+	private static final Vector2 SPRITE_DUCK_OFFSET = UInfo.P2MVector(0f, 8f);
+
 	/*
 	 * Animations by body size and [pose][group], where:
 	 *   pose is stuff like "stand", "run", "jump", etc.
@@ -160,10 +162,9 @@ public class LuigiSprite extends Sprite {
 
 	public void update(float delta, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
 			boolean facingRight) {
-		int group;
+		int group = SML_REG_GRP;
 		switch(parentPowerState) {
 			case SMALL:
-			default:
 				group = SML_REG_GRP;
 				setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
 				break;
@@ -176,10 +177,11 @@ public class LuigiSprite extends Sprite {
 				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 				break;
 		}
-		int pose;
+		int pose = STAND_POSE;
+		Vector2 offset = new Vector2(0f, 0f);
 		switch(parentMoveState) {
 			case STAND:
-			default:
+			case FALL:
 				pose = STAND_POSE;
 				break;
 			case RUN:
@@ -187,6 +189,11 @@ public class LuigiSprite extends Sprite {
 				break;
 			case BRAKE:
 				pose = BRAKE_POSE;
+				break;
+			case DUCK:
+			case DUCKJUMP:
+				offset.set(SPRITE_DUCK_OFFSET);
+				pose = DUCK_POSE;
 				break;
 		}
 
@@ -197,7 +204,7 @@ public class LuigiSprite extends Sprite {
 		// flip to face left if necessary
 		if(!facingRight && !isFlipX())
 			flip(true, false);
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+		setPosition(position.x - getWidth()/2f + offset.x, position.y - getHeight()/2f + offset.y);
 
 		stateTimer = parentMoveState == prevParentMoveState ? stateTimer+delta : 0f;
 		prevParentMoveState = parentMoveState;

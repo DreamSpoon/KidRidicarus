@@ -37,13 +37,13 @@ public class LuigiBody extends MobileAgentBody {
 	private World world;
 	private LuigiSpine spine;
 
-	public LuigiBody(Luigi parent, World world, Vector2 position, boolean isBigBody) {
+	public LuigiBody(Luigi parent, World world, Vector2 position, boolean isBigBody, boolean isDucking) {
 		this.world = world;
-		defineBody(position, isBigBody);
+		defineBody(position, isBigBody, isDucking);
 	}
 
-	private void defineBody(Vector2 position, boolean isBigBody) {
-		if(isBigBody)
+	public void defineBody(Vector2 position, boolean isBigBody, boolean isDucking) {
+		if(isBigBody && !isDucking)
 			setBodySize(BIG_BODY_SIZE.x, BIG_BODY_SIZE.y);
 		else
 			setBodySize(SML_BODY_SIZE.x, SML_BODY_SIZE.y);

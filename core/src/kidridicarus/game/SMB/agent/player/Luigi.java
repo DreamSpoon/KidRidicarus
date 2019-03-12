@@ -16,6 +16,7 @@ import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.SMB.agentbody.player.LuigiBody;
@@ -23,11 +24,13 @@ import kidridicarus.game.SMB.agentsprite.player.LuigiSprite;
 import kidridicarus.game.tool.QQ;
 
 public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
+	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
+
 	public enum PowerState {
 			SMALL, BIG, FIRE;
 			public boolean isBigBody() { return !this.equals(SMALL); }
 		}
-	public enum MoveState { STAND, RUN, BRAKE, FALL }
+	public enum MoveState { STAND, RUN, BRAKE, FALL, DUCK, DUCKJUMP }
 
 	private LuigiSupervisor supervisor;
 	private LuigiObserver observer;
@@ -45,9 +48,9 @@ QQ.pr("you made Luigi so happy!");
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
 		facingRight = true;
-		powerState = PowerState.SMALL;
+		powerState = PowerState.BIG;
 
-		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), powerState.isBigBody());
+		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), powerState.isBigBody(), false);
 		sprite = new LuigiSprite(agency.getAtlas(), body.getPosition(), powerState, facingRight);
 		observer = new LuigiObserver(this);
 		supervisor = new LuigiSupervisor(this);
@@ -67,11 +70,29 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
-		Direction4 moveDir = moveAdvice.getMoveDir4();
+		Direction4 moveDir = getLuigiMoveDir(moveAdvice);
 		boolean onGround = body.getSpine().isOnGround();
 		boolean doHorizontalImpulse = false;
 		boolean doDecelImpulse = false;
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
+		// check for body size change due to duck state change
+		switch(nextMoveState) {
+			case DUCK:
+			case DUCKJUMP:
+				// if the move state changed to duck then change body to ducking body
+				if(moveState != MoveState.DUCK && moveState != MoveState.DUCKJUMP)
+					body.defineBody(body.getPosition().cpy().sub(DUCK_OFFSET), powerState.isBigBody(), true);
+				break;
+			case STAND:
+			case RUN:
+			case BRAKE:
+			case FALL:
+				// if the move state was duck then change body to regular body
+				if(moveState == MoveState.DUCK || moveState == MoveState.DUCKJUMP)
+					body.defineBody(body.getPosition().cpy().add(DUCK_OFFSET), powerState.isBigBody(), false);
+				break;
+		}
+		// do other changes
 		switch(nextMoveState) {
 			case STAND:
 				if(moveDir.isHorizontal())
@@ -90,10 +111,13 @@ QQ.pr("you made Luigi so happy!");
 				break;
 			case FALL:
 				break;
+			case DUCK:
+			case DUCKJUMP:
+				break;
 		}
 
 		if(moveDir.isHorizontal()) {
-			if(onGround) {
+			if(onGround && moveState != MoveState.DUCK) {
 				// check for change of facing direction
 				if(moveDir == Direction4.RIGHT)
 					facingRight = true;
@@ -111,25 +135,51 @@ QQ.pr("you made Luigi so happy!");
 		moveState = nextMoveState;
 	}
 
+	private Direction4 getLuigiMoveDir(MoveAdvice moveAdvice) {
+		// if no left/right move then return unmodified direction from move advice
+		if(moveAdvice.moveLeft^moveAdvice.moveRight == false) {
+			// down takes priority over up advice
+			if(moveAdvice.moveDown)
+				return Direction4.DOWN;
+			else if(moveAdvice.moveUp)
+				return Direction4.UP;
+			else
+				return Direction4.NONE;
+		}
+
+		// if advising move down while advising left/right then return no direction
+		if(moveAdvice.moveDown)
+			return Direction4.NONE;
+		// ignore move up advice and return horizontal move direction
+		else {
+			if(moveAdvice.moveRight)
+				return Direction4.RIGHT;
+			else
+				return Direction4.LEFT;
+		}
+	}
+
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
-//		switch(moveState) {
-//			case STAND:
-//			case RUN:
-//			case BRAKE:
-//			case FALL:
-				// if not on ground then fall
-				if(!body.getSpine().isOnGround())
-					return MoveState.FALL;
-				// moving too slowly?
-				else if(body.getSpine().isStandingStill())
-					return MoveState.STAND;
-				// moving in wrong direction?
-				else if(body.getSpine().isBraking(facingRight))
-					return MoveState.BRAKE;
-				else
-					return MoveState.RUN;
-//		}
-//		return MoveState.STAND;	// return default move state
+		Direction4 moveDir = moveAdvice.getMoveDir4();
+		// if not on ground then fall
+		if(!body.getSpine().isOnGround()) {
+			// if ducking or ducking and jumping then start/maintain duck jump
+			if(moveState == MoveState.DUCK || moveState == MoveState.DUCKJUMP)
+				return MoveState.DUCKJUMP;
+			else
+				return MoveState.FALL;
+		}
+		// if big body mario and move down is advised then duck
+		else if(powerState.isBigBody() && moveDir == Direction4.DOWN)
+			return MoveState.DUCK;
+		// moving too slowly?
+		else if(body.getSpine().isStandingStill())
+			return MoveState.STAND;
+		// moving in wrong direction?
+		else if(body.getSpine().isBraking(facingRight))
+			return MoveState.BRAKE;
+		else
+			return MoveState.RUN;
 	}
 
 	private void processSprite(float delta) {
