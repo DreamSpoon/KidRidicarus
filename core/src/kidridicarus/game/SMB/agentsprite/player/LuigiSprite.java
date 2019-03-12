@@ -46,6 +46,12 @@ public class LuigiSprite extends Sprite {
 //	private static final int SML_INV2_GRP = 2;
 //	private static final int SML_INV3_GRP = 3;
 
+	/*
+	 * Animations by body size and [pose][group], where:
+	 *   pose is stuff like "stand", "run", "jump", etc.
+	 *   group is stuff like "small regular (red suit)", "big regular (red suit)", "big fire (white suit)",
+	 *     "small star powered (shimmering suit)", etc.
+	 */
 	private Animation<TextureRegion>[][] smlAnim;
 	private Animation<TextureRegion>[][] bigAnim;
 
@@ -65,11 +71,11 @@ public class LuigiSprite extends Sprite {
 				setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
 				break;
 			case BIG:
-				setRegion(smlAnim[STAND_POSE][BIG_REG_GRP].getKeyFrame(0f));
+				setRegion(bigAnim[STAND_POSE][BIG_REG_GRP].getKeyFrame(0f));
 				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 				break;
 			case FIRE:
-				setRegion(smlAnim[STAND_POSE][BIG_FIRE_GRP].getKeyFrame(0f));
+				setRegion(bigAnim[STAND_POSE][BIG_FIRE_GRP].getKeyFrame(0f));
 				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 				break;
 		}

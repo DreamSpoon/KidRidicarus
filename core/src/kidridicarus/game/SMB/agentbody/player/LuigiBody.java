@@ -3,6 +3,7 @@ package kidridicarus.game.SMB.agentbody.player;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
@@ -10,6 +11,7 @@ import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agentbody.general.MobileAgentBody;
 import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
+import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -18,7 +20,8 @@ import kidridicarus.game.SMB.agent.player.Luigi;
 public class LuigiBody extends MobileAgentBody {
 	private static final Vector2 BIG_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(26f));
 	private static final Vector2 SML_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(12f));
-	private static final float FRICTION = 0.01f;
+	private static final float FOOT_WIDTH = UInfo.P2M(5f);
+	private static final float FOOT_HEIGHT = UInfo.P2M(2f);
 
 	// main body
 	private static final CFBitSeq MAINBODY_CFCAT = CommonCF.SOLID_BODY_CFCAT;
@@ -26,10 +29,17 @@ public class LuigiBody extends MobileAgentBody {
 	// agent sensor (room sensor for now)
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
+	// ground sensor
+	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
+
+	private static final float FRICTION = 0.01f;
+	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 
 	private Luigi parent;
 	private World world;
 	private AgentContactHoldSensor acSensor;
+	private OnGroundSensor ogSensor;
 
 	public LuigiBody(Luigi parent, World world, Vector2 position, boolean isBigBody) {
 		this.world = world;
@@ -44,6 +54,7 @@ public class LuigiBody extends MobileAgentBody {
 
 		createBody(position);
 		createAgentSensor();
+		createGroundSensor();
 	}
 
 	private void createBody(Vector2 position) {
@@ -62,6 +73,19 @@ public class LuigiBody extends MobileAgentBody {
 				getBodySize().x, getBodySize().y);
 	}
 
+	private void createGroundSensor() {
+		FixtureDef fdef = new FixtureDef();
+		PolygonShape boxShape;
+		boxShape = new PolygonShape();
+		// foot sensor for detecting onGround
+		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBodySize().y/2f), 0f);
+		fdef.shape = boxShape;
+		fdef.isSensor = true;
+		ogSensor = new OnGroundSensor(null);
+		B2DFactory.makeBoxFixture(b2body, fdef, ogSensor, GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
+				getBodySize().x, getBodySize().y);
+	}
+
 	private void createAgentSensor() {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
@@ -69,8 +93,23 @@ public class LuigiBody extends MobileAgentBody {
 		B2DFactory.makeBoxFixture(b2body, fdef, acSensor, AS_CFCAT, AS_CFMASK, getBodySize().x, getBodySize().y);
 	}
 
+	public void doRunMove(boolean facingRight) {
+		if(facingRight)
+			applyImpulse(new Vector2(MARIO_WALKMOVE_XIMP, 0f));
+		else
+			applyImpulse(new Vector2(-MARIO_WALKMOVE_XIMP, 0f));
+	}
+
+	public void applyImpulse (Vector2 impulse) {
+		b2body.applyLinearImpulse(impulse, b2body.getWorldCenter(), true);
+	}
+
 	public Room getCurrentRoom() {
 		return (Room) acSensor.getFirstContactByClass(Room.class);
+	}
+
+	public boolean isOnGround() {
+		return ogSensor.isOnGround();
 	}
 
 	@Override

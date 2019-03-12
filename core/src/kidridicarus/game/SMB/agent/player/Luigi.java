@@ -27,7 +27,7 @@ public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 			SMALL, BIG, FIRE;
 			public boolean isBigBody() { return !this.equals(SMALL); }
 		}
-	public enum MoveState { STAND }
+	public enum MoveState { STAND, RUN }
 
 	private LuigiSupervisor supervisor;
 	private LuigiObserver observer;
@@ -67,13 +67,17 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
-		MoveState nextMoveState = getNextMoveState();
+		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		switch(nextMoveState) {
 			case STAND:
 			default:
 				break;
+			case RUN:
+				if(body.isOnGround())
+					body.doRunMove(facingRight);
+				break;
 		}
-		
+
 		Direction4 moveDir = moveAdvice.getMoveDir4();
 		if(moveDir == Direction4.RIGHT) {
 			facingRight = true;
@@ -86,11 +90,20 @@ QQ.pr("you made Luigi so happy!");
 		moveState = nextMoveState;
 	}
 
-	private MoveState getNextMoveState() {
+	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
+		Direction4 moveDir = moveAdvice.getMoveDir4();
 		switch(moveState) {
 			case STAND:
 			default:
-				return MoveState.STAND;
+				if(moveDir != null && moveDir.isHorizontal())
+					return MoveState.RUN;
+				else
+					return MoveState.STAND;
+			case RUN:
+				if(moveDir != null && moveDir.isHorizontal())
+					return MoveState.RUN;
+				else
+					return MoveState.STAND;
 		}
 	}
 
