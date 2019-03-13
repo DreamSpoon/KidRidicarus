@@ -21,33 +21,27 @@ import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.SMB.agentbody.player.LuigiBody;
 import kidridicarus.game.SMB.agentsprite.player.LuigiSprite;
+import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.tool.QQ;
 
 public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
+	private static final float DEAD_DELAY_TIME = 3f;
 
 	public enum PowerState {
-			SMALL, BIG, FIRE;
-			public boolean isBigBody() { return !this.equals(SMALL); }
+		SMALL, BIG, FIRE;
+		public boolean isBigBody() { return !this.equals(SMALL); }
+	}
+	public enum MoveState {
+		STAND, RUN, BRAKE, FALL, DUCK, DUCKFALL, DUCKJUMP, JUMP, DEAD;
+		public boolean equalsAny(MoveState ...otherStates) {
+			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-	public enum MoveState { STAND, RUN, BRAKE, FALL, DUCK, DUCKFALL, DUCKJUMP, JUMP;
-			public boolean equalsAny(MoveState ...statesInput) {
-				for(MoveState state : statesInput) if(this.equals(state)) return true;
-				return false;
-			}
-
-			public boolean isDuckType() {
-				return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP);
-			}
-
-			public boolean isJumpType() {
-				return this.equalsAny(JUMP, DUCKJUMP);
-			}
-
-			public boolean isGroundType() {
-				return this.equalsAny(STAND, RUN, BRAKE, DUCK);
-			}
-		}
+		public boolean isDuckType() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP); }
+		public boolean isJumpType() { return this.equalsAny(JUMP, DUCKJUMP); }
+		public boolean isGroundType() { return this.equalsAny(STAND, RUN, BRAKE, DUCK); }
+	}
 
 	private LuigiSupervisor supervisor;
 	private LuigiObserver observer;
@@ -62,6 +56,8 @@ public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 	private boolean isNextJumpDelayed;
 	private boolean isJumpForceContinue;
 
+	private boolean isHeadBumped;
+
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 QQ.pr("you made Luigi so happy!");
@@ -71,16 +67,25 @@ QQ.pr("you made Luigi so happy!");
 		isNextJumpAllowed = false;
 		isNextJumpDelayed = false;
 		isJumpForceContinue = false;
-		powerState = PowerState.BIG;
+		isHeadBumped = false;
+		powerState = PowerState.FIRE;
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
 		sprite = new LuigiSprite(agency.getAtlas(), body.getPosition(), powerState, facingRight);
 		observer = new LuigiObserver(this);
 		supervisor = new LuigiSupervisor(this);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
+		});
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
 		});
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
 			@Override
@@ -88,17 +93,50 @@ QQ.pr("you made Luigi so happy!");
 		});
 	}
 
+	// check for and do head bumps
+	private void doContactUpdate() {
+		// exit if head bump flag hasn't reset
+		if(isHeadBumped)
+			return;
+		// if luigi is big then hit hard
+		if(powerState.isBigBody())
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
+		else
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
+	}
+
 	private void doUpdate(float delta) {
+		processContacts();
 		processMove(delta, supervisor.pollMoveAdvice());
 		processSprite(delta);
 	}
 
+	private void processContacts() {
+		// if head bump flag is on, and body is moving down, then reset the flag
+		if(isHeadBumped && body.getSpine().isMovingDown())
+			isHeadBumped = false;
+	}
+
 	private void processMove(float delta, MoveAdvice moveAdvice) {
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
-		if(nextMoveState.isGroundType())
+		// if luigi is dead...
+		if(nextMoveState == MoveState.DEAD) {
+			// and if newly dead then disable contacts and start dead sound
+			if(moveState != nextMoveState) {
+				body.disableAllContacts();
+				observer.stopAllMusic();
+				agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
+			}
+			// ... and if died a long time ago then do game over
+			else if(moveStateTimer > DEAD_DELAY_TIME)
+				supervisor.setGameOver();
+			// otherwise do nothing
+		}
+		else if(nextMoveState.isGroundType())
 			processGroundMove(moveAdvice, nextMoveState);
 		else
 			processAirMove(moveAdvice, nextMoveState);
+
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
 	}
@@ -212,8 +250,13 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
-		if(body.getSpine().isOnGround())
+		// if luigi is already dead, or hit a despawn box, then return dead
+		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn())
+			return MoveState.DEAD;
+		// if on ground then do ground move
+		else if(body.getSpine().isOnGround())
 			return getNextMoveStateGround(moveAdvice);
+		// do air move
 		else
 			return getNextMoveStateAir(moveAdvice);
 	}
@@ -233,7 +276,7 @@ QQ.pr("you made Luigi so happy!");
 			else
 				return MoveState.JUMP;
 		}
-		// if big body mario and move down is advised then duck
+		// if big body luigi and move down is advised then duck
 		else if(powerState.isBigBody() && moveDir == Direction4.DOWN)
 			return MoveState.DUCK;
 		// moving too slowly?
@@ -283,6 +326,11 @@ QQ.pr("you made Luigi so happy!");
 			else
 				return Direction4.LEFT;
 		}
+	}
+
+	private void doPostUpdate() {
+		// let body update previous velocity
+		body.postUpdate();
 	}
 
 	private void processSprite(float delta) {

@@ -37,6 +37,7 @@ import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
 import kidridicarus.game.SMB.agent.other.PipeWarp;
 import kidridicarus.game.SMB.agentbody.player.MarioBody;
 import kidridicarus.game.SMB.agentsprite.player.MarioSprite;
+import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo.PointAmount;
@@ -551,7 +552,10 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 			// we have a weiner!
 			if(closestTile != null) {
 				canHeadBang = false;
-				((TileBumpTakeAgent) closestTile).onBumpTile(this);
+				TileBumpStrength tbs = TileBumpStrength.SOFT;
+				if(curPowerState != MarioPowerState.SMALL)
+					tbs = TileBumpStrength.HARD;
+				((TileBumpTakeAgent) closestTile).onTakeTileBump(this, tbs);
 			}
 		}
 		// mario can headbang once per up/down cycle of movement, so re-enable head bang when mario moves down

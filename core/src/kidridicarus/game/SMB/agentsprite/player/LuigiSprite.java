@@ -199,13 +199,17 @@ public class LuigiSprite extends Sprite {
 			case JUMP:
 				pose = JUMP_POSE;
 				break;
-				
+			case DEAD:
+				pose = DEAD_POSE;
+				group = SML_REG_GRP;
+				break;
 		}
 
-		if(parentPowerState.isBigBody())
+		if(parentPowerState.isBigBody() && parentMoveState != MoveState.DEAD)
 			setRegion(bigAnim[pose][group].getKeyFrame(stateTimer));
 		else
 			setRegion(smlAnim[pose][group].getKeyFrame(stateTimer));
+
 		// flip to face left if necessary
 		if(!facingRight && !isFlipX())
 			flip(true, false);

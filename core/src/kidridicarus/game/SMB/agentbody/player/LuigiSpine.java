@@ -1,11 +1,19 @@
 package kidridicarus.game.SMB.agentbody.player;
 
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.TreeSet;
+
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.agent.Agent;
+import kidridicarus.common.agent.general.DespawnBox;
 import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agentbody.sensor.AgentContactHoldSensor;
 import kidridicarus.common.agentbody.sensor.OnGroundSensor;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
+import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 
 /*
  * A "control center" for the body, to apply move impulses, etc. in an organized manner.
@@ -26,20 +34,25 @@ public class LuigiSpine {
 	private static final float MAX_RUNVEL = MAX_WALKVEL * 1.65f;
 
 	private static final float JUMP_IMPULSE = 1.75f;
-	private static final float JUMP_FORCE = 25.2f;
+	private static final float JUMP_FORCE = 25.25f;
 	private static final float JUMPFORCE_MAXTIME = 0.5f;
 
 	private static final float MAX_FALL_VELOCITY = UInfo.P2M(5f * 60f);
-	private static final float AIRMOVE_XIMP = 0.04f;
+	private static final float AIRMOVE_XIMP = WALKMOVE_XIMP;
+
+	// TODO: test this with different values to the best
+	private static final float MIN_HEADBANG_VEL = 0.01f;
 
 	private AgentContactHoldSensor acSensor;
 	private OnGroundSensor ogSensor;
 	private LuigiBody body;
+	private AgentContactHoldSensor btSensor;
 
 	public LuigiSpine(LuigiBody body) {
 		this.body = body;
 		acSensor = null;
 		ogSensor = null;
+		btSensor = null;
 	}
 
 	public AgentContactHoldSensor createAgentSensor() {
@@ -50,6 +63,11 @@ public class LuigiSpine {
 	public OnGroundSensor createGroundSensor() {
 		ogSensor = new OnGroundSensor(null);
 		return ogSensor;
+	}
+
+	public AgentContactHoldSensor createBumpTileSensor() {
+		btSensor = new AgentContactHoldSensor(body);
+		return btSensor;
 	}
 
 	/*
@@ -149,7 +167,11 @@ public class LuigiSpine {
 	}
 
 	public boolean isMovingUp() {
-		return body.getVelocity().y > 0f;
+		return body.getVelocity().y > UInfo.VEL_EPSILON;
+	}
+
+	public boolean isMovingDown() {
+		return body.getVelocity().y < -UInfo.VEL_EPSILON;
 	}
 
 	public Room getCurrentRoom() {
@@ -163,5 +185,47 @@ public class LuigiSpine {
 	public void capFallVelocity() {
 		if(body.getVelocity().y < -MAX_FALL_VELOCITY)
 			body.setVelocity(body.getVelocity().x, -MAX_FALL_VELOCITY);
+	}
+
+	public boolean isContactDespawn() {
+		return acSensor.getFirstContactByClass(DespawnBox.class) != null;
+	}
+
+	/*
+	 * If moving up fast enough, then check tiles currently contacting head for closest tile to take a bump.
+	 * Tile bump is applied if needed.
+	 * Returns true if tile bump is applied. Otherwise returns false.
+	 */
+	public boolean checkDoHeadBump(TileBumpStrength bumpStrength) {
+		// exit if not moving up fast enough in this frame or previous frame
+		if(body.getVelocity().y < MIN_HEADBANG_VEL || body.getPrevVelocity().y < MIN_HEADBANG_VEL)
+			return false;
+		// create list of bumptiles, in order from closest to luigi to farthest from luigi
+		TreeSet<TileBumpTakeAgent> closestTilesList = new TreeSet<TileBumpTakeAgent>(new Comparator<TileBumpTakeAgent>() {
+				@Override
+				public int compare(TileBumpTakeAgent o1, TileBumpTakeAgent o2) {
+					float dist1 = Math.abs(((Agent) o1).getPosition().x - body.getPosition().x);
+					float dist2 = Math.abs(((Agent) o2).getPosition().x - body.getPosition().x);
+					if(dist1 < dist2)
+						return -1;
+					else if(dist1 > dist2)
+						return 1;
+					return 0;
+				}
+			});
+		for(TileBumpTakeAgent bumpTile : btSensor.getContactsByClass(TileBumpTakeAgent.class))
+			closestTilesList.add(bumpTile);
+
+		// iterate through sorted list of bump tiles, exiting upon successful bump
+		Iterator<TileBumpTakeAgent> tileIter = closestTilesList.iterator();
+		while(tileIter.hasNext()) {
+			TileBumpTakeAgent bumpTile = tileIter.next();
+			// did the tile "take" the bump?
+			if(bumpTile.onTakeTileBump(body.getParent(), bumpStrength))
+				return true;
+		}
+
+		// no head bumps
+		return false;
 	}
 }

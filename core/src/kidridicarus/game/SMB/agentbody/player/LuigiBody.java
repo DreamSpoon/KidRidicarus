@@ -20,16 +20,22 @@ public class LuigiBody extends MobileAgentBody {
 	private static final Vector2 SML_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(12f));
 	private static final float FOOT_WIDTH = UInfo.P2M(5f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(2f);
+	// TODO head size needs some work, bump tile is inconsistent
+	private static final float HEAD_WIDTH = UInfo.P2M(10f);
+	private static final float HEAD_HEIGHT = UInfo.P2M(12f);
 
 	// main body
 	private static final CFBitSeq MAINBODY_CFCAT = CommonCF.SOLID_BODY_CFCAT;
 	private static final CFBitSeq MAINBODY_CFMASK = CommonCF.SOLID_BODY_CFMASK;
 	// agent sensor (room sensor for now)
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
+	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT, CommonCF.Alias.DESPAWN_BIT);
 	// ground sensor
 	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
+	// bumptile sensor
+	private static final CFBitSeq BUMPTILE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq BUMPTILE_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 
 	private static final float FRICTION = 0f;
 	private static final float GRAVITY_SCALE = 2f;
@@ -37,6 +43,7 @@ public class LuigiBody extends MobileAgentBody {
 	private Luigi parent;
 	private World world;
 	private LuigiSpine spine;
+	private Vector2 prevVelocity;
 
 	public LuigiBody(Luigi parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
 			boolean isDucking) {
@@ -58,6 +65,8 @@ public class LuigiBody extends MobileAgentBody {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
+		
+		prevVelocity = new Vector2(0f, 0f);
 
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyDef.BodyType.DynamicBody;
@@ -76,6 +85,7 @@ public class LuigiBody extends MobileAgentBody {
 		spine = new LuigiSpine(this);
 		createAgentSensorFixture();
 		createGroundSensorFixture();
+		createBumpTileSensorFixture();
 	}
 
 	private void createAgentSensorFixture() {
@@ -95,8 +105,27 @@ public class LuigiBody extends MobileAgentBody {
 				spine.createGroundSensor()));
 	}
 
+	// head sensor for detecting head hits against bumptiles
+	private void createBumpTileSensorFixture() {
+		FixtureDef fdef = new FixtureDef();
+		PolygonShape boxShape = new PolygonShape();
+		boxShape.setAsBox(HEAD_WIDTH/2f, HEAD_HEIGHT/2f, new Vector2(0f, getBodySize().y/2f), 0f);
+		fdef.shape = boxShape;
+		fdef.isSensor = true;
+		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(BUMPTILE_SENSOR_CFCAT, BUMPTILE_SENSOR_CFMASK,
+				spine.createBumpTileSensor()));
+	}
+
+	public void postUpdate() {
+		prevVelocity.set(b2body.getLinearVelocity());
+	}
+
 	public void applyBodyImpulse (Vector2 impulse) {
 		b2body.applyLinearImpulse(impulse, b2body.getWorldCenter(), true);
+	}
+
+	public Vector2 getPrevVelocity() {
+		return prevVelocity;
 	}
 
 	public LuigiSpine getSpine() {

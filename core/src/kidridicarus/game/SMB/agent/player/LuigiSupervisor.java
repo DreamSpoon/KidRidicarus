@@ -72,6 +72,10 @@ public class LuigiSupervisor extends GameAgentSupervisor {
 		return nextLevelName != null;
 	}
 
+	public void setGameOver() {
+		this.isGameOver = true;
+	}
+
 	@Override
 	public boolean isGameOver() {
 		return isGameOver;

@@ -9,7 +9,6 @@ import kidridicarus.game.SMB.agent.item.PowerMushroom;
 import kidridicarus.game.SMB.agent.item.PowerStar;
 import kidridicarus.game.SMB.agent.item.StaticCoin;
 import kidridicarus.game.SMB.agent.other.BrickPiece;
-import kidridicarus.game.SMB.agent.other.BumpTile;
 import kidridicarus.game.SMB.agent.other.CastleFlag;
 import kidridicarus.game.SMB.agent.other.Flagpole;
 import kidridicarus.game.SMB.agent.other.FloatingPoints;
@@ -17,6 +16,7 @@ import kidridicarus.game.SMB.agent.other.SpinCoin;
 import kidridicarus.game.SMB.agent.player.Luigi;
 import kidridicarus.game.SMB.agent.player.Mario;
 import kidridicarus.game.SMB.agent.player.MarioFireball;
+import kidridicarus.game.agent.SMB.other.bumptile.BumpTile;
 
 /*
  * Title: Super Mario Bros. Info

@@ -1,4 +1,4 @@
-package kidridicarus.game.SMB.agentsprite.other;
+package kidridicarus.game.agent.SMB.other.bumptile;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
