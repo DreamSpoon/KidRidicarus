@@ -32,27 +32,29 @@ public class LuigiBody extends MobileAgentBody {
 	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
 
 	private static final float FRICTION = 0f;
+	private static final float GRAVITY_SCALE = 2f;
 
 	private Luigi parent;
 	private World world;
 	private LuigiSpine spine;
 
-	public LuigiBody(Luigi parent, World world, Vector2 position, boolean isBigBody, boolean isDucking) {
+	public LuigiBody(Luigi parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
+			boolean isDucking) {
 		this.world = world;
-		defineBody(position, isBigBody, isDucking);
+		defineBody(position, velocity, isBigBody, isDucking);
 	}
 
-	public void defineBody(Vector2 position, boolean isBigBody, boolean isDucking) {
+	public void defineBody(Vector2 position, Vector2 velocity, boolean isBigBody, boolean isDucking) {
 		if(isBigBody && !isDucking)
 			setBodySize(BIG_BODY_SIZE.x, BIG_BODY_SIZE.y);
 		else
 			setBodySize(SML_BODY_SIZE.x, SML_BODY_SIZE.y);
 
-		createBody(position);
+		createBody(position, velocity);
 		createSpineAndSensors();
 	}
 
-	private void createBody(Vector2 position) {
+	private void createBody(Vector2 position, Vector2 velocity) {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
@@ -60,6 +62,8 @@ public class LuigiBody extends MobileAgentBody {
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		bdef.position.set(position);
+		bdef.linearVelocity.set(velocity);
+		bdef.gravityScale = GRAVITY_SCALE;
 		b2body = world.createBody(bdef);
 
 		FixtureDef fdef = new FixtureDef();

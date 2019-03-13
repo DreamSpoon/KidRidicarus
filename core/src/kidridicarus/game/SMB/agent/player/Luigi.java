@@ -1,7 +1,5 @@
 package kidridicarus.game.SMB.agent.player;
 
-import java.util.HashSet;
-
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -47,7 +45,7 @@ public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 			}
 
 			public boolean isGroundType() {
-				return this.equalsAny(STAND, RUN, BRAKE);
+				return this.equalsAny(STAND, RUN, BRAKE, DUCK);
 			}
 		}
 
@@ -62,6 +60,7 @@ public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 	private boolean facingRight;
 	private boolean isNextJumpAllowed;
 	private boolean isNextJumpDelayed;
+	private boolean isJumpForceContinue;
 
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -71,9 +70,11 @@ QQ.pr("you made Luigi so happy!");
 		facingRight = true;
 		isNextJumpAllowed = false;
 		isNextJumpDelayed = false;
+		isJumpForceContinue = false;
 		powerState = PowerState.BIG;
 
-		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), powerState.isBigBody(), false);
+		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
+				powerState.isBigBody(), false);
 		sprite = new LuigiSprite(agency.getAtlas(), body.getPosition(), powerState, facingRight);
 		observer = new LuigiObserver(this);
 		supervisor = new LuigiSupervisor(this);
@@ -93,43 +94,44 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
-		Direction4 moveDir = getLuigiMoveDir(moveAdvice);
-		boolean onGround = body.getSpine().isOnGround();
-		boolean doHorizontalImpulse = false;
-		boolean doDecelImpulse = false;
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
-		// check for body size change due to duck state change
-		switch(nextMoveState) {
-			case DUCK:
-			case DUCKFALL:
-			case DUCKJUMP:
-				// if the move state changed to duck then change body to ducking body
-				if(!moveState.isDuckType())
-					body.defineBody(body.getPosition().cpy().sub(DUCK_OFFSET), powerState.isBigBody(), true);
-				break;
-			case STAND:
-			case RUN:
-			case BRAKE:
-			case FALL:
-			case JUMP:
-				// if the move state was duck then change body to regular body
-				if(moveState.isDuckType())
-					body.defineBody(body.getPosition().cpy().add(DUCK_OFFSET), powerState.isBigBody(), false);
-				break;
+		if(nextMoveState.isGroundType())
+			processGroundMove(moveAdvice, nextMoveState);
+		else
+			processAirMove(moveAdvice, nextMoveState);
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveState = nextMoveState;
+	}
+
+	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+		// if was not ducking and is now ducking then define ducking body
+		if(!moveState.isDuckType() && nextMoveState.isDuckType()) {
+			body.defineBody(body.getPosition().cpy().sub(DUCK_OFFSET), body.getVelocity(),
+					powerState.isBigBody(), true);
+		}
+		// if was ducking and is now now ducking then define regular body
+		else if(moveState.isDuckType() && !nextMoveState.isDuckType()) {
+			body.defineBody(body.getPosition().cpy().add(DUCK_OFFSET), body.getVelocity(),
+					powerState.isBigBody(), false);
 		}
 
-		// If current move type is air and next move type is ground and advised to jump then delay jump until
+		// If current move type is air and next move type is ground and jump is advised then delay jump until
 		// jump advice is released.
 		if(!moveState.isGroundType() && nextMoveState.isGroundType() && moveAdvice.action1)
 			isNextJumpDelayed = true;
 
-		if(onGround && !body.getSpine().isMovingUp()) {
+		// if not moving up (i.e. resting on ground) then allow next jump...
+		if(!body.getSpine().isMovingUp()) {
 			isNextJumpAllowed = true;
+			// ... and if jump advice is released then turn off jump delay
 			if(!moveAdvice.action1)
 				isNextJumpDelayed = false;
 		}
 
-		// do other changes
+		// do other ground move changes
+		Direction4 moveDir = getLuigiMoveDir(moveAdvice);
+		boolean doHorizontalImpulse = false;
+		boolean doDecelImpulse = false;
 		switch(nextMoveState) {
 			case STAND:
 				if(moveDir.isHorizontal())
@@ -146,37 +148,67 @@ QQ.pr("you made Luigi so happy!");
 			case BRAKE:
 				doDecelImpulse = true;
 				break;
-			case FALL:
-				break;
 			case DUCK:
-			case DUCKFALL:
+				doDecelImpulse = true;
 				break;
-			case JUMP:
-			case DUCKJUMP:
-				if(moveState != nextMoveState) {
-					isNextJumpAllowed = false;
-					body.getSpine().applyJumpImpulse();
-				}
-				break;
+			default:
+				throw new IllegalStateException("Only ground move states allowed, wrong nextMoveState="+nextMoveState);
 		}
 
-		if(moveDir.isHorizontal()) {
-			if(onGround && !moveState.isDuckType()) {
-				// check for change of facing direction
-				if(moveDir == Direction4.RIGHT)
-					facingRight = true;
-				else if(moveDir == Direction4.LEFT)
-					facingRight = false;
-			}
+		// if not ducking then apply move advice to facing direction
+		if(moveDir.isHorizontal() && !moveState.isDuckType()) {
+			if(moveDir == Direction4.RIGHT)
+				facingRight = true;
+			else if(moveDir == Direction4.LEFT)
+				facingRight = false;
 		}
 
 		if(doHorizontalImpulse)
 			body.getSpine().applyWalkMove(facingRight, moveAdvice.action0);
 		if(doDecelImpulse)
-			body.getSpine().applyDecelMove(facingRight);
+			body.getSpine().applyDecelMove(facingRight, nextMoveState.isDuckType());
+	}
 
-		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
-		moveState = nextMoveState;
+	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+		if(!body.getSpine().isMovingUp())
+			isJumpForceContinue = false;
+
+		boolean isMoveStateChange = (moveState != nextMoveState);
+		switch(nextMoveState) {
+			case JUMP:
+			case DUCKJUMP:
+				if(isMoveStateChange) {
+					isNextJumpAllowed = false;
+					isJumpForceContinue = true;
+					body.getSpine().applyJumpImpulse();
+				}
+				else {
+					if(!moveAdvice.action1)
+						isJumpForceContinue = false;
+				}
+				break;
+			case FALL:
+			case DUCKFALL:
+				break;
+			default:
+				throw new IllegalStateException("Only air move states allowed, wrong nextMoveState="+nextMoveState);
+		}
+
+		// luigi might be ducking and moving right/left
+		if(moveAdvice.moveRight && !moveAdvice.moveLeft)
+			body.getSpine().applyAirMove(true);
+		else if(moveAdvice.moveLeft && !moveAdvice.moveRight)
+			body.getSpine().applyAirMove(false);
+
+		// if jump force must continue then apply it
+		if(isJumpForceContinue) {
+			if(isMoveStateChange)
+				body.getSpine().applyJumpForce(0f);
+			else
+				body.getSpine().applyJumpForce(moveStateTimer);
+		}
+
+		body.getSpine().capFallVelocity();
 	}
 
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
@@ -189,8 +221,11 @@ QQ.pr("you made Luigi so happy!");
 	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
 		Direction4 moveDir = getLuigiMoveDir(moveAdvice);
 
+		// if current state is an air state and body is moving up then continue air state
+		if(!moveState.isGroundType() && body.getSpine().isMovingUp())
+			return moveState;
 		// if advised to jump and jumping is okay...
-		if(moveAdvice.action1 && isNextJumpAllowed && !isNextJumpDelayed) {
+		else if(moveAdvice.action1 && isNextJumpAllowed && !isNextJumpDelayed) {
 			// if ducking already then duck jump
 			if(moveState.isDuckType())
 				return MoveState.DUCKJUMP;
