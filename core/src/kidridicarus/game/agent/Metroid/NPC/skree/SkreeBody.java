@@ -3,8 +3,6 @@ package kidridicarus.game.agent.Metroid.NPC.skree;
 import com.badlogic.gdx.math.Vector2;
 
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
@@ -42,13 +40,10 @@ public class SkreeBody extends MobileAgentBody {
 	}
 
 	private void createBody(World world, Vector2 position) {
-		BodyDef bdef = new BodyDef();
-		bdef.type = BodyType.DynamicBody;
-		bdef.position.set(position);
-		bdef.gravityScale = 0f;
-		b2body = world.createBody(bdef);
-		
-		spine = new SkreeSpine();
+		b2body = B2DFactory.makeDynamicBody(world, position);
+		b2body.setGravityScale(0f);
+
+		spine = new SkreeSpine(this);
 	}
 
 	private void createFixtures() {
@@ -75,10 +70,10 @@ public class SkreeBody extends MobileAgentBody {
 	// cone shaped sensor extending down below skree to check for player target 
 	private void createPlayerSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape;
-		boxShape = new PolygonShape();
-		boxShape.set(PLAYER_DETECTOR_SHAPE);
-		fdef.shape = boxShape;
+		PolygonShape coneShape;
+		coneShape = new PolygonShape();
+		coneShape.set(PLAYER_DETECTOR_SHAPE);
+		fdef.shape = coneShape;
 		fdef.isSensor = true;
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
 				CommonCF.AGENT_SENSOR_CFMASK, spine.createPlayerSensor()));

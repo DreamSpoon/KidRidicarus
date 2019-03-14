@@ -24,7 +24,7 @@ public class GoombaSpine {
 	}
 
 	public AgentContactHoldSensor createAgentSensor() {
-		acSensor = new AgentContactHoldSensor(this);
+		acSensor = new AgentContactHoldSensor(body);
 		return acSensor;
 	}
 

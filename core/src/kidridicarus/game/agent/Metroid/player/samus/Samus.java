@@ -122,19 +122,19 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 		switch(curContactState) {
 			case REGULAR:
 				// check for level end trigger contact, and use level end if found
-				LevelEndTrigger leTrigger = samusBody.getFirstContactByClass(LevelEndTrigger.class);
+				LevelEndTrigger leTrigger = samusBody.getSpine().getFirstContactByClass(LevelEndTrigger.class);
 				if(leTrigger != null) {
 					leTrigger.use(this);
 					break;
 				}
 				// check for level end flagpole contact, and use flagpole if found
-				Flagpole flagpole = samusBody.getFirstContactByClass(Flagpole.class);
+				Flagpole flagpole = samusBody.getSpine().getFirstContactByClass(Flagpole.class);
 				if(flagpole != null) {
 					flagpole.use(this);
 					break;
 				}
 				// check for incoming damage and apply
-				for(ContactDmgGiveAgent agent : samusBody.getContactsByClass(ContactDmgGiveAgent.class)) {
+				for(ContactDmgGiveAgent agent : samusBody.getSpine().getContactsByClass(ContactDmgGiveAgent.class)) {
 					if(agent.isContactDamage()) {
 						nextContactState = ContactState.DAMAGE;
 						takeContactDamage(((Agent) agent).getPosition());
@@ -203,7 +203,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 			return false;
 		}
 		// if no pipe to enter then exit (exit the method, not exit the pipe)
-		PipeWarp wp = samusBody.getPipeWarpForAdvice(adviceDir);
+		PipeWarp wp = samusBody.getSpine().getPipeWarpForAdvice(adviceDir);
 		if(wp == null)
 			return false;
 
@@ -255,12 +255,13 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 				isFacingUp = advice.moveUp;
 
 				// switch to ball form?
-				if(advice.moveDown && samusBody.isOnGround()) {
+				if(advice.moveDown && samusBody.getSpine().isOnGround()) {
 					samusBody.switchToBallForm();
 					nextMoveState = MoveState.BALL;
 				}
 				// jump?
-				else if(advice.action1 && samusBody.isOnGround() && isLastJumpLandable && isNextJumpEnabled) {
+				else if(advice.action1 && samusBody.getSpine().isOnGround() &&
+						isLastJumpLandable && isNextJumpEnabled) {
 					isLastJumpLandable = false;
 					isJumpForceEnabled = true;
 					jumpStart = true;
@@ -274,11 +275,11 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 					boolean didShoot = checkAndDoShoot(advice.action0);
 
 					// stand/run on ground?
-					if(samusBody.isOnGround()) {
+					if(samusBody.getSpine().isOnGround()) {
 						// moving sideways?
 						if(isMoveHorizontal) {
-							if((advice.moveRight && samusBody.isContactingWall(true)) ||
-									(advice.moveLeft && samusBody.isContactingWall(false)))
+							if((advice.moveRight && samusBody.getSpine().isContactingWall(true)) ||
+									(advice.moveLeft && samusBody.getSpine().isContactingWall(false)))
 								nextMoveState = MoveState.STAND;
 							// move is not blocked
 							else {
@@ -324,7 +325,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 
 				// If the body is now onground but jump is still advised then disallow jumping until the
 				// jump advice stops (to prevent bunny hopping)
-				if(samusBody.isOnGround() && advice.action1)
+				if(samusBody.getSpine().isOnGround() && advice.action1)
 					isNextJumpEnabled = false;
 
 				// disallow change to facing up if player is falling and they started jump with spin allowed
@@ -337,7 +338,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 					isFacingUp = false;
 
 				// check for landing on ground
-				if(samusBody.isOnGround() && !isJumpForceEnabled) {
+				if(samusBody.getSpine().isOnGround() && !isJumpForceEnabled) {
 					isJumpSpinAvailable = false;
 					isAutoContinueLeftAirMove = false;
 					isAutoContinueRightAirMove = false;
@@ -563,14 +564,14 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	 * Check for contact with tiled collision map. If contact then get solid state of tile given by tileCoords.
 	 */
 	private boolean isMapTileSolid(Vector2 tileCoords) {
-		CollisionTiledMapAgent octMap = samusBody.getFirstContactByClass(CollisionTiledMapAgent.class);
+		CollisionTiledMapAgent octMap = samusBody.getSpine().getFirstContactByClass(CollisionTiledMapAgent.class);
 		if(octMap == null)
 			return false;
 		return octMap.isMapTileSolid(tileCoords);
 	}
 
 	private boolean isMapPointSolid(Vector2 position) {
-		CollisionTiledMapAgent octMap = samusBody.getFirstContactByClass(CollisionTiledMapAgent.class);
+		CollisionTiledMapAgent octMap = samusBody.getSpine().getFirstContactByClass(CollisionTiledMapAgent.class);
 		if(octMap == null)
 			return false;
 		return octMap.isMapPointSolid(position);
@@ -578,7 +579,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 
 	@Override
 	public RoomBox getCurrentRoom() {
-		return samusBody.getCurrentRoom();
+		return samusBody.getSpine().getCurrentRoom();
 	}
 
 	@Override

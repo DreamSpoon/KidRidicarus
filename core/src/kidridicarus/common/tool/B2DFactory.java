@@ -32,12 +32,6 @@ public class B2DFactory {
 	}
 
 	public static Fixture makeBoxFixture(Body b2body, FixtureDef fdef, Object userData,
-			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height) {
-		return makeBoxFixture(b2body, fdef, userData, categoryBits, maskBits, width, height,
-				new Vector2(0f, 0f));
-	}
-
-	public static Fixture makeBoxFixture(Body b2body, FixtureDef fdef, Object userData,
 			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height, Vector2 position) {
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(width/2f, height/2f, position, 0f);
@@ -47,11 +41,24 @@ public class B2DFactory {
 		return fix;
 	}
 
+	public static Fixture makeBoxFixture(Body b2body, FixtureDef fdef, Object userData,
+			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height) {
+		return makeBoxFixture(b2body, fdef, userData, categoryBits, maskBits, width, height,
+				new Vector2(0f, 0f));
+	}
+
 	public static Fixture makeSensorBoxFixture(Body b2body, Object userData,
 			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height) {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
+		return makeBoxFixture(b2body, fdef, userData, categoryBits, maskBits, width, height);
+	}
+
+	public static Fixture makeSensorBoxFixture(Body b2body, Object userData,
+			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height, Vector2 position) {
+		FixtureDef fdef = new FixtureDef();
+		fdef.isSensor = true;
 		return makeBoxFixture(b2body, fdef, userData, categoryBits, maskBits, width, height,
-				new Vector2(0f, 0f));
+				position);
 	}
 }

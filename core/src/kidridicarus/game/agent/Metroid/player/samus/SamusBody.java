@@ -1,12 +1,9 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
-import java.util.List;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
@@ -14,18 +11,11 @@ import kidridicarus.agency.agentbody.MobileAgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
-import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.OnGroundSensor;
-import kidridicarus.common.agentsensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
-import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 
 public class SamusBody extends MobileAgentBody {
-	private static final float POSITION_EPS = 0.1f;
 	private static final float STAND_BODY_WIDTH = UInfo.P2M(5f);
 	private static final float STAND_BODY_HEIGHT = UInfo.P2M(25f);
 	private static final float BALL_BODY_WIDTH = UInfo.P2M(8f);
@@ -69,17 +59,14 @@ public class SamusBody extends MobileAgentBody {
 
 	private World world;
 	private Samus parent;
-	private AgentContactHoldSensor acSensor;
-	private OnGroundSensor ogSensor;
-	private SolidBoundSensor sbSensor;
-	private AgentContactHoldSensor wpSensor;	// warp pipe sensor
+	private SamusSpine spine;
+	private Fixture mainBodyFixture;
+	private Fixture agentSensorFixture;
+	private Fixture ogSensorFixture;
 	private boolean isBallForm;
 	private Vector2 prevVelocity;
 	private float forceTimer;
 	private boolean isContactEnabled;
-	private Fixture mainBodyFixture;
-	private Fixture agentSensorFixture;
-	private Fixture ogSensorFixture;
 
 	public SamusBody(Samus parent, World world, Vector2 position) {
 		super();
@@ -98,10 +85,7 @@ public class SamusBody extends MobileAgentBody {
 			setBodySize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
 
 		createBody(position);
-		createAgentSensor();
-		// the warp pipe sensor is chained to the other sensor, so create it here
-		wpSensor = new AgentContactHoldSensor(this);
-		createGroundAndPipeSensor();
+		createFixtures();
 
 		// reset previous velocity
 		prevVelocity.set(0f, 0f);
@@ -123,52 +107,52 @@ public class SamusBody extends MobileAgentBody {
 		bdef.gravityScale = GRAVITY_SCALE;
 		b2body = world.createBody(bdef);
 
+		spine = new SamusSpine(this);
+	}
+
+	private void createFixtures() {
+		createMainFixture();
+		createAgentSensorFixture();
+		createGroundAndPipeSensorFixture();
+
+	}
+
+	private void createMainFixture() {
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = FRICTION;
-		sbSensor = new SolidBoundSensor(this);
 		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
 		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
 		if(isContactEnabled) {
 			catBits = MAINBODY_CFCAT;
 			maskBits = MAINBODY_CFMASK;
 		}
-		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, fdef, sbSensor, catBits, maskBits,
-				getBodySize().x, getBodySize().y);
+		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, fdef, spine.createSolidBodySensor(),
+				catBits, maskBits, getBodySize().x, getBodySize().y);
 	}
 
-	private void createAgentSensor() {
+	private void createAgentSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		acSensor = new AgentContactHoldSensor(this);
 		CFBitSeq catBits = NOCONTACT_AS_CFCAT;
 		CFBitSeq maskBits = NOCONTACT_AS_CFMASK;
 		if(isContactEnabled) {
 			catBits = AS_CFCAT;
 			maskBits = AS_CFMASK;
 		}
-		agentSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, acSensor, catBits, maskBits,
-				getBodySize().x, getBodySize().y);
+		agentSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, spine.creatAgentContactSensor(),
+				catBits, maskBits, getBodySize().x, getBodySize().y);
 	}
 
 	// create the sensor for detecting onGround
-	private void createGroundAndPipeSensor() {
-		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape;
-		boxShape = new PolygonShape();
-		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBodySize().y/2f), 0f);
-		fdef.shape = boxShape;
-		fdef.isSensor = true;
-		ogSensor = new OnGroundSensor(null);
-		// the og sensor chains to the wp sensor, because the wp sensor will be attached to other fixtures
-		ogSensor.chainTo(wpSensor);
+	private void createGroundAndPipeSensorFixture() {
 		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
 		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
 		if(isContactEnabled) {
 			catBits = GROUND_AND_PIPE_SENSOR_CFCAT;
 			maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
 		}
-		ogSensorFixture = b2body.createFixture(fdef);
-		ogSensorFixture.setUserData(new AgentBodyFilter(catBits, maskBits, ogSensor));
+		ogSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createGroundAndPipeSensor(),
+				catBits, maskBits, FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 	}
 
 	public void switchToBallForm() {
@@ -306,42 +290,13 @@ public class SamusBody extends MobileAgentBody {
 
 	private void setPosition(Vector2 position) {
 		// if the current position is very close to the new position then exit
-		if(b2body.getPosition().epsilonEquals(position, POSITION_EPS))
+		if(b2body.getPosition().epsilonEquals(position, UInfo.POS_EPSILON))
 			return;
 		defineBody(position);
 	}
 
-	/*
-	 * Returns warp pipe entrance if pipe sensors are contacting a pipe with entrance direction matching adviceDir.
-	 * Returns null otherwise. 
-	 */
-	public PipeWarp getPipeWarpForAdvice(Direction4 adviceDir) {
-		for(PipeWarp pw : wpSensor.getContactsByClass(PipeWarp.class)) {
-			if(((PipeWarp) pw).canBodyEnterPipe(getBounds(), adviceDir))
-				return (PipeWarp) pw;
-		}
-		return null;
-	}
-
-	public <T> List<T> getContactsByClass(Class<T> cls) {
-		return acSensor.getContactsByClass(cls);
-	}
-
-	public <T> T getFirstContactByClass(Class<T> cls) {
-		return acSensor.getFirstContactByClass(cls);
-	}
-
-	public boolean isContactingWall(boolean isRightWall) {
-		return sbSensor.isHMoveBlocked(getBounds(), isRightWall);
-	}
-
-	public boolean isOnGround() {
-		// return true if the on ground contacts list contains at least 1 floor
-		return ogSensor.isOnGround();
-	}
-
-	public RoomBox getCurrentRoom() {
-		return (RoomBox) acSensor.getFirstContactByClass(RoomBox.class);
+	public SamusSpine getSpine() {
+		return spine;
 	}
 
 	@Override

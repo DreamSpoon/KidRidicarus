@@ -278,6 +278,10 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 			default:
 				break;
 		}
+
+		// clear the bump flag, to prevent rebump
+		bumpStrength = TileBumpStrength.NONE;
+		bumpingAgent = null;
 	}
 
 	private void startBreakTile() {

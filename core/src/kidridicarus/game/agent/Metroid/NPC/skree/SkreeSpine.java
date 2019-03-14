@@ -5,18 +5,20 @@ import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.OnGroundSensor;
 
 public class SkreeSpine {
+	private SkreeBody body;
 	private OnGroundSensor ogSensor;
 	private AgentContactHoldSensor acSensor;
 	private AgentContactHoldSensor playerSensor;
 
-	public SkreeSpine() {
+	public SkreeSpine(SkreeBody body) {
+		this.body = body;
 		ogSensor = null;
 		acSensor = null;
 		playerSensor = null;
 	}
 
 	public AgentContactHoldSensor createAgentSensor() {
-		acSensor = new AgentContactHoldSensor(this);
+		acSensor = new AgentContactHoldSensor(body);
 		return acSensor;
 	}
 

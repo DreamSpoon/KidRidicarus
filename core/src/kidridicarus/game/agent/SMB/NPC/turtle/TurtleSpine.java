@@ -25,8 +25,8 @@ public class TurtleSpine {
 	}
 
 	public AgentContactBeginSensor createAgentContactSensor() {
-		acSensor = new AgentContactHoldSensor(this);
-		kickSensor = new AgentContactBeginSensor(this);
+		acSensor = new AgentContactHoldSensor(body);
+		kickSensor = new AgentContactBeginSensor(body);
 		kickSensor.chainTo(acSensor);
 		return kickSensor;
 	}
