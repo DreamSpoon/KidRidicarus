@@ -2,7 +2,6 @@ package kidridicarus.game.agent.Metroid.item.marumari;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
@@ -23,9 +22,10 @@ public class MaruMariBody extends AgentBody {
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeDynamicBody(world, position);
 		b2body.setGravityScale(0f);
+		B2DFactory.makeSensorBoxFixture(b2body, this,
+				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override

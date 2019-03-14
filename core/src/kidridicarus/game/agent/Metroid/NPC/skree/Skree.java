@@ -83,8 +83,9 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 	}
 
 	private void processContacts() {
-		if(sBody.getPlayerContact() != null)
-			target = sBody.getPlayerContact();
+		// if no target yet then check for new target
+		if(target == null)
+			target = sBody.getSpine().getPlayerContact();
 	}
 
 	private void processMove(float delta) {
@@ -137,7 +138,7 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 			return MoveState.EXPLODE;
 		else if(isInjured)
 			return MoveState.INJURY;
-		else if(sBody.isOnGround())
+		else if(sBody.getSpine().isOnGround())
 			return MoveState.ONGROUND;
 		else if(target != null)
 			return MoveState.FALL;

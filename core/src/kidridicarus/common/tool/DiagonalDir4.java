@@ -1,5 +1,5 @@
 package kidridicarus.common.tool;
 
 public enum DiagonalDir4 {
-	NONE, TOPRIGHT, TOPLEFT, BOTTOMLEFT, BOTTOMRIGHT
+	TOPRIGHT, TOPLEFT, BOTTOMLEFT, BOTTOMRIGHT, NONE
 }

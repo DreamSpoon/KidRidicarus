@@ -29,14 +29,15 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 
 	public enum MoveState { WALK, INJURY, DEAD }
 
-	private ZoomerBody zBody;
-	private ZoomerSprite zSprite;
+	private ZoomerBody body;
+	private ZoomerSprite sprite;
 
 	// walking right relative to the zoomer's up direction
 	private boolean isWalkingRight;
 	// the moveDir can be derived from upDir and isWalkingRight
 	private Direction4 upDir;
 	private float upDirChangeTimer;
+	// TODO move prevBodyPosition into the ZoomerBody class
 	private Vector2 prevBodyPosition;
 
 	private boolean isInjured;
@@ -57,10 +58,10 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 		isDead = false;
 		curMoveState = MoveState.WALK;
 
-		zBody = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties));
-		prevBodyPosition = zBody.getPosition();
+		body = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		prevBodyPosition = body.getPosition();
 
-		zSprite = new ZoomerSprite(agency.getAtlas(), zBody.getPosition());
+		sprite = new ZoomerSprite(agency.getAtlas(), body.getPosition());
 
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
@@ -88,10 +89,10 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 		Direction4 newUpDir = upDir;
 		// need to get initial up direction?
 		if(upDir == Direction4.NONE)
-			newUpDir = CrawlNerve.getInitialUpDir(isWalkingRight, zBody);
+			newUpDir = body.getSpine().getInitialUpDir(isWalkingRight);
 		// check for change in up direction if enough time has elapsed
 		else if(upDirChangeTimer > UPDIR_CHANGE_MINTIME)
-			newUpDir = CrawlNerve.checkUp(upDir, isWalkingRight, zBody.getPosition(), prevBodyPosition);
+			newUpDir = body.getSpine().checkUp(upDir, isWalkingRight, prevBodyPosition);
 
 		upDirChangeTimer = upDir == newUpDir ? upDirChangeTimer+delta : 0f;
 		upDir = newUpDir;
@@ -101,10 +102,10 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case WALK:
-				zBody.setVelocity(CrawlNerve.getMoveVec(isWalkingRight, upDir));
+				body.setVelocity(body.getSpine().getMoveVec(isWalkingRight, upDir));
 				break;
 			case INJURY:
-				zBody.zeroVelocity(true, true);
+				body.zeroVelocity(true, true);
 				if(curMoveState == nextMoveState && stateTimer > INJURY_TIME)
 					isInjured = false;
 				break;
@@ -114,11 +115,11 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 		}
 		stateTimer = curMoveState == nextMoveState ? stateTimer+delta : 0f;
 		curMoveState = nextMoveState;
-		prevBodyPosition = zBody.getPosition().cpy();
+		prevBodyPosition = body.getPosition().cpy();
 	}
 
 	private void doDeathPop() {
-		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, zBody.getPosition()));
+		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
 		agency.disposeAgent(this);
 	}
 
@@ -132,11 +133,11 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 	}
 
 	private void processSprite(float delta) {
-		zSprite.update(delta, zBody.getPosition(), curMoveState, upDir);
+		sprite.update(delta, body.getPosition(), curMoveState, upDir);
 	}
 
 	public void doDraw(AgencyDrawBatch batch) {
-		batch.draw(zSprite);
+		batch.draw(sprite);
 	}
 
 	@Override
@@ -160,16 +161,16 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 
 	@Override
 	public Vector2 getPosition() {
-		return zBody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return zBody.getBounds();
+		return body.getBounds();
 	}
 
 	@Override
 	public void disposeAgent() {
-		zBody.dispose();
+		body.dispose();
 	}
 }

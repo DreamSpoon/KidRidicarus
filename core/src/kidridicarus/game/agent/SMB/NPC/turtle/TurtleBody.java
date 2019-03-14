@@ -1,20 +1,13 @@
 package kidridicarus.game.agent.SMB.NPC.turtle;
 
-import java.util.List;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.MobileAgentBody;
-import kidridicarus.agency.agentcontact.AgentBodyFilter;
-import kidridicarus.common.agentsensor.AgentContactBeginSensor;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.OnGroundSensor;
-import kidridicarus.common.agentsensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -27,10 +20,7 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
 	private Turtle parent;
-	private OnGroundSensor ogSensor;
-	private SolidBoundSensor hmSensor;
-	private AgentContactHoldSensor acSensor;
-	private AgentContactBeginSensor kickSensor;
+	private TurtleSpine spine;
 
 	public TurtleBody(Turtle parent, World world, Vector2 position) {
 		this.parent = parent;
@@ -39,39 +29,45 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		createSolidBody(world, position);
-		createAgentSensor();
-		createGroundSensor();
+		
+		createBody(world, position);
+		createFixtures();
 	}
 
-	private void createSolidBody(World world, Vector2 position) {
-		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, CommonCF.SOLID_BODY_CFCAT,
-				CommonCF.SOLID_BODY_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
+	private void createBody(World world, Vector2 position) {
+		BodyDef bdef = new BodyDef();
+		bdef.type = BodyType.DynamicBody;
+		bdef.position.set(position);
+		b2body = world.createBody(bdef);
+
+		spine = new TurtleSpine(this);
 	}
 
-	private void createAgentSensor() {
+	private void createFixtures() {
+		createMainFixture();
+		createAgentSensorFixture();
+		createGroundSensorFixture();
+	}
+
+	private void createMainFixture() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
-		fdef.isSensor = true;
-		fdef.shape = boxShape;
-		acSensor = new AgentContactHoldSensor(this);
-		kickSensor = new AgentContactBeginSensor(this);
-		kickSensor.chainTo(acSensor);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, kickSensor));
+		B2DFactory.makeBoxFixture(b2body, fdef, spine.createHorizontalMoveSensor(),
+				CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, getBodySize().x, getBodySize().y);
 	}
 
-	private void createGroundSensor() {
+	private void createAgentSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
 		fdef.isSensor = true;
-		fdef.shape = boxShape;
-		ogSensor = new OnGroundSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.GROUND_SENSOR_CFCAT,
-				CommonCF.GROUND_SENSOR_CFMASK, ogSensor));
+		B2DFactory.makeBoxFixture(b2body, fdef, spine.createAgentContactSensor(),
+				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, getBodySize().x, getBodySize().y);
+	}
+
+	private void createGroundSensorFixture() {
+		FixtureDef fdef = new FixtureDef();
+		fdef.isSensor = true;
+		B2DFactory.makeBoxFixture(b2body, fdef, spine.createOnGroundSensor(),
+				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK, FOOT_WIDTH/2f, FOOT_HEIGHT/2f,
+				new Vector2(0f, -BODY_HEIGHT/2f));
 	}
 
 	@Override
@@ -79,25 +75,12 @@ public class TurtleBody extends MobileAgentBody implements BumpableBody {
 		parent.onBump(bumpingAgent);
 	}
 
-	public boolean isMoveBlocked(boolean moveRight) {
-		return hmSensor.isHMoveBlocked(getBounds(), moveRight);
-	}
-
-	public boolean isMoveBlockedByAgent(boolean moveRight) {
-		return AgentContactHoldSensor.isMoveBlockedByAgent(acSensor, getPosition(), moveRight);
-	}
-
-	public boolean isOnGround() {
-		// return true if the on ground contacts list contains at least 1 floor
-		return ogSensor.isOnGround();
-	}
-
-	public List<Agent> getAndResetContactBeginAgents() {
-		return kickSensor.getAndResetContacts();
-	}
-
 	@Override
 	public Agent getParent() {
 		return parent;
+	}
+
+	public TurtleSpine getSpine() {
+		return spine;
 	}
 }

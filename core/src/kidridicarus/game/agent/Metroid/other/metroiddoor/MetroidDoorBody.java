@@ -2,8 +2,8 @@ package kidridicarus.game.agent.Metroid.other.metroiddoor;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
@@ -33,8 +33,8 @@ public class MetroidDoorBody extends AgentBody {
 		//   -will this interfere with on ground detection?
 		//   -will zoomer be able to walk on door?
 		//   -will this agent be confused with a solid bound line seg from collision map?
-		b2body = B2DFactory.makeBoxBody(world, BodyType.StaticBody, this, CFCAT_BITS, CFMASK_BITS, position,
-				BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeStaticBody(world, position);
+		B2DFactory.makeBoxFixture(b2body, new FixtureDef(), this, CFCAT_BITS, CFMASK_BITS, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	public void enableRegularContacts() {

@@ -110,7 +110,7 @@ public class Turtle extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 				isHiding = true;
 		}
 
-		List<Agent> contBeginAgents = turtleBody.getAndResetContactBeginAgents();
+		List<Agent> contBeginAgents = turtleBody.getSpine().getAndResetContactBeginAgents();
 		boolean nowDead = false;
 		if(isSliding) {
 			// check the list of contacting agents, if there are damageable agents then slide damage them
@@ -138,8 +138,8 @@ public class Turtle extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 		}
 
 		// if not dead then check if move is blocked and reverse direction if necessary
-		if(!nowDead && ((isSliding  && turtleBody.isMoveBlocked(getConstVelocity().x > 0f)) ||
-				(!isHiding && turtleBody.isMoveBlockedByAgent(getConstVelocity().x > 0f)))) {
+		if(!nowDead && ((isSliding  && turtleBody.getSpine().isMoveBlocked(getConstVelocity().x > 0f)) ||
+				(!isHiding && turtleBody.getSpine().isMoveBlockedByAgent(getConstVelocity().x > 0f)))) {
 			bounceOffThing();
 		}
 
@@ -178,7 +178,7 @@ public class Turtle extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 				// Because sliding turtle needs to move when onGround.
 			case WALK:
 			case NONE:
-				if(turtleBody.isOnGround())
+				if(turtleBody.getSpine().isOnGround())
 					turtleBody.setVelocity(getConstVelocity());
 				break;
 		}
@@ -249,7 +249,7 @@ public class Turtle extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 	private void doEndHide() {
 		isWaking = false;
 		isHiding = false;
-		if(turtleBody.isOnGround())
+		if(turtleBody.getSpine().isOnGround())
 			turtleBody.setVelocity(getConstVelocity());
 	}
 

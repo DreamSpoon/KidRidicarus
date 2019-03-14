@@ -1,6 +1,7 @@
 package kidridicarus.game.agent.SMB.NPC.goomba;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -10,9 +11,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.MobileAgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.OnGroundSensor;
-import kidridicarus.common.agentsensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -24,9 +22,7 @@ public class GoombaBody extends MobileAgentBody {
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
 	private Goomba parent;
-	private OnGroundSensor ogSensor;
-	private SolidBoundSensor hmSensor;
-	private AgentContactHoldSensor acSensor;
+	private GoombaSpine spine;
 	private Fixture acSensorFixture;
 
 	public GoombaBody(Goomba parent, World world, Vector2 position) {
@@ -37,52 +33,52 @@ public class GoombaBody extends MobileAgentBody {
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		createBody(world, position);
-		createAgentSensor();
-		createGroundSensor();
+		createFixtures();
 	}
 
 	private void createBody(World world, Vector2 position) {
-		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, CommonCF.SOLID_BODY_CFCAT,
-				CommonCF.SOLID_BODY_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
+//		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, CommonCF.SOLID_BODY_CFCAT,
+//				CommonCF.SOLID_BODY_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
+		BodyDef bdef = new BodyDef();
+		bdef.type = BodyType.DynamicBody;
+		bdef.position.set(position);
+		b2body = world.createBody(bdef);
+
+		spine = new GoombaSpine(this);
 	}
 
-	private void createAgentSensor() {
+	private void createFixtures() {
+		createMainFixture();
+		createAgentSensorFixture();
+		createGroundSensorFixture();
+	}
+
+	private void createMainFixture() {
+		FixtureDef fdef = new FixtureDef();
+		B2DFactory.makeBoxFixture(b2body, fdef, spine.createHorizontalMoveSensor(),
+				CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, getBodySize().x, getBodySize().y);
+	}
+
+	private void createAgentSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		acSensor = new AgentContactHoldSensor(this);
 		acSensorFixture = b2body.createFixture(fdef);
 		acSensorFixture.setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, acSensor));
+				CommonCF.AGENT_SENSOR_CFMASK, spine.createAgentSensor()));
 	}
 
-	// create the foot sensor for detecting onGround
-	private void createGroundSensor() {
+	private void createGroundSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape;
 		boxShape = new PolygonShape();
 		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		ogSensor = new OnGroundSensor(null);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.GROUND_SENSOR_CFCAT,
-				CommonCF.GROUND_SENSOR_CFMASK, ogSensor));
-	}
-
-	public boolean isMoveBlocked(boolean moveRight) {
-		return hmSensor.isHMoveBlocked(getBounds(), moveRight);
-	}
-
-	public boolean isOnGround() {
-		// return true if the on ground contacts list contains at least 1 floor
-		return ogSensor.isOnGround();
-	}
-
-	public boolean isMoveBlockedByAgent(boolean moveRight) {
-		return AgentContactHoldSensor.isMoveBlockedByAgent(acSensor, getPosition(), moveRight);
+				CommonCF.GROUND_SENSOR_CFMASK, spine.createOnGroundSensor()));
 	}
 
 	// disable contacts between the agent contact sensor and agents
@@ -93,6 +89,10 @@ public class GoombaBody extends MobileAgentBody {
 		((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
 		// the contact filters were changed, so let Box2D know to update contacts here
 		acSensorFixture.refilter();
+	}
+
+	public GoombaSpine getSpine() {
+		return spine;
 	}
 
 	@Override

@@ -115,9 +115,9 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 	private void checkReverseVelocity() {
 		boolean moveRight = getConstVelocity().x > 0f;
 		// if regular move is blocked...
-		if(goomBody.isMoveBlocked(moveRight) || goomBody.isMoveBlockedByAgent(moveRight)) {
+		if(goomBody.getSpine().isMoveBlocked(moveRight) || goomBody.getSpine().isMoveBlockedByAgent(moveRight)) {
 			// ... and reverse move is not also blocked then reverse 
-			if(!goomBody.isMoveBlocked(!moveRight) && !goomBody.isMoveBlockedByAgent(!moveRight))
+			if(!goomBody.getSpine().isMoveBlocked(!moveRight) && !goomBody.getSpine().isMoveBlockedByAgent(!moveRight))
 				reverseConstVelocity(true,  false);
 		}
 	}
@@ -129,7 +129,7 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 			else
 				return MoveState.BUMP;
 		}
-		else if(goomBody.isOnGround())
+		else if(goomBody.getSpine().isOnGround())
 			return MoveState.WALK;
 		else
 			return MoveState.FALL;

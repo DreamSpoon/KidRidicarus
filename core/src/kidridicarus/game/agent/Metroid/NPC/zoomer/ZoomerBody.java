@@ -21,17 +21,10 @@ public class ZoomerBody extends MobileAgentBody {
 	private static final float SENSORSIZEFACTOR = 1.2f;
 
 	private Zoomer parent;
-	private SolidBoundSensor[] crawlSense;
-	private int[] contactCounts;
+	private ZoomerSpine spine;
 
 	public ZoomerBody(Zoomer parent, World world, Vector2 position) {
 		this.parent = parent;
-		// 4 sensors: top-right, top-left, bottom-left, bottom-right
-		crawlSense = new SolidBoundSensor[] { null, null, null, null };
-
-		contactCounts = new int[DiagonalDir4.values().length];
-		for(int i=0; i<contactCounts.length; i++)
-			contactCounts[i] = 0;
 
 		defineBody(world, position);
 	}
@@ -40,24 +33,7 @@ public class ZoomerBody extends MobileAgentBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 
 		createBody(world, position);
-		createAgentSensor();
-
-		Vector2 subBoxSize = new Vector2(BODY_WIDTH/2f*SENSORSIZEFACTOR,
-				BODY_HEIGHT/2f*SENSORSIZEFACTOR);
-		Vector2 subBoxOffset = new Vector2(BODY_WIDTH/4f*SENSORSIZEFACTOR,
-				BODY_HEIGHT/4f*SENSORSIZEFACTOR);
-		// Create 4 sensor boxes, each slightly larger than 1/2 the size of the zoomer body. Each of the boxes is
-		// assigned a quadrant (top-right, top-left, bottom-left, bottom-right).
-		// Note: Give some thought to this when rotating the body (or just don't rotate the body!), because the
-		//       sensors will rotate with the body. So top-right for the body might not be top-right on screen.
-		crawlSense[DiagonalDir4.TOPRIGHT.ordinal()] = createCrawlSensor(subBoxOffset.x, subBoxOffset.y,
-				subBoxSize.x, subBoxSize.y);
-		crawlSense[DiagonalDir4.TOPLEFT.ordinal()] = createCrawlSensor(-subBoxOffset.x, subBoxOffset.y,
-				subBoxSize.x, subBoxSize.y);
-		crawlSense[DiagonalDir4.BOTTOMLEFT.ordinal()] = createCrawlSensor(-subBoxOffset.x, -subBoxOffset.y,
-				subBoxSize.x, subBoxSize.y);
-		crawlSense[DiagonalDir4.BOTTOMRIGHT.ordinal()] = createCrawlSensor(subBoxOffset.x, -subBoxOffset.y,
-				subBoxSize.x, subBoxSize.y);
+		createFixtures();
 	}
 
 	private void createBody(World world, Vector2 position) {
@@ -67,6 +43,16 @@ public class ZoomerBody extends MobileAgentBody {
 		bdef.gravityScale = 0f;
 		b2body = world.createBody(bdef);
 
+		spine = new ZoomerSpine(this);
+	}
+
+	private void createFixtures() {
+		createMainFixture();
+		createAgentSensor();
+		createCrawlSensorFixtures();
+	}
+
+	private void createMainFixture() {
 		FixtureDef fdef = new FixtureDef();
 		B2DFactory.makeBoxFixture(b2body, fdef, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
@@ -82,22 +68,36 @@ public class ZoomerBody extends MobileAgentBody {
 				CommonCF.AGENT_SENSOR_CFMASK, new AgentContactHoldSensor(this)));
 	}
 
-	// create the sensors for detecting walls to crawl on
-	private SolidBoundSensor createCrawlSensor(float posX, float posY, float sizeX, float sizeY) {
+	private void createCrawlSensorFixtures() {
+		Vector2 subBoxSize = new Vector2(BODY_WIDTH/2f*SENSORSIZEFACTOR,
+				BODY_HEIGHT/2f*SENSORSIZEFACTOR);
+		Vector2 subBoxOffset = new Vector2(BODY_WIDTH/4f*SENSORSIZEFACTOR,
+				BODY_HEIGHT/4f*SENSORSIZEFACTOR);
+		SolidBoundSensor[] crawlSensors = spine.createCrawlSensors();
+		createCrawlSensorFixture(crawlSensors[DiagonalDir4.TOPRIGHT.ordinal()],
+				subBoxOffset.x, subBoxOffset.y, subBoxSize.x, subBoxSize.y);
+		createCrawlSensorFixture(crawlSensors[DiagonalDir4.TOPLEFT.ordinal()],
+				-subBoxOffset.x, subBoxOffset.y, subBoxSize.x, subBoxSize.y);
+		createCrawlSensorFixture(crawlSensors[DiagonalDir4.BOTTOMLEFT.ordinal()],
+				-subBoxOffset.x, -subBoxOffset.y, subBoxSize.x, subBoxSize.y);
+		createCrawlSensorFixture(crawlSensors[DiagonalDir4.BOTTOMRIGHT.ordinal()],
+				subBoxOffset.x, -subBoxOffset.y, subBoxSize.x, subBoxSize.y);
+	}
+
+	private void createCrawlSensorFixture(SolidBoundSensor sensor, float posX, float posY,
+			float sizeX, float sizeY) {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape;
 		boxShape = new PolygonShape();
 		boxShape.setAsBox(sizeX/2f, sizeY/2f, new Vector2(posX, posY), 0f);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		SolidBoundSensor sensor = new SolidBoundSensor(null);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.SOLID_BODY_CFCAT,
 				CommonCF.SOLID_BODY_CFMASK, sensor));
-		return sensor;
 	}
 
-	public boolean isSensorContacting(DiagonalDir4 quad) {
-		return !crawlSense[quad.ordinal()].getContacts().isEmpty();
+	public ZoomerSpine getSpine() {
+		return spine;
 	}
 
 	@Override

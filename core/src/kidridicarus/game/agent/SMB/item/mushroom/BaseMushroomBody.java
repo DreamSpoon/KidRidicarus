@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.MobileAgentBody;
@@ -34,8 +33,9 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		hmSensor = new SolidBoundSensor(parent);
-		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, CommonCF.SOLID_ITEM_CFCAT,
-				CommonCF.SOLID_ITEM_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeDynamicBody(world, position);
+		B2DFactory.makeBoxFixture(b2body, new FixtureDef(), hmSensor,
+				CommonCF.SOLID_ITEM_CFCAT, CommonCF.SOLID_ITEM_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 		createGroundSensor();
 	}
 

@@ -11,9 +11,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.MobileAgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
-import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.OnGroundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -30,8 +27,7 @@ public class SkreeBody extends MobileAgentBody {
 			UInfo.P2M(80), UInfo.P2M(-176) };
 
 	private Skree parent;
-	private AgentContactHoldSensor playerSensor;
-	private OnGroundSensor ogSensor;
+	private SkreeSpine spine;
 
 	public SkreeBody(Skree parent, World world, Vector2 position) {
 		this.parent = parent;
@@ -40,10 +36,9 @@ public class SkreeBody extends MobileAgentBody {
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
+
 		createBody(world, position);
-		createAgentSensor();
-		createPlayerSensor();
-		createGroundSensor();
+		createFixtures();
 	}
 
 	private void createBody(World world, Vector2 position) {
@@ -52,55 +47,54 @@ public class SkreeBody extends MobileAgentBody {
 		bdef.position.set(position);
 		bdef.gravityScale = 0f;
 		b2body = world.createBody(bdef);
+		
+		spine = new SkreeSpine();
+	}
 
+	private void createFixtures() {
+		createMainFixture();
+		createAgentSensorFixture();
+		createPlayerSensorFixture();
+		createGroundSensorFixture();
+	}
+
+	private void createMainFixture() {
 		FixtureDef fdef = new FixtureDef();
 		B2DFactory.makeBoxFixture(b2body, fdef, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
 	}
 
-	// same size as main body, for detecting agents
-	private void createAgentSensor() {
+	// same size as main body, for detecting agents touching main body
+	private void createAgentSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
-		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, new AgentContactHoldSensor(this)));
+		B2DFactory.makeBoxFixture(b2body, fdef, spine.createAgentSensor(),
+				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, getBodySize().x, getBodySize().y);
 	}
 
 	// cone shaped sensor extending down below skree to check for player target 
-	private void createPlayerSensor() {
+	private void createPlayerSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape boxShape;
 		boxShape = new PolygonShape();
 		boxShape.set(PLAYER_DETECTOR_SHAPE);
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		playerSensor = new AgentContactHoldSensor(null);
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, playerSensor));
-	}
-
-	public PlayerAgent getPlayerContact() {
-		return playerSensor.getFirstContactByClass(PlayerAgent.class);
+				CommonCF.AGENT_SENSOR_CFMASK, spine.createPlayerSensor()));
 	}
 
 	// create the foot sensor for detecting onGround
-	private void createGroundSensor() {
+	private void createGroundSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape;
-		boxShape = new PolygonShape();
-		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
-		fdef.shape = boxShape;
 		fdef.isSensor = true;
-		ogSensor = new OnGroundSensor(null);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.GROUND_SENSOR_CFCAT,
-				CommonCF.GROUND_SENSOR_CFMASK, ogSensor));
+		B2DFactory.makeBoxFixture(b2body, fdef, spine.createOnGroundSensor(),
+				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
 	}
 
-	public boolean isOnGround() {
-		return ogSensor.isOnGround();
+	public SkreeSpine getSpine() {
+		return spine;
 	}
 
 	@Override
