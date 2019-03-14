@@ -36,9 +36,9 @@ public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-		public boolean isDuckType() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP); }
-		public boolean isJumpType() { return this.equalsAny(JUMP, DUCKJUMP); }
-		public boolean isGroundType() { return this.equalsAny(STAND, RUN, BRAKE, DUCK); }
+		public boolean isDuck() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP); }
+		public boolean isJump() { return this.equalsAny(JUMP, DUCKJUMP); }
+		public boolean isOnGround() { return this.equalsAny(STAND, RUN, BRAKE, DUCK); }
 	}
 
 	private LuigiSupervisor supervisor;
@@ -130,7 +130,7 @@ QQ.pr("you made Luigi so happy!");
 				supervisor.setGameOver();
 			// otherwise do nothing
 		}
-		else if(nextMoveState.isGroundType())
+		else if(nextMoveState.isOnGround())
 			processGroundMove(moveAdvice, nextMoveState);
 		else
 			processAirMove(moveAdvice, nextMoveState);
@@ -141,19 +141,19 @@ QQ.pr("you made Luigi so happy!");
 
 	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
 		// if was not ducking and is now ducking then define ducking body
-		if(!moveState.isDuckType() && nextMoveState.isDuckType()) {
+		if(!moveState.isDuck() && nextMoveState.isDuck()) {
 			body.defineBody(body.getPosition().cpy().sub(DUCK_OFFSET), body.getVelocity(),
 					powerState.isBigBody(), true);
 		}
 		// if was ducking and is now now ducking then define regular body
-		else if(moveState.isDuckType() && !nextMoveState.isDuckType()) {
+		else if(moveState.isDuck() && !nextMoveState.isDuck()) {
 			body.defineBody(body.getPosition().cpy().add(DUCK_OFFSET), body.getVelocity(),
 					powerState.isBigBody(), false);
 		}
 
 		// If current move type is air and next move type is ground and jump is advised then delay jump until
 		// jump advice is released.
-		if(!moveState.isGroundType() && nextMoveState.isGroundType() && moveAdvice.action1)
+		if(!moveState.isOnGround() && nextMoveState.isOnGround() && moveAdvice.action1)
 			isNextJumpDelayed = true;
 
 		// if not moving up (i.e. resting on ground) then allow next jump...
@@ -192,7 +192,7 @@ QQ.pr("you made Luigi so happy!");
 		}
 
 		// if not ducking then apply move advice to facing direction
-		if(moveDir.isHorizontal() && !moveState.isDuckType()) {
+		if(moveDir.isHorizontal() && !moveState.isDuck()) {
 			if(moveDir == Direction4.RIGHT)
 				facingRight = true;
 			else if(moveDir == Direction4.LEFT)
@@ -202,7 +202,7 @@ QQ.pr("you made Luigi so happy!");
 		if(doHorizontalImpulse)
 			body.getSpine().applyWalkMove(facingRight, moveAdvice.action0);
 		if(doDecelImpulse)
-			body.getSpine().applyDecelMove(facingRight, nextMoveState.isDuckType());
+			body.getSpine().applyDecelMove(facingRight, nextMoveState.isDuck());
 	}
 
 	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
@@ -263,12 +263,12 @@ QQ.pr("you made Luigi so happy!");
 		Direction4 moveDir = getLuigiMoveDir(moveAdvice);
 
 		// if current state is an air state and body is moving up then continue air state
-		if(!moveState.isGroundType() && body.getSpine().isMovingUp())
+		if(!moveState.isOnGround() && body.getSpine().isMovingUp())
 			return moveState;
 		// if advised to jump and jumping is okay...
 		else if(moveAdvice.action1 && isNextJumpAllowed && !isNextJumpDelayed) {
 			// if ducking already then duck jump
-			if(moveState.isDuckType())
+			if(moveState.isDuck())
 				return MoveState.DUCKJUMP;
 			// otherwise regular jump
 			else
@@ -289,12 +289,12 @@ QQ.pr("you made Luigi so happy!");
 
 	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {
 		// if in jump state then continue jump state
-		if(moveState.isJumpType())
+		if(moveState.isJump())
 			return moveState;
 		// not in jump state
 		else {
 			// if is ducking then do duck fall 
-			if(moveState.isDuckType())
+			if(moveState.isDuck())
 				return MoveState.DUCKFALL;
 			// not ducking so do regular fall
 			else

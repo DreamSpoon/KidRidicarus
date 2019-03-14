@@ -36,8 +36,6 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  */
 public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, DisposableAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
-	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
-	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
 	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
 	private static final float SHOT_VEL = 2f;
@@ -47,7 +45,12 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	private static final float POSTPONE_RUN_DELAY = 0.15f;
 
 	public enum ContactState { REGULAR, DAMAGE }
-	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, BALL, JUMPSHOOT, SHOOT, CLIMB }
+	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, JUMPSHOOT, SHOOT, BALL, CLIMB;
+			public boolean equalsAny(MoveState ...otherStates) {
+				for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
+			}
+			public boolean isJump() { return this.equalsAny(JUMP, JUMPSPIN, JUMPSHOOT); }
+		}
 
 	private SamusSupervisor supervisor;
 	private SamusObserver observer;
@@ -65,7 +68,6 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	// the last jump must land before the next jump can start
 	private boolean isLastJumpLandable;
 	private boolean isNextJumpEnabled;
-	private Vector2 damagePos = new Vector2();
 	private boolean isDrawThisFrame;
 	private float shootCooldownTime;
 	private float startJumpY;
@@ -155,22 +157,9 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	}
 
 	private void takeContactDamage(Vector2 position) {
-		damagePos.set(position);
-		// zero the y velocity
-		samusBody.setVelocity(samusBody.getVelocity().x, 0);
-		// apply a kick impulse to the left or right depending on other agent's position
-		if(samusBody.getPosition().x < position.x)
-			samusBody.applyBodyImpulse(DAMAGE_KICK_SIDE_IMP.cpy().scl(-1f));
-		else
-			samusBody.applyBodyImpulse(DAMAGE_KICK_SIDE_IMP);
-
-		// apply kick up impulse if the player is above the other agent
-		if(samusBody.getPosition().y > position.y)
-			samusBody.applyBodyImpulse(DAMAGE_KICK_UP_IMP);
-
+		samusBody.getSpine().applyDamageKick(position);
 		if(curMoveState != MoveState.JUMPSPIN)
 			isJumpForceEnabled = false;
-
 		agency.playSound(AudioInfo.Sound.Metroid.HURT);
 	}
 
@@ -198,10 +187,8 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	private boolean processPipeMove(MoveAdvice advice) {
 		Direction4 adviceDir = advice.getMoveDir4();
 		// if no move advice direction then no pipe move so exit; also, exit if move state is similar to jump
-		if(adviceDir == Direction4.NONE || curMoveState == MoveState.JUMP || curMoveState == MoveState.JUMPSPIN ||
-				curMoveState == MoveState.JUMPSHOOT) {
+		if(adviceDir == Direction4.NONE || curMoveState.isJump())
 			return false;
-		}
 		// if no pipe to enter then exit (exit the method, not exit the pipe)
 		PipeWarp wp = samusBody.getSpine().getPipeWarpForAdvice(adviceDir);
 		if(wp == null)
@@ -400,8 +387,7 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 		}
 
 		// check for and apply vertical (jump) impulses, forces, etc.
-		if(nextMoveState == MoveState.JUMP || nextMoveState == MoveState.JUMPSPIN ||
-				nextMoveState == MoveState.JUMPSHOOT) {
+		if(nextMoveState.isJump()) {
 			if(jumpStart)
 				samusBody.doJumpStart();
 			if(isJumpForceEnabled)

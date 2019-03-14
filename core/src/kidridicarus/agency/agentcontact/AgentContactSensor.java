@@ -20,6 +20,7 @@ public abstract class AgentContactSensor {
 
 	/*
 	 * Add a sensor to the start of this sensor's list of chained sensors.
+	 * The nextInChain sensor will be activated after this sensor.
 	 */
 	public void chainTo(AgentContactSensor nextInChain) {
 		this.nextInChain = nextInChain;

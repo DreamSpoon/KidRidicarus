@@ -61,10 +61,11 @@ public class SamusBody extends MobileAgentBody {
 	private Samus parent;
 	private SamusSpine spine;
 	private Fixture mainBodyFixture;
-	private Fixture agentSensorFixture;
+	private Fixture acSensorFixture;
 	private Fixture ogSensorFixture;
-	private boolean isBallForm;
+
 	private Vector2 prevVelocity;
+	private boolean isBallForm;
 	private float forceTimer;
 	private boolean isContactEnabled;
 
@@ -139,11 +140,10 @@ public class SamusBody extends MobileAgentBody {
 			catBits = AS_CFCAT;
 			maskBits = AS_CFMASK;
 		}
-		agentSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, spine.creatAgentContactSensor(),
+		acSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, spine.creatAgentContactSensor(),
 				catBits, maskBits, getBodySize().x, getBodySize().y);
 	}
 
-	// create the sensor for detecting onGround
 	private void createGroundAndPipeSensorFixture() {
 		CFBitSeq catBits = CommonCF.NO_CONTACT_CFCAT;
 		CFBitSeq maskBits = CommonCF.NO_CONTACT_CFMASK;
@@ -266,8 +266,8 @@ public class SamusBody extends MobileAgentBody {
 			// enable contacts
 			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAINBODY_CFCAT;
 			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAINBODY_CFMASK;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_CFCAT;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_CFMASK;
+			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_CFCAT;
+			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_CFMASK;
 			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = GROUND_AND_PIPE_SENSOR_CFCAT;
 			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
 		}
@@ -275,14 +275,14 @@ public class SamusBody extends MobileAgentBody {
 			// disable contacts
 			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
 			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = NOCONTACT_AS_CFCAT;
-			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = NOCONTACT_AS_CFMASK;
+			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = NOCONTACT_AS_CFCAT;
+			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = NOCONTACT_AS_CFMASK;
 			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
 			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
 		}
 		// the contact filters were changed, so let Box2D know to update contacts here
 		mainBodyFixture.refilter();
-		agentSensorFixture.refilter();
+		acSensorFixture.refilter();
 		ogSensorFixture.refilter();
 		// update the contacts enabled flag
 		isContactEnabled = enabled;
