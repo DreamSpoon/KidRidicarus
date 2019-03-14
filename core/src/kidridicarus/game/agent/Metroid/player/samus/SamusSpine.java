@@ -6,23 +6,25 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.OnGroundSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
+import kidridicarus.common.agentspine.OnGroundSpine;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 
-public class SamusSpine {
+public class SamusSpine extends OnGroundSpine {
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
 
-	private AgentContactHoldSensor acSensor;
-	private OnGroundSensor ogSensor;
-	private SolidBoundSensor sbSensor;
-	private AgentContactHoldSensor wpSensor;	// warp pipe sensor
 	private SamusBody body;
+	private AgentContactHoldSensor acSensor;
+	private SolidBoundSensor sbSensor;
+	private AgentContactHoldSensor pwSensor;	// pipe warp sensor
 
 	public SamusSpine(SamusBody body) {
 		this.body = body;
+		acSensor = null;
+		sbSensor = null;
+		pwSensor = null;
 	}
 
 	public SolidBoundSensor createSolidBodySensor() {
@@ -35,14 +37,9 @@ public class SamusSpine {
 		return acSensor;
 	}
 
-	public OnGroundSensor createGroundAndPipeSensor() {
-		wpSensor = new AgentContactHoldSensor(body);
-		ogSensor = new OnGroundSensor(null);
-		// The warp pipe and ground sensors are chained together such that the pipe sensor can be chained to
-		// multiple sensors concurrently without interfering with on ground checks.
-		ogSensor.chainTo(wpSensor);
-
-		return ogSensor;
+	public AgentContactHoldSensor createPipeWarpSensor() {
+		pwSensor = new AgentContactHoldSensor(body);
+		return pwSensor;
 	}
 
 	public void applyDamageKick(Vector2 position) {
@@ -64,7 +61,7 @@ public class SamusSpine {
 	 * returns pipe warp if found. Returns null otherwise. 
 	 */
 	public PipeWarp getPipeWarpForAdvice(Direction4 adviceDir) {
-		for(PipeWarp pw : wpSensor.getContactsByClass(PipeWarp.class)) {
+		for(PipeWarp pw : pwSensor.getContactsByClass(PipeWarp.class)) {
 			if(((PipeWarp) pw).canBodyEnterPipe(body.getBounds(), adviceDir))
 				return (PipeWarp) pw;
 		}
@@ -81,11 +78,6 @@ public class SamusSpine {
 
 	public boolean isContactingWall(boolean isRightWall) {
 		return sbSensor.isHMoveBlocked(body.getBounds(), isRightWall);
-	}
-
-	public boolean isOnGround() {
-		// return true if the on ground contacts list contains at least 1 floor
-		return ogSensor.isOnGround();
 	}
 
 	public RoomBox getCurrentRoom() {

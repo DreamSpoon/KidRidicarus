@@ -10,7 +10,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.OnGroundSensor;
+import kidridicarus.common.agentspine.OnGroundSpine;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
@@ -24,7 +24,7 @@ import kidridicarus.game.agent.SMB.player.mario.MarioBody;
  *   3) Take blocks of information and translate into body impulses, and apply those body impulses
  *     (e.g. move up, move left, apply jump).
  */
-public class LuigiSpine {
+public class LuigiSpine extends OnGroundSpine {
 	private static final float WALKMOVE_XIMP = 0.025f;
 	private static final float MAX_STAND_VEL = LuigiSpine.WALKMOVE_XIMP * 0.01f;
 	private static final float MIN_WALKVEL = WALKMOVE_XIMP * 2f;
@@ -45,25 +45,18 @@ public class LuigiSpine {
 	private static final float MIN_HEADBANG_VEL = 0.01f;
 
 	private AgentContactHoldSensor acSensor;
-	private OnGroundSensor ogSensor;
 	private LuigiBody body;
 	private AgentContactHoldSensor btSensor;
 
 	public LuigiSpine(LuigiBody body) {
 		this.body = body;
 		acSensor = null;
-		ogSensor = null;
 		btSensor = null;
 	}
 
 	public AgentContactHoldSensor createAgentSensor() {
 		acSensor = new AgentContactHoldSensor(body);
 		return acSensor;
-	}
-
-	public OnGroundSensor createGroundSensor() {
-		ogSensor = new OnGroundSensor(null);
-		return ogSensor;
 	}
 
 	public AgentContactHoldSensor createBumpTileSensor() {
@@ -177,10 +170,6 @@ public class LuigiSpine {
 
 	public RoomBox getCurrentRoom() {
 		return (RoomBox) acSensor.getFirstContactByClass(RoomBox.class);
-	}
-
-	public boolean isOnGround() {
-		return ogSensor.isOnGround();
 	}
 
 	public void capFallVelocity() {

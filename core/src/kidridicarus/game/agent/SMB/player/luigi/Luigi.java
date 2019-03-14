@@ -66,7 +66,7 @@ QQ.pr("you made Luigi so happy!");
 		isNextJumpDelayed = false;
 		isJumpForceContinue = false;
 		isHeadBumped = false;
-		powerState = PowerState.FIRE;
+		powerState = PowerState.SMALL;
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);

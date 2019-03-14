@@ -11,6 +11,7 @@ import kidridicarus.agency.agentbody.MobileAgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
+import kidridicarus.common.agentsensor.OnGroundSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -62,7 +63,7 @@ public class SamusBody extends MobileAgentBody {
 	private SamusSpine spine;
 	private Fixture mainBodyFixture;
 	private Fixture acSensorFixture;
-	private Fixture ogSensorFixture;
+	private Fixture ogpwSensorFixture;
 
 	private Vector2 prevVelocity;
 	private boolean isBallForm;
@@ -151,7 +152,11 @@ public class SamusBody extends MobileAgentBody {
 			catBits = GROUND_AND_PIPE_SENSOR_CFCAT;
 			maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
 		}
-		ogSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createGroundAndPipeSensor(),
+		OnGroundSensor ogSensor = spine.createOnGroundSensor();
+		// The pipe warp sensor and on ground sensor are chained together such that the pipe sensor can be
+		// chained to multiple sensors concurrently without interfering with on ground checks.
+		ogSensor.chainTo(spine.createPipeWarpSensor());
+		ogpwSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, ogSensor,
 				catBits, maskBits, FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 	}
 
@@ -268,8 +273,8 @@ public class SamusBody extends MobileAgentBody {
 			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAINBODY_CFMASK;
 			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_CFCAT;
 			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_CFMASK;
-			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = GROUND_AND_PIPE_SENSOR_CFCAT;
-			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
+			((AgentBodyFilter) ogpwSensorFixture.getUserData()).categoryBits = GROUND_AND_PIPE_SENSOR_CFCAT;
+			((AgentBodyFilter) ogpwSensorFixture.getUserData()).maskBits = GROUND_AND_PIPE_SENSOR_CFMASK;
 		}
 		else {
 			// disable contacts
@@ -277,13 +282,13 @@ public class SamusBody extends MobileAgentBody {
 			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
 			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = NOCONTACT_AS_CFCAT;
 			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = NOCONTACT_AS_CFMASK;
-			((AgentBodyFilter) ogSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
-			((AgentBodyFilter) ogSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
+			((AgentBodyFilter) ogpwSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
+			((AgentBodyFilter) ogpwSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
 		}
 		// the contact filters were changed, so let Box2D know to update contacts here
 		mainBodyFixture.refilter();
 		acSensorFixture.refilter();
-		ogSensorFixture.refilter();
+		ogpwSensorFixture.refilter();
 		// update the contacts enabled flag
 		isContactEnabled = enabled;
 	}

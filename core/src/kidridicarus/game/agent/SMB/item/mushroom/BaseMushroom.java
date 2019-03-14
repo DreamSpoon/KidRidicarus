@@ -125,7 +125,7 @@ public abstract class BaseMushroom extends BasicWalkAgent implements PowerupGive
 	private MoveState getMoveState() {
 		if(isSprouting)
 			return MoveState.SPROUT;
-		else if(bmBody.isOnGround())
+		else if(bmBody.getSpine().isOnGround())
 			return MoveState.WALK;
 		else
 			return MoveState.FALL;

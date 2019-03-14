@@ -37,8 +37,6 @@ public class GoombaBody extends MobileAgentBody {
 	}
 
 	private void createBody(World world, Vector2 position) {
-//		b2body = B2DFactory.makeBoxBody(world, BodyType.DynamicBody, hmSensor, CommonCF.SOLID_BODY_CFCAT,
-//				CommonCF.SOLID_BODY_CFMASK, position, BODY_WIDTH, BODY_HEIGHT);
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyType.DynamicBody;
 		bdef.position.set(position);

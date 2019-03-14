@@ -101,7 +101,7 @@ public class LuigiBody extends MobileAgentBody {
 		fdef.shape = boxShape;
 		fdef.isSensor = true;
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
-				spine.createGroundSensor()));
+				spine.createOnGroundSensor()));
 	}
 
 	// head sensor for detecting head hits against bumptiles
