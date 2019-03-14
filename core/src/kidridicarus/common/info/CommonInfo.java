@@ -4,17 +4,17 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.tool.AllowOrder;
-import kidridicarus.common.agent.collisionmap.DrawLayerAgent;
-import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
-import kidridicarus.common.agent.collisionmap.TiledMapMetaAgent;
-import kidridicarus.common.agent.general.AgentSpawnTrigger;
-import kidridicarus.common.agent.general.AgentSpawner;
-import kidridicarus.common.agent.general.DespawnBox;
-import kidridicarus.common.agent.general.PlayerSpawner;
-import kidridicarus.common.agent.general.Room;
+import kidridicarus.common.agent.agentspawner.AgentSpawner;
+import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
+import kidridicarus.common.agent.despawnbox.DespawnBox;
+import kidridicarus.common.agent.playerspawner.PlayerSpawner;
+import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
+import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
+import kidridicarus.common.metaagent.tiledmap.drawlayer.DrawLayerAgent;
 import kidridicarus.common.tool.DrawOrderAlias;
-import kidridicarus.game.SMB.agent.other.LevelEndTrigger;
-import kidridicarus.game.SMB.agent.other.PipeWarp;
+import kidridicarus.game.agent.SMB.other.levelendtrigger.LevelEndTrigger;
+import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 
 public class CommonInfo {
 	public static final int V_WIDTH = 256;
@@ -50,10 +50,10 @@ public class CommonInfo {
 			CommonKV.AgentClassAlias.VAL_DESPAWN, DespawnBox.class,
 			CommonKV.AgentClassAlias.VAL_PIPEWARP_SPAWN, PipeWarp.class,
 			CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, PlayerSpawner.class,
-			CommonKV.AgentClassAlias.VAL_ROOM, Room.class,
+			CommonKV.AgentClassAlias.VAL_ROOM, RoomBox.class,
 			CommonKV.AgentClassAlias.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
 			CommonKV.AgentClassAlias.VAL_TILEMAP_META, TiledMapMetaAgent.class,
-			CommonKV.AgentClassAlias.VAL_ORTHOCOLLISION_TILEMAP, OrthoCollisionTiledMapAgent.class,
+			CommonKV.AgentClassAlias.VAL_ORTHOCOLLISION_TILEMAP, CollisionTiledMapAgent.class,
 			CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP, DrawLayerAgent.class);
 
 	public static class AgentUpdateOrder {

@@ -16,15 +16,15 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.collisionmap.OrthoCollisionTiledMapAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.SMB.agent.BumpTakeAgent;
-import kidridicarus.game.SMB.agent.TileBumpTakeAgent;
-import kidridicarus.game.SMB.agent.other.BrickPiece;
-import kidridicarus.game.SMB.agent.other.FloatingPoints;
-import kidridicarus.game.SMB.agent.player.Mario;
+import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
+import kidridicarus.game.agent.SMB.BumpTakeAgent;
+import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
+import kidridicarus.game.agent.SMB.other.brickpiece.BrickPiece;
+import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.agent.SMB.player.mario.Mario;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.SMBInfo.PointAmount;
@@ -59,7 +59,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 
 	private TileBumpStrength bumpStrength;
 	private Agent bumpingAgent;
-	private OrthoCollisionTiledMapAgent collisionMap; 
+	private CollisionTiledMapAgent collisionMap; 
 	private MoveState moveState;
 	private float moveStateTimer;
 

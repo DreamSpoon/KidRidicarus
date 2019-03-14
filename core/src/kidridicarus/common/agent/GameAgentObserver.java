@@ -3,8 +3,8 @@ package kidridicarus.common.agent;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agent.general.Room;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 
 public abstract class GameAgentObserver extends AgentObserver {
 	public interface AgentObserverListener {
@@ -29,7 +29,7 @@ public abstract class GameAgentObserver extends AgentObserver {
 	 * Check current room to get view center, and retain last known view center if room becomes null.
 	 */
 	public Vector2 getViewCenter() {
-		Room room = ((PlayerAgent) playerAgent).getCurrentRoom();
+		RoomBox room = ((PlayerAgent) playerAgent).getCurrentRoom();
 		if(room == null)
 			return lastViewCenter;
 		lastViewCenter.set(((PlayerAgent) playerAgent).getCurrentRoom().getViewCenterForPos(
@@ -38,7 +38,7 @@ public abstract class GameAgentObserver extends AgentObserver {
 	}
 
 	@Override
-	public void roomChange(Room newRoom) {
+	public void roomChange(RoomBox newRoom) {
 		if(newRoom != null)
 			listener.roomMusicUpdate(newRoom.getRoommusic());
 	}

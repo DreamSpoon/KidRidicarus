@@ -1,22 +1,22 @@
 package kidridicarus.game.info;
 
 import kidridicarus.agency.AgentClassList;
-import kidridicarus.game.SMB.agent.NPC.Goomba;
-import kidridicarus.game.SMB.agent.NPC.Turtle;
-import kidridicarus.game.SMB.agent.item.FireFlower;
-import kidridicarus.game.SMB.agent.item.Mush1UP;
-import kidridicarus.game.SMB.agent.item.PowerMushroom;
-import kidridicarus.game.SMB.agent.item.PowerStar;
-import kidridicarus.game.SMB.agent.item.StaticCoin;
-import kidridicarus.game.SMB.agent.other.BrickPiece;
-import kidridicarus.game.SMB.agent.other.CastleFlag;
-import kidridicarus.game.SMB.agent.other.Flagpole;
-import kidridicarus.game.SMB.agent.other.FloatingPoints;
-import kidridicarus.game.SMB.agent.other.SpinCoin;
-import kidridicarus.game.SMB.agent.player.Luigi;
-import kidridicarus.game.SMB.agent.player.Mario;
-import kidridicarus.game.SMB.agent.player.MarioFireball;
+import kidridicarus.game.agent.SMB.NPC.goomba.Goomba;
+import kidridicarus.game.agent.SMB.NPC.turtle.Turtle;
+import kidridicarus.game.agent.SMB.item.fireflower.FireFlower;
+import kidridicarus.game.agent.SMB.item.mushroom.Mush1UP;
+import kidridicarus.game.agent.SMB.item.mushroom.PowerMushroom;
+import kidridicarus.game.agent.SMB.item.powerstar.PowerStar;
+import kidridicarus.game.agent.SMB.item.staticcoin.StaticCoin;
+import kidridicarus.game.agent.SMB.other.brickpiece.BrickPiece;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile;
+import kidridicarus.game.agent.SMB.other.castleflag.CastleFlag;
+import kidridicarus.game.agent.SMB.other.flagpole.Flagpole;
+import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.agent.SMB.other.spincoin.SpinCoin;
+import kidridicarus.game.agent.SMB.player.luigi.Luigi;
+import kidridicarus.game.agent.SMB.player.mario.Mario;
+import kidridicarus.game.agent.SMB.player.mario.MarioFireball;
 
 /*
  * Title: Super Mario Bros. Info

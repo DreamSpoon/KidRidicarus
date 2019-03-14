@@ -22,9 +22,9 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
-import kidridicarus.common.agent.collisionmap.TiledMapMetaAgent;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.common.tool.DrawOrderAlias;
 import kidridicarus.game.tool.QQ;
 
