@@ -44,8 +44,8 @@ public class LuigiSpine extends OnGroundSpine {
 	// TODO: test this with different values to the best
 	private static final float MIN_HEADBANG_VEL = 0.01f;
 
-	private AgentContactHoldSensor acSensor;
 	private LuigiBody body;
+	private AgentContactHoldSensor acSensor;
 	private AgentContactHoldSensor btSensor;
 
 	public LuigiSpine(LuigiBody body) {

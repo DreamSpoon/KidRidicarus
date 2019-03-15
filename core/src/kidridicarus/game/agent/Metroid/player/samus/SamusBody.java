@@ -32,7 +32,7 @@ public class SamusBody extends MobileAgentBody {
 	// agent sensor
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
-			CommonCF.Alias.ROOM_BIT, CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT,
+			CommonCF.Alias.ROOM_BIT, CommonCF.Alias.POWERUP_BIT, CommonCF.Alias.DESPAWN_BIT,
 			CommonCF.Alias.COLLISIONMAP_BIT);
 	// agent sensor with contacts disabled (still needs room bit)
 	private static final CFBitSeq NOCONTACT_AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
@@ -41,7 +41,7 @@ public class SamusBody extends MobileAgentBody {
 	// ground and pipe sensor
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFMASK =
-			new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.PIPE_BIT);
+			new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.PIPEWARP_BIT);
 
 	private static final float MIN_MOVE_VEL = 0.1f;
 	private static final Vector2 STOPMOVE_IMP = new Vector2(0.15f, 0f);

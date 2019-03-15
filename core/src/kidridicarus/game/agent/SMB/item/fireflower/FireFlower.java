@@ -10,31 +10,36 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.optional.PowerupGiveAgent;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.agent.SMB.player.mario.Mario;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
-public class FireFlower extends Agent implements PowerupGiveAgent, DisposableAgent {
+public class FireFlower extends Agent implements DisposableAgent {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 
-	private FireFlowerSprite flowerSprite;
-	private FireFlowerBody ffBody;
-	private float stateTimer;
-	private boolean isSprouting;
-	private Vector2 sproutingPosition;
+	private enum MoveState { SPROUT, WALK, END }
+
+	private FireFlowerSprite sprite;
+	private FireFlowerBody body;
 	private AgentDrawListener myDrawListener;
+	private Vector2 initSpawnPosition;
+	// powerup can not be used until body is created, body is created after sprout time is finished
+	private boolean powerupUsed;
+	private float moveStateTimer;
+	private MoveState moveState;
 
 	public FireFlower(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		sproutingPosition = Agent.getStartPoint(properties);
-		flowerSprite = new FireFlowerSprite(agency.getAtlas(), sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
+		powerupUsed = false;
+		initSpawnPosition = Agent.getStartPoint(properties);
+		moveStateTimer = 0f;
+		moveState = MoveState.SPROUT;
 
-		stateTimer = 0f;
-		isSprouting = true;
+		sprite = new FireFlowerSprite(agency.getAtlas(), initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
+
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
@@ -48,59 +53,95 @@ public class FireFlower extends Agent implements PowerupGiveAgent, DisposableAge
 	}
 
 	private void doUpdate(float delta) {
+		processContacts();
+		processMove(delta);
 		processSprite(delta);
 	}
 
-	private void processSprite(float delta) {
-		if(isSprouting) {
-			float yOffset = 0f;
-			if(stateTimer > SPROUT_TIME) {
-				isSprouting = false;
-				// change from bottom to middle sprite draw order
-				agency.removeAgentDrawListener(this, myDrawListener);
-				myDrawListener = new AgentDrawListener() {
-						@Override
-						public void draw(AgencyDrawBatch batch) { doDraw(batch); }
-					};
-				agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, myDrawListener);
-				ffBody = new FireFlowerBody(this, agency.getWorld(), sproutingPosition);
-			}
-			else
-				yOffset = SPROUT_OFFSET * (SPROUT_TIME - stateTimer) / SPROUT_TIME;
+	// if any agents touching this powerup are able to take it, then push it to them
+	private void processContacts() {
+		if(powerupUsed || body == null)
+			return;
 
-			flowerSprite.update(delta, sproutingPosition.cpy().add(0f, yOffset));
+		PowerupTakeAgent taker = body.getSpine().getTouchingPowerupTaker();
+		if(taker == null)
+			return;
+
+		// if taker takes the powerup then this fireflower is kaput!
+		if(taker.onTakePowerup(PowType.FIREFLOWER))
+			powerupUsed = true;
+	}
+
+	private void processMove(float delta) {
+		MoveState nextMoveState = getNextMoveState();
+		boolean moveStateChanged = nextMoveState != moveState;
+		switch(nextMoveState) {
+			case SPROUT:
+				break;
+			case WALK:
+				// if just finished sprouting then create agent body and change sprite draw order
+				if(moveStateChanged) {
+					// change from bottom to middle sprite draw order
+					agency.removeAgentDrawListener(this, myDrawListener);
+					myDrawListener = new AgentDrawListener() {
+							@Override
+							public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+						};
+					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, myDrawListener);
+					body = new FireFlowerBody(this, agency.getWorld(), initSpawnPosition);
+				}
+				break;
+			case END:
+				agency.disposeAgent(this);
+				break;
 		}
-		else
-			flowerSprite.update(delta, ffBody.getPosition());
 
-		// increment state timer
-		stateTimer += delta;
+		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
+		moveState = nextMoveState;
+	}
+
+	private MoveState getNextMoveState() {
+		if(powerupUsed)
+			return MoveState.END;
+		else if(moveState == MoveState.WALK || (moveState == MoveState.SPROUT && moveStateTimer > SPROUT_TIME))
+			return MoveState.WALK;
+		else
+			return MoveState.SPROUT;
+	}
+
+	private void processSprite(float delta) {
+		Vector2 position = new Vector2();
+		switch(moveState) {
+			case SPROUT:
+				position.set(initSpawnPosition.cpy().add(0f,
+						SPROUT_OFFSET * (SPROUT_TIME - moveStateTimer) / SPROUT_TIME));
+				break;
+			case WALK:
+			case END:
+				position.set(body.getPosition());
+				break;
+		}
+
+		sprite.update(delta, position);
 	}
 
 	public void doDraw(AgencyDrawBatch batch){
-		batch.draw(flowerSprite);
-	}
-
-	@Override
-	public void use(Agent agent) {
-		if(stateTimer > SPROUT_TIME && agent instanceof Mario) {
-			((Mario) agent).applyPowerup(PowType.FIREFLOWER);
-			agency.disposeAgent(this);
-		}
+		if(!powerupUsed)
+			batch.draw(sprite);
 	}
 
 	@Override
 	public Vector2 getPosition() {
-		return ffBody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return ffBody.getBounds();
+		return body.getBounds();
 	}
 
 	@Override
 	public void disposeAgent() {
-		ffBody.dispose();
+		body.dispose();
 	}
 }

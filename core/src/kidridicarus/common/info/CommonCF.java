@@ -12,9 +12,9 @@ public class CommonCF {
 		public static final String SPAWNBOX_BIT = "bit_spawnbox";
 		public static final String SPAWNTRIGGER_BIT = "bit_spawntrigger";
 		public static final String BUMPABLE_BIT = "bit_bumpable";
-		public static final String PIPE_BIT = "bit_pipe";
-		public static final String ITEM_BIT = "bit_item";
-		public static final String COLLISIONMAP_BIT = "bit_metasolid";
+		public static final String PIPEWARP_BIT = "bit_pipewarp";
+		public static final String POWERUP_BIT = "bit_powerup";
+		public static final String COLLISIONMAP_BIT = "bit_collisionmap";
 	}
 
 	public static final CFBitSeq NO_CONTACT_CFCAT = new CFBitSeq();
@@ -29,7 +29,7 @@ public class CommonCF {
 	public static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(Alias.AGENT_BIT);
 	public static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(Alias.SOLID_BOUND_BIT);
 
-	public static final CFBitSeq SOLID_ITEM_CFCAT = new CFBitSeq(CommonCF.Alias.ITEM_BIT);
-	public static final CFBitSeq SOLID_ITEM_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
+	public static final CFBitSeq SOLID_POWERUP_CFCAT = new CFBitSeq(CommonCF.Alias.POWERUP_BIT);
+	public static final CFBitSeq SOLID_POWERUP_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
 			CommonCF.Alias.AGENT_BIT);
 }

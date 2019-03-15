@@ -16,7 +16,6 @@ import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -28,13 +27,12 @@ import kidridicarus.game.agent.SMB.other.flagpole.Flagpole;
 import kidridicarus.game.agent.SMB.other.levelendtrigger.LevelEndTrigger;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.PowerupInfo.PowType;
 
 /*
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, DisposableAgent {
+public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
@@ -586,11 +584,6 @@ public class Samus extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	@Override
 	public AgentSupervisor getSupervisor() {
 		return supervisor;
-	}
-
-	@Override
-	public void applyPowerup(PowType pt) {
-		// TODO: powerups!
 	}
 
 	// unchecked cast to T warnings ignored because T is checked with class.equals(cls) 

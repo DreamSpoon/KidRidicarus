@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.game.agent.SMB.player.mario.Mario;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.game.info.SMBAnim;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
@@ -23,9 +23,9 @@ public class PowerMushroom extends BaseMushroom {
 		if(isSprouting || isUsed)
 			return;
 
-		if(agent instanceof Mario) {
+		if(agent instanceof PowerupTakeAgent) {
 			isUsed = true;
-			((Mario) agent).applyPowerup(PowType.MUSHROOM);
+			((PowerupTakeAgent) agent).onTakePowerup(PowType.MUSHROOM);
 			agency.disposeAgent(this);
 		}
 	}

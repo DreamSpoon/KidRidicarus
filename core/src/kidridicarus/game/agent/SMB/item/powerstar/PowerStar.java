@@ -11,11 +11,11 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.BasicWalkAgent;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
-import kidridicarus.game.agent.SMB.player.mario.Mario;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
 /*
@@ -136,8 +136,8 @@ public class PowerStar extends BasicWalkAgent implements PowerupGiveAgent, BumpT
 		if(stateTimer <= SPROUT_TIME)
 			return;
 
-		if(agent instanceof Mario) {
-			((Mario) agent).applyPowerup(PowType.POWERSTAR);
+		if(agent instanceof PowerupTakeAgent) {
+			((PowerupTakeAgent) agent).onTakePowerup(PowType.POWERSTAR);
 			agency.disposeAgent(this);
 		}
 	}

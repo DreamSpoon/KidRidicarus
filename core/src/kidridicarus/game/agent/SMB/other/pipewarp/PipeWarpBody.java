@@ -12,7 +12,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
 public class PipeWarpBody extends AgentBody {
-	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
+	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.PIPEWARP_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private PipeWarp parent;
 

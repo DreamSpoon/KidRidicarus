@@ -42,7 +42,7 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 	private void createFixtures() {
 		// create main fixture
 		B2DFactory.makeBoxFixture(b2body, new FixtureDef(), hmSensor,
-				CommonCF.SOLID_ITEM_CFCAT, CommonCF.SOLID_ITEM_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+				CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 		// create spine for detecting on ground only
 		spine = new OnGroundSpine();
 		// create on ground sensor fixture and attach to spine

@@ -26,9 +26,10 @@ public class LuigiBody extends MobileAgentBody {
 	// main body
 	private static final CFBitSeq MAINBODY_CFCAT = CommonCF.SOLID_BODY_CFCAT;
 	private static final CFBitSeq MAINBODY_CFMASK = CommonCF.SOLID_BODY_CFMASK;
-	// agent sensor (room sensor for now)
+	// agent sensor
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT, CommonCF.Alias.DESPAWN_BIT);
+	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT, CommonCF.Alias.DESPAWN_BIT,
+			CommonCF.Alias.POWERUP_BIT);
 	// ground sensor
 	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
@@ -46,6 +47,7 @@ public class LuigiBody extends MobileAgentBody {
 
 	public LuigiBody(Luigi parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
 			boolean isDucking) {
+		this.parent = parent;
 		this.world = world;
 		defineBody(position, velocity, isBigBody, isDucking);
 	}
@@ -88,9 +90,7 @@ public class LuigiBody extends MobileAgentBody {
 	}
 
 	private void createAgentSensorFixture() {
-		FixtureDef fdef = new FixtureDef();
-		fdef.isSensor = true;
-		B2DFactory.makeBoxFixture(b2body, fdef, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				getBodySize().x, getBodySize().y);
 	}
 

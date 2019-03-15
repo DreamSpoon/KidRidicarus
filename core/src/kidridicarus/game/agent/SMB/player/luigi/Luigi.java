@@ -13,6 +13,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -21,9 +22,10 @@ import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.tool.QQ;
 
-public class Luigi extends Agent implements PlayerAgent, DisposableAgent {
+public class Luigi extends Agent implements PlayerAgent, PowerupTakeAgent, DisposableAgent {
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
 	private static final float DEAD_DELAY_TIME = 3f;
 
@@ -66,7 +68,7 @@ QQ.pr("you made Luigi so happy!");
 		isNextJumpDelayed = false;
 		isJumpForceContinue = false;
 		isHeadBumped = false;
-		powerState = PowerState.SMALL;
+		powerState = PowerState.BIG;
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
@@ -337,6 +339,12 @@ QQ.pr("you made Luigi so happy!");
 
 	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(sprite);
+	}
+
+	@Override
+	public boolean onTakePowerup(PowType powType) {
+QQ.pr("thank you for powerup " + powType);
+		return false;
 	}
 
 	@Override

@@ -33,7 +33,7 @@ public class StaticCoinBody extends AgentBody {
 
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		B2DFactory.makeBoxFixture(b2body, fdef, this, CommonCF.SOLID_ITEM_CFCAT, CommonCF.SOLID_ITEM_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, fdef, this, CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	@Override

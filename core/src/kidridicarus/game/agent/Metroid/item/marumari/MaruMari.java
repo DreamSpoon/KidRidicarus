@@ -45,7 +45,7 @@ public class MaruMari extends Agent implements PowerupGiveAgent, DisposableAgent
 	public void use(Agent agent) {
 		// if the other agent can receive this powerup then apply 
 		if(agent instanceof PowerupTakeAgent) {
-			((PowerupTakeAgent) agent).applyPowerup(PowType.MARUMARI);
+			((PowerupTakeAgent) agent).onTakePowerup(PowType.MARUMARI);
 			agency.disposeAgent(this);
 		}
 	}

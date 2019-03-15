@@ -22,7 +22,6 @@ import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupGiveAgent;
-import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -45,8 +44,7 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
  * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe - fix this
  */
-public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
-		DisposableAgent {
+public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 	public enum MarioAgentState { PLAY, FIREBALL, DEAD }	// TODO merge this with move state
 
 	private static final float MARIO_DEAD_TIME = 3f;
@@ -866,10 +864,10 @@ public class Mario extends Agent implements PlayerAgent, PowerupTakeAgent,
 		return observer;
 	}
 
-	@Override
-	public void applyPowerup(PowType pt) {
-		powerupRec = pt;
-	}
+//	@Override
+//	public void applyPowerup(PowType pt) {
+//		powerupRec = pt;
+//	}
 
 	// unchecked cast to T warnings ignored because T is checked with class.equals(cls) 
 	@SuppressWarnings("unchecked")

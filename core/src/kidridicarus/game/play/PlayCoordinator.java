@@ -15,9 +15,9 @@ import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.common.agent.GameAgentObserver.AgentObserverListener;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.MoveAdvice;
-import kidridicarus.game.agent.SMB.player.mario.Mario;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.PowerupInfo.PowChar;
@@ -108,8 +108,8 @@ public class PlayCoordinator implements Disposable {
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
 			QQ.toggleOn();
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP)) {
-			if(agent instanceof Mario) {
-				((Mario) agent).applyPowerup(PowType.FIREFLOWER);
+			if(agent instanceof PowerupTakeAgent) {
+				((PowerupTakeAgent) agent).onTakePowerup(PowType.FIREFLOWER);
 			}
 		}
 	}

@@ -37,19 +37,19 @@ public class MarioBody extends MobileAgentBody {
 
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_AND_PIPE_SENSOR_CFMASK =
-			new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.PIPE_BIT);
+			new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.PIPEWARP_BIT);
 
 	private static final CFBitSeq SIDE_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq SIDE_PIPE_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.PIPE_BIT);
+	private static final CFBitSeq SIDE_PIPE_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.PIPEWARP_BIT);
 
 	private static final CFBitSeq BUMPTILE_AND_PIPE_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq BUMPTILE_AND_PIPE_SENSOR_CFMASK =
-			new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT, CommonCF.Alias.PIPE_BIT);
+			new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT, CommonCF.Alias.PIPEWARP_BIT);
 
 	// agent sensor
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT,
-			CommonCF.Alias.ITEM_BIT, CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
+			CommonCF.Alias.POWERUP_BIT, CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
 	// agent sensor with contacts disabled (still needs room bit)
 	private static final CFBitSeq NOCONTACT_AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq NOCONTACT_AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
