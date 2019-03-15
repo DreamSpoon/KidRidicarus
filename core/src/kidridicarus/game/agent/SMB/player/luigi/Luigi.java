@@ -1,5 +1,7 @@
 package kidridicarus.game.agent.SMB.player.luigi;
 
+import java.util.LinkedList;
+
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -55,20 +57,22 @@ public class Luigi extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	private boolean isNextJumpAllowed;
 	private boolean isNextJumpDelayed;
 	private boolean isJumpForceContinue;
-
 	private boolean isHeadBumped;
+	// list of powerups received during contact update
+	private LinkedList<PowType> powerupsReceived;
 
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 QQ.pr("you made Luigi so happy!");
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
+		powerState = PowerState.SMALL;
 		facingRight = true;
 		isNextJumpAllowed = false;
 		isNextJumpDelayed = false;
 		isJumpForceContinue = false;
 		isHeadBumped = false;
-		powerState = PowerState.BIG;
+		powerupsReceived = new LinkedList<PowType>();
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
@@ -95,6 +99,8 @@ QQ.pr("you made Luigi so happy!");
 
 	// check for and do head bumps
 	private void doContactUpdate() {
+		processPowerupsReceived();
+
 		// exit if head bump flag hasn't reset
 		if(isHeadBumped)
 			return;
@@ -103,6 +109,15 @@ QQ.pr("you made Luigi so happy!");
 			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
 		else
 			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
+	}
+
+	private void processPowerupsReceived() {
+		for(PowType pow : powerupsReceived) {
+			switch(pow) {
+				case FIREFLOWER:
+					break;
+			}
+		}
 	}
 
 	private void doUpdate(float delta) {
@@ -344,7 +359,8 @@ QQ.pr("you made Luigi so happy!");
 	@Override
 	public boolean onTakePowerup(PowType powType) {
 QQ.pr("thank you for powerup " + powType);
-		return false;
+		powerupsReceived.add(powType);
+		return true;
 	}
 
 	@Override

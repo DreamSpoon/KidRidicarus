@@ -14,14 +14,13 @@ import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.agent.SMB.BasicWalkAgent;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.HeadBounceTakeAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
-public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadBounceTakeAgent, BumpTakeAgent,
+public class Goomba extends Agent implements ContactDmgTakeAgent, HeadBounceTakeAgent, BumpTakeAgent,
 		ContactDmgGiveAgent, DisposableAgent {
 	private static final float GOOMBA_WALK_VEL = 0.4f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
@@ -31,34 +30,34 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 
 	public enum MoveState { NONE, WALK, FALL, SQUISH, BUMP }
 
-	private GoombaBody goomBody;
-	private GoombaSprite goombaSprite;
+	private float moveStateTimer;
+	private MoveState moveState;
+	private GoombaBody body;
+	private GoombaSprite sprite;
 
+	private boolean isFacingRight;
 	private boolean isHeadBounced;
 	private boolean isDead;
 	private Vector2 deadVelocity;
 	private Agent perp;	// perpetrator of squish, bump, and damage
 
-	private MoveState moveState;
-	private float moveStateTimer;
-
 	public Goomba(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		perp = null;
+		isFacingRight = false;
 		isHeadBounced = false;
 		isDead = false;
 		deadVelocity = new Vector2(0f, 0f);
-		moveState = MoveState.NONE;
+		perp = null;
 		moveStateTimer = 0f;
-		setConstVelocity(-GOOMBA_WALK_VEL, 0f);
+		moveState = MoveState.NONE;
 
-		goomBody = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties));
-		goombaSprite = new GoombaSprite(agency.getAtlas(), goomBody.getPosition());
+		body = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		sprite = new GoombaSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
 				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
@@ -97,7 +96,10 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 				break;
 			case NONE:
 			case WALK:
-				goomBody.setVelocity(getConstVelocity());
+				if(isFacingRight)
+					body.setVelocity(GOOMBA_WALK_VEL, body.getVelocity().y);
+				else
+					body.setVelocity(-GOOMBA_WALK_VEL, body.getVelocity().y);
 				break;
 			case FALL:
 				break;	// do nothing if falling
@@ -109,16 +111,18 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 
 	private void processSprite(float delta) {
 		// update sprite position and graphic
-		goombaSprite.update(delta, goomBody.getPosition(), moveState);
+		sprite.update(delta, body.getPosition(), moveState);
 	}
 
 	private void checkReverseVelocity() {
-		boolean moveRight = getConstVelocity().x > 0f;
 		// if regular move is blocked...
-		if(goomBody.getSpine().isMoveBlocked(moveRight) || goomBody.getSpine().isMoveBlockedByAgent(moveRight)) {
+		if(body.getSpine().isMoveBlocked(isFacingRight) ||
+				body.getSpine().isMoveBlockedByAgent(isFacingRight)) {
 			// ... and reverse move is not also blocked then reverse 
-			if(!goomBody.getSpine().isMoveBlocked(!moveRight) && !goomBody.getSpine().isMoveBlockedByAgent(!moveRight))
-				reverseConstVelocity(true,  false);
+			if(!body.getSpine().isMoveBlocked(!isFacingRight) &&
+					!body.getSpine().isMoveBlockedByAgent(!isFacingRight)) {
+				isFacingRight = !isFacingRight;
+			}
 		}
 	}
 
@@ -129,33 +133,33 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 			else
 				return MoveState.BUMP;
 		}
-		else if(goomBody.getSpine().isOnGround())
+		else if(body.getSpine().isOnGround())
 			return MoveState.WALK;
 		else
 			return MoveState.FALL;
 	}
 
 	private void startSquish() {
-		goomBody.zeroVelocity(true, true);
-		goomBody.disableAgentContact();
+		body.zeroVelocity(true, true);
+		body.disableAgentContact();
 		agency.playSound(AudioInfo.Sound.SMB.STOMP);
 		if(perp != null) {
 			agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, true,
-					goomBody.getPosition(), UInfo.P2M(16), perp));
+					body.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
 
 	private void startBump() {
-		goomBody.disableAllContacts();
-		goomBody.setVelocity(deadVelocity);
+		body.disableAllContacts();
+		body.setVelocity(deadVelocity);
 		if(perp != null) {
 			agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, false,
-					goomBody.getPosition(), UInfo.P2M(16), perp));
+					body.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
 
 	public void doDraw(AgencyDrawBatch batch){
-		batch.draw(goombaSprite);
+		batch.draw(sprite);
 	}
 
 	// assume any amount of damage kills, for now...
@@ -163,7 +167,7 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 	public void onDamage(Agent perp, float amount, Vector2 fromCenter) {
 		this.perp = perp;
 		isDead = true;
-		if(fromCenter.x < goomBody.getPosition().x)
+		if(fromCenter.x < body.getPosition().x)
 			deadVelocity.set(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
 			deadVelocity.set(-BUMP_SIDE_VEL, BUMP_UP_VEL);
@@ -185,7 +189,7 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 	public void onBump(Agent perp) {
 		this.perp = perp;
 		isDead = true;
-		if(perp.getPosition().x < goomBody.getPosition().x)
+		if(perp.getPosition().x < body.getPosition().x)
 			deadVelocity.set(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
 			deadVelocity.set(-BUMP_SIDE_VEL, BUMP_UP_VEL);
@@ -198,16 +202,16 @@ public class Goomba extends BasicWalkAgent implements ContactDmgTakeAgent, HeadB
 
 	@Override
 	public Vector2 getPosition() {
-		return goomBody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return goomBody.getBounds();
+		return body.getBounds();
 	}
 
 	@Override
 	public void disposeAgent() {
-		goomBody.dispose();
+		body.dispose();
 	}
 }

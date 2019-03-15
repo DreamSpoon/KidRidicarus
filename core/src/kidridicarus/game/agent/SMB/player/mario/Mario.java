@@ -21,7 +21,6 @@ import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
-import kidridicarus.common.agent.optional.PowerupGiveAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -470,9 +469,9 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 		processHeadContacts();	// hitting bricks with head
 
 		// item contact?
-		PowerupGiveAgent item = (PowerupGiveAgent) mBody.getFirstContactByClass(PowerupGiveAgent.class);
-		if(item != null)
-			item.use(this);
+//		PowerupGiveAgent item = (PowerupGiveAgent) mBody.getFirstContactByClass(PowerupGiveAgent.class);
+//		if(item != null)
+//			item.use(this);
 
 		// if power star is in use...
 		if(powerStarTimer > 0f) {

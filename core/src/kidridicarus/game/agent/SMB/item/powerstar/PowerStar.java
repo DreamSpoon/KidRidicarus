@@ -10,11 +10,9 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.optional.PowerupGiveAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.agent.SMB.BasicWalkAgent;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
@@ -23,52 +21,63 @@ import kidridicarus.game.info.PowerupInfo.PowType;
  * -allow the star to spawn down-right out of bricks like on level 1-1
  * -test the star's onBump method - I could not bump it, needs precise timing - maybe loosen the timing? 
  */
-public class PowerStar extends BasicWalkAgent implements PowerupGiveAgent, BumpTakeAgent, DisposableAgent {
+public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 	private static final float SPROUT_TIME = 0.5f;
-	private static final Vector2 START_BOUNCE_VEL = new Vector2(0.5f, 2f); 
+	private static final Vector2 MAX_BOUNCE_VEL = new Vector2(0.5f, 2f); 
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
-	private enum MoveState { SPROUT, WALK }
+	private enum MoveState { SPROUT, WALK, END }
 
-	private PowerStarBody starBody;
-	private PowerStarSprite starSprite;
-	private boolean isSprouting;
-	private Vector2 sproutingPosition;
+	private PowerStarBody body;
+	private PowerStarSprite sprite;
+	private AgentDrawListener drawListener;
 
-	private float stateTimer;
-	private MoveState curMoveState;
-	private AgentDrawListener myDrawListener;
+	private float moveStateTimer;
+	private MoveState moveState;
+	private Vector2 initSpawnPosition;
+	private boolean isFacingRight;
+	private boolean isPowerupUsed;
 
 	public PowerStar(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		// start in the SPROUT state
-		isSprouting = true;
-		setConstVelocity(START_BOUNCE_VEL);
-		starBody = null;
-		sproutingPosition = Agent.getStartPoint(properties);
-		starSprite = new PowerStarSprite(agency.getAtlas(), sproutingPosition.cpy().add(0f, SPROUT_OFFSET));
+		initSpawnPosition = Agent.getStartPoint(properties);
 
-		curMoveState = MoveState.SPROUT;
-		stateTimer = 0f;
+		moveStateTimer = 0f;
+		moveState = MoveState.SPROUT;
+		isFacingRight = true;
+		isPowerupUsed = false;
+//		setConstVelocity(START_BOUNCE_VEL);
 
+		body = null;
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
 		// sprout from bottom layer and switch to next layer on finish sprout
-		myDrawListener = new AgentDrawListener() {
+		sprite = new PowerStarSprite(agency.getAtlas(), initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
+		drawListener = new AgentDrawListener() {
 				@Override
 				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 			};
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, myDrawListener);
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, drawListener);
 	}
 
-	private MoveState getNextMoveState() {
-		// still sprouting?
-		if(isSprouting)
-			return MoveState.SPROUT;
-		else
-			return MoveState.WALK;
+	// if any agents touching this powerup are able to take it, then push it to them
+	private void doContactUpdate() {
+		// exit if not used or body not created yet
+		if(isPowerupUsed || body == null)
+			return;
+		// any takers?
+		PowerupTakeAgent taker = body.getSpine().getTouchingPowerupTaker();
+		if(taker == null)
+			return;
+		// if taker takes the powerup then this powerup is done
+		if(taker.onTakePowerup(PowType.POWERSTAR))
+			isPowerupUsed = true;
 	}
 
 	private void doUpdate(float delta) {
@@ -80,94 +89,101 @@ public class PowerStar extends BasicWalkAgent implements PowerupGiveAgent, BumpT
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case WALK:
-				// start bounce to the right if this is first time walking
-				if(curMoveState == MoveState.SPROUT) {
-					starBody.applyBodyImpulse(START_BOUNCE_VEL);
-					break;
-				}
-
-				// bounce off of vertical boundaries
-				if(starBody.isMoveBlocked(getConstVelocity().x > 0f))
-					reverseConstVelocity(true,  false);
-
-				// clamp y velocity and maintain steady x velocity
-				if(starBody.getVelocity().y > getConstVelocity().y)
-					starBody.setVelocity(getConstVelocity().x, getConstVelocity().y);
-				else if(starBody.getVelocity().y < -getConstVelocity().y)
-					starBody.setVelocity(getConstVelocity().x, -getConstVelocity().y);
-				else
-					starBody.setVelocity(getConstVelocity().x, starBody.getVelocity().y);
-				break;
-			case SPROUT:
-				if(stateTimer > SPROUT_TIME) {
-					isSprouting = false;
+				// spawn the body when sprout finishes
+				if(moveState == MoveState.SPROUT) {
 					// change from bottom to middle sprite draw order
-					agency.removeAgentDrawListener(this, myDrawListener);
-					myDrawListener = new AgentDrawListener() {
+					agency.removeAgentDrawListener(this, drawListener);
+					drawListener = new AgentDrawListener() {
 							@Override
 							public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 						};
-					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, myDrawListener);
-					starBody = new PowerStarBody(this, agency.getWorld(), sproutingPosition);
+					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, drawListener);
+					body = new PowerStarBody(this, agency.getWorld(), initSpawnPosition);
+
+					// start bounce to the right since this is first walk frame
+					body.applyBodyImpulse(MAX_BOUNCE_VEL);
+					break;
 				}
+
+				// if horizontal move is blocked then reverse direction
+				if(body.getSpine().isHMoveBlocked(isFacingRight))
+					isFacingRight = !isFacingRight;
+
+				float xVal = isFacingRight ? MAX_BOUNCE_VEL.x : -MAX_BOUNCE_VEL.x;
+				// clamp +y velocity and maintain contstant x velocity
+				if(body.getVelocity().y > MAX_BOUNCE_VEL.y)
+					body.setVelocity(xVal, MAX_BOUNCE_VEL.y);
+				// clamp -y velocity and maintain constant x velocity
+				else if(body.getVelocity().y < -MAX_BOUNCE_VEL.y)
+					body.setVelocity(xVal, -MAX_BOUNCE_VEL.y);
+				// maintain constant x velocity
+				else
+					body.setVelocity(xVal, body.getVelocity().y);
+				break;
+			case SPROUT:
+				break;
+			case END:
+				// powerup used, so dispose this agent
+				agency.disposeAgent(this);
 				break;
 		}
 
 		// increment state timer
-		stateTimer = nextMoveState == curMoveState ? stateTimer+delta : 0f;
-		curMoveState = nextMoveState;
+		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
+		moveState = nextMoveState;
+	}
+
+	private MoveState getNextMoveState() {
+		if(isPowerupUsed)
+			return MoveState.END;
+		else if(moveState == MoveState.SPROUT && moveStateTimer > SPROUT_TIME)
+			return MoveState.WALK;
+		else if(moveState == MoveState.SPROUT)
+			return MoveState.SPROUT;
+		else
+			return MoveState.WALK;
 	}
 
 	private void processSprite(float delta) {
-		if(starBody != null)
-			starSprite.update(delta, starBody.getPosition());
-		else {
-			float yOffset = SPROUT_OFFSET * (SPROUT_TIME - stateTimer) / SPROUT_TIME;
-			starSprite.update(delta, sproutingPosition.cpy().add(0f, yOffset));
+		// if sprouting then use sprout offset for sprite position
+		if(moveState == MoveState.SPROUT) {
+			float yOffset = SPROUT_OFFSET * (SPROUT_TIME - moveStateTimer) / SPROUT_TIME;
+			sprite.update(delta, initSpawnPosition.cpy().add(0f, yOffset));
 		}
+		// otherwise use the regular body position
+		else
+			sprite.update(delta, body.getPosition());
 	}
 
 	public void doDraw(AgencyDrawBatch batch){
-		batch.draw(starSprite);
-	}
-
-	@Override
-	public void use(Agent agent) {
-		if(stateTimer <= SPROUT_TIME)
+		// do not draw sprite if powerup is used 
+		if(isPowerupUsed)
 			return;
 
-		if(agent instanceof PowerupTakeAgent) {
-			((PowerupTakeAgent) agent).onTakePowerup(PowType.POWERSTAR);
-			agency.disposeAgent(this);
-		}
+		batch.draw(sprite);
 	}
 
 	@Override
 	public void onBump(Agent bumpingAgent) {
-		if(stateTimer <= SPROUT_TIME)
-			return;
-
 		// if bump came from left and star is moving left then reverse,
 		// if bump came from right and star is moving right then reverse
-		if((bumpingAgent.getPosition().x < starBody.getPosition().x && starBody.getVelocity().x < 0f) ||
-			(bumpingAgent.getPosition().x > starBody.getPosition().x && starBody.getVelocity().x > 0f))
-			reverseConstVelocity(true, false);
-
-		starBody.setVelocity(getConstVelocity().x, getConstVelocity().y);
+		if((bumpingAgent.getPosition().x < body.getPosition().x && body.getVelocity().x < 0f) ||
+			(bumpingAgent.getPosition().x > body.getPosition().x && body.getVelocity().x > 0f))
+			isFacingRight = !isFacingRight;
 	}
 
 	@Override
 	public Vector2 getPosition() {
-		return starBody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return starBody.getBounds();
+		return body.getBounds();
 	}
 
 	@Override
 	public void disposeAgent() {
-		starBody.dispose();
+		body.dispose();
 	}
 }

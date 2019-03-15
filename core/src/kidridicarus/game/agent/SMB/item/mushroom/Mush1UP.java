@@ -4,9 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.game.info.SMBAnim;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
@@ -16,18 +14,12 @@ public class Mush1UP extends BaseMushroom {
 	}
 
 	@Override
-	public void use(Agent agent) {
-		if(isSprouting)
-			return;
-
-		if(agent instanceof PowerupTakeAgent) {
-			((PowerupTakeAgent) agent).onTakePowerup(PowType.MUSH1UP);
-			agency.disposeAgent(this);
-		}
+	protected TextureRegion getMushroomTextureRegion(TextureAtlas atlas) {
+		return atlas.findRegion(SMBAnim.Item.MUSH1UP);
 	}
 
 	@Override
-	protected TextureRegion getMushroomTextureRegion(TextureAtlas atlas) {
-		return atlas.findRegion(SMBAnim.Item.MUSH1UP);
+	protected PowType getMushroomPowerup() {
+		return PowType.MUSH1UP;
 	}
 }

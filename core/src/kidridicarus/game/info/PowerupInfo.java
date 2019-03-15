@@ -8,7 +8,7 @@ public class PowerupInfo {
 	public enum PowType {
 		// each powerup type has an associated character
 		NONE(PowChar.NONE), MUSHROOM(PowChar.MARIO), FIREFLOWER(PowChar.MARIO), POWERSTAR(PowChar.MARIO),
-		MUSH1UP(PowChar.MARIO), MARUMARI(PowChar.SAMUS);
+		MUSH1UP(PowChar.MARIO), MARUMARI(PowChar.SAMUS), COIN(PowChar.MARIO);
 
 		private PowChar pc;
 		PowType(PowChar pc) { this.pc = pc; }

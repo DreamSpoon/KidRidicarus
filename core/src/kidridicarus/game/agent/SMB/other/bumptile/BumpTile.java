@@ -16,6 +16,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -24,9 +25,9 @@ import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.brickpiece.BrickPiece;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.agent.SMB.player.mario.Mario;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
 public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgent {
@@ -309,11 +310,15 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 	private void startSpinningCoin() {
 		agency.playSound(AudioInfo.Sound.SMB.COIN);
 		agency.createAgent(FloatingPoints.makeAP(PointAmount.P200, false, body.getPosition(),
-				UInfo.P2M(UInfo.TILEPIX_Y * 2f), (Mario) bumpingAgent));
+				UInfo.P2M(UInfo.TILEPIX_Y * 2f), bumpingAgent));
 
 		// spawn a coin one tile's height above the current tile position
 		agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_SPINCOIN,
 				body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y))));
+
+		// push coin powerup to powerup take agent if we have one
+		if(bumpingAgent instanceof PowerupTakeAgent)
+			((PowerupTakeAgent) bumpingAgent).onTakePowerup(PowType.COIN);
 	}
 
 	private void processSprite(float delta) {

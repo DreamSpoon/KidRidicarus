@@ -26,25 +26,30 @@ public class FireFlower extends Agent implements DisposableAgent {
 	private AgentDrawListener myDrawListener;
 	private Vector2 initSpawnPosition;
 	// powerup can not be used until body is created, body is created after sprout time is finished
-	private boolean powerupUsed;
+	private boolean isPowerupUsed;
 	private float moveStateTimer;
 	private MoveState moveState;
 
 	public FireFlower(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		powerupUsed = false;
+		isPowerupUsed = false;
 		initSpawnPosition = Agent.getStartPoint(properties);
 		moveStateTimer = 0f;
 		moveState = MoveState.SPROUT;
 
-		sprite = new FireFlowerSprite(agency.getAtlas(), initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
-
+		// no body at spawn time, body will be created later
+		body = null;
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		// sprout from bottom layer and switch to next layer on finish sprout
+		// sprout from bottom layer and switch to next layer on sprout finish
+		sprite = new FireFlowerSprite(agency.getAtlas(), initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
 		myDrawListener = new AgentDrawListener() {
 				@Override
 				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
@@ -52,24 +57,23 @@ public class FireFlower extends Agent implements DisposableAgent {
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, myDrawListener);
 	}
 
-	private void doUpdate(float delta) {
-		processContacts();
-		processMove(delta);
-		processSprite(delta);
-	}
-
 	// if any agents touching this powerup are able to take it, then push it to them
-	private void processContacts() {
-		if(powerupUsed || body == null)
+	private void doContactUpdate() {
+		// exit if not used or body not created yet
+		if(isPowerupUsed || body == null)
 			return;
-
+		// any takers?
 		PowerupTakeAgent taker = body.getSpine().getTouchingPowerupTaker();
 		if(taker == null)
 			return;
-
-		// if taker takes the powerup then this fireflower is kaput!
+		// if powerup is taken then set used flag
 		if(taker.onTakePowerup(PowType.FIREFLOWER))
-			powerupUsed = true;
+			isPowerupUsed = true;
+	}
+
+	private void doUpdate(float delta) {
+		processMove(delta);
+		processSprite(delta);
 	}
 
 	private void processMove(float delta) {
@@ -92,6 +96,7 @@ public class FireFlower extends Agent implements DisposableAgent {
 				}
 				break;
 			case END:
+				// powerup used, so dispose this agent
 				agency.disposeAgent(this);
 				break;
 		}
@@ -101,7 +106,7 @@ public class FireFlower extends Agent implements DisposableAgent {
 	}
 
 	private MoveState getNextMoveState() {
-		if(powerupUsed)
+		if(isPowerupUsed)
 			return MoveState.END;
 		else if(moveState == MoveState.WALK || (moveState == MoveState.SPROUT && moveStateTimer > SPROUT_TIME))
 			return MoveState.WALK;
@@ -121,13 +126,14 @@ public class FireFlower extends Agent implements DisposableAgent {
 				position.set(body.getPosition());
 				break;
 		}
-
 		sprite.update(delta, position);
 	}
 
 	public void doDraw(AgencyDrawBatch batch){
-		if(!powerupUsed)
-			batch.draw(sprite);
+		// do not draw sprite if powerup is used 
+		if(isPowerupUsed)
+			return;
+		batch.draw(sprite);
 	}
 
 	@Override

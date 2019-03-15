@@ -1,13 +1,14 @@
-package kidridicarus.game.agent.SMB.item.fireflower;
+package kidridicarus.common.agentspine;
 
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 
-public class FireFlowerSpine {
-	private FireFlowerBody body;
+public class PowerupSpine {
+	protected AgentBody body;
 	private AgentContactHoldSensor acSensor;
 
-	public FireFlowerSpine(FireFlowerBody body) {
+	public PowerupSpine(AgentBody body) {
 		this.body = body;
 		acSensor = null;
 	}
