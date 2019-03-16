@@ -10,6 +10,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.AgentTeam;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
@@ -207,9 +208,9 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 	}
 
 	@Override
-	public boolean onTakeDamage(Agent agent, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 fromCenter) {
 		// no damage during injury, or if dead
-		if(isInjured || isDead)
+		if(isInjured || isDead || aTeam == AgentTeam.NPC)
 			return false;
 		// decrease health and check dead status
 		health -= amount;

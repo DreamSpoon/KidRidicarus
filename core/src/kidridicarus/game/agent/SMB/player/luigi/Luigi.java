@@ -31,8 +31,8 @@ public class Luigi extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
 	private static final Vector2 GROW_OFFSET = DUCK_OFFSET;
 	private static final float DEAD_DELAY_TIME = 3f;
-	private static final float MAX_FIREBALL_JUICE = 2.0f;
-	private static final float JUICE_PER_FIREBALL = 1.0f;
+	private static final float MAX_FIREBALL_JUICE = 2f;
+	private static final float JUICE_PER_FIREBALL = 1.3f;
 	private static final float FIREBALL_OFFSET = UInfo.P2M(8f);
 	private static final float COOLDOWN_PER_FIREBALL = 0.25f;
 
@@ -102,7 +102,7 @@ QQ.pr("you made Luigi so happy!");
 			@Override
 			public void update(float delta) { doPostUpdate(); }
 		});
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
@@ -180,7 +180,7 @@ QQ.pr("you made Luigi so happy!");
 			else
 				offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
-			agency.createAgent(LuigiFireball.makeAP(offset, facingRight, null));
+			agency.createAgent(LuigiFireball.makeAP(offset, facingRight, this));
 			agency.playSound(AudioInfo.Sound.SMB.FIREBALL);
 		}
 	}

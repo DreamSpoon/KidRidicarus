@@ -12,6 +12,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.AgentTeam;
 import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
@@ -113,14 +114,16 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, HeadBounceTake
 			for(Agent a : contBeginAgents) {
 				// if hit another sliding turtle, then both die
 				if(a instanceof Turtle && ((Turtle) a).isSliding) {
-					((ContactDmgTakeAgent) a).onTakeDamage(perp, 1f, body.getPosition());
-					onTakeDamage(perp, 1f, a.getPosition());
+					// Team is player because a player kicked this turtle,
+					// essentially this turtle is a shot from the player.
+					((ContactDmgTakeAgent) a).onTakeDamage(perp, AgentTeam.PLAYER, 1f, body.getPosition());
+					onTakeDamage(perp, AgentTeam.PLAYER, 1f, a.getPosition());
 					nowDead = true;
 					break;
 				}
 				// hit non-turtle, so continue sliding and apply damage to other agent
 				else if(a instanceof ContactDmgTakeAgent)
-					((ContactDmgTakeAgent) a).onTakeDamage(perp, 1.0f, body.getPosition());
+					((ContactDmgTakeAgent) a).onTakeDamage(perp, AgentTeam.PLAYER, 1f, body.getPosition());
 			}
 		}
 		else if(!isHeadBounced) {
@@ -283,8 +286,8 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, HeadBounceTake
 
 	// assume any amount of damage kills, for now...
 	@Override
-	public boolean onTakeDamage(Agent perp, float amount, Vector2 fromCenter) {
-		if(isDead)
+	public boolean onTakeDamage(Agent perp, AgentTeam aTeam, float amount, Vector2 fromCenter) {
+		if(isDead || aTeam == AgentTeam.NPC)
 			return false;
 
 		this.perp = perp;

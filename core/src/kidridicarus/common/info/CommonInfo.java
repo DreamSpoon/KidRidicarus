@@ -31,6 +31,7 @@ public class CommonInfo {
 		public static final AllowOrder SPRITE_BOTTOM = new AllowOrder(true, 1f);
 		public static final AllowOrder SPRITE_MIDDLE = new AllowOrder(true, 3f);
 		public static final AllowOrder SPRITE_TOP = new AllowOrder(true, 5f);
+		public static final AllowOrder SPRITE_TOPFRONT = new AllowOrder(true, 7f);
 	}
 
 	public static final DrawOrderAlias[] KIDRID_DRAWORDER_ALIAS = new DrawOrderAlias[] {
