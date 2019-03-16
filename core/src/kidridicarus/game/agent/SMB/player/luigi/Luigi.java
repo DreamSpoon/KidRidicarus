@@ -24,12 +24,14 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.tool.QQ;
 
-public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, PowerupTakeAgent, DisposableAgent {
+public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
+		PowerupTakeAgent, DisposableAgent {
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
 	private static final Vector2 GROW_OFFSET = DUCK_OFFSET;
 	private static final float DEAD_DELAY_TIME = 3f;
@@ -72,6 +74,7 @@ public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, Po
 	private float fireballJuice;
 	private float shootCooldown;
 	private boolean didShootFireballThisFrame;
+	private boolean gaveHeadBounce;
 	// list of powerups received during contact update
 	private LinkedList<PowType> powerupsReceived;
 	private boolean didTakeDamage;
@@ -93,6 +96,7 @@ QQ.pr("you made Luigi so happy!");
 		fireballJuice = MAX_FIREBALL_JUICE;
 		shootCooldown = 0f;
 		didShootFireballThisFrame = false;
+		gaveHeadBounce = false;
 		powerupsReceived = new LinkedList<PowType>();
 		didTakeDamage = false;
 		noDamageCooldown = 0f;
@@ -152,6 +156,7 @@ QQ.pr("you made Luigi so happy!");
 			processPowerupsReceived();
 			processFireball(moveAdvice);
 			processDamageTaken(delta);
+			processHeadBouncesGiven();
 		}
 
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
@@ -177,6 +182,14 @@ QQ.pr("you made Luigi so happy!");
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
+	}
+
+	private void processHeadBouncesGiven() {
+		// if a head bounce was given in the update frame then reset the flag and do bounce move
+		if(gaveHeadBounce) {
+			gaveHeadBounce = false;
+			body.getSpine().applyHeadBounceMove();
+		}
 	}
 
 	private void processDeadMove(boolean moveStateChanged, MoveState nextMoveState) {
@@ -507,6 +520,16 @@ QQ.pr("you made Luigi so happy!");
 			return false;
 		didTakeDamage = true;
 		return true;
+	}
+
+	// give head bounce to agent
+	@Override
+	public boolean onGiveHeadBounce(Agent agent) {
+		if(body.getSpine().isGiveHeadBounceAllowed(agent.getBounds())) {
+			gaveHeadBounce = true;
+			return true;
+		}
+		return false;
 	}
 
 	@Override

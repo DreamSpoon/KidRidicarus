@@ -8,7 +8,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.optional.TriggerableAgent;
+import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 
@@ -34,8 +34,8 @@ public class AgentSpawnTrigger extends Agent implements DisposableAgent {
 	private void doUpdate(float delta) {
 		if(!enabled)
 			return;
-		for(TriggerableAgent agent : stBody.getSpawnerContacts())
-			agent.trigger();
+		for(TriggerTakeAgent agent : stBody.getSpawnerContacts())
+			agent.onTakeTrigger();
 	}
 
 	/*

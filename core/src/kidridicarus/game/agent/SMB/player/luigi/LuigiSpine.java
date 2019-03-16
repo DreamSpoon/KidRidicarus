@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
@@ -43,6 +44,8 @@ public class LuigiSpine extends OnGroundSpine {
 
 	// TODO: test this with different values to the best
 	private static final float MIN_HEADBANG_VEL = 0.01f;
+
+	private static final float MARIO_HEADBOUNCE_VEL = 2.8f;	// up velocity
 
 	private LuigiBody body;
 	private AgentContactHoldSensor acSensor;
@@ -217,5 +220,20 @@ public class LuigiSpine extends OnGroundSpine {
 
 		// no head bumps
 		return false;
+	}
+
+	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {
+		// check bounds
+		Rectangle myBounds = body.getBounds();
+		Vector2 myPrevPosition = body.getPrevPosition();
+		float otherCenterY = otherBounds.y+otherBounds.height/2f;
+		if(myBounds.y >= otherCenterY || myPrevPosition.y-myBounds.height/2f >= otherCenterY)
+			return true;
+		return false;
+	}
+
+	public void applyHeadBounceMove() {
+		body.setVelocity(body.getVelocity().x, 0f);
+		body.applyBodyImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL));
 	}
 }

@@ -45,6 +45,7 @@ public class LuigiBody extends AgentBody {
 	private Luigi parent;
 	private World world;
 	private LuigiSpine spine;
+	private Vector2 prevPosition;
 	private Vector2 prevVelocity;
 	private Fixture acSensorFixture;
 
@@ -69,8 +70,9 @@ public class LuigiBody extends AgentBody {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
-		
-		prevVelocity = new Vector2(0f, 0f);
+
+		prevPosition = position.cpy();
+		prevVelocity = velocity.cpy();
 
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
@@ -98,6 +100,7 @@ public class LuigiBody extends AgentBody {
 	}
 
 	public void postUpdate() {
+		prevPosition.set(b2body.getPosition());
 		prevVelocity.set(b2body.getLinearVelocity());
 	}
 
@@ -111,6 +114,11 @@ public class LuigiBody extends AgentBody {
 		// ... re-enable the needed agent contact sensor bits
 		((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
 		((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
+		acSensorFixture.refilter();
+	}
+
+	public Vector2 getPrevPosition() {
+		return prevPosition;
 	}
 
 	public Vector2 getPrevVelocity() {

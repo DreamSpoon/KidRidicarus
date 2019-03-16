@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
 import kidridicarus.common.agentspine.OnGroundSpine;
@@ -41,11 +42,6 @@ public class GoombaSpine extends OnGroundSpine {
 			body.setVelocity(-GOOMBA_WALK_VEL, body.getVelocity().y);
 	}
 
-/*	public void doStopAndDisableAgentContacts() {
-		body.zeroVelocity(true, true);
-		body.setAgentSensorEnabled(false);
-	}
-*/
 	public void doBumpAndDisableAllContacts(boolean bumpRight) {
 		body.disableAllContacts();
 		if(bumpRight)
@@ -82,7 +78,11 @@ public class GoombaSpine extends OnGroundSpine {
 		return false;
 	}
 
-	public <T> List<T> getContactAgentsByClass(Class<T> cls) {
-		return acSensor.getContactsByClass(cls);
+//	public <T> List<T> getContactAgentsByClass(Class<T> cls) {
+//		return acSensor.getContactsByClass(cls);
+//	}
+
+	public List<Agent> getAllContactAgents() {
+		return acSensor.getContacts();
 	}
 }

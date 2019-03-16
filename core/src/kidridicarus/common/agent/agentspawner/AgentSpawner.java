@@ -7,10 +7,10 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.optional.TriggerableAgent;
+import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonKV;
 
-public class AgentSpawner extends Agent implements TriggerableAgent, DisposableAgent {
+public class AgentSpawner extends Agent implements TriggerTakeAgent, DisposableAgent {
 	private AgentSpawnerBody sbody;
 	private boolean isUsed;
 	private String spawnAgentClassAlias;
@@ -24,7 +24,7 @@ public class AgentSpawner extends Agent implements TriggerableAgent, DisposableA
 
 	// to be called by a spawn trigger contacting this agent
 	@Override
-	public void trigger() {
+	public void onTakeTrigger() {
 		if(!isUsed) {
 			isUsed = true;
 			agency.createAgent(Agent.createPointAP(spawnAgentClassAlias, sbody.getPosition()));
