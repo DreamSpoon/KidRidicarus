@@ -164,13 +164,18 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, HeadBounceTake
 
 	// assume any amount of damage kills, for now...
 	@Override
-	public void onDamage(Agent perp, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent perp, float amount, Vector2 fromCenter) {
+		if(isDead)
+			return false;
+
 		this.perp = perp;
 		isDead = true;
 		if(fromCenter.x < body.getPosition().x)
 			deadVelocity.set(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
 			deadVelocity.set(-BUMP_SIDE_VEL, BUMP_UP_VEL);
+
+		return true;
 	}
 
 	@Override

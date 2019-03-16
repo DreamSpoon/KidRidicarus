@@ -480,7 +480,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 			for(ContactDmgTakeAgent agent : list) {
 				// playSound should go in the processBody method, but... this is so much easier!
 				agency.playSound(AudioInfo.Sound.SMB.KICK);
-				agent.onDamage(this, 1f, mBody.getPosition());
+				agent.onTakeDamage(this, 1f, mBody.getPosition());
 			}
 
 			// Remove any agents that accumulate in the begin queue, to prevent begin contacts during

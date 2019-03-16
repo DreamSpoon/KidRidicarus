@@ -29,7 +29,12 @@ import kidridicarus.game.tool.QQ;
 
 public class Luigi extends Agent implements PlayerAgent, PowerupTakeAgent, DisposableAgent {
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
+	private static final Vector2 GROW_OFFSET = DUCK_OFFSET;
 	private static final float DEAD_DELAY_TIME = 3f;
+	private static final float MAX_FIREBALL_JUICE = 2.0f;
+	private static final float JUICE_PER_FIREBALL = 1.0f;
+	private static final float FIREBALL_OFFSET = UInfo.P2M(8f);
+	private static final float COOLDOWN_PER_FIREBALL = 0.25f;
 
 	public enum PowerState {
 		SMALL, BIG, FIRE;
@@ -58,6 +63,9 @@ public class Luigi extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	private boolean isNextJumpDelayed;
 	private boolean isJumpForceContinue;
 	private boolean isHeadBumped;
+	private float fireballJuice;
+	private float shootCooldown;
+	private boolean didShootFireballThisFrame;
 	// list of powerups received during contact update
 	private LinkedList<PowType> powerupsReceived;
 
@@ -66,12 +74,15 @@ public class Luigi extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 QQ.pr("you made Luigi so happy!");
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
-		powerState = PowerState.SMALL;
+		powerState = PowerState.FIRE;
 		facingRight = true;
 		isNextJumpAllowed = false;
 		isNextJumpDelayed = false;
 		isJumpForceContinue = false;
 		isHeadBumped = false;
+		fireballJuice = MAX_FIREBALL_JUICE;
+		shootCooldown = 0f;
+		didShootFireballThisFrame = false;
 		powerupsReceived = new LinkedList<PowType>();
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
@@ -97,10 +108,11 @@ QQ.pr("you made Luigi so happy!");
 		});
 	}
 
-	// check for and do head bumps
+	/*
+	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
+	 * by way of regular update.
+	 */
 	private void doContactUpdate() {
-		processPowerupsReceived();
-
 		// exit if head bump flag hasn't reset
 		if(isHeadBumped)
 			return;
@@ -109,15 +121,6 @@ QQ.pr("you made Luigi so happy!");
 			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
 		else
 			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
-	}
-
-	private void processPowerupsReceived() {
-		for(PowType pow : powerupsReceived) {
-			switch(pow) {
-				case FIREFLOWER:
-					break;
-			}
-		}
 	}
 
 	private void doUpdate(float delta) {
@@ -134,26 +137,98 @@ QQ.pr("you made Luigi so happy!");
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
+		boolean moveStateChanged = nextMoveState != moveState;
 		// if luigi is dead...
-		if(nextMoveState == MoveState.DEAD) {
-			// and if newly dead then disable contacts and start dead sound
-			if(moveState != nextMoveState) {
-				body.disableAllContacts();
-				observer.stopAllMusic();
-				agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
-			}
-			// ... and if died a long time ago then do game over
-			else if(moveStateTimer > DEAD_DELAY_TIME)
-				supervisor.setGameOver();
-			// otherwise do nothing
+		if(nextMoveState == MoveState.DEAD)
+			processDeadMove(moveStateChanged);
+		else {
+			processPowerupsReceived();
+
+			// if pressing fireball button
+			processFireball(moveAdvice);
+
+			// check on ground and fork process move
+			if(nextMoveState.isOnGround())
+				processGroundMove(moveAdvice, nextMoveState);
+			else
+				processAirMove(moveAdvice, nextMoveState);
 		}
-		else if(nextMoveState.isOnGround())
-			processGroundMove(moveAdvice, nextMoveState);
-		else
-			processAirMove(moveAdvice, nextMoveState);
+
+		// recharge the fireball juice, stopping at max fill line
+		fireballJuice += delta;
+		if(fireballJuice > MAX_FIREBALL_JUICE)
+			fireballJuice = MAX_FIREBALL_JUICE;
+		// decrement fireball shoot cooldown timer
+		shootCooldown -= delta;
+		if(shootCooldown < 0f)
+			shootCooldown = 0f;
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
+	}
+
+	private void processFireball(MoveAdvice moveAdvice) {
+		// check do shoot fireball
+		didShootFireballThisFrame = false;
+		if(moveAdvice.action0 && isFireBallAllowed()) {
+			fireballJuice -= JUICE_PER_FIREBALL;
+			shootCooldown += COOLDOWN_PER_FIREBALL;
+			didShootFireballThisFrame = true;
+			Vector2 offset;
+			if(facingRight)
+				offset = body.getPosition().cpy().add(FIREBALL_OFFSET, 0f);
+			else
+				offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
+
+			agency.createAgent(LuigiFireball.makeAP(offset, facingRight, null));
+			agency.playSound(AudioInfo.Sound.SMB.FIREBALL);
+		}
+	}
+
+	private void processDeadMove(boolean moveStateChanged) {
+		// and if newly dead then disable contacts and start dead sound
+		if(moveStateChanged) {
+			body.disableAllContacts();
+			observer.stopAllMusic();
+			agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
+		}
+		// ... and if died a long time ago then do game over
+		else if(moveStateTimer > DEAD_DELAY_TIME)
+			supervisor.setGameOver();
+		// otherwise do nothing while in dead state
+	}
+
+	private void processPowerupsReceived() {
+		for(PowType pow : powerupsReceived)
+			applyPowerup(pow);
+		powerupsReceived.clear();
+	}
+
+	private void applyPowerup(PowType pow) {
+		PowerState newPowerState = powerState;
+		switch(pow) {
+			case MUSHROOM:
+				// if small then power up to big
+				if(powerState == PowerState.SMALL)
+					newPowerState = PowerState.BIG;
+				// otherwise maintain powerstate
+				break;
+			case FIREFLOWER:
+				// if small then power up to big
+				if(powerState == PowerState.SMALL)
+					newPowerState = PowerState.BIG;
+				// if big then power up to fire
+				else if(powerState == PowerState.BIG)
+					newPowerState = PowerState.FIRE;
+				// otherwise maintain powerstate
+				break;
+			default:
+				break;
+		}
+		// if growing then increase body size
+		if(newPowerState.isBigBody() && !powerState.isBigBody())
+			body.defineBody(body.getPosition().cpy().add(GROW_OFFSET), body.getVelocity(), true, moveState.isDuck());
+		powerState = newPowerState;
 	}
 
 	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
@@ -276,6 +351,12 @@ QQ.pr("you made Luigi so happy!");
 			return getNextMoveStateAir(moveAdvice);
 	}
 
+	private boolean isFireBallAllowed() {
+		if(fireballJuice <= 0f || powerState != PowerState.FIRE || shootCooldown > 0f)
+			return false;
+		return true;
+	}
+
 	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
 		Direction4 moveDir = getLuigiMoveDir(moveAdvice);
 
@@ -349,7 +430,7 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processSprite(float delta) {
-		sprite.update(delta, body.getPosition(), moveState, powerState, facingRight);
+		sprite.update(delta, body.getPosition(), moveState, powerState, facingRight, didShootFireballThisFrame);
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {

@@ -113,14 +113,14 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, HeadBounceTake
 			for(Agent a : contBeginAgents) {
 				// if hit another sliding turtle, then both die
 				if(a instanceof Turtle && ((Turtle) a).isSliding) {
-					((ContactDmgTakeAgent) a).onDamage(perp, 1f, body.getPosition());
-					onDamage(perp, 1f, a.getPosition());
+					((ContactDmgTakeAgent) a).onTakeDamage(perp, 1f, body.getPosition());
+					onTakeDamage(perp, 1f, a.getPosition());
 					nowDead = true;
 					break;
 				}
 				// hit non-turtle, so continue sliding and apply damage to other agent
 				else if(a instanceof ContactDmgTakeAgent)
-					((ContactDmgTakeAgent) a).onDamage(perp, 1.0f, body.getPosition());
+					((ContactDmgTakeAgent) a).onTakeDamage(perp, 1.0f, body.getPosition());
 			}
 		}
 		else if(!isHeadBounced) {
@@ -283,13 +283,18 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, HeadBounceTake
 
 	// assume any amount of damage kills, for now...
 	@Override
-	public void onDamage(Agent perp, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent perp, float amount, Vector2 fromCenter) {
+		if(isDead)
+			return false;
+
 		this.perp = perp;
 		isDead = true;
 		if(fromCenter.x < body.getPosition().x)
 			deadVelocity.set(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
 			deadVelocity.set(-BUMP_SIDE_VEL, BUMP_UP_VEL);
+
+		return true;
 	}
 
 	@Override

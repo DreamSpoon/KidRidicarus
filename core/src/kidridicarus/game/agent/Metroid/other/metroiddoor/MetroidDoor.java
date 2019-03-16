@@ -143,8 +143,9 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 	}
 
 	@Override
-	public void onDamage(Agent agent, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent agent, float amount, Vector2 fromCenter) {
 		isOpening = true;
+		return true;
 	}
 
 	@Override

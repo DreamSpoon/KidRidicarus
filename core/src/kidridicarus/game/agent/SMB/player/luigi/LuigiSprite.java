@@ -20,6 +20,8 @@ public class LuigiSprite extends Sprite {
 //	private static final int NUM_STARPOWER_FRAMES = 4;
 	private static final float REG_ANIM_SPEED = 0.1f;
 
+	private static final float THROW_POSE_TIME = 0.15f;
+
 	private static final int NUM_POSES = 10;
 	private static final int STAND_POSE = 0;
 	private static final int RUN_POSE = 1;
@@ -59,12 +61,14 @@ public class LuigiSprite extends Sprite {
 
 	private MoveState prevParentMoveState;
 	private float stateTimer;
+	private float throwPoseCooldown;
 
 	public LuigiSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean facingRight) {
 		createAnimations(atlas);
 
 		prevParentMoveState = MoveState.STAND;
 		stateTimer = 0f;
+		throwPoseCooldown = 0f;
 
 		// set the initial texture region and bounds
 		switch(parentPowerState) {
@@ -161,7 +165,7 @@ public class LuigiSprite extends Sprite {
 	}
 
 	public void update(float delta, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
-			boolean facingRight) {
+			boolean facingRight, boolean didShootFireball) {
 		int group = SML_REG_GRP;
 		switch(parentPowerState) {
 			case SMALL:
@@ -177,32 +181,41 @@ public class LuigiSprite extends Sprite {
 				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 				break;
 		}
+
 		int pose = STAND_POSE;
 		Vector2 offset = new Vector2(0f, 0f);
-		switch(parentMoveState) {
-			case STAND:
-			case FALL:
-				pose = STAND_POSE;
-				break;
-			case RUN:
-				pose = RUN_POSE;
-				break;
-			case BRAKE:
-				pose = BRAKE_POSE;
-				break;
-			case DUCK:
-			case DUCKFALL:
-			case DUCKJUMP:
-				offset.set(SPRITE_DUCK_OFFSET);
-				pose = DUCK_POSE;
-				break;
-			case JUMP:
-				pose = JUMP_POSE;
-				break;
-			case DEAD:
-				pose = DEAD_POSE;
-				group = SML_REG_GRP;
-				break;
+		if(didShootFireball)
+			throwPoseCooldown = THROW_POSE_TIME;
+		// check for fireball pose
+		if(throwPoseCooldown > 0f)
+			pose = THROW_POSE;
+		// other poses...
+		else {
+			switch(parentMoveState) {
+				case STAND:
+				case FALL:
+					pose = STAND_POSE;
+					break;
+				case RUN:
+					pose = RUN_POSE;
+					break;
+				case BRAKE:
+					pose = BRAKE_POSE;
+					break;
+				case DUCK:
+				case DUCKFALL:
+				case DUCKJUMP:
+					offset.set(SPRITE_DUCK_OFFSET);
+					pose = DUCK_POSE;
+					break;
+				case JUMP:
+					pose = JUMP_POSE;
+					break;
+				case DEAD:
+					pose = DEAD_POSE;
+					group = SML_REG_GRP;
+					break;
+			}
 		}
 
 		if(parentPowerState.isBigBody() && parentMoveState != MoveState.DEAD)
@@ -214,6 +227,11 @@ public class LuigiSprite extends Sprite {
 		if(!facingRight && !isFlipX())
 			flip(true, false);
 		setPosition(position.x - getWidth()/2f + offset.x, position.y - getHeight()/2f + offset.y);
+
+		// reduce throw pose cooldown
+		throwPoseCooldown -= delta;
+		if(throwPoseCooldown < 0)
+			throwPoseCooldown = 0f;
 
 		stateTimer = parentMoveState == prevParentMoveState ? stateTimer+delta : 0f;
 		prevParentMoveState = parentMoveState;

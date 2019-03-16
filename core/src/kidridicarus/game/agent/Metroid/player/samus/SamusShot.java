@@ -68,7 +68,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 			// do not hit parent
 			if(agent == parent)
 				continue;
-			agent.onDamage(parent, 1f, shotBody.getPosition());
+			agent.onTakeDamage(parent, 1f, shotBody.getPosition());
 			isExploding = true;
 			return;
 		}

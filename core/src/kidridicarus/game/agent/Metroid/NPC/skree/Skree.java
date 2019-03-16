@@ -207,10 +207,11 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 	}
 
 	@Override
-	public void onDamage(Agent agent, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent agent, float amount, Vector2 fromCenter) {
+		// no damage during injury, or if dead
 		if(isInjured || isDead)
-			return;
-
+			return false;
+		// decrease health and check dead status
 		health -= amount;
 		if(health <= 0f) {
 			isDead = true;
@@ -218,6 +219,8 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 		}
 		else
 			isInjured = true;
+		// took damage
+		return true;
 	}
 
 	/*

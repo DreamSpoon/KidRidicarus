@@ -141,9 +141,9 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 	}
 
 	@Override
-	public void onDamage(Agent agent, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent agent, float amount, Vector2 fromCenter) {
 		if(isInjured || isDead)
-			return;
+			return false;
 
 		health -= amount;
 		if(health <= 0f) {
@@ -152,6 +152,8 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 		}
 		else
 			isInjured = true;
+
+		return true;
 	}
 
 	@Override

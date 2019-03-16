@@ -24,6 +24,14 @@ public class B2DFactory {
 		return world.createBody(bdef);
 	}
 
+	public static Body makeDynamicBody(World world, Vector2 position, Vector2 velocity) {
+		BodyDef bdef = new BodyDef();
+		bdef.type = BodyType.DynamicBody;
+		bdef.position.set(position);
+		bdef.linearVelocity.set(velocity);
+		return world.createBody(bdef);
+	}
+
 	public static Body makeStaticBody(World world, Vector2 position) {
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyType.StaticBody;
