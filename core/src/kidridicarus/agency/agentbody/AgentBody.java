@@ -3,12 +3,9 @@ package kidridicarus.agency.agentbody;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentcontact.AgentBodyFilter;
-import kidridicarus.agency.agentcontact.CFBitSeq;
 
 /*
  * Assume that an AgentBody can contain exactly one Box2D body. If more bodies are needed then a linked agent
@@ -37,7 +34,7 @@ public abstract class AgentBody implements Disposable {
 				bodySize.x, bodySize.y);
 	}
 
-	// body can pass through everything, maybe to fall off screen
+/*	// body can pass through everything, maybe to fall off screen
 	public void disableAllContacts() {
 		CFBitSeq catBits = new CFBitSeq();
 		CFBitSeq maskBits = new CFBitSeq();
@@ -50,7 +47,7 @@ public abstract class AgentBody implements Disposable {
 			fix.refilter();
 		}
 	}
-
+*/
 	@Override
 	public void dispose() {
 		if(b2body != null) {

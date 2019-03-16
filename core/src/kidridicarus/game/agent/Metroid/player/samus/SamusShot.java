@@ -20,6 +20,7 @@ import kidridicarus.game.info.GameKV;
 public class SamusShot extends Agent implements DisposableAgent {
 	private static final float LIVE_TIME = 0.217f;
 	private static final float EXPLODE_TIME = 3f/60f;
+	private static final float GIVE_DAMAGE = 1f;
 
 	public enum MoveState { LIVE, EXPLODE, DEAD }
 
@@ -69,7 +70,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 			// do not hit parent
 			if(agent == parent)
 				continue;
-			agent.onTakeDamage(parent, AgentTeam.PLAYER, 1f, shotBody.getPosition());
+			agent.onTakeDamage(parent, AgentTeam.PLAYER, GIVE_DAMAGE, shotBody.getPosition());
 			isExploding = true;
 			return;
 		}
@@ -84,12 +85,11 @@ public class SamusShot extends Agent implements DisposableAgent {
 			case LIVE:
 				break;
 			case EXPLODE:
-				shotBody.disableAllContacts();
+				shotBody.setMainSolid(false);
+				shotBody.setAgentSensorEnabled(false);
 				shotBody.zeroVelocity(true, true);
 				break;
 			case DEAD:
-				// call disable contacts, just to be safe
-				shotBody.disableAllContacts();
 				agency.disposeAgent(this);
 				break;
 		}
@@ -107,8 +107,8 @@ public class SamusShot extends Agent implements DisposableAgent {
 		// if not dead, then is it exploding?
 		else if(isExploding || curMoveState == MoveState.EXPLODE)
 			return MoveState.EXPLODE;
-		// alive by deduction
-		return MoveState.LIVE;
+		else
+			return MoveState.LIVE;
 	}
 
 	private void processSprite(float delta) {

@@ -1,7 +1,6 @@
 package kidridicarus.game.agent.SMB.item.mushroom;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
@@ -41,7 +40,7 @@ public class BaseMushroomBody extends MobileAgentBody implements BumpableBody {
 		// create main fixture with agent sensor chained to horizontal move sensor
 		AgentContactHoldSensor sensor = spine.createAgentSensor();
 		sensor.chainTo(spine.createHMSensor());
-		B2DFactory.makeBoxFixture(b2body, new FixtureDef(), sensor,
+		B2DFactory.makeBoxFixture(b2body, sensor,
 				CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 		// create on ground sensor fixture and attach to spine
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),

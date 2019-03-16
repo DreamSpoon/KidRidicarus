@@ -53,7 +53,7 @@ public class MarioBody extends MobileAgentBody {
 	// agent sensor with contacts disabled (still needs room bit)
 	private static final CFBitSeq NOCONTACT_AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq NOCONTACT_AS_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
-			CommonCF.Alias.COLLISIONMAP_BIT);
+			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
 
 	private static final float MARIO_WALKMOVE_XIMP = 0.025f;
 	public static final float MARIO_MIN_WALKSPEED = MARIO_WALKMOVE_XIMP * 2;
@@ -301,7 +301,7 @@ public class MarioBody extends MobileAgentBody {
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 	}
 
-	private void setContactEnabled(boolean enabled) {
+	public void setContactEnabled(boolean enabled) {
 		// exit if no change necessary
 		if((isContactEnabled && enabled) || (!isContactEnabled && !enabled))
 			return;

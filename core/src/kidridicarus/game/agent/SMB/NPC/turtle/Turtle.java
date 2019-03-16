@@ -1,7 +1,5 @@
 package kidridicarus.game.agent.SMB.NPC.turtle;
 
-import java.util.List;
-
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -13,26 +11,164 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentTeam;
-import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
-import kidridicarus.game.agent.SMB.HeadBounceTakeAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
+import kidridicarus.game.tool.QQ;
 
 /*
  * TODO:
  * -do sliding turtle shells break bricks when they strike them?
  *  I couldn't find any maps in SMB 1 that would clear up this matter.
- * -turtle shells do not slide properly when they are kicked while contacting an agent, since the slide kill
- *  agent code is only called when contacting starts
  */
-public class Turtle extends Agent implements ContactDmgTakeAgent, HeadBounceTakeAgent, BumpTakeAgent,
-		ContactDmgGiveAgent, DisposableAgent {
+public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+	private static final float GIVE_DAMAGE = 1f;
+	private static final float DIE_FALL_TIME = 6f;
+
+	public enum MoveState { WALK, FALL, DEAD }
+
+	private TurtleBody body;
+	private TurtleSprite sprite;
+
+	private float moveStateTimer;
+	private MoveState moveState;
+	private boolean isFacingRight;
+	private boolean isDead;
+	private boolean deadBumpRight;
+	private Agent perp;
+
+	public Turtle(Agency agency, ObjectProperties properties) {
+		super(agency, properties);
+
+		moveStateTimer = 0f;
+		moveState = MoveState.WALK;
+		isFacingRight = false;
+		isDead = false;
+		deadBumpRight = false;
+		perp = null;
+		body = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		sprite = new TurtleSprite(agency.getAtlas(), body.getPosition());
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+				@Override
+				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			});
+	}
+
+	private void doContactUpdate() {
+		// push damage to contact damage agents
+		for(ContactDmgTakeAgent agent : body.getSpine().getContactAgentsByClass(ContactDmgTakeAgent.class))
+			agent.onTakeDamage(this, AgentTeam.NPC, GIVE_DAMAGE, body.getPosition());
+	}
+
+	private void doUpdate(float delta) {
+		processMove(delta);
+		processSprite(delta);
+	}
+
+	private void processMove(float delta) {
+		if(body.getSpine().checkReverseVelocity(isFacingRight))
+			isFacingRight = !isFacingRight;
+
+		MoveState nextMoveState = getNextMoveState();
+		boolean moveStateChanged = nextMoveState != moveState;
+		switch(nextMoveState) {
+			case WALK:
+				body.getSpine().doWalkMove(isFacingRight);
+				break;
+			case FALL:
+				break;
+			case DEAD:
+				// newly deceased?
+				if(moveStateChanged)
+					doStartDeath();
+				// check the old deceased for timeout or despawn touch
+				else if(moveStateTimer > DIE_FALL_TIME || body.getSpine().isContactDespawn()) {
+QQ.pr("turtle dispose, despawnbox contact="+body.getSpine().isContactDespawn());
+					agency.disposeAgent(this);
+				}
+				break;
+		}
+
+		// increment state timer if state stayed the same, otherwise reset timer
+		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
+		moveState = nextMoveState;
+	}
+
+	private MoveState getNextMoveState() {
+		if(isDead)
+			return MoveState.DEAD;
+		else if(body.getSpine().isOnGround())
+			return MoveState.WALK;
+		else
+			return MoveState.FALL;
+	}
+
+	private void doStartDeath() {
+		body.getSpine().doBumpAndDisableAllContacts(deadBumpRight);
+		if(perp == null)
+			return;
+		agency.createAgent(FloatingPoints.makeAP(PointAmount.P500, false, body.getPosition(), UInfo.P2M(16), perp));
+	}
+
+	private void processSprite(float delta) {
+		// update sprite position and graphic
+		sprite.update(delta, body.getPosition(), moveState, isFacingRight);
+	}
+
+	public void doDraw(AgencyDrawBatch batch){
+		batch.draw(sprite);
+	}
+
+	// assume any amount of damage kills, for now...
+	@Override
+	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 dmgOrigin) {
+		if(isDead || aTeam == AgentTeam.NPC)
+			return false;
+
+		this.perp = agent;
+		isDead = true;
+		deadBumpRight = body.getSpine().isDeadBumpRight(dmgOrigin);
+		return true;
+	}
+
+	@Override
+	public void onBump(Agent agent) {
+		if(isDead)
+			return;
+
+		this.perp = agent;
+		isDead = true;
+		deadBumpRight = body.getSpine().isDeadBumpRight(perp.getPosition());
+	}
+
+	@Override
+	public Vector2 getPosition() {
+		return body.getPosition();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return body.getBounds();
+	}
+
+	@Override
+	public void disposeAgent() {
+		body.dispose();
+	}
+}
+/*
+public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 0.4f;
@@ -347,4 +483,4 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, HeadBounceTake
 	public void disposeAgent() {
 		body.dispose();
 	}
-}
+}*/

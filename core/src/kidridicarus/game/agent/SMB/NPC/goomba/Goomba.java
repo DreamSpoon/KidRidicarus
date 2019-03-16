@@ -16,15 +16,14 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
 public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
-	private static final float GOOMBA_SQUISH_TIME = 2f;
+//	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
-	private static final float DAMAGE = 1f;
+	private static final float GIVE_DAMAGE = 1f;
 
-	public enum MoveState { NONE, WALK, FALL, SQUISH, BUMP }
+	public enum MoveState { WALK, FALL, DEAD_BUMP }
 
 	private float moveStateTimer;
 	private MoveState moveState;
@@ -44,7 +43,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		deadBumpRight = false;
 		perp = null;
 		moveStateTimer = 0f;
-		moveState = MoveState.NONE;
+		moveState = MoveState.WALK;
 
 		body = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
@@ -65,7 +64,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private void doContactUpdate() {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : body.getSpine().getContactAgentsByClass(ContactDmgTakeAgent.class))
-			agent.onTakeDamage(this, AgentTeam.NPC, DAMAGE, body.getPosition());
+			agent.onTakeDamage(this, AgentTeam.NPC, GIVE_DAMAGE, body.getPosition());
 	}
 
 	private void doUpdate(float delta) {
@@ -80,15 +79,12 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		MoveState nextMoveState = getNextMoveState();
 		boolean moveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
-			case SQUISH:
-				// new squish?
-				if(moveStateChanged)
-					startSquish();
-				// wait a short time and disappear
-				else if(moveStateTimer > GOOMBA_SQUISH_TIME)
-					agency.disposeAgent(this);
+			case WALK:
+				body.getSpine().doWalkMove(isFacingRight);
 				break;
-			case BUMP:
+			case FALL:
+				break;	// do nothing if falling
+			case DEAD_BUMP:
 				// new bump?
 				if(moveStateChanged)
 					startBump();
@@ -96,12 +92,15 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				else if(moveStateTimer > GOOMBA_BUMP_FALL_TIME)
 					agency.disposeAgent(this);
 				break;
-			case NONE:
-			case WALK:
-				body.getSpine().doWalkMove(isFacingRight);
+/*			case DEAD_SQUISH:
+				// new squish?
+				if(moveStateChanged)
+					startSquish();
+				// wait a short time and disappear
+				else if(moveStateTimer > GOOMBA_SQUISH_TIME)
+					agency.disposeAgent(this);
 				break;
-			case FALL:
-				break;	// do nothing if falling
+*/
 		}
 
 		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
@@ -110,14 +109,14 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 
 	private MoveState getNextMoveState() {
 		if(isDead)
-			return MoveState.BUMP;
+			return MoveState.DEAD_BUMP;
 		else if(body.getSpine().isOnGround())
 			return MoveState.WALK;
 		else
 			return MoveState.FALL;
 	}
 
-	private void startSquish() {
+/*	private void startSquish() {
 		body.getSpine().doStopAndDisableAgentContacts();
 		agency.playSound(AudioInfo.Sound.SMB.STOMP);
 		if(perp != null) {
@@ -125,6 +124,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 					body.getPosition(), UInfo.P2M(16), perp));
 		}
 	}
+*/
 
 	private void startBump() {
 		body.getSpine().doBumpAndDisableAllContacts(deadBumpRight);
@@ -145,22 +145,22 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 
 	// assume any amount of damage kills, for now...
 	@Override
-	public boolean onTakeDamage(Agent perp, AgentTeam aTeam, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 dmgOrigin) {
 		if(isDead || aTeam == AgentTeam.NPC)
 			return false;
 
-		this.perp = perp;
+		this.perp = agent;
 		isDead = true;
-		deadBumpRight = body.getSpine().isDeadBumpRight(fromCenter);
+		deadBumpRight = body.getSpine().isDeadBumpRight(dmgOrigin);
 		return true;
 	}
 
 	@Override
-	public void onBump(Agent perp) {
+	public void onBump(Agent agent) {
 		if(isDead)
 			return;
 
-		this.perp = perp;
+		this.perp = agent;
 		isDead = true;
 		deadBumpRight = body.getSpine().isDeadBumpRight(perp.getPosition());
 	}

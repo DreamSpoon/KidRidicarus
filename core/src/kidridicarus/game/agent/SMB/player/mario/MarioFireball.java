@@ -103,7 +103,8 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		switch(nextMoveState) {
 			case EXPLODE:
 				if(nextMoveState != moveState) {
-					body.disableAllContacts();
+					body.setMainSolid(false);
+					body.setAgentSensorEnabled(false);
 					body.setVelocity(0f, 0f);
 					body.setGravityScale(0f);
 					if(contactState == ContactState.AGENT)

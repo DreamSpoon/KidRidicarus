@@ -1,13 +1,14 @@
 package kidridicarus.game.agent.SMB.player.luigi;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.MobileAgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -17,8 +18,21 @@ public class LuigiFireballBody extends MobileAgentBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(7f);
 	private static final float GRAVITY_SCALE = 2f;
 
+	private static final CFBitSeq MAIN_ENABLED_CFCAT = CommonCF.SOLID_BODY_CFCAT;
+	private static final CFBitSeq MAIN_ENABLED_CFMASK = CommonCF.SOLID_BODY_CFMASK;
+	private static final CFBitSeq MAIN_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
+	private static final CFBitSeq MAIN_DISABLED_CFMASK = CommonCF.NO_CONTACT_CFMASK;
+
+	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
+			CommonCF.Alias.DESPAWN_BIT);
+	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.DESPAWN_BIT);
+
 	private LuigiFireball parent;
 	private LuigiFireballSpine spine;
+	private Fixture mainBodyFixture;
+	private Fixture acSensorFixture;
 
 	public LuigiFireballBody(LuigiFireball parent, World world, Vector2 position, Vector2 velocity) {
 		this.parent = parent;
@@ -47,24 +61,41 @@ public class LuigiFireballBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0f;		// slippery
 		fdef.restitution = 1f;	// bouncy
-		B2DFactory.makeBoxFixture(b2body, fdef, spine.createHMSensor(),
-				CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, fdef, spine.createHMSensor(),
+				MAIN_ENABLED_CFCAT, MAIN_ENABLED_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	private void createAgentSensorFixture() {
-		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
-		fdef.isSensor = true;
-		fdef.shape = boxShape;
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, spine.createAgentContactSensor()));
+		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentContactSensor(),
+				AS_ENABLED_CFCAT, AS_ENABLED_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
-	public void startExplode() {
-		disableAllContacts();
-		setVelocity(0f, 0f);
-		b2body.setGravityScale(0f);
+	public void setMainSolid(boolean enabled) {
+		if(enabled) {
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_ENABLED_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_ENABLED_CFMASK;
+		}
+		else {
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_DISABLED_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_DISABLED_CFMASK;
+		}
+		mainBodyFixture.refilter();
+	}
+
+	public void setAgentSensorEnabled(boolean enabled) {
+		if(enabled) {
+			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_ENABLED_CFCAT;
+			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_ENABLED_CFMASK;
+		}
+		else {
+			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
+			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
+		}
+		acSensorFixture.refilter();
+	}
+
+	public void setGravityScale(float scale) {
+		b2body.setGravityScale(scale);
 	}
 
 	public LuigiFireballSpine getSpine() {

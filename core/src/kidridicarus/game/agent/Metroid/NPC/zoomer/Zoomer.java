@@ -142,7 +142,7 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 	}
 
 	@Override
-	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 dmgOrigin) {
 		if(isInjured || isDead || aTeam == AgentTeam.NPC)
 			return false;
 

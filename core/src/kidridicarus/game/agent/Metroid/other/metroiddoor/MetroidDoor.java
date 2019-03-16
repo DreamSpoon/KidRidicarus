@@ -109,15 +109,15 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 				break;
 			case OPEN:
 				// make the door non-solid
-				mdBody.disableAllContacts();
+				mdBody.setMainSolid(false);
 				if(stateTimer > REMAIN_OPEN_DELAY)
 					return MoveState.CLOSING;
 				break;
 			case CLOSING:
 				if(isOpening)
 					return MoveState.OPENING_WAIT2;
-				// make the door solid
-				mdBody.enableRegularContacts();
+				// make the door solid again
+				mdBody.setMainSolid(true);
 				if(stateTimer > OPENCLOSE_DELAY2)
 					return MoveState.CLOSED;
 				break;
@@ -144,7 +144,7 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 	}
 
 	@Override
-	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 dmgOrigin) {
 		if(aTeam == AgentTeam.NPC)
 			return false;
 

@@ -34,18 +34,6 @@ public class GoombaSpine extends OnGroundSpine {
 		return acSensor;
 	}
 
-	public boolean isMoveBlocked(boolean moveRight) {
-		return hmSensor.isHMoveBlocked(body.getBounds(), moveRight);
-	}
-
-	public boolean isMoveBlockedByAgent(boolean moveRight) {
-		return AgentContactHoldSensor.isMoveBlockedByAgent(acSensor, body.getPosition(), moveRight);
-	}
-
-	public <T> List<T> getContactAgentsByClass(Class<T> cls) {
-		return acSensor.getContactsByClass(cls);
-	}
-
 	public void doWalkMove(boolean isFacingRight) {
 		if(isFacingRight)
 			body.setVelocity(GOOMBA_WALK_VEL, body.getVelocity().y);
@@ -53,13 +41,14 @@ public class GoombaSpine extends OnGroundSpine {
 			body.setVelocity(-GOOMBA_WALK_VEL, body.getVelocity().y);
 	}
 
-	public void doStopAndDisableAgentContacts() {
+/*	public void doStopAndDisableAgentContacts() {
 		body.zeroVelocity(true, true);
-		body.disableAgentContact();
+		body.setAgentSensorEnabled(false);
 	}
-
+*/
 	public void doBumpAndDisableAllContacts(boolean bumpRight) {
-		body.disableAllContacts();
+		body.setMainSolid(false);
+		body.setAgentSensorEnabled(false);
 		if(bumpRight)
 			body.setVelocity(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
@@ -73,16 +62,28 @@ public class GoombaSpine extends OnGroundSpine {
 			return false;
 	}
 
+	public boolean isMoveBlocked(boolean moveRight) {
+		return hmSensor.isHMoveBlocked(body.getBounds(), moveRight);
+	}
+
+	public boolean isMoveBlockedByAgent(boolean moveRight) {
+		return AgentContactHoldSensor.isMoveBlockedByAgent(acSensor, body.getPosition(), moveRight);
+	}
+
 	public boolean checkReverseVelocity(boolean isFacingRight) {
 		// if regular move is blocked...
-		if(body.getSpine().isMoveBlocked(isFacingRight) ||
-				body.getSpine().isMoveBlockedByAgent(isFacingRight)) {
+		if(isMoveBlocked(isFacingRight) ||
+				isMoveBlockedByAgent(isFacingRight)) {
 			// ... and reverse move is not also blocked then reverse 
-			if(!body.getSpine().isMoveBlocked(!isFacingRight) &&
-					!body.getSpine().isMoveBlockedByAgent(!isFacingRight)) {
+			if(!isMoveBlocked(!isFacingRight) &&
+					!isMoveBlockedByAgent(!isFacingRight)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public <T> List<T> getContactAgentsByClass(Class<T> cls) {
+		return acSensor.getContactsByClass(cls);
 	}
 }

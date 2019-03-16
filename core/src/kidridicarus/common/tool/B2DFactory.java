@@ -49,6 +49,12 @@ public class B2DFactory {
 		return fix;
 	}
 
+	public static Fixture makeBoxFixture(Body b2body, Object userData,
+			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height) {
+		return makeBoxFixture(b2body, new FixtureDef(), userData, categoryBits, maskBits, width, height,
+				new Vector2(0f, 0f));
+	}
+
 	public static Fixture makeBoxFixture(Body b2body, FixtureDef fdef, Object userData,
 			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height) {
 		return makeBoxFixture(b2body, fdef, userData, categoryBits, maskBits, width, height,

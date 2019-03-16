@@ -34,10 +34,10 @@ public class GoombaSprite extends Sprite {
 
 	public void update(float delta, Vector2 position, MoveState moveState) {
 		switch(moveState) {
-			case SQUISH:
-				setRegion(squish);
-				break;
-			case BUMP:
+//			case DEAD_SQUISH:
+//				setRegion(squish);
+//				break;
+			case DEAD_BUMP:
 				// no walking after bopping
 				setRegion(walkAnim.getKeyFrame(0f));
 				// upside down when bopped

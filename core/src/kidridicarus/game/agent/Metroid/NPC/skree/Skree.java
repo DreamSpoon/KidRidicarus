@@ -208,7 +208,7 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 	}
 
 	@Override
-	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 fromCenter) {
+	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 dmgOrigin) {
 		// no damage during injury, or if dead
 		if(isInjured || isDead || aTeam == AgentTeam.NPC)
 			return false;

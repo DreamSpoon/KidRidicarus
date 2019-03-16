@@ -3,15 +3,13 @@ package kidridicarus.game.agent.Metroid.player.samus;
 import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Fixture;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.MobileAgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
 import kidridicarus.common.info.CommonCF;
@@ -24,9 +22,24 @@ public class SamusShotBody extends MobileAgentBody {
 	private static final float SENSOR_WIDTH = UInfo.P2M(3);
 	private static final float SENSOR_HEIGHT = UInfo.P2M(3);
 
+	private static final float GRAVITY_SCALE = 0f;
+
+	private static final CFBitSeq MAIN_ENABLED_CFCAT = CommonCF.SOLID_BODY_CFCAT;
+	private static final CFBitSeq MAIN_ENABLED_CFMASK = CommonCF.SOLID_BODY_CFMASK;
+	private static final CFBitSeq MAIN_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
+	private static final CFBitSeq MAIN_DISABLED_CFMASK = CommonCF.NO_CONTACT_CFMASK;
+
+	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
+			CommonCF.Alias.DESPAWN_BIT);
+	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.DESPAWN_BIT);
+
 	private SamusShot parent;
 	private SolidBoundSensor boundSensor;
 	private AgentContactHoldSensor acSensor;
+	private Fixture mainBodyFixture;
+	private Fixture acSensorFixture;
 
 	public SamusShotBody(SamusShot parent, World world, Vector2 position, Vector2 velocity) {
 		this.parent = parent;
@@ -37,32 +50,47 @@ public class SamusShotBody extends MobileAgentBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 
 		createBody(world, position, velocity);
-		createAgentSensor();
+		createFixtures();
 	}
 
 	private void createBody(World world, Vector2 position, Vector2 velocity) {
-		BodyDef bdef = new BodyDef();
-		bdef.type = BodyType.DynamicBody;
-		bdef.position.set(position);
-		bdef.linearVelocity.set(velocity);
-		bdef.gravityScale = 0f;
-		b2body = world.createBody(bdef);
-
-		FixtureDef fdef = new FixtureDef();
-		boundSensor = new SolidBoundSensor(parent);
-		B2DFactory.makeBoxFixture(b2body, fdef, boundSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
+		b2body.setGravityScale(GRAVITY_SCALE);
 	}
 
-	private void createAgentSensor() {
-		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(SENSOR_WIDTH/2f, SENSOR_HEIGHT/2f);
-		fdef.isSensor = true;
-		fdef.shape = boxShape;
+	private void createFixtures() {
+		// create main fixture
+		boundSensor = new SolidBoundSensor(parent);
+		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_ENABLED_CFCAT, MAIN_ENABLED_CFMASK,
+				BODY_WIDTH, BODY_HEIGHT);
+		// create agent contact sensor fixture
 		acSensor = new AgentContactHoldSensor(this);
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, acSensor));
+		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, acSensor, AS_ENABLED_CFCAT, AS_ENABLED_CFMASK,
+				SENSOR_WIDTH, SENSOR_HEIGHT);
+	}
+
+	public void setMainSolid(boolean enabled) {
+		if(enabled) {
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_ENABLED_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_ENABLED_CFMASK;
+		}
+		else {
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_DISABLED_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_DISABLED_CFMASK;
+		}
+		mainBodyFixture.refilter();
+	}
+
+	public void setAgentSensorEnabled(boolean enabled) {
+		if(enabled) {
+			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_ENABLED_CFCAT;
+			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_ENABLED_CFMASK;
+		}
+		else {
+			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
+			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
+		}
+		acSensorFixture.refilter();
 	}
 
 	public boolean isHitBound() {

@@ -101,7 +101,7 @@ public class LuigiFireball extends Agent implements DisposableAgent {
 		switch(nextMoveState) {
 			case EXPLODE:
 				if(nextMoveState != moveState) {
-					body.startExplode();
+					body.getSpine().startExplode();
 					// if hit agent then play different sound than if hit boundary line
 					if(hitType == HitType.AGENT)
 						agency.playSound(AudioInfo.Sound.SMB.KICK);

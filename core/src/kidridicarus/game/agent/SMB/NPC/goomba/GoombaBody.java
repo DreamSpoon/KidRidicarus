@@ -1,16 +1,13 @@
 package kidridicarus.game.agent.SMB.NPC.goomba;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.MobileAgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -21,8 +18,20 @@ public class GoombaBody extends MobileAgentBody {
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
+	private static final CFBitSeq MAIN_ENABLED_CFCAT = CommonCF.SOLID_BODY_CFCAT;
+	private static final CFBitSeq MAIN_ENABLED_CFMASK = CommonCF.SOLID_BODY_CFMASK;
+	private static final CFBitSeq MAIN_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
+	private static final CFBitSeq MAIN_DISABLED_CFMASK = CommonCF.NO_CONTACT_CFMASK;
+
+	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
+			CommonCF.Alias.DESPAWN_BIT);
+	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.DESPAWN_BIT);
+
 	private Goomba parent;
 	private GoombaSpine spine;
+	private Fixture mainBodyFixture;
 	private Fixture acSensorFixture;
 
 	public GoombaBody(Goomba parent, World world, Vector2 position) {
@@ -37,55 +46,44 @@ public class GoombaBody extends MobileAgentBody {
 	}
 
 	private void createBody(World world, Vector2 position) {
-		BodyDef bdef = new BodyDef();
-		bdef.type = BodyType.DynamicBody;
-		bdef.position.set(position);
-		b2body = world.createBody(bdef);
-
+		b2body = B2DFactory.makeDynamicBody(world, position);
 		spine = new GoombaSpine(this);
 	}
 
 	private void createFixtures() {
-		createMainFixture();
-		createAgentSensorFixture();
-		createGroundSensorFixture();
+		// main body fixture
+		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, spine.createHorizontalMoveSensor(),
+				MAIN_ENABLED_CFCAT, MAIN_ENABLED_CFMASK, getBodySize().x, getBodySize().y);
+		// agent sensor fixture
+		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
+				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		// ground sensor fixture
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
+				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
 	}
 
-	private void createMainFixture() {
-		FixtureDef fdef = new FixtureDef();
-		B2DFactory.makeBoxFixture(b2body, fdef, spine.createHorizontalMoveSensor(),
-				CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, getBodySize().x, getBodySize().y);
+	public void setMainSolid(boolean enabled) {
+		if(enabled) {
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_ENABLED_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_ENABLED_CFMASK;
+		}
+		else {
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_DISABLED_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_DISABLED_CFMASK;
+		}
+		mainBodyFixture.refilter();
 	}
 
-	private void createAgentSensorFixture() {
-		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(BODY_WIDTH/2f, BODY_HEIGHT/2f);
-		fdef.shape = boxShape;
-		fdef.isSensor = true;
-		acSensorFixture = b2body.createFixture(fdef);
-		acSensorFixture.setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, spine.createAgentSensor()));
-	}
-
-	private void createGroundSensorFixture() {
-		FixtureDef fdef = new FixtureDef();
-		PolygonShape boxShape;
-		boxShape = new PolygonShape();
-		boxShape.setAsBox(FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f), 0f);
-		fdef.shape = boxShape;
-		fdef.isSensor = true;
-		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.GROUND_SENSOR_CFCAT,
-				CommonCF.GROUND_SENSOR_CFMASK, spine.createOnGroundSensor()));
-	}
-
-	// disable contacts between the agent contact sensor and agents
-	public void disableAgentContact() {
-		if(!(acSensorFixture.getUserData() instanceof AgentBodyFilter))
-			return;
-		((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = CommonCF.NO_CONTACT_CFCAT;
-		((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = CommonCF.NO_CONTACT_CFMASK;
-		// the contact filters were changed, so let Box2D know to update contacts here
+	public void setAgentSensorEnabled(boolean enabled) {
+		if(enabled) {
+			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_ENABLED_CFCAT;
+			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_ENABLED_CFMASK;
+		}
+		else {
+			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
+			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
+		}
 		acSensorFixture.refilter();
 	}
 

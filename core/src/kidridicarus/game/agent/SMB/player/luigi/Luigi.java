@@ -188,7 +188,8 @@ QQ.pr("you made Luigi so happy!");
 	private void processDeadMove(boolean moveStateChanged) {
 		// and if newly dead then disable contacts and start dead sound
 		if(moveStateChanged) {
-			body.disableAllContacts();
+			body.setMainSolid(false);
+			body.setAgentSensorEnabled(false);
 			observer.stopAllMusic();
 			agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
 		}

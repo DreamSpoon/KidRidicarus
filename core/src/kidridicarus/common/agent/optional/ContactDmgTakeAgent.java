@@ -10,5 +10,5 @@ public interface ContactDmgTakeAgent {
 	 * Returns true if damage was taken, otherwise returns false.
 	 * AgentTeam is the team of the agent that is pushing damage to this agent.
 	 */
-	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 fromCenter);
+	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 dmgOrigin);
 }

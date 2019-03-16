@@ -2,7 +2,6 @@ package kidridicarus.game.agent.SMB.item.fireflower;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
@@ -27,7 +26,7 @@ public class FireFlowerBody extends AgentBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeDynamicBody(world, position);
 		spine = new PowerupSpine(this);
-		B2DFactory.makeBoxFixture(b2body, new FixtureDef(), spine.createAgentSensor(),
+		B2DFactory.makeBoxFixture(b2body, spine.createAgentSensor(),
 				CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 

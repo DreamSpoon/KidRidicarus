@@ -569,8 +569,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 				observer.stopAllMusic();
 				agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
 
-				mBody.disableAllContacts();
-
+				mBody.setContactEnabled(false);
 				mBody.setVelocity(0f, 0f);
 				mBody.applyBodyImpulse(new Vector2(0, 4f));
 			}

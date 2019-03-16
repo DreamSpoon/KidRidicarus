@@ -2,7 +2,6 @@ package kidridicarus.game.agent.Metroid.other.metroiddoor;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
@@ -16,11 +15,15 @@ import kidridicarus.common.tool.B2DFactory;
 public class MetroidDoorBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(8f);
 	private static final float BODY_HEIGHT = UInfo.P2M(48f);
-	private static final CFBitSeq CFCAT_BITS =
-			new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.SOLID_BOUND_BIT);
-	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
+
+	private static final CFBitSeq MAIN_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
+			CommonCF.Alias.SOLID_BOUND_BIT);
+	private static final CFBitSeq MAIN_ENABLED_CFMASK = new CFBitSeq(true);
+	private static final CFBitSeq MAIN_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
+	private static final CFBitSeq MAIN_DISABLED_CFMASK = CommonCF.NO_CONTACT_CFMASK;
 
 	private MetroidDoor parent;
+	private Fixture mainBodyFixture;
 
 	public MetroidDoorBody(MetroidDoor parent, World world, Vector2 position) {
 		this.parent = parent;
@@ -34,18 +37,20 @@ public class MetroidDoorBody extends AgentBody {
 		//   -will zoomer be able to walk on door?
 		//   -will this agent be confused with a solid bound line seg from collision map?
 		b2body = B2DFactory.makeStaticBody(world, position);
-		B2DFactory.makeBoxFixture(b2body, new FixtureDef(), this, CFCAT_BITS, CFMASK_BITS, BODY_WIDTH, BODY_HEIGHT);
+		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, this,
+				MAIN_ENABLED_CFCAT, MAIN_ENABLED_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
-	public void enableRegularContacts() {
-		for(Fixture fix : b2body.getFixtureList()) {
-			if(!(fix.getUserData() instanceof AgentBodyFilter))
-				continue;
-			((AgentBodyFilter) fix.getUserData()).categoryBits = CFCAT_BITS;
-			((AgentBodyFilter) fix.getUserData()).maskBits = CFMASK_BITS;
-			// the contact filters were changed, so let Box2D know to update contacts here
-			fix.refilter();
+	public void setMainSolid(boolean enabled) {
+		if(enabled) {
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_ENABLED_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_ENABLED_CFMASK;
 		}
+		else {
+			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_DISABLED_CFCAT;
+			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_DISABLED_CFMASK;
+		}
+		mainBodyFixture.refilter();
 	}
 
 	@Override
