@@ -77,7 +77,6 @@ public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, Po
 	private boolean didTakeDamage;
 	private boolean isDead;
 	private float noDamageCooldown;
-	private boolean isDrawAllowed;
 
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -97,7 +96,6 @@ QQ.pr("you made Luigi so happy!");
 		powerupsReceived = new LinkedList<PowType>();
 		didTakeDamage = false;
 		noDamageCooldown = 0f;
-		isDrawAllowed = true;
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
@@ -182,7 +180,7 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processDeadMove(boolean moveStateChanged, MoveState nextMoveState) {
-		// and if newly dead then disable contacts and start dead sound
+		// if newly dead then disable contacts and start dead sound
 		if(moveStateChanged) {
 			body.allowOnlyDeadContacts();
 			body.zeroVelocity(true, true);
@@ -193,11 +191,10 @@ QQ.pr("you made Luigi so happy!");
 			if(nextMoveState == MoveState.DEAD_BOUNCE)
 				body.applyBodyImpulse(DEAD_BOUNCE_IMP);
 		}
-		else {
-			// ... and if died a long time ago then do game over
-			if(moveStateTimer > DEAD_DELAY_TIME)
+		// ... and if died a long time ago then do game over
+		else if(moveStateTimer > DEAD_DELAY_TIME)
 				supervisor.setGameOver();
-		}
+		// ... else do nothing.
 	}
 
 	private void processPowerupsReceived() {
@@ -489,16 +486,11 @@ QQ.pr("you made Luigi so happy!");
 
 	private void processSprite(float delta) {
 		sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,
-				didShootFireballThisFrame);
-		if(noDamageCooldown > 0f)
-			isDrawAllowed = !isDrawAllowed;
-		else
-			isDrawAllowed = true;
+				didShootFireballThisFrame, (noDamageCooldown > 0f));
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
-		if(isDrawAllowed)
-			batch.draw(sprite);
+		batch.draw(sprite);
 	}
 
 	@Override

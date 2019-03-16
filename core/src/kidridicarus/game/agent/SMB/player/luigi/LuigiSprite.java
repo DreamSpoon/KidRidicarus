@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
@@ -49,6 +50,7 @@ public class LuigiSprite extends Sprite {
 //	private static final int SML_INV3_GRP = 3;
 
 	private static final Vector2 SPRITE_DUCK_OFFSET = UInfo.P2MVector(0f, 8f);
+	private static final float SHRINK_OFFSET_Y = UInfo.P2M(8);
 
 	/*
 	 * Animations by body size and [pose][group], where:
@@ -60,15 +62,26 @@ public class LuigiSprite extends Sprite {
 	private Animation<TextureRegion>[][] bigAnim;
 
 	private MoveState prevParentMoveState;
-	private float stateTimer;
+	private PowerState prevParentPowerState;
+	private float parentMoveStateTimer;
 	private float throwPoseCooldown;
+	private boolean isDrawAllowed;
+
+	private enum SpriteState { NORMAL, GROW, SHRINK }
+	private SpriteState spriteState;
+	private float spriteStateTimer;
 
 	public LuigiSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean facingRight) {
 		createAnimations(atlas);
 
 		prevParentMoveState = MoveState.STAND;
-		stateTimer = 0f;
+		prevParentPowerState = parentPowerState;
+		parentMoveStateTimer = 0f;
 		throwPoseCooldown = 0f;
+		isDrawAllowed = true;
+
+		spriteState = SpriteState.NORMAL;
+		spriteStateTimer = 0f;
 
 		// set the initial texture region and bounds
 		switch(parentPowerState) {
@@ -165,7 +178,68 @@ public class LuigiSprite extends Sprite {
 	}
 
 	public void update(float delta, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
-			boolean facingRight, boolean didShootFireball) {
+			boolean facingRight, boolean didShootFireball, boolean isBlinking) {
+		SpriteState nextSpriteState = getNextSpriteState(parentPowerState);
+		boolean spriteStateChanged = nextSpriteState != spriteState;
+		switch(nextSpriteState) {
+			case NORMAL:
+				processPowerState(delta, position, parentMoveState, parentPowerState, facingRight,
+						didShootFireball, isBlinking);
+				break;
+			case GROW:
+				if(spriteStateChanged)
+					setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
+				processGrowState(position);
+				break;
+			case SHRINK:
+				processShrinkState(position);
+				break;
+		}
+
+		// flip to face left if needed
+		if(!facingRight && !isFlipX())
+			flip(true, false);
+
+		// if blinking due to damage invulnerability, then flicker the sprite
+		if(isBlinking && isDrawAllowed)
+			isDrawAllowed = false;
+		else
+			isDrawAllowed = true;
+
+		prevParentPowerState = parentPowerState;
+
+		parentMoveStateTimer = parentMoveState == prevParentMoveState ? parentMoveStateTimer+delta : 0f;
+		prevParentMoveState = parentMoveState;
+
+		spriteStateTimer = nextSpriteState == spriteState ? spriteStateTimer+delta : 0f;
+		spriteState = nextSpriteState;
+	}
+
+	private SpriteState getNextSpriteState(PowerState parentPowerState) {
+		// did parent grow? if so then do grow anim
+		if(parentPowerState.isBigBody() && !prevParentPowerState.isBigBody())
+			return SpriteState.GROW;
+		// did parent shrink? if so then do shrink anim
+		else if(!parentPowerState.isBigBody() && prevParentPowerState.isBigBody())
+			return SpriteState.SHRINK;
+		else if(spriteState == SpriteState.GROW) {
+			if(bigAnim[GROW_POSE][BIG_REG_GRP].isAnimationFinished(spriteStateTimer))
+				return SpriteState.NORMAL;
+			else
+				return SpriteState.GROW;
+		}
+		else if(spriteState == SpriteState.SHRINK) {
+			if(bigAnim[SHRINK_POSE][BIG_REG_GRP].isAnimationFinished(spriteStateTimer))
+				return SpriteState.NORMAL;
+			else
+				return SpriteState.SHRINK;
+		}
+		else
+			return SpriteState.NORMAL;
+	}
+
+	private void processPowerState(float delta, Vector2 position, MoveState parentMoveState,
+			PowerState parentPowerState, boolean facingRight, boolean didShootFireball, boolean isBlinking) {
 		int group = SML_REG_GRP;
 		switch(parentPowerState) {
 			case SMALL:
@@ -187,7 +261,7 @@ public class LuigiSprite extends Sprite {
 		if(didShootFireball)
 			throwPoseCooldown = THROW_POSE_TIME;
 		// check for fireball pose
-		if(throwPoseCooldown > 0f)
+		if(throwPoseCooldown > 0f && parentPowerState.isBigBody())
 			pose = THROW_POSE;
 		// other poses...
 		else {
@@ -219,22 +293,32 @@ public class LuigiSprite extends Sprite {
 			}
 		}
 
-		if(parentPowerState.isBigBody() && parentMoveState != MoveState.DEAD)
-			setRegion(bigAnim[pose][group].getKeyFrame(stateTimer));
-		else
-			setRegion(smlAnim[pose][group].getKeyFrame(stateTimer));
-
-		// flip to face left if necessary
-		if(!facingRight && !isFlipX())
-			flip(true, false);
-		setPosition(position.x - getWidth()/2f + offset.x, position.y - getHeight()/2f + offset.y);
-
 		// reduce throw pose cooldown
 		throwPoseCooldown -= delta;
 		if(throwPoseCooldown < 0)
 			throwPoseCooldown = 0f;
 
-		stateTimer = parentMoveState == prevParentMoveState ? stateTimer+delta : 0f;
-		prevParentMoveState = parentMoveState;
+		if(parentPowerState.isBigBody() && !parentMoveState.isDead())
+			setRegion(bigAnim[pose][group].getKeyFrame(parentMoveStateTimer));
+		else
+			setRegion(smlAnim[pose][group].getKeyFrame(parentMoveStateTimer));
+
+		setPosition(position.x - getWidth()/2f + offset.x, position.y - getHeight()/2f + offset.y);
+	}
+
+	private void processGrowState(Vector2 position) {
+		setRegion(bigAnim[GROW_POSE][BIG_REG_GRP].getKeyFrame(spriteStateTimer));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+	}
+
+	private void processShrinkState(Vector2 position) {
+		setRegion(bigAnim[SHRINK_POSE][BIG_REG_GRP].getKeyFrame(spriteStateTimer));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f + SHRINK_OFFSET_Y);
+	}
+
+	@Override
+	public void draw(Batch batch) {
+		if(isDrawAllowed)
+			super.draw(batch);
 	}
 }
