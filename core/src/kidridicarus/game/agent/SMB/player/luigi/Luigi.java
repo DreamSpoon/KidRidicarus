@@ -13,7 +13,9 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentSupervisor;
+import kidridicarus.common.agent.AgentTeam;
 import kidridicarus.common.agent.GameAgentObserver;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -27,7 +29,7 @@ import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.tool.QQ;
 
-public class Luigi extends Agent implements PlayerAgent, PowerupTakeAgent, DisposableAgent {
+public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, PowerupTakeAgent, DisposableAgent {
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
 	private static final Vector2 GROW_OFFSET = DUCK_OFFSET;
 	private static final float DEAD_DELAY_TIME = 3f;
@@ -35,19 +37,22 @@ public class Luigi extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	private static final float JUICE_PER_FIREBALL = 1.3f;
 	private static final float FIREBALL_OFFSET = UInfo.P2M(8f);
 	private static final float COOLDOWN_PER_FIREBALL = 0.25f;
+	private static final float NO_DAMAGE_TIME = 3f;
+	private static final Vector2 DEAD_BOUNCE_IMP = new Vector2(0, 6f);
 
 	public enum PowerState {
 		SMALL, BIG, FIRE;
 		public boolean isBigBody() { return !this.equals(SMALL); }
 	}
 	public enum MoveState {
-		STAND, RUN, BRAKE, FALL, DUCK, DUCKFALL, DUCKJUMP, JUMP, DEAD;
+		STAND, RUN, BRAKE, FALL, DUCK, DUCKFALL, DUCKJUMP, JUMP, DEAD, DEAD_BOUNCE;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
 		public boolean isDuck() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP); }
 		public boolean isJump() { return this.equalsAny(JUMP, DUCKJUMP); }
 		public boolean isOnGround() { return this.equalsAny(STAND, RUN, BRAKE, DUCK); }
+		public boolean isDead() { return this.equalsAny(DEAD, DEAD_BOUNCE); }
 	}
 
 	private LuigiSupervisor supervisor;
@@ -62,12 +67,17 @@ public class Luigi extends Agent implements PlayerAgent, PowerupTakeAgent, Dispo
 	private boolean isNextJumpAllowed;
 	private boolean isNextJumpDelayed;
 	private boolean isJumpForceContinue;
-	private boolean isHeadBumped;
+	// next head bump is denied immediately following headbump and lasts until Agent moves downward
+	private boolean isNextHeadBumpDenied;
 	private float fireballJuice;
 	private float shootCooldown;
 	private boolean didShootFireballThisFrame;
 	// list of powerups received during contact update
 	private LinkedList<PowType> powerupsReceived;
+	private boolean didTakeDamage;
+	private boolean isDead;
+	private float noDamageCooldown;
+	private boolean isDrawAllowed;
 
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -75,15 +85,19 @@ QQ.pr("you made Luigi so happy!");
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
 		powerState = PowerState.FIRE;
+		isDead = false;
 		facingRight = true;
 		isNextJumpAllowed = false;
 		isNextJumpDelayed = false;
 		isJumpForceContinue = false;
-		isHeadBumped = false;
+		isNextHeadBumpDenied = false;
 		fireballJuice = MAX_FIREBALL_JUICE;
 		shootCooldown = 0f;
 		didShootFireballThisFrame = false;
 		powerupsReceived = new LinkedList<PowType>();
+		didTakeDamage = false;
+		noDamageCooldown = 0f;
+		isDrawAllowed = true;
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
@@ -114,13 +128,13 @@ QQ.pr("you made Luigi so happy!");
 	 */
 	private void doContactUpdate() {
 		// exit if head bump flag hasn't reset
-		if(isHeadBumped)
+		if(isNextHeadBumpDenied)
 			return;
 		// if luigi is big then hit hard
 		if(powerState.isBigBody())
-			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
+			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
 		else
-			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
+			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
 	}
 
 	private void doUpdate(float delta) {
@@ -130,29 +144,29 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processContacts() {
-		// if head bump flag is on, and body is moving down, then reset the flag
-		if(isHeadBumped && body.getSpine().isMovingDown())
-			isHeadBumped = false;
+		// if head bump deny flag is on, and body is moving down, then reset the flag
+		if(isNextHeadBumpDenied && body.getSpine().isMovingDown())
+			isNextHeadBumpDenied = false;
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
+		if(!moveState.isDead()) {
+			processPowerupsReceived();
+			processFireball(moveAdvice);
+			processDamageTaken(delta);
+		}
+
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		boolean moveStateChanged = nextMoveState != moveState;
 		// if luigi is dead...
-		if(nextMoveState == MoveState.DEAD)
-			processDeadMove(moveStateChanged);
-		else {
-			processPowerupsReceived();
-
-			// if pressing fireball button
-			processFireball(moveAdvice);
-
-			// check on ground and fork process move
-			if(nextMoveState.isOnGround())
-				processGroundMove(moveAdvice, nextMoveState);
-			else
-				processAirMove(moveAdvice, nextMoveState);
-		}
+		if(nextMoveState.isDead())
+			processDeadMove(moveStateChanged, nextMoveState);
+		// if on ground...
+		else if(nextMoveState.isOnGround())
+			processGroundMove(moveAdvice, nextMoveState);
+		// else do air move
+		else
+			processAirMove(moveAdvice, nextMoveState);
 
 		// recharge the fireball juice, stopping at max fill line
 		fireballJuice += delta;
@@ -165,6 +179,60 @@ QQ.pr("you made Luigi so happy!");
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
+	}
+
+	private void processDeadMove(boolean moveStateChanged, MoveState nextMoveState) {
+		// and if newly dead then disable contacts and start dead sound
+		if(moveStateChanged) {
+			body.allowOnlyDeadContacts();
+			body.zeroVelocity(true, true);
+			observer.stopAllMusic();
+			agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
+
+			// do bounce up if needed
+			if(nextMoveState == MoveState.DEAD_BOUNCE)
+				body.applyBodyImpulse(DEAD_BOUNCE_IMP);
+		}
+		else {
+			// ... and if died a long time ago then do game over
+			if(moveStateTimer > DEAD_DELAY_TIME)
+				supervisor.setGameOver();
+		}
+	}
+
+	private void processPowerupsReceived() {
+		for(PowType pow : powerupsReceived)
+			applyPowerup(pow);
+		powerupsReceived.clear();
+	}
+
+	private void applyPowerup(PowType pow) {
+		PowerState newPowerState = powerState;
+		switch(pow) {
+			case MUSHROOM:
+				// if small then power up to big
+				if(powerState == PowerState.SMALL)
+					newPowerState = PowerState.BIG;
+
+				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+				break;
+			case FIREFLOWER:
+				// if small then power up to big
+				if(powerState == PowerState.SMALL)
+					newPowerState = PowerState.BIG;
+				// if big then power up to fire
+				else if(powerState == PowerState.BIG)
+					newPowerState = PowerState.FIRE;
+
+				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+				break;
+			default:
+				break;
+		}
+		// if growing then increase body size
+		if(newPowerState.isBigBody() && !powerState.isBigBody())
+			body.defineBody(body.getPosition().cpy().add(GROW_OFFSET), body.getVelocity(), true, moveState.isDuck());
+		powerState = newPowerState;
 	}
 
 	private void processFireball(MoveAdvice moveAdvice) {
@@ -185,50 +253,32 @@ QQ.pr("you made Luigi so happy!");
 		}
 	}
 
-	private void processDeadMove(boolean moveStateChanged) {
-		// and if newly dead then disable contacts and start dead sound
-		if(moveStateChanged) {
-			body.allowOnlyDeadContacts();
-			observer.stopAllMusic();
-			agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
+	private void processDamageTaken(float delta) {
+		// exit if invulnerable to next damage
+		if(noDamageCooldown > 0f) {
+			noDamageCooldown -= delta;
+			didTakeDamage = false;
+			return;
 		}
-		// ... and if died a long time ago then do game over
-		else if(moveStateTimer > DEAD_DELAY_TIME)
-			supervisor.setGameOver();
-		// otherwise do nothing while in dead state
-	}
+		// exit if no damage taken this frame
+		else if(!didTakeDamage)
+			return;
 
-	private void processPowerupsReceived() {
-		for(PowType pow : powerupsReceived)
-			applyPowerup(pow);
-		powerupsReceived.clear();
-	}
+		// apply damage and modify body if needed
+		didTakeDamage = false;
+		switch(powerState) {
+			case SMALL:
+				isDead = true;
+				break;
+			case BIG:
+			case FIRE:
+				powerState = PowerState.SMALL;
+				noDamageCooldown = NO_DAMAGE_TIME;
+				body.defineBody(body.getPosition().cpy().sub(GROW_OFFSET), body.getVelocity(), false, false);
 
-	private void applyPowerup(PowType pow) {
-		PowerState newPowerState = powerState;
-		switch(pow) {
-			case MUSHROOM:
-				// if small then power up to big
-				if(powerState == PowerState.SMALL)
-					newPowerState = PowerState.BIG;
-				// otherwise maintain powerstate
-				break;
-			case FIREFLOWER:
-				// if small then power up to big
-				if(powerState == PowerState.SMALL)
-					newPowerState = PowerState.BIG;
-				// if big then power up to fire
-				else if(powerState == PowerState.BIG)
-					newPowerState = PowerState.FIRE;
-				// otherwise maintain powerstate
-				break;
-			default:
+				agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
 				break;
 		}
-		// if growing then increase body size
-		if(newPowerState.isBigBody() && !powerState.isBigBody())
-			body.defineBody(body.getPosition().cpy().add(GROW_OFFSET), body.getVelocity(), true, moveState.isDuck());
-		powerState = newPowerState;
 	}
 
 	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
@@ -309,6 +359,11 @@ QQ.pr("you made Luigi so happy!");
 					isNextJumpAllowed = false;
 					isJumpForceContinue = true;
 					body.getSpine().applyJumpImpulse();
+
+					if(powerState.isBigBody())
+						agency.playSound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
+					else
+						agency.playSound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
 				}
 				else {
 					if(!moveAdvice.action1)
@@ -340,9 +395,12 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
-		// if luigi is already dead, or hit a despawn box, then return dead
-		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn())
+		if(moveState.isDead())
+			return moveState;
+		else if(body.getSpine().isContactDespawn())
 			return MoveState.DEAD;
+		else if(isDead)
+			return MoveState.DEAD_BOUNCE;
 		// if on ground then do ground move
 		else if(body.getSpine().isOnGround())
 			return getNextMoveStateGround(moveAdvice);
@@ -430,17 +488,32 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processSprite(float delta) {
-		sprite.update(delta, body.getPosition(), moveState, powerState, facingRight, didShootFireballThisFrame);
+		sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,
+				didShootFireballThisFrame);
+		if(noDamageCooldown > 0f)
+			isDrawAllowed = !isDrawAllowed;
+		else
+			isDrawAllowed = true;
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(sprite);
+		if(isDrawAllowed)
+			batch.draw(sprite);
 	}
 
 	@Override
 	public boolean onTakePowerup(PowType powType) {
-QQ.pr("thank you for powerup " + powType);
+		if(moveState == MoveState.DEAD)
+			return false;
 		powerupsReceived.add(powType);
+		return true;
+	}
+
+	@Override
+	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 dmgOrigin) {
+		if(isDead || didTakeDamage || noDamageCooldown > 0f || moveState == MoveState.DEAD)
+			return false;
+		didTakeDamage = true;
 		return true;
 	}
 

@@ -19,7 +19,6 @@ import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.AgentTeam;
-import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -510,7 +509,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 				mBody.applyBodyImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL));
 			}
 
-			// if not invincible then check for incoming damage
+/*			// if not invincible then check for incoming damage
 			if(dmgInvincibleTime <= 0f) {
 				// check for contact damage
 				for(Agent a : list) {
@@ -520,7 +519,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 					if(((ContactDmgGiveAgent) a).isContactDamage() && !bouncedAgents.contains(a))
 						isTakeDamage = true;
 				}
-			}
+			}*/
 		}
 	}
 

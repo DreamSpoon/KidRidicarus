@@ -10,10 +10,9 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.info.CommonInfo;
 
-public class SkreeExp extends Agent implements ContactDmgGiveAgent, DisposableAgent {
+public class SkreeExp extends Agent implements DisposableAgent {
 	private static final float LIVE_TIME = 0.167f;
 
 	private SkreeExpBody seBody;
@@ -58,11 +57,6 @@ public class SkreeExp extends Agent implements ContactDmgGiveAgent, DisposableAg
 	@Override
 	public Rectangle getBounds() {
 		return seBody.getBounds();
-	}
-
-	@Override
-	public boolean isContactDamage() {
-		return true;
 	}
 
 	@Override

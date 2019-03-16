@@ -28,7 +28,7 @@ public class LuigiBody extends AgentBody {
 	// agent sensor
 	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
-			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.POWERUP_BIT);
+			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.POWERUP_BIT, CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
 	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
 			CommonCF.Alias.DESPAWN_BIT);

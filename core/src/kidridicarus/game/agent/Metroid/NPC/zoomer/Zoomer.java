@@ -12,7 +12,6 @@ import kidridicarus.game.info.GameKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentTeam;
-import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.Direction4;
@@ -23,8 +22,7 @@ import kidridicarus.common.tool.Direction4;
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then
  * check the sensors.
  */
-public class Zoomer extends Agent implements ContactDmgGiveAgent,
-		ContactDmgTakeAgent, DisposableAgent {
+public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
 	private static final float INJURY_TIME = 10f/60f;
 
@@ -155,11 +153,6 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 			isInjured = true;
 
 		return true;
-	}
-
-	@Override
-	public boolean isContactDamage() {
-		return !isDead;
 	}
 
 	@Override

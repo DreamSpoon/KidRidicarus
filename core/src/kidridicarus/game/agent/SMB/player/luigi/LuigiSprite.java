@@ -212,6 +212,7 @@ public class LuigiSprite extends Sprite {
 					pose = JUMP_POSE;
 					break;
 				case DEAD:
+				case DEAD_BOUNCE:
 					pose = DEAD_POSE;
 					group = SML_REG_GRP;
 					break;

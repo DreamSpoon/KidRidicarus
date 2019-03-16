@@ -14,7 +14,6 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.AgentSupervisor;
-import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
@@ -133,13 +132,13 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 					flagpole.use(this);
 					break;
 				}
-				// check for incoming damage and apply
+/*				// check for incoming damage and apply
 				for(ContactDmgGiveAgent agent : samusBody.getSpine().getContactsByClass(ContactDmgGiveAgent.class)) {
 					if(agent.isContactDamage()) {
 						nextContactState = ContactState.DAMAGE;
 						takeContactDamage(((Agent) agent).getPosition());
 					}
-				}
+				}*/
 				break;
 			case DAMAGE:
 				// check for return to regular contact state

@@ -11,14 +11,13 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentTeam;
-import kidridicarus.common.agent.optional.ContactDmgGiveAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.GameKV;
 
-public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeAgent, DisposableAgent {
+public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
 
 	private static final float INJURY_TIME = 10f/60f;
@@ -222,14 +221,6 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 			isInjured = true;
 		// took damage
 		return true;
-	}
-
-	/*
-	 * Contact damage is enabled when Skree is not injured and not dead.
-	 */
-	@Override
-	public boolean isContactDamage() {
-		return !(isInjured | isDead);
 	}
 
 	@Override
