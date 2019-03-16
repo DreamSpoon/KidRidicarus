@@ -19,6 +19,7 @@ import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
+import kidridicarus.game.tool.QQ;
 
 public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GOOMBA_SQUISH_TIME = 2f;
@@ -72,7 +73,8 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 
 	private void doContactUpdate() {
 		boolean isHeadBounced = false;
-		for(Agent agent : body.getSpine().getAllContactAgents()) {
+		for(Agent agent : body.getSpine().getHeadBounceAndContactDamageAgents()) {
+QQ.pr("first contact with " + agent);
 			// if they take contact damage and give head bounces...
 			if(agent instanceof ContactDmgTakeAgent && agent instanceof HeadBounceGiveAgent) {
 				// if can't pull head bounce then try pushing contact damage
@@ -117,7 +119,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				if(moveStateChanged)
 					startBump();
 				// wait a short time and disappear
-				else if(moveStateTimer > GOOMBA_BUMP_FALL_TIME)
+				else if(moveStateTimer > GOOMBA_BUMP_FALL_TIME || body.getSpine().isContactDespawn())
 					agency.disposeAgent(this);
 				break;
 			case DEAD_SQUISH:
@@ -125,7 +127,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				if(moveStateChanged)
 					startSquish();
 				// wait a short time and disappear
-				else if(moveStateTimer > GOOMBA_SQUISH_TIME)
+				else if(moveStateTimer > GOOMBA_SQUISH_TIME || body.getSpine().isContactDespawn())
 					agency.disposeAgent(this);
 				break;
 		}
@@ -146,8 +148,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	}
 
 	private void startSquish() {
-		body.zeroVelocity(true, true);
-		body.allowOnlyDeadContacts();
+		body.getSpine().doDeadSquishContactsAndMove();
 		agency.playSound(AudioInfo.Sound.SMB.STOMP);
 		if(perp != null) {
 			agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, true,
@@ -156,7 +157,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	}
 
 	private void startBump() {
-		body.getSpine().doBumpAndDisableAllContacts(deadBumpRight);
+		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
 		if(perp != null) {
 			agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, false,
 					body.getPosition(), UInfo.P2M(16), perp));
@@ -186,7 +187,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	}
 
 	@Override
-	public void onBump(Agent agent) {
+	public void onTakeBump(Agent agent) {
 		if(nextDeadState != DeadState.NONE)
 			return;
 

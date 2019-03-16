@@ -253,7 +253,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 		while(iter.hasNext()) {
 			Agent agent = iter.next();
 			if(agent instanceof BumpTakeAgent)
-				((BumpTakeAgent) agent).onBump(bumpingAgent);
+				((BumpTakeAgent) agent).onTakeBump(bumpingAgent);
 		}
 	}
 

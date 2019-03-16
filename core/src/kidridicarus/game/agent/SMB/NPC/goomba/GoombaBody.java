@@ -8,6 +8,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -52,7 +53,9 @@ public class GoombaBody extends AgentBody {
 		B2DFactory.makeBoxFixture(b2body, spine.createHorizontalMoveSensor(), MAIN_CFCAT, MAIN_CFMASK,
 				getBodySize().x, getBodySize().y);
 		// agent sensor fixture
-		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+		AgentContactHoldSensor sensor = spine.createAgentContactSensor();
+		sensor.chainTo(spine.createHeadBounceAndContactDamageSensor());
+		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, sensor, AS_CFCAT, AS_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
 		// ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
@@ -60,7 +63,15 @@ public class GoombaBody extends AgentBody {
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
 	}
 
-	public void allowOnlyDeadContacts() {
+	public void allowOnlyDeadSquishContacts() {
+		// change the needed agent contact sensor bits
+		((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
+		((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
+		acSensorFixture.refilter();
+	}
+
+	public void allowOnlyDeadBumpContacts() {
+		disableAllContacts();
 		// change the needed agent contact sensor bits
 		((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
 		((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;

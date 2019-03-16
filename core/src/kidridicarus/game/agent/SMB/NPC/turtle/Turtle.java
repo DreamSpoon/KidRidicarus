@@ -15,9 +15,9 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
+import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.SMBInfo.PointAmount;
-import kidridicarus.game.tool.QQ;
 
 /*
  * TODO:
@@ -36,6 +36,8 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private float moveStateTimer;
 	private MoveState moveState;
 	private boolean isFacingRight;
+	private boolean isHeadBounced;
+	private boolean isHiding;
 	private boolean isDead;
 	private boolean deadBumpRight;
 	private Agent perp;
@@ -46,11 +48,13 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		moveStateTimer = 0f;
 		moveState = MoveState.WALK;
 		isFacingRight = false;
+		isHeadBounced = false;
+		isHiding = false;
 		isDead = false;
 		deadBumpRight = false;
 		perp = null;
+
 		body = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties));
-		sprite = new TurtleSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -59,6 +63,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		sprite = new TurtleSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
 				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
@@ -66,9 +71,29 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	}
 
 	private void doContactUpdate() {
-		// push damage to contact damage agents
-		for(ContactDmgTakeAgent agent : body.getSpine().getContactAgentsByClass(ContactDmgTakeAgent.class))
-			agent.onTakeDamage(this, AgentTeam.NPC, GIVE_DAMAGE, body.getPosition());
+		boolean bounceCheck = false;
+		for(Agent agent : body.getSpine().getHeadBounceAndContactDamageAgents()) {
+			// if they take contact damage and give head bounces...
+			if(agent instanceof ContactDmgTakeAgent && agent instanceof HeadBounceGiveAgent) {
+				// if can't pull head bounce then try pushing contact damage
+				if(((HeadBounceGiveAgent) agent).onGiveHeadBounce(this)) {
+					bounceCheck = true;
+					perp = agent;
+				}
+				else
+					((ContactDmgTakeAgent) agent).onTakeDamage(this, AgentTeam.NPC, GIVE_DAMAGE, body.getPosition());
+			}
+			// pull head bounces from head bounce agents
+			else if(agent instanceof HeadBounceGiveAgent)
+				bounceCheck = ((HeadBounceGiveAgent) agent).onGiveHeadBounce(this);
+			// push damage to contact damage agents
+			else if(agent instanceof ContactDmgTakeAgent)
+				((ContactDmgTakeAgent) agent).onTakeDamage(this, AgentTeam.NPC, GIVE_DAMAGE, body.getPosition());
+		}
+
+		// if a head bounce occurred then save it to a flag
+		if(bounceCheck) 
+			isHeadBounced = true;
 	}
 
 	private void doUpdate(float delta) {
@@ -93,10 +118,8 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				if(moveStateChanged)
 					doStartDeath();
 				// check the old deceased for timeout or despawn touch
-				else if(moveStateTimer > DIE_FALL_TIME || body.getSpine().isContactDespawn()) {
-QQ.pr("turtle dispose, despawnbox contact="+body.getSpine().isContactDespawn());
+				else if(moveStateTimer > DIE_FALL_TIME || body.getSpine().isContactDespawn())
 					agency.disposeAgent(this);
-				}
 				break;
 		}
 
@@ -108,6 +131,8 @@ QQ.pr("turtle dispose, despawnbox contact="+body.getSpine().isContactDespawn());
 	private MoveState getNextMoveState() {
 		if(isDead)
 			return MoveState.DEAD;
+//		else if(isHeadBounced)
+//			return MoveState.HIDE;
 		else if(body.getSpine().isOnGround())
 			return MoveState.WALK;
 		else
@@ -115,9 +140,7 @@ QQ.pr("turtle dispose, despawnbox contact="+body.getSpine().isContactDespawn());
 	}
 
 	private void doStartDeath() {
-		body.getSpine().doBumpAndDisableAllContacts(deadBumpRight);
-		if(perp == null)
-			return;
+		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
 		agency.createAgent(FloatingPoints.makeAP(PointAmount.P500, false, body.getPosition(), UInfo.P2M(16), perp));
 	}
 
@@ -143,7 +166,7 @@ QQ.pr("turtle dispose, despawnbox contact="+body.getSpine().isContactDespawn());
 	}
 
 	@Override
-	public void onBump(Agent agent) {
+	public void onTakeBump(Agent agent) {
 		if(isDead)
 			return;
 

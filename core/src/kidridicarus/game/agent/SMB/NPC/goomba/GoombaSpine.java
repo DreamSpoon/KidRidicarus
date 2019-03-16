@@ -1,38 +1,16 @@
 package kidridicarus.game.agent.SMB.NPC.goomba;
 
-import java.util.List;
-
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.SolidBoundSensor;
-import kidridicarus.common.agentspine.OnGroundSpine;
+import kidridicarus.common.agentspine.GoombaAndTurtleSpine;
 
-public class GoombaSpine extends OnGroundSpine {
+public class GoombaSpine extends GoombaAndTurtleSpine {
 	private static final float GOOMBA_WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 0.4f;
 
-	private GoombaBody body;
-	// horizontal move sensor
-	private SolidBoundSensor hmSensor;
-	private AgentContactHoldSensor acSensor;
-
 	public GoombaSpine(GoombaBody body) {
-		this.body = body;
-		hmSensor = null;
-		acSensor = null;
-	}
-
-	public SolidBoundSensor createHorizontalMoveSensor() {
-		hmSensor = new SolidBoundSensor(body);
-		return hmSensor;
-	}
-
-	public AgentContactHoldSensor createAgentSensor() {
-		acSensor = new AgentContactHoldSensor(body);
-		return acSensor;
+		super(body);
 	}
 
 	public void doWalkMove(boolean isFacingRight) {
@@ -42,8 +20,13 @@ public class GoombaSpine extends OnGroundSpine {
 			body.setVelocity(-GOOMBA_WALK_VEL, body.getVelocity().y);
 	}
 
-	public void doBumpAndDisableAllContacts(boolean bumpRight) {
-		body.disableAllContacts();
+	public void doDeadSquishContactsAndMove() {
+		((GoombaBody) body).allowOnlyDeadSquishContacts();
+		body.zeroVelocity(true, true);
+	}
+
+	public void doDeadBumpContactsAndMove(boolean bumpRight) {
+		((GoombaBody) body).allowOnlyDeadBumpContacts();
 		if(bumpRight)
 			body.setVelocity(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
@@ -55,34 +38,5 @@ public class GoombaSpine extends OnGroundSpine {
 			return true;
 		else
 			return false;
-	}
-
-	private boolean isMoveBlocked(boolean moveRight) {
-		return hmSensor.isHMoveBlocked(body.getBounds(), moveRight);
-	}
-
-	private boolean isMoveBlockedByAgent(boolean moveRight) {
-		return AgentContactHoldSensor.isMoveBlockedByAgent(acSensor, body.getPosition(), moveRight);
-	}
-
-	public boolean checkReverseVelocity(boolean isFacingRight) {
-		// if regular move is blocked...
-		if(isMoveBlocked(isFacingRight) ||
-				isMoveBlockedByAgent(isFacingRight)) {
-			// ... and reverse move is not also blocked then reverse 
-			if(!isMoveBlocked(!isFacingRight) &&
-					!isMoveBlockedByAgent(!isFacingRight)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-//	public <T> List<T> getContactAgentsByClass(Class<T> cls) {
-//		return acSensor.getContactsByClass(cls);
-//	}
-
-	public List<Agent> getAllContactAgents() {
-		return acSensor.getContacts();
 	}
 }

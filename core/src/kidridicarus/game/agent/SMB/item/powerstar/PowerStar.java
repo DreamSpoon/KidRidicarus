@@ -164,7 +164,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 	}
 
 	@Override
-	public void onBump(Agent bumpingAgent) {
+	public void onTakeBump(Agent bumpingAgent) {
 		// if bump came from left and star is moving left then reverse,
 		// if bump came from right and star is moving right then reverse
 		if((bumpingAgent.getPosition().x < body.getPosition().x && body.getVelocity().x < 0f) ||

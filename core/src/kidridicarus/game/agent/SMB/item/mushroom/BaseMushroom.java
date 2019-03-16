@@ -180,7 +180,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 	}
 
 	@Override
-	public void onBump(Agent bumpingAgent) {
+	public void onTakeBump(Agent bumpingAgent) {
 		isBumped = true;
 		bumpCenter.set(bumpingAgent.getPosition()); 
 	}
