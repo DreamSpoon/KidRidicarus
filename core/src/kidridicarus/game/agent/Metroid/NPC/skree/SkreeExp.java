@@ -46,7 +46,7 @@ public class SkreeExp extends Agent implements ContactDmgGiveAgent, DisposableAg
 		}
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(seSprite);
 	}
 

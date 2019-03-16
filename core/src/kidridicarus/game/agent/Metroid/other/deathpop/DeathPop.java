@@ -40,7 +40,7 @@ public class DeathPop extends Agent {
 		stateTimer += delta;
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(dpSprite);
 	}
 

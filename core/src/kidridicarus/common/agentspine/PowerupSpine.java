@@ -5,7 +5,7 @@ import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 
 public class PowerupSpine {
-	protected AgentBody body;
+	private AgentBody body;
 	private AgentContactHoldSensor acSensor;
 
 	public PowerupSpine(AgentBody body) {

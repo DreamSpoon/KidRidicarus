@@ -126,7 +126,7 @@ QQ.pr("turtle dispose, despawnbox contact="+body.getSpine().isContactDespawn());
 		sprite.update(delta, body.getPosition(), moveState, isFacingRight);
 	}
 
-	public void doDraw(AgencyDrawBatch batch){
+	private void doDraw(AgencyDrawBatch batch){
 		batch.draw(sprite);
 	}
 
@@ -403,7 +403,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		sprite.update(delta, body.getPosition(), moveState, isFacingRight);
 	}
 
-	public void doDraw(AgencyDrawBatch batch){
+	private void doDraw(AgencyDrawBatch batch){
 		batch.draw(sprite);
 	}
 

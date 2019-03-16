@@ -49,7 +49,7 @@ public class MarioSprite extends Sprite {
 //	private static final int SML_INV2_GRP = 2;
 //	private static final int SML_INV3_GRP = 3;
 
-	public enum MarioSpriteState { STAND, RUN, JUMP, BRAKE, FALL, SHRINK, GROW, DUCK, FIREBALL, DEAD, CLIMB }
+	private enum MarioSpriteState { STAND, RUN, JUMP, BRAKE, FALL, SHRINK, GROW, DUCK, FIREBALL, DEAD, CLIMB }
 
 	private MarioSpriteState curSpriteState;
 

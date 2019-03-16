@@ -7,12 +7,12 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentbody.MobileAgentBody;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SkreeExpBody extends MobileAgentBody {
+public class SkreeExpBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(6);
 	private static final float BODY_HEIGHT = UInfo.P2M(6);
 

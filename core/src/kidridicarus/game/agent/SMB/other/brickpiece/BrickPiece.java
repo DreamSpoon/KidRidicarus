@@ -73,7 +73,7 @@ public class BrickPiece extends Agent implements DisposableAgent {
 		stateTimer += delta;
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(bpSprite);
 	}
 

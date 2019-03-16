@@ -78,7 +78,7 @@ public class FloatingPoints extends Agent {
 			agency.disposeAgent(this);
 	}
 
-	public void doDraw(AgencyDrawBatch batch){
+	private void doDraw(AgencyDrawBatch batch){
 		batch.draw(pointsSprite);
 	}
 

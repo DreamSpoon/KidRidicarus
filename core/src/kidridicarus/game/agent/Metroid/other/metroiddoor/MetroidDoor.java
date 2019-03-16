@@ -129,7 +129,7 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 		mdSprite.update(stateTimer, moveState);
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(mdSprite);
 	}
 

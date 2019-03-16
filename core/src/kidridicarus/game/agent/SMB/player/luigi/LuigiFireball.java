@@ -85,7 +85,7 @@ public class LuigiFireball extends Agent implements DisposableAgent {
 		}
 	}
 
-	public void doUpdate(float delta) {
+	private void doUpdate(float delta) {
 		processContacts();
 		processMove(delta);
 		processSprite(delta);
@@ -137,7 +137,7 @@ public class LuigiFireball extends Agent implements DisposableAgent {
 		sprite.update(delta, body.getPosition(), moveState);
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		// don't draw sprite if explode animation is finished
 		if(moveState == MoveState.EXPLODE && sprite.isExplodeAnimFinished())
 			return;

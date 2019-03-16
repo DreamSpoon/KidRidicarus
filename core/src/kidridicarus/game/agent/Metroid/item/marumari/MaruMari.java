@@ -61,7 +61,7 @@ public class MaruMari extends Agent implements DisposableAgent {
 		sprite.update(delta, body.getPosition());
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		// do not draw powerup if it is used already
 		if(isPowerupUsed)
 			return;

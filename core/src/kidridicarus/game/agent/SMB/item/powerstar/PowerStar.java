@@ -155,7 +155,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 			sprite.update(delta, body.getPosition());
 	}
 
-	public void doDraw(AgencyDrawBatch batch){
+	private void doDraw(AgencyDrawBatch batch){
 		// do not draw sprite if powerup is used 
 		if(isPowerupUsed)
 			return;

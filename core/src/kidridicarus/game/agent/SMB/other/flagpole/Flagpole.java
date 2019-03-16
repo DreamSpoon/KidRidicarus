@@ -65,7 +65,7 @@ public class Flagpole extends Agent implements DisposableAgent {
 		flagSprite.update(flagPos);
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(flagSprite);
 	}
 

@@ -172,7 +172,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 			sprite.update(body.getPosition());
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		// do not draw sprite if powerup is used 
 		if(isPowerupUsed)
 			return;

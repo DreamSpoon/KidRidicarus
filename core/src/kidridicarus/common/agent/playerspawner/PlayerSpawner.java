@@ -11,7 +11,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
 
 public class PlayerSpawner extends Agent implements DisposableAgent {
-	public enum SpawnType { IMMEDIATE, PIPEWARP }
+	private enum SpawnType { IMMEDIATE, PIPEWARP }
 
 	private PlayerSpawnerBody psbody;
 

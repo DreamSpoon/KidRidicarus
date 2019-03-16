@@ -61,7 +61,7 @@ public class StaticCoin extends Agent implements DisposableAgent {
 		sprite.update(agency.getGlobalTimer());
 	}
 
-	public void doDraw(AgencyDrawBatch batch){
+	private void doDraw(AgencyDrawBatch batch){
 		// do not draw sprite if powerup is used
 		if(isPowerupUsed)
 			return;

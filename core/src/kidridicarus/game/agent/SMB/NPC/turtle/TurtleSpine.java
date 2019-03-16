@@ -43,8 +43,7 @@ public class TurtleSpine extends OnGroundSpine {
 	}
 
 	public void doBumpAndDisableAllContacts(boolean bumpRight) {
-		body.setMainSolid(false);
-		body.setAgentSensorEnabled(false);
+		body.disableAllContacts();
 		if(bumpRight)
 			body.setVelocity(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
@@ -68,11 +67,11 @@ public class TurtleSpine extends OnGroundSpine {
 		return false;
 	}
 
-	public boolean isMoveBlocked(boolean moveRight) {
+	private boolean isMoveBlocked(boolean moveRight) {
 		return hmSensor.isHMoveBlocked(body.getBounds(), moveRight);
 	}
 
-	public boolean isMoveBlockedByAgent(boolean moveRight) {
+	private boolean isMoveBlockedByAgent(boolean moveRight) {
 		return AgentContactHoldSensor.isMoveBlockedByAgent(acSensor, body.getPosition(), moveRight);
 	}
 

@@ -73,7 +73,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		return MoveState.EXPLODE;
 	}
 
-	public void doUpdate(float delta) {
+	private void doUpdate(float delta) {
 		processContacts();
 		processMove(delta);
 		processSprite(delta);
@@ -103,8 +103,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		switch(nextMoveState) {
 			case EXPLODE:
 				if(nextMoveState != moveState) {
-					body.setMainSolid(false);
-					body.setAgentSensorEnabled(false);
+					body.disableAllContacts();
 					body.setVelocity(0f, 0f);
 					body.setGravityScale(0f);
 					if(contactState == ContactState.AGENT)
@@ -134,7 +133,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		sprite.update(delta, body.getPosition(), moveState);
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(sprite);
 	}
 

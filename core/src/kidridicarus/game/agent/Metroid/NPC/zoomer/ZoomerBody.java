@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 
-import kidridicarus.agency.agentbody.MobileAgentBody;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
@@ -15,7 +15,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.DiagonalDir4;
 
-public class ZoomerBody extends MobileAgentBody {
+public class ZoomerBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float SENSORSIZEFACTOR = 1.2f;

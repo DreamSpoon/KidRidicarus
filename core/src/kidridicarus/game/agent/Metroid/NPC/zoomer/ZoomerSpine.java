@@ -45,7 +45,7 @@ public class ZoomerSpine {
 		return crawlSense;
 	}
 
-	public boolean isSensorContacting(DiagonalDir4 quad) {
+	private boolean isSensorContacting(DiagonalDir4 quad) {
 		return !crawlSense[quad.ordinal()].getContacts().isEmpty();
 	}
 	

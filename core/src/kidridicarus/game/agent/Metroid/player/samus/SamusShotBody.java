@@ -4,11 +4,9 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.Fixture;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentbody.MobileAgentBody;
-import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
@@ -16,7 +14,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SamusShotBody extends MobileAgentBody {
+public class SamusShotBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(1);
 	private static final float BODY_HEIGHT = UInfo.P2M(1);
 	private static final float SENSOR_WIDTH = UInfo.P2M(3);
@@ -24,22 +22,15 @@ public class SamusShotBody extends MobileAgentBody {
 
 	private static final float GRAVITY_SCALE = 0f;
 
-	private static final CFBitSeq MAIN_ENABLED_CFCAT = CommonCF.SOLID_BODY_CFCAT;
-	private static final CFBitSeq MAIN_ENABLED_CFMASK = CommonCF.SOLID_BODY_CFMASK;
-	private static final CFBitSeq MAIN_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
-	private static final CFBitSeq MAIN_DISABLED_CFMASK = CommonCF.NO_CONTACT_CFMASK;
+	private static final CFBitSeq MAIN_CFCAT = CommonCF.SOLID_BODY_CFCAT;
+	private static final CFBitSeq MAIN_CFMASK = CommonCF.SOLID_BODY_CFMASK;
 
-	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
-			CommonCF.Alias.DESPAWN_BIT);
-	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.DESPAWN_BIT);
+	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT);
 
 	private SamusShot parent;
 	private SolidBoundSensor boundSensor;
 	private AgentContactHoldSensor acSensor;
-	private Fixture mainBodyFixture;
-	private Fixture acSensorFixture;
 
 	public SamusShotBody(SamusShot parent, World world, Vector2 position, Vector2 velocity) {
 		this.parent = parent;
@@ -61,36 +52,12 @@ public class SamusShotBody extends MobileAgentBody {
 	private void createFixtures() {
 		// create main fixture
 		boundSensor = new SolidBoundSensor(parent);
-		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_ENABLED_CFCAT, MAIN_ENABLED_CFMASK,
+		B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_CFCAT, MAIN_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
 		// create agent contact sensor fixture
 		acSensor = new AgentContactHoldSensor(this);
-		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, acSensor, AS_ENABLED_CFCAT, AS_ENABLED_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, acSensor, AS_CFCAT, AS_CFMASK,
 				SENSOR_WIDTH, SENSOR_HEIGHT);
-	}
-
-	public void setMainSolid(boolean enabled) {
-		if(enabled) {
-			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_ENABLED_CFCAT;
-			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_ENABLED_CFMASK;
-		}
-		else {
-			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_DISABLED_CFCAT;
-			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_DISABLED_CFMASK;
-		}
-		mainBodyFixture.refilter();
-	}
-
-	public void setAgentSensorEnabled(boolean enabled) {
-		if(enabled) {
-			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_ENABLED_CFCAT;
-			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_ENABLED_CFMASK;
-		}
-		else {
-			((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
-			((AgentBodyFilter) acSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
-		}
-		acSensorFixture.refilter();
 	}
 
 	public boolean isHitBound() {

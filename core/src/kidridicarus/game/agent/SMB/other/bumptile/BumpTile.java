@@ -338,7 +338,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 				isEmptyItemBlock());
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(sprite);
 	}
 

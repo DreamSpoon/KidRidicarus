@@ -7,13 +7,13 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentbody.MobileAgentBody;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SkreeBody extends MobileAgentBody {
+public class SkreeBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(16);
 	private static final float BODY_HEIGHT = UInfo.P2M(16);
 	private static final float FOOT_WIDTH = UInfo.P2M(18);

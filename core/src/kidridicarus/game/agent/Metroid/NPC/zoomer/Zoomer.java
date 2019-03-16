@@ -137,7 +137,7 @@ public class Zoomer extends Agent implements ContactDmgGiveAgent,
 		sprite.update(delta, body.getPosition(), curMoveState, upDir);
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(sprite);
 	}
 

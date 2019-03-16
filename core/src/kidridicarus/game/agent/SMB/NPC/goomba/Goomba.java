@@ -139,7 +139,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		sprite.update(delta, body.getPosition(), moveState);
 	}
 
-	public void doDraw(AgencyDrawBatch batch){
+	private void doDraw(AgencyDrawBatch batch){
 		batch.draw(sprite);
 	}
 

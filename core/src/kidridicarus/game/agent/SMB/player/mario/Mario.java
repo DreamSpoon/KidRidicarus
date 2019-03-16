@@ -163,7 +163,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 			});
 	}
 
-	public void doUpdate(float delta) {
+	private void doUpdate(float delta) {
 		processContacts();
 		processMove(delta, supervisor.pollMoveAdvice());
 		processSprite(delta);
@@ -751,7 +751,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 		getAndResetTakeDamage();
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice() &&
 				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
 			return;
@@ -784,7 +784,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 		return t;
 	}
 
-	public void die() {
+	private void die() {
 		marioIsDead = true;
 	}
 

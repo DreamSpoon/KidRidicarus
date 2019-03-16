@@ -112,7 +112,7 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 				}
 				break;
 			case ONGROUND:
-				sBody.setVelocity(0f, 0f);
+				sBody.zeroVelocity(true, true);
 				break;
 			case EXPLODE:
 				doExplode();
@@ -193,7 +193,7 @@ public class Skree extends Agent implements ContactDmgGiveAgent, ContactDmgTakeA
 		agency.disposeAgent(this);
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(sSprite);
 	}
 

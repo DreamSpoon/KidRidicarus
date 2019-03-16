@@ -73,7 +73,7 @@ public class SpinCoin extends Agent implements DisposableAgent {
 			agency.disposeAgent(this);
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(coinSprite);
 	}
 

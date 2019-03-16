@@ -87,7 +87,7 @@ public class CastleFlag extends Agent {
 		}
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		if(isTriggered)
 			batch.draw(flagSprite);
 	}

@@ -59,7 +59,7 @@ public class DrawLayerAgent extends Agent {
 		return new AllowOrder(true, drawOrderFloat);
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(drawLayer);
 	}
 

@@ -42,7 +42,7 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 	private static final float STEP_SOUND_TIME = 0.167f;
 	private static final float POSTPONE_RUN_DELAY = 0.15f;
 
-	public enum ContactState { REGULAR, DAMAGE }
+	private enum ContactState { REGULAR, DAMAGE }
 	public enum MoveState { STAND, RUN, JUMP, JUMPSPIN, JUMPSHOOT, SHOOT, BALL, CLIMB;
 			public boolean equalsAny(MoveState ...otherStates) {
 				for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
@@ -531,7 +531,7 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 		}
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		// if a script is running and the sprite is visible then draw it
 		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice()) {
 			if(supervisor.getScriptAgentState().scriptedSpriteState.visible)

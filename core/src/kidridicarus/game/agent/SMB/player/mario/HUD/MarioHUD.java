@@ -54,7 +54,7 @@ public class MarioHUD implements Disposable {
 		stage.addActor(table);
 	}
 
-	public void update() {
+	private void update() {
 		scoreVarLabel.setText(String.format("%06d", mario.getPointTotal()));
 		timeVarLabel.setText(String.format("%03d", (int) mario.getLevelTimeRemaining()));
 		coinVarLabel.setText(String.format("×%02d", mario.getCoinTotal()));

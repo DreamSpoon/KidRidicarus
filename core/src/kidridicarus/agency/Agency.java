@@ -100,7 +100,7 @@ public class Agency implements Disposable {
 	 * -agent draw order lists
 	 * Process these queues.
 	 */
-	public void processChangeQ() {
+	private void processChangeQ() {
 		agencyChangeQ.process(new AgencyChangeCallback() {
 				@Override
 				public void change(Object change) {

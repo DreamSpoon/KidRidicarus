@@ -85,8 +85,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 			case LIVE:
 				break;
 			case EXPLODE:
-				shotBody.setMainSolid(false);
-				shotBody.setAgentSensorEnabled(false);
+				shotBody.disableAllContacts();
 				shotBody.zeroVelocity(true, true);
 				break;
 			case DEAD:
@@ -115,7 +114,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 		shotSprite.update(delta, shotBody.getPosition(), curMoveState);
 	}
 
-	public void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch batch) {
 		if(curMoveState != MoveState.DEAD)
 			batch.draw(shotSprite);
 	}

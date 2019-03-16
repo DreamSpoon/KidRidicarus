@@ -41,8 +41,7 @@ public class LuigiFireballSpine {
 	}
 
 	public void startExplode() {
-		body.setMainSolid(false);
-		body.setAgentSensorEnabled(false);
+		body.disableAllContacts();
 		body.setVelocity(0f, 0f);
 		body.setGravityScale(0f);
 	}

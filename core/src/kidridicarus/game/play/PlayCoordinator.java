@@ -97,7 +97,7 @@ public class PlayCoordinator implements Disposable {
 		setPlayAgentHUD();
 	}
 
-	public void handleInput() {
+	private void handleInput() {
 		inputMoveAdvice.moveRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
 		inputMoveAdvice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
 		inputMoveAdvice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
