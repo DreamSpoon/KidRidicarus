@@ -11,8 +11,8 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.GameTeam;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.Direction4;
 
@@ -140,8 +140,8 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	}
 
 	@Override
-	public boolean onTakeDamage(Agent agent, GameTeam aTeam, float amount, Vector2 dmgOrigin) {
-		if(isInjured || isDead || aTeam == GameTeam.NPC)
+	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
+		if(isInjured || isDead || !(agent instanceof PlayerAgent))
 			return false;
 
 		health -= amount;

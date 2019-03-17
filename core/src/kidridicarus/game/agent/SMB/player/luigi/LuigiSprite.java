@@ -289,6 +289,7 @@ public class LuigiSprite extends Sprite {
 				case DEAD_BOUNCE:
 					pose = DEAD_POSE;
 					group = SML_REG_GRP;
+					setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
 					break;
 			}
 		}

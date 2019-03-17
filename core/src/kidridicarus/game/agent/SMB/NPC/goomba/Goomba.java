@@ -10,8 +10,8 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.GameTeam;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
@@ -81,14 +81,14 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 					perp = agent;
 				}
 				else
-					((ContactDmgTakeAgent) agent).onTakeDamage(this, GameTeam.NPC, GIVE_DAMAGE, body.getPosition());
+					((ContactDmgTakeAgent) agent).onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
 			}
 			// pull head bounces from head bounce agents
 			else if(agent instanceof HeadBounceGiveAgent)
 				isHeadBounced = ((HeadBounceGiveAgent) agent).onGiveHeadBounce(this);
 			// push damage to contact damage agents
 			else if(agent instanceof ContactDmgTakeAgent)
-				((ContactDmgTakeAgent) agent).onTakeDamage(this, GameTeam.NPC, GIVE_DAMAGE, body.getPosition());
+				((ContactDmgTakeAgent) agent).onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
 		}
 
 		if(isHeadBounced)
@@ -174,9 +174,9 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 
 	// assume any amount of damage kills, for now...
 	@Override
-	public boolean onTakeDamage(Agent agent, GameTeam aTeam, float amount, Vector2 dmgOrigin) {
+	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
 		// if dead already or the damage is from the same team then return no damage taken
-		if(nextDeadState != DeadState.NONE || aTeam == GameTeam.NPC)
+		if(nextDeadState != DeadState.NONE || !(agent instanceof PlayerAgent))
 			return false;
 
 		this.perp = agent;

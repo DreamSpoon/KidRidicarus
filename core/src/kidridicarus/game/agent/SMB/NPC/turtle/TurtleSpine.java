@@ -37,8 +37,8 @@ public class TurtleSpine extends GoombaTurtleShareSpine {
 			body.setVelocity(-SLIDE_VEL, body.getVelocity().y);
 	}
 
-	public boolean isDeadBumpRight(Vector2 position) {
-		if(position.x < body.getPosition().x)
+	public boolean isDeadBumpOnRight(Vector2 position) {
+		if(position.x > body.getPosition().x)
 			return true;
 		else
 			return false;
