@@ -17,8 +17,8 @@ public class LuigiSprite extends Sprite {
 	private static final float SMLSPR_HEIGHT = UInfo.P2M(16);
 	private static final float BIGSPR_WIDTH = UInfo.P2M(16);
 	private static final float BIGSPR_HEIGHT = UInfo.P2M(32);
-//	private static final float STARPOWER_ANIM_SPEED = 0.05f;
-//	private static final int NUM_STARPOWER_FRAMES = 4;
+	private static final float STARPOWER_ANIM_SPEED = 0.05f;
+	private static final int NUM_STARPOWER_FRAMES = 4;
 	private static final float REG_ANIM_SPEED = 0.1f;
 
 	private static final float THROW_POSE_TIME = 0.15f;
@@ -39,15 +39,15 @@ public class LuigiSprite extends Sprite {
 	// big has exactly 1 more group than small, but the number are the same, sortof...
 	private static final int BIG_NUM_GRPS = 5;
 	private static final int BIG_REG_GRP = 0;
-//	private static final int BIG_INV1_GRP = 1;
-//	private static final int BIG_INV2_GRP = 2;
-//	private static final int BIG_INV3_GRP = 3;
+	private static final int BIG_INV1_GRP = 1;
+	private static final int BIG_INV2_GRP = 2;
+	private static final int BIG_INV3_GRP = 3;
 	private static final int BIG_FIRE_GRP = 4;
 	private static final int SML_NUM_GRPS = 4;
 	private static final int SML_REG_GRP = 0;
-//	private static final int SML_INV1_GRP = 1;
-//	private static final int SML_INV2_GRP = 2;
-//	private static final int SML_INV3_GRP = 3;
+	private static final int SML_INV1_GRP = 1;
+	private static final int SML_INV2_GRP = 2;
+	private static final int SML_INV3_GRP = 3;
 
 	private static final Vector2 SPRITE_DUCK_OFFSET = UInfo.P2MVector(0f, 8f);
 	private static final float SHRINK_OFFSET_Y = UInfo.P2M(8);
@@ -70,6 +70,7 @@ public class LuigiSprite extends Sprite {
 	private enum SpriteState { NORMAL, GROW, SHRINK }
 	private SpriteState spriteState;
 	private float spriteStateTimer;
+	private float starPowerTimer;
 
 	public LuigiSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean facingRight) {
 		createAnimations(atlas);
@@ -82,6 +83,7 @@ public class LuigiSprite extends Sprite {
 
 		spriteState = SpriteState.NORMAL;
 		spriteStateTimer = 0f;
+		starPowerTimer = 0f;
 
 		// set the initial texture region and bounds
 		switch(parentPowerState) {
@@ -178,13 +180,13 @@ public class LuigiSprite extends Sprite {
 	}
 
 	public void update(float delta, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
-			boolean facingRight, boolean didShootFireball, boolean isBlinking) {
+			boolean facingRight, boolean didShootFireball, boolean isBlinking, boolean isStarPowered) {
 		SpriteState nextSpriteState = getNextSpriteState(parentPowerState);
 		boolean spriteStateChanged = nextSpriteState != spriteState;
 		switch(nextSpriteState) {
 			case NORMAL:
 				processPowerState(delta, position, parentMoveState, parentPowerState, facingRight,
-						didShootFireball, isBlinking);
+						didShootFireball, isBlinking, isStarPowered);
 				break;
 			case GROW:
 				if(spriteStateChanged)
@@ -239,8 +241,10 @@ public class LuigiSprite extends Sprite {
 	}
 
 	private void processPowerState(float delta, Vector2 position, MoveState parentMoveState,
-			PowerState parentPowerState, boolean facingRight, boolean didShootFireball, boolean isBlinking) {
+			PowerState parentPowerState, boolean facingRight, boolean didShootFireball, boolean isBlinking,
+			boolean isStarPowered) {
 		int group = SML_REG_GRP;
+
 		switch(parentPowerState) {
 			case SMALL:
 				group = SML_REG_GRP;
@@ -254,6 +258,10 @@ public class LuigiSprite extends Sprite {
 				group = BIG_FIRE_GRP;
 				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 				break;
+		}
+		if(isStarPowered) {
+			group = getStarPowerFrameGroup(parentPowerState);
+			starPowerTimer += delta;
 		}
 
 		int pose = STAND_POSE;
@@ -302,16 +310,45 @@ public class LuigiSprite extends Sprite {
 		}
 
 		// reduce throw pose cooldown
-		throwPoseCooldown -= delta;
-		if(throwPoseCooldown < 0)
-			throwPoseCooldown = 0f;
+		throwPoseCooldown = throwPoseCooldown < delta ? 0f : throwPoseCooldown-delta;
 
+		// choose correct size anim category and set region
 		if(parentPowerState.isBigBody() && !parentMoveState.isDead())
 			setRegion(bigAnim[pose][group].getKeyFrame(parentMoveStateTimer));
 		else
 			setRegion(smlAnim[pose][group].getKeyFrame(parentMoveStateTimer));
 
 		setPosition(position.x - getWidth()/2f + offset.x, position.y - getHeight()/2f + offset.y);
+	}
+
+	private int getStarPowerFrameGroup(PowerState powerState) {
+		switch(Math.floorMod((int) (starPowerTimer / STARPOWER_ANIM_SPEED), NUM_STARPOWER_FRAMES)) {
+			case 3:
+				switch(powerState) {
+					case FIRE:
+						return BIG_FIRE_GRP;
+					case BIG:
+						return BIG_REG_GRP;
+					case SMALL:
+						return SML_REG_GRP;
+				}
+			case 2:
+				if(powerState.isBigBody())
+					return BIG_INV3_GRP;
+				else
+					return SML_INV3_GRP;
+			case 1:
+				if(powerState.isBigBody())
+					return BIG_INV2_GRP;
+				else
+					return SML_INV2_GRP;
+			case 0:
+			default:
+				if(powerState.isBigBody())
+					return BIG_INV1_GRP;
+				else
+					return SML_INV1_GRP;
+		}
 	}
 
 	private void processGrowState(Vector2 position) {

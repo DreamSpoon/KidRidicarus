@@ -41,6 +41,8 @@ public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private static final float COOLDOWN_PER_FIREBALL = 0.25f;
 	private static final float NO_DAMAGE_TIME = 3f;
 	private static final Vector2 DEAD_BOUNCE_IMP = new Vector2(0, 6f);
+	private static final float POWERSTAR_MAXTIME = 15f;
+	private static final float STARPOWER_DAMAGE = 1f;
 
 	public enum PowerState {
 		SMALL, BIG, FIRE;
@@ -83,6 +85,7 @@ public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private float noDamageCooldown;
 	private boolean isLastVelocityRight;
 	private boolean isDuckSlideRight;
+	private float starPowerCooldown;
 
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -105,12 +108,10 @@ QQ.pr("you made Luigi so happy!");
 		noDamageCooldown = 0f;
 		isLastVelocityRight = false;
 		isDuckSlideRight = false;
+		starPowerCooldown = 0f;
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
-		sprite = new LuigiSprite(agency.getAtlas(), body.getPosition(), powerState, facingRight);
-		observer = new LuigiObserver(this);
-		supervisor = new LuigiSupervisor(this);
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -123,15 +124,19 @@ QQ.pr("you made Luigi so happy!");
 			@Override
 			public void update(float delta) { doPostUpdate(); }
 		});
+		sprite = new LuigiSprite(agency.getAtlas(), body.getPosition(), powerState, facingRight);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
+
+		observer = new LuigiObserver(this);
+		supervisor = new LuigiSupervisor(this);
 	}
 
 	/*
 	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
-	 * by way of regular update.
+	 * by way of regular update. Also apply star power damage if needed.
 	 */
 	private void doContactUpdate() {
 		// exit if head bump flag hasn't reset
@@ -142,6 +147,15 @@ QQ.pr("you made Luigi so happy!");
 			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
 		else
 			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
+
+		// if star powered then apply star power damage
+		if(starPowerCooldown > 0f) {
+			for(Agent agent : body.getSpine().getPushDamageContacts()) {
+				// if they take contact damage then push it
+				if(agent instanceof ContactDmgTakeAgent)
+					((ContactDmgTakeAgent) agent).onTakeDamage(this, STARPOWER_DAMAGE, body.getPosition());
+			}
+		}
 	}
 
 	private void doUpdate(float delta) {
@@ -183,13 +197,11 @@ QQ.pr("you made Luigi so happy!");
 			processAirMove(moveAdvice, nextMoveState);
 
 		// recharge the fireball juice, stopping at max fill line
-		fireballJuice += delta;
-		if(fireballJuice > MAX_FIREBALL_JUICE)
-			fireballJuice = MAX_FIREBALL_JUICE;
+		fireballJuice = fireballJuice+delta > MAX_FIREBALL_JUICE ? MAX_FIREBALL_JUICE : fireballJuice+delta;
 		// decrement fireball shoot cooldown timer
-		shootCooldown -= delta;
-		if(shootCooldown < 0f)
-			shootCooldown = 0f;
+		shootCooldown = shootCooldown < delta ? 0f : shootCooldown-delta;
+		// decrement starpower cooldown timer
+		starPowerCooldown = starPowerCooldown < delta ? 0f : starPowerCooldown-delta;
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
@@ -247,6 +259,9 @@ QQ.pr("you made Luigi so happy!");
 
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 				break;
+			case POWERSTAR:
+				starPowerCooldown = POWERSTAR_MAXTIME;
+				break;
 			default:
 				break;
 		}
@@ -281,6 +296,9 @@ QQ.pr("you made Luigi so happy!");
 			didTakeDamage = false;
 			return;
 		}
+		// do not take damage during star power
+		else if(starPowerCooldown > 0f)
+			return;
 		// exit if no damage taken this frame
 		else if(!didTakeDamage)
 			return;
@@ -559,7 +577,7 @@ QQ.pr("you made Luigi so happy!");
 
 	private void processSprite(float delta) {
 		sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,
-				didShootFireballThisFrame, (noDamageCooldown > 0f));
+				didShootFireballThisFrame, (noDamageCooldown > 0f), (starPowerCooldown > 0f));
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
@@ -576,15 +594,19 @@ QQ.pr("you made Luigi so happy!");
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
-		if(isDead || didTakeDamage || noDamageCooldown > 0f || moveState == MoveState.DEAD)
+		// no damage taken if already took damage this frame, or if invulnerable, or if star powered, or if dead
+		if(didTakeDamage || noDamageCooldown > 0f || starPowerCooldown > 0f || moveState == MoveState.DEAD)
 			return false;
 		didTakeDamage = true;
 		return true;
 	}
 
-	// give head bounce to agent
 	@Override
 	public boolean onGiveHeadBounce(Agent agent) {
+		// no head bouncing while star powered or dead
+		if(starPowerCooldown > 0f || moveState == MoveState.DEAD)
+			return false;
+		// if head bounce is allowed then give head bounce to agent
 		if(body.getSpine().isGiveHeadBounceAllowed(agent.getBounds())) {
 			gaveHeadBounce = true;
 			return true;

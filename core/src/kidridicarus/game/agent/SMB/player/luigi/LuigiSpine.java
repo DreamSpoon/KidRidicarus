@@ -2,6 +2,7 @@ package kidridicarus.game.agent.SMB.player.luigi;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Rectangle;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.OnGroundSpine;
 import kidridicarus.common.info.UInfo;
@@ -47,23 +49,30 @@ public class LuigiSpine extends OnGroundSpine {
 	private static final float MARIO_HEADBOUNCE_VEL = 2.8f;	// up velocity
 
 	private LuigiBody body;
-	private AgentContactHoldSensor acSensor;
-	private AgentContactHoldSensor btSensor;
+	private AgentContactHoldSensor agentSensor;
+	private AgentContactHoldSensor tileBumpPushSensor;
+	private AgentContactBeginSensor damagePushSensor; 
 
 	public LuigiSpine(LuigiBody body) {
 		this.body = body;
-		acSensor = null;
-		btSensor = null;
+		agentSensor = null;
+		tileBumpPushSensor = null;
+		damagePushSensor = null;
 	}
 
 	public AgentContactHoldSensor createAgentSensor() {
-		acSensor = new AgentContactHoldSensor(body);
-		return acSensor;
+		agentSensor = new AgentContactHoldSensor(body);
+		return agentSensor;
 	}
 
-	public AgentContactHoldSensor createBumpTileSensor() {
-		btSensor = new AgentContactHoldSensor(body);
-		return btSensor;
+	public AgentContactHoldSensor createTileBumpPushSensor() {
+		tileBumpPushSensor = new AgentContactHoldSensor(body);
+		return tileBumpPushSensor;
+	}
+
+	public AgentContactBeginSensor createDamagePushSensor() {
+		damagePushSensor = new AgentContactBeginSensor(body);
+		return damagePushSensor;
 	}
 
 	/*
@@ -187,7 +196,7 @@ public class LuigiSpine extends OnGroundSpine {
 					return 0;
 				}
 			});
-		for(TileBumpTakeAgent bumpTile : btSensor.getContactsByClass(TileBumpTakeAgent.class))
+		for(TileBumpTakeAgent bumpTile : tileBumpPushSensor.getContactsByClass(TileBumpTakeAgent.class))
 			closestTilesList.add(bumpTile);
 
 		// iterate through sorted list of bump tiles, exiting upon successful bump
@@ -241,15 +250,19 @@ public class LuigiSpine extends OnGroundSpine {
 		return body.getVelocity().x < MIN_WALKVEL;
 	}
 
+	public List<Agent> getPushDamageContacts() {
+		return damagePushSensor.getAndResetContacts();
+	}
+
 	public CollisionTiledMapAgent getCollisionTiledMap() {
-		return acSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+		return agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
 	}
 
 	public RoomBox getCurrentRoom() {
-		return (RoomBox) acSensor.getFirstContactByClass(RoomBox.class);
+		return (RoomBox) agentSensor.getFirstContactByClass(RoomBox.class);
 	}
 
 	public boolean isContactDespawn() {
-		return acSensor.getFirstContactByClass(DespawnBox.class) != null;
+		return agentSensor.getFirstContactByClass(DespawnBox.class) != null;
 	}
 }
