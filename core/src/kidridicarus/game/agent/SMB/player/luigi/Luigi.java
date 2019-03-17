@@ -13,7 +13,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentSupervisor;
-import kidridicarus.common.agent.AgentTeam;
+import kidridicarus.common.agent.GameTeam;
 import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
@@ -515,7 +515,7 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	@Override
-	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 dmgOrigin) {
+	public boolean onTakeDamage(Agent agent, GameTeam aTeam, float amount, Vector2 dmgOrigin) {
 		if(isDead || didTakeDamage || noDamageCooldown > 0f || moveState == MoveState.DEAD)
 			return false;
 		didTakeDamage = true;

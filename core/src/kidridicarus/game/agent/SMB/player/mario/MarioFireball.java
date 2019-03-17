@@ -11,7 +11,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.AgentTeam;
+import kidridicarus.common.agent.GameTeam;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -91,7 +91,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		for(ContactDmgTakeAgent agent : body.getContactAgentsByClass(ContactDmgTakeAgent.class)) {
 			if(agent == parent)
 				continue;
-			agent.onTakeDamage(parent, AgentTeam.PLAYER, 1f, body.getPosition());
+			agent.onTakeDamage(parent, GameTeam.PLAYER, 1f, body.getPosition());
 			// at least one agent contact
 			contactState = ContactState.AGENT;
 			break;

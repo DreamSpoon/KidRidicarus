@@ -5,6 +5,6 @@ package kidridicarus.common.agent;
  *   e.g. mario's fireball can push contact damage to goombas (different teams),
  *   but goombas should not push contact damage to turtles (same team).
  */
-public enum AgentTeam {
+public enum GameTeam {
 	PLAYER, NPC
 }

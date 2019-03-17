@@ -11,7 +11,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.AgentTeam;
+import kidridicarus.common.agent.GameTeam;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -70,7 +70,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 			// do not hit parent
 			if(agent == parent)
 				continue;
-			agent.onTakeDamage(parent, AgentTeam.PLAYER, GIVE_DAMAGE, shotBody.getPosition());
+			agent.onTakeDamage(parent, GameTeam.PLAYER, GIVE_DAMAGE, shotBody.getPosition());
 			isExploding = true;
 			return;
 		}

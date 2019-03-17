@@ -10,7 +10,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.AgentTeam;
+import kidridicarus.common.agent.GameTeam;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
@@ -19,7 +19,6 @@ import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.SMBInfo.PointAmount;
-import kidridicarus.game.tool.QQ;
 
 public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GOOMBA_SQUISH_TIME = 2f;
@@ -73,8 +72,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 
 	private void doContactUpdate() {
 		boolean isHeadBounced = false;
-		for(Agent agent : body.getSpine().getHeadBounceAndContactDamageAgents()) {
-QQ.pr("first contact with " + agent);
+		for(Agent agent : body.getSpine().getAgentBeginContacts()) {
 			// if they take contact damage and give head bounces...
 			if(agent instanceof ContactDmgTakeAgent && agent instanceof HeadBounceGiveAgent) {
 				// if can't pull head bounce then try pushing contact damage
@@ -83,14 +81,14 @@ QQ.pr("first contact with " + agent);
 					perp = agent;
 				}
 				else
-					((ContactDmgTakeAgent) agent).onTakeDamage(this, AgentTeam.NPC, GIVE_DAMAGE, body.getPosition());
+					((ContactDmgTakeAgent) agent).onTakeDamage(this, GameTeam.NPC, GIVE_DAMAGE, body.getPosition());
 			}
 			// pull head bounces from head bounce agents
 			else if(agent instanceof HeadBounceGiveAgent)
 				isHeadBounced = ((HeadBounceGiveAgent) agent).onGiveHeadBounce(this);
 			// push damage to contact damage agents
 			else if(agent instanceof ContactDmgTakeAgent)
-				((ContactDmgTakeAgent) agent).onTakeDamage(this, AgentTeam.NPC, GIVE_DAMAGE, body.getPosition());
+				((ContactDmgTakeAgent) agent).onTakeDamage(this, GameTeam.NPC, GIVE_DAMAGE, body.getPosition());
 		}
 
 		if(isHeadBounced)
@@ -103,7 +101,7 @@ QQ.pr("first contact with " + agent);
 	}
 
 	private void processMove(float delta) {
-		if(body.getSpine().checkReverseVelocity(isFacingRight))
+		if(body.getSpine().checkReverseVelocity(isFacingRight, true))
 			isFacingRight = !isFacingRight;
 
 		MoveState nextMoveState = getNextMoveState();
@@ -149,11 +147,11 @@ QQ.pr("first contact with " + agent);
 
 	private void startSquish() {
 		body.getSpine().doDeadSquishContactsAndMove();
-		agency.playSound(AudioInfo.Sound.SMB.STOMP);
 		if(perp != null) {
 			agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, true,
 					body.getPosition(), UInfo.P2M(16), perp));
 		}
+		agency.playSound(AudioInfo.Sound.SMB.STOMP);
 	}
 
 	private void startBump() {
@@ -162,6 +160,7 @@ QQ.pr("first contact with " + agent);
 			agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, false,
 					body.getPosition(), UInfo.P2M(16), perp));
 		}
+		agency.playSound(AudioInfo.Sound.SMB.KICK);
 	}
 
 	private void processSprite(float delta) {
@@ -175,9 +174,9 @@ QQ.pr("first contact with " + agent);
 
 	// assume any amount of damage kills, for now...
 	@Override
-	public boolean onTakeDamage(Agent agent, AgentTeam aTeam, float amount, Vector2 dmgOrigin) {
+	public boolean onTakeDamage(Agent agent, GameTeam aTeam, float amount, Vector2 dmgOrigin) {
 		// if dead already or the damage is from the same team then return no damage taken
-		if(nextDeadState != DeadState.NONE || aTeam == AgentTeam.NPC)
+		if(nextDeadState != DeadState.NONE || aTeam == GameTeam.NPC)
 			return false;
 
 		this.perp = agent;

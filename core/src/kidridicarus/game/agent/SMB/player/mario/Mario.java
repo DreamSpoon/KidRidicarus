@@ -18,7 +18,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.AgentSupervisor;
-import kidridicarus.common.agent.AgentTeam;
+import kidridicarus.common.agent.GameTeam;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -480,7 +480,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 			for(ContactDmgTakeAgent agent : list) {
 				// playSound should go in the processBody method, but... this is so much easier!
 				agency.playSound(AudioInfo.Sound.SMB.KICK);
-				agent.onTakeDamage(this, AgentTeam.PLAYER, 1f, mBody.getPosition());
+				agent.onTakeDamage(this, GameTeam.PLAYER, 1f, mBody.getPosition());
 			}
 
 			// Remove any agents that accumulate in the begin queue, to prevent begin contacts during

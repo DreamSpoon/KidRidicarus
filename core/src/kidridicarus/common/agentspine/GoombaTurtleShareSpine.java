@@ -9,28 +9,28 @@ import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
 
-public class GoombaAndTurtleSpine extends OnGroundSpine {
+public class GoombaTurtleShareSpine extends OnGroundSpine {
 	protected AgentBody body;
-	private AgentContactHoldSensor acSensor;
-	private AgentContactBeginSensor headBounceAndContactDmgSensor; 
+	private AgentContactHoldSensor agentHoldContactSensor;
+	private AgentContactBeginSensor agentBeginContactSensor; 
 	// horizontal move sensor
 	private SolidBoundSensor hmSensor;
 
-	public GoombaAndTurtleSpine(AgentBody body) {
+	public GoombaTurtleShareSpine(AgentBody body) {
 		this.body = body;
-		acSensor = null;
-		headBounceAndContactDmgSensor = null;
+		agentHoldContactSensor = null;
+		agentBeginContactSensor = null;
 		hmSensor = null;
 	}
 
 	public AgentContactHoldSensor createAgentContactSensor() {
-		acSensor = new AgentContactHoldSensor(body);
-		return acSensor;
+		agentHoldContactSensor = new AgentContactHoldSensor(body);
+		return agentHoldContactSensor;
 	}
 
 	public AgentContactBeginSensor createHeadBounceAndContactDamageSensor() {
-		headBounceAndContactDmgSensor = new AgentContactBeginSensor(body);
-		return headBounceAndContactDmgSensor;
+		agentBeginContactSensor = new AgentContactBeginSensor(body);
+		return agentBeginContactSensor;
 	}
 
 	public SolidBoundSensor createHorizontalMoveSensor() {
@@ -38,13 +38,13 @@ public class GoombaAndTurtleSpine extends OnGroundSpine {
 		return hmSensor;
 	}
 
-	public boolean checkReverseVelocity(boolean isFacingRight) {
+	public boolean checkReverseVelocity(boolean isFacingRight, boolean useAgents) {
 		// if regular move is blocked...
 		if(isMoveBlocked(isFacingRight) ||
-				isMoveBlockedByAgent(isFacingRight)) {
+				(isMoveBlockedByAgent(isFacingRight)) && useAgents) {
 			// ... and reverse move is not also blocked then reverse 
-			if(!isMoveBlocked(!isFacingRight) &&
-					!isMoveBlockedByAgent(!isFacingRight)) {
+			if(!isMoveBlocked(!isFacingRight) && (!useAgents ||
+					!isMoveBlockedByAgent(!isFacingRight))) {
 				return true;
 			}
 		}
@@ -56,14 +56,14 @@ public class GoombaAndTurtleSpine extends OnGroundSpine {
 	}
 
 	private boolean isMoveBlockedByAgent(boolean moveRight) {
-		return AgentContactHoldSensor.isMoveBlockedByAgent(acSensor, body.getPosition(), moveRight);
+		return AgentContactHoldSensor.isMoveBlockedByAgent(agentHoldContactSensor, body.getPosition(), moveRight);
 	}
 
-	public List<Agent> getHeadBounceAndContactDamageAgents() {
-		return headBounceAndContactDmgSensor.getAndResetContacts();
+	public List<Agent> getAgentBeginContacts() {
+		return agentBeginContactSensor.getAndResetContacts();
 	}
 
 	public boolean isContactDespawn() {
-		return acSensor.getFirstContactByClass(DespawnBox.class) != null;
+		return agentHoldContactSensor.getFirstContactByClass(DespawnBox.class) != null;
 	}
 }
