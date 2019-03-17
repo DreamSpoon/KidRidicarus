@@ -459,37 +459,39 @@ QQ.pr("you made Luigi so happy!");
 		}
 		else if(moveState.isDuck()) {
 			// if not advising move down then check for unduck - if can't unduck then duckslide
-			if(moveDir != Direction4.DOWN && moveState.isOnGround()) {
-				Vector2 bodyTilePos = UInfo.getM2PTileForPos(body.getPosition());
+			if(moveDir != Direction4.DOWN) {
+				if(moveState.isOnGround()) {
+					Vector2 bodyTilePos = UInfo.getM2PTileForPos(body.getPosition());
 
-				// Check the space above and around mario to test if mario can unduck normally, or if he is in a
-				// tight spot
+					// Check the space above and around mario to test if mario can unduck normally, or if he is in a
+					// tight spot
 
-				// if the tile above ducking mario is solid ...
-				if(isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
-					Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(body.getPosition());
-					// If the player's last velocity direction was rightward, and their position is in the left half
-					// of the tile, and the tile above and to the left of them is solid, then the player should
-					// duckslide right.
-					if((isLastVelocityRight && subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
-							(subTilePos.x > 0.5f && !isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
-							(isLastVelocityRight && subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
-						isDuckSlideRight = true;
+					// if the tile above ducking mario is solid ...
+					if(isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
+						Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(body.getPosition());
+						// If the player's last velocity direction was rightward, and their position is in the left half
+						// of the tile, and the tile above and to the left of them is solid, then the player should
+						// duckslide right.
+						if((isLastVelocityRight && subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
+								(subTilePos.x > 0.5f && !isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
+								(isLastVelocityRight && subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
+							isDuckSlideRight = true;
+						}
+						// the only other option is to duckslide left
+						else
+							isDuckSlideRight = false;
+	
+						// tile above is solid so must be ducksliding
+						return MoveState.DUCKSLIDE;
 					}
-					// the only other option is to duckslide left
 					else
-						isDuckSlideRight = false;
-
-					// tile above is solid so must be ducksliding
-					return MoveState.DUCKSLIDE;
+						return MoveState.STAND;
 				}
 				else
 					return MoveState.STAND;
 			}
-			else if(moveDir == Direction4.DOWN && moveState == MoveState.DUCKSLIDE)
-				return MoveState.DUCK;
 			else
-				return moveState;
+				return MoveState.DUCK;
 		}
 		// if big body luigi and move down is advised then duck
 		else if(powerState.isBigBody() && moveDir == Direction4.DOWN)
