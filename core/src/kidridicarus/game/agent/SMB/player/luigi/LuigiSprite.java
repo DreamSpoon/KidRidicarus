@@ -261,14 +261,21 @@ public class LuigiSprite extends Sprite {
 		if(didShootFireball)
 			throwPoseCooldown = THROW_POSE_TIME;
 		// check for fireball pose
-		if(throwPoseCooldown > 0f && parentPowerState.isBigBody())
+		if(throwPoseCooldown > 0f && parentPowerState.isBigBody()) {
 			pose = THROW_POSE;
+			if(parentMoveState.isDuck())
+				offset.set(SPRITE_DUCK_OFFSET);
+		}
 		// other poses...
 		else {
 			switch(parentMoveState) {
 				case STAND:
 				case FALL:
 					pose = STAND_POSE;
+					break;
+				case DUCKSLIDE:
+					pose = STAND_POSE;
+					offset.set(SPRITE_DUCK_OFFSET);
 					break;
 				case RUN:
 					pose = RUN_POSE;
@@ -279,8 +286,8 @@ public class LuigiSprite extends Sprite {
 				case DUCK:
 				case DUCKFALL:
 				case DUCKJUMP:
-					offset.set(SPRITE_DUCK_OFFSET);
 					pose = DUCK_POSE;
+					offset.set(SPRITE_DUCK_OFFSET);
 					break;
 				case JUMP:
 					pose = JUMP_POSE;

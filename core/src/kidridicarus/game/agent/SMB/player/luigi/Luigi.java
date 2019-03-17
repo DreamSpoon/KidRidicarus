@@ -21,6 +21,7 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
@@ -46,13 +47,14 @@ public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		public boolean isBigBody() { return !this.equals(SMALL); }
 	}
 	public enum MoveState {
-		STAND, RUN, BRAKE, FALL, DUCK, DUCKFALL, DUCKJUMP, JUMP, DEAD, DEAD_BOUNCE;
+		STAND, RUN, BRAKE, FALL, DUCK, DUCKSLIDE, DUCKFALL, DUCKJUMP, JUMP, DEAD, DEAD_BOUNCE;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-		public boolean isDuck() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP); }
+		public boolean isDuck() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP, DUCKSLIDE); }
+		public boolean isDuckNoSlide() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP); }
 		public boolean isJump() { return this.equalsAny(JUMP, DUCKJUMP); }
-		public boolean isOnGround() { return this.equalsAny(STAND, RUN, BRAKE, DUCK); }
+		public boolean isOnGround() { return this.equalsAny(STAND, RUN, BRAKE, DUCK, DUCKSLIDE); }
 		public boolean isDead() { return this.equalsAny(DEAD, DEAD_BOUNCE); }
 	}
 
@@ -79,6 +81,8 @@ public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private boolean didTakeDamage;
 	private boolean isDead;
 	private float noDamageCooldown;
+	private boolean isLastVelocityRight;
+	private boolean isDuckSlideRight;
 
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -99,6 +103,8 @@ QQ.pr("you made Luigi so happy!");
 		powerupsReceived = new LinkedList<PowType>();
 		didTakeDamage = false;
 		noDamageCooldown = 0f;
+		isLastVelocityRight = false;
+		isDuckSlideRight = false;
 
 		body = new LuigiBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
@@ -157,6 +163,12 @@ QQ.pr("you made Luigi so happy!");
 			processDamageTaken(delta);
 			processHeadBouncesGiven();
 		}
+
+		// make a note of the last direction in which mario was moving, for duck sliding
+		if(body.getSpine().isMovingRight())
+			isLastVelocityRight = true;
+		else if(body.getSpine().isMovingLeft())
+			isLastVelocityRight = false;
 
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		boolean moveStateChanged = nextMoveState != moveState;
@@ -240,7 +252,7 @@ QQ.pr("you made Luigi so happy!");
 		}
 		// if growing then increase body size
 		if(newPowerState.isBigBody() && !powerState.isBigBody())
-			body.defineBody(body.getPosition().cpy().add(GROW_OFFSET), body.getVelocity(), true, moveState.isDuck());
+			body.defineBody(body.getPosition().cpy().add(GROW_OFFSET), body.getVelocity(), true, false);
 		powerState = newPowerState;
 	}
 
@@ -319,6 +331,7 @@ QQ.pr("you made Luigi so happy!");
 		Direction4 moveDir = getLuigiMoveDir(moveAdvice);
 		boolean doHorizontalImpulse = false;
 		boolean doDecelImpulse = false;
+		boolean doDuckSlideImpulse = false;
 		switch(nextMoveState) {
 			case STAND:
 				if(moveDir.isHorizontal())
@@ -338,12 +351,15 @@ QQ.pr("you made Luigi so happy!");
 			case DUCK:
 				doDecelImpulse = true;
 				break;
+			case DUCKSLIDE:
+				doDuckSlideImpulse = true;
+				break;
 			default:
 				throw new IllegalStateException("Only ground move states allowed, wrong nextMoveState="+nextMoveState);
 		}
 
 		// if not ducking then apply move advice to facing direction
-		if(moveDir.isHorizontal() && !moveState.isDuck()) {
+		if(moveDir.isHorizontal() && !moveState.isDuckNoSlide()) {
 			if(moveDir == Direction4.RIGHT)
 				facingRight = true;
 			else if(moveDir == Direction4.LEFT)
@@ -354,6 +370,8 @@ QQ.pr("you made Luigi so happy!");
 			body.getSpine().applyWalkMove(facingRight, moveAdvice.action0);
 		if(doDecelImpulse)
 			body.getSpine().applyDecelMove(facingRight, nextMoveState.isDuck());
+		if(doDuckSlideImpulse)
+			body.getSpine().applyDuckSlideMove(isDuckSlideRight);
 	}
 
 	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
@@ -419,7 +437,7 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private boolean isFireBallAllowed() {
-		if(fireballJuice <= 0f || powerState != PowerState.FIRE || shootCooldown > 0f)
+		if(fireballJuice <= 0f || powerState != PowerState.FIRE || shootCooldown > 0f || moveState.isDuckNoSlide())
 			return false;
 		return true;
 	}
@@ -439,6 +457,40 @@ QQ.pr("you made Luigi so happy!");
 			else
 				return MoveState.JUMP;
 		}
+		else if(moveState.isDuck()) {
+			// if not advising move down then check for unduck - if can't unduck then duckslide
+			if(moveDir != Direction4.DOWN && moveState.isOnGround()) {
+				Vector2 bodyTilePos = UInfo.getM2PTileForPos(body.getPosition());
+
+				// Check the space above and around mario to test if mario can unduck normally, or if he is in a
+				// tight spot
+
+				// if the tile above ducking mario is solid ...
+				if(isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
+					Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(body.getPosition());
+					// If the player's last velocity direction was rightward, and their position is in the left half
+					// of the tile, and the tile above and to the left of them is solid, then the player should
+					// duckslide right.
+					if((isLastVelocityRight && subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
+							(subTilePos.x > 0.5f && !isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
+							(isLastVelocityRight && subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
+						isDuckSlideRight = true;
+					}
+					// the only other option is to duckslide left
+					else
+						isDuckSlideRight = false;
+
+					// tile above is solid so must be ducksliding
+					return MoveState.DUCKSLIDE;
+				}
+				else
+					return MoveState.STAND;
+			}
+			else if(moveDir == Direction4.DOWN && moveState == MoveState.DUCKSLIDE)
+				return MoveState.DUCK;
+			else
+				return moveState;
+		}
 		// if big body luigi and move down is advised then duck
 		else if(powerState.isBigBody() && moveDir == Direction4.DOWN)
 			return MoveState.DUCK;
@@ -450,6 +502,13 @@ QQ.pr("you made Luigi so happy!");
 			return MoveState.BRAKE;
 		else
 			return MoveState.RUN;
+	}
+
+	private boolean isMapTileSolid(Vector2 tileCoords) {
+		CollisionTiledMapAgent ctMap = body.getSpine().getCollisionTiledMap();
+		if(ctMap == null)
+			return false;
+		return ctMap.isMapTileSolid(tileCoords);
 	}
 
 	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {

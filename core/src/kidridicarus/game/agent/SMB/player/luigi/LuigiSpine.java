@@ -13,6 +13,7 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.OnGroundSpine;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.player.mario.MarioBody;
@@ -34,17 +35,15 @@ public class LuigiSpine extends OnGroundSpine {
 	private static final float BRAKE_XIMP = WALKMOVE_XIMP * 2.75f;
 	private static final float RUNMOVE_XIMP = WALKMOVE_XIMP * 1.5f;
 	private static final float MAX_RUNVEL = MAX_WALKVEL * 1.65f;
-
 	private static final float JUMP_IMPULSE = 1.75f;
 	private static final float JUMP_FORCE = 25.25f;
 	private static final float JUMPFORCE_MAXTIME = 0.5f;
-
 	private static final float MAX_FALL_VELOCITY = UInfo.P2M(5f * 60f);
 	private static final float AIRMOVE_XIMP = WALKMOVE_XIMP;
-
+	private static final float MAX_DUCKSLIDE_VEL = MAX_WALKVEL * 0.65f;
+	private static final float DUCKSLIDE_XIMP = WALKMOVE_XIMP * 1f;
 	// TODO: test this with different values to the best
 	private static final float MIN_HEADBANG_VEL = 0.01f;
-
 	private static final float MARIO_HEADBOUNCE_VEL = 2.8f;	// up velocity
 
 	private LuigiBody body;
@@ -151,37 +150,19 @@ public class LuigiSpine extends OnGroundSpine {
 		capHorizontalVelocity(MAX_RUNVEL);
 	}
 
-	public boolean isStandingStill() {
-		return (body.getVelocity().x >= -MAX_STAND_VEL && body.getVelocity().x <= MAX_STAND_VEL);
+	public void applyHeadBounceMove() {
+		body.setVelocity(body.getVelocity().x, 0f);
+		body.applyBodyImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL));
 	}
 
-	public boolean isBraking(boolean facingRight) {
-		if(facingRight && body.getVelocity().x < -MIN_WALKVEL)
-			return true;
-		else if(!facingRight && body.getVelocity().x > MIN_WALKVEL)
-			return true;
-		return false;
-	}
-
-	public boolean isMovingUp() {
-		return body.getVelocity().y > UInfo.VEL_EPSILON;
-	}
-
-	public boolean isMovingDown() {
-		return body.getVelocity().y < -UInfo.VEL_EPSILON;
-	}
-
-	public RoomBox getCurrentRoom() {
-		return (RoomBox) acSensor.getFirstContactByClass(RoomBox.class);
+	public void applyDuckSlideMove(boolean isDuckSlideRight) {
+		applyHorizontalImpulse(isDuckSlideRight, DUCKSLIDE_XIMP);
+		capHorizontalVelocity(MAX_DUCKSLIDE_VEL);
 	}
 
 	public void capFallVelocity() {
 		if(body.getVelocity().y < -MAX_FALL_VELOCITY)
 			body.setVelocity(body.getVelocity().x, -MAX_FALL_VELOCITY);
-	}
-
-	public boolean isContactDespawn() {
-		return acSensor.getFirstContactByClass(DespawnBox.class) != null;
 	}
 
 	/*
@@ -232,8 +213,43 @@ public class LuigiSpine extends OnGroundSpine {
 		return false;
 	}
 
-	public void applyHeadBounceMove() {
-		body.setVelocity(body.getVelocity().x, 0f);
-		body.applyBodyImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL));
+	public boolean isStandingStill() {
+		return (body.getVelocity().x >= -MAX_STAND_VEL && body.getVelocity().x <= MAX_STAND_VEL);
+	}
+
+	public boolean isBraking(boolean facingRight) {
+		if(facingRight && body.getVelocity().x < -MIN_WALKVEL)
+			return true;
+		else if(!facingRight && body.getVelocity().x > MIN_WALKVEL)
+			return true;
+		return false;
+	}
+
+	public boolean isMovingUp() {
+		return body.getVelocity().y > UInfo.VEL_EPSILON;
+	}
+
+	public boolean isMovingDown() {
+		return body.getVelocity().y < -UInfo.VEL_EPSILON;
+	}
+
+	public boolean isMovingRight() {
+		return body.getVelocity().x > MIN_WALKVEL;
+	}
+
+	public boolean isMovingLeft() {
+		return body.getVelocity().x < MIN_WALKVEL;
+	}
+
+	public CollisionTiledMapAgent getCollisionTiledMap() {
+		return acSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+	}
+
+	public RoomBox getCurrentRoom() {
+		return (RoomBox) acSensor.getFirstContactByClass(RoomBox.class);
+	}
+
+	public boolean isContactDespawn() {
+		return acSensor.getFirstContactByClass(DespawnBox.class) != null;
 	}
 }
