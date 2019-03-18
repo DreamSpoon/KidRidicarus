@@ -16,8 +16,10 @@ import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.OnGroundSpine;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.agent.SMB.player.mario.MarioBody;
 
 /*
@@ -52,16 +54,21 @@ public class LuigiSpine extends OnGroundSpine {
 	private AgentContactHoldSensor agentSensor;
 	private AgentContactHoldSensor tileBumpPushSensor;
 	private AgentContactBeginSensor damagePushSensor; 
+	private AgentContactHoldSensor pipeWarpSensor;
 
 	public LuigiSpine(LuigiBody body) {
 		this.body = body;
 		agentSensor = null;
 		tileBumpPushSensor = null;
 		damagePushSensor = null;
+		pipeWarpSensor = null;
 	}
 
-	public AgentContactHoldSensor createAgentSensor() {
+	// main sensor for detecting general agent contacts and damage push begin contacts
+	public AgentContactHoldSensor createMainSensor() {
 		agentSensor = new AgentContactHoldSensor(body);
+		damagePushSensor = new AgentContactBeginSensor(body);
+		agentSensor.chainTo(damagePushSensor);
 		return agentSensor;
 	}
 
@@ -70,9 +77,9 @@ public class LuigiSpine extends OnGroundSpine {
 		return tileBumpPushSensor;
 	}
 
-	public AgentContactBeginSensor createDamagePushSensor() {
-		damagePushSensor = new AgentContactBeginSensor(body);
-		return damagePushSensor;
+	public AgentContactHoldSensor createPipeWarpSensor() {
+		pipeWarpSensor = new AgentContactHoldSensor(body);
+		return pipeWarpSensor;
 	}
 
 	/*
@@ -250,12 +257,22 @@ public class LuigiSpine extends OnGroundSpine {
 		return body.getVelocity().x < MIN_WALKVEL;
 	}
 
+	public CollisionTiledMapAgent getCollisionTiledMap() {
+		return agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+	}
+
 	public List<Agent> getPushDamageContacts() {
 		return damagePushSensor.getAndResetContacts();
 	}
 
-	public CollisionTiledMapAgent getCollisionTiledMap() {
-		return agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+	public PipeWarp getEnterPipeWarp(Direction4 moveDir) {
+		if(moveDir == null)
+			return null;
+		for(PipeWarp pw : pipeWarpSensor.getContactsByClass(PipeWarp.class)) {
+			if(pw.canBodyEnterPipe(body.getBounds(), moveDir))
+				return (PipeWarp) pw;
+		}
+		return null;
 	}
 
 	public RoomBox getCurrentRoom() {

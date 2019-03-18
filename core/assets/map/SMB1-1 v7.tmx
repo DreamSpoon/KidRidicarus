@@ -116,7 +116,7 @@
    <property name="spawnmain" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzgENAAAIA6DnsX9AY9xNSEACAAAAAAAAAAAAAAAAAAAAAAAAAHw37QAAAAAAAAAAAAAAAAAAAAAAAAAAAHDGAosCACs=
+   eJztzjENAAAIA7Dpwb9APCwhPK2CJgAAAAAAAAAAAAAAAAAAAAAAAADAhfkOAAAAAAAAAAAAAAAAAAAAAAAAAAAAFBanOgAr
   </data>
  </layer>
  <objectgroup id="20" name="spawnplayer" visible="0">

@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
+import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -22,6 +22,8 @@ public class LuigiBody extends AgentBody {
 	// TODO head size needs some work, bump tile is inconsistent
 	private static final float HEAD_WIDTH = UInfo.P2M(10f);
 	private static final float HEAD_HEIGHT = UInfo.P2M(12f);
+	private static final float PW_SENSOR_WIDTH = UInfo.P2M(5f);
+	private static final float PW_SENSOR_HEIGHT = UInfo.P2M(2f);
 
 	// main body
 	private static final CFBitSeq MAIN_CFCAT = CommonCF.SOLID_BODY_CFCAT;
@@ -34,12 +36,12 @@ public class LuigiBody extends AgentBody {
 	private static final CFBitSeq AS_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
 	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
 			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
-	// ground sensor
 	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
-	// bumptile sensor
 	private static final CFBitSeq TILEBUMP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq TILEBUMP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
+	private static final CFBitSeq PIPEWARP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq PIPEWARP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.PIPEWARP_BIT);
 
 	private static final float FRICTION = 0f;
 	private static final float GRAVITY_SCALE = 2f;
@@ -50,11 +52,13 @@ public class LuigiBody extends AgentBody {
 	private Vector2 prevPosition;
 	private Vector2 prevVelocity;
 	private Fixture agentSensorFixture;
+	private boolean isAgentSensorEnabled;
 
 	public LuigiBody(Luigi parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
 			boolean isDucking) {
 		this.parent = parent;
 		this.world = world;
+		isAgentSensorEnabled = true;
 		defineBody(position, velocity, isBigBody, isDucking);
 	}
 
@@ -89,14 +93,16 @@ public class LuigiBody extends AgentBody {
 
 	private void createFixtures() {
 		// create fixture for agent contact and damage push sensors
-		AgentContactHoldSensor sensor = spine.createAgentSensor();
-		sensor.chainTo(spine.createDamagePushSensor());
-		agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, sensor,
+		agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createMainSensor(),
 				AS_ENABLED_CFCAT, AS_ENABLED_CFMASK, getBodySize().x, getBodySize().y);
 		// create fixture for ground sensor
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
 				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
+		// create fixture for pipewarp sensor
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createPipeWarpSensor(),
+				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
+				PW_SENSOR_WIDTH, PW_SENSOR_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create fixture for tilebump sensor
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createTileBumpPushSensor(),
 				TILEBUMP_SENSOR_CFCAT, TILEBUMP_SENSOR_CFMASK,
@@ -119,6 +125,7 @@ public class LuigiBody extends AgentBody {
 		((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
 		((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
 		agentSensorFixture.refilter();
+		isAgentSensorEnabled = false;
 	}
 
 	public Vector2 getPrevPosition() {
@@ -136,5 +143,23 @@ public class LuigiBody extends AgentBody {
 	@Override
 	public Agent getParent() {
 		return parent;
+	}
+
+	public void useScriptedBodyState(ScriptedBodyState sbState, boolean bigBody) {
+		if(sbState.contactEnabled && !isAgentSensorEnabled) {
+			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_ENABLED_CFCAT;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_ENABLED_CFMASK;
+			agentSensorFixture.refilter();
+			isAgentSensorEnabled = true;
+		}
+		else if(!sbState.contactEnabled && isAgentSensorEnabled) {
+			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
+			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
+			agentSensorFixture.refilter();
+			isAgentSensorEnabled = false;
+		}
+		if(!sbState.position.epsilonEquals(getPosition(), UInfo.POS_EPSILON))
+			defineBody(sbState.position, new Vector2(0f, 0f), bigBody, false);
+		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 	}
 }

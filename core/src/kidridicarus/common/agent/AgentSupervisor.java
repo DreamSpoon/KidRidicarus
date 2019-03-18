@@ -59,4 +59,8 @@ public abstract class AgentSupervisor {
 	public boolean isRunningScriptMoveAdvice() {
 		return scriptRunner.isRunningMoveAdvice();
 	}
+
+	public boolean isRunningScriptNoMoveAdvice() {
+		return scriptRunner.isRunning() && !scriptRunner.isRunningMoveAdvice();
+	}
 }

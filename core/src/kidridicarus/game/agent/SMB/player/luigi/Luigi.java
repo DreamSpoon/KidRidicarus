@@ -10,6 +10,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentSupervisor;
@@ -26,6 +27,7 @@ import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.tool.QQ;
@@ -125,7 +127,7 @@ QQ.pr("you made Luigi so happy!");
 			public void update(float delta) { doPostUpdate(); }
 		});
 		sprite = new LuigiSprite(agency.getAtlas(), body.getPosition(), powerState, facingRight);
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
@@ -139,6 +141,8 @@ QQ.pr("you made Luigi so happy!");
 	 * by way of regular update. Also apply star power damage if needed.
 	 */
 	private void doContactUpdate() {
+		if(supervisor.isRunningScriptNoMoveAdvice())
+			return;
 		// exit if head bump flag hasn't reset
 		if(isNextHeadBumpDenied)
 			return;
@@ -171,18 +175,30 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
-		if(!moveState.isDead()) {
+		if(!moveState.isDead() && !supervisor.isRunningScriptNoMoveAdvice()) {
 			processPowerupsReceived();
 			processFireball(moveAdvice);
 			processDamageTaken(delta);
 			processHeadBouncesGiven();
+			processPipeWarps(moveAdvice);
+
+			// make a note of the last direction in which mario was moving, for duck sliding
+			if(body.getSpine().isMovingRight())
+				isLastVelocityRight = true;
+			else if(body.getSpine().isMovingLeft())
+				isLastVelocityRight = false;
 		}
 
-		// make a note of the last direction in which mario was moving, for duck sliding
-		if(body.getSpine().isMovingRight())
-			isLastVelocityRight = true;
-		else if(body.getSpine().isMovingLeft())
-			isLastVelocityRight = false;
+		if(supervisor.isRunningScript()) {
+			// if a script is running with move advice, then switch advice to the scripted move advice
+			if(supervisor.isRunningScriptMoveAdvice())
+				moveAdvice = supervisor.getScriptAgentState().scriptedMoveAdvice;
+			else {
+				// use the scripted agent state
+				body.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState, powerState.isBigBody());
+				return;
+			}
+		}
 
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		boolean moveStateChanged = nextMoveState != moveState;
@@ -213,6 +229,12 @@ QQ.pr("you made Luigi so happy!");
 			gaveHeadBounce = false;
 			body.getSpine().applyHeadBounceMove();
 		}
+	}
+
+	private void processPipeWarps(MoveAdvice moveAdvice) {
+		PipeWarp pw = body.getSpine().getEnterPipeWarp(moveAdvice.getMoveDir4());
+		if(pw != null)
+			pw.use(this);
 	}
 
 	private void processDeadMove(boolean moveStateChanged, MoveState nextMoveState) {
@@ -576,8 +598,24 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void processSprite(float delta) {
-		sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,
-				didShootFireballThisFrame, (noDamageCooldown > 0f), (starPowerCooldown > 0f));
+		if(supervisor.isRunningScriptNoMoveAdvice()) {
+			MoveState scriptedMoveState;
+			ScriptedSpriteState sss = supervisor.getScriptAgentState().scriptedSpriteState;
+			switch(sss.spriteState) {
+				case MOVE:
+					scriptedMoveState = MoveState.RUN;
+					break;
+				case STAND:
+				default:
+					scriptedMoveState = MoveState.STAND;
+					break;
+			}
+			sprite.update(delta, sss.position, scriptedMoveState, powerState, facingRight, false, false, false);
+		}
+		else {
+			sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,
+					didShootFireballThisFrame, (noDamageCooldown > 0f), (starPowerCooldown > 0f));
+		}
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
@@ -645,6 +683,10 @@ QQ.pr("you made Luigi so happy!");
 	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
 		if(key.equals(CommonKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
 			Boolean he = facingRight;
+			return (T) he;
+		}
+		else if(key.equals(CommonKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
+			Vector2 he = new Vector2(sprite.getWidth(), sprite.getHeight());
 			return (T) he;
 		}
 		return super.getProperty(key, defaultValue, cls);
