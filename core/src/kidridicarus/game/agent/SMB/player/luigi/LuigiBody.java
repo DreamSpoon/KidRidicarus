@@ -97,8 +97,14 @@ public class LuigiBody extends AgentBody {
 
 	private void createFixtures() {
 		// create fixture for agent contact and damage push sensors
-		agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createMainSensor(),
-				AS_ENABLED_CFCAT, AS_ENABLED_CFMASK, getBodySize().x, getBodySize().y);
+		if(isAgentSensorEnabled) {
+			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createMainSensor(),
+					AS_ENABLED_CFCAT, AS_ENABLED_CFMASK, getBodySize().x, getBodySize().y);
+		}
+		else {
+			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createMainSensor(),
+					AS_DISABLED_CFCAT, AS_DISABLED_CFMASK, getBodySize().x, getBodySize().y);
+		}
 		// create fixture for ground sensor
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
 				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
@@ -176,8 +182,9 @@ public class LuigiBody extends AgentBody {
 			agentSensorFixture.refilter();
 			isAgentSensorEnabled = false;
 		}
-		if(!sbState.position.epsilonEquals(getPosition(), UInfo.POS_EPSILON))
+		if(!sbState.position.epsilonEquals(getPosition(), UInfo.POS_EPSILON)) {
 			defineBody(sbState.position, new Vector2(0f, 0f), bigBody, false);
+		}
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 	}
 }

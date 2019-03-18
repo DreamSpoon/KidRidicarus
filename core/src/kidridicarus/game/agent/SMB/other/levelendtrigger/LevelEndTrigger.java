@@ -5,34 +5,41 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agent.optional.TriggerTakeAgent;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.agent.SMB.other.castleflag.CastleFlag;
 import kidridicarus.game.info.GameKV;
 
-public class LevelEndTrigger extends Agent implements DisposableAgent {
-	private LevelEndTriggerBody leBody;
+public class LevelEndTrigger extends Agent implements TriggerTakeAgent, DisposableAgent {
+	private LevelEndTriggerBody body;
 
 	public LevelEndTrigger(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		leBody = new LevelEndTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+
+		body = new LevelEndTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
 	}
 
-	public boolean use(Agent agent) {
-		if(!(agent instanceof PlayerAgent))
-			return false;
-
-		// trigger the castle flag
-		triggerCastleFlag();
-		// start player script with name of next level
-		return ((PlayerAgent) agent).getSupervisor().startScript(new LevelEndScript(
-				getProperty(CommonKV.Level.VAL_NEXTLEVEL_NAME, "", String.class)));
+	private void doContactUpdate() {
+		for(Agent agent : body.getPlayerBeginContacts()) {
+			// give the script to the player and the script, if used, will trigger flag hoist
+			((PlayerAgent) agent).getSupervisor().startScript(
+					new LevelEndScript(this, getProperty(CommonKV.Level.VAL_NEXTLEVEL_NAME, "", String.class)));
+		}
 	}
 
-	private void triggerCastleFlag() {
+	// hoist the flag on take trigger
+	@Override
+	public void onTakeTrigger() {
 		Agent agent = agency.getFirstAgentByProperties(
 				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS },
 				new String[] { GameKV.SMB.AgentClassAlias.VAL_CASTLEFLAG });
@@ -42,16 +49,16 @@ public class LevelEndTrigger extends Agent implements DisposableAgent {
 
 	@Override
 	public Vector2 getPosition() {
-		return leBody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return leBody.getBounds();
+		return body.getBounds();
 	}
 
 	@Override
 	public void disposeAgent() {
-		leBody.dispose();
+		body.dispose();
 	}
 }

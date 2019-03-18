@@ -186,7 +186,7 @@ public class PipeWarpScript implements AgentScript {
 	}
 
 	@Override
-	public boolean isOverridable() {
+	public boolean isOverridable(AgentScript nextScript) {
 		return false;
 	}
 }

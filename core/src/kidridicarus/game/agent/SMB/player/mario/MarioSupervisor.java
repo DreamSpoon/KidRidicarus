@@ -29,7 +29,7 @@ public class MarioSupervisor extends GameAgentSupervisor {
 	}
 
 	@Override
-	public MoveAdvice pollMoveAdvice() {
+	public MoveAdvice pollUserMoveAdvice() {
 		MoveAdvice adv = curMoveAdvice.cpy();
 		curMoveAdvice.clear();
 		return adv;

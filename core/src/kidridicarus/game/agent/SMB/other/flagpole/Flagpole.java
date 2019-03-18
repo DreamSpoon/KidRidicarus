@@ -11,96 +11,133 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 
-public class Flagpole extends Agent implements DisposableAgent {
+public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent {
 	public static final float FLAGDROP_TIME = 1.35f;
+	// offset relative to the center of the top bound
+	private static final Vector2 FLAG_OFFSET_FROM_TOP = new Vector2(UInfo.P2M(-8), UInfo.P2M(-16));
+	// offset relative to the center of the bottom bound
+	private static final Vector2 FLAG_OFFSET_FROM_BOTTOM = new Vector2(UInfo.P2M(-8), UInfo.P2M(16));
 
-	// offset is from top-left of flagpole bounds
-	private static final Vector2 FLAG_START_OFFSET = new Vector2(UInfo.P2M(-4), UInfo.P2M(-16));
-	private FlagpoleBody fpBody;
-	private PoleFlagSprite flagSprite;
-	private Vector2 flagPos;
-	private Vector2 initFlagPos;
-	private boolean isAtBottom;
-	private float dropTimer;
+	private enum MoveState { TOP, DROP, BOTTOM }
+
+	private FlagpoleBody body;
+	private PoleFlagSprite sprite;
+
+	private MoveState moveState;
+	private float moveStateTimer;
+	private boolean isFlagTriggered;
 
 	public Flagpole(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		fpBody = new FlagpoleBody(this, agency.getWorld(), Agent.getStartBounds(properties));
-		isAtBottom = false;
-		dropTimer = 0f;
-		initFlagPos = FLAG_START_OFFSET.cpy().add(fpBody.getBounds().x,
-				fpBody.getBounds().y+fpBody.getBounds().height);
-		flagPos = initFlagPos;
-		flagSprite = new PoleFlagSprite(agency.getAtlas(), flagPos);
+		isFlagTriggered = false;
+		moveState = MoveState.TOP;
+		moveStateTimer = 0f;
 
+		body = new FlagpoleBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		sprite = new PoleFlagSprite(agency.getAtlas(), getFlagPosAtTop());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
 				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 			});
 	}
 
-	private void doUpdate(float delta) {
-		if(isAtBottom)
-			return;
-		if(dropTimer > 0f) {
-			flagPos = initFlagPos.cpy().add(0f,
-					-(fpBody.getBounds().height - UInfo.P2M(32)) * (FLAGDROP_TIME - dropTimer) / FLAGDROP_TIME);
-
-			dropTimer -= delta;
-			if(dropTimer <= 0f)
-				isAtBottom = true;
+	private void doContactUpdate() {
+		for(Agent agent : body.getPlayerBeginContacts()) {
+			// give the flagpole script to the player and the script, if used, will trigger flag drop
+			((PlayerAgent) agent).getSupervisor().startScript(new FlagpoleScript(this,
+					agent.getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
 		}
-		else
-			flagPos = initFlagPos;
+	}
 
-		flagSprite.update(flagPos);
+	private void doUpdate(float delta) {
+		Vector2 flagPos;
+		MoveState nextMoveState = getNextMoveState();
+		switch(nextMoveState) {
+			case TOP:
+			default:
+				flagPos = getFlagPosAtTop();
+				break;
+			case DROP:
+				isFlagTriggered = false;
+				flagPos = getFlagPosAtTime(moveStateTimer);
+				break;
+			case BOTTOM:
+				flagPos = getFlagPosAtBottom();
+				break;
+		}
+		sprite.update(flagPos);
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveState = nextMoveState;
+	}
+
+	private MoveState getNextMoveState() {
+		if(moveState == MoveState.BOTTOM)
+			return MoveState.BOTTOM;
+		else if(moveState == MoveState.DROP) {
+			if(moveStateTimer > FLAGDROP_TIME)
+				return MoveState.BOTTOM;
+			else
+				return MoveState.DROP;
+		}
+		else if(isFlagTriggered)
+			return MoveState.DROP;
+		else
+			return MoveState.TOP;
+	}
+
+	private Vector2 getFlagPosAtTop() {
+		return FLAG_OFFSET_FROM_TOP.cpy().add(body.getBounds().x + body.getBounds().width/2f,
+				body.getBounds().y+body.getBounds().height);
+	}
+
+	private Vector2 getFlagPosAtBottom() {
+		return FLAG_OFFSET_FROM_BOTTOM.cpy().add(body.getBounds().x + body.getBounds().width/2f,
+				body.getBounds().y);
+	}
+
+	private Vector2 getFlagPosAtTime(float moveStateTimer) {
+		if(moveStateTimer <= 0f)
+			return getFlagPosAtTop();
+
+		float alpha = moveStateTimer >= FLAGDROP_TIME ? 1f : moveStateTimer/ FLAGDROP_TIME;
+		return getFlagPosAtTop().cpy().lerp(getFlagPosAtBottom(), alpha);
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(flagSprite);
+		batch.draw(sprite);
 	}
 
-	private void startDrop() {
-		isAtBottom = false;
-		dropTimer = FLAGDROP_TIME;
-	}
-
-	// check if the user is a player agent, if so then give the agent's supervisor a Flagpole script to run 
-	public boolean use(Agent agent) {
-		if(!(agent instanceof PlayerAgent))
-			return false;
-
-		// if the supervisor starts (uses) the script then start the flag drop
-		if(((PlayerAgent) agent).getSupervisor().startScript(new FlagpoleScript(fpBody.getBounds(),
-				agent.getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)))) {
-			startDrop();
-			return true;
-		}
-		else
-			return false;
+	@Override
+	public void onTakeTrigger() {
+		isFlagTriggered = true;
 	}
 
 	@Override
 	public Vector2 getPosition() {
-		return fpBody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return fpBody.getBounds();
+		return body.getBounds();
 	}
 
 	@Override
 	public void disposeAgent() {
-		fpBody.dispose();
+		body.dispose();
 	}
 }

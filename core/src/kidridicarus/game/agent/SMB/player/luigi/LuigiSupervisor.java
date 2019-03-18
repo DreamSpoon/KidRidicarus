@@ -8,27 +8,27 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.MoveAdvice;
 
 public class LuigiSupervisor extends GameAgentSupervisor {
-	private MoveAdvice curMoveAdvice;
 	private Luigi luigi;
+	private MoveAdvice userMoveAdvice;
 	private String nextLevelName;
 	private boolean isGameOver;
 
 	public LuigiSupervisor(Luigi luigi) {
-		curMoveAdvice = new MoveAdvice();
 		this.luigi = luigi;
+		userMoveAdvice = new MoveAdvice();
 		nextLevelName = null;
 		isGameOver = false;
 	}
 
 	@Override
 	public void setMoveAdvice(MoveAdvice moveAdvice) {
-		curMoveAdvice.set(moveAdvice);
+		userMoveAdvice.set(moveAdvice);
 	}
 
 	@Override
-	public MoveAdvice pollMoveAdvice() {
-		MoveAdvice adv = curMoveAdvice.cpy();
-		curMoveAdvice.clear();
+	public MoveAdvice pollUserMoveAdvice() {
+		MoveAdvice adv = userMoveAdvice.cpy();
+		userMoveAdvice.clear();
 		return adv;
 	}
 

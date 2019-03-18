@@ -30,7 +30,6 @@ import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
-import kidridicarus.game.tool.QQ;
 
 public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
 		PowerupTakeAgent, DisposableAgent {
@@ -91,7 +90,6 @@ public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 
 	public Luigi(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-QQ.pr("you made Luigi so happy!");
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
 		powerState = PowerState.FIRE;
@@ -189,15 +187,10 @@ QQ.pr("you made Luigi so happy!");
 				isLastVelocityRight = false;
 		}
 
-		if(supervisor.isRunningScript()) {
-			// if a script is running with move advice, then switch advice to the scripted move advice
-			if(supervisor.isRunningScriptMoveAdvice())
-				moveAdvice = supervisor.getScriptAgentState().scriptedMoveAdvice;
-			else {
-				// use the scripted agent state
-				body.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState, powerState.isBigBody());
-				return;
-			}
+		// if a script is running with no move advice then switch to scripted body state and exit
+		if(supervisor.isRunningScriptNoMoveAdvice()) {
+			body.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState, powerState.isBigBody());
+			return;
 		}
 
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
@@ -613,7 +606,7 @@ QQ.pr("you made Luigi so happy!");
 					scriptedMoveState = MoveState.STAND;
 					break;
 			}
-			sprite.update(delta, sss.position, scriptedMoveState, powerState, facingRight, false, false, false);
+			sprite.update(delta, sss.position, scriptedMoveState, powerState, sss.facingRight, false, false, false);
 		}
 		else {
 			sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,
@@ -622,6 +615,10 @@ QQ.pr("you made Luigi so happy!");
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
+		// exit if using scripted sprite state and script says don't draw
+		if(supervisor.isRunningScriptNoMoveAdvice() &&
+				supervisor.getScriptAgentState().scriptedSpriteState.visible == false)
+			return;
 		batch.draw(sprite);
 	}
 

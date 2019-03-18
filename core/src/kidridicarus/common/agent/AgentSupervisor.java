@@ -16,7 +16,7 @@ public abstract class AgentSupervisor {
 	private AgentScriptRunner scriptRunner;
 
 	public abstract void setMoveAdvice(MoveAdvice moveAdvice);
-	public abstract MoveAdvice pollMoveAdvice();
+	public abstract MoveAdvice pollUserMoveAdvice();
 	public abstract boolean isAtLevelEnd();
 	public abstract boolean isGameOver();
 
@@ -62,5 +62,12 @@ public abstract class AgentSupervisor {
 
 	public boolean isRunningScriptNoMoveAdvice() {
 		return scriptRunner.isRunning() && !scriptRunner.isRunningMoveAdvice();
+	}
+
+	public MoveAdvice pollMoveAdvice() {
+		if(scriptRunner.isRunningMoveAdvice())
+			return scriptRunner.getScriptAgentState().scriptedMoveAdvice;
+		else
+			return pollUserMoveAdvice();
 	}
 }

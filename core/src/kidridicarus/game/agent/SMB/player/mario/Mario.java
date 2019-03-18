@@ -598,7 +598,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 		// check for end level trigger contact, and use it if found
 		LevelEndTrigger leTrigger = mBody.getFirstContactByClass(LevelEndTrigger.class);
 		if(leTrigger != null) {
-			leTrigger.use(this);
+//			leTrigger.use(this);
 			return true;
 		}
 		return false;
@@ -608,7 +608,7 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 		// check for end level flagpole contact, and use it if found
 		Flagpole flagpole = mBody.getFirstContactByClass(Flagpole.class);
 		if(flagpole != null) {
-			flagpole.use(this);
+//			flagpole.use(this);
 			return true;
 		}
 		return false;

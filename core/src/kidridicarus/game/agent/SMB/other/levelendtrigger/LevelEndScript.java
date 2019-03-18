@@ -5,12 +5,15 @@ import kidridicarus.agency.agentscript.ScriptedAgentState;
 
 public class LevelEndScript implements AgentScript {
 	private static final float LEVELEND_WAIT = 1f;
+
+	private LevelEndTrigger parent;
 	private AgentScriptHooks asHooks;
-	private String nextLevelName;
 	private ScriptedAgentState curScriptAgentState;
 	private float stateTimer;
+	private String nextLevelName;
 
-	public LevelEndScript(String nextLevelName) {
+	public LevelEndScript(LevelEndTrigger parent, String nextLevelName) {
+		this.parent = parent;
 		this.nextLevelName = nextLevelName;
 		asHooks = null;
 		curScriptAgentState = null;
@@ -26,6 +29,9 @@ public class LevelEndScript implements AgentScript {
 		curScriptAgentState.scriptedBodyState.contactEnabled = false;
 		curScriptAgentState.scriptedBodyState.gravityFactor = 0f;
 		curScriptAgentState.scriptedSpriteState.visible = false;
+
+		// hoist the end of level flag
+		parent.onTakeTrigger();
 	}
 
 	@Override
@@ -45,7 +51,7 @@ public class LevelEndScript implements AgentScript {
 	}
 
 	@Override
-	public boolean isOverridable() {
+	public boolean isOverridable(AgentScript nextScript) {
 		return false;
 	}
 }

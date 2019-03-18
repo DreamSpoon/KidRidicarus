@@ -123,13 +123,13 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 				// check for level end trigger contact, and use level end if found
 				LevelEndTrigger leTrigger = samusBody.getSpine().getFirstContactByClass(LevelEndTrigger.class);
 				if(leTrigger != null) {
-					leTrigger.use(this);
+//					leTrigger.use(this);
 					break;
 				}
 				// check for level end flagpole contact, and use flagpole if found
 				Flagpole flagpole = samusBody.getSpine().getFirstContactByClass(Flagpole.class);
 				if(flagpole != null) {
-					flagpole.use(this);
+//					flagpole.use(this);
 					break;
 				}
 /*				// check for incoming damage and apply

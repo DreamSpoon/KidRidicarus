@@ -33,7 +33,7 @@ public class AgentScriptRunner {
 	public boolean startScript(AgentScript agentScript, AgentScriptHooks asHooks,
 			ScriptedAgentState startAgentState) {
 		// if a script is already running and cannot be overridden then return false
-		if(isRunning && !currentScript.isOverridable())
+		if(isRunning && !currentScript.isOverridable(agentScript))
 			return false;
 		// start the script
 		isRunning = true;
