@@ -3,7 +3,7 @@ package kidridicarus.game.agent.SMB.NPC.turtle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agentspine.GoombaTurtleShareSpine;
+import kidridicarus.game.agentspine.SMB.GoombaTurtleShareSpine;
 
 public class TurtleSpine extends GoombaTurtleShareSpine {
 	private static final float WALK_VEL = 0.4f;

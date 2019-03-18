@@ -75,9 +75,11 @@ public class MarioFireball extends Agent implements DisposableAgent {
 
 	private void doContactUpdate() {
 		// check do agents needing damage
-		for(ContactDmgTakeAgent agent : body.getSpine().getContactAgentsByClass(ContactDmgTakeAgent.class)) {
+		for(ContactDmgTakeAgent agent : body.getSpine().getContactDmgTakeAgents()) {
+			// do not damage parent
 			if(agent == parent)
 				continue;
+			// if contact agent took damage then set hit type flag
 			if(agent.onTakeDamage(parent, DAMAGE, body.getPosition())) {
 				hitType = HitType.AGENT;
 				break;

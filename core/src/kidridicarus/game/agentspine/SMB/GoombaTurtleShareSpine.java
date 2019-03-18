@@ -1,13 +1,14 @@
-package kidridicarus.common.agentspine;
+package kidridicarus.game.agentspine.SMB;
 
 import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentbody.AgentBody;
+import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
+import kidridicarus.common.agentspine.OnGroundSpine;
 
 public class GoombaTurtleShareSpine extends OnGroundSpine {
 	protected AgentBody body;

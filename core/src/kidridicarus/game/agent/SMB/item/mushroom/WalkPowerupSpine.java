@@ -1,6 +1,6 @@
 package kidridicarus.game.agent.SMB.item.mushroom;
 
-import kidridicarus.agency.agentbody.AgentBody;
+import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;

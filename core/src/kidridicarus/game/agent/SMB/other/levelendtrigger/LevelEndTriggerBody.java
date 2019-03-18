@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentbody.AgentBody;
+import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;

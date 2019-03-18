@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 
-import kidridicarus.agency.agentbody.AgentBody;
+import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;

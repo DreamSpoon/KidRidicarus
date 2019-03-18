@@ -2,7 +2,7 @@ package kidridicarus.game.info;
 
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.game.agent.Metroid.NPC.skree.Skree;
-import kidridicarus.game.agent.Metroid.NPC.skree.SkreeExp;
+import kidridicarus.game.agent.Metroid.NPC.skreeshot.SkreeShot;
 import kidridicarus.game.agent.Metroid.NPC.zoomer.Zoomer;
 import kidridicarus.game.agent.Metroid.item.marumari.MaruMari;
 import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
@@ -18,6 +18,6 @@ public class MetroidInfo {
 			GameKV.Metroid.AgentClassAlias.VAL_SAMUS, Samus.class,
 			GameKV.Metroid.AgentClassAlias.VAL_SAMUS_SHOT, SamusShot.class,
 			GameKV.Metroid.AgentClassAlias.VAL_SKREE, Skree.class,
-			GameKV.Metroid.AgentClassAlias.VAL_SKREE_EXP, SkreeExp.class,
+			GameKV.Metroid.AgentClassAlias.VAL_SKREE_EXP, SkreeShot.class,
 			GameKV.Metroid.AgentClassAlias.VAL_ZOOMER, Zoomer.class);
 }

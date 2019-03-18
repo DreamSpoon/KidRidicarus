@@ -3,6 +3,7 @@ package kidridicarus.game.agent.SMB.player.mariofireball;
 import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
 
@@ -29,8 +30,8 @@ public class MarioFireballSpine {
 		return acSensor.getContacts();
 	}
 
-	public <T> List<T> getContactAgentsByClass(Class<T> cls) {
-		return acSensor.getContactsByClass(cls);
+	public List<ContactDmgTakeAgent> getContactDmgTakeAgents() {
+		return acSensor.getContactsByClass(ContactDmgTakeAgent.class);
 	}
 
 	public boolean isHitBoundary(boolean facingRight) {

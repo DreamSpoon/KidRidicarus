@@ -1,6 +1,6 @@
 package kidridicarus.common.agentspine;
 
-import kidridicarus.agency.agentbody.AgentBody;
+import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 
