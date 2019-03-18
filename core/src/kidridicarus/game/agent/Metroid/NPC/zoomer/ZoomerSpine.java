@@ -1,7 +1,11 @@
 package kidridicarus.game.agent.Metroid.NPC.zoomer;
 
+import java.util.List;
+
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.DiagonalDir4;
@@ -27,6 +31,7 @@ public class ZoomerSpine {
 	private SolidBoundSensor[] crawlSense;
 	private int[] contactCounts;
 	private ZoomerBody body;
+	private AgentContactBeginSensor agentBeginContactSensor;
 
 	public ZoomerSpine(ZoomerBody body) {
 		this.body = body;
@@ -43,6 +48,11 @@ public class ZoomerSpine {
 		for(int i=0; i<crawlSense.length; i++)
 			crawlSense[i] = new SolidBoundSensor(null);
 		return crawlSense;
+	}
+
+	public AgentContactBeginSensor createAgentSensor() {
+		agentBeginContactSensor = new AgentContactBeginSensor(body);
+		return agentBeginContactSensor;
 	}
 
 	private boolean isSensorContacting(DiagonalDir4 quad) {
@@ -238,5 +248,9 @@ public class ZoomerSpine {
 			default:
 				return Direction4.LEFT;
 		}
+	}
+
+	public List<ContactDmgTakeAgent> getContactDmgTakeAgents() {
+		return agentBeginContactSensor.getOnlyAndResetContacts(ContactDmgTakeAgent.class);
 	}
 }

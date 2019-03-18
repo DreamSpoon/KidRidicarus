@@ -598,7 +598,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	}
 
 	private void doPostUpdate() {
-		// let body update previous velocity
+		// let body update previous position/velocity
 		body.postUpdate();
 	}
 

@@ -8,13 +8,13 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.game.info.GameKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.info.GameKV;
 
 /*
  * The sensor code. It seems like a million cases due to the 4 possible "up" directions of the zoomer,
@@ -25,26 +25,23 @@ import kidridicarus.common.tool.Direction4;
 public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
 	private static final float INJURY_TIME = 10f/60f;
+	private static final float GIVE_DAMAGE = 1f;
 
 	public enum MoveState { WALK, INJURY, DEAD }
 
 	private ZoomerBody body;
 	private ZoomerSprite sprite;
+	private MoveState moveState;
+	private float moveStateTimer;
 
 	// walking right relative to the zoomer's up direction
 	private boolean isWalkingRight;
 	// the moveDir can be derived from upDir and isWalkingRight
 	private Direction4 upDir;
 	private float upDirChangeTimer;
-	// TODO move prevBodyPosition into the ZoomerBody class
-	private Vector2 prevBodyPosition;
-
 	private boolean isInjured;
 	private float health;
 	private boolean isDead;
-
-	private MoveState curMoveState;
-	private float stateTimer;
 
 	public Zoomer(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -55,21 +52,31 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 		isInjured = false;
 		health = 2f;
 		isDead = false;
-		curMoveState = MoveState.WALK;
+		moveState = MoveState.WALK;
 
 		body = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties));
-		prevBodyPosition = body.getPosition();
-
-		sprite = new ZoomerSprite(agency.getAtlas(), body.getPosition());
-
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
+		sprite = new ZoomerSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
+	}
+
+	private void doContactUpdate() {
+		for(ContactDmgTakeAgent agent : body.getSpine().getContactDmgTakeAgents())
+			((ContactDmgTakeAgent) agent).onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
 	}
 
 	private void doUpdate(float delta) {
@@ -91,7 +98,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 			newUpDir = body.getSpine().getInitialUpDir(isWalkingRight);
 		// check for change in up direction if enough time has elapsed
 		else if(upDirChangeTimer > UPDIR_CHANGE_MINTIME)
-			newUpDir = body.getSpine().checkUp(upDir, isWalkingRight, prevBodyPosition);
+			newUpDir = body.getSpine().checkUp(upDir, isWalkingRight, body.getPrevPosition());
 
 		upDirChangeTimer = upDir == newUpDir ? upDirChangeTimer+delta : 0f;
 		upDir = newUpDir;
@@ -105,21 +112,15 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 				break;
 			case INJURY:
 				body.zeroVelocity(true, true);
-				if(curMoveState == nextMoveState && stateTimer > INJURY_TIME)
+				if(moveState == nextMoveState && moveStateTimer > INJURY_TIME)
 					isInjured = false;
 				break;
 			case DEAD:
 				doDeathPop();
 				break;
 		}
-		stateTimer = curMoveState == nextMoveState ? stateTimer+delta : 0f;
-		curMoveState = nextMoveState;
-		prevBodyPosition = body.getPosition().cpy();
-	}
-
-	private void doDeathPop() {
-		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
-		agency.disposeAgent(this);
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveState = nextMoveState;
 	}
 
 	private MoveState getNextMoveState() {
@@ -131,8 +132,18 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 			return MoveState.WALK;
 	}
 
+	private void doDeathPop() {
+		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
+		agency.disposeAgent(this);
+	}
+
+	private void doPostUpdate() {
+		// let body update previous position/velocity
+		body.postUpdate();
+	}
+
 	private void processSprite(float delta) {
-		sprite.update(delta, body.getPosition(), curMoveState, upDir);
+		sprite.update(delta, body.getPosition(), moveState, upDir);
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
