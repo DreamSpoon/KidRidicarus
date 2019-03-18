@@ -284,6 +284,9 @@ QQ.pr("you made Luigi so happy!");
 			case POWERSTAR:
 				starPowerCooldown = POWERSTAR_MAXTIME;
 				break;
+			case COIN:
+				agency.playSound(AudioInfo.Sound.SMB.COIN);
+				break;
 			default:
 				break;
 		}

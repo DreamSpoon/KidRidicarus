@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
+import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp.PipeWarpHorizon;
 
 /*
@@ -58,6 +59,10 @@ public class PipeWarpScript implements AgentScript {
 			// sprite entering pipe
 			case ENTRY:
 				curScriptAgentState.scriptedSpriteState.position.set(getSpriteEntryPosition(stateTimer));
+				if(entryHorizon.direction.isHorizontal())
+					curScriptAgentState.scriptedSpriteState.spriteState = SpriteState.MOVE;
+				else
+					curScriptAgentState.scriptedSpriteState.spriteState = SpriteState.STAND;
 				break;
 			// body position warp
 			case WARP:
@@ -65,8 +70,13 @@ public class PipeWarpScript implements AgentScript {
 				break;
 			// sprite leaving pipe
 			case EXIT:
-				if(exitHorizon != null)
+				if(exitHorizon != null) {
 					curScriptAgentState.scriptedSpriteState.position.set(getSpriteExitPosition(stateTimer));
+					if(exitHorizon.direction.isHorizontal())
+						curScriptAgentState.scriptedSpriteState.spriteState = SpriteState.MOVE;
+					else
+						curScriptAgentState.scriptedSpriteState.spriteState = SpriteState.STAND;
+				}
 				break;
 			// script complete, return false to end script
 			case COMPLETE:

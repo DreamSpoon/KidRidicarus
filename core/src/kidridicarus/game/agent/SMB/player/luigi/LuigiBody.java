@@ -10,6 +10,7 @@ import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
+import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -22,8 +23,11 @@ public class LuigiBody extends AgentBody {
 	// TODO head size needs some work, bump tile is inconsistent
 	private static final float HEAD_WIDTH = UInfo.P2M(10f);
 	private static final float HEAD_HEIGHT = UInfo.P2M(12f);
-	private static final float PW_SENSOR_WIDTH = UInfo.P2M(5f);
-	private static final float PW_SENSOR_HEIGHT = UInfo.P2M(2f);
+
+	private static final float TOPBOT_PW_SENSOR_WIDTH = UInfo.P2M(5f);
+	private static final float TOPBOT_PW_SENSOR_HEIGHT = UInfo.P2M(2f);
+	private static final float SIDE_PW_SENSOR_WIDTH = UInfo.P2M(2f);
+	private static final float SIDE_PW_SENSOR_HEIGHT = UInfo.P2M(5f);
 
 	// main body
 	private static final CFBitSeq MAIN_CFCAT = CommonCF.SOLID_BODY_CFCAT;
@@ -99,14 +103,28 @@ public class LuigiBody extends AgentBody {
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
 				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
-		// create fixture for pipewarp sensor
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createPipeWarpSensor(),
-				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
-				PW_SENSOR_WIDTH, PW_SENSOR_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create fixture for tilebump sensor
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createTileBumpPushSensor(),
 				TILEBUMP_SENSOR_CFCAT, TILEBUMP_SENSOR_CFMASK,
 				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, getBodySize().y/2f));
+
+		AgentContactHoldSensor pwSensor = spine.createPipeWarpSensor();
+		// create fixture for bottom pipewarp sensor
+		B2DFactory.makeSensorBoxFixture(b2body, pwSensor,
+				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
+				TOPBOT_PW_SENSOR_WIDTH, TOPBOT_PW_SENSOR_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
+		// create fixture for top pipewarp sensor
+		B2DFactory.makeSensorBoxFixture(b2body, pwSensor,
+				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
+				TOPBOT_PW_SENSOR_WIDTH, TOPBOT_PW_SENSOR_HEIGHT, new Vector2(0f, getBodySize().y/2f));
+		// create fixture for left pipewarp sensor
+		B2DFactory.makeSensorBoxFixture(b2body, pwSensor,
+				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
+				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(-getBodySize().x/2f, 0f));
+		// create fixture for right pipewarp sensor
+		B2DFactory.makeSensorBoxFixture(b2body, pwSensor,
+				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
+				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(getBodySize().x/2f, 0f));
 	}
 
 	public void postUpdate() {
