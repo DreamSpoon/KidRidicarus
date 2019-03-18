@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.SMB.player.luigi;
+package kidridicarus.game.agent.SMB.player.mariofireball;
 
 import java.util.List;
 
@@ -6,12 +6,12 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
 
-public class LuigiFireballSpine {
-	private LuigiFireballBody body;
+public class MarioFireballSpine {
+	private MarioFireballBody body;
 	private SolidBoundSensor hmSensor;
 	private AgentContactHoldSensor acSensor;
 
-	public LuigiFireballSpine(LuigiFireballBody body) {
+	public MarioFireballSpine(MarioFireballBody body) {
 		this.body = body;
 	}
 

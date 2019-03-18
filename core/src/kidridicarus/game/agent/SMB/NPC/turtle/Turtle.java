@@ -176,6 +176,8 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				break;
 			case HIDE:
 				if(moveStateChanged) {
+					agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, true,
+							body.getPosition(), UInfo.P2M(16), perp));
 					body.zeroVelocity(true, true);
 					agency.playSound(AudioInfo.Sound.SMB.STOMP);
 				}
@@ -190,13 +192,18 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 					else if(!isFacingRight && !body.getSpine().isOtherAgentOnRight(perp))
 						isFacingRight = true;
 					agency.playSound(AudioInfo.Sound.SMB.KICK);
+					agency.createAgent(FloatingPoints.makeAP(PointAmount.P400, true,
+							body.getPosition(), UInfo.P2M(16), perp));
 				}
 				body.getSpine().doSlideMove(isFacingRight);
 				break;
 			case DEAD:
 				// newly deceased?
-				if(moveStateChanged)
+				if(moveStateChanged) {
 					doStartDeath();
+					agency.createAgent(FloatingPoints.makeAP(PointAmount.P500, true,
+							body.getPosition(), UInfo.P2M(16), perp));
+				}
 				// check the old deceased for timeout or despawn touch
 				else if(moveStateTimer > DIE_FALL_TIME || body.getSpine().isContactDespawn())
 					agency.disposeAgent(this);

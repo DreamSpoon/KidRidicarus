@@ -5,14 +5,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.agent.SMB.player.mario.Mario.MarioAgentState;
-import kidridicarus.game.agent.SMB.player.mario.Mario.MarioBodyState;
-import kidridicarus.game.agent.SMB.player.mario.Mario.MarioPowerState;
+import kidridicarus.game.agent.SMB.player.mario.Mario.MoveState;
+import kidridicarus.game.agent.SMB.player.mario.Mario.PowerState;
 
 public class MarioSprite extends Sprite {
 	private static final float SMLSPR_WIDTH = UInfo.P2M(16);
@@ -22,6 +20,8 @@ public class MarioSprite extends Sprite {
 	private static final float STARPOWER_ANIM_SPEED = 0.05f;
 	private static final int NUM_STARPOWER_FRAMES = 4;
 	private static final float REG_ANIM_SPEED = 0.1f;
+
+	private static final float THROW_POSE_TIME = 0.15f;
 
 	private static final int NUM_POSES = 10;
 	private static final int STAND_POSE = 0;
@@ -45,43 +45,65 @@ public class MarioSprite extends Sprite {
 	private static final int BIG_FIRE_GRP = 4;
 	private static final int SML_NUM_GRPS = 4;
 	private static final int SML_REG_GRP = 0;
-//	private static final int SML_INV1_GRP = 1;
-//	private static final int SML_INV2_GRP = 2;
-//	private static final int SML_INV3_GRP = 3;
+	private static final int SML_INV1_GRP = 1;
+	private static final int SML_INV2_GRP = 2;
+	private static final int SML_INV3_GRP = 3;
 
-	private enum MarioSpriteState { STAND, RUN, JUMP, BRAKE, FALL, SHRINK, GROW, DUCK, FIREBALL, DEAD, CLIMB }
+	private static final Vector2 SPRITE_DUCK_OFFSET = UInfo.P2MVector(0f, 8f);
+	private static final float SHRINK_OFFSET_Y = UInfo.P2M(8);
 
-	private MarioSpriteState curSpriteState;
-
+	/*
+	 * Animations by body size and [pose][group], where:
+	 *   pose is stuff like "stand", "run", "jump", etc.
+	 *   group is stuff like "small regular (red suit)", "big regular (red suit)", "big fire (white suit)",
+	 *     "small star powered (shimmering suit)", etc.
+	 */
 	private Animation<TextureRegion>[][] smlAnim;
 	private Animation<TextureRegion>[][] bigAnim;
 
-	private float stateTimer;
-	private float fallStateStartTime;
-	private boolean wasBigLastFrame;
-	private boolean doGrowAnim;
-	private boolean doShrinkAnim;
-	private boolean doFireballAnim;
-	private float starPowerFrameTimer;
-	private float climbStateTimer;
+	private MoveState prevParentMoveState;
+	private PowerState prevParentPowerState;
+	private float parentMoveStateTimer;
+	private float throwPoseCooldown;
+	private boolean isDrawAllowed;
 
-	public MarioSprite(TextureAtlas atlas, Vector2 position, MarioPowerState powerState) {
+	private enum SpriteState { NORMAL, GROW, SHRINK }
+	private SpriteState spriteState;
+	private float spriteStateTimer;
+	private float starPowerTimer;
+
+	public MarioSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean facingRight) {
 		createAnimations(atlas);
 
-		setRegion(smlAnim[STAND_POSE][BIG_REG_GRP].getKeyFrame(0f));
-		setBounds(0f, 0f, SMLSPR_WIDTH, SMLSPR_HEIGHT);
+		prevParentMoveState = MoveState.STAND;
+		prevParentPowerState = parentPowerState;
+		parentMoveStateTimer = 0f;
+		throwPoseCooldown = 0f;
+		isDrawAllowed = true;
+
+		spriteState = SpriteState.NORMAL;
+		spriteStateTimer = 0f;
+		starPowerTimer = 0f;
+
+		// set the initial texture region and bounds
+		switch(parentPowerState) {
+			case SMALL:
+				setRegion(smlAnim[STAND_POSE][SML_REG_GRP].getKeyFrame(0f));
+				setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
+				break;
+			case BIG:
+				setRegion(bigAnim[STAND_POSE][BIG_REG_GRP].getKeyFrame(0f));
+				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
+				break;
+			case FIRE:
+				setRegion(bigAnim[STAND_POSE][BIG_FIRE_GRP].getKeyFrame(0f));
+				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
+				break;
+		}
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
-
-		curSpriteState = MarioSpriteState.STAND;
-		stateTimer = 0f;
-		fallStateStartTime = 0f;
-
-		wasBigLastFrame = (powerState != MarioPowerState.SMALL);
-		doGrowAnim = false;
-		doShrinkAnim = false;
-		doFireballAnim = false;
-		starPowerFrameTimer = 0f;
-		climbStateTimer = 0f;
+		// flip to face left if necessary
+		if(!facingRight && !isFlipX())
+			flip(true, false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -157,214 +179,191 @@ public class MarioSprite extends Sprite {
 					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_throw"), PlayMode.LOOP);
 	}
 
-	public void update(float delta, Vector2 position, MarioAgentState agentState, MarioBodyState bodyState,
-			MarioPowerState powerState, boolean facingRight, boolean isStarPowered, boolean isBigBody,
-			Direction4 moveDir) {
-		MarioSpriteState prevSpriteState;
-
-		// switch from small to big?
-		if(powerState != MarioPowerState.SMALL && !wasBigLastFrame) {
-			// TODO: still need to test that mario can switch from shrinking to growing at the same time
-			if(doShrinkAnim)
-				doShrinkAnim = false;
-
-			doGrowAnim = true;
-			stateTimer = 0f;
-			setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
-		}
-		else if(powerState == MarioPowerState.SMALL && wasBigLastFrame) {
-			if(doGrowAnim)
-				doGrowAnim = false;
-
-			doShrinkAnim = true;
-			stateTimer = 0f;
-			// setBounds when shrink animation finishes
-		}
-
-		if(doGrowAnim && bigAnim[GROW_POSE][BIG_REG_GRP].isAnimationFinished(stateTimer))
-			doGrowAnim = false;
-
-		if(doShrinkAnim && bigAnim[SHRINK_POSE][BIG_REG_GRP].isAnimationFinished(stateTimer)) {
-			doShrinkAnim = false;
-			// change sprite bounds to small mario size
-			setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
-		}
-
-		if(doFireballAnim && bigAnim[THROW_POSE][BIG_FIRE_GRP].isAnimationFinished(stateTimer))
-			doFireballAnim = false;
-
-		prevSpriteState = curSpriteState;
-		curSpriteState = getNextSpriteState(bodyState, agentState);
-
-		if(prevSpriteState == MarioSpriteState.STAND && curSpriteState == MarioSpriteState.FALL)
-			fallStateStartTime = -1;
-		else if(prevSpriteState == MarioSpriteState.RUN && curSpriteState == MarioSpriteState.FALL)
-			fallStateStartTime = stateTimer;
-
-		if(curSpriteState == MarioSpriteState.DEAD && curSpriteState != prevSpriteState)
-			setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
-
-		stateTimer = curSpriteState == prevSpriteState ? stateTimer+delta : 0f;
-		wasBigLastFrame = (powerState != MarioPowerState.SMALL);
-
-		starPowerFrameTimer += delta;
-
-		// if moving up/down then increment/decrement the climb timer, otherwise no change
-		if(moveDir == Direction4.UP)
-			climbStateTimer += delta;
-		else if(moveDir == Direction4.DOWN) {
-			// defaulting to SML_REG_GRP because climb animation should be same duration for all groups
-			climbStateTimer = CommonInfo.ensurePositive(climbStateTimer - delta,
-					smlAnim[CLIMB_POSE][SML_REG_GRP].getAnimationDuration());
-		}
-
-		setRegion(getFrame(powerState, facingRight, isStarPowered));
-
-		// if mario's body is small, but his sprite is big (the shrink animation is a big sprite) then offset
-		if(!isBigBody && (powerState != MarioPowerState.SMALL || doShrinkAnim))
-			setPosition(position.x - getWidth() / 2f, position.y - getHeight() / 2f + getHeight() / 4f);
-		// otherwise center the sprite on mario's body
-		else
-			setPosition(position.x - getWidth() / 2f, position.y - getHeight() / 2f);
-	}
-
-	private MarioSpriteState getNextSpriteState(MarioBodyState bodyState, MarioAgentState agentState) {
-		if(agentState != MarioAgentState.PLAY && agentState != MarioAgentState.FIREBALL) {
-			switch(agentState) {
-				case DEAD:
-					return MarioSpriteState.DEAD;
-				default:
-					return MarioSpriteState.STAND;
-			}
-		}
-		else {
-			// some animations override the current mario state, unless mario is dead
-			// (note: the animation might just be one frame, but displayed for a duration)
-			if(agentState != MarioAgentState.DEAD) {
-				if(agentState == MarioAgentState.FIREBALL)
-					doFireballAnim = true;
-
-				if(doGrowAnim)
-					return MarioSpriteState.GROW;
-				else if(doShrinkAnim)
-					return MarioSpriteState.SHRINK;
-				else if(doFireballAnim)
-					return MarioSpriteState.FIREBALL;
-			}
-		}
-
-		switch(bodyState) {
-			case CLIMB:
-				return MarioSpriteState.CLIMB;
-			case DUCK:
-				return MarioSpriteState.DUCK;
-			case WALKRUN:
-				return MarioSpriteState.RUN;
-			case JUMP:
-				return MarioSpriteState.JUMP;
-			case FALL:
-				return MarioSpriteState.FALL;
-			case BRAKE:
-				return MarioSpriteState.BRAKE;
-			case DEAD:
-				return MarioSpriteState.DEAD;
-			case STAND:
-			default:
-				return MarioSpriteState.STAND;
-		}
-	}
-
-	private TextureRegion getFrame(MarioPowerState powerState, boolean facingRight, boolean isStarPowered) {
-		TextureRegion region = null;
-		int grp;
-
-		switch(powerState) {
-			case FIRE:
-				grp = BIG_FIRE_GRP;
-				break;
-			case BIG:
-				grp = BIG_REG_GRP;
-				break;
-			case SMALL:
-			default:
-				grp = SML_REG_GRP;
-				break;
-		}
-		if(isStarPowered)
-			grp = getStarFrameGrp(powerState);
-
-		// create an alias to the big or small animation arrays
-		Animation<TextureRegion>[][] sizeAnim;
-		if(powerState == MarioPowerState.SMALL)
-			sizeAnim = smlAnim;
-		else
-			sizeAnim = bigAnim;
-		// set region to an animation based on the current state
-		switch(curSpriteState) {
-			case CLIMB:
-				region = sizeAnim[CLIMB_POSE][grp].getKeyFrame(climbStateTimer);
-				break;
-			case DUCK:
-				region = bigAnim[DUCK_POSE][grp].getKeyFrame(stateTimer);
-				break;
-			case FIREBALL:
-				region = bigAnim[THROW_POSE][grp].getKeyFrame(stateTimer);
-				break;
-			case RUN:
-				region = sizeAnim[RUN_POSE][grp].getKeyFrame(stateTimer);
-				break;
-			case JUMP:
-				region = sizeAnim[JUMP_POSE][grp].getKeyFrame(stateTimer);
-				break;
-			case FALL:
-				// mario maintains his current frame of run animation if he was running when started to fall
-				if(fallStateStartTime == -1)
-					region = sizeAnim[STAND_POSE][grp].getKeyFrame(stateTimer);
-				else
-					region = sizeAnim[RUN_POSE][grp].getKeyFrame(fallStateStartTime);
-				break;
-			case BRAKE:
-				region = sizeAnim[BRAKE_POSE][grp].getKeyFrame(stateTimer);
-				break;
-			case DEAD:
-				region = smlAnim[DEAD_POSE][SML_REG_GRP].getKeyFrame(stateTimer);
+	public void update(float delta, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
+			boolean facingRight, boolean didShootFireball, boolean isBlinking, boolean isStarPowered) {
+		SpriteState nextSpriteState = getNextSpriteState(parentPowerState);
+		boolean spriteStateChanged = nextSpriteState != spriteState;
+		switch(nextSpriteState) {
+			case NORMAL:
+				processPowerState(delta, position, parentMoveState, parentPowerState, facingRight,
+						didShootFireball, isBlinking, isStarPowered);
 				break;
 			case GROW:
-				region = bigAnim[GROW_POSE][BIG_REG_GRP].getKeyFrame(stateTimer);
+				if(spriteStateChanged)
+					setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
+				processGrowState(position);
 				break;
 			case SHRINK:
-				region = bigAnim[SHRINK_POSE][BIG_REG_GRP].getKeyFrame(stateTimer);
-				break;
-			case STAND:
-				region = sizeAnim[STAND_POSE][grp].getKeyFrame(stateTimer);
+				processShrinkState(position);
 				break;
 		}
 
-		// should the sprite be flipped on X due to facing direction?
-		if((facingRight && region.isFlipX()) || (!facingRight && !region.isFlipX()))
-			region.flip(true,  false);
+		// flip to face left if needed
+		if(!facingRight && !isFlipX())
+			flip(true, false);
 
-		return region;
+		// if blinking due to damage invulnerability, then flicker the sprite
+		if(isBlinking && isDrawAllowed)
+			isDrawAllowed = false;
+		else
+			isDrawAllowed = true;
+
+		prevParentPowerState = parentPowerState;
+
+		parentMoveStateTimer = parentMoveState == prevParentMoveState ? parentMoveStateTimer+delta : 0f;
+		prevParentMoveState = parentMoveState;
+
+		spriteStateTimer = nextSpriteState == spriteState ? spriteStateTimer+delta : 0f;
+		spriteState = nextSpriteState;
 	}
 
-	private int getStarFrameGrp(MarioPowerState powerState) {
-		switch(Math.floorMod((int) (starPowerFrameTimer / STARPOWER_ANIM_SPEED), NUM_STARPOWER_FRAMES)) {
+	private SpriteState getNextSpriteState(PowerState parentPowerState) {
+		// did parent grow? if so then do grow anim
+		if(parentPowerState.isBigBody() && !prevParentPowerState.isBigBody())
+			return SpriteState.GROW;
+		// did parent shrink? if so then do shrink anim
+		else if(!parentPowerState.isBigBody() && prevParentPowerState.isBigBody())
+			return SpriteState.SHRINK;
+		else if(spriteState == SpriteState.GROW) {
+			if(bigAnim[GROW_POSE][BIG_REG_GRP].isAnimationFinished(spriteStateTimer))
+				return SpriteState.NORMAL;
+			else
+				return SpriteState.GROW;
+		}
+		else if(spriteState == SpriteState.SHRINK) {
+			if(bigAnim[SHRINK_POSE][BIG_REG_GRP].isAnimationFinished(spriteStateTimer))
+				return SpriteState.NORMAL;
+			else
+				return SpriteState.SHRINK;
+		}
+		else
+			return SpriteState.NORMAL;
+	}
+
+	private void processPowerState(float delta, Vector2 position, MoveState parentMoveState,
+			PowerState parentPowerState, boolean facingRight, boolean didShootFireball, boolean isBlinking,
+			boolean isStarPowered) {
+		int group = SML_REG_GRP;
+
+		switch(parentPowerState) {
+			case SMALL:
+				group = SML_REG_GRP;
+				setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
+				break;
+			case BIG:
+				group = BIG_REG_GRP;
+				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
+				break;
+			case FIRE:
+				group = BIG_FIRE_GRP;
+				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
+				break;
+		}
+		if(isStarPowered) {
+			group = getStarPowerFrameGroup(parentPowerState);
+			starPowerTimer += delta;
+		}
+
+		int pose = STAND_POSE;
+		Vector2 offset = new Vector2(0f, 0f);
+		if(didShootFireball)
+			throwPoseCooldown = THROW_POSE_TIME;
+		// check for fireball pose
+		if(throwPoseCooldown > 0f && parentPowerState.isBigBody()) {
+			pose = THROW_POSE;
+			if(parentMoveState.isDuck())
+				offset.set(SPRITE_DUCK_OFFSET);
+		}
+		// other poses...
+		else {
+			switch(parentMoveState) {
+				case STAND:
+				case FALL:
+					pose = STAND_POSE;
+					break;
+				case DUCKSLIDE:
+					pose = STAND_POSE;
+					offset.set(SPRITE_DUCK_OFFSET);
+					break;
+				case RUN:
+					pose = RUN_POSE;
+					break;
+				case BRAKE:
+					pose = BRAKE_POSE;
+					break;
+				case DUCK:
+				case DUCKFALL:
+				case DUCKJUMP:
+					pose = DUCK_POSE;
+					offset.set(SPRITE_DUCK_OFFSET);
+					break;
+				case JUMP:
+					pose = JUMP_POSE;
+					break;
+				case DEAD:
+				case DEAD_BOUNCE:
+					pose = DEAD_POSE;
+					group = SML_REG_GRP;
+					setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
+					break;
+			}
+		}
+
+		// reduce throw pose cooldown
+		throwPoseCooldown = throwPoseCooldown < delta ? 0f : throwPoseCooldown-delta;
+
+		// choose correct size anim category and set region
+		if(parentPowerState.isBigBody() && !parentMoveState.isDead())
+			setRegion(bigAnim[pose][group].getKeyFrame(parentMoveStateTimer));
+		else
+			setRegion(smlAnim[pose][group].getKeyFrame(parentMoveStateTimer));
+
+		setPosition(position.x - getWidth()/2f + offset.x, position.y - getHeight()/2f + offset.y);
+	}
+
+	private int getStarPowerFrameGroup(PowerState powerState) {
+		switch(Math.floorMod((int) (starPowerTimer / STARPOWER_ANIM_SPEED), NUM_STARPOWER_FRAMES)) {
 			case 3:
 				switch(powerState) {
 					case FIRE:
 						return BIG_FIRE_GRP;
 					case BIG:
-					case SMALL:
-					default:
 						return BIG_REG_GRP;
+					case SMALL:
+						return SML_REG_GRP;
 				}
 			case 2:
-				return BIG_INV3_GRP;
+				if(powerState.isBigBody())
+					return BIG_INV3_GRP;
+				else
+					return SML_INV3_GRP;
 			case 1:
-				return BIG_INV2_GRP;
+				if(powerState.isBigBody())
+					return BIG_INV2_GRP;
+				else
+					return SML_INV2_GRP;
 			case 0:
 			default:
-				return BIG_INV1_GRP;
+				if(powerState.isBigBody())
+					return BIG_INV1_GRP;
+				else
+					return SML_INV1_GRP;
 		}
+	}
+
+	private void processGrowState(Vector2 position) {
+		setRegion(bigAnim[GROW_POSE][BIG_REG_GRP].getKeyFrame(spriteStateTimer));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+	}
+
+	private void processShrinkState(Vector2 position) {
+		setRegion(bigAnim[SHRINK_POSE][BIG_REG_GRP].getKeyFrame(spriteStateTimer));
+		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f + SHRINK_OFFSET_Y);
+	}
+
+	@Override
+	public void draw(Batch batch) {
+		if(isDrawAllowed)
+			super.draw(batch);
 	}
 }

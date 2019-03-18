@@ -14,7 +14,9 @@ import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
+import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.PowerupInfo.PowType;
+import kidridicarus.game.info.SMBInfo.PointAmount;
 
 /*
  * TODO:
@@ -36,6 +38,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 	private Vector2 initSpawnPosition;
 	private boolean isFacingRight;
 	private boolean isPowerupUsed;
+	private Agent powerupTaker;
 
 	public PowerStar(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -46,7 +49,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 		moveState = MoveState.SPROUT;
 		isFacingRight = true;
 		isPowerupUsed = false;
-//		setConstVelocity(START_BOUNCE_VEL);
+		powerupTaker = null;
 
 		body = null;
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
@@ -76,8 +79,10 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 		if(taker == null)
 			return;
 		// if taker takes the powerup then this powerup is done
-		if(taker.onTakePowerup(PowType.POWERSTAR))
+		if(taker.onTakePowerup(PowType.POWERSTAR)) {
 			isPowerupUsed = true;
+			powerupTaker = (Agent) taker;
+		}
 	}
 
 	private void doUpdate(float delta) {
@@ -123,6 +128,8 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 			case SPROUT:
 				break;
 			case END:
+				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, true,
+						body.getPosition(), UInfo.P2M(16), powerupTaker));
 				// powerup used, so dispose this agent
 				agency.disposeAgent(this);
 				break;

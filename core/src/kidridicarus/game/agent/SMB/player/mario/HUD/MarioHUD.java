@@ -11,9 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.game.agent.SMB.player.luigi.HUD.HudCoin;
 import kidridicarus.game.agent.SMB.player.mario.Mario;
 import kidridicarus.game.info.GameInfo;
+import kidridicarus.game.info.GameKV;
 
 public class MarioHUD implements Disposable {
 	private Mario mario;
@@ -56,9 +56,11 @@ public class MarioHUD implements Disposable {
 	}
 
 	private void update() {
-		scoreVarLabel.setText(String.format("%06d", mario.getPointTotal()));
-		timeVarLabel.setText(String.format("%03d", (int) mario.getLevelTimeRemaining()));
-		coinVarLabel.setText(String.format("×%02d", mario.getCoinTotal()));
+		scoreVarLabel.setText(String.format("%06d",
+				mario.getProperty(GameKV.SMB.KEY_POINTAMOUNT, 0, Integer.class)));
+//		timeVarLabel.setText(String.format("%03d", (int) mario.getLevelTimeRemaining()));
+		coinVarLabel.setText(String.format("×%02d",
+				mario.getProperty(GameKV.SMB.KEY_COINAMOUNT, 0, Integer.class)));
 		stage.act();
 	}
 

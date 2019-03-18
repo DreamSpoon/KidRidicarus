@@ -14,10 +14,8 @@ import kidridicarus.game.agent.SMB.other.castleflag.CastleFlag;
 import kidridicarus.game.agent.SMB.other.flagpole.Flagpole;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.agent.SMB.other.spincoin.SpinCoin;
-import kidridicarus.game.agent.SMB.player.luigi.Luigi;
-import kidridicarus.game.agent.SMB.player.luigi.LuigiFireball;
 import kidridicarus.game.agent.SMB.player.mario.Mario;
-import kidridicarus.game.agent.SMB.player.mario.MarioFireball;
+import kidridicarus.game.agent.SMB.player.mariofireball.MarioFireball;
 
 /*
  * Title: Super Mario Bros. Info
@@ -54,8 +52,6 @@ public class SMBInfo {
 			GameKV.SMB.AgentClassAlias.VAL_FLAGPOLE, Flagpole.class,
 			GameKV.SMB.AgentClassAlias.VAL_FLOATINGPOINTS, FloatingPoints.class,
 			GameKV.SMB.AgentClassAlias.VAL_GOOMBA, Goomba.class,
-			GameKV.SMB.AgentClassAlias.VAL_LUIGI, Luigi.class,
-			GameKV.SMB.AgentClassAlias.VAL_LUIGIFIREBALL, LuigiFireball.class,
 			GameKV.SMB.AgentClassAlias.VAL_MARIO, Mario.class,
 			GameKV.SMB.AgentClassAlias.VAL_MARIOFIREBALL, MarioFireball.class,
 			GameKV.SMB.AgentClassAlias.VAL_MUSHROOM, PowerMushroom.class,

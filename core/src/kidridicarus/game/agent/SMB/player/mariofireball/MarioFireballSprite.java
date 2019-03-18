@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.SMB.player.luigi;
+package kidridicarus.game.agent.SMB.player.mariofireball;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -8,10 +8,10 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.agent.SMB.player.luigi.LuigiFireball.MoveState;
+import kidridicarus.game.agent.SMB.player.mariofireball.MarioFireball.MoveState;
 import kidridicarus.game.info.SMBAnim;
 
-public class LuigiFireballSprite extends Sprite {
+public class MarioFireballSprite extends Sprite {
 	private static final float SPR_BALLWIDTH = UInfo.P2M(8);
 	private static final float SPR_BALLHEIGHT = UInfo.P2M(8);
 	private static final float SPR_EXPWIDTH = UInfo.P2M(16);
@@ -23,7 +23,7 @@ public class LuigiFireballSprite extends Sprite {
 	private float stateTimer;
 	private MoveState parentPrevMoveState;
 
-	public LuigiFireballSprite(TextureAtlas atlas, Vector2 position) {
+	public MarioFireballSprite(TextureAtlas atlas, Vector2 position) {
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED_FLY,
 				atlas.findRegions(SMBAnim.General.FIREBALL), PlayMode.LOOP);
 

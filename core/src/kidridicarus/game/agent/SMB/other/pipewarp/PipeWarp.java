@@ -63,8 +63,7 @@ public class PipeWarp extends Agent implements DisposableAgent {
 		}
 		// check position for left/right warp
 		else if(direction == Direction4.LEFT || direction == Direction4.RIGHT) {
-			// Little mario or big mario might be entering the pipe, check that either one of these has a
-			// bottom y bound that is +- 2 pixels from the bottom y bound of the pipe.
+			// check that bottom of player body is +- 2 pixels from the bottom y bound of the pipe.
 			if(pwBody.getBounds().y - UInfo.P2M(2f) <= otherBounds.y &&
 					otherBounds.y <= pwBody.getBounds().y + UInfo.P2M(2f))
 				return true;

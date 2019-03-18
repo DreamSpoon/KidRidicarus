@@ -1,7 +1,6 @@
 package kidridicarus.game.agent.SMB.player.mario;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -12,153 +11,155 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
-import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.GameAgentObserver;
-import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.AgentSupervisor;
+import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
-import kidridicarus.game.agent.SMB.HeadBounceTakeAgent;
-import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
+import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
-import kidridicarus.game.agent.SMB.other.flagpole.Flagpole;
-import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.agent.SMB.other.levelendtrigger.LevelEndTrigger;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
+import kidridicarus.game.agent.SMB.player.mariofireball.MarioFireball;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GameKV;
 import kidridicarus.game.info.PowerupInfo.PowType;
-import kidridicarus.game.info.SMBInfo.PointAmount;
 
-/*
- * TODO:
- * -the body physics code has only been tested with non-moving surfaces, needs to be tested with moving platforms
- * -mario will sometimes not go down a pipe warp even though he is in the right place on top of the pipe - fix this
- */
-public class Mario extends Agent implements PlayerAgent, DisposableAgent {
-	public enum MarioAgentState { PLAY, FIREBALL, DEAD }	// TODO merge this with move state
-
-	private static final float MARIO_DEAD_TIME = 3f;
-	private static final float LEVEL_MAX_TIME = 300f;
-
-	private static final float DMG_INVINCIBLE_TIME = 3f;
+public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
+		PowerupTakeAgent, DisposableAgent {
+	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
+	private static final Vector2 GROW_OFFSET = DUCK_OFFSET;
+	private static final float DEAD_DELAY_TIME = 3f;
+	private static final float MAX_FIREBALL_JUICE = 2f;
+	private static final float JUICE_PER_FIREBALL = 1.3f;
 	private static final float FIREBALL_OFFSET = UInfo.P2M(8f);
-	private static final float TIME_PER_FIREBALL = 0.5f;
-	private static final float POWERSTAR_TIME = 15f;
-	private static final float BLINK_DURATION = 0.05f;
+	private static final float COOLDOWN_PER_FIREBALL = 0.25f;
+	private static final float NO_DAMAGE_TIME = 3f;
+	private static final Vector2 DEAD_BOUNCE_IMP = new Vector2(0, 6f);
+	private static final float POWERSTAR_MAXTIME = 15f;
+	private static final float STARPOWER_DAMAGE = 1f;
 
-	private static final float MARIO_JUMP_GROUNDCHECK_DELAY = 0.05f;
-	private static final float MARIO_JUMPFORCE_TIME = 0.5f;
-	private static final float MARIO_JUMP_IMPULSE = 1.75f;
-	private static final float MARIO_JUMP_FORCE = 14f;
-	private static final float MARIO_RUNJUMP_MULT = 0.25f;
-	private static final float MARIO_MAX_RUNJUMPVEL = MarioBody.MARIO_MAX_RUNVEL;
-	private static final float MARIO_HEADBOUNCE_VEL = 1.75f;	// up velocity
-	private static final float MIN_HEADBANG_VEL = 0.01f;	// TODO: test this with different values to the best
-
-	public enum MarioBodyState { STAND, WALKRUN, BRAKE, JUMP, FALL, DUCK, DEAD, CLIMB }
-
-	public enum MarioPowerState { SMALL, BIG, FIRE }
+	public enum PowerState {
+		SMALL, BIG, FIRE;
+		public boolean isBigBody() { return !this.equals(SMALL); }
+	}
+	public enum MoveState {
+		STAND, RUN, BRAKE, FALL, DUCK, DUCKSLIDE, DUCKFALL, DUCKJUMP, JUMP, DEAD, DEAD_BOUNCE;
+		public boolean equalsAny(MoveState ...otherStates) {
+			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
+		}
+		public boolean isDuck() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP, DUCKSLIDE); }
+		public boolean isDuckNoSlide() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP); }
+		public boolean isJump() { return this.equalsAny(JUMP, DUCKJUMP); }
+		public boolean isOnGround() { return this.equalsAny(STAND, RUN, BRAKE, DUCK, DUCKSLIDE); }
+		public boolean isDead() { return this.equalsAny(DEAD, DEAD_BOUNCE); }
+	}
 
 	private MarioSupervisor supervisor;
 	private MarioObserver observer;
-	private MarioBody mBody;
-	private MarioSprite marioSprite;
-	private MarioPowerState curPowerState;
-	private MarioAgentState curAgentState;
-	private float stateTimer;
+	private MarioBody body;
+	private MarioSprite sprite;
 
-	private boolean marioIsDead;
-	private boolean prevFrameAdvisedShoot;
-	private boolean isDmgInvincible;
-	private float dmgInvincibleTime;
-	private float fireballTimer;
-	private float powerStarTimer;
-	private float levelTimeRemaining;
-	private int extraLives;
-	private int coinTotal;
-	private int pointTotal;
-	private PointAmount consecBouncePoints;
-	// powerup received
-	private PowType powerupRec;
-
-	private boolean isBrakeAvailable;
-	private float brakeTimer;
-	private boolean isNewJumpAllowed;
-	private float jumpGroundCheckTimer;
-	private boolean isJumping;
-	private float jumpForceTimer;
+	private MoveState moveState;
+	private float moveStateTimer;
+	private PowerState powerState;
+	private boolean facingRight;
+	private boolean isNextJumpAllowed;
+	private boolean isNextJumpDelayed;
+	private boolean isJumpForceContinue;
+	// next head bump is denied immediately following headbump and lasts until Agent moves downward
+	private boolean isNextHeadBumpDenied;
+	private float fireballJuice;
+	private float shootCooldown;
+	private boolean didShootFireballThisFrame;
+	private boolean gaveHeadBounce;
+	// list of powerups received during contact update
+	private LinkedList<PowType> powerupsReceived;
+	private boolean didTakeDamage;
+	private boolean isDead;
+	private float noDamageCooldown;
 	private boolean isLastVelocityRight;
 	private boolean isDuckSlideRight;
-	private boolean canHeadBang;
-	private MarioBodyState curBodyState;
-	private boolean isFacingRight;
-	private boolean isBig;
-	private boolean isDucking;
-	private boolean isDuckSliding;
-	private boolean isTakeDamage;
-	private PipeWarp pipeToEnter;
+	private float starPowerCooldown;
 
 	public Mario(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
-		marioIsDead = false;
-		prevFrameAdvisedShoot = false;
-		isDmgInvincible = false;
-		dmgInvincibleTime = 0f;
-		fireballTimer = TIME_PER_FIREBALL * 2f;
-		powerStarTimer = 0f;
-
-		curPowerState = MarioPowerState.SMALL;
-
-		powerupRec = PowType.NONE;
-
-		levelTimeRemaining = LEVEL_MAX_TIME;
-
-		curAgentState = MarioAgentState.PLAY;
-		stateTimer = 0f;
-
-		extraLives = 2;
-		coinTotal = pointTotal = 0;
-		consecBouncePoints = PointAmount.ZERO;
-
-		isBrakeAvailable = true;
-		brakeTimer = 0f;
-		isNewJumpAllowed = false;
-		jumpGroundCheckTimer = 0f;
-		isJumping = false;
-		jumpForceTimer = 0f;
-		isDucking = false;
+		moveState = MoveState.STAND;
+		moveStateTimer = 0f;
+		powerState = PowerState.SMALL;
+		isDead = false;
+		facingRight = true;
+		isNextJumpAllowed = false;
+		isNextJumpDelayed = false;
+		isJumpForceContinue = false;
+		isNextHeadBumpDenied = false;
+		fireballJuice = MAX_FIREBALL_JUICE;
+		shootCooldown = 0f;
+		didShootFireballThisFrame = false;
+		gaveHeadBounce = false;
+		powerupsReceived = new LinkedList<PowType>();
+		didTakeDamage = false;
+		noDamageCooldown = 0f;
 		isLastVelocityRight = false;
-		isDuckSliding = false;
 		isDuckSlideRight = false;
-		isTakeDamage = false;
-		canHeadBang = true;
-		pipeToEnter = null;
+		starPowerCooldown = 0f;
 
-		curBodyState = MarioBodyState.STAND;
-
-		mBody = new MarioBody(this, agency, Agent.getStartPoint(properties), false, false);
-		marioSprite = new MarioSprite(agency.getAtlas(), mBody.getPosition(), curPowerState);
-
-		supervisor = new MarioSupervisor(this);
-		observer = new MarioObserver(this, agency.getAtlas());
-
+		body = new MarioBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
+				powerState.isBigBody(), false);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
-				@Override
-				public void update(float delta) { doUpdate(delta); }
-			});
+			@Override
+			public void update(float delta) { doUpdate(delta); }
+		});
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
+		sprite = new MarioSprite(agency.getAtlas(), body.getPosition(), powerState, facingRight);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
-				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
-			});
+			@Override
+			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+		});
+
+		observer = new MarioObserver(this, agency.getAtlas());
+		supervisor = new MarioSupervisor(this);
+	}
+
+	/*
+	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
+	 * by way of regular update. Also apply star power damage if needed.
+	 */
+	private void doContactUpdate() {
+		if(supervisor.isRunningScriptNoMoveAdvice())
+			return;
+		// exit if head bump flag hasn't reset
+		if(isNextHeadBumpDenied)
+			return;
+		// if mario is big then hit hard
+		if(powerState.isBigBody())
+			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
+		else
+			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
+
+		// if star powered then apply star power damage
+		if(starPowerCooldown > 0f) {
+			for(Agent agent : body.getSpine().getPushDamageContacts()) {
+				// if they take contact damage then push it
+				if(agent instanceof ContactDmgTakeAgent)
+					((ContactDmgTakeAgent) agent).onTakeDamage(this, STARPOWER_DAMAGE, body.getPosition());
+			}
+		}
 	}
 
 	private void doUpdate(float delta) {
@@ -168,687 +169,496 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 	}
 
 	private void processContacts() {
+		// if head bump deny flag is on, and body is moving down, then reset the flag
+		if(isNextHeadBumpDenied && body.getSpine().isMovingDown())
+			isNextHeadBumpDenied = false;
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
-		MarioBodyState bodyState;
-		MarioAgentState nextAgentState;
-		boolean isStarPowered;
+		if(!moveState.isDead() && !supervisor.isRunningScriptNoMoveAdvice()) {
+			processPowerupsReceived();
+			processFireball(moveAdvice);
+			processDamageTaken(delta);
+			processHeadBouncesGiven();
+			processPipeWarps(moveAdvice);
 
-		levelTimeRemaining -= delta;
-
-		if(supervisor.isRunningScript()) {
-			// if a script is running with move advice, then switch advice to the scripted move advice
-			if(supervisor.isRunningScriptMoveAdvice())
-				moveAdvice = supervisor.getScriptAgentState().scriptedMoveAdvice;
-			else {
-				// use the scripted agent state
-				mBody.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState, isBig, false);
-				MarioBodyState scriptedBodyState;
-				ScriptedSpriteState sss = supervisor.getScriptAgentState().scriptedSpriteState;
-				switch(sss.spriteState) {
-					case CLIMB:
-						scriptedBodyState = MarioBodyState.CLIMB;
-						break;
-					case MOVE:
-						scriptedBodyState = MarioBodyState.WALKRUN;
-						break;
-					case STAND:
-					default:
-						scriptedBodyState = MarioBodyState.STAND;
-						break;
-				}
-				marioSprite.update(delta, sss.position, MarioAgentState.PLAY, scriptedBodyState, curPowerState,
-						sss.facingRight, false, isBigBody(), sss.moveDir);
-
-				// TODO only run this next line when script ends,
-				//   to prevent mario getting pipe warp contact where there is none
-				pipeToEnter = null;
-
-				return;
-			}
+			// make a note of the last direction in which mario was moving, for duck sliding
+			if(body.getSpine().isMovingRight())
+				isLastVelocityRight = true;
+			else if(body.getSpine().isMovingLeft())
+				isLastVelocityRight = false;
 		}
 
-		// reset consecutive bounce points
-		if(mBody.isOnGround())
-			consecBouncePoints = PointAmount.ZERO;
-
-		bodyState = MarioBodyState.STAND;
-		nextAgentState = processMarioAgentState(delta, moveAdvice);
-		// mario special states (e.g. end level script) override regular body states (e.g. mario use powerup) 
-		if(nextAgentState == MarioAgentState.PLAY || nextAgentState == MarioAgentState.FIREBALL) {
-			processDamage(delta);
-			processPowerups();
-			bodyState = mBodyUpdate(delta, moveAdvice, curPowerState);
-		}
-		else if(curAgentState == MarioAgentState.DEAD && stateTimer > MARIO_DEAD_TIME) {
-			supervisor.setGameOver();
-		}
-
-		stateTimer = nextAgentState == curAgentState ? stateTimer+delta : 0f;
-		curAgentState = nextAgentState;
-
-		isStarPowered = false;
-		if(powerStarTimer > 0f) {
-			isStarPowered = true;
-			powerStarTimer -= delta;
-		}
-
-		marioSprite.update(delta, mBody.getPosition(), curAgentState, bodyState, curPowerState,
-				isFacingRight, isStarPowered, isBigBody(), null);
-
-		prevFrameAdvisedShoot = moveAdvice.action0;
-	}
-
-	private MarioBodyState mBodyUpdate(float delta, MoveAdvice advice, MarioPowerState curPowerState) {
-		MarioBodyState nextState;
-		boolean isVelocityLeft;
-		boolean isVelocityRight;
-		boolean doDuckSlideMove;
-		boolean doWalkRunMove;
-		boolean doDecelMove;
-		boolean doBrakeMove;
-
-		pipeToEnter = mBody.getEnterPipeWarp(advice.getMoveDir4());
-		processOtherContacts();
-
-		nextState = MarioBodyState.STAND;
-		isVelocityRight = mBody.getVelocity().x > MarioBody.MARIO_MIN_WALKSPEED;
-		isVelocityLeft = mBody.getVelocity().x < -MarioBody.MARIO_MIN_WALKSPEED;
-
-		// If mario's velocity is below min walking speed while on ground and he is not duck sliding then
-		// zero his velocity
-		if(mBody.isOnGround() && !isDuckSliding && !isVelocityRight && !isVelocityLeft &&
-				!advice.moveRight && !advice.moveLeft)
-			mBody.setVelocity(0f, mBody.getVelocity().y);
-
-		// multiple concurrent body impulses may be necessary
-		doDuckSlideMove = false;
-		doWalkRunMove = false;
-		doDecelMove = false;
-		doBrakeMove = false;
-
-		// make a note of the last direction in which mario was moving, for duck sliding
-		if(isVelocityRight)
-			isLastVelocityRight = true;
-		else if(isVelocityLeft)
-			isLastVelocityRight = false;
-
-		// eligible for duck/unduck?
-		if(curPowerState != MarioPowerState.SMALL && mBody.isOnGround()) {
-			Vector2 bodyTilePos = UInfo.getM2PTileForPos(mBody.getPosition());
-
-			// first time duck check
-			if(advice.moveDown && !isDucking) {
-				// quack
-				isDucking = true;
-				if(isDuckSliding)
-					isDuckSliding = false;
-				else {
-					// mario's body's height is reduced when ducking, so recreate the body in a slightly lower pos
-					mBody.defineBody(mBody.getPosition().cpy().sub(0f, UInfo.P2M(8f)), mBody.getVelocity(),
-							isBig, isDucking);
-				}
-			}
-			// first time unduck check
-			else if(!advice.moveDown && isDucking) {
-				isDucking = false;
-
-				// Check the space above and around mario to test if mario can unduck normally, or if he is in a
-				// tight spot
-
-				// if the tile above ducking mario is solid ...
-				if(isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
-					Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(mBody.getPosition());
-					// If the player's last velocity direction was rightward, and their position is in the left half
-					// of the tile, and the tile above and to the left of them is solid, then the player should
-					// duckslide right.
-					if((isLastVelocityRight && subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
-							(subTilePos.x > 0.5f && !isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
-							(isLastVelocityRight && subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
-						isDuckSlideRight = true;
-					}
-					// the only other option is to duckslide left
-					else
-						isDuckSlideRight = false;
-
-					// tile above is solid so must be ducksliding
-					isDuckSliding = true;
-				}
-				else {
-					mBody.defineBody(mBody.getPosition().cpy().add(0f, UInfo.P2M(8f)), mBody.getVelocity(),
-							isBig, isDucking);
-				}
-			}
-
-			if(isDuckSliding) {
-				// if the player was duck sliding but the space above them is now nonsolid then end duckslide
-				if(!isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
-					isDuckSliding = false;
-					mBody.defineBody(mBody.getPosition().cpy().add(0f, UInfo.P2M(8f)), mBody.getVelocity(),
-							isBig, isDucking);
-				}
-				else
-					doDuckSlideMove = true;
-			}
-		}
-
-		// want to move left or right? (but not both! because they would cancel each other)
-		if((advice.moveRight && !advice.moveLeft) || (!advice.moveRight && advice.moveLeft)) {
-			doWalkRunMove = true;
-
-			// mario can change facing direction, but not while airborne
-			if(mBody.isOnGround()) {
-				// brake becomes available again when facing direction changes
-				if(isFacingRight != advice.moveRight) {
-					isBrakeAvailable = true;
-					brakeTimer = 0f;
-				}
-
-				// can't run/walk on ground while ducking, only slide
-				if(isDucking) {
-					doWalkRunMove = false;
-					doDecelMove = true;
-				}
-				else	// update facing direction
-					isFacingRight = advice.moveRight;
-			}
-		}
-		// decelerate if on ground and not wanting to move left or right
-		else if(mBody.isOnGround() && (isVelocityRight || isVelocityLeft))
-			doDecelMove = true;
-
-		// check for brake application
-		if(!isDucking && mBody.isOnGround() && isBrakeAvailable &&
-				((isFacingRight && isVelocityLeft) || (!isFacingRight && isVelocityRight))) {
-			isBrakeAvailable = false;
-			brakeTimer = MarioBody.MARIO_BRAKE_TIME;
-		}
-		// this catches brake applications from this update() call and previous update() calls
-		if(brakeTimer > 0f) {
-			doBrakeMove = true;
-			brakeTimer -= delta;
-		}
-
-		// apply impulses if necessary
-		if(doDuckSlideMove)
-			mBody.duckSlideLeftRight(isDuckSlideRight);
-		else if(doBrakeMove) {
-			mBody.brakeLeftRight(isFacingRight);
-			nextState = MarioBodyState.BRAKE;
-		}
-		else if(doWalkRunMove) {
-			mBody.moveBodyLeftRight(advice.moveRight, advice.action0, isDucking);
-			nextState = MarioBodyState.WALKRUN;
-		}
-		else if(doDecelMove) {
-			mBody.decelLeftRight();
-			nextState = MarioBodyState.WALKRUN;
-		}
-
-		// Do not check mario's "on ground" state for a short time after mario jumps, because his foot sensor
-		// might still be contacting the ground even after his body enters the air.
-		if(jumpGroundCheckTimer > delta)
-			jumpGroundCheckTimer -= delta;
-		else {
-			jumpGroundCheckTimer = 0f;
-			// The player can jump once per press of the jump key, so let them jump again when they release the
-			// button but, they need to be on the ground with the button released.
-			if(mBody.isOnGround()) {
-				isJumping = false;
-				if(!advice.action1)
-					isNewJumpAllowed = true;
-			}
-		}
-
-		// jump?
-		if(advice.action1 && isNewJumpAllowed) {	// do jump
-			isNewJumpAllowed = false;
-			isJumping = true;
-			// start a timer to delay checking for onGround state
-			jumpGroundCheckTimer = MARIO_JUMP_GROUNDCHECK_DELAY;
-			nextState = MarioBodyState.JUMP;
-
-			// the faster mario is moving, the higher he jumps, up to a max
-			float mult = Math.abs(mBody.getVelocity().x) / MARIO_MAX_RUNJUMPVEL;
-			// cap the multiplier
-			if(mult > 1f)
-				mult = 1f;
-
-			mult *= MARIO_RUNJUMP_MULT;
-			mult += 1f;
-
-			// apply initial (and only) jump impulse
-			mBody.applyBodyImpulse(new Vector2(0, MARIO_JUMP_IMPULSE * mult));
-			// the remainder of the jump up velocity is achieved through mid-air up-force
-			jumpForceTimer = MARIO_JUMPFORCE_TIME;
-			if(curPowerState != MarioPowerState.SMALL)
-				agency.playSound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
-			else
-				agency.playSound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
-		}
-		else if(isJumping) {	// jumped and is mid-air
-			nextState = MarioBodyState.JUMP;
-			// jump force stops, and cannot be restarted, if the player releases the jump key
-			if(!advice.action1)
-				jumpForceTimer = 0f;
-			// The longer the player holds the jump key, the higher they go,
-			// if mario is moving up (no jump force allowed while mario is moving down)
-			// TODO: what if mario is initally moving down because he jumped from an elevator?
-			else if(mBody.getVelocity().y > 0f && jumpForceTimer > 0f) {
-				jumpForceTimer -= delta;
-				// the force was strong to begin and tapered off over time - some said it became irrelevant
-				mBody.applyForce(new Vector2(0, MARIO_JUMP_FORCE * jumpForceTimer / MARIO_JUMPFORCE_TIME));
-			}
-		}
-		// finally, if mario is not on the ground (for reals) then he is falling since he is not jumping
-		else if(!mBody.isOnGround() && jumpGroundCheckTimer <= 0f) {
-			// cannot jump while falling
-			isNewJumpAllowed = false;
-			nextState = MarioBodyState.FALL;
-		}
-
-		if(isDucking)
-			nextState = MarioBodyState.DUCK;
-
-		stateTimer = nextState == curBodyState ? stateTimer+delta : 0f;
-		curBodyState = nextState;
-		mBody.updatePrevs();
-
-		return nextState;
-	}
-
-	private void processOtherContacts() {
-		// despawn contact?
-		if(mBody.getFirstContactByClass(DespawnBox.class) != null) {
-			die();
+		// if a script is running with no move advice then switch to scripted body state and exit
+		if(supervisor.isRunningScriptNoMoveAdvice()) {
+			body.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState, powerState.isBigBody());
 			return;
 		}
 
-		processHeadContacts();	// hitting bricks with head
+		MoveState nextMoveState = getNextMoveState(moveAdvice);
+		boolean moveStateChanged = nextMoveState != moveState;
+		// if mario is dead...
+		if(nextMoveState.isDead())
+			processDeadMove(moveStateChanged, nextMoveState);
+		// if on ground...
+		else if(nextMoveState.isOnGround())
+			processGroundMove(moveAdvice, nextMoveState);
+		// else do air move
+		else
+			processAirMove(moveAdvice, nextMoveState);
 
-		// item contact?
-//		PowerupGiveAgent item = (PowerupGiveAgent) mBody.getFirstContactByClass(PowerupGiveAgent.class);
-//		if(item != null)
-//			item.use(this);
+		// recharge the fireball juice, stopping at max fill line
+		fireballJuice = fireballJuice+delta > MAX_FIREBALL_JUICE ? MAX_FIREBALL_JUICE : fireballJuice+delta;
+		// decrement fireball shoot cooldown timer
+		shootCooldown = shootCooldown < delta ? 0f : shootCooldown-delta;
+		// decrement starpower cooldown timer
+		starPowerCooldown = starPowerCooldown < delta ? 0f : starPowerCooldown-delta;
 
-		// if power star is in use...
-		if(powerStarTimer > 0f) {
-			// apply powerstar damage
-			List<ContactDmgTakeAgent> list = mBody.getContactsByClass(ContactDmgTakeAgent.class);
-			for(ContactDmgTakeAgent agent : list) {
-				// playSound should go in the processBody method, but... this is so much easier!
-				agency.playSound(AudioInfo.Sound.SMB.KICK);
-				agent.onTakeDamage(this, 1f, mBody.getPosition());
-			}
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveState = nextMoveState;
+	}
 
-			// Remove any agents that accumulate in the begin queue, to prevent begin contacts during
-			// power star time being ignored - which would cause mario to take damage when power star time ends. 
-			mBody.getAndResetBeginContacts();
-		}
-		else {
-			// check for headbounces
-			List<Agent> list = mBody.getAndResetBeginContacts();
-			LinkedList<Agent> bouncedAgents = new LinkedList<Agent>();
-			for(Agent agent : list) {
-				// skip the agent if not bouncy :)
-				if(!(agent instanceof HeadBounceTakeAgent) || !((HeadBounceTakeAgent) agent).isBouncy())
-					continue;
-				// If the bottom of mario's bounds box is at least as high as the middle of the agent then bounce.
-				// (i.e. if mario's foot is at least as high as midway up the other agent...)
-				// Note: check this frame postiion and previous frame postiion in case mario is travelling quickly...
-				if(mBody.getPosition().y - mBody.getBounds().height/2f >= agent.getPosition().y ||
-						mBody.getPrevPosition().y - mBody.getBounds().height/2f >= agent.getPosition().y) {
-					bouncedAgents.add(agent);
-					((HeadBounceTakeAgent) agent).onHeadBounce(this);
-				}
-			}
-			if(!bouncedAgents.isEmpty()) {
-				mBody.setVelocity(mBody.getVelocity().x, 0f);
-				mBody.applyBodyImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL));
-			}
-
-/*			// if not invincible then check for incoming damage
-			if(dmgInvincibleTime <= 0f) {
-				// check for contact damage
-				for(Agent a : list) {
-					if(!(a instanceof ContactDmgGiveAgent))
-						continue;
-					// if the agent does contact damage and they were not head bounced
-					if(((ContactDmgGiveAgent) a).isContactDamage() && !bouncedAgents.contains(a))
-						isTakeDamage = true;
-				}
-			}*/
+	private void processHeadBouncesGiven() {
+		// if a head bounce was given in the update frame then reset the flag and do bounce move
+		if(gaveHeadBounce) {
+			gaveHeadBounce = false;
+			body.getSpine().applyHeadBounceMove();
 		}
 	}
 
-	/*
-	 * Process the head contact add and remove queues, then check the list of current contacts for a head bang.
-	 *
-	 * NOTE: After banging his head while moving up, mario cannot bang his head again until he has moved down a
-	 * sufficient amount. Also, mario can only break one block per head bang - but if his head contacts multiple
-	 * blocks when he hits, then choose the block closest to mario on the x axis.
-	 */
-	private void processHeadContacts() {
-		// if can head bang and is moving upwards fast enough then ...
-		if(canHeadBang && (mBody.getVelocity().y > MIN_HEADBANG_VEL || mBody.getPrevVelocity().y > MIN_HEADBANG_VEL)) {
-			// check the list of tiles for the closest to mario
-			float closest = 0;
-			TileBumpTakeAgent closestTile = null;
-			for(TileBumpTakeAgent thingHit : mBody.getBumptileContacts()) {
-				float dist = Math.abs(((Agent) thingHit).getPosition().x - mBody.getPosition().x);
-				if(closestTile == null || dist < closest) {
-					closest = dist;
-					closestTile = thingHit;
-				}
-			}
+	private void processPipeWarps(MoveAdvice moveAdvice) {
+		PipeWarp pw = body.getSpine().getEnterPipeWarp(moveAdvice.getMoveDir4());
+		if(pw != null)
+			pw.use(this);
+	}
 
-			// we have a weiner!
-			if(closestTile != null) {
-				canHeadBang = false;
-				TileBumpStrength tbs = TileBumpStrength.SOFT;
-				if(curPowerState != MarioPowerState.SMALL)
-					tbs = TileBumpStrength.HARD;
-				((TileBumpTakeAgent) closestTile).onTakeTileBump(this, tbs);
-			}
+	private void processDeadMove(boolean moveStateChanged, MoveState nextMoveState) {
+		// if newly dead then disable contacts and start dead sound
+		if(moveStateChanged) {
+			body.allowOnlyDeadContacts();
+			body.zeroVelocity(true, true);
+			observer.stopAllMusic();
+			agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
+
+			// do bounce up if needed
+			if(nextMoveState == MoveState.DEAD_BOUNCE)
+				body.applyBodyImpulse(DEAD_BOUNCE_IMP);
 		}
-		// mario can headbang once per up/down cycle of movement, so re-enable head bang when mario moves down
-		else if(mBody.getVelocity().y < 0f)
-			canHeadBang = true;
+		// ... and if died a long time ago then do game over
+		else if(moveStateTimer > DEAD_DELAY_TIME)
+				supervisor.setGameOver();
+		// ... else do nothing.
+	}
+
+	private void processPowerupsReceived() {
+		for(PowType pow : powerupsReceived)
+			applyPowerup(pow);
+		powerupsReceived.clear();
+	}
+
+	private void applyPowerup(PowType pow) {
+		PowerState newPowerState = powerState;
+		switch(pow) {
+			case MUSHROOM:
+				// if small then power up to big
+				if(powerState == PowerState.SMALL)
+					newPowerState = PowerState.BIG;
+
+				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+				break;
+			case FIREFLOWER:
+				// if small then power up to big
+				if(powerState == PowerState.SMALL)
+					newPowerState = PowerState.BIG;
+				// if big then power up to fire
+				else if(powerState == PowerState.BIG)
+					newPowerState = PowerState.FIRE;
+
+				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+				break;
+			case POWERSTAR:
+				starPowerCooldown = POWERSTAR_MAXTIME;
+				break;
+			case COIN:
+				int coinTotal = properties.get(GameKV.SMB.KEY_COINAMOUNT, 0, Integer.class);
+				coinTotal += 1;
+				properties.put(GameKV.SMB.KEY_COINAMOUNT, coinTotal);
+				break;
+			case POINTS100:
+				int pointsTotal = properties.get(GameKV.SMB.KEY_POINTAMOUNT, 0, Integer.class);
+				pointsTotal += 100;
+				properties.put(GameKV.SMB.KEY_POINTAMOUNT, pointsTotal);
+				break;
+			default:
+				break;
+		}
+		// if growing then increase body size
+		if(newPowerState.isBigBody() && !powerState.isBigBody())
+			body.defineBody(body.getPosition().cpy().add(GROW_OFFSET), body.getVelocity(), true, false);
+		powerState = newPowerState;
+	}
+
+	private void processFireball(MoveAdvice moveAdvice) {
+		// check do shoot fireball
+		didShootFireballThisFrame = false;
+		if(moveAdvice.action0 && isFireBallAllowed()) {
+			fireballJuice -= JUICE_PER_FIREBALL;
+			shootCooldown += COOLDOWN_PER_FIREBALL;
+			didShootFireballThisFrame = true;
+			Vector2 offset;
+			if(facingRight)
+				offset = body.getPosition().cpy().add(FIREBALL_OFFSET, 0f);
+			else
+				offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
+
+			agency.createAgent(MarioFireball.makeAP(offset, facingRight, this));
+			agency.playSound(AudioInfo.Sound.SMB.FIREBALL);
+		}
+	}
+
+	private void processDamageTaken(float delta) {
+		// exit if invulnerable to next damage
+		if(noDamageCooldown > 0f) {
+			noDamageCooldown -= delta;
+			didTakeDamage = false;
+			return;
+		}
+		// do not take damage during star power
+		else if(starPowerCooldown > 0f)
+			return;
+		// exit if no damage taken this frame
+		else if(!didTakeDamage)
+			return;
+
+		// apply damage and modify body if needed
+		didTakeDamage = false;
+		switch(powerState) {
+			case SMALL:
+				isDead = true;
+				break;
+			case BIG:
+			case FIRE:
+				powerState = PowerState.SMALL;
+				noDamageCooldown = NO_DAMAGE_TIME;
+				body.defineBody(body.getPosition().cpy().sub(GROW_OFFSET), body.getVelocity(), false, false);
+
+				agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
+				break;
+		}
+	}
+
+	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+		// if was not ducking and is now ducking then define ducking body
+		if(!moveState.isDuck() && nextMoveState.isDuck()) {
+			body.defineBody(body.getPosition().cpy().sub(DUCK_OFFSET), body.getVelocity(),
+					powerState.isBigBody(), true);
+		}
+		// if was ducking and is now now ducking then define regular body
+		else if(moveState.isDuck() && !nextMoveState.isDuck()) {
+			body.defineBody(body.getPosition().cpy().add(DUCK_OFFSET), body.getVelocity(),
+					powerState.isBigBody(), false);
+		}
+
+		// If current move type is air and next move type is ground and jump is advised then delay jump until
+		// jump advice is released.
+		if(!moveState.isOnGround() && nextMoveState.isOnGround() && moveAdvice.action1)
+			isNextJumpDelayed = true;
+
+		// if not moving up (i.e. resting on ground) then allow next jump...
+		if(!body.getSpine().isMovingUp()) {
+			isNextJumpAllowed = true;
+			// ... and if jump advice is released then turn off jump delay
+			if(!moveAdvice.action1)
+				isNextJumpDelayed = false;
+		}
+
+		// do other ground move changes
+		Direction4 moveDir = getMarioMoveDir(moveAdvice);
+		boolean doHorizontalImpulse = false;
+		boolean doDecelImpulse = false;
+		boolean doDuckSlideImpulse = false;
+		switch(nextMoveState) {
+			case STAND:
+				if(moveDir.isHorizontal())
+					doHorizontalImpulse = true;
+				else
+					doDecelImpulse = true;
+				break;
+			case RUN:
+				if(moveDir.isHorizontal())
+					doHorizontalImpulse = true;
+				else
+					doDecelImpulse = true;
+				break;
+			case BRAKE:
+				doDecelImpulse = true;
+				break;
+			case DUCK:
+				doDecelImpulse = true;
+				break;
+			case DUCKSLIDE:
+				doDuckSlideImpulse = true;
+				break;
+			default:
+				throw new IllegalStateException("Only ground move states allowed, wrong nextMoveState="+nextMoveState);
+		}
+
+		// if not ducking then apply move advice to facing direction
+		if(moveDir.isHorizontal() && !moveState.isDuckNoSlide()) {
+			if(moveDir == Direction4.RIGHT)
+				facingRight = true;
+			else if(moveDir == Direction4.LEFT)
+				facingRight = false;
+		}
+
+		if(doHorizontalImpulse)
+			body.getSpine().applyWalkMove(facingRight, moveAdvice.action0);
+		if(doDecelImpulse)
+			body.getSpine().applyDecelMove(facingRight, nextMoveState.isDuck());
+		if(doDuckSlideImpulse)
+			body.getSpine().applyDuckSlideMove(isDuckSlideRight);
+	}
+
+	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+		if(!body.getSpine().isMovingUp())
+			isJumpForceContinue = false;
+
+		boolean isMoveStateChange = (moveState != nextMoveState);
+		switch(nextMoveState) {
+			case JUMP:
+			case DUCKJUMP:
+				if(isMoveStateChange) {
+					isNextJumpAllowed = false;
+					isJumpForceContinue = true;
+					body.getSpine().applyJumpImpulse();
+
+					if(powerState.isBigBody())
+						agency.playSound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
+					else
+						agency.playSound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
+				}
+				else {
+					if(!moveAdvice.action1)
+						isJumpForceContinue = false;
+				}
+				break;
+			case FALL:
+			case DUCKFALL:
+				break;
+			default:
+				throw new IllegalStateException("Only air move states allowed, wrong nextMoveState="+nextMoveState);
+		}
+
+		// mario might be ducking and moving right/left
+		if(moveAdvice.moveRight && !moveAdvice.moveLeft)
+			body.getSpine().applyAirMove(true);
+		else if(moveAdvice.moveLeft && !moveAdvice.moveRight)
+			body.getSpine().applyAirMove(false);
+
+		// if jump force must continue then apply it
+		if(isJumpForceContinue) {
+			if(isMoveStateChange)
+				body.getSpine().applyJumpForce(0f);
+			else
+				body.getSpine().applyJumpForce(moveStateTimer);
+		}
+
+		body.getSpine().capFallVelocity();
+	}
+
+	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
+		if(moveState.isDead())
+			return moveState;
+		else if(body.getSpine().isContactDespawn())
+			return MoveState.DEAD;
+		else if(isDead)
+			return MoveState.DEAD_BOUNCE;
+		// if on ground then do ground move
+		else if(body.getSpine().isOnGround())
+			return getNextMoveStateGround(moveAdvice);
+		// do air move
+		else
+			return getNextMoveStateAir(moveAdvice);
+	}
+
+	private boolean isFireBallAllowed() {
+		if(fireballJuice <= 0f || powerState != PowerState.FIRE || shootCooldown > 0f || moveState.isDuckNoSlide())
+			return false;
+		return true;
+	}
+
+	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
+		Direction4 moveDir = getMarioMoveDir(moveAdvice);
+
+		// if current state is an air state and body is moving up then continue air state
+		if(!moveState.isOnGround() && body.getSpine().isMovingUp())
+			return moveState;
+		// if advised to jump and jumping is okay...
+		else if(moveAdvice.action1 && isNextJumpAllowed && !isNextJumpDelayed) {
+			// if ducking already then duck jump
+			if(moveState.isDuck())
+				return MoveState.DUCKJUMP;
+			// otherwise regular jump
+			else
+				return MoveState.JUMP;
+		}
+		else if(moveState.isDuck()) {
+			// if not advising move down then check for unduck - if can't unduck then duckslide
+			if(moveDir != Direction4.DOWN) {
+				if(moveState.isOnGround()) {
+					Vector2 bodyTilePos = UInfo.getM2PTileForPos(body.getPosition());
+
+					// Check the space above and around mario to test if mario can unduck normally, or if he is in a
+					// tight spot
+
+					// if the tile above ducking mario is solid ...
+					if(isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
+						Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(body.getPosition());
+						// If the player's last velocity direction was rightward, and their position is in the left half
+						// of the tile, and the tile above and to the left of them is solid, then the player should
+						// duckslide right.
+						if((isLastVelocityRight && subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
+								(subTilePos.x > 0.5f && !isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
+								(isLastVelocityRight && subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
+							isDuckSlideRight = true;
+						}
+						// the only other option is to duckslide left
+						else
+							isDuckSlideRight = false;
+	
+						// tile above is solid so must be ducksliding
+						return MoveState.DUCKSLIDE;
+					}
+					else
+						return MoveState.STAND;
+				}
+				else
+					return MoveState.STAND;
+			}
+			else
+				return MoveState.DUCK;
+		}
+		// if big body mario and move down is advised then duck
+		else if(powerState.isBigBody() && moveDir == Direction4.DOWN)
+			return MoveState.DUCK;
+		// moving too slowly?
+		else if(body.getSpine().isStandingStill())
+			return MoveState.STAND;
+		// moving in wrong direction?
+		else if(body.getSpine().isBraking(facingRight))
+			return MoveState.BRAKE;
+		else
+			return MoveState.RUN;
+	}
+
+	private boolean isMapTileSolid(Vector2 tileCoords) {
+		CollisionTiledMapAgent ctMap = body.getSpine().getCollisionTiledMap();
+		if(ctMap == null)
+			return false;
+		return ctMap.isMapTileSolid(tileCoords);
+	}
+
+	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {
+		// if in jump state then continue jump state
+		if(moveState.isJump())
+			return moveState;
+		// not in jump state
+		else {
+			// if is ducking then do duck fall 
+			if(moveState.isDuck())
+				return MoveState.DUCKFALL;
+			// not ducking so do regular fall
+			else
+				return MoveState.FALL;
+		}
+	}
+
+	private Direction4 getMarioMoveDir(MoveAdvice moveAdvice) {
+		// if no left/right move then return unmodified direction from move advice
+		if(moveAdvice.moveLeft^moveAdvice.moveRight == false) {
+			// down takes priority over up advice
+			if(moveAdvice.moveDown)
+				return Direction4.DOWN;
+			else if(moveAdvice.moveUp)
+				return Direction4.UP;
+			else
+				return Direction4.NONE;
+		}
+
+		// if advising move down while advising left/right then return no direction
+		if(moveAdvice.moveDown)
+			return Direction4.NONE;
+		// ignore move up advice and return horizontal move direction
+		else {
+			if(moveAdvice.moveRight)
+				return Direction4.RIGHT;
+			else
+				return Direction4.LEFT;
+		}
+	}
+
+	private void doPostUpdate() {
+		// let body update previous velocity
+		body.postUpdate();
 	}
 
 	private void processSprite(float delta) {
-	}
-
-	// Process the body and return a character state based on the findings.
-	private MarioAgentState processMarioAgentState(float delta, MoveAdvice advice) {
-		if(marioIsDead) {
-			if(curAgentState != MarioAgentState.DEAD) {
-				observer.stopAllMusic();
-				agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
-
-				mBody.setContactEnabled(false);
-				mBody.setVelocity(0f, 0f);
-				mBody.applyBodyImpulse(new Vector2(0, 4f));
+		if(supervisor.isRunningScriptNoMoveAdvice()) {
+			MoveState scriptedMoveState;
+			ScriptedSpriteState sss = supervisor.getScriptAgentState().scriptedSpriteState;
+			switch(sss.spriteState) {
+				case MOVE:
+					scriptedMoveState = MoveState.RUN;
+					break;
+				case STAND:
+				default:
+					scriptedMoveState = MoveState.STAND;
+					break;
 			}
-			// make sure mario doesn't move left or right while dead
-			mBody.zeroVelocity(true, false);
-			return MarioAgentState.DEAD;
+			sprite.update(delta, sss.position, scriptedMoveState, powerState, sss.facingRight, false, false, false);
 		}
-		else if(isUseLevelEndTrigger())
-			return curAgentState;
-		// flagpole contact and use?
-		else if(isUseFlagpole())
-			return curAgentState;
-		// scripted pipe entrance
-		else if(pipeToEnter != null) {
-			pipeToEnter.use(this);
-			return curAgentState;
-		}
-		// otherwise the player has control, because no script is runnning
 		else {
-			if(processFireball(delta, advice.action0))
-				return MarioAgentState.FIREBALL;
-			else
-				return MarioAgentState.PLAY;
+			sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,
+					didShootFireballThisFrame, (noDamageCooldown > 0f), (starPowerCooldown > 0f));
 		}
-	}
-
-	private boolean isUseLevelEndTrigger() {
-		// check for end level trigger contact, and use it if found
-		LevelEndTrigger leTrigger = mBody.getFirstContactByClass(LevelEndTrigger.class);
-		if(leTrigger != null) {
-//			leTrigger.use(this);
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isUseFlagpole() {
-		// check for end level flagpole contact, and use it if found
-		Flagpole flagpole = mBody.getFirstContactByClass(Flagpole.class);
-		if(flagpole != null) {
-//			flagpole.use(this);
-			return true;
-		}
-		return false;
-	}
-
-	// mario can shoot fireballs two at a time, but must wait if his "fireball timer" runs low
-	private boolean processFireball(float delta, boolean shoot) {
-		if(curAgentState != MarioAgentState.PLAY)
-			return false;
-
-		fireballTimer += delta;
-		if(fireballTimer > TIME_PER_FIREBALL)
-			fireballTimer = TIME_PER_FIREBALL;
-
-		// fire a ball?
-		if(curPowerState == MarioPowerState.FIRE && shoot && !prevFrameAdvisedShoot && fireballTimer > 0f) {
-			fireballTimer -= TIME_PER_FIREBALL;
-			throwFireball();
-			return true;
-		}
-
-		return false;
-	}
-
-	private void throwFireball() {
-		Vector2 offset;
-		if(isFacingRight)
-			offset = mBody.getPosition().cpy().add(FIREBALL_OFFSET, 0f);
-		else
-			offset = mBody.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
-
-		agency.createAgent(MarioFireball.makeAP(offset, isFacingRight, this));
-		agency.playSound(AudioInfo.Sound.SMB.FIREBALL);
-	}
-
-	private void processPowerups() {
-		// apply powerup if received
-		switch(powerupRec) {
-			case MUSH1UP:
-				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1UP, false,
-						mBody.getPosition(), UInfo.P2M(16), this));
-				break;
-			case MUSHROOM:
-				if(curPowerState == MarioPowerState.SMALL) {
-					curPowerState = MarioPowerState.BIG;
-
-					isBig = true;
-					mBody.defineBody(mBody.getPosition().add(0f, UInfo.P2M(8f)), mBody.getVelocity(),
-							isBig, isDucking);
-
-					agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
-				}
-				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, false,
-						mBody.getPosition(), UInfo.P2M(16), this));
-				break;
-			case FIREFLOWER:
-				if(curPowerState == MarioPowerState.SMALL) {
-					curPowerState = MarioPowerState.BIG;
-
-					isBig = true;
-					mBody.defineBody(mBody.getPosition().add(0f, UInfo.P2M(8f)), mBody.getVelocity(),
-							isBig, isDucking);
-
-					agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
-				}
-				else if(curPowerState == MarioPowerState.BIG) {
-					curPowerState = MarioPowerState.FIRE;
-					agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
-				}
-				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, false,
-						mBody.getPosition(), UInfo.P2M(16), this));
-				break;
-			case POWERSTAR:
-				powerStarTimer = POWERSTAR_TIME;
-				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
-				observer.startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
-				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, false,
-						mBody.getPosition(), UInfo.P2M(16), this));
-				break;
-			case NONE:
-				break;
-			// did mario receive a powerup that's not for his character?
-			default:
-				// tell supervisor!
-				supervisor.applyNonMarioPowerup(powerupRec);
-				break;
-		}
-
-		powerupRec = PowType.NONE;
-	}
-
-	private void processDamage(float delta) {
-		// if invincible then remove incoming damage from the damage queue
-		if(dmgInvincibleTime > 0f)
-			dmgInvincibleTime -= delta;
-		else if(isDmgInvincible)
-			endDmgInvincibility();
-
-		// check for damage, and reset the flag
-		boolean dmg = getAndResetTakeDamage();
-		// exit because no damage during power star time
-		if(powerStarTimer > 0f)
-			return;
-
-		// exit if no damage received
-		if(!dmg)
-			return;
-
-		// Apply damage if received:
-		//   Fire mario becomes small mario,
-		//   Big mario becomes small mario,
-		//   Small mario becomes dead mario.
-		if(curPowerState == MarioPowerState.FIRE || curPowerState == MarioPowerState.BIG) {
-			curPowerState = MarioPowerState.SMALL;
-			if(isDucking) {
-				isBig = false;
-				mBody.defineBody(mBody.getPosition(), mBody.getVelocity(), false, isDucking);
-			}
-			else {
-				isBig = false;
-				mBody.defineBody(mBody.getPosition().sub(0f, UInfo.P2M(8f)), mBody.getVelocity(), false, isDucking);
-			}
-			startDmgInvincibility();
-			agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
-		}
-		else
-			marioIsDead = true;
-	}
-
-	private void startDmgInvincibility() {
-		isDmgInvincible = true;
-		dmgInvincibleTime = DMG_INVINCIBLE_TIME;
-	}
-
-	private void endDmgInvincibility() {
-		isDmgInvincible = false;
-		dmgInvincibleTime = 0f;
-		getAndResetTakeDamage();
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
-		if(supervisor.isRunningScript() && !supervisor.isRunningScriptMoveAdvice() &&
-				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
+		// exit if using scripted sprite state and script says don't draw
+		if(supervisor.isRunningScriptNoMoveAdvice() &&
+				supervisor.getScriptAgentState().scriptedSpriteState.visible == false)
 			return;
-
-		// if mario has damage invincible time then the sprite will blink visible/invisible
-		if(!(isDmgInvincible && Math.floorMod((int) (this.dmgInvincibleTime / BLINK_DURATION), 2) == 0))
-			batch.draw(marioSprite);
+		batch.draw(sprite);
 	}
 
-	/*
-	 * Check for contact with tiled collision map. If contact then get solid state of tile given by tileCoords.
-	 */
-	private boolean isMapTileSolid(Vector2 tileCoords) {
-		CollisionTiledMapAgent octMap = mBody.getFirstContactByClass(CollisionTiledMapAgent.class);
-		if(octMap == null)
+	@Override
+	public boolean onTakePowerup(PowType powType) {
+		if(moveState == MoveState.DEAD)
 			return false;
-		return octMap.isMapTileSolid(tileCoords);
+		powerupsReceived.add(powType);
+		return true;
 	}
 
-	private boolean isBigBody() {
-		if(!isBig || isDucking || isDuckSliding)
+	@Override
+	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
+		// no damage taken if already took damage this frame, or if invulnerable, or if star powered, or if dead
+		if(didTakeDamage || noDamageCooldown > 0f || starPowerCooldown > 0f || moveState == MoveState.DEAD)
 			return false;
-		else
+		didTakeDamage = true;
+		return true;
+	}
+
+	@Override
+	public boolean onGiveHeadBounce(Agent agent) {
+		// no head bouncing while star powered or dead
+		if(starPowerCooldown > 0f || moveState == MoveState.DEAD)
+			return false;
+		// if head bounce is allowed then give head bounce to agent
+		if(body.getSpine().isGiveHeadBounceAllowed(agent.getBounds())) {
+			gaveHeadBounce = true;
 			return true;
-	}
-
-	private boolean getAndResetTakeDamage() {
-		boolean t = isTakeDamage;
-		isTakeDamage = false;
-		return t;
-	}
-
-	private void die() {
-		marioIsDead = true;
-	}
-
-	public void giveCoin() {
-		agency.playSound(AudioInfo.Sound.SMB.COIN);
-		givePoints(PointAmount.P200, false);
-		coinTotal++;
-	}
-
-	public PointAmount givePoints(PointAmount amt, boolean relative) {
-		PointAmount actualAmt = amt;
-		// relative points do not stack when mario is onground
-		if(relative && !mBody.isOnGround()) {
-			if(consecBouncePoints.increment().getIntAmt() >= amt.getIntAmt()) {
-				consecBouncePoints = consecBouncePoints.increment();
-				actualAmt = consecBouncePoints;
-			}
-			else
-				consecBouncePoints = amt;
 		}
-
-		if(actualAmt == PointAmount.P1UP)
-			give1UP();
-		else
-			pointTotal += actualAmt.getIntAmt();
-
-		return actualAmt;
-	}
-
-	private void give1UP() {
-		extraLives++;
-	}
-
-	@Override
-	public RoomBox getCurrentRoom() {
-		return mBody.getCurrentRoom();
-	}
-
-	public float getLevelTimeRemaining() {
-		return levelTimeRemaining;
-	}
-
-	public int getCoinTotal() {
-		return coinTotal;
-	}
-
-	public int getPointTotal() {
-		return pointTotal;
-	}
-
-	public int getExtraLives() {
-		return extraLives;
-	}
-
-	public boolean isBig() {
-		return (curPowerState != MarioPowerState.SMALL);
-	}
-
-	@Override
-	public Vector2 getPosition() {
-		return mBody.getPosition();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return mBody.getBounds();
+		return false;
 	}
 
 	@Override
@@ -861,32 +671,38 @@ public class Mario extends Agent implements PlayerAgent, DisposableAgent {
 		return observer;
 	}
 
-//	@Override
-//	public void applyPowerup(PowType pt) {
-//		powerupRec = pt;
-//	}
+	@Override
+	public RoomBox getCurrentRoom() {
+		return body.getSpine().getCurrentRoom();
+	}
+
+	@Override
+	public Vector2 getPosition() {
+		return body.getPosition();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return body.getBounds();
+	}
 
 	// unchecked cast to T warnings ignored because T is checked with class.equals(cls) 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
 		if(key.equals(CommonKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
-			Boolean he = isFacingRight;
-			return (T) he;
-		}
-		else if(key.equals(CommonKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(cls)) {
-			SpriteState he = SpriteState.STAND;
+			Boolean he = facingRight;
 			return (T) he;
 		}
 		else if(key.equals(CommonKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
-			Vector2 he = new Vector2(marioSprite.getWidth(), marioSprite.getHeight());
+			Vector2 he = new Vector2(sprite.getWidth(), sprite.getHeight());
 			return (T) he;
 		}
-		return properties.get(key, defaultValue, cls);
+		return super.getProperty(key, defaultValue, cls);
 	}
 
 	@Override
 	public void disposeAgent() {
-		mBody.dispose();
+		body.dispose();
 	}
 }

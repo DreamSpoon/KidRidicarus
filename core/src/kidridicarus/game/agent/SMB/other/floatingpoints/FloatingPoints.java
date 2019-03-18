@@ -13,9 +13,10 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.agent.SMB.player.mario.Mario;
+import kidridicarus.common.tool.Powerups;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.PowerupInfo.PowType;
 import kidridicarus.game.info.SMBInfo.PointAmount;
 
 /*
@@ -26,7 +27,6 @@ import kidridicarus.game.info.SMBInfo.PointAmount;
  * i.e. The sliding turtle shell points multiplier, and the consecutive head bounce multiplier.
  * 
  * The sliding turtle shell awards only absolute points, and head bounces award only relative points.
- * Currently, mario fireball strikes award only absolute points.
  */
 public class FloatingPoints extends Agent {
 	private static final float FLOAT_TIME = 1f;
@@ -47,15 +47,12 @@ public class FloatingPoints extends Agent {
 		if(properties.containsKey(GameKV.SMB.KEY_POINTAMOUNT))
 			amount = properties.get(GameKV.SMB.KEY_POINTAMOUNT, null, PointAmount.class);
 
-		Agent ud = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Agent.class);
 		// give points to player and get the actual amount awarded (since player may have points multiplier)
-		if(ud != null && ud instanceof Mario) {
-			// relative points can stack, absolute points can not
-			amount = ((Mario) ud).givePoints(amount, properties.containsKV(GameKV.SMB.KEY_RELPOINTAMOUNT,
-					CommonKV.VAL_TRUE));
-			if(amount == PointAmount.P1UP)
-				agency.playSound(AudioInfo.Sound.SMB.UP1);
-		}
+		Powerups.tryPushPowerup(properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Agent.class),
+				PowType.POINTS100);
+
+		if(amount == PointAmount.P1UP)
+			agency.playSound(AudioInfo.Sound.SMB.UP1);
 
 		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount);
 

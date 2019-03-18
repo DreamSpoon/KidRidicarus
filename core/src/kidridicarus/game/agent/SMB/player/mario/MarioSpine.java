@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.SMB.player.luigi;
+package kidridicarus.game.agent.SMB.player.mario;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -20,7 +20,6 @@ import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
-import kidridicarus.game.agent.SMB.player.mario.MarioBody;
 
 /*
  * A "control center" for the body, to apply move impulses, etc. in an organized manner.
@@ -30,15 +29,17 @@ import kidridicarus.game.agent.SMB.player.mario.MarioBody;
  *   3) Take blocks of information and translate into body impulses, and apply those body impulses
  *     (e.g. move up, move left, apply jump).
  */
-public class LuigiSpine extends OnGroundSpine {
+public class MarioSpine extends OnGroundSpine {
 	private static final float WALKMOVE_XIMP = 0.025f;
-	private static final float MAX_STAND_VEL = LuigiSpine.WALKMOVE_XIMP * 0.01f;
+	private static final float MAX_STAND_VEL = MarioSpine.WALKMOVE_XIMP * 0.01f;
 	private static final float MIN_WALKVEL = WALKMOVE_XIMP * 2f;
 	private static final float MAX_WALKVEL = WALKMOVE_XIMP * 42f;
 	private static final float DECEL_XIMP = WALKMOVE_XIMP * 1.37f;
 	private static final float BRAKE_XIMP = WALKMOVE_XIMP * 2.75f;
 	private static final float RUNMOVE_XIMP = WALKMOVE_XIMP * 1.5f;
 	private static final float MAX_RUNVEL = MAX_WALKVEL * 1.65f;
+	private static final float RUNJUMP_MULT = 0.25f;
+	private static final float MAX_RUNJUMPVEL = MAX_RUNVEL;
 	private static final float JUMP_IMPULSE = 1.75f;
 	private static final float JUMP_FORCE = 25.25f;
 	private static final float JUMPFORCE_MAXTIME = 0.5f;
@@ -48,15 +49,15 @@ public class LuigiSpine extends OnGroundSpine {
 	private static final float DUCKSLIDE_XIMP = WALKMOVE_XIMP * 1f;
 	// TODO: test this with different values to the best
 	private static final float MIN_HEADBANG_VEL = 0.01f;
-	private static final float MARIO_HEADBOUNCE_VEL = 2.8f;	// up velocity
+	private static final float HEADBOUNCE_VEL = 2.8f;	// up velocity
 
-	private LuigiBody body;
+	private MarioBody body;
 	private AgentContactHoldSensor agentSensor;
 	private AgentContactHoldSensor tileBumpPushSensor;
 	private AgentContactBeginSensor damagePushSensor; 
 	private AgentContactHoldSensor pipeWarpSensor;
 
-	public LuigiSpine(LuigiBody body) {
+	public MarioSpine(MarioBody body) {
 		this.body = body;
 		agentSensor = null;
 		tileBumpPushSensor = null;
@@ -138,16 +139,14 @@ public class LuigiSpine extends OnGroundSpine {
 			body.setVelocity(-max, body.getVelocity().y);
 	}
 
-	private static final float MARIO_RUNJUMP_MULT = 0.25f;
-	private static final float MARIO_MAX_RUNJUMPVEL = MarioBody.MARIO_MAX_RUNVEL;
 	public void applyJumpImpulse() {
 		// the faster mario is moving, the higher he jumps, up to a max
-		float mult = Math.abs(body.getVelocity().x) / MARIO_MAX_RUNJUMPVEL;
+		float mult = Math.abs(body.getVelocity().x) / MAX_RUNJUMPVEL;
 		// cap the multiplier
 		if(mult > 1f)
 			mult = 1f;
 		// 
-		mult = 1f + mult * MARIO_RUNJUMP_MULT;
+		mult = 1f + mult * RUNJUMP_MULT;
 
 		body.applyBodyImpulse(new Vector2 (0f, JUMP_IMPULSE * mult));
 	}
@@ -168,7 +167,7 @@ public class LuigiSpine extends OnGroundSpine {
 
 	public void applyHeadBounceMove() {
 		body.setVelocity(body.getVelocity().x, 0f);
-		body.applyBodyImpulse(new Vector2(0f, MARIO_HEADBOUNCE_VEL));
+		body.applyBodyImpulse(new Vector2(0f, HEADBOUNCE_VEL));
 	}
 
 	public void applyDuckSlideMove(boolean isDuckSlideRight) {
@@ -190,7 +189,7 @@ public class LuigiSpine extends OnGroundSpine {
 		// exit if not moving up fast enough in this frame or previous frame
 		if(body.getVelocity().y < MIN_HEADBANG_VEL || body.getPrevVelocity().y < MIN_HEADBANG_VEL)
 			return false;
-		// create list of bumptiles, in order from closest to luigi to farthest from luigi
+		// create list of bumptiles, in order from closest to mario to farthest from mario
 		TreeSet<TileBumpTakeAgent> closestTilesList = new TreeSet<TileBumpTakeAgent>(new Comparator<TileBumpTakeAgent>() {
 				@Override
 				public int compare(TileBumpTakeAgent o1, TileBumpTakeAgent o2) {

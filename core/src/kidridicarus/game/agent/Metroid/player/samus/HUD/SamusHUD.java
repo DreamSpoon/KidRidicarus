@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.game.agent.Metroid.player.samus.Samus;
-import kidridicarus.game.agent.SMB.player.luigi.HUD.HudCoin;
+import kidridicarus.game.agent.SMB.player.mario.HUD.HudCoin;
 import kidridicarus.game.info.GameInfo;
 
 public class SamusHUD implements Disposable {
@@ -32,7 +32,7 @@ public class SamusHUD implements Disposable {
 
 		LabelStyle labelstyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal(GameInfo.SMB1_FONT), false),
 				Color.WHITE);
-		Label marioLabel = new Label("SAMUS", labelstyle);
+		Label samusLabel = new Label("SAMUS", labelstyle);
 		Label worldLabel = new Label("WORLD", labelstyle);
 		Label timeLabel = new Label("TIME", labelstyle);
 		scoreVarLabel = new Label(String.format("%06d", 0), labelstyle);
@@ -40,7 +40,7 @@ public class SamusHUD implements Disposable {
 		worldVarLabel = new Label("1-1", labelstyle);
 		timeVarLabel = new Label(String.format("%03d", 0), labelstyle);
 
-		table.add(marioLabel).align(Align.left).colspan(3).expandX().padLeft(24).padTop(16);
+		table.add(samusLabel).align(Align.left).colspan(3).expandX().padLeft(24).padTop(16);
 		table.add(worldLabel).align(Align.left).expandX().padTop(16);
 		table.add(timeLabel).align(Align.left).expandX().padTop(16);
 		table.row();

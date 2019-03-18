@@ -16,11 +16,11 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
+import kidridicarus.common.tool.Powerups;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.brickpiece.BrickPiece;
@@ -192,8 +192,6 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 			switch(blockItem) {
 				case COIN:
 					isItemAvailable = false;
-//					if(bumpingAgent instanceof Mario)
-//						((Mario) bumpingAgent).giveCoin();
 					startSpinningCoin();
 					break;
 				case COIN10:
@@ -214,8 +212,6 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 					else
 						coin10BumpResetTimer = COIN_BUMP_RESET_TIME;
 
-//					if(bumpingAgent instanceof Mario)
-//						((Mario) bumpingAgent).giveCoin();
 					startSpinningCoin();
 					break;
 				default:
@@ -266,7 +262,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 				break;
 			case MUSHROOM:
 				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
-				// big mario pops a fireflower?
+				// hard bump gives a fireflower, soft bump gives mushroom
 				if(bumpStrength == TileBumpStrength.HARD)
 					agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_FIREFLOWER, pos));
 				else
@@ -302,9 +298,9 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 				new Vector2(-BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0));
 
 		agency.playSound(AudioInfo.Sound.SMB.BREAK);
-//		((Mario) bumpingAgent).givePoints(PointAmount.P200, false);
-
 		agency.disposeAgent(this);
+
+		Powerups.tryPushPowerup(bumpingAgent, PowType.POINTS100);
 	}
 
 	private void startSpinningCoin() {
@@ -317,8 +313,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 				body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y))));
 
 		// push coin powerup to powerup take agent if we have one
-		if(bumpingAgent instanceof PowerupTakeAgent)
-			((PowerupTakeAgent) bumpingAgent).onTakePowerup(PowType.COIN);
+		Powerups.tryPushPowerup(bumpingAgent, PowType.COIN);
 	}
 
 	private void processSprite(float delta) {

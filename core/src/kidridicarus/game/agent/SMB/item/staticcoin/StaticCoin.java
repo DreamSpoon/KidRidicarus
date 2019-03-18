@@ -12,6 +12,7 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.PowerupInfo.PowType;
 
 public class StaticCoin extends Agent implements DisposableAgent {
@@ -55,8 +56,10 @@ public class StaticCoin extends Agent implements DisposableAgent {
 	}
 
 	private void doUpdate(float delta) {
-		if(isPowerupUsed)
+		if(isPowerupUsed) {
+			agency.playSound(AudioInfo.Sound.SMB.COIN);
 			agency.disposeAgent(this);
+		}
 
 		sprite.update(agency.getGlobalTimer());
 	}

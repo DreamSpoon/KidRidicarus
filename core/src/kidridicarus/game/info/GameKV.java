@@ -14,9 +14,7 @@ public class GameKV {
 			public static final String VAL_FLAGPOLE = "flagpole";
 			public static final String VAL_FLOATINGPOINTS = "floatingpoints";
 			public static final String VAL_GOOMBA = "goomba";
-			public static final String VAL_LUIGI = "luigi";
 			public static final String VAL_MARIO = "mario";
-			public static final String VAL_LUIGIFIREBALL = "luigifireball";
 			public static final String VAL_MARIOFIREBALL = "mariofireball";
 			public static final String VAL_MUSHROOM = "mushroom";
 			public static final String VAL_MUSH1UP = "mushroom1up";
@@ -46,6 +44,8 @@ public class GameKV {
 		public static final String VAL_POINTS5000 = "p5000";
 		public static final String VAL_POINTS8000 = "p8000";
 		public static final String VAL_POINTS1UP = "p1up";
+
+		public static final String KEY_COINAMOUNT = "coinamount";
 	}
 
 	public class Metroid {

@@ -16,7 +16,9 @@ import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
+import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.PowerupInfo.PowType;
+import kidridicarus.game.info.SMBInfo.PointAmount;
 
 public abstract class BaseMushroom extends Agent implements BumpTakeAgent, DisposableAgent {
 	private static final float SPROUT_TIME = 1f;
@@ -38,6 +40,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 	private Vector2 bumpCenter;
 	// powerup can not be used until body is created, body is created after sprout time is finished
 	private boolean isPowerupUsed;
+	private Agent powerupTaker;
 
 	protected abstract TextureRegion getMushroomTextureRegion(TextureAtlas atlas);
 	protected abstract PowType getMushroomPowerup();
@@ -52,6 +55,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 		isFacingRight = true;
 		isBumped = false;
 		bumpCenter = new Vector2();
+		powerupTaker = null;
 
 		// no body at spawn time, body will be created later
 		body = null;
@@ -83,8 +87,10 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 		if(taker == null)
 			return;
 		// if taker takes the powerup then this powerup is done
-		if(taker.onTakePowerup(getMushroomPowerup()))
+		if(taker.onTakePowerup(getMushroomPowerup())) {
 			isPowerupUsed = true;
+			powerupTaker = (Agent) taker;
+		}
 	}
 
 	private void doUpdate(float delta) {
@@ -138,6 +144,8 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 			case FALL:
 				break;
 			case END:
+				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, true,
+						body.getPosition(), UInfo.P2M(16), powerupTaker));
 				// powerup used, so dispose this agent
 				agency.disposeAgent(this);
 				break;

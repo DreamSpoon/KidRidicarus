@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.SMB.player.luigi;
+package kidridicarus.game.agent.SMB.player.mariofireball;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -11,7 +11,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class LuigiFireballBody extends AgentBody {
+public class MarioFireballBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(7f);
 	private static final float BODY_HEIGHT = UInfo.P2M(7f);
 	private static final float GRAVITY_SCALE = 2f;
@@ -21,10 +21,10 @@ public class LuigiFireballBody extends AgentBody {
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT);
 
-	private LuigiFireball parent;
-	private LuigiFireballSpine spine;
+	private MarioFireball parent;
+	private MarioFireballSpine spine;
 
-	public LuigiFireballBody(LuigiFireball parent, World world, Vector2 position, Vector2 velocity) {
+	public MarioFireballBody(MarioFireball parent, World world, Vector2 position, Vector2 velocity) {
 		this.parent = parent;
 		defineBody(world, position, velocity);
 	}
@@ -39,7 +39,7 @@ public class LuigiFireballBody extends AgentBody {
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);	// heavy
 
-		spine = new LuigiFireballSpine(this);
+		spine = new MarioFireballSpine(this);
 	}
 
 	private void createFixtures() {
@@ -64,7 +64,7 @@ public class LuigiFireballBody extends AgentBody {
 		b2body.setGravityScale(scale);
 	}
 
-	public LuigiFireballSpine getSpine() {
+	public MarioFireballSpine getSpine() {
 		return spine;
 	}
 
