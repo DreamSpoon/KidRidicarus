@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.game.agent.SMB.player.luigi.HUD.HudCoin;
 import kidridicarus.game.agent.SMB.player.mario.Mario;
 import kidridicarus.game.info.GameInfo;
 

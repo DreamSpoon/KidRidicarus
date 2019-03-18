@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.Metroid.player.samus.HUD;
+package kidridicarus.game.agent.SMB.player.luigi.HUD;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -6,16 +6,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.game.agent.Metroid.player.samus.Samus;
-import kidridicarus.game.agent.SMB.player.luigi.HUD.HudCoin;
+import kidridicarus.game.agent.SMB.player.luigi.Luigi;
 import kidridicarus.game.info.GameInfo;
 
-public class SamusHUD implements Disposable {
+public class LuigiHUD implements Disposable {
+//	private Luigi luigi;
 	private Stage stage;
 
 	private Label scoreVarLabel;
@@ -23,7 +23,8 @@ public class SamusHUD implements Disposable {
 	private Label worldVarLabel;
 	private Label timeVarLabel;
 
-	public SamusHUD(Samus samus, TextureAtlas atlas, Stage stage) {
+	public LuigiHUD(Luigi agent, TextureAtlas atlas, Stage stage) {
+//		this.luigi = agent;
 		this.stage = stage;
 
 		Table table = new Table();
@@ -32,7 +33,7 @@ public class SamusHUD implements Disposable {
 
 		LabelStyle labelstyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal(GameInfo.SMB1_FONT), false),
 				Color.WHITE);
-		Label marioLabel = new Label("SAMUS", labelstyle);
+		Label marioLabel = new Label("MARIO", labelstyle);
 		Label worldLabel = new Label("WORLD", labelstyle);
 		Label timeLabel = new Label("TIME", labelstyle);
 		scoreVarLabel = new Label(String.format("%06d", 0), labelstyle);
@@ -53,15 +54,15 @@ public class SamusHUD implements Disposable {
 		stage.addActor(table);
 	}
 
-/*	public void update() {
-		scoreVarLabel.setText(String.format("%06d", samus.getPointTotal()));
-		timeVarLabel.setText(String.format("%03d", (int) samus.getLevelTimeRemaining()));
-		coinVarLabel.setText(String.format("×%02d", samus.getCoinTotal()));
+	private void update() {
+//		scoreVarLabel.setText(String.format("%06d", mario.getPointTotal()));
+//		timeVarLabel.setText(String.format("%03d", (int) mario.getLevelTimeRemaining()));
+//		coinVarLabel.setText(String.format("×%02d", mario.getCoinTotal()));
 		stage.act();
 	}
-*/
+
 	public void draw() {
-//		update();
+		update();
 		stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
 		stage.draw();
 	}

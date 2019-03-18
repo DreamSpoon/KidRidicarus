@@ -130,7 +130,7 @@ public class Luigi extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
 
-		observer = new LuigiObserver(this);
+		observer = new LuigiObserver(this, agency.getAtlas());
 		supervisor = new LuigiSupervisor(this);
 	}
 

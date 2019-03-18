@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.SMB.player.mario.HUD;
+package kidridicarus.game.agent.SMB.player.luigi.HUD;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
