@@ -32,6 +32,6 @@ public class WalkPowerupSpine extends OnGroundSpine {
 	}
 
 	public boolean isHMoveBlocked(boolean moveRight) {
-		return hmSensor.isContactWall(body.getBounds(), moveRight);
+		return hmSensor.isSolidOnThisSide(body.getBounds(), moveRight);
 	}
 }

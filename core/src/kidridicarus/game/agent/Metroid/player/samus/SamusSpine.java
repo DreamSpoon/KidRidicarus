@@ -74,8 +74,8 @@ public class SamusSpine extends PlayerSpine {
 		return ctMap == null ? false : ctMap.isMapPointSolid(position); 
 	}
 
-	public boolean isContactingWall(boolean isRightWall) {
-		return sbSensor.isContactWall(body.getBounds(), isRightWall);
+	public boolean isSolidOnThisSide(boolean isRightSide) {
+		return sbSensor.isSolidOnThisSide(body.getBounds(), isRightSide);
 	}
 
 	public RoomBox getCurrentRoom() {

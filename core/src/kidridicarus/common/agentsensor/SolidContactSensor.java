@@ -22,30 +22,30 @@ public class SolidContactSensor extends AgentContactSensor {
 	}
 
 	@Override
-	public void onBeginSense(AgentBodyFilter obj) {
-		if(obj.userData instanceof LineSeg) {
-			LineSeg ls = (LineSeg) obj.userData;
-			if(!lineSegContacts.contains(ls))
-				lineSegContacts.add(ls);
-		}
-		else if(obj.userData instanceof Agent) {
-			Agent agent = (Agent) obj.userData;
+	public void onBeginSense(AgentBodyFilter abf) {
+		Agent agent = AgentBodyFilter.getAgentFromFilter(abf);
+		if(agent != null) {
 			if(!agentContacts.contains(agent))
 				agentContacts.add(agent);
+		}
+		else if(abf.userData instanceof LineSeg) {
+			LineSeg ls = (LineSeg) abf.userData;
+			if(!lineSegContacts.contains(ls))
+				lineSegContacts.add(ls);
 		}
 	}
 
 	@Override
-	public void onEndSense(AgentBodyFilter obj) {
-		if(obj.userData instanceof LineSeg) {
-			LineSeg ls = (LineSeg) obj.userData;
-			if(lineSegContacts.contains(ls))
-				lineSegContacts.remove(ls);
-		}
-		else if(obj.userData instanceof Agent) {
-			Agent agent = (Agent) obj.userData;
+	public void onEndSense(AgentBodyFilter abf) {
+		Agent agent = AgentBodyFilter.getAgentFromFilter(abf);
+		if(agent != null) {
 			if(agentContacts.contains(agent))
 				agentContacts.remove(agent);
+		}
+		else if(abf.userData instanceof LineSeg) {
+			LineSeg ls = (LineSeg) abf.userData;
+			if(lineSegContacts.contains(ls))
+				lineSegContacts.remove(ls);
 		}
 	}
 
@@ -67,7 +67,11 @@ public class SolidContactSensor extends AgentContactSensor {
 		return !getLineSegsFiltered(true, true, true, true).isEmpty();
 	}
 
-	public boolean isContactWall(Rectangle testBounds, boolean rightWall) {
+	public boolean isSolidOnThisSide(Rectangle testBounds, boolean rightSide) {
+		return isLineSegOnThisSide(testBounds, rightSide) || isAgentOnThisSide(testBounds, rightSide);
+	}
+
+	private boolean isLineSegOnThisSide(Rectangle testBounds, boolean rightSide) {
 		Vector2 center = testBounds.getCenter(new Vector2());
 		// loop through list of walls contacted
 		for(LineSeg line : getLineSegsFiltered(true, false, false, false)) {
@@ -75,12 +79,29 @@ public class SolidContactSensor extends AgentContactSensor {
 			// to know if this bound is blocking just a teensy bit or a large amount
 			if(line.dblCheckContact(testBounds)) {
 				// if moving right and there is a right wall on the right then return blocked true
-				if(rightWall && !line.upNormal && center.x <= line.getBounds().x)
+				if(rightSide && !line.upNormal && center.x <= line.getBounds().x)
 					return true;
 				// if moving left and there is a left wall on the left then return blocked true
-				else if(!rightWall && line.upNormal && center.x >= line.getBounds().x)
+				else if(!rightSide && line.upNormal && center.x >= line.getBounds().x)
 					return true;
 			}
+		}
+		return false;
+	}
+
+	private boolean isAgentOnThisSide(Rectangle testBounds, boolean rightSide) {
+		for(Agent agent : agentContacts) {
+			Rectangle otherBounds = agent.getBounds();
+			// if other is too far above or below testBounds then no contact
+			if(otherBounds.y >= testBounds.y+testBounds.height ||
+					otherBounds.y+otherBounds.height <= testBounds.y)
+				continue;
+			// if testing for right side and center x of other is on right then return true 
+			else if(rightSide && otherBounds.x+otherBounds.width/2f > testBounds.x+testBounds.width/2f)
+				return true;
+			// if testing for left side and center x of other is on left then return true 
+			else if(!rightSide && otherBounds.x+otherBounds.width/2f < testBounds.x+testBounds.width/2f)
+				return true;
 		}
 		return false;
 	}

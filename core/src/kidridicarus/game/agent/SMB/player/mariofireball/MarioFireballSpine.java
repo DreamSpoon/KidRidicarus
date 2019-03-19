@@ -35,7 +35,7 @@ public class MarioFireballSpine {
 	}
 
 	public boolean isHitBoundary(boolean facingRight) {
-		if(hmSensor.isContactWall(body.getBounds(), facingRight) || (body.getVelocity().x <= 0f && facingRight) ||
+		if(hmSensor.isSolidOnThisSide(body.getBounds(), facingRight) || (body.getVelocity().x <= 0f && facingRight) ||
 				(body.getVelocity().x >= 0f && !facingRight))
 			return true;
 		return false;

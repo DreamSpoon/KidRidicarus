@@ -53,7 +53,7 @@ public class SMB_NPC_Spine extends OnGroundSpine {
 	}
 
 	private boolean isMoveBlocked(boolean moveRight) {
-		return hmSensor.isContactWall(body.getBounds(), moveRight);
+		return hmSensor.isSolidOnThisSide(body.getBounds(), moveRight);
 	}
 
 	private boolean isMoveBlockedByAgent(boolean moveRight) {

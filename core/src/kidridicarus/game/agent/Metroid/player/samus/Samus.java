@@ -115,8 +115,8 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 			// if advised move left and contacting left wall, or
 			// if no left/right move advice,
 			// then stand.
-			if((moveAdvice.moveRight && body.getSpine().isContactingWall(true)) ||
-					(moveAdvice.moveLeft && body.getSpine().isContactingWall(false)) ||
+			if((moveAdvice.moveRight && body.getSpine().isSolidOnThisSide(true)) ||
+					(moveAdvice.moveLeft && body.getSpine().isSolidOnThisSide(false)) ||
 					!(moveAdvice.moveRight^moveAdvice.moveLeft))
 				return MoveState.STAND;
 			else {
