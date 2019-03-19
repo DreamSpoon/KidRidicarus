@@ -8,13 +8,13 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.MoveAdvice;
 
 public class SamusSupervisor extends GameAgentSupervisor {
-	private MoveAdvice curMoveAdvice;
+	private MoveAdvice moveAdvice;
 	private Samus samus;
 	private String nextLevelName;
 	private boolean isGameOver;
 
 	public SamusSupervisor(Samus samus) {
-		curMoveAdvice = new MoveAdvice();
+		moveAdvice = new MoveAdvice();
 		this.samus = samus;
 		nextLevelName = null;
 		isGameOver = false;
@@ -22,29 +22,28 @@ public class SamusSupervisor extends GameAgentSupervisor {
 
 	@Override
 	public void setMoveAdvice(MoveAdvice moveAdvice) {
-		curMoveAdvice.set(moveAdvice);
+		this.moveAdvice.set(moveAdvice);
 	}
 
 	@Override
-	public MoveAdvice pollUserMoveAdvice() {
-		MoveAdvice adv = curMoveAdvice.cpy();
-		curMoveAdvice.clear();
-		return adv;
+	protected MoveAdvice internalPollMoveAdvice() {
+		MoveAdvice userAdvice = moveAdvice.cpy();
+		moveAdvice.clear();
+		return userAdvice;
 	}
 
 	@Override
 	protected ScriptedAgentState getCurrentScriptAgentState() {
-		ScriptedAgentState curState = new ScriptedAgentState();
-		curState.scriptedBodyState.contactEnabled = true;
-		curState.scriptedBodyState.position.set(samus.getPosition());
-
-		curState.scriptedSpriteState.position.set(samus.getPosition());
-		curState.scriptedSpriteState.visible = true;
-		curState.scriptedSpriteState.spriteState =
+		ScriptedAgentState scriptedState = new ScriptedAgentState();
+		scriptedState.scriptedBodyState.contactEnabled = true;
+		scriptedState.scriptedBodyState.position.set(samus.getPosition());
+		scriptedState.scriptedSpriteState.visible = true;
+		scriptedState.scriptedSpriteState.position.set(samus.getPosition());
+		scriptedState.scriptedSpriteState.spriteState =
 				samus.getProperty(CommonKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
-		curState.scriptedSpriteState.facingRight = samus.getProperty(CommonKV.Script.KEY_FACINGRIGHT, false,
-				Boolean.class);
-		return curState;
+		scriptedState.scriptedSpriteState.facingRight =
+				samus.getProperty(CommonKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
+		return scriptedState;
 	}
 
 	@Override

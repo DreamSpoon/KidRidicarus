@@ -1,16 +1,89 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
-import java.util.List;
-
-import com.badlogic.gdx.math.Vector2;
-
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
-import kidridicarus.common.agentspine.OnGroundSpine;
-import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
+import kidridicarus.game.agentspine.SMB.PlayerSpine;
 
+public class SamusSpine extends PlayerSpine {
+	private static final float GROUNDMOVE_XIMP = 0.28f;
+	private static final float MAX_GROUNDMOVE_VEL = 0.85f;
+	private static final float MIN_WALK_VEL = 0.1f;
+	private static final float STOPMOVE_XIMP = 0.15f;
+//	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
+//	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
+
+	private AgentContactHoldSensor acSensor;
+	private SolidBoundSensor sbSensor;
+
+	public SamusSpine(SamusBody body) {
+		super(body);
+		acSensor = null;
+		sbSensor = null;
+	}
+
+	public SolidBoundSensor createSolidBodySensor() {
+		sbSensor = new SolidBoundSensor(body);
+		return sbSensor;
+	}
+
+	public AgentContactHoldSensor creatAgentContactSensor() {
+		acSensor = new AgentContactHoldSensor(body);
+		return acSensor;
+	}
+
+	/*
+	 * Apply walk impulse and cap horizontal velocity.
+	 */
+	public void applyWalkMove(boolean moveRight) {
+		applyHorizontalImpulse(moveRight, GROUNDMOVE_XIMP);
+		capHorizontalVelocity(MAX_GROUNDMOVE_VEL);
+	}
+
+	public void applyStopMove() {
+		// if moving right...
+		if(body.getVelocity().x > MIN_WALK_VEL)
+			applyHorizontalImpulse(true, -STOPMOVE_XIMP);
+		// if moving left...
+		else if(body.getVelocity().x < -MIN_WALK_VEL)
+			applyHorizontalImpulse(false, -STOPMOVE_XIMP);
+		// not moving right or left fast enough, set horizontal velocity to zero to avoid wobbling
+		else
+			body.setVelocity(0f, body.getVelocity().y);
+	}
+
+/*	public void applyDamageKick(Vector2 position) {
+		// zero the y velocity
+		body.setVelocity(body.getVelocity().x, 0);
+		// apply a kick impulse to the left or right depending on other agent's position
+		if(body.getPosition().x < position.x)
+			body.applyBodyImpulse(DAMAGE_KICK_SIDE_IMP.cpy().scl(-1f));
+		else
+			body.applyBodyImpulse(DAMAGE_KICK_SIDE_IMP);
+
+		// apply kick up impulse if the player is above the other agent
+		if(body.getPosition().y > position.y)
+			body.applyBodyImpulse(DAMAGE_KICK_UP_IMP);
+	}
+*/
+	public boolean isContactingWall(boolean isRightWall) {
+		return sbSensor.isHMoveBlocked(body.getBounds(), isRightWall);
+	}
+
+	public RoomBox getCurrentRoom() {
+		return (RoomBox) acSensor.getFirstContactByClass(RoomBox.class);
+	}
+
+	public boolean isMovingUp() {
+		return false;
+	}
+
+	public boolean isStandingStill() {
+		return isStandingStill(MIN_WALK_VEL);
+	}
+}
+
+/*
 public class SamusSpine extends OnGroundSpine {
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
@@ -55,12 +128,12 @@ public class SamusSpine extends OnGroundSpine {
 		if(body.getPosition().y > position.y)
 			body.applyBodyImpulse(DAMAGE_KICK_UP_IMP);
 	}
-
+*/
 	/*
 	 * Checks pipe warp sensors for a contacting pipe warp with entrance direction matching adviceDir, and
 	 * returns pipe warp if found. Returns null otherwise. 
 	 */
-	public PipeWarp getPipeWarpForAdvice(Direction4 adviceDir) {
+/*	public PipeWarp getPipeWarpForAdvice(Direction4 adviceDir) {
 		for(PipeWarp pw : pwSensor.getContactsByClass(PipeWarp.class)) {
 			if(((PipeWarp) pw).canBodyEnterPipe(body.getBounds(), adviceDir))
 				return (PipeWarp) pw;
@@ -84,3 +157,4 @@ public class SamusSpine extends OnGroundSpine {
 		return (RoomBox) acSensor.getFirstContactByClass(RoomBox.class);
 	}
 }
+*/

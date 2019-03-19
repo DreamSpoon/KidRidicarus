@@ -10,14 +10,14 @@ import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
 import kidridicarus.common.agentspine.OnGroundSpine;
 
-public class GoombaTurtleShareSpine extends OnGroundSpine {
+public class SMB_NPC_Spine extends OnGroundSpine {
 	protected AgentBody body;
 	private AgentContactHoldSensor agentHoldContactSensor;
 	private AgentContactBeginSensor agentBeginContactSensor; 
 	// horizontal move sensor
 	private SolidBoundSensor hmSensor;
 
-	public GoombaTurtleShareSpine(AgentBody body) {
+	public SMB_NPC_Spine(AgentBody body) {
 		this.body = body;
 		agentHoldContactSensor = null;
 		agentBeginContactSensor = null;

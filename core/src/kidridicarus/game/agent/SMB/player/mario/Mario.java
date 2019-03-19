@@ -84,7 +84,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	// list of powerups received during contact update
 	private LinkedList<PowType> powerupsReceived;
 	private boolean didTakeDamage;
-	private boolean isDead;
+	private boolean isDeadBounce;
 	private float noDamageCooldown;
 //	private boolean isLastVelocityRight;
 	private Direction4 lastHorizontalMoveDir;
@@ -96,7 +96,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
 		powerState = PowerState.SMALL;
-		isDead = false;
+		isDeadBounce = false;
 		facingRight = true;
 		isNextJumpAllowed = false;
 		isNextJumpDelayed = false;
@@ -336,7 +336,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		didTakeDamage = false;
 		switch(powerState) {
 			case SMALL:
-				isDead = true;
+				isDeadBounce = true;
 				break;
 			case BIG:
 			case FIRE:
@@ -473,10 +473,10 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			return moveState;
 		else if(body.getSpine().isContactDespawn())
 			return MoveState.DEAD;
-		else if(isDead)
+		else if(isDeadBounce)
 			return MoveState.DEAD_BOUNCE;
-		// if on ground then do ground move
-		else if(body.getSpine().isOnGround())
+		// if on ground flag is true and agent isn't moving upward while in air move state, then do ground move
+		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && moveState.isOnGround()))
 			return getNextMoveStateGround(moveAdvice);
 		// do air move
 		else
@@ -492,11 +492,8 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
 		Direction4 moveDir = getMarioMoveDir(moveAdvice);
 
-		// if current state is an air state and body is moving up then continue air state
-		if(!moveState.isOnGround() && body.getSpine().isMovingUp())
-			return moveState;
 		// if advised to jump and jumping is okay...
-		else if(moveAdvice.action1 && isNextJumpAllowed && !isNextJumpDelayed) {
+		if(moveAdvice.action1 && isNextJumpAllowed && !isNextJumpDelayed) {
 			// if ducking already then duck jump
 			if(moveState.isDuck())
 				return MoveState.DUCKJUMP;

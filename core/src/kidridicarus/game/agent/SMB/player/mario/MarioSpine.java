@@ -13,13 +13,13 @@ import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.OnGroundSpine;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
+import kidridicarus.game.agentspine.SMB.PlayerSpine;
 
 /*
  * A "control center" for the body, to apply move impulses, etc. in an organized manner.
@@ -29,9 +29,8 @@ import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
  *   3) Take blocks of information and translate into body impulses, and apply those body impulses
  *     (e.g. move up, move left, apply jump).
  */
-public class MarioSpine extends OnGroundSpine {
+public class MarioSpine extends PlayerSpine {
 	private static final float WALKMOVE_XIMP = 0.025f;
-	private static final float MAX_STAND_VEL = MarioSpine.WALKMOVE_XIMP * 0.01f;
 	private static final float MIN_WALKVEL = WALKMOVE_XIMP * 2f;
 	private static final float MAX_WALKVEL = WALKMOVE_XIMP * 42f;
 	private static final float DECEL_XIMP = WALKMOVE_XIMP * 1.37f;
@@ -51,14 +50,13 @@ public class MarioSpine extends OnGroundSpine {
 	private static final float MIN_HEADBANG_VEL = 0.01f;
 	private static final float HEADBOUNCE_VEL = 2.8f;	// up velocity
 
-	private MarioBody body;
 	private AgentContactHoldSensor agentSensor;
 	private AgentContactHoldSensor tileBumpPushSensor;
 	private AgentContactBeginSensor damagePushSensor; 
 	private AgentContactHoldSensor pipeWarpSensor;
 
 	public MarioSpine(MarioBody body) {
-		this.body = body;
+		super(body);
 		agentSensor = null;
 		tileBumpPushSensor = null;
 		damagePushSensor = null;
@@ -107,6 +105,9 @@ public class MarioSpine extends OnGroundSpine {
 			// ... and facing left, then decelerate with hard impulse to the left
 			else
 				applyHorizontalImpulse(true, -BRAKE_XIMP);
+			// if decelerated too hard to the left then set x velocity to zero
+			if(body.getVelocity().x <= UInfo.VEL_EPSILON)
+				body.setVelocity(0f, body.getVelocity().y);
 		}
 		// if moving left...
 		else if(body.getVelocity().x < -MIN_WALKVEL) {
@@ -116,27 +117,13 @@ public class MarioSpine extends OnGroundSpine {
 			// ... and facing right, then decelerate with hard impulse to the right
 			else
 				applyHorizontalImpulse(false, -BRAKE_XIMP);
+			// if decelerated too hard to the right then set x velocity to zero
+			if(body.getVelocity().x >= -UInfo.VEL_EPSILON)
+				body.setVelocity(0f, body.getVelocity().y);
 		}
 		// not moving right or left fast enough, set horizontal velocity to zero to avoid wobbling
 		else
 			body.setVelocity(0f, body.getVelocity().y);
-	}
-
-	private void applyHorizontalImpulse(boolean moveRight, float amt) {
-		if(moveRight)
-			body.applyBodyImpulse(new Vector2(amt, 0f));
-		else
-			body.applyBodyImpulse(new Vector2(-amt, 0f));
-	}
-
-	/*
-	 * Ensure horizontal velocity is within -max to +max.
-	 */
-	private void capHorizontalVelocity(float max) {
-		if(body.getVelocity().x > max)
-			body.setVelocity(max, body.getVelocity().y);
-		else if(body.getVelocity().x < -max)
-			body.setVelocity(-max, body.getVelocity().y);
 	}
 
 	public void applyJumpImpulse() {
@@ -175,11 +162,6 @@ public class MarioSpine extends OnGroundSpine {
 		capHorizontalVelocity(MAX_DUCKSLIDE_VEL);
 	}
 
-	public void capFallVelocity() {
-		if(body.getVelocity().y < -MAX_FALL_VELOCITY)
-			body.setVelocity(body.getVelocity().x, -MAX_FALL_VELOCITY);
-	}
-
 	/*
 	 * If moving up fast enough, then check tiles currently contacting head for closest tile to take a bump.
 	 * Tile bump is applied if needed.
@@ -187,10 +169,11 @@ public class MarioSpine extends OnGroundSpine {
 	 */
 	public boolean checkDoHeadBump(TileBumpStrength bumpStrength) {
 		// exit if not moving up fast enough in this frame or previous frame
-		if(body.getVelocity().y < MIN_HEADBANG_VEL || body.getPrevVelocity().y < MIN_HEADBANG_VEL)
+		if(body.getVelocity().y < MIN_HEADBANG_VEL || ((MarioBody) body).getPrevVelocity().y < MIN_HEADBANG_VEL)
 			return false;
 		// create list of bumptiles, in order from closest to mario to farthest from mario
-		TreeSet<TileBumpTakeAgent> closestTilesList = new TreeSet<TileBumpTakeAgent>(new Comparator<TileBumpTakeAgent>() {
+		TreeSet<TileBumpTakeAgent> closestTilesList = 
+				new TreeSet<TileBumpTakeAgent>(new Comparator<TileBumpTakeAgent>() {
 				@Override
 				public int compare(TileBumpTakeAgent o1, TileBumpTakeAgent o2) {
 					float dist1 = Math.abs(((Agent) o1).getPosition().x - body.getPosition().x);
@@ -221,15 +204,11 @@ public class MarioSpine extends OnGroundSpine {
 	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {
 		// check bounds
 		Rectangle myBounds = body.getBounds();
-		Vector2 myPrevPosition = body.getPrevPosition();
+		Vector2 myPrevPosition = ((MarioBody) body).getPrevPosition();
 		float otherCenterY = otherBounds.y+otherBounds.height/2f;
 		if(myBounds.y >= otherCenterY || myPrevPosition.y-myBounds.height/2f >= otherCenterY)
 			return true;
 		return false;
-	}
-
-	public boolean isStandingStill() {
-		return (body.getVelocity().x >= -MAX_STAND_VEL && body.getVelocity().x <= MAX_STAND_VEL);
 	}
 
 	public boolean isBraking(boolean facingRight) {
@@ -238,22 +217,6 @@ public class MarioSpine extends OnGroundSpine {
 		else if(!facingRight && body.getVelocity().x > MIN_WALKVEL)
 			return true;
 		return false;
-	}
-
-	public boolean isMovingUp() {
-		return body.getVelocity().y > UInfo.VEL_EPSILON;
-	}
-
-	public boolean isMovingDown() {
-		return body.getVelocity().y < -UInfo.VEL_EPSILON;
-	}
-
-	public boolean isMovingRight() {
-		return body.getVelocity().x > MIN_WALKVEL;
-	}
-
-	public boolean isMovingLeft() {
-		return body.getVelocity().x < -MIN_WALKVEL;
 	}
 
 	public CollisionTiledMapAgent getCollisionTiledMap() {
@@ -280,5 +243,13 @@ public class MarioSpine extends OnGroundSpine {
 
 	public boolean isContactDespawn() {
 		return agentSensor.getFirstContactByClass(DespawnBox.class) != null;
+	}
+
+	public void capFallVelocity() {
+		capFallVelocity(MAX_FALL_VELOCITY);
+	}
+
+	public boolean isStandingStill() {
+		return isStandingStill(MIN_WALKVEL);
 	}
 }

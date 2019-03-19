@@ -1,6 +1,11 @@
 package kidridicarus.agency.agentscript;
 
 public interface AgentScript {
+	/*
+	 * A superclass of AgentSupervisor will create and implement the hooks, to allow a running script to give
+	 * information to, and/or trigger actions by, the AgentSupervisor. Scripts must be able to do more than
+	 * move a sprite/body around on the screen.
+	 */
 	public interface AgentScriptHooks {
 		public void gotoNextLevel(String levelName);
 		// also include start music, stop music, etc.

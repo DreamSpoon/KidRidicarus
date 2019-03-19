@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.Metroid.player.samus;
+package kidridicarus.game.agent.Metroid.player.samusshot;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.agent.Metroid.player.samus.SamusShot.MoveState;
+import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot.MoveState;
 import kidridicarus.game.info.MetroidAnim;
 
 public class SamusShotSprite extends Sprite {

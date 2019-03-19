@@ -8,30 +8,194 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.agentscript.ScriptedSpriteState;
-import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.AgentSupervisor;
+import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.common.info.UInfo;
-import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
-import kidridicarus.game.agent.SMB.other.flagpole.Flagpole;
-import kidridicarus.game.agent.SMB.other.levelendtrigger.LevelEndTrigger;
-import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
-import kidridicarus.game.info.AudioInfo;
+
+public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, DisposableAgent {
+	public enum MoveState { STAND, RUN, BALL, SHOOT, JUMPSHOOT, JUMP, JUMPSPIN, CLIMB;
+		public boolean equalsAny(MoveState ...otherStates) {
+			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
+		}
+		public boolean isJump() { return this.equalsAny(JUMP, JUMPSHOOT, JUMPSPIN); }
+		public boolean isOnGround() { return this.equalsAny(STAND, RUN, BALL, SHOOT); }
+	}
+
+	private SamusSupervisor supervisor;
+	private SamusObserver observer;
+	private SamusBody body;
+	private SamusSprite sprite;
+	private MoveState moveState;
+	private float moveStateTimer;
+
+	private boolean isFacingRight;
+	private boolean isFacingUp;
+
+	public Samus(Agency agency, ObjectProperties properties) {
+		super(agency, properties);
+
+		isFacingRight = false;
+		if(properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
+			isFacingRight = true;
+		isFacingUp = false;
+
+		body = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doUpdate(delta); }
+		});
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
+		sprite = new SamusSprite(agency.getAtlas(), body.getPosition());
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+			@Override
+			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+		});
+
+		supervisor = new SamusSupervisor(this);
+		observer = new SamusObserver(this, agency.getAtlas());
+	}
+
+	private void doPostUpdate() {
+		// let body update previous position/velocity
+		body.postUpdate();
+	}
+
+	private void doUpdate(float delta) {
+		processMove(delta, supervisor.pollMoveAdvice());
+		processSprite(delta);
+	}
+
+	private void processMove(float delta, MoveAdvice moveAdvice) {
+		MoveState nextMoveState = getNextMoveState(moveAdvice);
+		if(nextMoveState.isOnGround())
+			processGroundMove(moveAdvice, nextMoveState);
+		else
+			processAirMove(moveAdvice, nextMoveState);
+
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveState = nextMoveState;
+	}
+
+	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
+		// if on ground flag is true and agent isn't moving upward while in air move state, then do ground move
+		if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && moveState.isOnGround()))
+			return getNextMoveStateGround(moveAdvice);
+		// do air move
+		else
+			return getNextMoveStateAir(moveAdvice);
+	}
+
+	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
+		Direction4 moveDir = moveAdvice.getMoveDir4();
+		// moving too slowly?
+		if(body.getSpine().isStandingStill() && !moveDir.isHorizontal())
+			return MoveState.STAND;
+		else
+			return MoveState.RUN;
+	}
+
+	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {
+		return MoveState.JUMP;
+	}
+
+	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+		boolean applyWalkMove = false;
+		boolean applyStopMove = false;
+		// if advised to move right or move left, but not both at same time, then...
+		if(moveAdvice.moveRight^moveAdvice.moveLeft) {
+			if(isFacingRight && moveAdvice.moveLeft)
+				isFacingRight = false;
+			else if(!isFacingRight && moveAdvice.moveRight)
+				isFacingRight = true;
+
+			applyWalkMove = true;
+		}
+		else
+			applyStopMove = true;
+		
+		// if advised to move up or move down, but not both at same time, then...
+		if(moveAdvice.moveUp^moveAdvice.moveDown)
+			isFacingUp = moveAdvice.moveUp;
+		else
+			isFacingUp = false;
+
+		switch(nextMoveState) {
+			case STAND:
+				break;
+			case RUN:
+				break;
+		}
+
+		if(applyWalkMove)
+			body.getSpine().applyWalkMove(isFacingRight);
+		if(applyStopMove)
+			body.getSpine().applyStopMove();
+	}
+
+	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+	}
+
+	private void processSprite(float delta) {
+		sprite.update(delta, body.getPosition(), moveState, isFacingRight, isFacingUp, Direction4.NONE);
+	}
+
+	private void doDraw(AgencyDrawBatch batch) {
+		batch.draw(sprite);
+	}
+
+	@Override
+	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
+		return false;
+	}
+
+	@Override
+	public AgentSupervisor getSupervisor() {
+		return supervisor;
+	}
+
+	@Override
+	public GameAgentObserver getObserver() {
+		return observer;
+	}
+
+	@Override
+	public RoomBox getCurrentRoom() {
+		return body.getSpine().getCurrentRoom();
+	}
+
+	@Override
+	public Vector2 getPosition() {
+		return body.getPosition();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return body.getBounds();
+	}
+
+	@Override
+	public void disposeAgent() {
+		body.dispose();
+	}
+}
 
 /*
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements PlayerAgent, DisposableAgent {
+/*
+public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, DisposableAgent {
 	private static final float DAMAGE_INV_TIME = 0.8f;
 	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
@@ -120,25 +284,6 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 		ContactState nextContactState = ContactState.REGULAR;
 		switch(curContactState) {
 			case REGULAR:
-				// check for level end trigger contact, and use level end if found
-				LevelEndTrigger leTrigger = samusBody.getSpine().getFirstContactByClass(LevelEndTrigger.class);
-				if(leTrigger != null) {
-//					leTrigger.use(this);
-					break;
-				}
-				// check for level end flagpole contact, and use flagpole if found
-				Flagpole flagpole = samusBody.getSpine().getFirstContactByClass(Flagpole.class);
-				if(flagpole != null) {
-//					flagpole.use(this);
-					break;
-				}
-/*				// check for incoming damage and apply
-				for(ContactDmgGiveAgent agent : samusBody.getSpine().getContactsByClass(ContactDmgGiveAgent.class)) {
-					if(agent.isContactDamage()) {
-						nextContactState = ContactState.DAMAGE;
-						takeContactDamage(((Agent) agent).getPosition());
-					}
-				}*/
 				break;
 			case DAMAGE:
 				// check for return to regular contact state
@@ -153,11 +298,13 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 		curContactState = nextContactState;
 	}
 
-	private void takeContactDamage(Vector2 position) {
-		samusBody.getSpine().applyDamageKick(position);
+	@Override
+	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
+		samusBody.getSpine().applyDamageKick(dmgOrigin);
 		if(curMoveState != MoveState.JUMPSPIN)
 			isJumpForceEnabled = false;
 		agency.playSound(AudioInfo.Sound.Metroid.HURT);
+		return true;
 	}
 
 	private void processMove(float delta, MoveAdvice advice) {
@@ -177,11 +324,11 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 			isFacingRight = supervisor.getScriptAgentState().scriptedSpriteState.facingRight;
 		}
 	}
-
+*/
 	/*
 	 * Should Samus enter a warp pipe? Do it if needed.
 	 */
-	private boolean processPipeMove(MoveAdvice advice) {
+/*	private boolean processPipeMove(MoveAdvice advice) {
 		Direction4 adviceDir = advice.getMoveDir4();
 		// if no move advice direction then no pipe move so exit; also, exit if move state is similar to jump
 		if(adviceDir == Direction4.NONE || curMoveState.isJump())
@@ -194,11 +341,11 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 		// use the pipe warp, returning the result
 		return wp.use(this);
 	}
-
+*/
 	/*
 	 * Run, jump, shoot, etc.
 	 */
-	private void processRegularMove(float delta, MoveAdvice advice) {
+/*	private void processRegularMove(float delta, MoveAdvice advice) {
 		MoveState nextMoveState = null;
 		boolean jumpStart = false;
 		// XOR the moveleft and moveright, becuase can't move left and right at same time
@@ -542,11 +689,11 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 				batch.draw(samusSprite);
 		}
 	}
-
+*/
 	/*
 	 * Check for contact with tiled collision map. If contact then get solid state of tile given by tileCoords.
 	 */
-	private boolean isMapTileSolid(Vector2 tileCoords) {
+/*	private boolean isMapTileSolid(Vector2 tileCoords) {
 		CollisionTiledMapAgent octMap = samusBody.getSpine().getFirstContactByClass(CollisionTiledMapAgent.class);
 		if(octMap == null)
 			return false;
@@ -608,4 +755,4 @@ public class Samus extends Agent implements PlayerAgent, DisposableAgent {
 	public void disposeAgent() {
 		samusBody.dispose();
 	}
-}
+}*/

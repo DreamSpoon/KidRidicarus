@@ -8,7 +8,7 @@ import kidridicarus.game.agent.Metroid.item.marumari.MaruMari;
 import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
 import kidridicarus.game.agent.Metroid.other.metroiddoor.MetroidDoor;
 import kidridicarus.game.agent.Metroid.player.samus.Samus;
-import kidridicarus.game.agent.Metroid.player.samus.SamusShot;
+import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
 
 public class MetroidInfo {
 	public static final AgentClassList METROID_AGENT_CLASSLIST = new AgentClassList( 

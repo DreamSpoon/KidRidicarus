@@ -3,9 +3,9 @@ package kidridicarus.game.agent.SMB.NPC.turtle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.game.agentspine.SMB.GoombaTurtleShareSpine;
+import kidridicarus.game.agentspine.SMB.SMB_NPC_Spine;
 
-public class TurtleSpine extends GoombaTurtleShareSpine {
+public class TurtleSpine extends SMB_NPC_Spine {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 0.4f;

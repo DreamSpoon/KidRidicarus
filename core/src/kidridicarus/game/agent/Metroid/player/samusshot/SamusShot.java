@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.Metroid.player.samus;
+package kidridicarus.game.agent.Metroid.player.samusshot;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -14,6 +14,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.game.agent.Metroid.player.samus.Samus;
 import kidridicarus.game.info.GameKV;
 
 public class SamusShot extends Agent implements DisposableAgent {

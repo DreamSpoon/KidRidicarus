@@ -16,13 +16,15 @@ public abstract class AgentSupervisor {
 	private AgentScriptRunner scriptRunner;
 
 	public abstract void setMoveAdvice(MoveAdvice moveAdvice);
-	public abstract MoveAdvice pollUserMoveAdvice();
+	// internalPollMoveAdvice method to be implemented by superclass, for use by this class only.
+	// Other classes that poll move advice from a superclass must call pollMoveAdvice method.
+	protected abstract MoveAdvice internalPollMoveAdvice();
 	public abstract boolean isAtLevelEnd();
 	public abstract boolean isGameOver();
 
 	/*
-	 * Convert the Player agent information into a simpler script agent state format, which will be used to
-	 * initialize the agent state when a script is started.
+	 * Convert the Player agent state information into a simpler script agent state format, and return it.
+	 * Script agent state is used to initialize/direct the agent state when a script is started/running.
 	 */
 	protected abstract ScriptedAgentState getCurrentScriptAgentState();
 
@@ -40,10 +42,7 @@ public abstract class AgentSupervisor {
 		scriptRunner.postUpdateAgency();
 	}
 
-	/*
-	 * Return false if already running a script.
-	 * Otherwise start using the given script and return true. 
-	 */
+	// return false if already running a script, otherwise start using the given script and return true 
 	public boolean startScript(AgentScript agentScript) {
 		return scriptRunner.startScript(agentScript, getAgentScriptHooks(), getCurrentScriptAgentState());
 	}
@@ -64,10 +63,14 @@ public abstract class AgentSupervisor {
 		return scriptRunner.isRunning() && !scriptRunner.isRunningMoveAdvice();
 	}
 
+	/*
+	 * Returns scripted move advice if scripted move advice script is running.
+	 * Otherwise returns regular user move advice.
+	 */
 	public MoveAdvice pollMoveAdvice() {
 		if(scriptRunner.isRunningMoveAdvice())
 			return scriptRunner.getScriptAgentState().scriptedMoveAdvice;
 		else
-			return pollUserMoveAdvice();
+			return internalPollMoveAdvice();
 	}
 }

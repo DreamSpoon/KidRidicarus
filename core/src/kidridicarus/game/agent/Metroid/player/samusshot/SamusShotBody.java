@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.Metroid.player.samus;
+package kidridicarus.game.agent.Metroid.player.samusshot;
 
 import java.util.List;
 
