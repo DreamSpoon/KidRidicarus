@@ -17,17 +17,25 @@ import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
+import kidridicarus.game.info.AudioInfo;
 
 public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, DisposableAgent {
-	public enum MoveState { STAND, RUN, BALL, SHOOT, JUMPSHOOT, JUMP, JUMPSPIN, CLIMB;
+	public enum MoveState { STAND, BALL, RUN, RUNSHOOT, JUMPSHOOT, JUMP, JUMPSPIN, CLIMB;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
 		public boolean isJump() { return this.equalsAny(JUMP, JUMPSHOOT, JUMPSPIN); }
-		public boolean isOnGround() { return this.equalsAny(STAND, RUN, BALL, SHOOT); }
+		public boolean isOnGround() { return this.equalsAny(STAND, BALL, RUN, RUNSHOOT); }
 	}
+
+	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
+	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
+	private static final float SHOT_VEL = 2f;
+	private static final float SHOOT_COOLDOWN = 0.15f;
 
 	private SamusSupervisor supervisor;
 	private SamusObserver observer;
@@ -38,6 +46,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 
 	private boolean isFacingRight;
 	private boolean isFacingUp;
+	private float shootCooldownTimer;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -46,6 +55,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		if(properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
 			isFacingRight = true;
 		isFacingUp = false;
+		shootCooldownTimer = 0f;
 
 		body = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
@@ -83,6 +93,9 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		else
 			processAirMove(moveAdvice, nextMoveState);
 
+		// decrememnt shoot cooldown timer
+		shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
+
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
 	}
@@ -97,10 +110,24 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	}
 
 	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
-		Direction4 moveDir = moveAdvice.getMoveDir4();
-		// moving too slowly?
-		if(body.getSpine().isStandingStill() && !moveDir.isHorizontal())
-			return MoveState.STAND;
+		if(body.getSpine().isNoHorizontalVelocity()) {
+			// If advised move right and contacting right wall, or
+			// if advised move left and contacting left wall, or
+			// if no left/right move advice,
+			// then stand.
+			if((moveAdvice.moveRight && body.getSpine().isContactingWall(true)) ||
+					(moveAdvice.moveLeft && body.getSpine().isContactingWall(false)) ||
+					!(moveAdvice.moveRight^moveAdvice.moveLeft))
+				return MoveState.STAND;
+			else {
+				if(moveAdvice.action0)
+					return MoveState.RUNSHOOT;
+				else
+					return MoveState.RUN;
+			}
+		}
+		else if(moveAdvice.action0)
+			return MoveState.RUNSHOOT;
 		else
 			return MoveState.RUN;
 	}
@@ -130,17 +157,57 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		else
 			isFacingUp = false;
 
+		if(moveAdvice.action0 && isShootAllowed())
+			doShoot();
+
 		switch(nextMoveState) {
 			case STAND:
-				break;
 			case RUN:
+			case RUNSHOOT:
 				break;
+			default:
+				throw new IllegalStateException("Wrong nextMoveState = " + nextMoveState);
 		}
 
 		if(applyWalkMove)
 			body.getSpine().applyWalkMove(isFacingRight);
 		if(applyStopMove)
 			body.getSpine().applyStopMove();
+	}
+
+	private boolean isShootAllowed() {
+		return shootCooldownTimer <= 0f;
+	}
+
+	private void doShoot() {
+		shootCooldownTimer = SHOOT_COOLDOWN;
+
+		// calculate position and velocity of shot based on samus' orientation
+		Vector2 velocity = new Vector2();
+		Vector2 position = new Vector2();
+		if(isFacingUp) {
+			velocity.set(0f, SHOT_VEL);
+			if(isFacingRight)
+				position.set(SHOT_OFFSET_UP).add(body.getPosition());
+			else
+				position.set(SHOT_OFFSET_UP).scl(-1, 1).add(body.getPosition());
+		}
+		else if(isFacingRight) {
+			velocity.set(SHOT_VEL, 0f);
+			position.set(SHOT_OFFSET_RIGHT).add(body.getPosition());
+		}
+		else {
+			velocity.set(-SHOT_VEL, 0f);
+			position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(body.getPosition());
+		}
+
+		// create shot
+		ObjectProperties shotProps = SamusShot.makeAP(this, position, velocity);
+		// if the spawn point of shot is in a solid tile then the shot must immediately explode
+		if(body.getSpine().isMapPointSolid(position))
+			shotProps.put(CommonKV.Spawn.KEY_EXPIRE, true);
+		agency.createAgent(shotProps);
+		agency.playSound(AudioInfo.Sound.Metroid.SHOOT);
 	}
 
 	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {

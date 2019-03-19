@@ -1,8 +1,11 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
+import com.badlogic.gdx.math.Vector2;
+
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidBoundSensor;
+import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.game.agentspine.SMB.PlayerSpine;
 
 public class SamusSpine extends PlayerSpine {
@@ -13,12 +16,12 @@ public class SamusSpine extends PlayerSpine {
 //	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 //	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
 
-	private AgentContactHoldSensor acSensor;
+	private AgentContactHoldSensor agentSensor;
 	private SolidBoundSensor sbSensor;
 
 	public SamusSpine(SamusBody body) {
 		super(body);
-		acSensor = null;
+		agentSensor = null;
 		sbSensor = null;
 	}
 
@@ -28,8 +31,8 @@ public class SamusSpine extends PlayerSpine {
 	}
 
 	public AgentContactHoldSensor creatAgentContactSensor() {
-		acSensor = new AgentContactHoldSensor(body);
-		return acSensor;
+		agentSensor = new AgentContactHoldSensor(body);
+		return agentSensor;
 	}
 
 	/*
@@ -66,19 +69,20 @@ public class SamusSpine extends PlayerSpine {
 			body.applyBodyImpulse(DAMAGE_KICK_UP_IMP);
 	}
 */
+	public boolean isMapPointSolid(Vector2 position) {
+		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+		return ctMap == null ? false : ctMap.isMapPointSolid(position); 
+	}
+
 	public boolean isContactingWall(boolean isRightWall) {
 		return sbSensor.isHMoveBlocked(body.getBounds(), isRightWall);
 	}
 
 	public RoomBox getCurrentRoom() {
-		return (RoomBox) acSensor.getFirstContactByClass(RoomBox.class);
+		return (RoomBox) agentSensor.getFirstContactByClass(RoomBox.class);
 	}
 
-	public boolean isMovingUp() {
-		return false;
-	}
-
-	public boolean isStandingStill() {
+	public boolean isNoHorizontalVelocity() {
 		return isStandingStill(MIN_WALK_VEL);
 	}
 }

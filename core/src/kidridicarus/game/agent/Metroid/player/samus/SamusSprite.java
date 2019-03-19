@@ -89,7 +89,7 @@ public class SamusSprite extends Sprite {
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case RUN:
-			case SHOOT:
+			case RUNSHOOT:
 				if(isFacingUp)
 					setRegion(runAimUpAnim.getKeyFrame(stateTimer));
 				else {

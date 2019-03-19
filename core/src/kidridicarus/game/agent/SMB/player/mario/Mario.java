@@ -22,7 +22,6 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
@@ -503,41 +502,35 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		}
 		else if(moveState.isDuck()) {
 			// if not advising move down then check for unduck - if can't unduck then duckslide
-			if(moveDir != Direction4.DOWN) {
-				if(moveState.isOnGround()) {
-					Vector2 bodyTilePos = UInfo.getM2PTileForPos(body.getPosition());
-
-					// Check the space above and around mario to test if mario can unduck normally, or if he is in a
-					// tight spot
-
-					// if the tile above ducking mario is solid ...
-					if(isMapTileSolid(bodyTilePos.cpy().add(0, 1))) {
-						Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(body.getPosition());
-						// If the player's last velocity direction was rightward, and their position is in the left half
-						// of the tile, and the tile above and to the left of them is solid, then the player should
-						// duckslide right.
-						if((lastHorizontalMoveDir == Direction4.RIGHT &&
-								subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
-								(subTilePos.x > 0.5f && !isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
-								(lastHorizontalMoveDir == Direction4.RIGHT &&
-								subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
-							isDuckSlideRight = true;
-						}
-						// the only other option is to duckslide left
-						else
-							isDuckSlideRight = false;
-	
-						// tile above is solid so must be ducksliding
-						return MoveState.DUCKSLIDE;
-					}
-					else
-						return MoveState.STAND;
-				}
-				else
-					return MoveState.STAND;
-			}
-			else
+			if(moveDir == Direction4.DOWN)
 				return MoveState.DUCK;
+			if(!moveState.isOnGround())
+				return MoveState.STAND;
+			Vector2 bodyTilePos = UInfo.getM2PTileForPos(body.getPosition());
+
+			// Check the space above and around mario to test if mario can unduck normally, or if he is in a
+			// tight spot:
+
+			// if the tile above ducking mario is not solid then allow stand
+			if(!body.getSpine().isMapTileSolid(bodyTilePos.cpy().add(0, 1)))
+				return MoveState.STAND;
+
+			Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(body.getPosition());
+			// If the player's last velocity direction was rightward, and their position is in the left half
+			// of the tile, and the tile above and to the left of them is solid, then the player should
+			// duckslide right.
+			if((lastHorizontalMoveDir == Direction4.RIGHT &&
+					subTilePos.x <= 0.5f && body.getSpine().isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
+					(subTilePos.x > 0.5f && !body.getSpine().isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
+					(lastHorizontalMoveDir == Direction4.RIGHT &&
+					subTilePos.x > 0.5f && body.getSpine().isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
+				isDuckSlideRight = true;
+			}
+			// the only other option is to duckslide left
+			else
+				isDuckSlideRight = false;
+
+			return MoveState.DUCKSLIDE;
 		}
 		// if big body mario and move down is advised then duck
 		else if(powerState.isBigBody() && moveDir == Direction4.DOWN)
@@ -550,13 +543,6 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			return MoveState.BRAKE;
 		else
 			return MoveState.RUN;
-	}
-
-	private boolean isMapTileSolid(Vector2 tileCoords) {
-		CollisionTiledMapAgent ctMap = body.getSpine().getCollisionTiledMap();
-		if(ctMap == null)
-			return false;
-		return ctMap.isMapTileSolid(tileCoords);
 	}
 
 	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {

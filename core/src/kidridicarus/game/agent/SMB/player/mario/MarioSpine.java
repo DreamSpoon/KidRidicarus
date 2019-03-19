@@ -219,10 +219,6 @@ public class MarioSpine extends PlayerSpine {
 		return false;
 	}
 
-	public CollisionTiledMapAgent getCollisionTiledMap() {
-		return agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
-	}
-
 	public List<Agent> getPushDamageContacts() {
 		return damagePushSensor.getAndResetContacts();
 	}
@@ -235,6 +231,11 @@ public class MarioSpine extends PlayerSpine {
 				return (PipeWarp) pw;
 		}
 		return null;
+	}
+
+	public boolean isMapTileSolid(Vector2 tileCoords) {
+		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+		return ctMap == null ? false : ctMap.isMapTileSolid(tileCoords); 
 	}
 
 	public RoomBox getCurrentRoom() {

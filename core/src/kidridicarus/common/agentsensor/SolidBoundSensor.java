@@ -10,6 +10,8 @@ import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.AgentContactSensor;
 import kidridicarus.common.metaagent.tiledmap.collision.LineSeg;
 
+// TODO how to include Agents that use the contact filter bit BOUND_BIT?
+// e.g. so that samus agent can sense when body contacts metroid door
 public class SolidBoundSensor extends AgentContactSensor {
 	private LinkedList<LineSeg> contacts;
 
