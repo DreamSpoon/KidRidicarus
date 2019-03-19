@@ -86,7 +86,8 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private boolean didTakeDamage;
 	private boolean isDead;
 	private float noDamageCooldown;
-	private boolean isLastVelocityRight;
+//	private boolean isLastVelocityRight;
+	private Direction4 lastHorizontalMoveDir;
 	private boolean isDuckSlideRight;
 	private float starPowerCooldown;
 
@@ -108,7 +109,8 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		powerupsReceived = new LinkedList<PowType>();
 		didTakeDamage = false;
 		noDamageCooldown = 0f;
-		isLastVelocityRight = false;
+//		isLastVelocityRight = false;
+		lastHorizontalMoveDir = Direction4.NONE;
 		isDuckSlideRight = false;
 		starPowerCooldown = 0f;
 
@@ -184,9 +186,9 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 
 			// make a note of the last direction in which mario was moving, for duck sliding
 			if(body.getSpine().isMovingRight())
-				isLastVelocityRight = true;
+				lastHorizontalMoveDir = Direction4.RIGHT;
 			else if(body.getSpine().isMovingLeft())
-				isLastVelocityRight = false;
+				lastHorizontalMoveDir = Direction4.LEFT;
 		}
 
 		// if a script is running with no move advice then switch to scripted body state and exit
@@ -517,9 +519,11 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 						// If the player's last velocity direction was rightward, and their position is in the left half
 						// of the tile, and the tile above and to the left of them is solid, then the player should
 						// duckslide right.
-						if((isLastVelocityRight && subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
+						if((lastHorizontalMoveDir == Direction4.RIGHT &&
+								subTilePos.x <= 0.5f && isMapTileSolid(bodyTilePos.cpy().add(-1, 1))) ||
 								(subTilePos.x > 0.5f && !isMapTileSolid(bodyTilePos.cpy().add(1, 1))) ||
-								(isLastVelocityRight && subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
+								(lastHorizontalMoveDir == Direction4.RIGHT &&
+								subTilePos.x > 0.5f && isMapTileSolid(bodyTilePos.cpy().add(1, 1)))) {
 							isDuckSlideRight = true;
 						}
 						// the only other option is to duckslide left

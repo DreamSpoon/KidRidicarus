@@ -253,7 +253,7 @@ public class MarioSpine extends OnGroundSpine {
 	}
 
 	public boolean isMovingLeft() {
-		return body.getVelocity().x < MIN_WALKVEL;
+		return body.getVelocity().x < -MIN_WALKVEL;
 	}
 
 	public CollisionTiledMapAgent getCollisionTiledMap() {

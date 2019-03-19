@@ -93,6 +93,9 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		processSprite(delta);
 	}
 
+	// TODO Refactor this code because mario's fireballs sometimes do not push damage to metroid doors - this is
+	// due to the fireball bouncing off the solid boundary of the door without causing agent-agent sensor contact.
+	// Maybe fix this by do an AABB check for agents on the facingRight side of the fireball.
 	private void processContacts() {
 		if(hitType == HitType.NONE && body.getSpine().isHitBoundary(isFacingRight))
 			hitType = HitType.BOUNDARY;

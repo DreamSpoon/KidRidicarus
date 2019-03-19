@@ -22,29 +22,29 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 
 	public enum MoveState { CLOSED, OPENING_WAIT1, OPEN, CLOSING, OPENING_WAIT2 }
 
-	private MetroidDoorBody mdBody;
-	private MetroidDoorSprite mdSprite;
-	private boolean isFacingRight;
-	private boolean isOpening;
+	private MetroidDoorBody body;
+	private MetroidDoorSprite sprite;
 	private MoveState moveState;
 	private float stateTimer;
+
+	private boolean isFacingRight;
+	private boolean isOpening;
 
 	public MetroidDoor(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
+		moveState = MoveState.CLOSED;
+		stateTimer = 0f;
 		isFacingRight = false;
 		isFacingRight = properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT);
 		isOpening = false;
-		moveState = MoveState.CLOSED;
-		stateTimer = 0f;
 
-		mdBody = new MetroidDoorBody(this, agency.getWorld(), Agent.getStartPoint(properties));
-		mdSprite = new MetroidDoorSprite(agency.getAtlas(), mdBody.getPosition(), isFacingRight);
-
+		body = new MetroidDoorBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		sprite = new MetroidDoorSprite(agency.getAtlas(), body.getPosition(), isFacingRight);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
@@ -109,7 +109,7 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 				break;
 			case OPEN:
 				// make the door non-solid
-				mdBody.setMainSolid(false);
+				body.setMainSolid(false);
 				if(stateTimer > REMAIN_OPEN_DELAY)
 					return MoveState.CLOSING;
 				break;
@@ -117,7 +117,7 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 				if(isOpening)
 					return MoveState.OPENING_WAIT2;
 				// make the door solid again
-				mdBody.setMainSolid(true);
+				body.setMainSolid(true);
 				if(stateTimer > OPENCLOSE_DELAY2)
 					return MoveState.CLOSED;
 				break;
@@ -126,21 +126,21 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 	}
 
 	private void processSprite() {
-		mdSprite.update(stateTimer, moveState);
+		sprite.update(stateTimer, moveState);
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(mdSprite);
+		batch.draw(sprite);
 	}
 
 	@Override
 	public Vector2 getPosition() {
-		return mdBody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return mdBody.getBounds();
+		return body.getBounds();
 	}
 
 	@Override
@@ -154,6 +154,6 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 
 	@Override
 	public void disposeAgent() {
-		mdBody.dispose();
+		body.dispose();
 	}
 }
