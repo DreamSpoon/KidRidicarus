@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.SolidBoundSensor;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -29,7 +29,7 @@ public class SamusShotBody extends AgentBody {
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT);
 
 	private SamusShot parent;
-	private SolidBoundSensor boundSensor;
+	private SolidContactSensor boundSensor;
 	private AgentContactHoldSensor acSensor;
 
 	public SamusShotBody(SamusShot parent, World world, Vector2 position, Vector2 velocity) {
@@ -51,7 +51,7 @@ public class SamusShotBody extends AgentBody {
 
 	private void createFixtures() {
 		// create main fixture
-		boundSensor = new SolidBoundSensor(parent);
+		boundSensor = new SolidContactSensor(parent);
 		B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_CFCAT, MAIN_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
 		// create agent contact sensor fixture
@@ -61,7 +61,7 @@ public class SamusShotBody extends AgentBody {
 	}
 
 	public boolean isHitBound() {
-		return !boundSensor.getContacts().isEmpty();
+		return boundSensor.isContacting();
 	}
 
 	public <T> List<T> getContactAgentsByClass(Class<T> cls) {

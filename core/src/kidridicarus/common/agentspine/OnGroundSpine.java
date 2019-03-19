@@ -1,21 +1,20 @@
 package kidridicarus.common.agentspine;
 
-import kidridicarus.common.agentsensor.OnGroundSensor;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 
 public class OnGroundSpine {
-	private OnGroundSensor ogSensor;
+	private SolidContactSensor ogSensor;
 
 	public OnGroundSpine() {
 		ogSensor = null;
 	}
 
-	public OnGroundSensor createOnGroundSensor() {
-		ogSensor = new OnGroundSensor(null);
+	public SolidContactSensor createOnGroundSensor() {
+		ogSensor = new SolidContactSensor(null);
 		return ogSensor;
 	}
 
 	public boolean isOnGround() {
-		// return true if the on ground contacts list contains at least 1 floor
-		return ogSensor.isOnGround();
+		return ogSensor.isContactFloor();
 	}
 }

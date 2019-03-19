@@ -5,19 +5,19 @@ import java.util.List;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.SolidBoundSensor;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 
 public class MarioFireballSpine {
 	private MarioFireballBody body;
-	private SolidBoundSensor hmSensor;
+	private SolidContactSensor hmSensor;
 	private AgentContactHoldSensor acSensor;
 
 	public MarioFireballSpine(MarioFireballBody body) {
 		this.body = body;
 	}
 
-	public SolidBoundSensor createHMSensor() {
-		hmSensor = new SolidBoundSensor(body);
+	public SolidContactSensor createHMSensor() {
+		hmSensor = new SolidContactSensor(body);
 		return hmSensor;
 	}
 
@@ -35,7 +35,7 @@ public class MarioFireballSpine {
 	}
 
 	public boolean isHitBoundary(boolean facingRight) {
-		if(hmSensor.isHMoveBlocked(body.getBounds(), facingRight) || (body.getVelocity().x <= 0f && facingRight) ||
+		if(hmSensor.isContactWall(body.getBounds(), facingRight) || (body.getVelocity().x <= 0f && facingRight) ||
 				(body.getVelocity().x >= 0f && !facingRight))
 			return true;
 		return false;

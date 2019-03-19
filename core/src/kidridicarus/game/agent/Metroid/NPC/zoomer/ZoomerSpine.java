@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agentsensor.AgentContactBeginSensor;
-import kidridicarus.common.agentsensor.SolidBoundSensor;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.DiagonalDir4;
 import kidridicarus.common.tool.Direction4;
@@ -28,7 +28,7 @@ public class ZoomerSpine {
 	private static final float JUKE_EPSILON1 = 0.0002f;
 	private static final float JUKE_EPSILON2 = UInfo.P2M(0.01f);
 
-	private SolidBoundSensor[] crawlSense;
+	private SolidContactSensor[] crawlSense;
 	private int[] contactCounts;
 	private ZoomerBody body;
 	private AgentContactBeginSensor agentBeginContactSensor;
@@ -37,16 +37,16 @@ public class ZoomerSpine {
 		this.body = body;
 
 		// 4 sensors: top-right, top-left, bottom-left, bottom-right
-		crawlSense = new SolidBoundSensor[DiagonalDir4.values().length];
+		crawlSense = new SolidContactSensor[DiagonalDir4.values().length];
 
 		contactCounts = new int[DiagonalDir4.values().length];
 		for(int i=0; i<contactCounts.length; i++)
 			contactCounts[i] = 0;
 	}
 
-	public SolidBoundSensor[] createCrawlSensors() {
+	public SolidContactSensor[] createCrawlSensors() {
 		for(int i=0; i<crawlSense.length; i++)
-			crawlSense[i] = new SolidBoundSensor(null);
+			crawlSense[i] = new SolidContactSensor(null);
 		return crawlSense;
 	}
 
@@ -56,7 +56,7 @@ public class ZoomerSpine {
 	}
 
 	private boolean isSensorContacting(DiagonalDir4 quad) {
-		return !crawlSense[quad.ordinal()].getContacts().isEmpty();
+		return crawlSense[quad.ordinal()].isContacting();
 	}
 	
 	/*

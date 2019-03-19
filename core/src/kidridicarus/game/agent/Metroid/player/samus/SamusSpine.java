@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.SolidBoundSensor;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.game.agentspine.SMB.PlayerSpine;
 
@@ -17,7 +17,7 @@ public class SamusSpine extends PlayerSpine {
 //	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
 
 	private AgentContactHoldSensor agentSensor;
-	private SolidBoundSensor sbSensor;
+	private SolidContactSensor sbSensor;
 
 	public SamusSpine(SamusBody body) {
 		super(body);
@@ -25,8 +25,8 @@ public class SamusSpine extends PlayerSpine {
 		sbSensor = null;
 	}
 
-	public SolidBoundSensor createSolidBodySensor() {
-		sbSensor = new SolidBoundSensor(body);
+	public SolidContactSensor createSolidBodySensor() {
+		sbSensor = new SolidContactSensor(body);
 		return sbSensor;
 	}
 
@@ -75,7 +75,7 @@ public class SamusSpine extends PlayerSpine {
 	}
 
 	public boolean isContactingWall(boolean isRightWall) {
-		return sbSensor.isHMoveBlocked(body.getBounds(), isRightWall);
+		return sbSensor.isContactWall(body.getBounds(), isRightWall);
 	}
 
 	public RoomBox getCurrentRoom() {

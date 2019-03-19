@@ -7,7 +7,7 @@ import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.SolidBoundSensor;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.agentspine.OnGroundSpine;
 
 public class SMB_NPC_Spine extends OnGroundSpine {
@@ -15,7 +15,7 @@ public class SMB_NPC_Spine extends OnGroundSpine {
 	private AgentContactHoldSensor agentHoldContactSensor;
 	private AgentContactBeginSensor agentBeginContactSensor; 
 	// horizontal move sensor
-	private SolidBoundSensor hmSensor;
+	private SolidContactSensor hmSensor;
 
 	public SMB_NPC_Spine(AgentBody body) {
 		this.body = body;
@@ -34,8 +34,8 @@ public class SMB_NPC_Spine extends OnGroundSpine {
 		return agentBeginContactSensor;
 	}
 
-	public SolidBoundSensor createHorizontalMoveSensor() {
-		hmSensor = new SolidBoundSensor(body);
+	public SolidContactSensor createHorizontalMoveSensor() {
+		hmSensor = new SolidContactSensor(body);
 		return hmSensor;
 	}
 
@@ -53,7 +53,7 @@ public class SMB_NPC_Spine extends OnGroundSpine {
 	}
 
 	private boolean isMoveBlocked(boolean moveRight) {
-		return hmSensor.isHMoveBlocked(body.getBounds(), moveRight);
+		return hmSensor.isContactWall(body.getBounds(), moveRight);
 	}
 
 	private boolean isMoveBlockedByAgent(boolean moveRight) {
