@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
@@ -14,8 +13,9 @@ import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
+import kidridicarus.game.agentbody.PlayerAgentBody;
 
-public class MarioBody extends AgentBody {
+public class MarioBody extends PlayerAgentBody {
 	private static final Vector2 BIG_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(26f));
 	private static final Vector2 SML_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(12f));
 	private static final float FOOT_WIDTH = UInfo.P2M(5f);
@@ -53,13 +53,13 @@ public class MarioBody extends AgentBody {
 	private Mario parent;
 	private World world;
 	private MarioSpine spine;
-	private Vector2 prevPosition;
-	private Vector2 prevVelocity;
 	private Fixture agentSensorFixture;
 	private boolean isAgentSensorEnabled;
 
 	public MarioBody(Mario parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
 			boolean isDucking) {
+		super(position, velocity);
+
 		this.parent = parent;
 		this.world = world;
 		isAgentSensorEnabled = true;
@@ -81,11 +81,9 @@ public class MarioBody extends AgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		prevPosition = position.cpy();
-		prevVelocity = velocity.cpy();
-
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
+		resetPrevValues(position, velocity);
 
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = FRICTION;
@@ -133,11 +131,6 @@ public class MarioBody extends AgentBody {
 				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(getBodySize().x/2f, 0f));
 	}
 
-	public void postUpdate() {
-		prevPosition.set(b2body.getPosition());
-		prevVelocity.set(b2body.getLinearVelocity());
-	}
-
 	public void applyImpulse (Vector2 impulse) {
 		b2body.applyLinearImpulse(impulse, b2body.getWorldCenter(), true);
 	}
@@ -150,14 +143,6 @@ public class MarioBody extends AgentBody {
 		((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
 		agentSensorFixture.refilter();
 		isAgentSensorEnabled = false;
-	}
-
-	public Vector2 getPrevPosition() {
-		return prevPosition;
-	}
-
-	public Vector2 getPrevVelocity() {
-		return prevVelocity;
 	}
 
 	public MarioSpine getSpine() {

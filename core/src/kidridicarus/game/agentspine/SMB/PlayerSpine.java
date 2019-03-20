@@ -2,14 +2,14 @@ package kidridicarus.game.agentspine.SMB;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agentspine.OnGroundSpine;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.game.agentbody.PlayerAgentBody;
 
 public class PlayerSpine extends OnGroundSpine {
-	protected AgentBody body;
+	protected PlayerAgentBody body;
 
-	public PlayerSpine(AgentBody body) {
+	public PlayerSpine(PlayerAgentBody body) {
 		this.body = body;
 	}
 
@@ -39,6 +39,11 @@ public class PlayerSpine extends OnGroundSpine {
 	protected void capFallVelocity(float maxVelocity) {
 		if(body.getVelocity().y < -maxVelocity)
 			body.setVelocity(body.getVelocity().x, -maxVelocity);
+	}
+
+	public void applyHeadBounceMove(float bounceVel) {
+		body.setVelocity(body.getVelocity().x, 0f);
+		body.applyImpulse(new Vector2(0f, bounceVel));
 	}
 
 	/*

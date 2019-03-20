@@ -221,7 +221,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		// if a head bounce was given in the update frame then reset the flag and do bounce move
 		if(gaveHeadBounce) {
 			gaveHeadBounce = false;
-			body.getSpine().applyHeadBounceMove();
+			body.getSpine().doHeadBounce();
 		}
 	}
 

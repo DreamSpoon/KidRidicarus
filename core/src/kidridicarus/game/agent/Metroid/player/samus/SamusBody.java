@@ -5,13 +5,13 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
+import kidridicarus.game.agentbody.PlayerAgentBody;
 
-public class SamusBody extends AgentBody {
+public class SamusBody extends PlayerAgentBody {
 	private static final float STAND_BODY_WIDTH = UInfo.P2M(5f);
 	private static final float STAND_BODY_HEIGHT = UInfo.P2M(25f);
 	private static final float BALL_BODY_WIDTH = UInfo.P2M(8f);
@@ -21,6 +21,8 @@ public class SamusBody extends AgentBody {
 	private static final float GRAVITY_SCALE = 0.5f;	// floaty
 	private static final float FRICTION = 0f;	// (default is 0.2f)
 	private static final Vector2 BALL_TO_STAND_OFFSET = UInfo.P2MVector(0f, 8f);
+	private static final float HEAD_WIDTH = UInfo.P2M(10f);
+	private static final float HEAD_HEIGHT = UInfo.P2M(12f);
 
 	private static final CFBitSeq MAINBODY_CFCAT = CommonCF.SOLID_BODY_CFCAT;
 	private static final CFBitSeq MAINBODY_CFMASK = CommonCF.SOLID_BODY_CFMASK;
@@ -30,16 +32,18 @@ public class SamusBody extends AgentBody {
 			CommonCF.Alias.COLLISIONMAP_BIT);
 	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
+	private static final CFBitSeq TILEBUMP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq TILEBUMP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 
 	private World world;
 	private Samus parent;
 	private SamusSpine spine;
-	private Vector2 prevVelocity;
 
 	public SamusBody(Samus parent, World world, Vector2 position) {
+		super(position, new Vector2(0f, 0f));
+
 		this.world = world;
 		this.parent = parent;
-		prevVelocity = new Vector2(0f, 0f);
 		defineBody(position, false);
 	}
 
@@ -63,38 +67,31 @@ public class SamusBody extends AgentBody {
 			world.destroyBody(b2body);
 		b2body = B2DFactory.makeDynamicBody(world, position);
 		b2body.setGravityScale(GRAVITY_SCALE);
-		prevVelocity.set(0f, 0f);
+		resetPrevValues(position, new Vector2(0f, 0f));
+
 		spine = new SamusSpine(this);
 	}
 
 	private void createFixtures() {
-		createMainFixture();
-		createAgentSensorFixture();
-		createGroundSensorFixture();
-	}
-
-	private void createMainFixture() {
+		// create main fixture
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = FRICTION;
 		B2DFactory.makeBoxFixture(b2body, fdef, spine.createSolidBodySensor(), MAINBODY_CFCAT, MAINBODY_CFMASK,
 				getBodySize().x, getBodySize().y);
-	}
 
-	private void createAgentSensorFixture() {
-		FixtureDef fdef = new FixtureDef();
+		// create agent sensor fixture
+		fdef = new FixtureDef();
 		fdef.isSensor = true;
 		B2DFactory.makeBoxFixture(b2body, fdef, spine.creatAgentContactSensor(), AS_CFCAT, AS_CFMASK,
 				getBodySize().x, getBodySize().y);
-	}
-
-	private void createGroundSensorFixture() {
+		// create on ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
 				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
-	}
-
-	public void postUpdate() {
-		prevVelocity.set(getVelocity());
+		// create tilebump sensor fixture
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createTileBumpPushSensor(),
+				TILEBUMP_SENSOR_CFCAT, TILEBUMP_SENSOR_CFMASK,
+				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, getBodySize().y/2f));
 	}
 
 	public void setBallForm(boolean ballForm) {
@@ -103,10 +100,6 @@ public class SamusBody extends AgentBody {
 			position.add(BALL_TO_STAND_OFFSET);
 
 		defineBody(position, ballForm);
-	}
-
-	public Vector2 getPrevVelocity() {
-		return prevVelocity;
 	}
 
 	public SamusSpine getSpine() {

@@ -21,9 +21,12 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
+import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
+import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.info.AudioInfo;
 
-public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, DisposableAgent {
+public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
+		DisposableAgent {
 	public enum MoveState { STAND, BALL_GRND, RUN, RUNSHOOT, PRE_JUMPSHOOT, JUMPSHOOT, JUMPSPINSHOOT,
 		PRE_JUMPSPIN, JUMPSPIN, PRE_JUMP, JUMP, BALL_AIR, CLIMB;
 		public boolean equalsAny(MoveState ...otherStates) {
@@ -63,6 +66,8 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	private boolean didTakeDamage;
 	private Vector2 takeDmgOrigin;
 	private float noDamageCooldown;
+	private boolean gaveHeadBounce;
+	private boolean isNextHeadBumpDenied;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -82,8 +87,14 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		didTakeDamage = false;
 		takeDmgOrigin = new Vector2();
 		noDamageCooldown = 0f;
+		gaveHeadBounce = false;
+		isNextHeadBumpDenied = false;
 
 		body = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
@@ -102,18 +113,43 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		observer = new SamusObserver(this, agency.getAtlas());
 	}
 
-	private void doPostUpdate() {
-		// let body update previous position/velocity
-		body.postUpdate();
+	/*
+	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
+	 * by way of regular update. Also apply star power damage if needed.
+	 */
+	private void doContactUpdate() {
+		if(supervisor.isRunningScriptNoMoveAdvice())
+			return;
+		// exit if head bump flag hasn't reset
+		if(isNextHeadBumpDenied)
+			return;
+
+		// if jump spinning then hit hard
+		if(moveState.isJumpSpin())
+			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
+		else
+			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
 	}
 
 	private void doUpdate(float delta) {
+		processContacts();
 		processMove(delta, supervisor.pollMoveAdvice());
 		processSprite(delta);
 	}
 
+	private void processContacts() {
+		// if head bump deny flag is on, and body is moving down, then reset the flag
+		if(isNextHeadBumpDenied && body.getSpine().isMovingDown())
+			isNextHeadBumpDenied = false;
+	}
+
 	private void processMove(float delta, MoveAdvice moveAdvice) {
+		// since body has zero bounciness, a manual check is needed while in ball form 
+		if(moveState.isBall())
+			body.getSpine().doBounceCheck();
+
 		processDamageTaken(delta);
+		processHeadBouncesGiven();
 
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		if(nextMoveState.isGroundMove())
@@ -144,6 +180,14 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		body.getSpine().applyDamageKick(takeDmgOrigin);
 		takeDmgOrigin.set(0f, 0f);
 		agency.playSound(AudioInfo.Sound.Metroid.HURT);
+	}
+
+	private void processHeadBouncesGiven() {
+		// if a head bounce was given in the update frame then reset the flag and do bounce move
+		if(gaveHeadBounce) {
+			gaveHeadBounce = false;
+			body.getSpine().doHeadBounce();
+		}
 	}
 
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
@@ -299,10 +343,6 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		if(!nextMoveState.isBall() && moveState.isBall())
 			body.setBallForm(false);
 
-		// since body has zero bounciness, a manual check is needed while in ball form 
-		if(nextMoveState.isBall())
-			body.getSpine().doBounceCheck();
-
 		switch(nextMoveState) {
 			case STAND:
 			case RUN:
@@ -342,10 +382,6 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		if(!nextMoveState.isBall() && moveState.isBall())
 			body.setBallForm(false);
 		// note: cannot change from non-ball state to ball state while mid-air
-
-		// since body has zero bounciness, a manual check is needed while in ball form 
-		if(nextMoveState.isBall())
-			body.getSpine().doBounceCheck();
 
 		switch(nextMoveState) {
 			case PRE_JUMPSPIN:
@@ -447,6 +483,11 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		agency.playSound(AudioInfo.Sound.Metroid.SHOOT);
 	}
 
+	private void doPostUpdate() {
+		// let body update previous position/velocity
+		body.postUpdate();
+	}
+
 	private void processSprite(float delta) {
 		sprite.update(delta, body.getPosition(), moveState, isFacingRight, isFacingUp, (noDamageCooldown > 0f),
 				Direction4.NONE);
@@ -464,6 +505,16 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		didTakeDamage = true;
 		takeDmgOrigin.set(dmgOrigin);
 		return true;
+	}
+
+	@Override
+	public boolean onGiveHeadBounce(Agent agent) {
+		// if head bounce is allowed then give head bounce to agent
+		if(body.getSpine().isGiveHeadBounceAllowed(agent.getBounds())) {
+			gaveHeadBounce = true;
+			return true;
+		}
+		return false;
 	}
 
 	@Override

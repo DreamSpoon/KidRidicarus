@@ -46,7 +46,6 @@ public class MarioSpine extends PlayerSpine {
 	private static final float AIRMOVE_XIMP = WALKMOVE_XIMP;
 	private static final float MAX_DUCKSLIDE_VEL = MAX_WALKVEL * 0.65f;
 	private static final float DUCKSLIDE_XIMP = WALKMOVE_XIMP * 1f;
-	// TODO: test this with different values to the best
 	private static final float MIN_HEADBANG_VEL = 0.01f;
 	private static final float HEADBOUNCE_VEL = 2.8f;	// up velocity
 
@@ -154,11 +153,6 @@ public class MarioSpine extends PlayerSpine {
 		applyHorizImpulseAndCapVel(moveRight, DUCKSLIDE_XIMP, MAX_DUCKSLIDE_VEL);
 	}
 
-	public void applyHeadBounceMove() {
-		body.setVelocity(body.getVelocity().x, 0f);
-		body.applyImpulse(new Vector2(0f, HEADBOUNCE_VEL));
-	}
-
 	/*
 	 * If moving up fast enough, then check tiles currently contacting head for closest tile to take a bump.
 	 * Tile bump is applied if needed.
@@ -206,6 +200,10 @@ public class MarioSpine extends PlayerSpine {
 		if(myBounds.y >= otherCenterY || myPrevPosition.y-myBounds.height/2f >= otherCenterY)
 			return true;
 		return false;
+	}
+
+	public void doHeadBounce() {
+		applyHeadBounceMove(HEADBOUNCE_VEL);
 	}
 
 	public boolean isBraking(boolean facingRight) {
