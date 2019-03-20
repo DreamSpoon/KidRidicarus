@@ -5,7 +5,6 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
@@ -40,8 +39,6 @@ public class MarioBody extends PlayerAgentBody {
 	private static final CFBitSeq AS_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
 	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
 			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
-	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
 	private static final CFBitSeq TILEBUMP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq TILEBUMP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 	private static final CFBitSeq PIPEWARP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
@@ -50,7 +47,6 @@ public class MarioBody extends PlayerAgentBody {
 	private static final float FRICTION = 0f;
 	private static final float GRAVITY_SCALE = 2f;
 
-	private Mario parent;
 	private World world;
 	private MarioSpine spine;
 	private Fixture agentSensorFixture;
@@ -58,9 +54,8 @@ public class MarioBody extends PlayerAgentBody {
 
 	public MarioBody(Mario parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
 			boolean isDucking) {
-		super(position, velocity);
+		super(parent, position, velocity);
 
-		this.parent = parent;
 		this.world = world;
 		isAgentSensorEnabled = true;
 		defineBody(position, velocity, isBigBody, isDucking);
@@ -105,7 +100,7 @@ public class MarioBody extends PlayerAgentBody {
 		}
 		// create fixture for ground sensor
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
-				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
+				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create fixture for tilebump sensor
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createTileBumpPushSensor(),
@@ -147,11 +142,6 @@ public class MarioBody extends PlayerAgentBody {
 
 	public MarioSpine getSpine() {
 		return spine;
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 
 	public void useScriptedBodyState(ScriptedBodyState sbState, boolean bigBody) {

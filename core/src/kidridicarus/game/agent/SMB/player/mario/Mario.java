@@ -600,7 +600,8 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 					scriptedMoveState = MoveState.STAND;
 					break;
 			}
-			sprite.update(delta, sss.position, scriptedMoveState, powerState, sss.facingRight, false, false, false);
+			sprite.update(delta, sss.position, scriptedMoveState, powerState, sss.facingRight, false, false,
+					(starPowerCooldown > 0f));
 		}
 		else {
 			sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,

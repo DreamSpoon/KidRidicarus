@@ -5,7 +5,6 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
@@ -28,12 +27,11 @@ public class SamusShotBody extends AgentBody {
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT);
 
-	private SamusShot parent;
 	private SolidContactSensor boundSensor;
 	private AgentContactHoldSensor acSensor;
 
 	public SamusShotBody(SamusShot parent, World world, Vector2 position, Vector2 velocity) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, position, velocity);
 	}
 
@@ -51,7 +49,7 @@ public class SamusShotBody extends AgentBody {
 
 	private void createFixtures() {
 		// create main fixture
-		boundSensor = new SolidContactSensor(parent);
+		boundSensor = new SolidContactSensor(this);
 		B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_CFCAT, MAIN_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
 		// create agent contact sensor fixture
@@ -66,10 +64,5 @@ public class SamusShotBody extends AgentBody {
 
 	public <T> List<T> getContactAgentsByClass(Class<T> cls) {
 		return acSensor.getContactsByClass(cls);
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }

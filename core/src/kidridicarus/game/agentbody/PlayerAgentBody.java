@@ -2,13 +2,15 @@ package kidridicarus.game.agentbody;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 
 public abstract class PlayerAgentBody extends AgentBody {
 	private Vector2 prevPosition;
 	private Vector2 prevVelocity;
 
-	public PlayerAgentBody(Vector2 position, Vector2 velocity) {
+	public PlayerAgentBody(Agent parent, Vector2 position, Vector2 velocity) {
+		super(parent);
 		prevPosition = position.cpy();
 		prevVelocity = velocity.cpy();
 	}

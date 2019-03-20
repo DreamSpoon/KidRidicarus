@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
@@ -21,11 +20,10 @@ public class MarioFireballBody extends AgentBody {
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT);
 
-	private MarioFireball parent;
 	private MarioFireballSpine spine;
 
 	public MarioFireballBody(MarioFireball parent, World world, Vector2 position, Vector2 velocity) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, position, velocity);
 	}
 
@@ -66,10 +64,5 @@ public class MarioFireballBody extends AgentBody {
 
 	public MarioFireballSpine getSpine() {
 		return spine;
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }

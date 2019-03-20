@@ -26,13 +26,12 @@ public class AgentSpawnTriggerBody extends AgentBody {
 	// TODO: is 50 pixels right?
 	private static final float RESET_DIST = UInfo.P2M(50);
 
-	private AgentSpawnTrigger parent;
 	private MouseJoint mj;
 	private World world;
 	private AgentContactHoldSensor acSensor;
 
 	public AgentSpawnTriggerBody(AgentSpawnTrigger parent, World world, Rectangle bounds) {
-		this.parent = parent;
+		super(parent);
 		this.world = world;
 		defineBody(world, bounds);
 	}
@@ -110,11 +109,6 @@ public class AgentSpawnTriggerBody extends AgentBody {
 		Rectangle oldBounds = getBounds();
 		defineBody(b2body.getWorld(), new Rectangle(position.x - oldBounds.width/2f,
 				position.y - oldBounds.height/2f, oldBounds.width, oldBounds.height));
-	}
-
-	@Override
-	public AgentSpawnTrigger getParent() {
-		return parent;
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agentspine.PowerupSpine;
 import kidridicarus.common.info.CommonCF;
@@ -16,11 +15,10 @@ public class StaticCoinBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(16f);
 	private static final float BODY_HEIGHT = UInfo.P2M(16f);
 
-	private StaticCoin parent;
 	private PowerupSpine spine;
 
 	public StaticCoinBody(StaticCoin parent, World world, Vector2 position) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, position);
 	}
 
@@ -49,10 +47,5 @@ public class StaticCoinBody extends AgentBody {
 
 	public PowerupSpine getSpine() {
 		return spine;
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }

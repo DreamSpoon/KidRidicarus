@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
@@ -22,11 +21,10 @@ public class MetroidDoorBody extends AgentBody {
 	private static final CFBitSeq MAIN_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
 	private static final CFBitSeq MAIN_DISABLED_CFMASK = CommonCF.NO_CONTACT_CFMASK;
 
-	private MetroidDoor parent;
 	private Fixture mainBodyFixture;
 
 	public MetroidDoorBody(MetroidDoor parent, World world, Vector2 position) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, position);
 	}
 
@@ -51,10 +49,5 @@ public class MetroidDoorBody extends AgentBody {
 			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_DISABLED_CFMASK;
 		}
 		mainBodyFixture.refilter();
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }

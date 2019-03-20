@@ -3,7 +3,6 @@ package kidridicarus.game.agent.Metroid.item.marumari;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agentspine.PowerupSpine;
 import kidridicarus.common.info.CommonCF;
@@ -14,11 +13,10 @@ public class MaruMariBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(4f);
 	private static final float BODY_HEIGHT = UInfo.P2M(4f);
 
-	private MaruMari parent;
 	private PowerupSpine spine;
 
 	public MaruMariBody(MaruMari parent, World world, Vector2 position) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, position);
 	}
 
@@ -42,10 +40,5 @@ public class MaruMariBody extends AgentBody {
 
 	public PowerupSpine getSpine() {
 		return spine;
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }

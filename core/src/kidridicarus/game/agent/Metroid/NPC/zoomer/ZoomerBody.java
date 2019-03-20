@@ -16,12 +16,11 @@ public class ZoomerBody extends AgentBody {
 	private static final float SENSOR_SIZEFACTOR = 1.2f;
 	private static final float GRAVITY_SCALE = 0f;
 
-	private Zoomer parent;
 	private ZoomerSpine spine;
 	private Vector2 prevPosition;
 
 	public ZoomerBody(Zoomer parent, World world, Vector2 position) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, position);
 	}
 
@@ -83,10 +82,5 @@ public class ZoomerBody extends AgentBody {
 
 	public ZoomerSpine getSpine() {
 		return spine;
-	}
-
-	@Override
-	public Zoomer getParent() {
-		return parent;
 	}
 }

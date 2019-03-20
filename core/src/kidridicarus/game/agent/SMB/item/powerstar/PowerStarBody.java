@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonCF;
@@ -17,11 +16,10 @@ public class PowerStarBody extends AgentBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float GRAVITY_SCALE = 0.5f;
 
-	private PowerStar parent;
 	private WalkPowerupSpine spine;
 
 	public PowerStarBody(PowerStar parent, World world, Vector2 position) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, position);
 	}
 
@@ -51,10 +49,5 @@ public class PowerStarBody extends AgentBody {
 
 	public WalkPowerupSpine getSpine() {
 		return spine;
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }

@@ -13,11 +13,10 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
 public class FlagpoleBody extends AgentBody {
-	private Flagpole parent;
 	private AgentContactBeginSensor agentBeginContactSensor; 
 
 	public FlagpoleBody(Flagpole parent, World world, Rectangle bounds) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, bounds);
 	}
 
@@ -40,10 +39,5 @@ public class FlagpoleBody extends AgentBody {
 
 	public List<Agent> getPlayerBeginContacts() {
 		return agentBeginContactSensor.getAndResetContacts();
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }

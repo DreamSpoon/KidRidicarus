@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
@@ -18,11 +17,10 @@ public class BumpTileBody extends AgentBody {
 	private static final CFBitSeq MAINSENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.COLLISIONMAP_BIT,
 			CommonCF.Alias.AGENT_BIT);
 
-	private BumpTile parent;
 	private BumpTileSpine spine;
 
 	public BumpTileBody(World world, BumpTile parent, Rectangle bounds) {
-		this.parent = parent;
+		super(parent);
 		setBodySize(bounds.width, bounds.height);
 		defineBody(world, bounds);
 	}
@@ -49,11 +47,6 @@ public class BumpTileBody extends AgentBody {
 		fdef.isSensor = true;
 		B2DFactory.makeBoxFixture(b2body, fdef, spine.createMainSensor(),
 				MAINSENSOR_CFCAT, MAINSENSOR_CFMASK, bounds.width, bounds.height);
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 
 	public BumpTileSpine getSpine() {

@@ -1,20 +1,13 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.TreeSet;
-
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
-import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
-import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agentspine.SMB.PlayerSpine;
 
 public class SamusSpine extends PlayerSpine {
@@ -31,18 +24,15 @@ public class SamusSpine extends PlayerSpine {
 	private static final float MAX_UP_VELOCITY = 1.75f;
 	private static final float MAX_DOWN_VELOCITY = 2.5f;
 	private static final float HEADBOUNCE_VEL = 1.4f;	// up velocity
-	private static final float MIN_HEADBANG_VEL = 0.01f;
 
 	private AgentContactHoldSensor agentSensor;
 	private SolidContactSensor sbSensor;
-	private AgentContactHoldSensor tileBumpPushSensor;
 	private float jumpStartY;
 
 	public SamusSpine(SamusBody body) {
 		super(body);
 		agentSensor = null;
 		sbSensor = null;
-		tileBumpPushSensor = null;
 		jumpStartY = 0;
 	}
 
@@ -54,11 +44,6 @@ public class SamusSpine extends PlayerSpine {
 	public AgentContactHoldSensor creatAgentContactSensor() {
 		agentSensor = new AgentContactHoldSensor(body);
 		return agentSensor;
-	}
-
-	public AgentContactHoldSensor createTileBumpPushSensor() {
-		tileBumpPushSensor = new AgentContactHoldSensor(body);
-		return tileBumpPushSensor;
 	}
 
 	// apply walk impulse and cap horizontal velocity.
@@ -161,45 +146,6 @@ public class SamusSpine extends PlayerSpine {
 				amount = amount * 0.6f;
 			body.setVelocity(body.getVelocity().x, amount);
 		}
-	}
-
-	/*
-	 * If moving up fast enough, then check tiles currently contacting head for closest tile to take a bump.
-	 * Tile bump is applied if needed.
-	 * Returns true if tile bump is applied. Otherwise returns false.
-	 */
-	public boolean checkDoHeadBump(TileBumpStrength bumpStrength) {
-		// exit if not moving up fast enough in this frame or previous frame
-		if(body.getVelocity().y < MIN_HEADBANG_VEL || body.getPrevVelocity().y < MIN_HEADBANG_VEL)
-			return false;
-		// create list of bumptiles, in order from closest to player to farthest from player
-		TreeSet<TileBumpTakeAgent> closestTilesList = 
-				new TreeSet<TileBumpTakeAgent>(new Comparator<TileBumpTakeAgent>() {
-				@Override
-				public int compare(TileBumpTakeAgent o1, TileBumpTakeAgent o2) {
-					float dist1 = Math.abs(((Agent) o1).getPosition().x - body.getPosition().x);
-					float dist2 = Math.abs(((Agent) o2).getPosition().x - body.getPosition().x);
-					if(dist1 < dist2)
-						return -1;
-					else if(dist1 > dist2)
-						return 1;
-					return 0;
-				}
-			});
-		for(TileBumpTakeAgent bumpTile : tileBumpPushSensor.getContactsByClass(TileBumpTakeAgent.class))
-			closestTilesList.add(bumpTile);
-
-		// iterate through sorted list of bump tiles, exiting upon successful bump
-		Iterator<TileBumpTakeAgent> tileIter = closestTilesList.iterator();
-		while(tileIter.hasNext()) {
-			TileBumpTakeAgent bumpTile = tileIter.next();
-			// did the tile "take" the bump?
-			if(bumpTile.onTakeTileBump(body.getParent(), bumpStrength))
-				return true;
-		}
-
-		// no head bumps
-		return false;
 	}
 }
 

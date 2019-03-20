@@ -13,10 +13,8 @@ public class AgentSpawnerBody extends AgentBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SPAWNBOX_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.SPAWNTRIGGER_BIT);
 
-	private AgentSpawner parent;
-
 	public AgentSpawnerBody(AgentSpawner parent, World world, Rectangle bounds) {
-		this.parent = parent;
+		super(parent);
 		setBodySize(bounds.width, bounds.height);
 		defineBody(world, bounds);
 	}
@@ -24,10 +22,5 @@ public class AgentSpawnerBody extends AgentBody {
 	private void defineBody(World world, Rectangle bounds) {
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
 		B2DFactory.makeSensorBoxFixture(b2body, this, CFCAT_BITS, CFMASK_BITS, bounds.width, bounds.height);
-	}
-
-	@Override
-	public AgentSpawner getParent() {
-		return parent;
 	}
 }

@@ -13,11 +13,10 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
 public class LevelEndTriggerBody extends AgentBody {
-	private LevelEndTrigger parent;
 	private AgentContactBeginSensor agentBeginContactSensor; 
 
 	public LevelEndTriggerBody(LevelEndTrigger parent, World world, Rectangle bounds) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, bounds);
 	}
 
@@ -39,10 +38,5 @@ public class LevelEndTriggerBody extends AgentBody {
 
 	public List<Agent> getPlayerBeginContacts() {
 		return agentBeginContactSensor.getAndResetContacts();
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }

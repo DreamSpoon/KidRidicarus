@@ -15,10 +15,8 @@ public class CollisionTiledMapBody extends AgentBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.COLLISIONMAP_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
-	private CollisionTiledMapAgent parent;
-
 	public CollisionTiledMapBody(CollisionTiledMapAgent parent, World world, Rectangle bounds) {
-		this.parent = parent;
+		super(parent);
 		setBodySize(bounds.width, bounds.height);
 		defineBody(world, bounds);
 	}
@@ -32,10 +30,5 @@ public class CollisionTiledMapBody extends AgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
 		B2DFactory.makeBoxFixture(b2body, fdef, this, CFCAT_BITS, CFMASK_BITS, bounds.width, bounds.height);
-	}
-
-	@Override
-	public CollisionTiledMapAgent getParent() {
-		return parent;
 	}
 }

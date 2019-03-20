@@ -1,11 +1,7 @@
 package kidridicarus.game.agent.SMB.player.mario;
 
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
@@ -15,10 +11,6 @@ import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
-import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
-import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
-import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.agentspine.SMB.PlayerSpine;
 
 /*
@@ -46,20 +38,15 @@ public class MarioSpine extends PlayerSpine {
 	private static final float AIRMOVE_XIMP = WALKMOVE_XIMP;
 	private static final float MAX_DUCKSLIDE_VEL = MAX_WALKVEL * 0.65f;
 	private static final float DUCKSLIDE_XIMP = WALKMOVE_XIMP * 1f;
-	private static final float MIN_HEADBANG_VEL = 0.01f;
 	private static final float HEADBOUNCE_VEL = 2.8f;	// up velocity
 
 	private AgentContactHoldSensor agentSensor;
-	private AgentContactHoldSensor tileBumpPushSensor;
 	private AgentContactBeginSensor damagePushSensor; 
-	private AgentContactHoldSensor pipeWarpSensor;
 
 	public MarioSpine(MarioBody body) {
 		super(body);
 		agentSensor = null;
-		tileBumpPushSensor = null;
 		damagePushSensor = null;
-		pipeWarpSensor = null;
 	}
 
 	// main sensor for detecting general agent contacts and damage push begin contacts
@@ -68,16 +55,6 @@ public class MarioSpine extends PlayerSpine {
 		damagePushSensor = new AgentContactBeginSensor(body);
 		agentSensor.chainTo(damagePushSensor);
 		return agentSensor;
-	}
-
-	public AgentContactHoldSensor createTileBumpPushSensor() {
-		tileBumpPushSensor = new AgentContactHoldSensor(body);
-		return tileBumpPushSensor;
-	}
-
-	public AgentContactHoldSensor createPipeWarpSensor() {
-		pipeWarpSensor = new AgentContactHoldSensor(body);
-		return pipeWarpSensor;
 	}
 
 	/*
@@ -153,55 +130,6 @@ public class MarioSpine extends PlayerSpine {
 		applyHorizImpulseAndCapVel(moveRight, DUCKSLIDE_XIMP, MAX_DUCKSLIDE_VEL);
 	}
 
-	/*
-	 * If moving up fast enough, then check tiles currently contacting head for closest tile to take a bump.
-	 * Tile bump is applied if needed.
-	 * Returns true if tile bump is applied. Otherwise returns false.
-	 */
-	public boolean checkDoHeadBump(TileBumpStrength bumpStrength) {
-		// exit if not moving up fast enough in this frame or previous frame
-		if(body.getVelocity().y < MIN_HEADBANG_VEL || ((MarioBody) body).getPrevVelocity().y < MIN_HEADBANG_VEL)
-			return false;
-		// create list of bumptiles, in order from closest to mario to farthest from mario
-		TreeSet<TileBumpTakeAgent> closestTilesList = 
-				new TreeSet<TileBumpTakeAgent>(new Comparator<TileBumpTakeAgent>() {
-				@Override
-				public int compare(TileBumpTakeAgent o1, TileBumpTakeAgent o2) {
-					float dist1 = Math.abs(((Agent) o1).getPosition().x - body.getPosition().x);
-					float dist2 = Math.abs(((Agent) o2).getPosition().x - body.getPosition().x);
-					if(dist1 < dist2)
-						return -1;
-					else if(dist1 > dist2)
-						return 1;
-					return 0;
-				}
-			});
-		for(TileBumpTakeAgent bumpTile : tileBumpPushSensor.getContactsByClass(TileBumpTakeAgent.class))
-			closestTilesList.add(bumpTile);
-
-		// iterate through sorted list of bump tiles, exiting upon successful bump
-		Iterator<TileBumpTakeAgent> tileIter = closestTilesList.iterator();
-		while(tileIter.hasNext()) {
-			TileBumpTakeAgent bumpTile = tileIter.next();
-			// did the tile "take" the bump?
-			if(bumpTile.onTakeTileBump(body.getParent(), bumpStrength))
-				return true;
-		}
-
-		// no head bumps
-		return false;
-	}
-
-	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {
-		// check bounds
-		Rectangle myBounds = body.getBounds();
-		Vector2 myPrevPosition = ((MarioBody) body).getPrevPosition();
-		float otherCenterY = otherBounds.y+otherBounds.height/2f;
-		if(myBounds.y >= otherCenterY || myPrevPosition.y-myBounds.height/2f >= otherCenterY)
-			return true;
-		return false;
-	}
-
 	public void doHeadBounce() {
 		applyHeadBounceMove(HEADBOUNCE_VEL);
 	}
@@ -216,16 +144,6 @@ public class MarioSpine extends PlayerSpine {
 
 	public List<Agent> getPushDamageContacts() {
 		return damagePushSensor.getAndResetContacts();
-	}
-
-	public PipeWarp getEnterPipeWarp(Direction4 moveDir) {
-		if(moveDir == null)
-			return null;
-		for(PipeWarp pw : pipeWarpSensor.getContactsByClass(PipeWarp.class)) {
-			if(pw.canBodyEnterPipe(body.getBounds(), moveDir))
-				return (PipeWarp) pw;
-		}
-		return null;
 	}
 
 	public boolean isMapTileSolid(Vector2 tileCoords) {

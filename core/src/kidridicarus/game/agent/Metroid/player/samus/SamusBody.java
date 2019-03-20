@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
@@ -30,20 +29,16 @@ public class SamusBody extends PlayerAgentBody {
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT,
 			CommonCF.Alias.COLLISIONMAP_BIT);
-	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
 	private static final CFBitSeq TILEBUMP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq TILEBUMP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 
 	private World world;
-	private Samus parent;
 	private SamusSpine spine;
 
 	public SamusBody(Samus parent, World world, Vector2 position) {
-		super(position, new Vector2(0f, 0f));
+		super(parent, position, new Vector2(0f, 0f));
 
 		this.world = world;
-		this.parent = parent;
 		defineBody(position, false);
 	}
 
@@ -86,7 +81,7 @@ public class SamusBody extends PlayerAgentBody {
 				getBodySize().x, getBodySize().y);
 		// create on ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
-				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
+				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create tilebump sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createTileBumpPushSensor(),
@@ -104,11 +99,6 @@ public class SamusBody extends PlayerAgentBody {
 
 	public SamusSpine getSpine() {
 		return spine;
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }
 

@@ -1,12 +1,10 @@
 package kidridicarus.game.agent.Metroid.NPC.skree;
 
 import com.badlogic.gdx.math.Vector2;
-
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.common.info.CommonCF;
@@ -24,11 +22,10 @@ public class SkreeBody extends AgentBody {
 			UInfo.P2M(-80), UInfo.P2M(-176),
 			UInfo.P2M(80), UInfo.P2M(-176) };
 
-	private Skree parent;
 	private SkreeSpine spine;
 
 	public SkreeBody(Skree parent, World world, Vector2 position) {
-		this.parent = parent;
+		super(parent);
 		defineBody(world, position);
 	}
 
@@ -90,10 +87,5 @@ public class SkreeBody extends AgentBody {
 
 	public SkreeSpine getSpine() {
 		return spine;
-	}
-
-	@Override
-	public Agent getParent() {
-		return parent;
 	}
 }

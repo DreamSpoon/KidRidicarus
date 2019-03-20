@@ -14,10 +14,19 @@ import kidridicarus.common.info.CommonCF;
  * scenario may be fruitful.
  */
 public abstract class AgentBody implements Disposable {
-	protected Body b2body = null;
-	private Vector2 bodySize = new Vector2(0f, 0f);
+	private Agent parent;
+	protected Body b2body;
+	private Vector2 bodySize;
 
-	public abstract Agent getParent();
+	public AgentBody(Agent parent) {
+		this.parent = parent;
+		b2body = null;
+		bodySize = new Vector2(0f, 0f);
+	}
+
+	public Agent getParent() {
+		return parent;
+	}
 
 	public Vector2 getPosition() {
 		return b2body.getPosition();
