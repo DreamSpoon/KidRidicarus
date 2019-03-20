@@ -87,10 +87,9 @@ public class MarioSpine extends PlayerSpine {
 	public void applyWalkMove(boolean moveRight, boolean run) {
 		// run impulse or walk impulse?
 		float impulse = run ? RUNMOVE_XIMP : WALKMOVE_XIMP;
-		applyHorizontalImpulse(moveRight, impulse);
 		// max run velocity or max walk velocity?
 		float max = run ? MAX_RUNVEL : MAX_WALKVEL;
-		capHorizontalVelocity(max);
+		applyHorizImpulseAndCapVel(moveRight, impulse, max);
 	}
 
 	/*
@@ -148,18 +147,16 @@ public class MarioSpine extends PlayerSpine {
 	}
 
 	public void applyAirMove(boolean moveRight) {
-		applyHorizontalImpulse(moveRight, AIRMOVE_XIMP);
-		capHorizontalVelocity(MAX_RUNVEL);
+		applyHorizImpulseAndCapVel(moveRight, AIRMOVE_XIMP, MAX_RUNVEL);
+	}
+
+	public void applyDuckSlideMove(boolean moveRight) {
+		applyHorizImpulseAndCapVel(moveRight, DUCKSLIDE_XIMP, MAX_DUCKSLIDE_VEL);
 	}
 
 	public void applyHeadBounceMove() {
 		body.setVelocity(body.getVelocity().x, 0f);
 		body.applyImpulse(new Vector2(0f, HEADBOUNCE_VEL));
-	}
-
-	public void applyDuckSlideMove(boolean isDuckSlideRight) {
-		applyHorizontalImpulse(isDuckSlideRight, DUCKSLIDE_XIMP);
-		capHorizontalVelocity(MAX_DUCKSLIDE_VEL);
 	}
 
 	/*

@@ -101,8 +101,10 @@ public class SamusSprite extends Sprite {
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
-			case JUMP:
+			case PRE_JUMP:
+			case PRE_JUMPSHOOT:
 			case PRE_JUMPSPIN:
+			case JUMP:
 				if(isFacingUp)
 					setRegion(jumpAimUpAnim.getKeyFrame(stateTimer));
 				else
@@ -116,6 +118,7 @@ public class SamusSprite extends Sprite {
 				offset.set(MED_SPRITE_OFFSET);
 				break;
 			case JUMPSHOOT:
+			case JUMPSPINSHOOT:
 				if(isFacingUp)
 					setRegion(jumpAimUpAnim.getKeyFrame(stateTimer));
 				else

@@ -42,14 +42,12 @@ public class SamusSpine extends PlayerSpine {
 
 	// apply walk impulse and cap horizontal velocity.
 	public void applyWalkMove(boolean moveRight) {
-		applyHorizontalImpulse(moveRight, GROUNDMOVE_XIMP);
-		capHorizontalVelocity(MAX_GROUNDMOVE_VEL);
+		applyHorizImpulseAndCapVel(moveRight, GROUNDMOVE_XIMP, MAX_GROUNDMOVE_VEL);
 	}
 
 	// apply air impulse and cap horizontal velocity.
 	public void applyAirMove(boolean moveRight) {
-		applyHorizontalImpulse(moveRight, AIRMOVE_XIMP);
-		capHorizontalVelocity(MAX_AIRMOVE_VEL);
+		applyHorizImpulseAndCapVel(moveRight, AIRMOVE_XIMP, MAX_AIRMOVE_VEL);
 	}
 
 	public void applyStopMove() {

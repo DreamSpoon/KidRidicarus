@@ -30,6 +30,11 @@ public class PlayerSpine extends OnGroundSpine {
 			body.setVelocity(-max, body.getVelocity().y);
 	}
 
+	protected void applyHorizImpulseAndCapVel(boolean moveRight, float xImpulse, float maxXvel) {
+		applyHorizontalImpulse(moveRight, xImpulse);
+		capHorizontalVelocity(maxXvel);
+	}
+
 	// maxVelocity must be positive because it is multiplied by -1 in the logic
 	protected void capFallVelocity(float maxVelocity) {
 		if(body.getVelocity().y < -maxVelocity)

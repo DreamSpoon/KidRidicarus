@@ -85,7 +85,6 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private boolean didTakeDamage;
 	private boolean isDeadBounce;
 	private float noDamageCooldown;
-//	private boolean isLastVelocityRight;
 	private Direction4 lastHorizontalMoveDir;
 	private boolean isDuckSlideRight;
 	private float starPowerCooldown;
@@ -108,7 +107,6 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		powerupsReceived = new LinkedList<PowType>();
 		didTakeDamage = false;
 		noDamageCooldown = 0f;
-//		isLastVelocityRight = false;
 		lastHorizontalMoveDir = Direction4.NONE;
 		isDuckSlideRight = false;
 		starPowerCooldown = 0f;
