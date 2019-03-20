@@ -1,6 +1,7 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -42,6 +43,7 @@ public class SamusSprite extends Sprite {
 	private float climbAnimTimer;
 	private MoveState curParentState;
 	private float stateTimer;
+	private boolean isDrawAllowed;
 
 	public SamusSprite(TextureAtlas atlas, Vector2 position) {
 		aimRightAnim = new Animation<TextureRegion>(ANIM_SPEED,
@@ -67,16 +69,18 @@ public class SamusSprite extends Sprite {
 		climbAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidAnim.Player.CLIMB), PlayMode.LOOP);
 
-		climbAnimTimer = 0f;
-		curParentState = null;
 		stateTimer = 0f;
+		curParentState = null;
+		climbAnimTimer = 0f;
+		isDrawAllowed = true;
+
 		setRegion(aimRightAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position, MoveState nextParentState, boolean isFacingRight,
-			boolean isFacingUp, Direction4 climbDir) {
+			boolean isFacingUp, boolean isBlinking, Direction4 climbDir) {
 		Vector2 offset = new Vector2(0f, 0f);
 
 		switch(nextParentState) {
@@ -156,7 +160,18 @@ public class SamusSprite extends Sprite {
 		// update sprite position
 		setPosition(position.x - getWidth()/2 + offset.x, position.y - getHeight()/2 + offset.y);
 
+		if(isBlinking && isDrawAllowed)
+			isDrawAllowed = false;
+		else
+			isDrawAllowed = true;
+
 		stateTimer = curParentState == nextParentState ? stateTimer+delta : 0f;
 		curParentState = nextParentState;
+	}
+
+	@Override
+	public void draw(Batch batch) {
+		if(isDrawAllowed)
+			super.draw(batch);
 	}
 }

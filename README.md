@@ -19,3 +19,5 @@ Mario will be able to play in his world, in Metroid world and Kid Icarus world. 
 Multiple Platform Game Emulator (MPGE)
 
 * Kid Ridicarus emulates multiple games in the platform game genre
+
+### See wiki for info on keys to play game, game snapshots, etc.

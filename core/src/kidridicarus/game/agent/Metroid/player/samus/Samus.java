@@ -43,6 +43,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	private static final float JUMPSHOOT_RESPIN_DELAY = 0.05f;
 	private static final float STEP_SOUND_TIME = 0.167f;
 	private static final float POSTPONE_RUN_DELAY = 0.15f;
+	private static final float NO_DAMAGE_TIME = 0.8f;
 
 	private SamusSupervisor supervisor;
 	private SamusObserver observer;
@@ -58,6 +59,9 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	private boolean isNextJumpAllowed;
 	private float lastStepSoundTime;
 	private float runStateTimer;
+	private boolean didTakeDamage;
+	private Vector2 takeDmgOrigin;
+	private float noDamageCooldown;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -74,6 +78,9 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		isNextJumpAllowed = false;
 		lastStepSoundTime = 0f;
 		runStateTimer = 0f;
+		didTakeDamage = false;
+		takeDmgOrigin = new Vector2();
+		noDamageCooldown = 0f;
 
 		body = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
@@ -105,6 +112,8 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
+		processDamageTaken(delta);
+
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		if(nextMoveState.isGroundMove())
 			processGroundMove(delta, moveAdvice, nextMoveState);
@@ -116,6 +125,25 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
+	}
+
+	private void processDamageTaken(float delta) {
+		// if invulnerable to damage then exit
+		if(noDamageCooldown > 0f) {
+			noDamageCooldown -= delta;
+			didTakeDamage = false;
+			takeDmgOrigin.set(0f, 0f);
+			return;
+		}
+		// if no damage taken this frame then exit
+		else if(!didTakeDamage)
+			return;
+		// take damage
+		didTakeDamage = false;
+		noDamageCooldown = NO_DAMAGE_TIME;
+		body.getSpine().applyDamageKick(takeDmgOrigin);
+		takeDmgOrigin.set(0f, 0f);
+		agency.playSound(AudioInfo.Sound.Metroid.HURT);
 	}
 
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
@@ -374,7 +402,8 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	}
 
 	private void processSprite(float delta) {
-		sprite.update(delta, body.getPosition(), moveState, isFacingRight, isFacingUp, Direction4.NONE);
+		sprite.update(delta, body.getPosition(), moveState, isFacingRight, isFacingUp, (noDamageCooldown > 0f),
+				Direction4.NONE);
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
@@ -383,7 +412,12 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
-		return false;
+		// no damage taken if already took damage this frame, or if invulnerable, or if star powered, or if dead
+		if(didTakeDamage || noDamageCooldown > 0f)
+			return false;
+		didTakeDamage = true;
+		takeDmgOrigin.set(dmgOrigin);
+		return true;
 	}
 
 	@Override

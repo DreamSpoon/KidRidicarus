@@ -18,6 +18,8 @@ public class SamusSpine extends PlayerSpine {
 	private static final float MAX_AIRMOVE_VEL = MAX_GROUNDMOVE_VEL;
 	private static final float JUMPUP_FORCE = 8.33f;
 	private static final float JUMPUP_CONSTVEL = 1f;
+	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
+	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
 
 	private AgentContactHoldSensor agentSensor;
 	private SolidContactSensor sbSensor;
@@ -71,6 +73,19 @@ public class SamusSpine extends PlayerSpine {
 		jumpStartY = body.getPosition().y;
 	}
 
+	public void applyDamageKick(Vector2 position) {
+		// zero the y velocity
+		body.setVelocity(body.getVelocity().x, 0);
+		// apply a kick impulse to the left or right depending on other agent's position
+		if(body.getPosition().x < position.x)
+			body.applyImpulse(DAMAGE_KICK_SIDE_IMP.cpy().scl(-1f));
+		else
+			body.applyImpulse(DAMAGE_KICK_SIDE_IMP);
+
+		// apply kick up impulse if the player is above the other agent
+		if(body.getPosition().y > position.y)
+			body.applyImpulse(DAMAGE_KICK_UP_IMP);
+	}
 	// jumpspin is allowed when body moves at least 2 tiles higher than jump start position 
 	public boolean isJumpSpinAllowed() {
 		return body.getPosition().y > jumpStartY + 2f*UInfo.P2M(UInfo.TILEPIX_Y);

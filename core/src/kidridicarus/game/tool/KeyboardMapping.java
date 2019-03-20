@@ -14,6 +14,6 @@ public class KeyboardMapping {
 	public static final int MOVE_LEFT = Input.Keys.A;
 	public static final int MOVE_DOWN = Input.Keys.S;
 	// run and shoot share a key temporarily
-	public static final int MOVE_RUNSHOOT = Input.Keys.LEFT;
-	public static final int MOVE_JUMP = Input.Keys.DOWN;
+	public static final int MOVE_RUNSHOOT = Input.Keys.DOWN;
+	public static final int MOVE_JUMP = Input.Keys.RIGHT;
 }
