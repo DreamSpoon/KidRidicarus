@@ -10,8 +10,8 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.AgentSupervisor;
+import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -24,25 +24,26 @@ import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
 import kidridicarus.game.info.AudioInfo;
 
 public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, DisposableAgent {
-	public enum MoveState { STAND, BALL, RUN, RUNSHOOT, JUMPSHOOT, JUMP, PRE_JUMPSPIN, JUMPSPIN, JUMPSPINSHOOT,
-		PRE_JUMPSHOOT, PRE_JUMP, CLIMB;
+	public enum MoveState { STAND, BALL_GRND, RUN, RUNSHOOT, PRE_JUMPSHOOT, JUMPSHOOT, JUMPSPINSHOOT,
+		PRE_JUMPSPIN, JUMPSPIN, PRE_JUMP, JUMP, BALL_AIR, CLIMB;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-		public boolean isGroundMove() { return this.equalsAny(STAND, BALL, RUN, RUNSHOOT); }
-		public boolean isJumpSpin() { return this.equalsAny(PRE_JUMPSPIN, JUMPSPIN, JUMPSPINSHOOT); }
+		public boolean isGroundMove() { return this.equalsAny(STAND, BALL_GRND, RUN, RUNSHOOT); }
 		public boolean isRun() { return this.equalsAny(RUN, RUNSHOOT); }
+		public boolean isJumpSpin() { return this.equalsAny(PRE_JUMPSPIN, JUMPSPIN, JUMPSPINSHOOT); }
+		public boolean isBall() { return this.equalsAny(BALL_GRND, BALL_AIR); }
 	}
 
+	private static final float STEP_SOUND_TIME = 0.167f;
+	private static final float POSTPONE_RUN_DELAY = 0.15f;
+	private static final float JUMPUP_CONSTVEL_TIME = 0.2f;
+	private static final float JUMPUP_FORCE_TIME = 0.75f;
+	private static final float JUMPSHOOT_RESPIN_DELAY = 0.05f;
 	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
 	private static final float SHOT_VEL = 2f;
 	private static final float SHOOT_COOLDOWN = 0.15f;
-	private static final float JUMPUP_CONSTVEL_TIME = 0.2f;
-	private static final float JUMPUP_FORCE_TIME = 0.75f;
-	private static final float JUMPSHOOT_RESPIN_DELAY = 0.05f;
-	private static final float STEP_SOUND_TIME = 0.167f;
-	private static final float POSTPONE_RUN_DELAY = 0.15f;
 	private static final float NO_DAMAGE_TIME = 0.8f;
 
 	private SamusSupervisor supervisor;
@@ -54,11 +55,11 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 
 	private boolean isFacingRight;
 	private boolean isFacingUp;
-	private float shootCooldownTimer;
+	private float runStateTimer;
+	private float lastStepSoundTime;
 	private float jumpForceTimer;
 	private boolean isNextJumpAllowed;
-	private float lastStepSoundTime;
-	private float runStateTimer;
+	private float shootCooldownTimer;
 	private boolean didTakeDamage;
 	private Vector2 takeDmgOrigin;
 	private float noDamageCooldown;
@@ -72,12 +73,12 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		if(properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
 			isFacingRight = true;
 		isFacingUp = false;
-		shootCooldownTimer = 0f;
+		runStateTimer = 0f;
+		lastStepSoundTime = 0f;
 		jumpForceTimer = 0f;
 		// player must land on ground before first jump is allowed
 		isNextJumpAllowed = false;
-		lastStepSoundTime = 0f;
-		runStateTimer = 0f;
+		shootCooldownTimer = 0f;
 		didTakeDamage = false;
 		takeDmgOrigin = new Vector2();
 		noDamageCooldown = 0f;
@@ -120,11 +121,10 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		else
 			processAirMove(delta, moveAdvice, nextMoveState);
 
-		// decrememnt shoot cooldown timer
-		shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
-
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
+
+		processShoot(delta, moveAdvice);
 	}
 
 	private void processDamageTaken(float delta) {
@@ -156,8 +156,21 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	}
 
 	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
+		if(moveState.isBall()) {
+			// if advised move up and not move down, and map tile above player is not solid, then change to stand
+			if(moveAdvice.moveUp && !moveAdvice.moveDown &&
+					!body.getSpine().isMapTileSolid(UInfo.getM2PTileForPos(body.getPosition()).add(0, 1)))
+				return MoveState.STAND;
+			// continue current ball state
+			else
+				return moveState;
+		}
+		// if already standing and advised to move down but not advised to move horizontally then start ball state
+		else if(moveState == MoveState.STAND && moveAdvice.moveDown &&
+				!moveAdvice.moveRight && !moveAdvice.moveLeft)
+			return MoveState.BALL_GRND;
 		// if advised to jump and allowed to jump then...
-		if(moveAdvice.action1 && isNextJumpAllowed) {
+		else if(moveAdvice.action1 && isNextJumpAllowed) {
 			// if advised move right or left but not both at same time then do jump spin
 			if(moveAdvice.moveRight^moveAdvice.moveLeft && !moveAdvice.action0)
 				return MoveState.PRE_JUMPSPIN;
@@ -190,7 +203,17 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	}
 
 	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {
-		if(moveState == MoveState.JUMPSHOOT)
+		if(moveState.isBall()) {
+			// If advised to move up and not move down and tile above samus head is not solid then change to
+			// standing type state.
+			if(moveAdvice.moveUp && !moveAdvice.moveDown &&
+					!body.getSpine().isMapTileSolid(UInfo.getM2PTileForPos(body.getPosition()).add(0, 1)))
+				return MoveState.JUMP;
+			// continue air ball state if already in air ball state, or change from ground to air ball state
+			else
+				return MoveState.BALL_AIR;
+		}
+		else if(moveState == MoveState.JUMPSHOOT)
 			return MoveState.JUMPSHOOT;
 		else if(moveState == MoveState.JUMPSPINSHOOT) {
 			// if not moving up then lose spin and do jumpshoot
@@ -256,9 +279,6 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		else
 			isFacingUp = false;
 
-		if(moveAdvice.action0 && isShootAllowed())
-			doShoot();
-
 		// if previous move air move then samus just landed, so play landing sound
 		if(!moveState.isGroundMove())
 			agency.playSound(AudioInfo.Sound.Metroid.STEP);
@@ -272,10 +292,22 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		else
 			lastStepSoundTime = 0f;
 
+		// if changed to ball state from non-ball state then decrease body size
+		if(nextMoveState.isBall() && !moveState.isBall())
+			body.setBallForm(true);
+		// if changed to non-ball state from ball state then increase body size 
+		if(!nextMoveState.isBall() && moveState.isBall())
+			body.setBallForm(false);
+
+		// since body has zero bounciness, a manual check is needed while in ball form 
+		if(nextMoveState.isBall())
+			body.getSpine().doBounceCheck();
+
 		switch(nextMoveState) {
 			case STAND:
 			case RUN:
 			case RUNSHOOT:
+			case BALL_GRND:
 				break;
 			default:
 				throw new IllegalStateException("Wrong ground nextMoveState = " + nextMoveState);
@@ -298,10 +330,6 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 				isFacingRight = true;
 		}
 
-		// check for shoot
-		if(moveAdvice.action0 && isShootAllowed())
-			doShoot();
-
 		// facing up can change during jumpspin while player moves upward
 		if(nextMoveState.isJumpSpin() && body.getSpine().isMovingUp()) {
 			if(moveAdvice.moveUp && !moveAdvice.moveDown)
@@ -309,6 +337,15 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 			else
 				isFacingUp = false;
 		}
+
+		// if changed to non-ball state from ball state then increase body size 
+		if(!nextMoveState.isBall() && moveState.isBall())
+			body.setBallForm(false);
+		// note: cannot change from non-ball state to ball state while mid-air
+
+		// since body has zero bounciness, a manual check is needed while in ball form 
+		if(nextMoveState.isBall())
+			body.getSpine().doBounceCheck();
 
 		switch(nextMoveState) {
 			case PRE_JUMPSPIN:
@@ -339,6 +376,8 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 					body.getSpine().applyJumpForce(jumpForceTimer-JUMPUP_CONSTVEL_TIME, JUMPUP_FORCE_TIME);
 
 				break;
+			case BALL_AIR:
+				break;
 			default:
 				throw new IllegalStateException("Wrong air nextMoveState = " + nextMoveState);
 		}
@@ -364,6 +403,13 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 
 		// decrement jump force timer
 		jumpForceTimer = jumpForceTimer > delta ? jumpForceTimer-delta : 0f;
+	}
+
+	private void processShoot(float delta, MoveAdvice moveAdvice) {
+		if(moveAdvice.action0 && isShootAllowed() && !moveState.isBall())
+			doShoot();
+		// decrememnt shoot cooldown timer
+		shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
 	}
 
 	private boolean isShootAllowed() {

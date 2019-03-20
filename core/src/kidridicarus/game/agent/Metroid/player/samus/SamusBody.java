@@ -14,10 +14,13 @@ import kidridicarus.common.tool.B2DFactory;
 public class SamusBody extends AgentBody {
 	private static final float STAND_BODY_WIDTH = UInfo.P2M(5f);
 	private static final float STAND_BODY_HEIGHT = UInfo.P2M(25f);
+	private static final float BALL_BODY_WIDTH = UInfo.P2M(8f);
+	private static final float BALL_BODY_HEIGHT = UInfo.P2M(10f);
 	private static final float FOOT_WIDTH = UInfo.P2M(4f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 	private static final float GRAVITY_SCALE = 0.5f;	// floaty
 	private static final float FRICTION = 0f;	// (default is 0.2f)
+	private static final Vector2 BALL_TO_STAND_OFFSET = UInfo.P2MVector(0f, 8f);
 
 	private static final CFBitSeq MAINBODY_CFCAT = CommonCF.SOLID_BODY_CFCAT;
 	private static final CFBitSeq MAINBODY_CFMASK = CommonCF.SOLID_BODY_CFMASK;
@@ -37,11 +40,14 @@ public class SamusBody extends AgentBody {
 		this.world = world;
 		this.parent = parent;
 		prevVelocity = new Vector2(0f, 0f);
-		defineBody(position);
+		defineBody(position, false);
 	}
 
-	private void defineBody(Vector2 position) {
-		setBodySize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
+	private void defineBody(Vector2 position, boolean ballForm) {
+		if(ballForm)
+			setBodySize(BALL_BODY_WIDTH, BALL_BODY_HEIGHT);
+		else
+			setBodySize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
 		createBody(position);
 		createFixtures();
 	}
@@ -89,6 +95,18 @@ public class SamusBody extends AgentBody {
 
 	public void postUpdate() {
 		prevVelocity.set(getVelocity());
+	}
+
+	public void setBallForm(boolean ballForm) {
+		Vector2 position = b2body.getPosition();
+		if(!ballForm)
+			position.add(BALL_TO_STAND_OFFSET);
+
+		defineBody(position, ballForm);
+	}
+
+	public Vector2 getPrevVelocity() {
+		return prevVelocity;
 	}
 
 	public SamusSpine getSpine() {

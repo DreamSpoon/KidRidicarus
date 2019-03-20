@@ -20,6 +20,8 @@ public class SamusSpine extends PlayerSpine {
 	private static final float JUMPUP_CONSTVEL = 1f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
+	private static final float MAX_UP_VELOCITY = 1.75f;
+	private static final float MAX_DOWN_VELOCITY = 2.5f;
 
 	private AgentContactHoldSensor agentSensor;
 	private SolidContactSensor sbSensor;
@@ -96,6 +98,11 @@ public class SamusSpine extends PlayerSpine {
 		return ctMap == null ? false : ctMap.isMapPointSolid(position); 
 	}
 
+	public boolean isMapTileSolid(Vector2 tileCoords) {
+		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+		return ctMap == null ? false : ctMap.isMapTileSolid(tileCoords); 
+	}
+
 	public boolean isSolidOnThisSide(boolean isRightSide) {
 		return sbSensor.isSolidOnThisSide(body.getBounds(), isRightSide);
 	}
@@ -110,6 +117,20 @@ public class SamusSpine extends PlayerSpine {
 
 	public void applyJumpVelocity() {
 		body.setVelocity(body.getVelocity().x, JUMPUP_CONSTVEL);
+	}
+
+	public void doBounceCheck() {
+		// Check for bounce up (no left/right bounces, no down bounces).
+		// Since body restitution=0, bounce occurs when current velocity=0 and previous velocity > 0.
+		// Check against 0 using velocity epsilon.
+		if(UInfo.epsCheck(body.getVelocity().y, 0f, UInfo.VEL_EPSILON)) {
+			float amount = -((SamusBody) body).getPrevVelocity().y;
+			if(amount > MAX_DOWN_VELOCITY-UInfo.VEL_EPSILON)
+				amount = MAX_UP_VELOCITY-UInfo.VEL_EPSILON;
+			else
+				amount = amount * 0.6f;
+			body.setVelocity(body.getVelocity().x, amount);
+		}
 	}
 }
 

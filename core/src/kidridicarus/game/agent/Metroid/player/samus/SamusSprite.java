@@ -130,7 +130,8 @@ public class SamusSprite extends Sprite {
 				setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
-			case BALL:
+			case BALL_GRND:
+			case BALL_AIR:
 				setRegion(ballAnim.getKeyFrame(stateTimer));
 				setBounds(getX(), getY(), SML_SPRITE_WIDTH, SML_SPRITE_HEIGHT);
 				offset.set(SML_SPRITE_OFFSET);
