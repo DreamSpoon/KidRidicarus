@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB.player.mario.Mario.MoveState;
 import kidridicarus.game.agent.SMB.player.mario.Mario.PowerState;
 
@@ -71,6 +73,7 @@ public class MarioSprite extends Sprite {
 	private SpriteState spriteState;
 	private float spriteStateTimer;
 	private float starPowerTimer;
+	private float climbAnimTimer;
 
 	public MarioSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean facingRight) {
 		createAnimations(atlas);
@@ -84,6 +87,7 @@ public class MarioSprite extends Sprite {
 		spriteState = SpriteState.NORMAL;
 		spriteStateTimer = 0f;
 		starPowerTimer = 0f;
+		climbAnimTimer = 0f;
 
 		// set the initial texture region and bounds
 		switch(parentPowerState) {
@@ -180,13 +184,14 @@ public class MarioSprite extends Sprite {
 	}
 
 	public void update(float delta, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
-			boolean facingRight, boolean didShootFireball, boolean isBlinking, boolean isStarPowered) {
+			boolean facingRight, boolean didShootFireball, boolean isBlinking, boolean isStarPowered,
+			Direction4 moveDir) {
 		SpriteState nextSpriteState = getNextSpriteState(parentPowerState);
 		boolean spriteStateChanged = nextSpriteState != spriteState;
 		switch(nextSpriteState) {
 			case NORMAL:
 				processPowerState(delta, position, parentMoveState, parentPowerState, facingRight,
-						didShootFireball, isBlinking, isStarPowered);
+						didShootFireball, isBlinking, isStarPowered, moveDir);
 				break;
 			case GROW:
 				if(spriteStateChanged)
@@ -242,7 +247,7 @@ public class MarioSprite extends Sprite {
 
 	private void processPowerState(float delta, Vector2 position, MoveState parentMoveState,
 			PowerState parentPowerState, boolean facingRight, boolean didShootFireball, boolean isBlinking,
-			boolean isStarPowered) {
+			boolean isStarPowered, Direction4 moveDir) {
 		int group = SML_REG_GRP;
 
 		switch(parentPowerState) {
@@ -264,6 +269,14 @@ public class MarioSprite extends Sprite {
 			starPowerTimer += delta;
 		}
 
+		// choose correct size anim category
+		Animation<TextureRegion>[][] sizeAnim = smlAnim;
+		if(parentPowerState.isBigBody() && !parentMoveState.isDead())
+			sizeAnim = bigAnim;
+		else
+			sizeAnim = smlAnim;
+
+		float timer = parentMoveStateTimer;
 		int pose = STAND_POSE;
 		Vector2 offset = new Vector2(0f, 0f);
 		if(didShootFireball)
@@ -306,18 +319,28 @@ public class MarioSprite extends Sprite {
 					group = SML_REG_GRP;
 					setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
 					break;
+				case CLIMB:
+					pose = CLIMB_POSE;
+					// if this is first frame of climb animation then reset clim anim timer
+					if(prevParentMoveState != MoveState.CLIMB)
+						climbAnimTimer = 0f;
+					// if climbing up then forward the animation
+					if(moveDir == Direction4.UP)
+						climbAnimTimer += delta;
+					// if climbing down then reverse the animation
+					else if(moveDir == Direction4.DOWN) {
+						climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - delta,
+								sizeAnim[pose][group].getAnimationDuration());
+					}
+					timer = climbAnimTimer;
+					break;
 			}
 		}
 
 		// reduce throw pose cooldown
 		throwPoseCooldown = throwPoseCooldown < delta ? 0f : throwPoseCooldown-delta;
 
-		// choose correct size anim category and set region
-		if(parentPowerState.isBigBody() && !parentMoveState.isDead())
-			setRegion(bigAnim[pose][group].getKeyFrame(parentMoveStateTimer));
-		else
-			setRegion(smlAnim[pose][group].getKeyFrame(parentMoveStateTimer));
-
+		setRegion(sizeAnim[pose][group].getKeyFrame(timer));
 		setPosition(position.x - getWidth()/2f + offset.x, position.y - getHeight()/2f + offset.y);
 	}
 

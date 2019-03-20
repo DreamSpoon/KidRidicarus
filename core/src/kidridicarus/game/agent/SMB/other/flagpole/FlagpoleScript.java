@@ -8,6 +8,7 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.game.tool.QQ;
 
 /*
  * SMB end of level flagpole script.
@@ -64,6 +65,7 @@ public class FlagpoleScript implements AgentScript {
 	@Override
 	public boolean update(float delta) {
 		ScriptState nextScriptState = getNextScriptState();
+		boolean scriptStateChanged = nextScriptState != curScriptState;
 		switch(nextScriptState) {
 			// sprite sliding down flagpole
 			case SLIDE:
@@ -71,9 +73,10 @@ public class FlagpoleScript implements AgentScript {
 				isSlideFinished = isAgentAtBottom(stateTimer);
 				break;
 			case SLIDE_STOP:
-				if(curScriptState != ScriptState.SLIDE_STOP) {
+				if(scriptStateChanged) {
 					slideDuration = stateTimer;
-					scriptedState.scriptedSpriteState.moveDir = null;
+					scriptedState.scriptedSpriteState.moveDir = Direction4.NONE;
+QQ.pr("sprite move dir = NONE");
 				}
 				break;
 			case SLIDE_FLIPRIGHT:
@@ -91,7 +94,7 @@ public class FlagpoleScript implements AgentScript {
 				break;
 			case MOVERIGHT:
 				// if first frame of this state then start character moving right
-				if(curScriptState != nextScriptState) {
+				if(scriptStateChanged) {
 					scriptedState.scriptedMoveAdvice = new MoveAdvice();
 					scriptedState.scriptedMoveAdvice.moveRight = true;
 				}

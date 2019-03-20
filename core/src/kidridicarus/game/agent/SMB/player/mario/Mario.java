@@ -51,7 +51,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		public boolean isBigBody() { return !this.equals(SMALL); }
 	}
 	public enum MoveState {
-		STAND, RUN, BRAKE, FALL, DUCK, DUCKSLIDE, DUCKFALL, DUCKJUMP, JUMP, DEAD, DEAD_BOUNCE;
+		STAND, RUN, BRAKE, FALL, DUCK, DUCKSLIDE, DUCKFALL, DUCKJUMP, JUMP, DEAD, DEAD_BOUNCE, CLIMB;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
@@ -595,24 +595,28 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 				case MOVE:
 					scriptedMoveState = MoveState.RUN;
 					break;
+				case CLIMB:
+					scriptedMoveState = MoveState.CLIMB;
+					break;
 				case STAND:
 				default:
 					scriptedMoveState = MoveState.STAND;
 					break;
 			}
 			sprite.update(delta, sss.position, scriptedMoveState, powerState, sss.facingRight, false, false,
-					(starPowerCooldown > 0f));
+					(starPowerCooldown > 0f), sss.moveDir);
 		}
 		else {
 			sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,
-					didShootFireballThisFrame, (noDamageCooldown > 0f), (starPowerCooldown > 0f));
+					didShootFireballThisFrame, (noDamageCooldown > 0f), (starPowerCooldown > 0f),
+					Direction4.NONE);
 		}
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
 		// exit if using scripted sprite state and script says don't draw
 		if(supervisor.isRunningScriptNoMoveAdvice() &&
-				supervisor.getScriptAgentState().scriptedSpriteState.visible == false)
+				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
 			return;
 		batch.draw(sprite);
 	}

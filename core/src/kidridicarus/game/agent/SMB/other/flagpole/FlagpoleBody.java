@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
@@ -37,7 +37,7 @@ public class FlagpoleBody extends AgentBody {
 				getBodySize().x, getBodySize().y);
 	}
 
-	public List<Agent> getPlayerBeginContacts() {
-		return agentBeginContactSensor.getAndResetContacts();
+	public List<PlayerAgent> getPlayerBeginContacts() {
+		return agentBeginContactSensor.getOnlyAndResetContacts(PlayerAgent.class);
 	}
 }
