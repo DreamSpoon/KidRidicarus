@@ -24,18 +24,21 @@ import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
 import kidridicarus.game.info.AudioInfo;
 
 public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, DisposableAgent {
-	public enum MoveState { STAND, BALL, RUN, RUNSHOOT, JUMPSHOOT, JUMP, JUMPSPIN, CLIMB;
+	public enum MoveState { STAND, BALL, RUN, RUNSHOOT, JUMPSHOOT, JUMP, PRE_JUMPSPIN, JUMPSPIN, CLIMB,
+		PRE_JUMPSHOOT, PRE_JUMP;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-		public boolean isJump() { return this.equalsAny(JUMP, JUMPSHOOT, JUMPSPIN); }
-		public boolean isOnGround() { return this.equalsAny(STAND, BALL, RUN, RUNSHOOT); }
+		public boolean isJump() { return this.equalsAny(JUMP, JUMPSHOOT, PRE_JUMPSPIN, JUMPSPIN); }
+		public boolean isGroundMove() { return this.equalsAny(STAND, BALL, RUN, RUNSHOOT); }
 	}
 
 	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
 	private static final float SHOT_VEL = 2f;
 	private static final float SHOOT_COOLDOWN = 0.15f;
+	private static final float JUMPUP_CONSTVEL_TIME = 0.2f;
+	private static final float JUMPUP_FORCE_TIME = 0.75f;
 
 	private SamusSupervisor supervisor;
 	private SamusObserver observer;
@@ -47,15 +50,21 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	private boolean isFacingRight;
 	private boolean isFacingUp;
 	private float shootCooldownTimer;
+	private float jumpForceTimer;
+	private boolean isNextJumpAllowed;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
+		moveState = MoveState.STAND;
+		moveStateTimer = 0f;
 		isFacingRight = false;
 		if(properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
 			isFacingRight = true;
 		isFacingUp = false;
 		shootCooldownTimer = 0f;
+		jumpForceTimer = 0f;
+		isNextJumpAllowed = true;
 
 		body = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
@@ -88,10 +97,10 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
-		if(nextMoveState.isOnGround())
+		if(nextMoveState.isGroundMove())
 			processGroundMove(moveAdvice, nextMoveState);
 		else
-			processAirMove(moveAdvice, nextMoveState);
+			processAirMove(delta, moveAdvice, nextMoveState);
 
 		// decrememnt shoot cooldown timer
 		shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
@@ -101,8 +110,8 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	}
 
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
-		// if on ground flag is true and agent isn't moving upward while in air move state, then do ground move
-		if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && moveState.isOnGround()))
+		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
+		if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && !moveState.isGroundMove()))
 			return getNextMoveStateGround(moveAdvice);
 		// do air move
 		else
@@ -110,7 +119,18 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	}
 
 	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
-		if(body.getSpine().isNoHorizontalVelocity()) {
+		// if advised to jump and allowed to jump then...
+		if(moveAdvice.action1 && isNextJumpAllowed) {
+			// if advised move right or left but not both at same time then do jump spin
+			if(moveAdvice.moveRight^moveAdvice.moveLeft && !moveAdvice.action0)
+				return MoveState.PRE_JUMPSPIN;
+			// if advised shoot then do jumpshoot
+			else if(moveAdvice.action0)
+				return MoveState.PRE_JUMPSHOOT;
+			else
+				return MoveState.PRE_JUMP;
+		}
+		else if(body.getSpine().isNoHorizontalVelocity()) {
 			// If advised move right and contacting right wall, or
 			// if advised move left and contacting left wall, or
 			// if no left/right move advice,
@@ -133,10 +153,25 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 	}
 
 	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {
-		return MoveState.JUMP;
+		if(moveAdvice.action0 || moveState == MoveState.JUMPSHOOT)
+			return MoveState.JUMPSHOOT;
+		else if(moveState == MoveState.PRE_JUMPSPIN) {
+			if(body.getSpine().isJumpSpinAllowed())
+				return MoveState.JUMPSPIN;
+			else
+				return MoveState.PRE_JUMPSPIN;
+		}
+		else if(moveState == MoveState.JUMPSPIN)
+			return MoveState.JUMPSPIN;
+		else
+			return MoveState.JUMP;
 	}
 
 	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+		// next jump changes to allowed when on ground and not advising jump move 
+		if(!moveAdvice.action1)
+			isNextJumpAllowed = true;
+
 		boolean applyWalkMove = false;
 		boolean applyStopMove = false;
 		// if advised to move right or move left, but not both at same time, then...
@@ -150,29 +185,86 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 		}
 		else
 			applyStopMove = true;
-		
+
 		// if advised to move up or move down, but not both at same time, then...
 		if(moveAdvice.moveUp^moveAdvice.moveDown)
 			isFacingUp = moveAdvice.moveUp;
 		else
 			isFacingUp = false;
 
-		if(moveAdvice.action0 && isShootAllowed())
-			doShoot();
-
 		switch(nextMoveState) {
 			case STAND:
 			case RUN:
 			case RUNSHOOT:
+				if(moveAdvice.action0 && isShootAllowed())
+					doShoot();
 				break;
 			default:
-				throw new IllegalStateException("Wrong nextMoveState = " + nextMoveState);
+				throw new IllegalStateException("Wrong ground nextMoveState = " + nextMoveState);
 		}
 
 		if(applyWalkMove)
 			body.getSpine().applyWalkMove(isFacingRight);
 		if(applyStopMove)
 			body.getSpine().applyStopMove();
+	}
+
+	private void processAirMove(float delta, MoveAdvice moveAdvice, MoveState nextMoveState) {
+		// check for change of facing direction
+		if(moveAdvice.moveRight^moveAdvice.moveLeft) {
+			if(isFacingRight && moveAdvice.moveLeft)
+				isFacingRight = false;
+			else if(!isFacingRight && moveAdvice.moveRight)
+				isFacingRight = true;
+		}
+
+		// check for shoot
+		if(moveAdvice.action0 && isShootAllowed())
+			doShoot();
+
+		switch(nextMoveState) {
+			case PRE_JUMP:
+			case PRE_JUMPSPIN:
+			case PRE_JUMPSHOOT:
+				// if previously on ground and advised jump then try to do jump
+				if(moveState.isGroundMove() && moveAdvice.action1) {
+					isNextJumpAllowed = false;
+					jumpForceTimer = JUMPUP_CONSTVEL_TIME+JUMPUP_FORCE_TIME;
+				}
+				body.getSpine().applyJumpVelocity();
+				break;
+			case JUMP:
+			case JUMPSPIN:
+			case JUMPSHOOT:
+				// if jump force continues and jump is advised then do jump force
+				if(jumpForceTimer > 0f && moveAdvice.action1)
+					body.getSpine().applyJumpForce(jumpForceTimer-JUMPUP_CONSTVEL_TIME, JUMPUP_FORCE_TIME);
+
+				break;
+			default:
+				throw new IllegalStateException("Wrong air nextMoveState = " + nextMoveState);
+		}
+
+		// disallow jump force until next jump when [jump advice stops] or [body stops moving up]
+		if(!moveAdvice.action1 || !body.getSpine().isMovingUp())
+			jumpForceTimer = 0f;
+
+		// if advised move right or move left but not both at same time then...
+		if(moveAdvice.moveRight^moveAdvice.moveLeft) {
+			// if advised move right and facing left then change to facing right
+			if(moveAdvice.moveRight && !isFacingRight)
+				isFacingRight = true;
+			// if advised move left and facing right then change to facing left
+			else if(moveAdvice.moveLeft && isFacingRight)
+				isFacingRight = false;
+
+			body.getSpine().applyAirMove(isFacingRight);
+		}
+		else
+			body.getSpine().applyStopMove();
+
+		// decrement jump force timer
+		jumpForceTimer = jumpForceTimer > delta ? jumpForceTimer-delta : 0f;
 	}
 
 	private boolean isShootAllowed() {
@@ -208,9 +300,6 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, Di
 			shotProps.put(CommonKV.Spawn.KEY_EXPIRE, true);
 		agency.createAgent(shotProps);
 		agency.playSound(AudioInfo.Sound.Metroid.SHOOT);
-	}
-
-	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
 	}
 
 	private void processSprite(float delta) {

@@ -138,7 +138,7 @@ public class MarioBody extends AgentBody {
 		prevVelocity.set(b2body.getLinearVelocity());
 	}
 
-	public void applyBodyImpulse (Vector2 impulse) {
+	public void applyImpulse (Vector2 impulse) {
 		b2body.applyLinearImpulse(impulse, b2body.getWorldCenter(), true);
 	}
 

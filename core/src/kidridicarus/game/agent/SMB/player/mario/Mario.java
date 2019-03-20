@@ -243,7 +243,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 
 			// do bounce up if needed
 			if(nextMoveState == MoveState.DEAD_BOUNCE)
-				body.applyBodyImpulse(DEAD_BOUNCE_IMP);
+				body.applyImpulse(DEAD_BOUNCE_IMP);
 		}
 		// ... and if died a long time ago then do game over
 		else if(moveStateTimer > DEAD_DELAY_TIME)
@@ -474,8 +474,8 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			return MoveState.DEAD;
 		else if(isDeadBounce)
 			return MoveState.DEAD_BOUNCE;
-		// if on ground flag is true and agent isn't moving upward while in air move state, then do ground move
-		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && moveState.isOnGround()))
+		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
+		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && !moveState.isOnGround()))
 			return getNextMoveStateGround(moveAdvice);
 		// do air move
 		else

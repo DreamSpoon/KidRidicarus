@@ -46,9 +46,9 @@ public class SkreeSpine extends OnGroundSpine {
 		if(xdiff > 0) {
 			if(body.getVelocity().x < SIDE_SPEED_MAX) {
 				if(xdiff < SIDE_IMPULSE_MAX)
-					body.applyBodyImpulse(new Vector2(xdiff, 0f));
+					body.applyImpulse(new Vector2(xdiff, 0f));
 				else
-					body.applyBodyImpulse(new Vector2(SIDE_IMPULSE_MAX, 0f));
+					body.applyImpulse(new Vector2(SIDE_IMPULSE_MAX, 0f));
 			}
 			else
 				body.setVelocity(SIDE_SPEED_MAX, body.getVelocity().y);
@@ -56,9 +56,9 @@ public class SkreeSpine extends OnGroundSpine {
 		else if(xdiff < 0) {
 			if(body.getVelocity().x > -SIDE_SPEED_MAX) {
 				if(xdiff > -SIDE_IMPULSE_MAX)
-					body.applyBodyImpulse(new Vector2(xdiff, 0f));
+					body.applyImpulse(new Vector2(xdiff, 0f));
 				else
-					body.applyBodyImpulse(new Vector2(-SIDE_IMPULSE_MAX, 0f));
+					body.applyImpulse(new Vector2(-SIDE_IMPULSE_MAX, 0f));
 			}
 			else
 				body.setVelocity(-SIDE_SPEED_MAX, body.getVelocity().y);
@@ -66,7 +66,7 @@ public class SkreeSpine extends OnGroundSpine {
 
 		// fall downward
 		if(body.getVelocity().y > -FALL_SPEED_MAX)
-			body.applyBodyImpulse(new Vector2(0f, -FALL_IMPULSE));
+			body.applyImpulse(new Vector2(0f, -FALL_IMPULSE));
 		else
 			body.setVelocity(body.getVelocity().x, -FALL_SPEED_MAX);
 	}

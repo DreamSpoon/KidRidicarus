@@ -15,9 +15,9 @@ public class PlayerSpine extends OnGroundSpine {
 
 	protected void applyHorizontalImpulse(boolean moveRight, float amt) {
 		if(moveRight)
-			body.applyBodyImpulse(new Vector2(amt, 0f));
+			body.applyImpulse(new Vector2(amt, 0f));
 		else
-			body.applyBodyImpulse(new Vector2(-amt, 0f));
+			body.applyImpulse(new Vector2(-amt, 0f));
 	}
 
 	/*

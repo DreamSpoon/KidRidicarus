@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.game.agentspine.SMB.PlayerSpine;
 
@@ -13,16 +14,20 @@ public class SamusSpine extends PlayerSpine {
 	private static final float MAX_GROUNDMOVE_VEL = 0.85f;
 	private static final float MIN_WALK_VEL = 0.1f;
 	private static final float STOPMOVE_XIMP = 0.15f;
-//	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
-//	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
+	private static final float AIRMOVE_XIMP = GROUNDMOVE_XIMP * 0.7f;
+	private static final float MAX_AIRMOVE_VEL = MAX_GROUNDMOVE_VEL;
+	private static final float JUMPUP_FORCE = 8.33f;
+	private static final float JUMPUP_CONSTVEL = 1f;
 
 	private AgentContactHoldSensor agentSensor;
 	private SolidContactSensor sbSensor;
+	private float jumpStartY;
 
 	public SamusSpine(SamusBody body) {
 		super(body);
 		agentSensor = null;
 		sbSensor = null;
+		jumpStartY = 0;
 	}
 
 	public SolidContactSensor createSolidBodySensor() {
@@ -35,12 +40,16 @@ public class SamusSpine extends PlayerSpine {
 		return agentSensor;
 	}
 
-	/*
-	 * Apply walk impulse and cap horizontal velocity.
-	 */
+	// apply walk impulse and cap horizontal velocity.
 	public void applyWalkMove(boolean moveRight) {
 		applyHorizontalImpulse(moveRight, GROUNDMOVE_XIMP);
 		capHorizontalVelocity(MAX_GROUNDMOVE_VEL);
+	}
+
+	// apply air impulse and cap horizontal velocity.
+	public void applyAirMove(boolean moveRight) {
+		applyHorizontalImpulse(moveRight, AIRMOVE_XIMP);
+		capHorizontalVelocity(MAX_AIRMOVE_VEL);
 	}
 
 	public void applyStopMove() {
@@ -55,20 +64,20 @@ public class SamusSpine extends PlayerSpine {
 			body.setVelocity(0f, body.getVelocity().y);
 	}
 
-/*	public void applyDamageKick(Vector2 position) {
-		// zero the y velocity
-		body.setVelocity(body.getVelocity().x, 0);
-		// apply a kick impulse to the left or right depending on other agent's position
-		if(body.getPosition().x < position.x)
-			body.applyBodyImpulse(DAMAGE_KICK_SIDE_IMP.cpy().scl(-1f));
-		else
-			body.applyBodyImpulse(DAMAGE_KICK_SIDE_IMP);
-
-		// apply kick up impulse if the player is above the other agent
-		if(body.getPosition().y > position.y)
-			body.applyBodyImpulse(DAMAGE_KICK_UP_IMP);
+	public void applyJumpForce(float forceTimer, float jumpForceDuration) {
+		if(forceTimer < jumpForceDuration)
+			body.applyForce(new Vector2(0f, JUMPUP_FORCE * forceTimer / jumpForceDuration));
 	}
-*/
+
+	public void setJumpStartPosition() {
+		jumpStartY = body.getPosition().y;
+	}
+
+	// jumpspin is allowed when body moves at least 2 tiles higher than jump start position 
+	public boolean isJumpSpinAllowed() {
+		return body.getPosition().y > jumpStartY + 2f*UInfo.P2M(UInfo.TILEPIX_Y);
+	}
+
 	public boolean isMapPointSolid(Vector2 position) {
 		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
 		return ctMap == null ? false : ctMap.isMapPointSolid(position); 
@@ -84,6 +93,10 @@ public class SamusSpine extends PlayerSpine {
 
 	public boolean isNoHorizontalVelocity() {
 		return isStandingStill(MIN_WALK_VEL);
+	}
+
+	public void applyJumpVelocity() {
+		body.setVelocity(body.getVelocity().x, JUMPUP_CONSTVEL);
 	}
 }
 

@@ -102,6 +102,7 @@ public class SamusSprite extends Sprite {
 				offset.set(BIG_SPRITE_OFFSET);
 				break;
 			case JUMP:
+			case PRE_JUMPSPIN:
 				if(isFacingUp)
 					setRegion(jumpAimUpAnim.getKeyFrame(stateTimer));
 				else

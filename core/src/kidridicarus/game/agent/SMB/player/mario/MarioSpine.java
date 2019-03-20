@@ -135,7 +135,7 @@ public class MarioSpine extends PlayerSpine {
 		// 
 		mult = 1f + mult * RUNJUMP_MULT;
 
-		body.applyBodyImpulse(new Vector2 (0f, JUMP_IMPULSE * mult));
+		body.applyImpulse(new Vector2 (0f, JUMP_IMPULSE * mult));
 	}
 
 	public void applyJumpForce(float jumpForceTimer) {
@@ -154,7 +154,7 @@ public class MarioSpine extends PlayerSpine {
 
 	public void applyHeadBounceMove() {
 		body.setVelocity(body.getVelocity().x, 0f);
-		body.applyBodyImpulse(new Vector2(0f, HEADBOUNCE_VEL));
+		body.applyImpulse(new Vector2(0f, HEADBOUNCE_VEL));
 	}
 
 	public void applyDuckSlideMove(boolean isDuckSlideRight) {
