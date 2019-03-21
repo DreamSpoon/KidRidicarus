@@ -5,10 +5,16 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import kidridicarus.agency.AgentClassList;
+import kidridicarus.common.agencydirector.AgencyDirector;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameInfo;
+import kidridicarus.game.info.MetroidInfo;
+import kidridicarus.game.info.SMBInfo;
 import kidridicarus.game.screen.PlayScreen;
 
 /*
@@ -18,13 +24,17 @@ import kidridicarus.game.screen.PlayScreen;
 public class MyKidRidicarus extends Game {
 	public SpriteBatch batch;
 	public ShapeRenderer sr;
-
 	public AssetManager manager;
+	public AgencyDirector director;
+
+	private TextureAtlas atlas;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		sr = new ShapeRenderer();
+
+		atlas = new TextureAtlas(GameInfo.TA_MAIN_FILENAME);
 
 		manager = new AssetManager();
 		// other music files may be loaded later when a space is loaded
@@ -51,6 +61,10 @@ public class MyKidRidicarus extends Game {
 		manager.load(AudioInfo.Sound.Metroid.SHOOT, Sound.class);
 		manager.finishLoading();
 
+		director = new AgencyDirector(manager, batch, atlas,
+				new AgentClassList(CommonInfo.CORE_AGENT_CLASS_LIST, SMBInfo.SMB_AGENT_CLASSLIST,
+						MetroidInfo.METROID_AGENT_CLASSLIST), AudioInfo.SOUND_VOLUME);
+
 		// start playing first level 
 		setScreen(new PlayScreen(this, GameInfo.GAMEMAP_FILENAME1, null));
 	}
@@ -60,6 +74,7 @@ public class MyKidRidicarus extends Game {
 		super.dispose();
 		if(getScreen() != null)
 			getScreen().dispose();
+		director.dispose();
 		batch.dispose();
 		sr.dispose();
 		manager.dispose();

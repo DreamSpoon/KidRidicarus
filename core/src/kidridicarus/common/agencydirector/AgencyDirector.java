@@ -29,7 +29,20 @@ import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.game.tool.QQ;
 
 /*
- * Run the agency, insert players into the agency, and take direction from the agency to play sounds, music, etc. 
+ * Run the agency, insert players into the agency, and take direction from the Agency to play sounds, music, etc.
+ * Why is AgencyDirectory necessary and what is the difference between Agency and AgencyDirector?
+ * Basically:
+ *   -AgencyDirector can load resources from files
+ *   -Agency cannot load resources from files
+ * Other concepts flow from this general concept, i.e.
+ *   AgencyDirector can load map files, load sound and music files referenced in the map files, etc., and then
+ *   create Agents that use the resources in these files. AgencyDirector manages resources/files.
+ *   Agency creates and manages Agents.
+ *   Agents do not manage the resources that they need - they only request use of resources.
+ *   i.e. by requesting use of preloaded music/image/resource files at Agent constructor time,
+ *   and releasing use of these resources at Agent disposal time.
+ *   AgencyDirector can alos perform some garbage collection functions, e.g. by unloading level music files
+ *   when a level ends, so that memory usage is minimized.
  */
 public class AgencyDirector implements Disposable {
 	private AssetManager manager;
@@ -132,6 +145,10 @@ public class AgencyDirector implements Disposable {
 
 	public Agency getAgency() {
 		return agency;
+	}
+
+	public void disposeAndRemoveAllAgents() {
+		agency.disposeAndRemoveAllAgents();
 	}
 
 	@Override

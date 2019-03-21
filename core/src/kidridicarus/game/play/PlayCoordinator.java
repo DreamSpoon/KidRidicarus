@@ -26,6 +26,14 @@ import kidridicarus.game.powerup.SMB_Pow;
 import kidridicarus.game.tool.KeyboardMapping;
 import kidridicarus.game.tool.QQ;
 
+/*
+ * Handles:
+ *   -user input
+ *   -camera
+ *   -music changes
+ *   -drawing HUDs
+ *   -returning info about state of play.
+ */
 public class PlayCoordinator implements Disposable {
 	private static final float SPAWN_TRIGGER_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 30);
 	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_X * 15);
@@ -124,10 +132,9 @@ public class PlayCoordinator implements Disposable {
 	}
 
 	public void postUpdateAgency() {
-		if(((GameAgentSupervisor) playAgent.getSupervisor()).isSwitchToOtherChar()) {
-//			agency.startSinglePlayMusic(AudioInfo.Music.Metroid.METROIDITEM);
+		if(((GameAgentSupervisor) playAgent.getSupervisor()).isSwitchToOtherChar())
 			switchAgentType(PowChar.SAMUS);
-		}
+
 		playAgent.getSupervisor().postUpdateAgency();
 		playAgent.getObserver().postUpdateAgency();
 	}

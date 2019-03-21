@@ -91,4 +91,8 @@ public class AllowOrderList {
 			}
 		}
 	}
+
+	public void clear() {
+		listObjects.clear();
+	}
 }

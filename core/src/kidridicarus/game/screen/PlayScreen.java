@@ -4,22 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.agency.AgentClassList;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.MyKidRidicarus;
-import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GameInfo;
-import kidridicarus.game.info.MetroidInfo;
-import kidridicarus.game.info.SMBInfo;
 import kidridicarus.game.play.PlayCoordinator;
 import kidridicarus.game.tool.KeyboardMapping;
 import kidridicarus.game.tool.QQ;
@@ -51,8 +44,6 @@ public class PlayScreen implements Screen {
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
 	private Stage stageHUD;
-	private TextureAtlas atlas;
-	private AgencyDirector director;
 	private PlayCoordinator playCo;
 
 	private boolean useForcedUpdateFramerate;
@@ -69,16 +60,10 @@ public class PlayScreen implements Screen {
 		forcedUpdateFPS = FF_FPS;
 		forcedUpdateFrameTimer = 0f;
 
-		atlas = new TextureAtlas(GameInfo.TA_MAIN_FILENAME);
-
 		gamecam = new OrthographicCamera();
 		gameport = new FitViewport(UInfo.P2M(CommonInfo.V_WIDTH), UInfo.P2M(CommonInfo.V_HEIGHT), gamecam);
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
-
-		director = new AgencyDirector(game.manager, game.batch, atlas,
-				new AgentClassList(CommonInfo.CORE_AGENT_CLASS_LIST, SMBInfo.SMB_AGENT_CLASSLIST,
-						MetroidInfo.METROID_AGENT_CLASSLIST), AudioInfo.SOUND_VOLUME);
 
 		stageHUD = new Stage(new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera()),
 				game.batch);
@@ -86,15 +71,15 @@ public class PlayScreen implements Screen {
 		b2dr = new Box2DDebugRenderer();
 
 		// load the game map
-		director.createMapAgent(levelFilename);
+		game.director.createMapAgent(levelFilename);
 		// run one update to let the map create the collision map and draw layer agents
-		director.update(1f/60f);
+		game.director.update(1f/60f);
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
-		director.update(1f/60f);
+		game.director.update(1f/60f);
 
 		// create play coordinator and insert the player
-		playCo = new PlayCoordinator(director.getAgency(), game.manager, stageHUD);
-		playCo.setPlayAgent(director.createInitialPlayerAgent(playerAgentProperties));
+		playCo = new PlayCoordinator(game.director.getAgency(), game.manager, stageHUD);
+		playCo.setPlayAgent(game.director.createInitialPlayerAgent(playerAgentProperties));
 	}
 
 	@Override
@@ -120,7 +105,7 @@ public class PlayScreen implements Screen {
 		// pre-update stuff like scripts, and user input
 		playCo.preUpdateAgency(newDelta);
 		// update the game world
-		director.update(newDelta);
+		game.director.update(newDelta);
 		// post-update stuff like camera changes
 		playCo.postUpdateAgency();
 	}
@@ -179,23 +164,25 @@ public class PlayScreen implements Screen {
 		playCo.updateCamera(gamecam);
 
 		// draw screen
-		director.draw(gamecam);
+		game.director.draw(gamecam);
 
 		// DEBUG: draw outlines of Box2D fixtures
 		if(QQ.isOn())
-			b2dr.render(director.getAgency().getWorld(), gamecam.combined);
+			b2dr.render(game.director.getAgency().getWorld(), gamecam.combined);
 
 		// draw HUD last
 		playCo.postRenderFrame();
 
 		// change to next level?
 		if(playCo.isGameWon()) {
+			game.director.disposeAndRemoveAllAgents();
 			game.setScreen(new LevelTransitScreen(game, playCo.getNextLevelFilename(),
 					playCo.getCopyPlayerAgentProperties()));
 			dispose();
 		}
 		// change to game over screen?
 		else if(playCo.isGameOver()) {
+			game.director.disposeAndRemoveAllAgents();
 			game.setScreen(new GameOverScreen(game, false, currentLevelFilename));
 			dispose();
 		}
@@ -226,7 +213,6 @@ public class PlayScreen implements Screen {
 	public void dispose() {
 		playCo.dispose();
 		stageHUD.dispose();
-		director.dispose();
 		b2dr.dispose();
 	}
 }

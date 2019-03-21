@@ -49,14 +49,15 @@ public class MaruMari extends Agent implements DisposableAgent {
 		PowerupTakeAgent taker = body.getSpine().getTouchingPowerupTaker();
 		if(taker == null)
 			return;
-		// if taker takes the powerup then this fireflower is kaput!
 		if(taker.onTakePowerup(new MetroidPow.MaruMariPow()))
 			isPowerupUsed = true;
 	}
 
 	private void doUpdate(float delta) {
-		if(isPowerupUsed)
+		if(isPowerupUsed) {
+//			agency.startSinglePlayMusic(AudioInfo.Music.Metroid.METROIDITEM);
 			agency.disposeAgent(this);
+		}
 
 		sprite.update(delta, body.getPosition());
 	}

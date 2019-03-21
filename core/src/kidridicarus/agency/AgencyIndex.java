@@ -227,11 +227,15 @@ public class AgencyIndex {
 		orderedDrawListeners.iterateList(doli);
 	}
 
-	public void iterateThroughDisposableAgents(AgentIter agentIter) {
-		for(DisposableAgent agent : disposeAgents) {
-			// call the method passed to this method by way of agent iter, stopping iteration if returns true
-			if(agentIter.iterate((Agent) agent))
-				break;
-		}
+	public void disposeAndRemoveAllAgents() {
+		for(DisposableAgent agent : disposeAgents)
+			agent.disposeAgent();
+		// clear agent and agent related lists, reseting this object back to constructor finish state
+		allAgents.clear();
+		orderedUpdateListeners.clear();
+		allUpdateListeners.clear();
+		orderedDrawListeners.clear();
+		allDrawListeners.clear();
+		disposeAgents.clear();
 	}
 }

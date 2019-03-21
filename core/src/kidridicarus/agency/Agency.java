@@ -12,20 +12,19 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.agencychange.AgencyChangeQueue;
+import kidridicarus.agency.agencychange.AgencyChangeQueue.AgencyChangeCallback;
 import kidridicarus.agency.agencychange.AgentPlaceholder;
 import kidridicarus.agency.agencychange.AllAgentListChange;
 import kidridicarus.agency.agencychange.DrawListenerChange;
 import kidridicarus.agency.agencychange.UpdateListenerChange;
-import kidridicarus.agency.agencychange.AgencyChangeQueue.AgencyChangeCallback;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.AllowOrder;
+import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.ObjectProperties;
 
 /*
@@ -278,28 +277,25 @@ public class Agency implements Disposable {
 	}
 
 	/*
-	 * How much time has passed since this agency was constructed?
+	 * How much time has passed since this Agency was constructed?
 	 */
 	public float getGlobalTimer() {
 		return globalTimer;
 	}
 
-	@Override
-	public void dispose() {
-		disposeAllAgents();
-		world.dispose();
+	/*
+	 * Dispose and remove all Agents but do not dispose Agency.
+	 */
+	public void disposeAndRemoveAllAgents() {
+		agencyIndex.disposeAndRemoveAllAgents();
 	}
 
 	/*
-	 * Call dispose method of each agent in the all agents list.
+	 * Dispose and remove all Agents and dispose Agency.
 	 */
-	private void disposeAllAgents() {
-		agencyIndex.iterateThroughDisposableAgents(new AgentIter() {
-			@Override
-			public boolean iterate(Agent agent) {
-				((DisposableAgent) agent).disposeAgent();
-				return false;
-			}
-		});
+	@Override
+	public void dispose() {
+		disposeAndRemoveAllAgents();
+		world.dispose();
 	}
 }
