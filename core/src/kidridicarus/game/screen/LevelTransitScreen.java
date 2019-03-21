@@ -57,6 +57,7 @@ public class LevelTransitScreen implements Screen {
 
 	private class MyLittleInPr implements InputProcessor {
 		private boolean a() { return didAnythingHappen = true; }
+		// return true for all the following to relay that the event was handled
 		@Override
 		public boolean keyDown(int keycode) { return a(); }
 		@Override

@@ -39,11 +39,11 @@ public class CollisionTiledMapAgent extends Agent implements Disposable {
 		//   -it will process these requests in batch format during post-update
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(delta); }
+				public void update(float delta) { doUpdate(); }
 			});
 	}
 
-	private void doUpdate(float delta) {
+	private void doUpdate() {
 		// process change q
 		while(!tileChangeQ.isEmpty())
 			doChange(tileChangeQ.poll());

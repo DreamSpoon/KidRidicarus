@@ -41,9 +41,7 @@ public class ObjectProperties {
 	}
 
 	public boolean containsKV(String key, Object val) {
-		if(properties.containsKey(key) && (val == null || properties.get(key).equals(val)))
-			return true;
-		return false;
+		return properties.containsKey(key) && (val == null || properties.get(key).equals(val));
 	}
 
 	public boolean containsAllKV(String[] keys, Object[] vals) {

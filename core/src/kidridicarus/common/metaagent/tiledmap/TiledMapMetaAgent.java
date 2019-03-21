@@ -46,9 +46,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
-					doUpdate(delta);
-				}
+				public void update(float delta) { doUpdate(); }
 			});
 		otherSpawnDone = false;
 	}
@@ -101,7 +99,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	 * So there was previously no solid stuff for the initial spawn agents to land on, so they needed to be
 	 * spawned later.
 	 */
-	private void doUpdate(float delta) {
+	private void doUpdate() {
 		if(!otherSpawnDone) {
 			otherSpawnDone = true;
 			// create the other agents (typically spawn boxes, rooms, player start, etc.)

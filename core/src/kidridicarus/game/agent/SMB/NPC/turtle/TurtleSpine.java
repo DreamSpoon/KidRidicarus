@@ -38,10 +38,7 @@ public class TurtleSpine extends SMB_NPC_Spine {
 	}
 
 	public boolean isDeadBumpOnRight(Vector2 position) {
-		if(position.x > body.getPosition().x)
-			return true;
-		else
-			return false;
+		return position.x > body.getPosition().x;
 	}
 
 	public boolean isOtherAgentOnRight(Agent other) {

@@ -25,7 +25,6 @@ import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
-import kidridicarus.common.tool.DrawOrderAlias;
 import kidridicarus.game.tool.QQ;
 
 /*
@@ -42,8 +41,8 @@ public class AgencyDirector implements Disposable {
 	/*
 	 * The soundVolume paramater is a hack, TODO put it in a better place
 	 */
-	public AgencyDirector(AssetManager manager, Batch batch, TextureAtlas atlas, DrawOrderAlias[] drawOrderAliasList,
-			AgentClassList additionalAgents, float soundVolume) {
+	public AgencyDirector(AssetManager manager, Batch batch, TextureAtlas atlas, AgentClassList additionalAgents,
+			float soundVolume) {
 		this.manager = manager;
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(null, UInfo.P2M(1f), batch);
 		adBatch = new AgencyDrawBatch(batch, tiledMapRenderer);

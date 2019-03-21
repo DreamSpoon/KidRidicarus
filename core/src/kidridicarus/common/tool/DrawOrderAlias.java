@@ -3,8 +3,8 @@ package kidridicarus.common.tool;
 import kidridicarus.agency.tool.AllowOrder;
 
 public class DrawOrderAlias {
-	public String alias;
-	public AllowOrder drawOrder;
+	private String alias;
+	private AllowOrder drawOrder;
 
 	public DrawOrderAlias(String alias, AllowOrder drawOrder) {
 		this.alias = alias;

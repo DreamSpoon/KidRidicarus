@@ -47,7 +47,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 
 	private static final float STEP_SOUND_TIME = 0.167f;
 	private static final float POSTPONE_RUN_DELAY = 0.15f;
-	private static final float JUMPUP_CONSTVEL_TIME = 0.2f;
+	private static final float JUMPUP_CONSTVEL_TIME = 0.017f;
 	private static final float JUMPUP_FORCE_TIME = 0.75f;
 	private static final float JUMPSHOOT_RESPIN_DELAY = 0.05f;
 	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
@@ -304,7 +304,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		}
 		else if(moveState == MoveState.PRE_JUMPSPIN) {
 			// is change to jumpspin allowed?
-			if(body.getSpine().isJumpSpinAllowed()) {
+			if(moveStateTimer > JUMPUP_CONSTVEL_TIME) {
 				// if shooting then enter jumpspin with shoot
 				if(moveAdvice.action0)
 					return MoveState.JUMPSPINSHOOT;
@@ -315,6 +315,12 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			// continue pre-jumpspin
 			else
 				return MoveState.PRE_JUMPSPIN;
+		}
+		else if(moveState == MoveState.PRE_JUMP) {
+			if(moveStateTimer > JUMPUP_CONSTVEL_TIME)
+				return MoveState.JUMP;
+			else
+				return MoveState.PRE_JUMP;
 		}
 		else
 			return MoveState.JUMP;
@@ -415,10 +421,10 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 					if(moveAdvice.action1 && isNextJumpAllowed) {
 						isNextJumpAllowed = false;
 						jumpForceTimer = JUMPUP_CONSTVEL_TIME+JUMPUP_FORCE_TIME;
-						body.getSpine().applyJumpVelocity();
 						agency.playSound(AudioInfo.Sound.Metroid.JUMP);
 					}
 				}
+				body.getSpine().applyJumpVelocity();
 				break;
 			case JUMP:
 			case JUMPSPIN:

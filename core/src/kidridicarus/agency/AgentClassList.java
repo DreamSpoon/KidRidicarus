@@ -49,7 +49,7 @@ public class AgentClassList {
 	private void createFromPairArgs(Object[] args) {
 		// Check for correct number of args here? Or allow the wrong number of args so long as the args that
 		// are passed are the correct type? be harsh, and quit if the args count is not divisible by 2.
-		if((int) ((int) args.length / 2) * 2 != args.length)
+		if(Math.floorMod(args.length, 2) != 0)
 			return;
 
 		// iterate through the method arguments as pairs of arguments: { String, Class } 
@@ -76,11 +76,10 @@ public class AgentClassList {
 	 * of testClass equals Agent.Class .
 	 */
 	private boolean isSuperAgent(Class<?> testClass) {
-		Class<?> sup = (Class<?>) testClass;
-		while(sup != null && !sup.equals(Object.class)) {
-			if(sup.equals(Agent.class))
+		while(testClass != null && !testClass.equals(Object.class)) {
+			if(testClass.equals(Agent.class))
 				return true;
-			sup = sup.getSuperclass();
+			testClass = testClass.getSuperclass();
 		}
 		return false;
 	}
@@ -108,6 +107,6 @@ public class AgentClassList {
 	 * Return the Class object associated with the given key.
 	 */
 	public Class<?> get(String key) {
-		return (Class<?>) classIndex.get(key);
+		return classIndex.get(key);
 	}
 }

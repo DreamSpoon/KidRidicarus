@@ -12,7 +12,7 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.game.info.PowerupInfo.PowType;
+import kidridicarus.game.powerup.MetroidPow;
 
 public class MaruMari extends Agent implements DisposableAgent {
 	private MaruMariBody body;
@@ -50,7 +50,7 @@ public class MaruMari extends Agent implements DisposableAgent {
 		if(taker == null)
 			return;
 		// if taker takes the powerup then this fireflower is kaput!
-		if(taker.onTakePowerup(PowType.MARUMARI))
+		if(taker.onTakePowerup(new MetroidPow.MaruMariPow()))
 			isPowerupUsed = true;
 	}
 

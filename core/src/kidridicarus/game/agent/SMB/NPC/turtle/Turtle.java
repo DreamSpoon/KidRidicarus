@@ -13,12 +13,10 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.SMBInfo.PointAmount;
 
 /*
  * TODO:
@@ -176,8 +174,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				break;
 			case HIDE:
 				if(moveStateChanged) {
-					agency.createAgent(FloatingPoints.makeAP(PointAmount.P100, true,
-							body.getPosition(), UInfo.P2M(16), perp));
+					agency.createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
 					body.zeroVelocity(true, true);
 					agency.playSound(AudioInfo.Sound.SMB.STOMP);
 				}
@@ -192,8 +189,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 					else if(!isFacingRight && !body.getSpine().isOtherAgentOnRight(perp))
 						isFacingRight = true;
 					agency.playSound(AudioInfo.Sound.SMB.KICK);
-					agency.createAgent(FloatingPoints.makeAP(PointAmount.P400, true,
-							body.getPosition(), UInfo.P2M(16), perp));
+					agency.createAgent(FloatingPoints.makeAP(400, true, body.getPosition(), perp));
 				}
 				body.getSpine().doSlideMove(isFacingRight);
 				break;
@@ -201,8 +197,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				// newly deceased?
 				if(moveStateChanged) {
 					doStartDeath();
-					agency.createAgent(FloatingPoints.makeAP(PointAmount.P500, true,
-							body.getPosition(), UInfo.P2M(16), perp));
+					agency.createAgent(FloatingPoints.makeAP(500, true, body.getPosition(), perp));
 				}
 				// check the old deceased for timeout or despawn touch
 				else if(moveStateTimer > DIE_FALL_TIME || body.getSpine().isContactDespawn())
@@ -253,7 +248,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 
 	private void doStartDeath() {
 		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
-		agency.createAgent(FloatingPoints.makeAP(PointAmount.P500, false, body.getPosition(), UInfo.P2M(16), perp));
+		agency.createAgent(FloatingPoints.makeAP(500, false, body.getPosition(), perp));
 	}
 
 	private void processSprite(float delta) {

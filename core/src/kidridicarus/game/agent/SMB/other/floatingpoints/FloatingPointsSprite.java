@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.SMBAnim;
-import kidridicarus.game.info.SMBInfo.PointAmount;
 
 public class FloatingPointsSprite extends Sprite {
 	private static final float DIGIT_W = UInfo.P2M(4);
@@ -22,13 +21,12 @@ public class FloatingPointsSprite extends Sprite {
 	private Sprite sprite1UP;
 	private boolean is1UP;
 
-	public FloatingPointsSprite(TextureAtlas atlas, Vector2 position, PointAmount amount) {
+	public FloatingPointsSprite(TextureAtlas atlas, Vector2 position, int amount, boolean is1Up) {
 		this.position = position;
-		
-		if(amount == PointAmount.P1UP) {
+		if(is1Up) {
 			sprite1UP = new Sprite(atlas.findRegion(SMBAnim.General.UP1DIGITS));
 			sprite1UP.setBounds(sprite1UP.getX(), sprite1UP.getY(), DIGIT_W*4, DIGIT_H);
-			is1UP = true;
+			this.is1UP = true;
 			return;
 		}
 
@@ -45,11 +43,11 @@ public class FloatingPointsSprite extends Sprite {
 
 		// allocate arrays for drawing point digits, set up draw offsets, and prefill trailing zero digits
 		switch(amount) {
-			case P100:
-			case P200:
-			case P400:
-			case P500:
-			case P800:
+			case 100:
+			case 200:
+			case 400:
+			case 500:
+			case 800:
 				drawOffsets = new Vector2[3];
 				drawOffsets[0] = new Vector2(-DIGIT_W, 0f);
 				drawOffsets[1] = new Vector2(0f, 0f);
@@ -58,11 +56,11 @@ public class FloatingPointsSprite extends Sprite {
 				drawDigits[1] = PDigit.DIGIT_0;
 				drawDigits[2] = PDigit.DIGIT_0;
 				break;
-			case P1000:
-			case P2000:
-			case P4000:
-			case P5000:
-			case P8000:
+			case 1000:
+			case 2000:
+			case 4000:
+			case 5000:
+			case 8000:
 				drawOffsets = new Vector2[4];
 				drawOffsets[0] = new Vector2(-1.5f * DIGIT_W, 0f);
 				drawOffsets[1] = new Vector2(-0.5f * DIGIT_W, 0f);
@@ -78,24 +76,24 @@ public class FloatingPointsSprite extends Sprite {
 		}
 		// insert first digit of score, the trailing zeroes have been prefilled
 		switch(amount) {
-			case P100:
-			case P1000:
+			case 100:
+			case 1000:
 				drawDigits[0] = PDigit.DIGIT_1;
 				break;
-			case P200:
-			case P2000:
+			case 200:
+			case 2000:
 				drawDigits[0] = PDigit.DIGIT_2;
 				break;
-			case P400:
-			case P4000:
+			case 400:
+			case 4000:
 				drawDigits[0] = PDigit.DIGIT_4;
 				break;
-			case P500:
-			case P5000:
+			case 500:
+			case 5000:
 				drawDigits[0] = PDigit.DIGIT_5;
 				break;
-			case P800:
-			case P8000:
+			case 800:
+			case 8000:
 				drawDigits[0] = PDigit.DIGIT_8;
 				break;
 			default:

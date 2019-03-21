@@ -14,8 +14,7 @@ import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.info.PowerupInfo.PowType;
-import kidridicarus.game.info.SMBInfo.PointAmount;
+import kidridicarus.game.powerup.SMB_Pow;
 
 public class FireFlower extends Agent implements DisposableAgent {
 	private static final float SPROUT_TIME = 1f;
@@ -71,7 +70,7 @@ public class FireFlower extends Agent implements DisposableAgent {
 		if(taker == null)
 			return;
 		// if powerup is taken then set used flag
-		if(taker.onTakePowerup(PowType.FIREFLOWER)) {
+		if(taker.onTakePowerup(new SMB_Pow.FireFlowerPow())) {
 			powerupTaker = (Agent) taker;
 			isPowerupUsed = true;
 		}
@@ -102,8 +101,7 @@ public class FireFlower extends Agent implements DisposableAgent {
 				}
 				break;
 			case END:
-				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, true,
-						body.getPosition(), UInfo.P2M(16), powerupTaker));
+				agency.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(), powerupTaker));
 				// powerup used, so dispose this agent
 				agency.disposeAgent(this);
 				break;

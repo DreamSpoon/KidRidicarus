@@ -1,7 +1,7 @@
 package kidridicarus.common.agent.optional;
 
-import kidridicarus.game.info.PowerupInfo.PowType;
+import kidridicarus.common.powerup.Powerup;
 
 public interface PowerupTakeAgent {
-	public abstract boolean onTakePowerup(PowType powType);
+	public abstract boolean onTakePowerup(Powerup pu);
 }

@@ -190,8 +190,8 @@ public class MarioSprite extends Sprite {
 		boolean spriteStateChanged = nextSpriteState != spriteState;
 		switch(nextSpriteState) {
 			case NORMAL:
-				processPowerState(delta, position, parentMoveState, parentPowerState, facingRight,
-						didShootFireball, isBlinking, isStarPowered, moveDir);
+				processPowerState(delta, position, parentMoveState, parentPowerState, didShootFireball, isBlinking,
+						isStarPowered, moveDir);
 				break;
 			case GROW:
 				if(spriteStateChanged)
@@ -246,7 +246,7 @@ public class MarioSprite extends Sprite {
 	}
 
 	private void processPowerState(float delta, Vector2 position, MoveState parentMoveState,
-			PowerState parentPowerState, boolean facingRight, boolean didShootFireball, boolean isBlinking,
+			PowerState parentPowerState, boolean didShootFireball, boolean isBlinking,
 			boolean isStarPowered, Direction4 moveDir) {
 		int group = SML_REG_GRP;
 
@@ -270,7 +270,7 @@ public class MarioSprite extends Sprite {
 		}
 
 		// choose correct size anim category
-		Animation<TextureRegion>[][] sizeAnim = smlAnim;
+		Animation<TextureRegion>[][] sizeAnim;
 		if(parentPowerState.isBigBody() && !parentMoveState.isDead())
 			sizeAnim = bigAnim;
 		else

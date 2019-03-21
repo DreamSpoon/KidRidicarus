@@ -13,7 +13,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.PowerupInfo.PowType;
+import kidridicarus.game.powerup.SMB_Pow;
 
 public class StaticCoin extends Agent implements DisposableAgent {
 	private StaticCoinBody body;
@@ -32,7 +32,7 @@ public class StaticCoin extends Agent implements DisposableAgent {
 		});
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(delta); }
+				public void update(float delta) { doUpdate(); }
 			});
 		sprite = new StaticCoinSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
@@ -51,11 +51,11 @@ public class StaticCoin extends Agent implements DisposableAgent {
 		if(taker == null)
 			return;
 		// if powerup is taken then set used flag
-		if(taker.onTakePowerup(PowType.COIN))
+		if(taker.onTakePowerup(new SMB_Pow.CoinPow()))
 			isPowerupUsed = true;
 	}
 
-	private void doUpdate(float delta) {
+	private void doUpdate() {
 		if(isPowerupUsed) {
 			agency.playSound(AudioInfo.Sound.SMB.COIN);
 			agency.disposeAgent(this);

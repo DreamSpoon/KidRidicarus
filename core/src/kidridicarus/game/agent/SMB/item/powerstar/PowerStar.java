@@ -15,8 +15,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.info.PowerupInfo.PowType;
-import kidridicarus.game.info.SMBInfo.PointAmount;
+import kidridicarus.game.powerup.SMB_Pow;
 
 /*
  * TODO:
@@ -79,7 +78,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 		if(taker == null)
 			return;
 		// if taker takes the powerup then this powerup is done
-		if(taker.onTakePowerup(PowType.POWERSTAR)) {
+		if(taker.onTakePowerup(new SMB_Pow.PowerStarPow())) {
 			isPowerupUsed = true;
 			powerupTaker = (Agent) taker;
 		}
@@ -128,8 +127,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 			case SPROUT:
 				break;
 			case END:
-				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, true,
-						body.getPosition(), UInfo.P2M(16), powerupTaker));
+				agency.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(), powerupTaker));
 				// powerup used, so dispose this agent
 				agency.disposeAgent(this);
 				break;

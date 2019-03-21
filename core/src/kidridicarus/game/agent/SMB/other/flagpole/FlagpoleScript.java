@@ -8,7 +8,6 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
-import kidridicarus.game.tool.QQ;
 
 /*
  * SMB end of level flagpole script.
@@ -76,7 +75,6 @@ public class FlagpoleScript implements AgentScript {
 				if(scriptStateChanged) {
 					slideDuration = stateTimer;
 					scriptedState.scriptedSpriteState.moveDir = Direction4.NONE;
-QQ.pr("sprite move dir = NONE");
 				}
 				break;
 			case SLIDE_FLIPRIGHT:
@@ -191,8 +189,6 @@ QQ.pr("sprite move dir = NONE");
 	@Override
 	public boolean isOverridable(AgentScript nextScript) {
 		// override allowed if script is in final states
-		if(curScriptState == ScriptState.MOVERIGHT || curScriptState == ScriptState.COMPLETE)
-			return true;
-		return false;
+		return curScriptState == ScriptState.MOVERIGHT || curScriptState == ScriptState.COMPLETE;
 	}
 }

@@ -76,7 +76,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 
 	private void doContactUpdate() {
 		for(ContactDmgTakeAgent agent : body.getSpine().getContactDmgTakeAgents())
-			((ContactDmgTakeAgent) agent).onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
+			agent.onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
 	}
 
 	private void doUpdate(float delta) {

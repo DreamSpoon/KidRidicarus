@@ -90,7 +90,7 @@ public class PlayerSpine extends OnGroundSpine {
 	/*
 	 * Ensure horizontal velocity is within -max to +max.
 	 */
-	protected void capHorizontalVelocity(float max) {
+	private void capHorizontalVelocity(float max) {
 		if(body.getVelocity().x > max)
 			body.setVelocity(max, body.getVelocity().y);
 		else if(body.getVelocity().x < -max)
@@ -142,18 +142,16 @@ public class PlayerSpine extends OnGroundSpine {
 			return null;
 		for(PipeWarp pw : pipeWarpSensor.getContactsByClass(PipeWarp.class)) {
 			if(pw.canBodyEnterPipe(body.getBounds(), moveDir))
-				return (PipeWarp) pw;
+				return pw;
 		}
 		return null;
 	}
 
 	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {
 		// check bounds
-		Rectangle myBounds = body.getBounds();
 		Vector2 myPrevPosition = ((MarioBody) body).getPrevPosition();
 		float otherCenterY = otherBounds.y+otherBounds.height/2f;
-		if(myBounds.y >= otherCenterY || myPrevPosition.y-myBounds.height/2f >= otherCenterY)
-			return true;
-		return false;
+		return body.getBounds().y >= otherCenterY ||
+				myPrevPosition.y-body.getBounds().height/2f >= otherCenterY;
 	}
 }

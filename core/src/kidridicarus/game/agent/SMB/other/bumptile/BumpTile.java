@@ -20,15 +20,14 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
-import kidridicarus.common.tool.Powerups;
+import kidridicarus.common.powerup.Powerup;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.brickpiece.BrickPiece;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
-import kidridicarus.game.info.PowerupInfo.PowType;
-import kidridicarus.game.info.SMBInfo.PointAmount;
+import kidridicarus.game.powerup.SMB_Pow;
 
 public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgent {
 	public enum TileBumpStrength { NONE, SOFT, HARD }
@@ -120,12 +119,12 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case PRESOLID:
-				// check for first contact with collision map every frame until found
+				// Check for first contact with collision map every frame until found,
+				// make the tile solid in the tile physics layer if it is not a secret block. 
 				collisionMap = body.getSpine().getCollisionMap();
-				if(collisionMap != null) {
-					// make the tile solid in the tile physics layer if it is not a secret block 
-					if(!properties.containsKV(GameKV.SMB.KEY_SECRETBLOCK, CommonKV.VAL_TRUE))
-						collisionMap.setTileSolidStateAtPos(body.getPosition(), true);
+				if(collisionMap != null &&
+						!properties.containsKV(GameKV.SMB.KEY_SECRETBLOCK, CommonKV.VAL_TRUE)) {
+					collisionMap.setTileSolidStateAtPos(body.getPosition(), true);
 				}
 				break;
 			case PREBUMP:
@@ -300,20 +299,19 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 		agency.playSound(AudioInfo.Sound.SMB.BREAK);
 		agency.disposeAgent(this);
 
-		Powerups.tryPushPowerup(bumpingAgent, PowType.POINTS100);
+		Powerup.tryPushPowerup(bumpingAgent, new SMB_Pow.PointsPow(100));
 	}
 
 	private void startSpinningCoin() {
 		agency.playSound(AudioInfo.Sound.SMB.COIN);
-		agency.createAgent(FloatingPoints.makeAP(PointAmount.P200, false, body.getPosition(),
-				UInfo.P2M(UInfo.TILEPIX_Y * 2f), bumpingAgent));
+		agency.createAgent(FloatingPoints.makeAP(200, false, body.getPosition(), bumpingAgent));
 
 		// spawn a coin one tile's height above the current tile position
 		agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_SPINCOIN,
 				body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y))));
 
 		// push coin powerup to powerup take agent if we have one
-		Powerups.tryPushPowerup(bumpingAgent, PowType.COIN);
+		Powerup.tryPushPowerup(bumpingAgent, new SMB_Pow.CoinPow());
 	}
 
 	private void processSprite(float delta) {

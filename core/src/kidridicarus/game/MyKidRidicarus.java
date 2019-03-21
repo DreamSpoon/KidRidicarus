@@ -59,11 +59,6 @@ public class MyKidRidicarus extends Game {
 		setScreen(new PlayScreen(this, 0));
 	}
 
-	@Override
-	public void render () {
-		super.render();
-	}
-
 	public String getLevelFilename(int level) {
 		if(level < 0 || level >= levelFilenames.length)
 			return "";

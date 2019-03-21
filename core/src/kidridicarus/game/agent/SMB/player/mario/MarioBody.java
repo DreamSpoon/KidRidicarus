@@ -126,6 +126,7 @@ public class MarioBody extends PlayerAgentBody {
 				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(getBodySize().x/2f, 0f));
 	}
 
+	@Override
 	public void applyImpulse (Vector2 impulse) {
 		b2body.applyLinearImpulse(impulse, b2body.getWorldCenter(), true);
 	}

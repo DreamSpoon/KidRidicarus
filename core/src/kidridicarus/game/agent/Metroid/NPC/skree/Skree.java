@@ -74,7 +74,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	// apply damage to all contacting agents
 	private void doContactUpdate() {
 		for(ContactDmgTakeAgent agent : body.getSpine().getContactDmgTakeAgents())
-			((ContactDmgTakeAgent) agent).onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
+			agent.onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
 	}
 
 	private void doUpdate(float delta) {

@@ -22,6 +22,7 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
@@ -30,7 +31,7 @@ import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.agent.SMB.player.mariofireball.MarioFireball;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
-import kidridicarus.game.info.PowerupInfo.PowType;
+import kidridicarus.game.powerup.SMB_Pow;
 
 public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
 		PowerupTakeAgent, DisposableAgent {
@@ -81,7 +82,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private boolean didShootFireballThisFrame;
 	private boolean gaveHeadBounce;
 	// list of powerups received during contact update
-	private LinkedList<PowType> powerupsReceived;
+	private LinkedList<Powerup> powerupsReceived;
 	private boolean didTakeDamage;
 	private boolean isDeadBounce;
 	private float noDamageCooldown;
@@ -104,7 +105,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		shootCooldown = 0f;
 		didShootFireballThisFrame = false;
 		gaveHeadBounce = false;
-		powerupsReceived = new LinkedList<PowType>();
+		powerupsReceived = new LinkedList<Powerup>();
 		didTakeDamage = false;
 		noDamageCooldown = 0f;
 		lastHorizontalMoveDir = Direction4.NONE;
@@ -250,47 +251,45 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	}
 
 	private void processPowerupsReceived() {
-		for(PowType pow : powerupsReceived)
-			applyPowerup(pow);
+		for(Powerup pu : powerupsReceived)
+			applyPowerup(pu);
 		powerupsReceived.clear();
 	}
 
-	private void applyPowerup(PowType pow) {
+	private void applyPowerup(Powerup pu) {
 		PowerState newPowerState = powerState;
-		switch(pow) {
-			case MUSHROOM:
-				// if small then power up to big
-				if(powerState == PowerState.SMALL)
-					newPowerState = PowerState.BIG;
-
-				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
-				break;
-			case FIREFLOWER:
-				// if small then power up to big
-				if(powerState == PowerState.SMALL)
-					newPowerState = PowerState.BIG;
-				// if big then power up to fire
-				else if(powerState == PowerState.BIG)
-					newPowerState = PowerState.FIRE;
-
-				agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
-				break;
-			case POWERSTAR:
-				starPowerCooldown = POWERSTAR_MAXTIME;
-				break;
-			case COIN:
-				int coinTotal = properties.get(GameKV.SMB.KEY_COINAMOUNT, 0, Integer.class);
-				coinTotal += 1;
-				properties.put(GameKV.SMB.KEY_COINAMOUNT, coinTotal);
-				break;
-			case POINTS100:
-				int pointsTotal = properties.get(GameKV.SMB.KEY_POINTAMOUNT, 0, Integer.class);
-				pointsTotal += 100;
-				properties.put(GameKV.SMB.KEY_POINTAMOUNT, pointsTotal);
-				break;
-			default:
-				break;
+		if(pu instanceof SMB_Pow.MushroomPow) {
+			// if small then power up to big
+			if(powerState == PowerState.SMALL)
+				newPowerState = PowerState.BIG;
+			agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 		}
+		else if(pu instanceof SMB_Pow.FireFlowerPow) {
+			// if small then power up to big
+			if(powerState == PowerState.SMALL)
+				newPowerState = PowerState.BIG;
+			// if big then power up to fire
+			else if(powerState == PowerState.BIG)
+				newPowerState = PowerState.FIRE;
+			agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+		}
+		else if(pu instanceof SMB_Pow.Mush1UpPow) {
+			// TODO apply 1-UP mushroom
+		}
+		else if(pu instanceof SMB_Pow.PowerStarPow) {
+			starPowerCooldown = POWERSTAR_MAXTIME;
+		}
+		else if(pu instanceof SMB_Pow.CoinPow) {
+			int coinTotal = properties.get(GameKV.SMB.KEY_COINAMOUNT, 0, Integer.class);
+			coinTotal += 1;
+			properties.put(GameKV.SMB.KEY_COINAMOUNT, coinTotal);
+		}
+		else if(pu instanceof SMB_Pow.PointsPow) {
+			int pointsTotal = properties.get(GameKV.SMB.KEY_POINTAMOUNT, 0, Integer.class);
+			pointsTotal += 100;
+			properties.put(GameKV.SMB.KEY_POINTAMOUNT, pointsTotal);
+		}
+
 		// if growing then increase body size
 		if(newPowerState.isBigBody() && !powerState.isBigBody())
 			body.defineBody(body.getPosition().cpy().add(GROW_OFFSET), body.getVelocity(), true, false);
@@ -477,13 +476,12 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			return getNextMoveStateGround(moveAdvice);
 		// do air move
 		else
-			return getNextMoveStateAir(moveAdvice);
+			return getNextMoveStateAir();
 	}
 
 	private boolean isFireBallAllowed() {
-		if(fireballJuice <= 0f || powerState != PowerState.FIRE || shootCooldown > 0f || moveState.isDuckNoSlide())
-			return false;
-		return true;
+		return !(fireballJuice <= 0f || powerState != PowerState.FIRE || shootCooldown > 0f ||
+				moveState.isDuckNoSlide());
 	}
 
 	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
@@ -543,7 +541,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			return MoveState.RUN;
 	}
 
-	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {
+	private MoveState getNextMoveStateAir() {
 		// if in jump state then continue jump state
 		if(moveState.isJump())
 			return moveState;
@@ -622,10 +620,10 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	}
 
 	@Override
-	public boolean onTakePowerup(PowType powType) {
+	public boolean onTakePowerup(Powerup pu) {
 		if(moveState == MoveState.DEAD)
 			return false;
-		powerupsReceived.add(powType);
+		powerupsReceived.add(pu);
 		return true;
 	}
 

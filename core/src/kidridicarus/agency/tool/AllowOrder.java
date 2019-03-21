@@ -17,8 +17,10 @@ public class AllowOrder implements Comparable<AllowOrder> {
 
 	@Override
 	public boolean equals(Object other) {
+		if(other == null)
+			return false;
 		// if both are not allowed then order does not matter
-		if(!this.allow && !((AllowOrder) other).allow)
+		else if(!this.allow && !((AllowOrder) other).allow)
 			return true;
 		// check allow state and order state
 		return (other instanceof AllowOrder && this.allow == ((AllowOrder) other).allow &&

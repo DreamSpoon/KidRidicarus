@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.powerup.Powerup;
 import kidridicarus.game.info.SMBAnim;
-import kidridicarus.game.info.PowerupInfo.PowType;
+import kidridicarus.game.powerup.SMB_Pow;
 
 public class PowerMushroom extends BaseMushroom {
 	public PowerMushroom(Agency agency, ObjectProperties properties) {
@@ -19,7 +20,7 @@ public class PowerMushroom extends BaseMushroom {
 	}
 
 	@Override
-	protected PowType getMushroomPowerup() {
-		return PowType.MUSHROOM;
+	protected Powerup getMushroomPowerup() {
+		return new SMB_Pow.MushroomPow();
 	}
 }

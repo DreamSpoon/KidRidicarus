@@ -75,10 +75,9 @@ public class PlayScreen implements Screen {
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
-		director = new AgencyDirector(game.manager, game.batch, atlas, CommonInfo.KIDRID_DRAWORDER_ALIAS,
+		director = new AgencyDirector(game.manager, game.batch, atlas,
 				new AgentClassList(CommonInfo.CORE_AGENT_CLASS_LIST, SMBInfo.SMB_AGENT_CLASSLIST,
 						MetroidInfo.METROID_AGENT_CLASSLIST), AudioInfo.SOUND_VOLUME);
-//		director.createSpace(game.getLevelFilename(level));
 
 		stageHUD = new Stage(new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera()),
 				game.batch);

@@ -34,9 +34,6 @@ public class GoombaSpine extends SMB_NPC_Spine {
 	}
 
 	public boolean isDeadBumpRight(Vector2 position) {
-		if(position.x < body.getPosition().x)
-			return true;
-		else
-			return false;
+		return position.x < body.getPosition().x;
 	}
 }

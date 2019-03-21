@@ -15,10 +15,9 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.powerup.Powerup;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.info.PowerupInfo.PowType;
-import kidridicarus.game.info.SMBInfo.PointAmount;
 
 public abstract class BaseMushroom extends Agent implements BumpTakeAgent, DisposableAgent {
 	private static final float SPROUT_TIME = 1f;
@@ -43,7 +42,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 	private Agent powerupTaker;
 
 	protected abstract TextureRegion getMushroomTextureRegion(TextureAtlas atlas);
-	protected abstract PowType getMushroomPowerup();
+	protected abstract Powerup getMushroomPowerup();
 
 	public BaseMushroom(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -144,8 +143,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 			case FALL:
 				break;
 			case END:
-				agency.createAgent(FloatingPoints.makeAP(PointAmount.P1000, true,
-						body.getPosition(), UInfo.P2M(16), powerupTaker));
+				agency.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(), powerupTaker));
 				// powerup used, so dispose this agent
 				agency.disposeAgent(this);
 				break;

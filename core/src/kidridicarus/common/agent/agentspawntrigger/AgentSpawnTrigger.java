@@ -26,12 +26,12 @@ public class AgentSpawnTrigger extends Agent implements DisposableAgent {
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) {
-					doUpdate(delta);
+					doUpdate();
 				}
 			});
 	}
 
-	private void doUpdate(float delta) {
+	private void doUpdate() {
 		if(!enabled)
 			return;
 		for(TriggerTakeAgent agent : stBody.getSpawnerContacts())

@@ -11,17 +11,17 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.common.agent.GameAgentObserver.AgentObserverListener;
+import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.powerup.PowChar;
+import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.MoveAdvice;
-import kidridicarus.common.tool.Powerups;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
-import kidridicarus.game.info.PowerupInfo.PowChar;
-import kidridicarus.game.info.PowerupInfo.PowType;
+import kidridicarus.game.powerup.SMB_Pow;
 import kidridicarus.game.tool.KeyboardMapping;
 import kidridicarus.game.tool.QQ;
 
@@ -108,7 +108,7 @@ public class PlayCoordinator implements Disposable {
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
 			QQ.toggleOn();
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP))
-			Powerups.tryPushPowerup(agent, PowType.FIREFLOWER);
+			Powerup.tryPushPowerup(agent, new SMB_Pow.FireFlowerPow());
 	}
 
 	public void preUpdateAgency(float delta) {
@@ -170,15 +170,11 @@ public class PlayCoordinator implements Disposable {
 	}
 
 	public boolean isGameWon() {
-		if(playAgent.getSupervisor().isAtLevelEnd())
-			return true;
-		return false;
+		return playAgent.getSupervisor().isAtLevelEnd();
 	}
 
 	public boolean isGameOver() {
-		if(playAgent.getSupervisor().isGameOver())
-			return true;
-		return false;
+		return playAgent.getSupervisor().isGameOver();
 	}
 
 	private void doChangeAndStartMainMusic(String musicName) {

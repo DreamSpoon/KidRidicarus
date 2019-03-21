@@ -152,7 +152,7 @@ public class MarioSpine extends PlayerSpine {
 	}
 
 	public RoomBox getCurrentRoom() {
-		return (RoomBox) agentSensor.getFirstContactByClass(RoomBox.class);
+		return agentSensor.getFirstContactByClass(RoomBox.class);
 	}
 
 	public boolean isContactDespawn() {

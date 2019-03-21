@@ -17,8 +17,8 @@ public class SamusSpine extends PlayerSpine {
 	private static final float STOPMOVE_XIMP = 0.15f;
 	private static final float AIRMOVE_XIMP = GROUNDMOVE_XIMP * 0.7f;
 	private static final float MAX_AIRMOVE_VEL = MAX_GROUNDMOVE_VEL;
-	private static final float JUMPUP_FORCE = 8.33f;
-	private static final float JUMPUP_CONSTVEL = 1f;
+	private static final float JUMPUP_FORCE = 6.15f;
+	private static final float JUMPUP_CONSTVEL = 1.6f;
 	private static final Vector2 DAMAGE_KICK_SIDE_IMP = new Vector2(1.8f, 0f);
 	private static final Vector2 DAMAGE_KICK_UP_IMP = new Vector2(0f, 1.3f);
 	private static final float MAX_UP_VELOCITY = 1.75f;
@@ -27,13 +27,11 @@ public class SamusSpine extends PlayerSpine {
 
 	private AgentContactHoldSensor agentSensor;
 	private SolidContactSensor sbSensor;
-	private float jumpStartY;
 
 	public SamusSpine(SamusBody body) {
 		super(body);
 		agentSensor = null;
 		sbSensor = null;
-		jumpStartY = 0;
 	}
 
 	public SolidContactSensor createSolidBodySensor() {
@@ -73,10 +71,6 @@ public class SamusSpine extends PlayerSpine {
 			body.applyForce(new Vector2(0f, JUMPUP_FORCE * forceTimer / jumpForceDuration));
 	}
 
-	public void setJumpStartPosition() {
-		jumpStartY = body.getPosition().y;
-	}
-
 	public void applyDamageKick(Vector2 position) {
 		// zero the y velocity
 		body.setVelocity(body.getVelocity().x, 0);
@@ -89,10 +83,6 @@ public class SamusSpine extends PlayerSpine {
 		// apply kick up impulse if the player is above the other agent
 		if(body.getPosition().y > position.y)
 			body.applyImpulse(DAMAGE_KICK_UP_IMP);
-	}
-	// jumpspin is allowed when body moves at least 2 tiles higher than jump start position 
-	public boolean isJumpSpinAllowed() {
-		return body.getPosition().y > jumpStartY + 2f*UInfo.P2M(UInfo.TILEPIX_Y);
 	}
 
 	public boolean isMapPointSolid(Vector2 position) {
@@ -109,13 +99,12 @@ public class SamusSpine extends PlayerSpine {
 		return sbSensor.isSolidOnThisSide(body.getBounds(), isRightSide);
 	}
 
+	@Override
 	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {
 		// check bounds
-		Rectangle myBounds = body.getBounds();
 		float otherCenterY = otherBounds.y+otherBounds.height/2f;
-		if(myBounds.y >= otherCenterY || body.getPrevPosition().y-myBounds.height/2f >= otherCenterY)
-			return true;
-		return false;
+		return body.getBounds().y >= otherCenterY ||
+				body.getPrevPosition().y-body.getBounds().height/2f >= otherCenterY;
 	}
 
 	public void doHeadBounce() {
@@ -123,7 +112,7 @@ public class SamusSpine extends PlayerSpine {
 	}
 
 	public RoomBox getCurrentRoom() {
-		return (RoomBox) agentSensor.getFirstContactByClass(RoomBox.class);
+		return agentSensor.getFirstContactByClass(RoomBox.class);
 	}
 
 	public boolean isNoHorizontalVelocity() {

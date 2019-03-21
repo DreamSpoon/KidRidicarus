@@ -44,7 +44,7 @@ public class SkreeShot extends Agent implements DisposableAgent {
 	// apply damage to all contacting agents
 	private void doContactUpdate() {
 		for(ContactDmgTakeAgent agent : body.getContactDmgTakeAgents())
-			((ContactDmgTakeAgent) agent).onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
+			agent.onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
 	}
 
 	private void doUpdate(float delta) {
