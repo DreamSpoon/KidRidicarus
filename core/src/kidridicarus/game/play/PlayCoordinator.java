@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.GameAgentObserver.AgentObserverListener;
 import kidridicarus.common.agent.GameAgentSupervisor;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
@@ -245,5 +246,9 @@ public class PlayCoordinator implements Disposable {
 		// TODO the following code was giving an exception on game exit, where should player spawntrigger be disposed?
 //		if(spawnTrigger != null)
 //			spawnTrigger.dispose();
+	}
+
+	public ObjectProperties getCopyPlayerAgentProperties() {
+		return playAgent.getCopyAllProperties();
 	}
 }

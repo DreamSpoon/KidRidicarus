@@ -79,7 +79,7 @@ public class GameOverScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		if(didAnythingHappen) {
-			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename));
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename, null));
 			dispose();
 		}
 

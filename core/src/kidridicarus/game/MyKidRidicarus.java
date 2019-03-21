@@ -52,7 +52,7 @@ public class MyKidRidicarus extends Game {
 		manager.finishLoading();
 
 		// start playing first level 
-		setScreen(new PlayScreen(this, GameInfo.GAMEMAP_FILENAME1));
+		setScreen(new PlayScreen(this, GameInfo.GAMEMAP_FILENAME1, null));
 	}
 
 	@Override

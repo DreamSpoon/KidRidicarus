@@ -23,6 +23,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.powerup.PowerupList;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
@@ -71,7 +72,10 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private MoveState moveState;
 	private float moveStateTimer;
 	private PowerState powerState;
-	private boolean facingRight;
+	private boolean isFacingRight;
+	private float noDamageCooldown;
+	private float starPowerCooldown;
+
 	private boolean isNextJumpAllowed;
 	private boolean isNextJumpDelayed;
 	private boolean isJumpForceContinue;
@@ -85,32 +89,13 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private LinkedList<Powerup> powerupsReceived;
 	private boolean didTakeDamage;
 	private boolean isDeadBounce;
-	private float noDamageCooldown;
 	private Direction4 lastHorizontalMoveDir;
 	private boolean isDuckSlideRight;
-	private float starPowerCooldown;
 
 	public Mario(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		moveState = MoveState.STAND;
-		moveStateTimer = 0f;
-		powerState = PowerState.SMALL;
-		isDeadBounce = false;
-		facingRight = true;
-		isNextJumpAllowed = false;
-		isNextJumpDelayed = false;
-		isJumpForceContinue = false;
-		isNextHeadBumpDenied = false;
-		fireballJuice = MAX_FIREBALL_JUICE;
-		shootCooldown = 0f;
-		didShootFireballThisFrame = false;
-		gaveHeadBounce = false;
-		powerupsReceived = new LinkedList<Powerup>();
-		didTakeDamage = false;
-		noDamageCooldown = 0f;
-		lastHorizontalMoveDir = Direction4.NONE;
-		isDuckSlideRight = false;
-		starPowerCooldown = 0f;
+
+		setStateFromProperties(properties);
 
 		body = new MarioBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
@@ -126,7 +111,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			@Override
 			public void update(float delta) { doPostUpdate(); }
 		});
-		sprite = new MarioSprite(agency.getAtlas(), body.getPosition(), powerState, facingRight);
+		sprite = new MarioSprite(agency.getAtlas(), body.getPosition(), powerState, isFacingRight);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
@@ -134,6 +119,42 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 
 		observer = new MarioObserver(this, agency.getAtlas());
 		supervisor = new MarioSupervisor(this);
+	}
+
+	private void setStateFromProperties(ObjectProperties properties) {
+		moveState = MoveState.STAND;
+		moveStateTimer = 0f;
+
+		isFacingRight = false;
+		if(properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
+			isFacingRight = true;
+
+		PowerupList powList = properties.get(CommonKV.Powerup.KEY_POWERUP_LIST, null, PowerupList.class);
+		if(powList == null)
+			powerState = PowerState.SMALL;
+		else if(powList.containsPowClass(SMB_Pow.MushroomPow.class))
+			powerState = PowerState.BIG;
+		else if(powList.containsPowClass(SMB_Pow.FireFlowerPow.class))
+			powerState = PowerState.FIRE;
+		else
+			powerState = PowerState.SMALL;
+
+		noDamageCooldown = 0f;
+		starPowerCooldown = 0f;
+
+		isDeadBounce = false;
+		isNextJumpAllowed = false;
+		isNextJumpDelayed = false;
+		isJumpForceContinue = false;
+		isNextHeadBumpDenied = false;
+		fireballJuice = MAX_FIREBALL_JUICE;
+		shootCooldown = 0f;
+		didShootFireballThisFrame = false;
+		gaveHeadBounce = false;
+		powerupsReceived = new LinkedList<Powerup>();
+		didTakeDamage = false;
+		lastHorizontalMoveDir = Direction4.NONE;
+		isDuckSlideRight = false;
 	}
 
 	/*
@@ -304,12 +325,12 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			shootCooldown += COOLDOWN_PER_FIREBALL;
 			didShootFireballThisFrame = true;
 			Vector2 offset;
-			if(facingRight)
+			if(isFacingRight)
 				offset = body.getPosition().cpy().add(FIREBALL_OFFSET, 0f);
 			else
 				offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
-			agency.createAgent(MarioFireball.makeAP(offset, facingRight, this));
+			agency.createAgent(MarioFireball.makeAP(offset, isFacingRight, this));
 			agency.playSound(AudioInfo.Sound.SMB.FIREBALL);
 		}
 	}
@@ -404,15 +425,15 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		// if not ducking then apply move advice to facing direction
 		if(moveDir.isHorizontal() && !moveState.isDuckNoSlide()) {
 			if(moveDir == Direction4.RIGHT)
-				facingRight = true;
+				isFacingRight = true;
 			else if(moveDir == Direction4.LEFT)
-				facingRight = false;
+				isFacingRight = false;
 		}
 
 		if(doHorizontalImpulse)
-			body.getSpine().applyWalkMove(facingRight, moveAdvice.action0);
+			body.getSpine().applyWalkMove(isFacingRight, moveAdvice.action0);
 		if(doDecelImpulse)
-			body.getSpine().applyDecelMove(facingRight, nextMoveState.isDuck());
+			body.getSpine().applyDecelMove(isFacingRight, nextMoveState.isDuck());
 		if(doDuckSlideImpulse)
 			body.getSpine().applyDuckSlideMove(isDuckSlideRight);
 	}
@@ -535,7 +556,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		else if(body.getSpine().isStandingStill())
 			return MoveState.STAND;
 		// moving in wrong direction?
-		else if(body.getSpine().isBraking(facingRight))
+		else if(body.getSpine().isBraking(isFacingRight))
 			return MoveState.BRAKE;
 		else
 			return MoveState.RUN;
@@ -601,11 +622,11 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 					scriptedMoveState = MoveState.STAND;
 					break;
 			}
-			sprite.update(delta, sss.position, scriptedMoveState, powerState, sss.facingRight, false, false,
+			sprite.update(delta, sss.position, scriptedMoveState, powerState, sss.isFacingRight, false, false,
 					(starPowerCooldown > 0f), sss.moveDir);
 		}
 		else {
-			sprite.update(delta, body.getPosition(), moveState, powerState, facingRight,
+			sprite.update(delta, body.getPosition(), moveState, powerState, isFacingRight,
 					didShootFireballThisFrame, (noDamageCooldown > 0f), (starPowerCooldown > 0f),
 					Direction4.NONE);
 		}
@@ -679,7 +700,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	@Override
 	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
 		if(key.equals(CommonKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
-			Boolean he = facingRight;
+			Boolean he = isFacingRight;
 			return (T) he;
 		}
 		else if(key.equals(CommonKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
@@ -687,6 +708,23 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			return (T) he;
 		}
 		return super.getProperty(key, defaultValue, cls);
+	}
+
+	@Override
+	public ObjectProperties getCopyAllProperties() {
+		// create copy of agent's current properties
+		ObjectProperties myProperties = properties.cpy();
+		// put property: facing right
+		myProperties.put(CommonKV.Script.KEY_FACINGRIGHT, isFacingRight);
+		// put property: powerup list
+		PowerupList powList = new PowerupList();
+		if(powerState == PowerState.BIG)
+			powList.add(new SMB_Pow.MushroomPow());
+		else if(powerState == PowerState.FIRE)
+			powList.add(new SMB_Pow.FireFlowerPow());
+		myProperties.put(CommonKV.Powerup.KEY_POWERUP_LIST, powList);
+		// return copy of agent's current properties
+		return myProperties;
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.MyKidRidicarus;
 
@@ -25,25 +26,22 @@ public class LevelTransitScreen implements Screen {
 	private InputProcessor oldInPr;
 	private boolean didAnythingHappen;
 	private String nextLevelFilename;
+	private ObjectProperties playerAgentProperties;
 
-	public LevelTransitScreen(MyKidRidicarus game, String nextLevelFilename) {
-		LabelStyle font;
-		Label gameOverLabel, playAgainLabel;
-		Table table;
-
+	public LevelTransitScreen(MyKidRidicarus game, String nextLevelFilename, ObjectProperties playerAgentProperties) {
 		this.game = game;
 		this.nextLevelFilename = nextLevelFilename;
+		this.playerAgentProperties = playerAgentProperties;
+
 		viewport = new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera());
 		stage = new Stage(viewport, game.batch);
 
-		font = new LabelStyle(new BitmapFont(), Color.WHITE);
-		table = new Table();
+		LabelStyle font = new LabelStyle(new BitmapFont(), Color.WHITE);
+		Label gameOverLabel = new Label("Next Level: " + nextLevelFilename, font);
+		Label playAgainLabel = new Label("Do Something to Play Next Level", font);
+		Table table = new Table();
 		table.center();
 		table.setFillParent(true);
-
-		gameOverLabel = new Label("Next Level: " + nextLevelFilename, font);
-		playAgainLabel = new Label("Do Something to Play Next Level", font);
-
 		table.add(gameOverLabel).expandX();
 		table.row();
 		table.add(playAgainLabel).expandX().padTop(10f);
@@ -83,7 +81,7 @@ public class LevelTransitScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		if(didAnythingHappen) {
-			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename));
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename, playerAgentProperties));
 			dispose();
 		}
 

@@ -10,14 +10,14 @@ public class ScriptedSpriteState {
 
 	public Vector2 position;
 	public boolean visible;
-	public boolean facingRight;
+	public boolean isFacingRight;
 	public Direction4 moveDir;
 
 	public ScriptedSpriteState() {
 		spriteState = SpriteState.STAND;
 		position = new Vector2(0f, 0f);
 		visible = false;
-		facingRight = false;
+		isFacingRight = false;
 		moveDir = Direction4.NONE;
 	}
 
@@ -25,7 +25,7 @@ public class ScriptedSpriteState {
 		this.spriteState = other.spriteState;
 		this.position = other.position.cpy();
 		this.visible = other.visible;
-		this.facingRight = other.facingRight;
+		this.isFacingRight = other.isFacingRight;
 		this.moveDir = other.moveDir;
 	}
 }

@@ -52,7 +52,7 @@ public class FlagpoleScript implements AgentScript {
 		scriptedState.scriptedBodyState.contactEnabled = false;
 		scriptedState.scriptedBodyState.gravityFactor = 0f;
 
-		scriptedState.scriptedSpriteState.facingRight = true;
+		scriptedState.scriptedSpriteState.isFacingRight = true;
 		// show climb down sprite
 		scriptedState.scriptedSpriteState.spriteState = SpriteState.CLIMB;
 		scriptedState.scriptedSpriteState.moveDir = Direction4.DOWN;
@@ -78,7 +78,7 @@ public class FlagpoleScript implements AgentScript {
 				}
 				break;
 			case SLIDE_FLIPRIGHT:
-				scriptedState.scriptedSpriteState.facingRight = false;
+				scriptedState.scriptedSpriteState.isFacingRight = false;
 				scriptedState.scriptedSpriteState.position.set(getSlideEndRightPosition());
 				break;
 			case SLIDE_WAIT:

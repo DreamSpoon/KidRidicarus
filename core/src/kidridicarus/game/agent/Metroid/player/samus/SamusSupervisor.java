@@ -41,7 +41,7 @@ public class SamusSupervisor extends GameAgentSupervisor {
 		scriptedState.scriptedSpriteState.position.set(samus.getPosition());
 		scriptedState.scriptedSpriteState.spriteState =
 				samus.getProperty(CommonKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
-		scriptedState.scriptedSpriteState.facingRight =
+		scriptedState.scriptedSpriteState.isFacingRight =
 				samus.getProperty(CommonKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
 		return scriptedState;
 	}

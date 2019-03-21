@@ -17,6 +17,12 @@ public class ObjectProperties {
 		properties = new HashMap<String, Object>();
 	}
 
+	public ObjectProperties cpy() {
+		ObjectProperties op = new ObjectProperties();
+		op.properties.putAll(properties);
+		return op;
+	}
+
 	public void put(String key, Object value) {
 		properties.put(key, value);
 	}

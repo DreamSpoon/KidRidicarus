@@ -22,6 +22,7 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
@@ -99,14 +100,23 @@ public class AgencyDirector implements Disposable {
 		agency.createAgent(TiledMapMetaAgent.makeAP(tiledMap));
 	}
 
-	public Agent createInitialPlayerAgent() {
+	public Agent createInitialPlayerAgent(ObjectProperties playerAgentProperties) {
+		// find main player spawner
 		Agent spawner = getMainPlayerSpawner();
 		if(spawner == null)
 			return null;
-		String initPlayClass = spawner.getProperty("playeragentclass", null, String.class);
-		if(initPlayClass == null)
-			return null;
-		return agency.createAgent(Agent.createPointAP(initPlayClass, spawner.getPosition()));
+		// if no agent properties given then use spawner to determine player class and position
+		if(playerAgentProperties == null) {
+			String initPlayClass = spawner.getProperty("playeragentclass", null, String.class);
+			if(initPlayClass == null)
+				return null;
+			return agency.createAgent(Agent.createPointAP(initPlayClass, spawner.getPosition()));
+		}
+		// otherwise use agent properties and set start point to main spawn point
+		else {
+			playerAgentProperties.put(AgencyKV.Spawn.KEY_START_POINT, spawner.getPosition());
+			return agency.createAgent(playerAgentProperties);
+		}
 	}
 
 	private Agent getMainPlayerSpawner() {

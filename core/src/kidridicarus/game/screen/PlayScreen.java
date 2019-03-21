@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.agency.AgentClassList;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
@@ -60,7 +61,7 @@ public class PlayScreen implements Screen {
 	private Box2DDebugRenderer b2dr;
 	private String currentLevelFilename;
 
-	public PlayScreen(MyKidRidicarus game, String levelFilename) {
+	public PlayScreen(MyKidRidicarus game, String levelFilename, ObjectProperties playerAgentProperties) {
 		this.game = game;
 		this.currentLevelFilename = levelFilename;
 
@@ -93,7 +94,7 @@ public class PlayScreen implements Screen {
 
 		// create play coordinator and insert the player
 		playCo = new PlayCoordinator(director.getAgency(), game.manager, stageHUD);
-		playCo.setPlayAgent(director.createInitialPlayerAgent());
+		playCo.setPlayAgent(director.createInitialPlayerAgent(playerAgentProperties));
 	}
 
 	@Override
@@ -189,7 +190,8 @@ public class PlayScreen implements Screen {
 
 		// change to next level?
 		if(playCo.isGameWon()) {
-			game.setScreen(new LevelTransitScreen(game, playCo.getNextLevelFilename()));
+			game.setScreen(new LevelTransitScreen(game, playCo.getNextLevelFilename(),
+					playCo.getCopyPlayerAgentProperties()));
 			dispose();
 		}
 		// change to game over screen?

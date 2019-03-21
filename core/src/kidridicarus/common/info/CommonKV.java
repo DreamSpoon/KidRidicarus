@@ -75,4 +75,8 @@ public class CommonKV {
 		public static final String VAL_ROOMTYPE_CENTER = "center";
 		public static final String VAL_ROOMTYPE_HSCROLL = "hscroll";
 	}
+
+	public class Powerup {
+		public static final String KEY_POWERUP_LIST = "powerup_list";
+	}
 }

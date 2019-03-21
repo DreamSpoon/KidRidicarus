@@ -62,9 +62,10 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private SamusSprite sprite;
 	private MoveState moveState;
 	private float moveStateTimer;
-
 	private boolean isFacingRight;
 	private boolean isFacingUp;
+	private float noDamageCooldown;
+
 	private float runStateTimer;
 	private float lastStepSoundTime;
 	private float jumpForceTimer;
@@ -72,30 +73,13 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	private float shootCooldownTimer;
 	private boolean didTakeDamage;
 	private Vector2 takeDmgOrigin;
-	private float noDamageCooldown;
 	private boolean gaveHeadBounce;
 	private boolean isNextHeadBumpDenied;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		moveState = MoveState.STAND;
-		moveStateTimer = 0f;
-		isFacingRight = false;
-		if(properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
-			isFacingRight = true;
-		isFacingUp = false;
-		runStateTimer = 0f;
-		lastStepSoundTime = 0f;
-		jumpForceTimer = 0f;
-		// player must land on ground before first jump is allowed
-		isNextJumpAllowed = false;
-		shootCooldownTimer = 0f;
-		didTakeDamage = false;
-		takeDmgOrigin = new Vector2();
-		noDamageCooldown = 0f;
-		gaveHeadBounce = false;
-		isNextHeadBumpDenied = false;
+		setStateFromProperties(properties);
 
 		body = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
@@ -118,6 +102,27 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 
 		supervisor = new SamusSupervisor(this);
 		observer = new SamusObserver(this, agency.getAtlas());
+	}
+
+	private void setStateFromProperties(ObjectProperties properties) {
+		moveState = MoveState.STAND;
+		moveStateTimer = 0f;
+		isFacingRight = false;
+		if(properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
+			isFacingRight = true;
+		isFacingUp = false;
+		noDamageCooldown = 0f;
+
+		runStateTimer = 0f;
+		lastStepSoundTime = 0f;
+		jumpForceTimer = 0f;
+		// player must land on ground before first jump is allowed
+		isNextJumpAllowed = false;
+		shootCooldownTimer = 0f;
+		didTakeDamage = false;
+		takeDmgOrigin = new Vector2();
+		gaveHeadBounce = false;
+		isNextHeadBumpDenied = false;
 	}
 
 	/*
@@ -532,7 +537,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 					scriptedMoveState = MoveState.STAND;
 					break;
 			}
-			sprite.update(delta, sss.position, scriptedMoveState, sss.facingRight, false, false, sss.moveDir);
+			sprite.update(delta, sss.position, scriptedMoveState, sss.isFacingRight, false, false, sss.moveDir);
 		}
 		else {
 			sprite.update(delta, body.getPosition(), moveState, isFacingRight, isFacingUp,
@@ -610,6 +615,13 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			return (T) he;
 		}
 		return super.getProperty(key, defaultValue, cls);
+	}
+
+	@Override
+	public ObjectProperties getCopyAllProperties() {
+		ObjectProperties op = properties.cpy();
+		op.put(CommonKV.Script.KEY_FACINGRIGHT, isFacingRight);
+		return op;
 	}
 
 	@Override

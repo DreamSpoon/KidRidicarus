@@ -42,7 +42,7 @@ public class MarioSupervisor extends GameAgentSupervisor {
 		curState.scriptedSpriteState.visible = true;
 		curState.scriptedSpriteState.spriteState =
 				mario.getProperty(CommonKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
-		curState.scriptedSpriteState.facingRight = mario.getProperty(CommonKV.Script.KEY_FACINGRIGHT, false,
+		curState.scriptedSpriteState.isFacingRight = mario.getProperty(CommonKV.Script.KEY_FACINGRIGHT, false,
 				Boolean.class);
 		return curState;
 	}
