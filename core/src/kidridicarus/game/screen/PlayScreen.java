@@ -53,16 +53,16 @@ public class PlayScreen implements Screen {
 	private TextureAtlas atlas;
 	private AgencyDirector director;
 	private PlayCoordinator playCo;
-	private int level;
 
 	private boolean useForcedUpdateFramerate;
 	private float forcedUpdateFPS;
 	private float forcedUpdateFrameTimer;
 	private Box2DDebugRenderer b2dr;
+	private String currentLevelFilename;
 
-	public PlayScreen(MyKidRidicarus game, int level) {
+	public PlayScreen(MyKidRidicarus game, String levelFilename) {
 		this.game = game;
-		this.level = level;
+		this.currentLevelFilename = levelFilename;
 
 		useForcedUpdateFramerate = FF_USE;
 		forcedUpdateFPS = FF_FPS;
@@ -85,7 +85,7 @@ public class PlayScreen implements Screen {
 		b2dr = new Box2DDebugRenderer();
 
 		// load the game map
-		director.createMapAgent(game.getLevelFilename(level));
+		director.createMapAgent(levelFilename);
 		// run one update to let the map create the collision map and draw layer agents
 		director.update(1f/60f);
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
@@ -189,12 +189,12 @@ public class PlayScreen implements Screen {
 
 		// change to next level?
 		if(playCo.isGameWon()) {
-			game.setScreen(new LevelTransitScreen(game, level+1));
+			game.setScreen(new LevelTransitScreen(game, playCo.getNextLevelFilename()));
 			dispose();
 		}
 		// change to game over screen?
 		else if(playCo.isGameOver()) {
-			game.setScreen(new GameOverScreen(game, false));
+			game.setScreen(new GameOverScreen(game, false, currentLevelFilename));
 			dispose();
 		}
 	}

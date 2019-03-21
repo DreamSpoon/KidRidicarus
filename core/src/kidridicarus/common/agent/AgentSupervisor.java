@@ -20,6 +20,7 @@ public abstract class AgentSupervisor {
 	// Other classes that poll move advice from a superclass must call pollMoveAdvice method.
 	protected abstract MoveAdvice internalPollMoveAdvice();
 	public abstract boolean isAtLevelEnd();
+	public abstract String getNextLevelFilename();
 	public abstract boolean isGameOver();
 
 	/*

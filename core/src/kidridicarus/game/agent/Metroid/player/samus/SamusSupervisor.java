@@ -62,7 +62,7 @@ public class SamusSupervisor extends GameAgentSupervisor {
 	}
 
 	@Override
-	public String getNextLevelName() {
+	public String getNextLevelFilename() {
 		return nextLevelName;
 	}
 

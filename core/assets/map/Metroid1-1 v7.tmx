@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="6">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="7">
  <tileset firstgid="1" name="MetroidTilesetV3" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="40" columns="8">
   <image source="MetroidTilesetV3.png" width="144" height="90"/>
  </tileset>
@@ -64,6 +64,16 @@
    eJztzgENAAAIA6AXsX9NY3xTSEACAAAAAAD/TDsAAADACQvGbwAe
   </data>
  </layer>
+ <objectgroup id="13" name="levelend">
+  <properties>
+   <property name="agentclass" value="levelend_trigger"/>
+  </properties>
+  <object id="6" x="1504" y="80" width="16" height="48">
+   <properties>
+    <property name="nextlevel_name" value="map/SMB1-1 v7.tmx"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="12" name="blue door">
   <properties>
    <property name="agentclass" value="metroid_door"/>

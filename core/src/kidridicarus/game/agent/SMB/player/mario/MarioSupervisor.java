@@ -10,13 +10,13 @@ import kidridicarus.common.tool.MoveAdvice;
 public class MarioSupervisor extends GameAgentSupervisor {
 	private Mario mario;
 	private MoveAdvice userMoveAdvice;
-	private String nextLevelName;
+	private String nextLevelFilename;
 	private boolean isGameOver;
 
 	public MarioSupervisor(Mario mario) {
 		this.mario = mario;
 		userMoveAdvice = new MoveAdvice();
-		nextLevelName = null;
+		nextLevelFilename = null;
 		isGameOver = false;
 	}
 
@@ -52,7 +52,7 @@ public class MarioSupervisor extends GameAgentSupervisor {
 		return new AgentScriptHooks() {
 				@Override
 				public void gotoNextLevel(String name) {
-					nextLevelName = name;
+					nextLevelFilename = name;
 				}
 			};
 	}
@@ -63,13 +63,13 @@ public class MarioSupervisor extends GameAgentSupervisor {
 	}
 
 	@Override
-	public String getNextLevelName() {
-		return nextLevelName;
+	public String getNextLevelFilename() {
+		return nextLevelFilename;
 	}
 
 	@Override
 	public boolean isAtLevelEnd() {
-		return nextLevelName != null;
+		return nextLevelFilename != null;
 	}
 
 	public void setGameOver() {

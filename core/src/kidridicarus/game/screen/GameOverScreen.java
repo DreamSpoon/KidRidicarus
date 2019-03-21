@@ -24,28 +24,22 @@ public class GameOverScreen implements Screen {
 	private Game game;
 	private InputProcessor oldInPr;
 	private boolean didAnythingHappen;
+	private String nextLevelFilename;
 
-	public GameOverScreen(Game game, boolean win) {
-		LabelStyle font;
-		Label gameOverLabel;
-		Label playAgainLabel;
-		Table table;
-
+	public GameOverScreen(Game game, boolean win, String nextLevelFilename) {
 		this.game = game;
+		this.nextLevelFilename = nextLevelFilename;
+
 		viewport = new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera());
 		stage = new Stage(viewport, ((MyKidRidicarus) game).batch);
 
-		font = new LabelStyle(new BitmapFont(), Color.WHITE);
-		table = new Table();
+		LabelStyle font = new LabelStyle(new BitmapFont(), Color.WHITE);
+		Label gameOverLabel = win ? new Label("GAME WON!", font) : new Label("GAME OVER", font);
+		Label playAgainLabel = new Label("Do Something to Play Again", font);
+
+		Table table = new Table();
 		table.center();
 		table.setFillParent(true);
-
-		if(win)
-			gameOverLabel = new Label("GAME WON!", font);
-		else
-			gameOverLabel = new Label("GAME OVER", font);
-		playAgainLabel = new Label("Do Something to Play Again", font);
-
 		table.add(gameOverLabel).expandX();
 		table.row();
 		table.add(playAgainLabel).expandX().padTop(10f);
@@ -85,7 +79,7 @@ public class GameOverScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		if(didAnythingHappen) {
-			game.setScreen(new PlayScreen((MyKidRidicarus) game, 0));
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename));
 			dispose();
 		}
 

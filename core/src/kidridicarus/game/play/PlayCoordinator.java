@@ -234,6 +234,10 @@ public class PlayCoordinator implements Disposable {
 			currentMainMusic.play();
 	}
 
+	public String getNextLevelFilename() {
+		return playAgent.getSupervisor().getNextLevelFilename();
+	}
+
 	@Override
 	public void dispose() {
 		doStopMainMusic();

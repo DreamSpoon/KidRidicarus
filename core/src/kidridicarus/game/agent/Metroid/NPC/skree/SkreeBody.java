@@ -13,7 +13,7 @@ import kidridicarus.common.tool.B2DFactory;
 
 public class SkreeBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(16);
-	private static final float BODY_HEIGHT = UInfo.P2M(16);
+	private static final float BODY_HEIGHT = UInfo.P2M(18);
 	private static final float FOOT_WIDTH = UInfo.P2M(18);
 	private static final float FOOT_HEIGHT = UInfo.P2M(2);
 	private static final float[] PLAYER_DETECTOR_SHAPE = new float[] {

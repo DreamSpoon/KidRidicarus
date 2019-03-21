@@ -24,15 +24,15 @@ public class LevelTransitScreen implements Screen {
 	private Game game;
 	private InputProcessor oldInPr;
 	private boolean didAnythingHappen;
-	private int nextLevel;
+	private String nextLevelFilename;
 
-	public LevelTransitScreen(MyKidRidicarus game, int nextLevel) {
+	public LevelTransitScreen(MyKidRidicarus game, String nextLevelFilename) {
 		LabelStyle font;
 		Label gameOverLabel, playAgainLabel;
 		Table table;
 
 		this.game = game;
-		this.nextLevel = nextLevel;
+		this.nextLevelFilename = nextLevelFilename;
 		viewport = new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera());
 		stage = new Stage(viewport, game.batch);
 
@@ -41,7 +41,7 @@ public class LevelTransitScreen implements Screen {
 		table.center();
 		table.setFillParent(true);
 
-		gameOverLabel = new Label("Next Level: " + nextLevel, font);
+		gameOverLabel = new Label("Next Level: " + nextLevelFilename, font);
 		playAgainLabel = new Label("Do Something to Play Next Level", font);
 
 		table.add(gameOverLabel).expandX();
@@ -83,7 +83,7 @@ public class LevelTransitScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		if(didAnythingHappen) {
-			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevel));
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename));
 			dispose();
 		}
 

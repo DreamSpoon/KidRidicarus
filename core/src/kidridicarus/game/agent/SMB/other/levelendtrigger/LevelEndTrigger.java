@@ -30,9 +30,9 @@ public class LevelEndTrigger extends Agent implements TriggerTakeAgent, Disposab
 	}
 
 	private void doContactUpdate() {
-		for(Agent agent : body.getPlayerBeginContacts()) {
+		for(PlayerAgent agent : body.getPlayerBeginContacts()) {
 			// give the script to the player and the script, if used, will trigger flag hoist
-			((PlayerAgent) agent).getSupervisor().startScript(
+			agent.getSupervisor().startScript(
 					new LevelEndScript(this, getProperty(CommonKV.Level.VAL_NEXTLEVEL_NAME, "", String.class)));
 		}
 	}
