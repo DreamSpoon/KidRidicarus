@@ -106,9 +106,9 @@ public class MarioFireball extends Agent implements DisposableAgent {
 					body.getSpine().startExplode();
 					// if hit agent then play different sound than if hit boundary line
 					if(hitType == HitType.AGENT)
-						agency.getEar().onPlaySound(AudioInfo.Sound.SMB.KICK);
+						agency.getEar().playSound(AudioInfo.Sound.SMB.KICK);
 					else
-						agency.getEar().onPlaySound(AudioInfo.Sound.SMB.BUMP);
+						agency.getEar().playSound(AudioInfo.Sound.SMB.BUMP);
 				}
 				// dispose agent after explode animation finishes
 				if(sprite.isExplodeAnimFinished())

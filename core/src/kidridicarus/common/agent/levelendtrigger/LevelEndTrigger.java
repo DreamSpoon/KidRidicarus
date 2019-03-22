@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;

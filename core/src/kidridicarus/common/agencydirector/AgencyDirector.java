@@ -1,6 +1,5 @@
 package kidridicarus.common.agencydirector;
 
-import java.util.Collection;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.assets.AssetManager;
@@ -15,13 +14,9 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentClassList;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
-import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.game.tool.QQ;
@@ -97,40 +92,6 @@ public class AgencyDirector implements Disposable {
 		TiledMap tiledMap = (new TmxMapLoader()).load(levelFilename);
 		// create the agent
 		agency.createAgent(TiledMapMetaAgent.makeAP(tiledMap));
-	}
-
-	public Agent createInitialPlayerAgent(ObjectProperties playerAgentProperties) {
-		// find main player spawner
-		Agent spawner = getMainPlayerSpawner();
-		if(spawner == null) {
-QQ.pr("no spawner for player");
-			return null;
-		}
-		// if no agent properties given then use spawner to determine player class and position
-		if(playerAgentProperties == null) {
-			String initPlayClass = spawner.getProperty("playeragentclass", null, String.class);
-			if(initPlayClass == null) {
-QQ.pr("no init class for player");
-				return null;
-			}
-			return agency.createAgent(Agent.createPointAP(initPlayClass, spawner.getPosition()));
-		}
-		// otherwise use agent properties and set start point to main spawn point
-		else {
-			playerAgentProperties.put(AgencyKV.Spawn.KEY_START_POINT, spawner.getPosition());
-			return agency.createAgent(playerAgentProperties);
-		}
-	}
-
-	private Agent getMainPlayerSpawner() {
-		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
-		Collection<Agent> spawnList = agency.getAgentsByProperties(
-				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, CommonKV.Spawn.KEY_SPAWNMAIN },
-				new String[] { CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, CommonKV.VAL_TRUE });
-		if(!spawnList.isEmpty())
-			return spawnList.iterator().next();
-		else
-			return null;
 	}
 
 	public Agency getAgency() {

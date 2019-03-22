@@ -10,8 +10,8 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
@@ -147,14 +147,14 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		body.getSpine().doDeadSquishContactsAndMove();
 		if(perp != null)
 			agency.createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
-		agency.getEar().onPlaySound(AudioInfo.Sound.SMB.STOMP);
+		agency.getEar().playSound(AudioInfo.Sound.SMB.STOMP);
 	}
 
 	private void startBump() {
 		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
 		if(perp != null)
 			agency.createAgent(FloatingPoints.makeAP(100, false, body.getPosition(), perp));
-		agency.getEar().onPlaySound(AudioInfo.Sound.SMB.KICK);
+		agency.getEar().playSound(AudioInfo.Sound.SMB.KICK);
 	}
 
 	private void processSprite(float delta) {

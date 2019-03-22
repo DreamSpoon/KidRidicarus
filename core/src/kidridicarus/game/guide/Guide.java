@@ -1,5 +1,7 @@
 package kidridicarus.game.guide;
 
+import java.util.Collection;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -12,11 +14,13 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agencydirector.AgencyDirector;
+import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
-import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
@@ -40,12 +44,7 @@ public class Guide implements Disposable {
 	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_X * 15);
 
 	private Agency agency;
-
-	// * two references to the same player agent - usage depends upon the functionality needed
-	private Agent agent;
-	private PlayerAgent playAgent;
-	// * TODO ?  a private class that  extends Agent implements PlayerAgent  ?
-
+	private PlayerAgent myPlayerAgent;
 	private AgentSpawnTrigger spawnTrigger;
 	private MoveAdvice inputMoveAdvice;
 	private Stage stageHUD;
@@ -55,6 +54,7 @@ public class Guide implements Disposable {
 	private boolean isMainMusicPlaying;
 	private Music currentSinglePlayMusic;
 	private AssetManager manager;
+
 	// TODO this is hack - remove!
 	private AgencyDirector director;
 
@@ -65,7 +65,7 @@ public class Guide implements Disposable {
 		this.stageHUD = stageHUD;
 
 		spawnTrigger = null;
-		playAgent = null;
+		myPlayerAgent = null;
 		inputMoveAdvice = new MoveAdvice();
 		currentMainMusicName = "";
 		currentMainMusic = null;
@@ -73,22 +73,9 @@ public class Guide implements Disposable {
 		currentSinglePlayMusic = null;
 	}
 
-	public void setGuidedAgent(Agent agent) {
-		if(!(agent instanceof PlayerAgent))
-			throw new IllegalArgumentException("agent is not instanceof PlayerAgent: " + agent);
-
-		this.agent = agent;
-		this.playAgent = (PlayerAgent) agent;
-		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(AgentSpawnTrigger.makeAP(
-				playAgent.getSupervisor().getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
-		spawnTrigger.setEnabled(true);
-
-		switchHUDtoNewPlayerAgent();
-	}
-
 	private void switchHUDtoNewPlayerAgent() {
 		stageHUD.clear();
-		playAgent.getSupervisor().setStageHUD(stageHUD);
+		myPlayerAgent.getSupervisor().setStageHUD(stageHUD);
 	}
 
 	private void handleInput() {
@@ -102,7 +89,7 @@ public class Guide implements Disposable {
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
 			QQ.toggleOn();
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP))
-			Powerup.tryPushPowerup(agent, new SMB_Pow.FireFlowerPow());
+			Powerup.tryPushPowerup(myPlayerAgent, new SMB_Pow.FireFlowerPow());
 	}
 
 	public void preUpdateAgency(float delta) {
@@ -110,44 +97,43 @@ public class Guide implements Disposable {
 		handleInput();
 
 		// ensure spawn trigger follows view of player
-		spawnTrigger.setTarget(playAgent.getSupervisor().getViewCenter());
+		spawnTrigger.setTarget(myPlayerAgent.getSupervisor().getViewCenter());
 		// pass user input to player agent's supervisor
-		playAgent.getSupervisor().setMoveAdvice(inputMoveAdvice);
-		playAgent.getSupervisor().preUpdateAgency(delta);
+		myPlayerAgent.getSupervisor().setMoveAdvice(inputMoveAdvice);
+		myPlayerAgent.getSupervisor().preUpdateAgency(delta);
 	}
 
 	// check / do player agent power character changes 
 	public void updateAgency() {
 		// check for "out-of-character" powerup received and change to appropriate character for powerup
-		Powerup nonCharPowerup = playAgent.getSupervisor().getNonCharPowerups().getFirst();
-		playAgent.getSupervisor().clearNonCharPowerups();
+		Powerup nonCharPowerup = myPlayerAgent.getSupervisor().getNonCharPowerups().getFirst();
+		myPlayerAgent.getSupervisor().clearNonCharPowerups();
 		if(nonCharPowerup != null)
 			switchAgentType(nonCharPowerup.getPowerupCharacter());
 	}
 
 	public void postUpdateAgency() {
-		playAgent.getSupervisor().postUpdateAgency();
+		myPlayerAgent.getSupervisor().postUpdateAgency();
 	}
 
 	private void switchAgentType(PowChar pc) {
 		Vector2 currentPos = new Vector2(0f, 0f);
-		if(agent != null) {
-			currentPos = agent.getPosition();
-			agency.disposeAgent(agent);
-			agent = null;
-			playAgent = null;
+		if(myPlayerAgent != null) {
+			currentPos = myPlayerAgent.getPosition();
+			agency.disposeAgent(myPlayerAgent);
+			myPlayerAgent = null;
 		}
 
 		switch(pc) {
 			default:
 			case MARIO:
-				agent = agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIO, currentPos));
-				playAgent = (PlayerAgent) agent;
+				myPlayerAgent = (PlayerAgent) agency.createAgent(
+						Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIO, currentPos));
 				switchHUDtoNewPlayerAgent();
 				break;
 			case SAMUS:
-				agent = agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS, currentPos));
-				playAgent = (PlayerAgent) agent;
+				myPlayerAgent = (PlayerAgent) agency.createAgent(
+						Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS, currentPos));
 				switchHUDtoNewPlayerAgent();
 				break;
 			case NONE:
@@ -157,46 +143,46 @@ public class Guide implements Disposable {
 
 	public void updateCamera(OrthographicCamera gamecam) {
 		// if player is not dead then use their current room to determine the gamecam position
-		if(!playAgent.getSupervisor().isGameOver()) {
-			gamecam.position.set(playAgent.getSupervisor().getViewCenter(), 0f);
+		if(!myPlayerAgent.getSupervisor().isGameOver()) {
+			gamecam.position.set(myPlayerAgent.getSupervisor().getViewCenter(), 0f);
 			gamecam.update();
 		}
 	}
 
 	public void postRenderFrame() {
-		playAgent.getSupervisor().drawHUD();
+		myPlayerAgent.getSupervisor().drawHUD();
 	}
 
 	public boolean isGameWon() {
-		return playAgent.getSupervisor().isAtLevelEnd();
+		return myPlayerAgent.getSupervisor().isAtLevelEnd();
 	}
 
 	public boolean isGameOver() {
-		return playAgent.getSupervisor().isGameOver();
+		return myPlayerAgent.getSupervisor().isGameOver();
 	}
 
 	public Ear createEar() {
 		return new Ear() {
 			@Override
-			public void onRegisterMusic(String musicName) { registerMusic(musicName); }
+			public void registerMusic(String musicName) { doRegisterMusic(musicName); }
 			@Override
-			public void onPlaySound(String soundName) { playSound(soundName); }
+			public void playSound(String soundName) { doPlaySound(soundName); }
 			@Override
-			public void onChangeAndStartMainMusic(String musicName) { doChangeAndStartMainMusic(musicName); };
+			public void changeAndStartMainMusic(String musicName) { doChangeAndStartMainMusic(musicName); };
 			@Override
-			public void onStartSinglePlayMusic(String musicName) { doStartSinglePlayMusic(musicName); }
+			public void startSinglePlayMusic(String musicName) { doStartSinglePlayMusic(musicName); }
 			@Override
 			public void stopAllMusic() { doStopAllMusic(); };
 		};
 	}
 
-	private void playSound(String soundName) {
+	private void doPlaySound(String soundName) {
 		manager.get(soundName, Sound.class).play(AudioInfo.SOUND_VOLUME);
 	}
 
 	// TODO This is a hack - registerMusic should be done before loading map file - read map file init agents
 	// for rooms, then harvest music names.
-	private void registerMusic(String musicName) {
+	private void doRegisterMusic(String musicName) {
 		director.registerMusic(musicName);
 	}
 
@@ -267,19 +253,57 @@ public class Guide implements Disposable {
 	}
 
 	public String getNextLevelFilename() {
-		return playAgent.getSupervisor().getNextLevelFilename();
+		return myPlayerAgent.getSupervisor().getNextLevelFilename();
 	}
 
 	public ObjectProperties getCopyPlayerAgentProperties() {
-		return playAgent.getCopyAllProperties();
+		return myPlayerAgent.getCopyAllProperties();
+	}
+
+	public boolean insertPlayerAgent(ObjectProperties playerAgentProperties) {
+		// find main player spawner and return fail if none found
+		Agent spawner = getMainPlayerSpawner();
+		if(spawner == null)
+			return false;
+
+		// spawn player with properties at spawn location
+		myPlayerAgent = spawnPlayerAgentWithProperties(playerAgentProperties, spawner);
+		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(AgentSpawnTrigger.makeAP(
+				myPlayerAgent.getSupervisor().getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
+		spawnTrigger.setEnabled(true);
+		switchHUDtoNewPlayerAgent();
+		return true;
+	}
+
+	private PlayerAgent spawnPlayerAgentWithProperties(ObjectProperties playerAgentProperties, Agent spawner) {
+		// if no agent properties given then use spawner to determine player class and position
+		if(playerAgentProperties == null) {
+			String initPlayClass = spawner.getProperty("playeragentclass", null, String.class);
+			if(initPlayClass == null)
+				return null;
+			return (PlayerAgent) agency.createAgent(Agent.createPointAP(initPlayClass, spawner.getPosition()));
+		}
+		// otherwise use agent properties and set start point to main spawn point
+		else {
+			playerAgentProperties.put(AgencyKV.Spawn.KEY_START_POINT, spawner.getPosition());
+			return (PlayerAgent) agency.createAgent(playerAgentProperties);
+		}
+	}
+
+	private Agent getMainPlayerSpawner() {
+		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
+		Collection<Agent> spawnList = agency.getAgentsByProperties(
+				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, CommonKV.Spawn.KEY_SPAWNMAIN },
+				new String[] { CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, CommonKV.VAL_TRUE });
+		if(!spawnList.isEmpty())
+			return spawnList.iterator().next();
+		else
+			return null;
 	}
 
 	@Override
 	public void dispose() {
 		doStopMainMusic();
 		stageHUD.clear();
-		// TODO the following code was giving an exception on game exit, where should player spawntrigger be disposed?
-//		if(spawnTrigger != null)
-//			spawnTrigger.dispose();
 	}
 }

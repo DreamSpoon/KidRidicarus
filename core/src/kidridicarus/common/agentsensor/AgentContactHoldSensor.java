@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.AgentContactSensor;
-import kidridicarus.common.agent.optional.PlayerAgent;
+import kidridicarus.common.agent.PlayerAgent;
 
 /*
  * Keep track of agents contacted.

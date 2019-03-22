@@ -12,9 +12,9 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -31,8 +31,7 @@ import kidridicarus.game.info.AudioInfo;
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
-		DisposableAgent {
+public class Samus extends PlayerAgent implements ContactDmgTakeAgent, HeadBounceGiveAgent, DisposableAgent {
 	public enum MoveState { STAND, BALL_GRND, RUN, RUNSHOOT, PRE_JUMPSHOOT, JUMPSHOOT, JUMPSPINSHOOT,
 		PRE_JUMPSPIN, JUMPSPIN, PRE_JUMP, JUMP, BALL_AIR, CLIMB;
 		public boolean equalsAny(MoveState ...otherStates) {
@@ -197,7 +196,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		noDamageCooldown = NO_DAMAGE_TIME;
 		body.getSpine().applyDamageKick(takeDmgOrigin);
 		takeDmgOrigin.set(0f, 0f);
-		agency.getEar().onPlaySound(AudioInfo.Sound.Metroid.HURT);
+		agency.getEar().playSound(AudioInfo.Sound.Metroid.HURT);
 	}
 
 	private void processHeadBouncesGiven() {
@@ -355,12 +354,12 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 
 		// if previous move air move then samus just landed, so play landing sound
 		if(!moveState.isGroundMove())
-			agency.getEar().onPlaySound(AudioInfo.Sound.Metroid.STEP);
+			agency.getEar().playSound(AudioInfo.Sound.Metroid.STEP);
 		// if last move and this move are run moves then check/do step sound
 		else if(moveState.isRun() && nextMoveState.isRun()) {
 			if(runStateTimer - lastStepSoundTime >= STEP_SOUND_TIME) {
 				lastStepSoundTime = runStateTimer;
-				agency.getEar().onPlaySound(AudioInfo.Sound.Metroid.STEP);
+				agency.getEar().playSound(AudioInfo.Sound.Metroid.STEP);
 			}
 		}
 		else
@@ -423,7 +422,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 					if(moveAdvice.action1 && isNextJumpAllowed) {
 						isNextJumpAllowed = false;
 						jumpForceTimer = JUMPUP_CONSTVEL_TIME+JUMPUP_FORCE_TIME;
-						agency.getEar().onPlaySound(AudioInfo.Sound.Metroid.JUMP);
+						agency.getEar().playSound(AudioInfo.Sound.Metroid.JUMP);
 					}
 				}
 				body.getSpine().applyJumpVelocity();
@@ -510,7 +509,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		if(body.getSpine().isMapPointSolid(position))
 			shotProps.put(CommonKV.Spawn.KEY_EXPIRE, true);
 		agency.createAgent(shotProps);
-		agency.getEar().onPlaySound(AudioInfo.Sound.Metroid.SHOOT);
+		agency.getEar().playSound(AudioInfo.Sound.Metroid.SHOOT);
 	}
 
 	private void doPostUpdate() {

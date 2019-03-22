@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
-import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.powerup.PowerupList;
@@ -40,7 +39,7 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 
 	public void roomChange(RoomBox newRoom) {
 		if(newRoom != null)
-			agency.getEar().onChangeAndStartMainMusic(newRoom.getRoommusic());
+			agency.getEar().changeAndStartMainMusic(newRoom.getRoommusic());
 	}
 
 	/*

@@ -13,21 +13,21 @@ public class EarPlug {
 		realEar = null;
 		fakeEar = new Ear() {
 			@Override
-			public void onRegisterMusic(String musicName) {
-				if(realEar != null) realEar.onRegisterMusic(musicName);
+			public void registerMusic(String musicName) {
+				if(realEar != null) realEar.registerMusic(musicName);
 			}
 			@Override
-			public void onStartSinglePlayMusic(String musicName) {
-				if(realEar != null) realEar.onStartSinglePlayMusic(musicName);
+			public void startSinglePlayMusic(String musicName) {
+				if(realEar != null) realEar.startSinglePlayMusic(musicName);
 			}
 			@Override
-			public void onChangeAndStartMainMusic(String musicName) {
-				if(realEar != null) realEar.onChangeAndStartMainMusic(musicName);
+			public void changeAndStartMainMusic(String musicName) {
+				if(realEar != null) realEar.changeAndStartMainMusic(musicName);
 			}
 			@Override
 			public void stopAllMusic() { if(realEar != null) realEar.stopAllMusic(); }
 			@Override
-			public void onPlaySound(String soundName) { if(realEar != null) realEar.onPlaySound(soundName); }
+			public void playSound(String soundName) { if(realEar != null) realEar.playSound(soundName); }
 		};
 	}
 

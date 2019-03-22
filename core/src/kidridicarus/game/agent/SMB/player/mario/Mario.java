@@ -13,9 +13,9 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
@@ -34,8 +34,8 @@ import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 import kidridicarus.game.powerup.SMB_Pow;
 
-public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
-		PowerupTakeAgent, DisposableAgent {
+public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounceGiveAgent, PowerupTakeAgent,
+		DisposableAgent {
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
 	private static final Vector2 GROW_OFFSET = DUCK_OFFSET;
 	private static final float DEAD_DELAY_TIME = 3f;
@@ -257,7 +257,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			body.allowOnlyDeadContacts();
 			body.zeroVelocity(true, true);
 			agency.getEar().stopAllMusic();
-			agency.getEar().onPlaySound(AudioInfo.Sound.SMB.MARIO_DIE);
+			agency.getEar().playSound(AudioInfo.Sound.SMB.MARIO_DIE);
 
 			// do bounce up if needed
 			if(nextMoveState == MoveState.DEAD_BOUNCE)
@@ -285,7 +285,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			// if small then power up to big
 			if(powerState == PowerState.SMALL)
 				newPowerState = PowerState.BIG;
-			agency.getEar().onPlaySound(AudioInfo.Sound.SMB.POWERUP_USE);
+			agency.getEar().playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 		}
 		else if(pu instanceof SMB_Pow.FireFlowerPow) {
 			// if small then power up to big
@@ -294,14 +294,14 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			// if big then power up to fire
 			else if(powerState == PowerState.BIG)
 				newPowerState = PowerState.FIRE;
-			agency.getEar().onPlaySound(AudioInfo.Sound.SMB.POWERUP_USE);
+			agency.getEar().playSound(AudioInfo.Sound.SMB.POWERUP_USE);
 		}
 		else if(pu instanceof SMB_Pow.Mush1UpPow) {
 			// TODO apply 1-UP mushroom
 		}
 		else if(pu instanceof SMB_Pow.PowerStarPow) {
 			starPowerCooldown = POWERSTAR_MAXTIME;
-			agency.getEar().onStartSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
+			agency.getEar().startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
 		}
 		else if(pu instanceof SMB_Pow.CoinPow) {
 			int coinTotal = properties.get(GameKV.SMB.KEY_COINAMOUNT, 0, Integer.class);
@@ -334,7 +334,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 				offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
 			agency.createAgent(MarioFireball.makeAP(offset, isFacingRight, this));
-			agency.getEar().onPlaySound(AudioInfo.Sound.SMB.FIREBALL);
+			agency.getEar().playSound(AudioInfo.Sound.SMB.FIREBALL);
 		}
 	}
 
@@ -364,7 +364,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 				noDamageCooldown = NO_DAMAGE_TIME;
 				body.defineBody(body.getPosition().cpy().sub(GROW_OFFSET), body.getVelocity(), false, false);
 
-				agency.getEar().onPlaySound(AudioInfo.Sound.SMB.POWERDOWN);
+				agency.getEar().playSound(AudioInfo.Sound.SMB.POWERDOWN);
 				break;
 		}
 	}
@@ -455,9 +455,9 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 					body.getSpine().applyJumpImpulse();
 
 					if(powerState.isBigBody())
-						agency.getEar().onPlaySound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
+						agency.getEar().playSound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
 					else
-						agency.getEar().onPlaySound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
+						agency.getEar().playSound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
 				}
 				else {
 					if(!moveAdvice.action1)

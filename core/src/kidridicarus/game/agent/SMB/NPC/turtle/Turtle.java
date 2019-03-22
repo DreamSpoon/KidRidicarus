@@ -10,8 +10,8 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
@@ -161,7 +161,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		if(body.getSpine().checkReverseVelocity(isFacingRight, !isSliding)) {
 			isFacingRight = !isFacingRight;
 			if(isSliding)
-				agency.getEar().onPlaySound(AudioInfo.Sound.SMB.BUMP);
+				agency.getEar().playSound(AudioInfo.Sound.SMB.BUMP);
 		}
 
 		MoveState nextMoveState = getNextMoveState();
@@ -176,7 +176,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				if(moveStateChanged) {
 					agency.createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
 					body.zeroVelocity(true, true);
-					agency.getEar().onPlaySound(AudioInfo.Sound.SMB.STOMP);
+					agency.getEar().playSound(AudioInfo.Sound.SMB.STOMP);
 				}
 				break;
 			case WAKE:
@@ -188,7 +188,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 						isFacingRight = false;
 					else if(!isFacingRight && !body.getSpine().isOtherAgentOnRight(perp))
 						isFacingRight = true;
-					agency.getEar().onPlaySound(AudioInfo.Sound.SMB.KICK);
+					agency.getEar().playSound(AudioInfo.Sound.SMB.KICK);
 					agency.createAgent(FloatingPoints.makeAP(400, true, body.getPosition(), perp));
 				}
 				body.getSpine().doSlideMove(isFacingRight);

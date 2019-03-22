@@ -6,9 +6,9 @@ package kidridicarus.agency.tool;
  * If an Agent needs to receive audio info then it creates an Ear and gives the Ear to Agency for listening. 
  */
 public interface Ear {
-	public void onRegisterMusic(String musicName);
-	public void onStartSinglePlayMusic(String musicName);
-	public void onChangeAndStartMainMusic(String musicName);
+	public void registerMusic(String musicName);
+	public void startSinglePlayMusic(String musicName);
+	public void changeAndStartMainMusic(String musicName);
 	public void stopAllMusic();
-	public void onPlaySound(String soundName);
+	public void playSound(String soundName);
 }

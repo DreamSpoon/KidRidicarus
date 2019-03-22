@@ -9,6 +9,7 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.game.info.AudioInfo;
 
 /*
  * SMB end of level flagpole script.
@@ -60,6 +61,9 @@ public class FlagpoleScript implements AgentScript {
 
 		// trigger the flag drop
 		parent.onTakeTrigger();
+
+		agency.getEar().stopAllMusic();
+		agency.getEar().startSinglePlayMusic(AudioInfo.Music.SMB.LEVELEND);
 	}
 
 	@Override

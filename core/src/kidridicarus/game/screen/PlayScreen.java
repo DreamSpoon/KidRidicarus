@@ -83,8 +83,7 @@ public class PlayScreen implements Screen {
 		game.director.update(1f/60f);
 		game.director.postUpdate();
 
-		// create agent for guide
-		guide.setGuidedAgent(game.director.createInitialPlayerAgent(playerAgentProperties));
+		guide.insertPlayerAgent(playerAgentProperties);
 	}
 
 	@Override
