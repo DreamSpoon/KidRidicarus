@@ -24,6 +24,8 @@ import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AllowOrder;
+import kidridicarus.agency.tool.Ear;
+import kidridicarus.agency.tool.EarPlug;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.ObjectProperties;
 
@@ -51,16 +53,18 @@ import kidridicarus.agency.tool.ObjectProperties;
  */
 public class Agency implements Disposable {
 	private AgentClassList allAgentsClassList;
-	private AgencyEventListener agencyEventListener;
 	private AgencyChangeQueue agencyChangeQ;
 	private AgencyIndex agencyIndex;
 	private World world;
 	private TextureAtlas atlas;
 	private float globalTimer;
+	// Agency needs an earplug because it looks cool... and lets Agents exchange audio info
+	private EarPlug earplug;
 
 	public Agency(AgentClassList allAgentsClassList) {
 		atlas = null;
 		globalTimer = 0f;
+		earplug = new EarPlug();
 
 		world = new World(new Vector2(0, -10f), true);
 		world.setContactListener(new AgentContactListener());
@@ -200,10 +204,6 @@ public class Agency implements Disposable {
 		agencyChangeQ.removeAgentDrawListener(new AgentPlaceholder(agent), adListener);
 	}
 
-	public void setEventListener(AgencyEventListener listener) {
-		agencyEventListener = listener;
-	}
-
 	public void setAtlas(TextureAtlas atlas) {
 		this.atlas = atlas;
 	}
@@ -214,19 +214,6 @@ public class Agency implements Disposable {
 
 	public World getWorld() {
 		return world;
-	}
-
-	public void playSound(String soundName) {
-		if(agencyEventListener != null)
-			agencyEventListener.onPlaySound(soundName);
-	}
-
-	/*
-	 * Register, as in add to the list of needed music.
-	 */
-	public void registerMusic(String musicName) {
-		if(agencyEventListener != null)
-			agencyEventListener.onRegisterMusic(musicName);
 	}
 
 	/*
@@ -288,6 +275,14 @@ public class Agency implements Disposable {
 	 */
 	public void disposeAndRemoveAllAgents() {
 		agencyIndex.disposeAndRemoveAllAgents();
+	}
+
+	public Ear getEar() {
+		return earplug.getEar();
+	}
+
+	public void setEar(Ear ear) {
+		this.earplug.setRealEar(ear);
 	}
 
 	/*

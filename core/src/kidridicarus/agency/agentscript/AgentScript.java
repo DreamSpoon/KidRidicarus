@@ -1,5 +1,7 @@
 package kidridicarus.agency.agentscript;
 
+import kidridicarus.agency.Agency;
+
 public interface AgentScript {
 	/*
 	 * A superclass of AgentSupervisor will create and implement the hooks, to allow a running script to give
@@ -11,7 +13,7 @@ public interface AgentScript {
 		// also include start music, stop music, etc.
 	}
 
-	public void startScript(AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState);
+	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState);
 	public boolean update(float delta);	// return true to continue running script, return false to stop
 	public ScriptedAgentState getScriptAgentState();
 	// The next script (the script which is requesting the override) is passed so current script can

@@ -161,7 +161,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		if(body.getSpine().checkReverseVelocity(isFacingRight, !isSliding)) {
 			isFacingRight = !isFacingRight;
 			if(isSliding)
-				agency.playSound(AudioInfo.Sound.SMB.BUMP);
+				agency.getEar().onPlaySound(AudioInfo.Sound.SMB.BUMP);
 		}
 
 		MoveState nextMoveState = getNextMoveState();
@@ -176,7 +176,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				if(moveStateChanged) {
 					agency.createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
 					body.zeroVelocity(true, true);
-					agency.playSound(AudioInfo.Sound.SMB.STOMP);
+					agency.getEar().onPlaySound(AudioInfo.Sound.SMB.STOMP);
 				}
 				break;
 			case WAKE:
@@ -188,7 +188,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 						isFacingRight = false;
 					else if(!isFacingRight && !body.getSpine().isOtherAgentOnRight(perp))
 						isFacingRight = true;
-					agency.playSound(AudioInfo.Sound.SMB.KICK);
+					agency.getEar().onPlaySound(AudioInfo.Sound.SMB.KICK);
 					agency.createAgent(FloatingPoints.makeAP(400, true, body.getPosition(), perp));
 				}
 				body.getSpine().doSlideMove(isFacingRight);

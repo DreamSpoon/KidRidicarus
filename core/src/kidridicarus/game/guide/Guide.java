@@ -1,9 +1,10 @@
-package kidridicarus.game.play;
+package kidridicarus.game.guide;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Music.OnCompletionListener;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,9 +12,10 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.GameAgentObserver.AgentObserverListener;
-import kidridicarus.common.agent.GameAgentSupervisor;
+import kidridicarus.common.agencydirector.AgencyDirector;
+import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.UInfo;
@@ -34,7 +36,7 @@ import kidridicarus.game.tool.QQ;
  *   -drawing HUDs
  *   -returning info about state of play.
  */
-public class PlayCoordinator implements Disposable {
+public class Guide implements Disposable {
 	private static final float SPAWN_TRIGGER_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 30);
 	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_X * 15);
 
@@ -54,11 +56,15 @@ public class PlayCoordinator implements Disposable {
 	private boolean isMainMusicPlaying;
 	private Music currentSinglePlayMusic;
 	private AssetManager manager;
+	// TODO this is hack - remove!
+	private AgencyDirector director;
 
-	public PlayCoordinator(Agency agency, AssetManager manager, Stage stageHUD) {
+	public Guide(AgencyDirector director, Agency agency, AssetManager manager, Stage stageHUD) {
+		this.director = director;
 		this.agency = agency;
 		this.manager = manager;
 		this.stageHUD = stageHUD;
+
 		spawnTrigger = null;
 		playAgent = null;
 		inputMoveAdvice = new MoveAdvice();
@@ -68,42 +74,22 @@ public class PlayCoordinator implements Disposable {
 		currentSinglePlayMusic = null;
 	}
 
-	public void setPlayAgent(Agent agent) {
+	public void setGuidedAgent(Agent agent) {
 		if(!(agent instanceof PlayerAgent))
 			throw new IllegalArgumentException("agent is not instanceof PlayerAgent: " + agent);
 
 		this.agent = agent;
 		this.playAgent = (PlayerAgent) agent;
 		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(AgentSpawnTrigger.makeAP(
-				playAgent.getObserver().getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
+				playAgent.getSupervisor().getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 		spawnTrigger.setEnabled(true);
 
-		setPlayAgentHUD();
+		switchHUDtoNewPlayerAgent();
 	}
 
-	private void setPlayAgentHUD() {
-		playAgent.getObserver().setStageHUD(stageHUD);
-		playAgent.getObserver().setListener(new AgentObserverListener() {
-				@Override
-				public void startSinglePlayMusic(String musicName) {
-					doStartSinglePlayMusic(musicName);
-				}
-
-				@Override
-				public void stopAllMusic() {
-					doStopMainMusic();
-				}
-
-				@Override
-				public void roomMusicUpdate(String musicName) {
-					doChangeAndStartMainMusic(musicName);
-				}
-			});
-	}
-
-	private void switchPlayAgentHUD() {
+	private void switchHUDtoNewPlayerAgent() {
 		stageHUD.clear();
-		setPlayAgentHUD();
+		playAgent.getSupervisor().setStageHUD(stageHUD);
 	}
 
 	private void handleInput() {
@@ -125,18 +111,17 @@ public class PlayCoordinator implements Disposable {
 		handleInput();
 
 		// ensure spawn trigger follows view of player
-		spawnTrigger.setTarget(playAgent.getObserver().getViewCenter());
+		spawnTrigger.setTarget(playAgent.getSupervisor().getViewCenter());
 		// pass user input to player agent's supervisor
 		playAgent.getSupervisor().setMoveAdvice(inputMoveAdvice);
 		playAgent.getSupervisor().preUpdateAgency(delta);
 	}
 
 	public void postUpdateAgency() {
-		if(((GameAgentSupervisor) playAgent.getSupervisor()).isSwitchToOtherChar())
+		if(((AgentSupervisor) playAgent.getSupervisor()).isSwitchToOtherChar())
 			switchAgentType(PowChar.SAMUS);
 
 		playAgent.getSupervisor().postUpdateAgency();
-		playAgent.getObserver().postUpdateAgency();
 	}
 
 	private void switchAgentType(PowChar pc) {
@@ -153,12 +138,12 @@ public class PlayCoordinator implements Disposable {
 			case MARIO:
 				agent = agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIO, currentPos));
 				playAgent = (PlayerAgent) agent;
-				switchPlayAgentHUD();
+				switchHUDtoNewPlayerAgent();
 				break;
 			case SAMUS:
 				agent = agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS, currentPos));
 				playAgent = (PlayerAgent) agent;
-				switchPlayAgentHUD();
+				switchHUDtoNewPlayerAgent();
 				break;
 			case NONE:
 				break;
@@ -168,13 +153,13 @@ public class PlayCoordinator implements Disposable {
 	public void updateCamera(OrthographicCamera gamecam) {
 		// if player is not dead then use their current room to determine the gamecam position
 		if(!playAgent.getSupervisor().isGameOver()) {
-			gamecam.position.set(playAgent.getObserver().getViewCenter(), 0f);
+			gamecam.position.set(playAgent.getSupervisor().getViewCenter(), 0f);
 			gamecam.update();
 		}
 	}
 
 	public void postRenderFrame() {
-		playAgent.getObserver().drawHUD();
+		playAgent.getSupervisor().drawHUD();
 	}
 
 	public boolean isGameWon() {
@@ -183,6 +168,31 @@ public class PlayCoordinator implements Disposable {
 
 	public boolean isGameOver() {
 		return playAgent.getSupervisor().isGameOver();
+	}
+
+	public Ear createEar() {
+		return new Ear() {
+			@Override
+			public void onRegisterMusic(String musicName) { registerMusic(musicName); }
+			@Override
+			public void onPlaySound(String soundName) { playSound(soundName); }
+			@Override
+			public void onChangeAndStartMainMusic(String musicName) { doChangeAndStartMainMusic(musicName); };
+			@Override
+			public void onStartSinglePlayMusic(String musicName) { doStartSinglePlayMusic(musicName); }
+			@Override
+			public void stopAllMusic() { doStopAllMusic(); };
+		};
+	}
+
+	private void playSound(String soundName) {
+		manager.get(soundName, Sound.class).play(AudioInfo.SOUND_VOLUME);
+	}
+
+	// TODO This is a hack - registerMusic should be done before loading map file - read map file init agents
+	// for rooms, then harvest music names.
+	private void registerMusic(String musicName) {
+		director.registerMusic(musicName);
 	}
 
 	private void doChangeAndStartMainMusic(String musicName) {
@@ -242,8 +252,21 @@ public class PlayCoordinator implements Disposable {
 			currentMainMusic.play();
 	}
 
+	private void doStopAllMusic() {
+		// stop current main music if playing
+		if(currentMainMusic != null)
+			currentMainMusic.stop();
+		// stop single play music if playing
+		if(currentSinglePlayMusic != null)
+			currentSinglePlayMusic.stop();
+	}
+
 	public String getNextLevelFilename() {
 		return playAgent.getSupervisor().getNextLevelFilename();
+	}
+
+	public ObjectProperties getCopyPlayerAgentProperties() {
+		return playAgent.getCopyAllProperties();
 	}
 
 	@Override
@@ -253,9 +276,5 @@ public class PlayCoordinator implements Disposable {
 		// TODO the following code was giving an exception on game exit, where should player spawntrigger be disposed?
 //		if(spawnTrigger != null)
 //			spawnTrigger.dispose();
-	}
-
-	public ObjectProperties getCopyPlayerAgentProperties() {
-		return playAgent.getCopyAllProperties();
 	}
 }

@@ -256,11 +256,11 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 		Vector2 pos = body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y));
 		switch(blockItem) {
 			case MUSH1UP:
-				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
+				agency.getEar().onPlaySound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
 				agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MUSH1UP, pos));
 				break;
 			case MUSHROOM:
-				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
+				agency.getEar().onPlaySound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
 				// hard bump gives a fireflower, soft bump gives mushroom
 				if(bumpStrength == TileBumpStrength.HARD)
 					agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_FIREFLOWER, pos));
@@ -268,7 +268,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 					agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MUSHROOM, pos));
 				break;
 			case STAR:
-				agency.playSound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
+				agency.getEar().onPlaySound(AudioInfo.Sound.SMB.POWERUP_SPAWN);
 				agency.createAgent(Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_POWERSTAR, pos));
 				break;
 			default:
@@ -296,14 +296,14 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 		agency.createAgent(BrickPiece.makeAP(body.getPosition().cpy().add(-right, -up),
 				new Vector2(-BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0));
 
-		agency.playSound(AudioInfo.Sound.SMB.BREAK);
+		agency.getEar().onPlaySound(AudioInfo.Sound.SMB.BREAK);
 		agency.disposeAgent(this);
 
 		Powerup.tryPushPowerup(bumpingAgent, new SMB_Pow.PointsPow(100));
 	}
 
 	private void startSpinningCoin() {
-		agency.playSound(AudioInfo.Sound.SMB.COIN);
+		agency.getEar().onPlaySound(AudioInfo.Sound.SMB.COIN);
 		agency.createAgent(FloatingPoints.makeAP(200, false, body.getPosition(), bumpingAgent));
 
 		// spawn a coin one tile's height above the current tile position

@@ -63,7 +63,7 @@ public class MyKidRidicarus extends Game {
 
 		director = new AgencyDirector(manager, batch, atlas,
 				new AgentClassList(CommonInfo.CORE_AGENT_CLASS_LIST, SMBInfo.SMB_AGENT_CLASSLIST,
-						MetroidInfo.METROID_AGENT_CLASSLIST), AudioInfo.SOUND_VOLUME);
+						MetroidInfo.METROID_AGENT_CLASSLIST));
 
 		// start playing first level 
 		setScreen(new PlayScreen(this, GameInfo.GAMEMAP_FILENAME1, null));

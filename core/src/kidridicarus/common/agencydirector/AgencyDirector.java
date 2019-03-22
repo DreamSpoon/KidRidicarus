@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgencyEventListener;
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
@@ -47,29 +45,17 @@ import kidridicarus.game.tool.QQ;
 public class AgencyDirector implements Disposable {
 	private AssetManager manager;
 	private Agency agency;
-	private float soundVolume;
 	private AgencyDrawBatch adBatch;
 	private OrthogonalTiledMapRenderer tiledMapRenderer;
 	private LinkedList<String> musicCatalog;
 
-	/*
-	 * The soundVolume paramater is a hack, TODO put it in a better place
-	 */
-	public AgencyDirector(AssetManager manager, Batch batch, TextureAtlas atlas, AgentClassList additionalAgents,
-			float soundVolume) {
+	public AgencyDirector(AssetManager manager, Batch batch, TextureAtlas atlas, AgentClassList additionalAgents) {
 		this.manager = manager;
+
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(null, UInfo.P2M(1f), batch);
 		adBatch = new AgencyDrawBatch(batch, tiledMapRenderer);
 		musicCatalog = new LinkedList<String>();
-		this.soundVolume = soundVolume;
-
 		agency = new Agency(additionalAgents);
-		agency.setEventListener(new AgencyEventListener() {
-			@Override
-			public void onPlaySound(String soundName) { playSound(soundName); }
-			@Override
-			public void onRegisterMusic(String musicName) { registerMusic(musicName); }
-		});
 		agency.setAtlas(atlas);
 	}
 
@@ -94,11 +80,7 @@ public class AgencyDirector implements Disposable {
 		adBatch.end();
 	}
 
-	private void playSound(String soundName) {
-		manager.get(soundName, Sound.class).play(soundVolume);
-	}
-
-	private void registerMusic(String musicName) {
+	public void registerMusic(String musicName) {
 		if(musicName.equals("") || musicCatalog.contains(musicName))
 			return;
 		musicCatalog.add(musicName);

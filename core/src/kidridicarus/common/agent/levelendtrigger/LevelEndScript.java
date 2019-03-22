@@ -1,5 +1,6 @@
-package kidridicarus.game.agent.SMB.other.levelendtrigger;
+package kidridicarus.common.agent.levelendtrigger;
 
+import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 
@@ -21,7 +22,7 @@ public class LevelEndScript implements AgentScript {
 	}
 
 	@Override
-	public void startScript(AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
+	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
 		this.asHooks = asHooks;
 		this.curScriptAgentState = beginScriptAgentState.cpy();
 

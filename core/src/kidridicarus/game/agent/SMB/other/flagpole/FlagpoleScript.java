@@ -2,6 +2,7 @@ package kidridicarus.game.agent.SMB.other.flagpole;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -43,7 +44,7 @@ public class FlagpoleScript implements AgentScript {
 	}
 
 	@Override
-	public void startScript(AgentScriptHooks asHooks, ScriptedAgentState beginAgentState) {
+	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginAgentState) {
 		this.beginScriptedState = beginAgentState.cpy();
 		this.scriptedState = beginAgentState.cpy();
 

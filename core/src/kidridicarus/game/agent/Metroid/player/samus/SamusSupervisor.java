@@ -1,21 +1,31 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+
+import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.common.agent.GameAgentSupervisor;
+import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.game.agent.Metroid.player.samus.HUD.SamusHUD;
 
-public class SamusSupervisor extends GameAgentSupervisor {
+public class SamusSupervisor extends AgentSupervisor {
 	private MoveAdvice moveAdvice;
 	private Samus samus;
+	private TextureAtlas atlas;
+	private SamusHUD samusHUD;
 	private String nextLevelName;
 	private boolean isGameOver;
 
-	public SamusSupervisor(Samus samus) {
-		moveAdvice = new MoveAdvice();
+	public SamusSupervisor(Agency agency, Samus samus, TextureAtlas atlas) {
+		super(agency, samus);
 		this.samus = samus;
+		this.atlas = atlas;
+
+		moveAdvice = new MoveAdvice();
 		nextLevelName = null;
 		isGameOver = false;
 	}
@@ -78,5 +88,15 @@ public class SamusSupervisor extends GameAgentSupervisor {
 	@Override
 	public boolean isGameOver() {
 		return isGameOver;
+	}
+
+	@Override
+	public void setStageHUD(Stage stageHUD) {
+		samusHUD = new SamusHUD((Samus) playerAgent, atlas, stageHUD);
+	}
+
+	@Override
+	public void drawHUD() {
+		samusHUD.draw();
 	}
 }

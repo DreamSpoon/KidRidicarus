@@ -1,0 +1,41 @@
+package kidridicarus.agency.tool;
+
+/*
+ * A wrapper for the ear class, with getEar method that always returns non-null.
+ * If no "real" ear is set for this earplug then incoming calls to onRegisterMusic, playSound, etc. will be ignored.
+ * Advantage: Code that uses getEar() in this way doesn't need to check if ear == null.
+ */
+public class EarPlug {
+	private Ear realEar;
+	private Ear fakeEar;
+
+	public EarPlug() {
+		realEar = null;
+		fakeEar = new Ear() {
+			@Override
+			public void onRegisterMusic(String musicName) {
+				if(realEar != null) realEar.onRegisterMusic(musicName);
+			}
+			@Override
+			public void onStartSinglePlayMusic(String musicName) {
+				if(realEar != null) realEar.onStartSinglePlayMusic(musicName);
+			}
+			@Override
+			public void onChangeAndStartMainMusic(String musicName) {
+				if(realEar != null) realEar.onChangeAndStartMainMusic(musicName);
+			}
+			@Override
+			public void stopAllMusic() { if(realEar != null) realEar.stopAllMusic(); }
+			@Override
+			public void onPlaySound(String soundName) { if(realEar != null) realEar.onPlaySound(soundName); }
+		};
+	}
+
+	public Ear getEar() {
+		return fakeEar;
+	}
+
+	public void setRealEar(Ear ear) {
+		realEar = ear;
+	}
+}

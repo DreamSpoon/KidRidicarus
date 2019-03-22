@@ -36,7 +36,7 @@ public class RoomBox extends Agent implements DisposableAgent {
 			roomtype = RoomType.CENTER;
 
 		roommusic = properties.get(CommonKV.Room.KEY_ROOMMUSIC, "", String.class);
-		agency.registerMusic(roommusic);
+		agency.getEar().onRegisterMusic(roommusic);
 
 		vOffset = UInfo.P2M(properties.get(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
 	}

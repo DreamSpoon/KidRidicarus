@@ -14,7 +14,6 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.AgentSupervisor;
-import kidridicarus.common.agent.GameAgentObserver;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -65,7 +64,6 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	}
 
 	private MarioSupervisor supervisor;
-	private MarioObserver observer;
 	private MarioBody body;
 	private MarioSprite sprite;
 
@@ -117,8 +115,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
 
-		observer = new MarioObserver(this, agency.getAtlas());
-		supervisor = new MarioSupervisor(this);
+		supervisor = new MarioSupervisor(agency, this, agency.getAtlas());
 	}
 
 	private void setStateFromProperties(ObjectProperties properties) {
@@ -258,8 +255,8 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 		if(moveStateChanged) {
 			body.allowOnlyDeadContacts();
 			body.zeroVelocity(true, true);
-			observer.stopAllMusic();
-			agency.playSound(AudioInfo.Sound.SMB.MARIO_DIE);
+			agency.getEar().stopAllMusic();
+			agency.getEar().onPlaySound(AudioInfo.Sound.SMB.MARIO_DIE);
 
 			// do bounce up if needed
 			if(nextMoveState == MoveState.DEAD_BOUNCE)
@@ -283,7 +280,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			// if small then power up to big
 			if(powerState == PowerState.SMALL)
 				newPowerState = PowerState.BIG;
-			agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+			agency.getEar().onPlaySound(AudioInfo.Sound.SMB.POWERUP_USE);
 		}
 		else if(pu instanceof SMB_Pow.FireFlowerPow) {
 			// if small then power up to big
@@ -292,13 +289,14 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 			// if big then power up to fire
 			else if(powerState == PowerState.BIG)
 				newPowerState = PowerState.FIRE;
-			agency.playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+			agency.getEar().onPlaySound(AudioInfo.Sound.SMB.POWERUP_USE);
 		}
 		else if(pu instanceof SMB_Pow.Mush1UpPow) {
 			// TODO apply 1-UP mushroom
 		}
 		else if(pu instanceof SMB_Pow.PowerStarPow) {
 			starPowerCooldown = POWERSTAR_MAXTIME;
+			agency.getEar().onStartSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
 		}
 		else if(pu instanceof SMB_Pow.CoinPow) {
 			int coinTotal = properties.get(GameKV.SMB.KEY_COINAMOUNT, 0, Integer.class);
@@ -331,7 +329,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 				offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
 			agency.createAgent(MarioFireball.makeAP(offset, isFacingRight, this));
-			agency.playSound(AudioInfo.Sound.SMB.FIREBALL);
+			agency.getEar().onPlaySound(AudioInfo.Sound.SMB.FIREBALL);
 		}
 	}
 
@@ -361,7 +359,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 				noDamageCooldown = NO_DAMAGE_TIME;
 				body.defineBody(body.getPosition().cpy().sub(GROW_OFFSET), body.getVelocity(), false, false);
 
-				agency.playSound(AudioInfo.Sound.SMB.POWERDOWN);
+				agency.getEar().onPlaySound(AudioInfo.Sound.SMB.POWERDOWN);
 				break;
 		}
 	}
@@ -452,9 +450,9 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 					body.getSpine().applyJumpImpulse();
 
 					if(powerState.isBigBody())
-						agency.playSound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
+						agency.getEar().onPlaySound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
 					else
-						agency.playSound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
+						agency.getEar().onPlaySound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
 				}
 				else {
 					if(!moveAdvice.action1)
@@ -673,11 +671,6 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	@Override
 	public AgentSupervisor getSupervisor() {
 		return supervisor;
-	}
-
-	@Override
-	public GameAgentObserver getObserver() {
-		return observer;
 	}
 
 	@Override

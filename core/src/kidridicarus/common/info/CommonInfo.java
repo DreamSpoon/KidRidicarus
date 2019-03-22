@@ -7,13 +7,13 @@ import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.common.agent.agentspawner.AgentSpawner;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
+import kidridicarus.common.agent.levelendtrigger.LevelEndTrigger;
 import kidridicarus.common.agent.playerspawner.PlayerSpawner;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.metaagent.tiledmap.drawlayer.DrawLayerAgent;
 import kidridicarus.common.tool.DrawOrderAlias;
-import kidridicarus.game.agent.SMB.other.levelendtrigger.LevelEndTrigger;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 
 public class CommonInfo {

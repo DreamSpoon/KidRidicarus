@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.SMB.other.levelendtrigger;
+package kidridicarus.common.agent.levelendtrigger;
 
 import java.util.List;
 

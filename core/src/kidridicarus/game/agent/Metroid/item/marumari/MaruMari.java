@@ -12,6 +12,7 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.powerup.MetroidPow;
 
 public class MaruMari extends Agent implements DisposableAgent {
@@ -55,7 +56,7 @@ public class MaruMari extends Agent implements DisposableAgent {
 
 	private void doUpdate(float delta) {
 		if(isPowerupUsed) {
-//			agency.startSinglePlayMusic(AudioInfo.Music.Metroid.METROIDITEM);
+			agency.getEar().onStartSinglePlayMusic(AudioInfo.Music.Metroid.METROIDITEM);
 			agency.disposeAgent(this);
 		}
 

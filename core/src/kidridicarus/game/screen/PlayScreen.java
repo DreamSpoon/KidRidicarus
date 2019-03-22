@@ -13,7 +13,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.MyKidRidicarus;
-import kidridicarus.game.play.PlayCoordinator;
+import kidridicarus.game.guide.Guide;
 import kidridicarus.game.tool.KeyboardMapping;
 import kidridicarus.game.tool.QQ;
 
@@ -44,7 +44,7 @@ public class PlayScreen implements Screen {
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
 	private Stage stageHUD;
-	private PlayCoordinator playCo;
+	private Guide guide;
 
 	private boolean useForcedUpdateFramerate;
 	private float forcedUpdateFPS;
@@ -70,6 +70,10 @@ public class PlayScreen implements Screen {
 
 		b2dr = new Box2DDebugRenderer();
 
+		// create guide and set event listener for Agency
+		guide = new Guide(game.director, game.director.getAgency(), game.manager, stageHUD);
+		game.director.getAgency().setEar(guide.createEar());
+
 		// load the game map
 		game.director.createMapAgent(levelFilename);
 		// run one update to let the map create the collision map and draw layer agents
@@ -77,9 +81,8 @@ public class PlayScreen implements Screen {
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
 		game.director.update(1f/60f);
 
-		// create play coordinator and insert the player
-		playCo = new PlayCoordinator(game.director.getAgency(), game.manager, stageHUD);
-		playCo.setPlayAgent(game.director.createInitialPlayerAgent(playerAgentProperties));
+		// create agent for guide
+		guide.setGuidedAgent(game.director.createInitialPlayerAgent(playerAgentProperties));
 	}
 
 	@Override
@@ -103,11 +106,11 @@ public class PlayScreen implements Screen {
 			newDelta = clampFrameDelta(delta);
 
 		// pre-update stuff like scripts, and user input
-		playCo.preUpdateAgency(newDelta);
+		guide.preUpdateAgency(newDelta);
 		// update the game world
 		game.director.update(newDelta);
 		// post-update stuff like camera changes
-		playCo.postUpdateAgency();
+		guide.postUpdateAgency();
 	}
 
 	private float clampFrameDelta(float delta) {
@@ -161,7 +164,7 @@ public class PlayScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		playCo.updateCamera(gamecam);
+		guide.updateCamera(gamecam);
 
 		// draw screen
 		game.director.draw(gamecam);
@@ -171,17 +174,17 @@ public class PlayScreen implements Screen {
 			b2dr.render(game.director.getAgency().getWorld(), gamecam.combined);
 
 		// draw HUD last
-		playCo.postRenderFrame();
+		guide.postRenderFrame();
 
 		// change to next level?
-		if(playCo.isGameWon()) {
+		if(guide.isGameWon()) {
 			game.director.disposeAndRemoveAllAgents();
-			game.setScreen(new LevelTransitScreen(game, playCo.getNextLevelFilename(),
-					playCo.getCopyPlayerAgentProperties()));
+			game.setScreen(new LevelTransitScreen(game, guide.getNextLevelFilename(),
+					guide.getCopyPlayerAgentProperties()));
 			dispose();
 		}
 		// change to game over screen?
-		else if(playCo.isGameOver()) {
+		else if(guide.isGameOver()) {
 			game.director.disposeAndRemoveAllAgents();
 			game.setScreen(new GameOverScreen(game, false, currentLevelFilename));
 			dispose();
@@ -211,7 +214,7 @@ public class PlayScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		playCo.dispose();
+		guide.dispose();
 		stageHUD.dispose();
 		b2dr.dispose();
 	}

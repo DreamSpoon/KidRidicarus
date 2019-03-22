@@ -3,6 +3,7 @@ package kidridicarus.game.agent.SMB.other.pipewarp;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -42,7 +43,7 @@ public class PipeWarpScript implements AgentScript {
 	}
 
 	@Override
-	public void startScript(AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
+	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
 		this.beginAgentState = beginScriptAgentState.cpy();
 		this.curScriptAgentState = beginScriptAgentState.cpy();
 

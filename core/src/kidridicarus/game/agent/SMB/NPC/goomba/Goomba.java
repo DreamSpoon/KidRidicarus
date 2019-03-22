@@ -147,14 +147,14 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		body.getSpine().doDeadSquishContactsAndMove();
 		if(perp != null)
 			agency.createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
-		agency.playSound(AudioInfo.Sound.SMB.STOMP);
+		agency.getEar().onPlaySound(AudioInfo.Sound.SMB.STOMP);
 	}
 
 	private void startBump() {
 		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
 		if(perp != null)
 			agency.createAgent(FloatingPoints.makeAP(100, false, body.getPosition(), perp));
-		agency.playSound(AudioInfo.Sound.SMB.KICK);
+		agency.getEar().onPlaySound(AudioInfo.Sound.SMB.KICK);
 	}
 
 	private void processSprite(float delta) {

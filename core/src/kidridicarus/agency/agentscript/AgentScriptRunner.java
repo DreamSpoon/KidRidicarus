@@ -1,5 +1,6 @@
 package kidridicarus.agency.agentscript;
 
+import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 
 /*
@@ -16,14 +17,16 @@ import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
  * might be ignored by the player agent.
  */
 public class AgentScriptRunner {
+	private Agency agency;
+	private AgentScript currentScript;
 	private boolean isRunning;
 	private boolean continueRunning;
-	private AgentScript currentScript;
 
-	public AgentScriptRunner() {
+	public AgentScriptRunner(Agency agency) {
+		this.agency = agency;
+		currentScript = null;
 		isRunning = false;
 		continueRunning = false;
-		currentScript = null;
 	}
 
 	/*
@@ -39,7 +42,7 @@ public class AgentScriptRunner {
 		isRunning = true;
 		continueRunning = true;
 		currentScript = agentScript;
-		currentScript.startScript(asHooks, startAgentState);
+		currentScript.startScript(agency, asHooks, startAgentState);
 		return true;
 	}
 
