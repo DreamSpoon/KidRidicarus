@@ -78,8 +78,10 @@ public class PlayScreen implements Screen {
 		game.director.createMapAgent(levelFilename);
 		// run one update to let the map create the collision map and draw layer agents
 		game.director.update(1f/60f);
+		game.director.postUpdate();
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
 		game.director.update(1f/60f);
+		game.director.postUpdate();
 
 		// create agent for guide
 		guide.setGuidedAgent(game.director.createInitialPlayerAgent(playerAgentProperties));
@@ -109,7 +111,11 @@ public class PlayScreen implements Screen {
 		guide.preUpdateAgency(newDelta);
 		// update the game world
 		game.director.update(newDelta);
-		// post-update stuff like camera changes
+		// allow guide to modify player agent state, create agents, change visibility, etc.
+		guide.updateAgency();
+		// post processing of changes during update
+		game.director.postUpdate();
+		// update camera, etc.
 		guide.postUpdateAgency();
 	}
 

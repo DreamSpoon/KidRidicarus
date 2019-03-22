@@ -15,7 +15,6 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agencydirector.AgencyDirector;
-import kidridicarus.common.agent.AgentSupervisor;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.info.UInfo;
@@ -117,10 +116,16 @@ public class Guide implements Disposable {
 		playAgent.getSupervisor().preUpdateAgency(delta);
 	}
 
-	public void postUpdateAgency() {
-		if(((AgentSupervisor) playAgent.getSupervisor()).isSwitchToOtherChar())
-			switchAgentType(PowChar.SAMUS);
+	// check / do player agent power character changes 
+	public void updateAgency() {
+		// check for "out-of-character" powerup received and change to appropriate character for powerup
+		Powerup nonCharPowerup = playAgent.getSupervisor().getNonCharPowerups().getFirst();
+		playAgent.getSupervisor().clearNonCharPowerups();
+		if(nonCharPowerup != null)
+			switchAgentType(nonCharPowerup.getPowerupCharacter());
+	}
 
+	public void postUpdateAgency() {
 		playAgent.getSupervisor().postUpdateAgency();
 	}
 

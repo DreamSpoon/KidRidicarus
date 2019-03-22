@@ -20,11 +20,21 @@ public class PowerupList {
 		powList.add(pow);
 	}
 
+	public Powerup getFirst() {
+		if(powList.isEmpty())
+			return null;
+		return powList.getFirst();
+	}
+
 	public <T> boolean containsPowClass(Class<T> cls) {
 		for(Powerup pow : powList) {
 			if(pow.getClass().equals(cls))
 				return true;
 		}
 		return false;
+	}
+
+	public void clear() {
+		powList.clear();
 	}
 }

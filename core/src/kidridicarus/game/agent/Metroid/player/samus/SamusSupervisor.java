@@ -7,12 +7,12 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.common.agent.AgentSupervisor;
+import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.Metroid.player.samus.HUD.SamusHUD;
 
-public class SamusSupervisor extends AgentSupervisor {
+public class SamusSupervisor extends PlayerAgentSupervisor {
 	private MoveAdvice moveAdvice;
 	private Samus samus;
 	private TextureAtlas atlas;
@@ -64,11 +64,6 @@ public class SamusSupervisor extends AgentSupervisor {
 					nextLevelName = name;
 				}
 			};
-	}
-
-	@Override
-	public boolean isSwitchToOtherChar() {
-		return false;
 	}
 
 	@Override

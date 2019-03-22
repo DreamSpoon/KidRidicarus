@@ -13,7 +13,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.AgentSupervisor;
+import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -21,6 +21,7 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.powerup.PowerupList;
 import kidridicarus.common.tool.Direction4;
@@ -269,8 +270,12 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	}
 
 	private void processPowerupsReceived() {
-		for(Powerup pu : powerupsReceived)
+		for(Powerup pu : powerupsReceived) {
+			if(pu.getPowerupCharacter() != PowChar.MARIO)
+				supervisor.receiveNonCharPowerup(pu);
+
 			applyPowerup(pu);
+		}
 		powerupsReceived.clear();
 	}
 
@@ -669,7 +674,7 @@ public class Mario extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	}
 
 	@Override
-	public AgentSupervisor getSupervisor() {
+	public PlayerAgentSupervisor getSupervisor() {
 		return supervisor;
 	}
 

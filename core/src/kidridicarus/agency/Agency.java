@@ -82,6 +82,10 @@ public class Agency implements Disposable {
 		globalTimer += delta;
 	}
 
+	public void postUpdate() {
+		processChangeQ();
+	}
+
 	private void updateAgents(final float delta) {
 		// loop through list of agents receiving updates, calling each agent's update method
 		agencyIndex.iterateThroughUpdateAgents(new AllowOrderListIter() {
@@ -93,7 +97,6 @@ public class Agency implements Disposable {
 					return false;
 				}
 			});
-		processChangeQ();
 	}
 
 	/*

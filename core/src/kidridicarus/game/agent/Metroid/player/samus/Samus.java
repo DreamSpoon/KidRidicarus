@@ -12,7 +12,7 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.AgentSupervisor;
+import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -571,7 +571,7 @@ public class Samus extends Agent implements PlayerAgent, ContactDmgTakeAgent, He
 	}
 
 	@Override
-	public AgentSupervisor getSupervisor() {
+	public PlayerAgentSupervisor getSupervisor() {
 		return supervisor;
 	}
 

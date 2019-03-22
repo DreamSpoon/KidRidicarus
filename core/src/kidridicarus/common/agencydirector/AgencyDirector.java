@@ -63,6 +63,10 @@ public class AgencyDirector implements Disposable {
 		agency.update(delta);
 	}
 
+	public void postUpdate() {
+		agency.postUpdate();
+	}
+
 	public void draw(OrthographicCamera camera) {
 		adBatch.setView(camera);
 		adBatch.begin();
@@ -98,13 +102,17 @@ public class AgencyDirector implements Disposable {
 	public Agent createInitialPlayerAgent(ObjectProperties playerAgentProperties) {
 		// find main player spawner
 		Agent spawner = getMainPlayerSpawner();
-		if(spawner == null)
+		if(spawner == null) {
+QQ.pr("no spawner for player");
 			return null;
+		}
 		// if no agent properties given then use spawner to determine player class and position
 		if(playerAgentProperties == null) {
 			String initPlayClass = spawner.getProperty("playeragentclass", null, String.class);
-			if(initPlayClass == null)
+			if(initPlayClass == null) {
+QQ.pr("no init class for player");
 				return null;
+			}
 			return agency.createAgent(Agent.createPointAP(initPlayClass, spawner.getPosition()));
 		}
 		// otherwise use agent properties and set start point to main spawn point
