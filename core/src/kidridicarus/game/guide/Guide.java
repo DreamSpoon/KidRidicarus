@@ -247,9 +247,11 @@ public class Guide implements Disposable {
 		// stop current main music if playing
 		if(currentMainMusic != null)
 			currentMainMusic.stop();
+		currentMainMusic = null;
 		// stop single play music if playing
 		if(currentSinglePlayMusic != null)
 			currentSinglePlayMusic.stop();
+		currentSinglePlayMusic = null;
 	}
 
 	public String getNextLevelFilename() {

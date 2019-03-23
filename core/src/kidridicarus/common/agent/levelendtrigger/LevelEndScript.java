@@ -5,7 +5,7 @@ import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 
 public class LevelEndScript implements AgentScript {
-	private static final float LEVELEND_WAIT = 1f;
+	private static final float LEVELEND_WAIT = 4f;
 
 	private LevelEndTrigger parent;
 	private AgentScriptHooks asHooks;
