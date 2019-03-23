@@ -75,6 +75,8 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	}
 
 	private void createCollisionMapAgent(LinkedList<TiledMapTileLayer> solidLayers) {
+		if(solidLayers.isEmpty())
+			return;
 		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_ORTHOCOLLISION_TILEMAP,
 				Agent.getStartBounds(properties));
 		cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAPTILELAYER_LIST, solidLayers);
@@ -82,6 +84,8 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	}
 
 	private void createDrawLayerAgents(LinkedList<TiledMapTileLayer> drawLayers) {
+		if(drawLayers.isEmpty())
+			return;
 		drawLayerAgents = new LinkedList<DrawLayerAgent>();
 		// loop through each draw layer in the list, adding each and passing a ref to its tiled map layer
 		for(TiledMapTileLayer layer : drawLayers) {

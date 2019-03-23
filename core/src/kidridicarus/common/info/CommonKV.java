@@ -65,7 +65,7 @@ public class CommonKV {
 
 	public class TiledMap {
 		public static final String KEY_WIDTH = "width";
-		public static final String KEY_HEIGHT = "width";
+		public static final String KEY_HEIGHT = "height";
 	}
 
 	public class Room {
@@ -74,6 +74,7 @@ public class CommonKV {
 		public static final String KEY_ROOMTYPE = "roomtype";
 		public static final String VAL_ROOMTYPE_CENTER = "center";
 		public static final String VAL_ROOMTYPE_HSCROLL = "hscroll";
+		public static final String VAL_ROOMTYPE_VSCROLL = "vscroll";
 	}
 
 	public class Powerup {

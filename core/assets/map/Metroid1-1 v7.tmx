@@ -70,7 +70,7 @@
   </properties>
   <object id="6" x="2544" y="80" width="16" height="48">
    <properties>
-    <property name="nextlevel_name" value="map/SMB1-1 v7.tmx"/>
+    <property name="nextlevel_name" value="map/KidIcarus1-1 v4.tmx"/>
    </properties>
   </object>
  </objectgroup>
