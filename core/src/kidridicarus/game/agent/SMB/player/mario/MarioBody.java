@@ -36,7 +36,7 @@ public class MarioBody extends PlayerAgentBody {
 	private static final CFBitSeq AS_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
 			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.COLLISIONMAP_BIT, CommonCF.Alias.POWERUP_BIT,
 			CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
+	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
 			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
 	private static final CFBitSeq TILEBUMP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
@@ -158,9 +158,8 @@ public class MarioBody extends PlayerAgentBody {
 			agentSensorFixture.refilter();
 			isAgentSensorEnabled = false;
 		}
-		if(!sbState.position.epsilonEquals(getPosition(), UInfo.POS_EPSILON)) {
+		if(!sbState.position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON))
 			defineBody(sbState.position, new Vector2(0f, 0f), bigBody, false);
-		}
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 	}
 }

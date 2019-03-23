@@ -59,6 +59,7 @@ public class MyKidRidicarus extends Game {
 		manager.load(AudioInfo.Sound.Metroid.STEP, Sound.class);
 		manager.load(AudioInfo.Sound.Metroid.HURT, Sound.class);
 		manager.load(AudioInfo.Sound.Metroid.SHOOT, Sound.class);
+		manager.load(AudioInfo.Sound.Metroid.ENERGY_PICKUP, Sound.class);
 		manager.finishLoading();
 
 		director = new AgencyDirector(manager, batch, atlas,

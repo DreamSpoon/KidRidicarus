@@ -36,7 +36,8 @@ public class SamusBody extends PlayerAgentBody {
 	// agent sensor
 	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_ENABLED_CFMASK =
-			new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
+			new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT,
+					CommonCF.Alias.POWERUP_BIT);
 	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_DISABLED_CFMASK =
 			new CFBitSeq(CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
@@ -148,6 +149,11 @@ public class SamusBody extends PlayerAgentBody {
 		if(!sbState.position.epsilonEquals(getPosition(), UInfo.POS_EPSILON))
 			defineBody(sbState.position, false);
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
+		if(sbState.gravityFactor != 0f ) {
+			// Body may "fall asleep" while no activity, also while gravityScale was zero,
+			// wake it up so that gravity functions again.
+			b2body.setAwake(true);
+		}
 	}
 
 	public SamusSpine getSpine() {

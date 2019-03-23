@@ -41,6 +41,7 @@ public class AudioInfo {
 			public static final String JUMP = DIR+"jump.wav";
 			public static final String HURT = DIR+"hurt.wav";
 			public static final String SHOOT = DIR+"shoot.wav";
+			public static final String ENERGY_PICKUP = DIR+"energy_pickup.wav";
 		}
 	}
 }

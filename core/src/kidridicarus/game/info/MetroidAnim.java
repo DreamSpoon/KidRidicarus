@@ -20,6 +20,8 @@ public class MetroidAnim {
 		private static final String DIR = "item/metroid/";
 
 		public static final String MARUMARI = DIR+"marumari";
+
+		public static final String ENERGY = DIR+"energy";
 	}
 
 	public class Player {

@@ -66,6 +66,7 @@ public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent
 	private void doUpdate(float delta) {
 		Vector2 flagPos;
 		MoveState nextMoveState = getNextMoveState();
+		boolean moveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case TOP:
 			default:
@@ -73,7 +74,11 @@ public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent
 				break;
 			case DROP:
 				isFlagTriggered = false;
-				flagPos = getFlagPosAtTime(moveStateTimer);
+				// return flag at top if first frame of drop
+				if(moveStateChanged)
+					flagPos = getFlagPosAtTop();
+				else
+					flagPos = getFlagPosAtTime(moveStateTimer);
 				break;
 			case BOTTOM:
 				flagPos = getFlagPosAtBottom();

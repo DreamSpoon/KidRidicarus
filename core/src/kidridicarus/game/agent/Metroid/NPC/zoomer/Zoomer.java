@@ -116,6 +116,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 					isInjured = false;
 				break;
 			case DEAD:
+				doPowerupDrop();
 				doDeathPop();
 				break;
 		}
@@ -130,6 +131,10 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 			return MoveState.INJURY;
 		else
 			return MoveState.WALK;
+	}
+
+	private void doPowerupDrop() {
+		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_ENERGY, body.getPosition()));
 	}
 
 	private void doDeathPop() {

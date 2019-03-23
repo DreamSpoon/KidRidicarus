@@ -1,5 +1,7 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
+import java.util.LinkedList;
+
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -15,10 +17,13 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.powerup.PowChar;
+import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
@@ -26,14 +31,24 @@ import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.powerup.MetroidPow;
+import kidridicarus.game.powerup.SMB_Pow;
 
+/*
+ * If Samus has zero energy tanks, then max energy is 99
+ * With 1 energy tank, Samus has 199 energy.
+ * The extra tank shows as an empty/filled blue square above and on the right side of energy number.
+ * When 100 <= energy <= 199, then tank still shows as filled blue square, but when energy drops by 1 to be =99,
+ * then energy tank is empty black square.
+ */
 /*
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends PlayerAgent implements ContactDmgTakeAgent, HeadBounceGiveAgent, DisposableAgent {
+public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
+		DisposableAgent {
 	public enum MoveState { STAND, BALL_GRND, RUN, RUNSHOOT, PRE_JUMPSHOOT, JUMPSHOOT, JUMPSPINSHOOT,
-		PRE_JUMPSPIN, JUMPSPIN, PRE_JUMP, JUMP, BALL_AIR, CLIMB;
+		PRE_JUMPSPIN, JUMPSPIN, PRE_JUMP, JUMP, BALL_AIR, CLIMB, DEAD;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
@@ -72,6 +87,8 @@ public class Samus extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private Vector2 takeDmgOrigin;
 	private boolean gaveHeadBounce;
 	private boolean isNextHeadBumpDenied;
+	// list of powerups received during contact update
+	private LinkedList<Powerup> powerupsReceived;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -119,6 +136,7 @@ public class Samus extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		takeDmgOrigin = new Vector2();
 		gaveHeadBounce = false;
 		isNextHeadBumpDenied = false;
+		powerupsReceived = new LinkedList<Powerup>();
 	}
 
 	/*
@@ -156,7 +174,8 @@ public class Samus extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			// since body has zero bounciness, a manual check is needed while in ball form 
 			if(moveState.isBall())
 				body.getSpine().doBounceCheck();
-	
+
+			processPowerupsReceived();
 			processDamageTaken(delta);
 			processHeadBouncesGiven();
 			processPipeWarps(moveAdvice);
@@ -178,6 +197,22 @@ public class Samus extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		moveState = nextMoveState;
 
 		processShoot(delta, moveAdvice);
+	}
+
+	private void processPowerupsReceived() {
+		for(Powerup pu : powerupsReceived) {
+			// TODO: implement ignore points pow for samus somewhere better
+			if(pu.getPowerupCharacter() != PowChar.SAMUS && !(pu instanceof SMB_Pow.PointsPow))
+				supervisor.receiveNonCharPowerup(pu);
+
+			applyPowerup(pu);
+		}
+		powerupsReceived.clear();
+	}
+
+	private void applyPowerup(Powerup pu) {
+		if(pu instanceof MetroidPow.EnergyPow)
+			agency.getEar().playSound(AudioInfo.Sound.Metroid.ENERGY_PICKUP);
 	}
 
 	private void processDamageTaken(float delta) {
@@ -547,6 +582,14 @@ public class Samus extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
 			return;
 		batch.draw(sprite);
+	}
+
+	@Override
+	public boolean onTakePowerup(Powerup pu) {
+		if(moveState == MoveState.DEAD)
+			return false;
+		powerupsReceived.add(pu);
+		return true;
 	}
 
 	@Override

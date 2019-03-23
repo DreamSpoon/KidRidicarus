@@ -118,6 +118,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 				doExplode();
 				break;
 			case DEAD:
+				doPowerupDrop();
 				doDeathPop();
 				break;
 		}
@@ -155,6 +156,10 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 					body.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
 		}
 		agency.disposeAgent(this);
+	}
+
+	private void doPowerupDrop() {
+		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_ENERGY, body.getPosition()));
 	}
 
 	private void doDeathPop() {

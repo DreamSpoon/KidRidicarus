@@ -45,6 +45,7 @@ public class GameKV {
 			public static final String VAL_SKREE = "skree";
 			public static final String VAL_SKREE_EXP = "skree_exp";
 			public static final String VAL_ZOOMER = "zoomer";
+			public static final String VAL_ENERGY = "metroid_energy";
 		}
 	}
 }
