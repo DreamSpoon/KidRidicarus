@@ -3,6 +3,7 @@ package kidridicarus.game.agent.Metroid.player.samus;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
@@ -135,5 +136,9 @@ public class SamusSpine extends PlayerSpine {
 				amount = amount * 0.6f;
 			body.setVelocity(body.getVelocity().x, amount);
 		}
+	}
+
+	public boolean isContactDespawn() {
+		return agentSensor.getFirstContactByClass(DespawnBox.class) != null;
 	}
 }

@@ -41,5 +41,16 @@ public class MetroidAnim {
 
 		public static final String SHOT = DIR+"shot_regular";
 		public static final String SHOT_EXP = DIR+"shot_explode";
+
+		public class Dead {
+			private static final String SUBDIR = DIR + "dead/";
+
+			public static final String BOT_LEFT = SUBDIR + "bot_left";
+			public static final String MID_LEFT = SUBDIR + "mid_left";
+			public static final String TOP_LEFT = SUBDIR + "top_left";
+			public static final String BOT_RIGHT = SUBDIR + "bot_right";
+			public static final String MID_RIGHT = SUBDIR + "mid_right";
+			public static final String TOP_RIGHT = SUBDIR + "top_right";
+		}
 	}
 }

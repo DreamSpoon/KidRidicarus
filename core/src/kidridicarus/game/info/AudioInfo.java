@@ -13,7 +13,8 @@ public class AudioInfo {
 
 		public class Metroid {
 			private static final String DIR = "audio/music/Metroid/";
-			public static final String METROIDITEM = DIR+"08_-_Metroid_-_NES_-_Get_Item_Jingle.ogg";
+			public static final String GET_ITEM = DIR+"08_-_Metroid_-_NES_-_Get_Item_Jingle.ogg";
+			public static final String SAMUS_DIE = DIR+"samus_die.ogg";
 		}
 	}
 

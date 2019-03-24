@@ -40,6 +40,7 @@ public class SamusSprite extends Sprite {
 	private Animation<TextureRegion> jumpSpinAnim;
 	private Animation<TextureRegion> ballAnim;
 	private Animation<TextureRegion> climbAnim;
+
 	private float climbAnimTimer;
 	private MoveState curParentState;
 	private float stateTimer;
@@ -152,7 +153,15 @@ public class SamusSprite extends Sprite {
 				setBounds(getX(), getY(), MED_SPRITE_WIDTH, MED_SPRITE_HEIGHT);
 				offset.set(MED_SPRITE_OFFSET);
 				break;
+			// samus is not drawn during dead anim state
+			case DEAD:
+				break;
 		}
+
+		if((isBlinking && isDrawAllowed) || nextParentState == MoveState.DEAD)
+			isDrawAllowed = false;
+		else
+			isDrawAllowed = true;
 
 		// should the sprite be flipped on X due to facing direction?
 		if((isFacingRight && isFlipX()) || (!isFacingRight && !isFlipX()))
@@ -160,11 +169,6 @@ public class SamusSprite extends Sprite {
 
 		// update sprite position
 		setPosition(position.x - getWidth()/2 + offset.x, position.y - getHeight()/2 + offset.y);
-
-		if(isBlinking && isDrawAllowed)
-			isDrawAllowed = false;
-		else
-			isDrawAllowed = true;
 
 		stateTimer = curParentState == nextParentState ? stateTimer+delta : 0f;
 		curParentState = nextParentState;

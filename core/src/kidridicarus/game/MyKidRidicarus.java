@@ -40,7 +40,8 @@ public class MyKidRidicarus extends Game {
 		// other music files may be loaded later when a space is loaded
 		manager.load(AudioInfo.Music.SMB.LEVELEND, Music.class);
 		manager.load(AudioInfo.Music.SMB.STARPOWER, Music.class);
-		manager.load(AudioInfo.Music.Metroid.METROIDITEM, Music.class);
+		manager.load(AudioInfo.Music.Metroid.GET_ITEM, Music.class);
+		manager.load(AudioInfo.Music.Metroid.SAMUS_DIE, Music.class);
 		manager.load(AudioInfo.Sound.SMB.COIN, Sound.class);
 		manager.load(AudioInfo.Sound.SMB.BUMP, Sound.class);
 		manager.load(AudioInfo.Sound.SMB.BREAK, Sound.class);

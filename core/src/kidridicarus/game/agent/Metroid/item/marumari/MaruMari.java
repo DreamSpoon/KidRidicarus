@@ -56,7 +56,7 @@ public class MaruMari extends Agent implements DisposableAgent {
 
 	private void doUpdate(float delta) {
 		if(isPowerupUsed) {
-			agency.getEar().startSinglePlayMusic(AudioInfo.Music.Metroid.METROIDITEM);
+			agency.getEar().startSinglePlayMusic(AudioInfo.Music.Metroid.GET_ITEM);
 			agency.disposeAgent(this);
 		}
 

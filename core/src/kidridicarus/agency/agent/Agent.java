@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.Direction8;
 
 /*
  * The Agent can interact with other Agents (like Body in Box2D).
@@ -117,5 +119,9 @@ public abstract class Agent {
 
 	public static TextureRegion getStartTexRegion(ObjectProperties agentProps) {
 		return agentProps.get(AgencyKV.Spawn.KEY_START_TEXREGION, null, TextureRegion.class);
+	}
+
+	public static Direction8 getStartDirection8(ObjectProperties agentProps) {
+		return agentProps.get(CommonKV.KEY_DIRECTION, Direction8.NONE, Direction8.class);
 	}
 }

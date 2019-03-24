@@ -25,12 +25,15 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.common.tool.Direction8;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.game.agent.Metroid.player.samuschunk.SamusChunk;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.GameKV;
 import kidridicarus.game.powerup.MetroidPow;
 import kidridicarus.game.powerup.SMB_Pow;
 
@@ -68,6 +71,9 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private static final float SHOT_VEL = 2f;
 	private static final float SHOOT_COOLDOWN = 0.15f;
 	private static final float NO_DAMAGE_TIME = 0.8f;
+	private static final float DEAD_DELAY_TIME = 3f;
+	private static final int START_ENERGY_SUPPLY = 30;
+	private static final int ENERGY_POW_AMOUNT = 5;
 
 	private SamusSupervisor supervisor;
 	private SamusBody body;
@@ -89,6 +95,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private boolean isNextHeadBumpDenied;
 	// list of powerups received during contact update
 	private LinkedList<Powerup> powerupsReceived;
+	private int energySupply;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -137,6 +144,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		gaveHeadBounce = false;
 		isNextHeadBumpDenied = false;
 		powerupsReceived = new LinkedList<Powerup>();
+		energySupply = START_ENERGY_SUPPLY;
 	}
 
 	/*
@@ -188,7 +196,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
-		if(nextMoveState.isGroundMove())
+		boolean moveStateChanged = nextMoveState != moveState;
+		if(nextMoveState == MoveState.DEAD)
+			processDeadMove(delta, moveStateChanged);
+		else if(nextMoveState.isGroundMove())
 			processGroundMove(delta, moveAdvice, nextMoveState);
 		else
 			processAirMove(delta, moveAdvice, nextMoveState);
@@ -201,8 +212,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	private void processPowerupsReceived() {
 		for(Powerup pu : powerupsReceived) {
+			if(pu instanceof MetroidPow.EnergyPow)
+				energySupply += ENERGY_POW_AMOUNT;
 			// TODO: implement ignore points pow for samus somewhere better
-			if(pu.getPowerupCharacter() != PowChar.SAMUS && !(pu instanceof SMB_Pow.PointsPow))
+			else if(pu.getPowerupCharacter() != PowChar.SAMUS && !(pu instanceof SMB_Pow.PointsPow))
 				supervisor.receiveNonCharPowerup(pu);
 
 			applyPowerup(pu);
@@ -228,6 +241,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			return;
 		// take damage
 		didTakeDamage = false;
+		energySupply -= 5;
 		noDamageCooldown = NO_DAMAGE_TIME;
 		body.getSpine().applyDamageKick(takeDmgOrigin);
 		takeDmgOrigin.set(0f, 0f);
@@ -249,8 +263,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
+		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn() || energySupply <= 0)
+			return MoveState.DEAD;
 		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
-		if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && !moveState.isGroundMove()))
+		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && !moveState.isGroundMove()))
 			return getNextMoveStateGround(moveAdvice);
 		// do air move
 		else
@@ -360,6 +376,45 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 		else
 			return MoveState.JUMP;
+	}
+
+	private void processDeadMove(float delta, boolean moveStateChanged) {
+		// if newly dead then disable contacts and start dead sound
+		if(moveStateChanged) {
+			body.applyDead();
+			createDeathPop();
+			agency.getEar().stopAllMusic();
+			agency.getEar().startSinglePlayMusic(AudioInfo.Music.Metroid.SAMUS_DIE);
+		}
+		// ... and if died a long time ago then do game over
+		else if(moveStateTimer > DEAD_DELAY_TIME)
+				supervisor.setGameOver();
+		// ... else do nothing.
+	}
+
+	private static final float CHUNK_OFFSET_X = UInfo.P2M(4f); 
+	private static final float CHUNK_OFFSET_Y = UInfo.P2M(8f); 
+	private static final float BOT_VEL_X = 0.6f; 
+	private static final float BOT_VEL_Y = 1f; 
+	private static final float MID_VEL_X = 0.6f; 
+	private static final float MID_VEL_Y = 1f; 
+	private static final float TOP_VEL_X = 0.6f; 
+	private static final float TOP_VEL_Y = 0.9f; 
+	// 6 pieces burst in 6 different directions
+	// 2 columns and 3 rows of 8x8 sprite animation
+	private void createDeathPop() {
+		agency.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, -CHUNK_OFFSET_Y),
+				new Vector2(BOT_VEL_X, BOT_VEL_Y), Direction8.DOWN_RIGHT));
+		agency.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, -CHUNK_OFFSET_Y),
+				new Vector2(-BOT_VEL_X, BOT_VEL_Y), Direction8.DOWN_LEFT));
+		agency.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, 0f),
+				new Vector2(MID_VEL_X, MID_VEL_Y), Direction8.RIGHT));
+		agency.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, 0f),
+				new Vector2(-MID_VEL_X, MID_VEL_Y), Direction8.LEFT));
+		agency.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, CHUNK_OFFSET_Y),
+				new Vector2(TOP_VEL_X, TOP_VEL_Y), Direction8.UP_RIGHT));
+		agency.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, CHUNK_OFFSET_Y),
+				new Vector2(-TOP_VEL_X, TOP_VEL_Y), Direction8.UP_LEFT));
 	}
 
 	private void processGroundMove(float delta, MoveAdvice moveAdvice, MoveState nextMoveState) {
@@ -646,6 +701,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 		else if(key.equals(CommonKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
 			Vector2 he = new Vector2(sprite.getWidth(), sprite.getHeight());
+			return (T) he;
+		}
+		else if(key.equals(GameKV.Metroid.KEY_ENERGY_SUPPLY) && Integer.class.equals(cls)) {
+			Integer he = energySupply;
 			return (T) he;
 		}
 		return super.getProperty(key, defaultValue, cls);

@@ -5,10 +5,14 @@ public class CommonKV {
 	public static final String VAL_FALSE = "false";
 
 	public static final String KEY_DIRECTION = "direction";
-	public static final String VAL_LEFT = "left";
 	public static final String VAL_RIGHT = "right";
+	public static final String VAL_UP_RIGHT = "up_right";
 	public static final String VAL_UP = "up";
+	public static final String VAL_UP_LEFT = "up_left";
+	public static final String VAL_LEFT = "left";
+	public static final String VAL_DOWN_LEFT = "down_left";
 	public static final String VAL_DOWN = "down";
+	public static final String VAL_DOWN_RIGHT = "down_right";
 
 	public class AgentClassAlias {
 		public static final String VAL_AGENTSPAWNER = "agentspawner";

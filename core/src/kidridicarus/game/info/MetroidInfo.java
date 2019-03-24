@@ -9,6 +9,7 @@ import kidridicarus.game.agent.Metroid.item.marumari.MaruMari;
 import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
 import kidridicarus.game.agent.Metroid.other.metroiddoor.MetroidDoor;
 import kidridicarus.game.agent.Metroid.player.samus.Samus;
+import kidridicarus.game.agent.Metroid.player.samuschunk.SamusChunk;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
 
 public class MetroidInfo {
@@ -18,6 +19,7 @@ public class MetroidInfo {
 			GameKV.Metroid.AgentClassAlias.VAL_ENERGY, Energy.class,
 			GameKV.Metroid.AgentClassAlias.VAL_MARUMARI, MaruMari.class,
 			GameKV.Metroid.AgentClassAlias.VAL_SAMUS, Samus.class,
+			GameKV.Metroid.AgentClassAlias.VAL_SAMUS_CHUNK, SamusChunk.class,
 			GameKV.Metroid.AgentClassAlias.VAL_SAMUS_SHOT, SamusShot.class,
 			GameKV.Metroid.AgentClassAlias.VAL_SKREE, Skree.class,
 			GameKV.Metroid.AgentClassAlias.VAL_SKREE_EXP, SkreeShot.class,

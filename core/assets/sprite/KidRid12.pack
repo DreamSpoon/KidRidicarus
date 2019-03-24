@@ -1291,6 +1291,179 @@ KidRid128.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+player/metroid/dead/bot_left
+  rotate: false
+  xy: 1, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+player/metroid/dead/bot_left
+  rotate: false
+  xy: 11, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+player/metroid/dead/bot_left
+  rotate: false
+  xy: 21, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+player/metroid/dead/bot_left
+  rotate: false
+  xy: 31, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 4
+player/metroid/dead/bot_right
+  rotate: false
+  xy: 41, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+player/metroid/dead/bot_right
+  rotate: false
+  xy: 51, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+player/metroid/dead/bot_right
+  rotate: false
+  xy: 61, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+player/metroid/dead/bot_right
+  rotate: false
+  xy: 71, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 4
+player/metroid/dead/mid_left
+  rotate: false
+  xy: 81, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+player/metroid/dead/mid_left
+  rotate: false
+  xy: 91, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+player/metroid/dead/mid_left
+  rotate: false
+  xy: 101, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+player/metroid/dead/mid_left
+  rotate: false
+  xy: 111, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 4
+player/metroid/dead/mid_right
+  rotate: false
+  xy: 121, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+player/metroid/dead/mid_right
+  rotate: false
+  xy: 131, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+player/metroid/dead/mid_right
+  rotate: false
+  xy: 141, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+player/metroid/dead/mid_right
+  rotate: false
+  xy: 151, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 4
+player/metroid/dead/top_left
+  rotate: false
+  xy: 161, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+player/metroid/dead/top_left
+  rotate: false
+  xy: 171, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+player/metroid/dead/top_left
+  rotate: false
+  xy: 181, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+player/metroid/dead/top_left
+  rotate: false
+  xy: 191, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 4
+player/metroid/dead/top_right
+  rotate: false
+  xy: 201, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+player/metroid/dead/top_right
+  rotate: false
+  xy: 211, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+player/metroid/dead/top_right
+  rotate: false
+  xy: 221, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+player/metroid/dead/top_right
+  rotate: false
+  xy: 231, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 4
+
+KidRid129.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 player/metroid/samus_aim_right
   rotate: false
   xy: 1, 87

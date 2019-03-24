@@ -37,7 +37,7 @@ public class SamusBody extends PlayerAgentBody {
 	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_ENABLED_CFMASK =
 			new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT,
-					CommonCF.Alias.POWERUP_BIT);
+					CommonCF.Alias.POWERUP_BIT, CommonCF.Alias.DESPAWN_BIT);
 	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_DISABLED_CFMASK =
 			new CFBitSeq(CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
@@ -158,5 +158,21 @@ public class SamusBody extends PlayerAgentBody {
 
 	public SamusSpine getSpine() {
 		return spine;
+	}
+
+	public void applyDead() {
+		allowOnlyDeadContacts();
+		zeroVelocity(true, true);
+		b2body.setGravityScale(0f);
+	}
+
+	public void allowOnlyDeadContacts() {
+		// disable all, and...
+		disableAllContacts();
+		// ... re-enable the needed agent contact sensor bits
+		((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
+		((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
+		agentSensorFixture.refilter();
+		isAgentSensorEnabled = false;
 	}
 }

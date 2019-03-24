@@ -14,8 +14,10 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.game.agent.Metroid.player.samus.Samus;
 import kidridicarus.game.agent.SMB.player.mario.HUD.HudCoin;
 import kidridicarus.game.info.GameInfo;
+import kidridicarus.game.info.GameKV;
 
 public class SamusHUD implements Disposable {
+	private Samus samus;
 	private Stage stage;
 
 	private Label scoreVarLabel;
@@ -24,6 +26,7 @@ public class SamusHUD implements Disposable {
 	private Label timeVarLabel;
 
 	public SamusHUD(Samus samus, TextureAtlas atlas, Stage stage) {
+		this.samus = samus;
 		this.stage = stage;
 
 		Table table = new Table();
@@ -53,15 +56,16 @@ public class SamusHUD implements Disposable {
 		stage.addActor(table);
 	}
 
-/*	public void update() {
-		scoreVarLabel.setText(String.format("%06d", samus.getPointTotal()));
-		timeVarLabel.setText(String.format("%03d", (int) samus.getLevelTimeRemaining()));
-		coinVarLabel.setText(String.format("×%02d", samus.getCoinTotal()));
+	public void update() {
+//		scoreVarLabel.setText(String.format("%06d", samus.getPointTotal()));
+//		timeVarLabel.setText(String.format("%03d", (int) samus.getLevelTimeRemaining()));
+		coinVarLabel.setText(String.format("×%02d",
+				samus.getProperty(GameKV.Metroid.KEY_ENERGY_SUPPLY, 0, Integer.class)));
 		stage.act();
 	}
-*/
+
 	public void draw() {
-//		update();
+		update();
 		stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
 		stage.draw();
 	}
