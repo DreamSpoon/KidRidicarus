@@ -42,6 +42,7 @@ import kidridicarus.game.tool.QQ;
 public class Guide implements Disposable {
 	private static final float SPAWN_TRIGGER_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 30);
 	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_X * 15);
+	private static final Vector2 SAFETY_RESPAWN_OFFSET = UInfo.P2MVector(0f, 8f);
 
 	private Agency agency;
 	private PlayerAgent myPlayerAgent;
@@ -119,7 +120,7 @@ public class Guide implements Disposable {
 	private void switchAgentType(PowChar pc) {
 		Vector2 currentPos = new Vector2(0f, 0f);
 		if(myPlayerAgent != null) {
-			currentPos = myPlayerAgent.getPosition();
+			currentPos = myPlayerAgent.getPosition().add(SAFETY_RESPAWN_OFFSET);
 			agency.disposeAgent(myPlayerAgent);
 			myPlayerAgent = null;
 		}

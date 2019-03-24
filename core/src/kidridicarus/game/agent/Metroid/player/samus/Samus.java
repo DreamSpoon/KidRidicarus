@@ -132,6 +132,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			isFacingRight = true;
 		isFacingUp = false;
 		noDamageCooldown = 0f;
+		energySupply = properties.get(GameKV.Metroid.KEY_ENERGY_SUPPLY, START_ENERGY_SUPPLY, Integer.class);
 
 		runStateTimer = 0f;
 		lastStepSoundTime = 0f;
@@ -144,7 +145,6 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		gaveHeadBounce = false;
 		isNextHeadBumpDenied = false;
 		powerupsReceived = new LinkedList<Powerup>();
-		energySupply = START_ENERGY_SUPPLY;
 	}
 
 	/*
@@ -714,6 +714,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	public ObjectProperties getCopyAllProperties() {
 		ObjectProperties op = properties.cpy();
 		op.put(CommonKV.Script.KEY_FACINGRIGHT, isFacingRight);
+		op.put(GameKV.Metroid.KEY_ENERGY_SUPPLY, energySupply);
 		return op;
 	}
 
