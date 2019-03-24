@@ -1464,6 +1464,32 @@ KidRid129.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+player/metroid/HUD/energy_text
+  rotate: false
+  xy: 1, 1
+  size: 24, 8
+  orig: 24, 8
+  offset: 0, 0
+  index: -1
+player/metroid/HUD/energy_tank_empty
+  rotate: false
+  xy: 27, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+player/metroid/HUD/energy_tank_full
+  rotate: false
+  xy: 37, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+
+KidRid1210.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 player/metroid/samus_aim_right
   rotate: false
   xy: 1, 87

@@ -14,13 +14,14 @@ import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.game.info.AudioInfo;
 
 public class MetroidDoor extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float REMAIN_OPEN_DELAY = 77/30f;
 	private static final float OPENCLOSE_DELAY1 = 1/5f;
 	private static final float OPENCLOSE_DELAY2 = 1/10f;
 
-	public enum MoveState { CLOSED, OPENING_WAIT1, OPEN, CLOSING, OPENING_WAIT2 }
+	public enum MoveState { CLOSED, OPENING_WAIT1, OPENING_WAIT2, OPEN, CLOSING }
 
 	private MetroidDoorBody body;
 	private MetroidDoorSprite sprite;
@@ -58,14 +59,27 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 
 	private void processMove(float delta) {
 		MoveState nextMoveState = getNextMoveState();
+		boolean moveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case CLOSING:
+				// if first frame of closing then cancel isOpening flag, make door solid again, and play sound
+				if(moveStateChanged) {
+					isOpening = false;
+					body.setMainSolid(true);
+					agency.getEar().playSound(AudioInfo.Sound.Metroid.DOOR);
+				}
+				break;
 			case CLOSED:	// there must be a joke in this somewhere...
-				isOpening = false;
 				break;
 			case OPENING_WAIT1:
 			case OPENING_WAIT2:
+				break;
 			case OPEN:
+				// if first frame of open then make the door non-solid
+				if(moveStateChanged) {
+					body.setMainSolid(false);
+					agency.getEar().playSound(AudioInfo.Sound.Metroid.DOOR);
+				}
 				break;
 		}
 		stateTimer = moveState == nextMoveState ? stateTimer+delta : 0f;
@@ -94,7 +108,7 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 	 */
 	private MoveState getNextMoveState() {
 		// progress through opening and closing states by timed delays
-		switch(moveState) {
+/*		switch(moveState) {
 			case CLOSED:
 				if(isOpening)
 					return MoveState.OPENING_WAIT1;
@@ -108,21 +122,59 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 					return MoveState.OPEN;
 				break;
 			case OPEN:
-				// make the door non-solid
-				body.setMainSolid(false);
 				if(stateTimer > REMAIN_OPEN_DELAY)
 					return MoveState.CLOSING;
 				break;
 			case CLOSING:
 				if(isOpening)
 					return MoveState.OPENING_WAIT2;
-				// make the door solid again
-				body.setMainSolid(true);
-				if(stateTimer > OPENCLOSE_DELAY2)
+				else if(stateTimer > OPENCLOSE_DELAY2)
 					return MoveState.CLOSED;
 				break;
 		}
 		return moveState;
+*/
+		if(moveState == MoveState.CLOSED) {
+			// if triggered to open...
+			if(isOpening)
+				return MoveState.OPENING_WAIT1;
+			else
+				return MoveState.CLOSED;
+		}
+		else if(moveState == MoveState.OPENING_WAIT1) {
+			// if the first opening delay has elapsed...
+			if(stateTimer > OPENCLOSE_DELAY1)
+				return MoveState.OPENING_WAIT2;
+			else
+				return MoveState.OPENING_WAIT1;
+		}
+		else if(moveState == MoveState.OPENING_WAIT2) {
+			// ... and if the second opening delay has elapsed then change to open state
+			if(stateTimer > OPENCLOSE_DELAY2)
+				return MoveState.OPEN;
+			else
+				return MoveState.OPENING_WAIT2;
+		}
+		else if(moveState == MoveState.OPEN) {
+			// if stay open delay has elapsed then change to closing
+			if(stateTimer > REMAIN_OPEN_DELAY)
+				return MoveState.CLOSING;
+			// remain open
+			else
+				return MoveState.OPEN;
+		}
+		// MoveState.CLOSING
+		else {
+			// re-open before closing is finished?
+			if(isOpening)
+				return MoveState.OPENING_WAIT2;
+			// closing finished?
+			else if(stateTimer > OPENCLOSE_DELAY2)
+				return MoveState.CLOSED;
+			// continue closing
+			else
+				return MoveState.CLOSING;
+		}
 	}
 
 	private void processSprite() {

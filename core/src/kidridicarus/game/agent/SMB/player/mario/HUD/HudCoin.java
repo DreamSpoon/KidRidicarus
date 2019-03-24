@@ -13,7 +13,7 @@ public class HudCoin extends Image {
 		setDrawable(drawable);
 		stateTimer = 0f;
 	}
-	
+
 	@Override
 	public void act(float delta) {
 		super.act(delta);

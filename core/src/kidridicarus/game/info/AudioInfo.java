@@ -38,11 +38,12 @@ public class AudioInfo {
 		}
 		public class Metroid {
 			private static final String DIR = "audio/sound/Metroid/";
-			public static final String STEP = DIR+"step.wav";
-			public static final String JUMP = DIR+"jump.wav";
-			public static final String HURT = DIR+"hurt.wav";
-			public static final String SHOOT = DIR+"shoot.wav";
+			public static final String DOOR = DIR+"door.ogg";
 			public static final String ENERGY_PICKUP = DIR+"energy_pickup.wav";
+			public static final String HURT = DIR+"hurt.wav";
+			public static final String JUMP = DIR+"jump.wav";
+			public static final String SHOOT = DIR+"shoot.wav";
+			public static final String STEP = DIR+"step.wav";
 		}
 	}
 }
