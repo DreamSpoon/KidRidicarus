@@ -17,7 +17,8 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.GameKV;
 
 public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent {
-	private static final float GIVE_DAMAGE = 1f;
+	private static final float ITEM_DROP_RATE = 1/3f;
+	private static final float GIVE_DAMAGE = 8f;
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
 	private static final float INJURY_TIME = 10f/60f;
 	private static final float EXPLODE_WAIT = 1f;
@@ -159,6 +160,9 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	}
 
 	private void doPowerupDrop() {
+		// exit if drop not allowed
+		if(Math.random() > ITEM_DROP_RATE)
+			return;
 		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_ENERGY, body.getPosition()));
 	}
 

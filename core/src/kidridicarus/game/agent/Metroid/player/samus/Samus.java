@@ -73,6 +73,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private static final float NO_DAMAGE_TIME = 0.8f;
 	private static final float DEAD_DELAY_TIME = 3f;
 	private static final int START_ENERGY_SUPPLY = 30;
+	private static final int MAX_ENERGY_SUPPLY = 99;
 	private static final int ENERGY_POW_AMOUNT = 5;
 
 	private SamusSupervisor supervisor;
@@ -83,19 +84,19 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private boolean isFacingRight;
 	private boolean isFacingUp;
 	private float noDamageCooldown;
+	private int energySupply;
 
 	private float runStateTimer;
 	private float lastStepSoundTime;
 	private float jumpForceTimer;
 	private boolean isNextJumpAllowed;
 	private float shootCooldownTimer;
-	private boolean didTakeDamage;
+	private float takeDamageAmount;
 	private Vector2 takeDmgOrigin;
 	private boolean gaveHeadBounce;
 	private boolean isNextHeadBumpDenied;
 	// list of powerups received during contact update
 	private LinkedList<Powerup> powerupsReceived;
-	private int energySupply;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -140,7 +141,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		// player must land on ground before first jump is allowed
 		isNextJumpAllowed = false;
 		shootCooldownTimer = 0f;
-		didTakeDamage = false;
+		takeDamageAmount = 0f;
 		takeDmgOrigin = new Vector2();
 		gaveHeadBounce = false;
 		isNextHeadBumpDenied = false;
@@ -212,8 +213,11 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	private void processPowerupsReceived() {
 		for(Powerup pu : powerupsReceived) {
-			if(pu instanceof MetroidPow.EnergyPow)
-				energySupply += ENERGY_POW_AMOUNT;
+			if(pu instanceof MetroidPow.EnergyPow) {
+				energySupply += ENERGY_POW_AMOUNT;  
+				if(energySupply > MAX_ENERGY_SUPPLY)
+					energySupply = MAX_ENERGY_SUPPLY;
+			}
 			// TODO: implement ignore points pow for samus somewhere better
 			else if(pu.getPowerupCharacter() != PowChar.SAMUS && !(pu instanceof SMB_Pow.PointsPow))
 				supervisor.receiveNonCharPowerup(pu);
@@ -232,19 +236,24 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		// if invulnerable to damage then exit
 		if(noDamageCooldown > 0f) {
 			noDamageCooldown -= delta;
-			didTakeDamage = false;
+			takeDamageAmount = 0f;
 			takeDmgOrigin.set(0f, 0f);
 			return;
 		}
 		// if no damage taken this frame then exit
-		else if(!didTakeDamage)
+		else if(takeDamageAmount == 0f)
 			return;
-		// take damage
-		didTakeDamage = false;
-		energySupply -= 5;
+		// apply damage against energy supply
+		energySupply -= takeDamageAmount;
+		// reset frame take damage amount
+		takeDamageAmount = 0f;
+		// start no damage period
 		noDamageCooldown = NO_DAMAGE_TIME;
+		// push player away from damage origin
 		body.getSpine().applyDamageKick(takeDmgOrigin);
+		// reset take damage origin
 		takeDmgOrigin.set(0f, 0f);
+		// ouchie sound
 		agency.getEar().playSound(AudioInfo.Sound.Metroid.HURT);
 	}
 
@@ -331,8 +340,6 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			else
 				return MoveState.BALL_AIR;
 		}
-		else if(moveState == MoveState.JUMPSHOOT)
-			return MoveState.JUMPSHOOT;
 		else if(moveState == MoveState.JUMPSPINSHOOT) {
 			// if not moving up then lose spin and do jumpshoot
 			if(!body.getSpine().isMovingUp())
@@ -374,6 +381,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			else
 				return MoveState.PRE_JUMP;
 		}
+		else if(moveAdvice.action0 || moveState == MoveState.JUMPSHOOT)
+			return MoveState.JUMPSHOOT;
 		else
 			return MoveState.JUMP;
 	}
@@ -490,12 +499,11 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 
 		// facing up can change during jumpspin while player moves upward
-		if(nextMoveState.isJumpSpin() && body.getSpine().isMovingUp()) {
-			if(moveAdvice.moveUp && !moveAdvice.moveDown)
-				isFacingUp = true;
-			else
-				isFacingUp = false;
-		}
+		if(nextMoveState.isJumpSpin() && body.getSpine().isMovingUp())
+			isFacingUp = moveAdvice.moveUp;
+		// facing up can change to true during jump, but cannot change back to false
+		else if(moveAdvice.moveUp)
+			isFacingUp = true;
 
 		// if changed to non-ball state from ball state then increase body size 
 		if(!nextMoveState.isBall() && moveState.isBall())
@@ -649,10 +657,11 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
-		// no damage taken if already took damage this frame, or if invulnerable, or if star powered, or if dead
-		if(didTakeDamage || noDamageCooldown > 0f)
+		// don't take more damage if damage taken already this frame, or if invulnerable
+		if(takeDamageAmount > 0f || noDamageCooldown > 0f)
 			return false;
-		didTakeDamage = true;
+		// keep damage info
+		takeDamageAmount = amount;
 		takeDmgOrigin.set(dmgOrigin);
 		return true;
 	}

@@ -23,9 +23,10 @@ import kidridicarus.game.info.GameKV;
  * check the sensors.
  */
 public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+	private static final float ITEM_DROP_RATE = 3/7f;
+	private static final float GIVE_DAMAGE = 8f;
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
 	private static final float INJURY_TIME = 10f/60f;
-	private static final float GIVE_DAMAGE = 1f;
 
 	public enum MoveState { WALK, INJURY, DEAD }
 
@@ -134,6 +135,9 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	}
 
 	private void doPowerupDrop() {
+		// exit if drop not allowed
+		if(Math.random() > ITEM_DROP_RATE)
+			return;
 		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_ENERGY, body.getPosition()));
 	}
 

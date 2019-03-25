@@ -19,9 +19,9 @@ import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.AudioInfo;
 
 public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+	private static final float GIVE_DAMAGE = 8f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
-	private static final float GIVE_DAMAGE = 1f;
 
 	public enum MoveState { WALK, FALL, DEAD_BUMP, DEAD_SQUISH;
 		public boolean equalsAny(MoveState ...otherStates) {

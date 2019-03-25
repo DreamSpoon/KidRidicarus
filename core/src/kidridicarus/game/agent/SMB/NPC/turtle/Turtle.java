@@ -24,7 +24,7 @@ import kidridicarus.game.info.AudioInfo;
  *  I couldn't find any maps in SMB 1 that would clear up this matter.
  */
 public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
-	private static final float GIVE_DAMAGE = 1f;
+	private static final float GIVE_DAMAGE = 8f;
 	private static final float DIE_FALL_TIME = 6f;
 	private static final float HIDE_DELAY = 1.7f;
 	private static final float WAKE_DELAY = 3f;

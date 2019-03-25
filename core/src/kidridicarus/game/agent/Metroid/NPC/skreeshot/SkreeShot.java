@@ -15,7 +15,7 @@ import kidridicarus.common.info.CommonInfo;
 
 public class SkreeShot extends Agent implements DisposableAgent {
 	private static final float LIVE_TIME = 0.167f;
-	private static final float GIVE_DAMAGE = 1f;
+	private static final float GIVE_DAMAGE = 5f;
 
 	private SkreeShotBody body;
 	private SkreeShotSprite sprite;

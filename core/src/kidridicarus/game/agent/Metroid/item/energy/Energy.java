@@ -15,13 +15,18 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.powerup.MetroidPow;
 
 public class Energy extends Agent implements DisposableAgent {
+	private static final float LIVE_TIME = 6.35f;
+
 	private EnergyBody body;
 	private EnergySprite sprite;
 	private boolean isPowerupUsed;
+	private float moveStateTimer;
 
 	public Energy(Agency agency, ObjectProperties agentProps) {
 		super(agency, agentProps);
+
 		isPowerupUsed = false;
+		moveStateTimer = 0f;
 
 		body = new EnergyBody(this, agency.getWorld(), Agent.getStartPoint(agentProps));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
@@ -53,10 +58,12 @@ public class Energy extends Agent implements DisposableAgent {
 	}
 
 	private void doUpdate(float delta) {
-		if(isPowerupUsed)
+		if(isPowerupUsed || moveStateTimer > LIVE_TIME)
 			agency.disposeAgent(this);
 
 		sprite.update(delta, body.getPosition());
+
+		moveStateTimer += delta;
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
