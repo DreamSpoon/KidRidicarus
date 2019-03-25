@@ -21,8 +21,8 @@ import kidridicarus.game.info.GameKV;
 public class MarioFireball extends Agent implements DisposableAgent {
 	private static final float DAMAGE = 1f;
 
-	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
-	private static final float MAX_Y_VEL = 2.0f;
+//	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
+//	private static final float MAX_Y_VEL = 2.0f;
 
 	public enum MoveState { FLY, EXPLODE }
 	private enum HitType { NONE, BOUNDARY, AGENT }
@@ -49,13 +49,13 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		if(properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT)) {
 			isFacingRight = true;
 			body = new MarioFireballBody(this, agency.getWorld(), Agent.getStartPoint(properties),
-					MOVE_VEL.cpy().scl(1, 1));
+					MarioFireballSpine.MOVE_VEL.cpy().scl(1, -1));
 		}
 		// fireball on left
 		else {
 			isFacingRight = false;
 			body = new MarioFireballBody(this, agency.getWorld(), Agent.getStartPoint(properties),
-					MOVE_VEL.cpy().scl(-1, 1));
+					MarioFireballSpine.MOVE_VEL.cpy().scl(-1, -1));
 		}
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
@@ -65,9 +65,12 @@ public class MarioFireball extends Agent implements DisposableAgent {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
 		sprite = new MarioFireballSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
 				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 			});
@@ -100,9 +103,10 @@ public class MarioFireball extends Agent implements DisposableAgent {
 
 	private void processMove(float delta) {
 		MoveState nextMoveState = getNextMoveState();
+		boolean moveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case EXPLODE:
-				if(nextMoveState != moveState) {
+				if(moveStateChanged) {
 					body.getSpine().startExplode();
 					// if hit agent then play different sound than if hit boundary line
 					if(hitType == HitType.AGENT)
@@ -115,15 +119,10 @@ public class MarioFireball extends Agent implements DisposableAgent {
 					agency.disposeAgent(this);
 				break;
 			case FLY:
+				// check for bounce (y velocity) and maintain x velocity
+				body.getSpine().doVelocityCheck();
 				break;
 		}
-
-		// cap up velocity
-		if(body.getVelocity().y > MAX_Y_VEL)
-			body.setVelocity(body.getVelocity().x, MAX_Y_VEL);
-		// cap down velocity
-		else if(body.getVelocity().y < -MAX_Y_VEL)
-			body.setVelocity(body.getVelocity().x, -MAX_Y_VEL);
 
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
@@ -133,6 +132,10 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		if(hitType == HitType.NONE && moveState == MoveState.FLY)
 			return MoveState.FLY;
 		return MoveState.EXPLODE;
+	}
+
+	private void doPostUpdate() {
+		body.postUpdate();
 	}
 
 	private void processSprite(float delta) {

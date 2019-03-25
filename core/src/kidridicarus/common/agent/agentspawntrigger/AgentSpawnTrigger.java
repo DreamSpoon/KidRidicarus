@@ -8,12 +8,14 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.followbox.FollowBox;
+import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 
-public class AgentSpawnTrigger extends Agent implements DisposableAgent {
-	private AgentSpawnTriggerBody stBody;
+public class AgentSpawnTrigger extends FollowBox implements DisposableAgent {
+	private AgentSpawnTriggerBody body;
 	private boolean enabled;
 
 	public AgentSpawnTrigger(Agency agency, ObjectProperties properties) {
@@ -21,28 +23,18 @@ public class AgentSpawnTrigger extends Agent implements DisposableAgent {
 
 		// begin in the disabled state (will not trigger spawners)
 		enabled = false;
-		stBody = new AgentSpawnTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
-
+		body = new AgentSpawnTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
-					doUpdate();
-				}
+				public void update(float delta) { doUpdate(); }
 			});
 	}
 
 	private void doUpdate() {
 		if(!enabled)
 			return;
-		for(TriggerTakeAgent agent : stBody.getSpawnerContacts())
+		for(TriggerTakeAgent agent : body.getSpawnerContacts())
 			agent.onTakeTrigger();
-	}
-
-	/*
-	 * Set the target center position of the spawn trigger, and the trigger will move on update (mouse joint).
-	 */
-	public void setTarget(Vector2 position) {
-		stBody.setPosition(position);
 	}
 
 	public void setEnabled(boolean enabled) {
@@ -54,18 +46,8 @@ public class AgentSpawnTrigger extends Agent implements DisposableAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
-		return stBody.getPosition();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return stBody.getBounds();
-	}
-
-	@Override
-	public void disposeAgent() {
-		stBody.dispose();
+	protected FollowBoxBody getFollowBoxBody() {
+		return body;
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, float width, float height) {

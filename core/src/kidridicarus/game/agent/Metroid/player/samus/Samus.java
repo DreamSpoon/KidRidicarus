@@ -245,6 +245,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			return;
 		// apply damage against energy supply
 		energySupply -= takeDamageAmount;
+		if(energySupply < 0)
+			energySupply = 0;
 		// reset frame take damage amount
 		takeDamageAmount = 0f;
 		// start no damage period

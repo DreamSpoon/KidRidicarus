@@ -7,6 +7,7 @@ import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.common.agent.agentspawner.AgentSpawner;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
+import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.levelendtrigger.LevelEndTrigger;
 import kidridicarus.common.agent.playerspawner.PlayerSpawner;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -49,6 +50,7 @@ public class CommonInfo {
 			CommonKV.AgentClassAlias.VAL_AGENTSPAWNER, AgentSpawner.class,
 			CommonKV.AgentClassAlias.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
 			CommonKV.AgentClassAlias.VAL_DESPAWN, DespawnBox.class,
+			CommonKV.AgentClassAlias.VAL_KEEP_ALIVE_BOX, KeepAliveBox.class,
 			CommonKV.AgentClassAlias.VAL_PIPEWARP_SPAWN, PipeWarp.class,
 			CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, PlayerSpawner.class,
 			CommonKV.AgentClassAlias.VAL_ROOM, RoomBox.class,

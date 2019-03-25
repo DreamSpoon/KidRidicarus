@@ -6,15 +6,16 @@ public class CommonCF {
 	// Contact Filter Bit list (for collision detection)
 	public class Alias {
 		public static final String AGENT_BIT = "bit_agent";
-		public static final String SOLID_BOUND_BIT = "bit_solid_bound";
-		public static final String ROOM_BIT = "bit_room";
-		public static final String DESPAWN_BIT = "bit_despawn";
-		public static final String SPAWNBOX_BIT = "bit_spawnbox";
-		public static final String SPAWNTRIGGER_BIT = "bit_spawntrigger";
 		public static final String BUMPABLE_BIT = "bit_bumpable";
+		public static final String COLLISIONMAP_BIT = "bit_collision_map";
+		public static final String DESPAWN_BIT = "bit_despawn";
+		public static final String KEEP_ALIVE_BIT = "bit_keep_alive";
 		public static final String PIPEWARP_BIT = "bit_pipewarp";
 		public static final String POWERUP_BIT = "bit_powerup";
-		public static final String COLLISIONMAP_BIT = "bit_collisionmap";
+		public static final String ROOM_BIT = "bit_room";
+		public static final String SOLID_BOUND_BIT = "bit_solid_bound";
+		public static final String SPAWNBOX_BIT = "bit_spawnbox";
+		public static final String SPAWNTRIGGER_BIT = "bit_spawntrigger";
 	}
 
 	public static final CFBitSeq NO_CONTACT_CFCAT = new CFBitSeq();

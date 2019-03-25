@@ -25,6 +25,7 @@ public class CommonKV {
 		public static final String VAL_PLAYERSPAWNER = "playerspawner";
 		public static final String VAL_ROOM = "room";
 		public static final String VAL_TILEMAP_META = "tilemap_meta";
+		public static final String VAL_KEEP_ALIVE_BOX = "keep_alive_box";
 	}
 
 	public class Spawn {
