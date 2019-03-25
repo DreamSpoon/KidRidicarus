@@ -94,7 +94,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private float takeDamageAmount;
 	private Vector2 takeDmgOrigin;
 	private boolean gaveHeadBounce;
-	private boolean isNextHeadBumpDenied;
+	private boolean isHeadBumped;
 	// list of powerups received during contact update
 	private LinkedList<Powerup> powerupsReceived;
 
@@ -144,7 +144,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		takeDamageAmount = 0f;
 		takeDmgOrigin = new Vector2();
 		gaveHeadBounce = false;
-		isNextHeadBumpDenied = false;
+		isHeadBumped = false;
 		powerupsReceived = new LinkedList<Powerup>();
 	}
 
@@ -156,26 +156,19 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
 		// exit if head bump flag hasn't reset
-		if(isNextHeadBumpDenied)
+		if(isHeadBumped)
 			return;
 
 		// if jump spinning then hit hard
 		if(moveState.isJumpSpin())
-			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
 		else
-			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
 	}
 
 	private void doUpdate(float delta) {
-		processContacts();
 		processMove(delta, supervisor.pollMoveAdvice());
 		processSprite(delta);
-	}
-
-	private void processContacts() {
-		// if head bump deny flag is on, and body is moving down, then reset the flag
-		if(isNextHeadBumpDenied && body.getSpine().isMovingDown())
-			isNextHeadBumpDenied = false;
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
@@ -488,6 +481,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		if(applyStopMove)
 			body.getSpine().applyStopMove();
 
+		// reset head bump flag while on ground and not moving up
+		if(body.getVelocity().y < UInfo.VEL_EPSILON)
+			isHeadBumped = false;
+
 		runStateTimer = nextMoveState.isRun() ? runStateTimer+delta : 0f;
 	}
 
@@ -565,6 +562,11 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		// if in jumpspin then maintain velocity, otherwise apply stop move 
 		else if(moveState != MoveState.JUMPSPIN)
 			body.getSpine().applyStopMove();
+
+		if(isHeadBumped) {
+			body.getSpine().applyHeadBumpMove();
+			isHeadBumped = false;
+		}
 
 		// decrement jump force timer
 		jumpForceTimer = jumpForceTimer > delta ? jumpForceTimer-delta : 0f;
@@ -702,8 +704,12 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
-		if(key.equals(CommonKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
-			Boolean he = isFacingRight;
+		if(key.equals(CommonKV.KEY_DIRECTION) && Direction4.class.equals(cls)) {
+			Direction4 he;
+			if(isFacingRight)
+				he = Direction4.RIGHT;
+			else
+				he = Direction4.LEFT;
 			return (T) he;
 		}
 		else if(key.equals(CommonKV.Script.KEY_SPRITESTATE) && SpriteState.class.equals(cls)) {
@@ -723,10 +729,13 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	@Override
 	public ObjectProperties getCopyAllProperties() {
-		ObjectProperties op = properties.cpy();
-		op.put(CommonKV.Script.KEY_FACINGRIGHT, isFacingRight);
-		op.put(GameKV.Metroid.KEY_ENERGY_SUPPLY, energySupply);
-		return op;
+		ObjectProperties myProperties = properties.cpy();
+		if(isFacingRight)
+			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
+		else
+			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.LEFT);
+		myProperties.put(GameKV.Metroid.KEY_ENERGY_SUPPLY, energySupply);
+		return myProperties;
 	}
 
 	@Override

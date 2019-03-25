@@ -154,4 +154,10 @@ public class PlayerSpine extends OnGroundSpine {
 		return body.getBounds().y >= otherCenterY ||
 				myPrevPosition.y-body.getBounds().height/2f >= otherCenterY;
 	}
+
+	public void applyHeadBumpMove() {
+		// if moving upward then arrest upward movement, but continue horizontal movement unimpeded  
+		if(body.getVelocity().y > 0f)
+			body.setVelocity(body.getVelocity().x, 0f);
+	}
 }

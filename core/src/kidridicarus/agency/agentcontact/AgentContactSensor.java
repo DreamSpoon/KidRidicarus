@@ -12,8 +12,10 @@ public abstract class AgentContactSensor {
 		nextInChain = null;
 	}
 
-	// In case a contact sensor contacts another contact sensor, it can use getParent on the other contact sensor
-	// to figure out what was actually contacted.
+	/*
+	 * In case a contact sensor contacts another contact sensor, it can use getParent on the other contact sensor
+	 * to figure out what was actually contacted.
+	 */
 	public Object getParent() {
 		return parent;
 	}

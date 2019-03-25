@@ -24,6 +24,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
@@ -121,8 +122,11 @@ public class Guide implements Disposable {
 
 	private void switchAgentType(PowChar pc) {
 		Vector2 currentPos = new Vector2(0f, 0f);
+		boolean facingRight = false;
 		if(playerAgent != null) {
 			currentPos = playerAgent.getPosition().add(SAFETY_RESPAWN_OFFSET);
+			facingRight = playerAgent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE,
+					Direction4.class) == Direction4.RIGHT;
 			agency.disposeAgent(playerAgent);
 			playerAgent = null;
 		}
@@ -130,18 +134,22 @@ public class Guide implements Disposable {
 		switch(pc) {
 			default:
 			case MARIO:
-				playerAgent = (PlayerAgent) agency.createAgent(
-						Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIO, currentPos));
-				switchHUDtoNewPlayerAgent();
+				doAgentMake(GameKV.SMB.AgentClassAlias.VAL_MARIO, currentPos, facingRight);
 				break;
 			case SAMUS:
-				playerAgent = (PlayerAgent) agency.createAgent(
-						Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS, currentPos));
-				switchHUDtoNewPlayerAgent();
+				doAgentMake(GameKV.Metroid.AgentClassAlias.VAL_SAMUS, currentPos, facingRight);
 				break;
 			case NONE:
 				break;
 		}
+	}
+
+	private void doAgentMake(String classAlias, Vector2 position, boolean facingRight) {
+		ObjectProperties props = Agent.createPointAP(classAlias, position);
+		if(facingRight)
+			props.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
+		playerAgent = (PlayerAgent) agency.createAgent(props);
+		switchHUDtoNewPlayerAgent();
 	}
 
 	public void updateCamera(OrthographicCamera gamecam) {

@@ -79,7 +79,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private boolean isNextJumpDelayed;
 	private boolean isJumpForceContinue;
 	// next head bump is denied immediately following headbump and lasts until Agent moves downward
-	private boolean isNextHeadBumpDenied;
+	private boolean isHeadBumped;
 	private float fireballJuice;
 	private float shootCooldown;
 	private boolean didShootFireballThisFrame;
@@ -144,7 +144,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		isNextJumpAllowed = false;
 		isNextJumpDelayed = false;
 		isJumpForceContinue = false;
-		isNextHeadBumpDenied = false;
+		isHeadBumped = false;
 		fireballJuice = MAX_FIREBALL_JUICE;
 		shootCooldown = 0f;
 		didShootFireballThisFrame = false;
@@ -163,13 +163,13 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
 		// exit if head bump flag hasn't reset
-		if(isNextHeadBumpDenied)
+		if(isHeadBumped)
 			return;
 		// if mario is big then hit hard
 		if(powerState.isBigBody())
-			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
 		else
-			isNextHeadBumpDenied = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
 
 		// if star powered then apply star power damage
 		if(starPowerCooldown > 0f) {
@@ -182,15 +182,8 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	private void doUpdate(float delta) {
-		processContacts();
 		processMove(delta, supervisor.pollMoveAdvice());
 		processSprite(delta);
-	}
-
-	private void processContacts() {
-		// if head bump deny flag is on, and body is moving down, then reset the flag
-		if(isNextHeadBumpDenied && body.getSpine().isMovingDown())
-			isNextHeadBumpDenied = false;
 	}
 
 	private void processMove(float delta, MoveAdvice moveAdvice) {
@@ -439,6 +432,10 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			body.getSpine().applyDecelMove(isFacingRight, nextMoveState.isDuck());
 		if(doDuckSlideImpulse)
 			body.getSpine().applyDuckSlideMove(isDuckSlideRight);
+
+		// reset head bump flag while on ground and not moving up
+		if(body.getVelocity().y < UInfo.VEL_EPSILON)
+			isHeadBumped = false;
 	}
 
 	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
@@ -477,8 +474,12 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		else if(moveAdvice.moveLeft && !moveAdvice.moveRight)
 			body.getSpine().applyAirMove(false);
 
-		// if jump force must continue then apply it
-		if(isJumpForceContinue) {
+		// if jump force must continue then apply it, unless head bumped something
+		if(isHeadBumped) {
+			body.getSpine().applyHeadBumpMove();
+			isHeadBumped = false;
+		}
+		else if(isJumpForceContinue) {
 			if(isMoveStateChange)
 				body.getSpine().applyJumpForce(0f);
 			else
@@ -697,8 +698,12 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
-		if(key.equals(CommonKV.Script.KEY_FACINGRIGHT) && Boolean.class.equals(cls)) {
-			Boolean he = isFacingRight;
+		if(key.equals(CommonKV.KEY_DIRECTION) && Direction4.class.equals(cls)) {
+			Direction4 he;
+			if(isFacingRight)
+				he = Direction4.RIGHT;
+			else
+				he = Direction4.LEFT;
 			return (T) he;
 		}
 		else if(key.equals(CommonKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
@@ -713,7 +718,10 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		// create copy of agent's current properties
 		ObjectProperties myProperties = properties.cpy();
 		// put property: facing right
-		myProperties.put(CommonKV.Script.KEY_FACINGRIGHT, isFacingRight);
+		if(isFacingRight)
+			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
+		else
+			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.LEFT);
 		// put property: powerup list
 		PowerupList powList = new PowerupList();
 		if(powerState == PowerState.BIG)
