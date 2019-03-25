@@ -1,34 +1,23 @@
 package kidridicarus.game.agent.Metroid.NPC.skree;
 
-import java.util.List;
-
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.PlayerAgent;
-import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.OnGroundSpine;
+import kidridicarus.common.agentspine.NPC_Spine;
 
-public class SkreeSpine extends OnGroundSpine {
+public class SkreeSpine extends NPC_Spine {
 	private static final float FALL_IMPULSE = 0.07f;
 	private static final float FALL_SPEED_MAX = 2f;
 	private static final float SIDE_IMPULSE_MAX = 0.07f;
 	private static final float SIDE_SPEED_MAX = 0.8f;
 
-	private SkreeBody body;
-	private AgentContactHoldSensor acSensor;
 	private AgentContactHoldSensor playerSensor;
 
 	public SkreeSpine(SkreeBody body) {
-		this.body = body;
-		acSensor = null;
+		super(body);
 		playerSensor = null;
-	}
-
-	public AgentContactHoldSensor createAgentSensor() {
-		acSensor = new AgentContactHoldSensor(body);
-		return acSensor;
 	}
 
 	public AgentContactHoldSensor createPlayerSensor() {
@@ -69,9 +58,5 @@ public class SkreeSpine extends OnGroundSpine {
 			body.applyImpulse(new Vector2(0f, -FALL_IMPULSE));
 		else
 			body.setVelocity(body.getVelocity().x, -FALL_SPEED_MAX);
-	}
-
-	public List<ContactDmgTakeAgent> getContactDmgTakeAgents() {
-		return acSensor.getContactsByClass(ContactDmgTakeAgent.class);
 	}
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -21,6 +22,10 @@ public class SkreeBody extends AgentBody {
 			UInfo.P2M(-24), UInfo.P2M(16),
 			UInfo.P2M(-80), UInfo.P2M(-176),
 			UInfo.P2M(80), UInfo.P2M(-176) };
+
+	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_CFMASK =
+			new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.KEEP_ALIVE_BIT);
 
 	private SkreeSpine spine;
 
@@ -51,17 +56,14 @@ public class SkreeBody extends AgentBody {
 	}
 
 	private void createMainFixture() {
-		FixtureDef fdef = new FixtureDef();
-		B2DFactory.makeBoxFixture(b2body, fdef, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+		B2DFactory.makeBoxFixture(b2body, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	// same size as main body, for detecting agents touching main body
 	private void createAgentSensorFixture() {
-		FixtureDef fdef = new FixtureDef();
-		fdef.isSensor = true;
-		B2DFactory.makeBoxFixture(b2body, fdef, spine.createAgentSensor(),
-				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, getBodySize().x, getBodySize().y);
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+				getBodySize().x, getBodySize().y);
 	}
 
 	// cone shaped sensor extending down below skree to check for player target 
@@ -78,9 +80,7 @@ public class SkreeBody extends AgentBody {
 
 	// create the foot sensor for detecting onGround
 	private void createGroundSensorFixture() {
-		FixtureDef fdef = new FixtureDef();
-		fdef.isSensor = true;
-		B2DFactory.makeBoxFixture(b2body, fdef, spine.createOnGroundSensor(),
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
 				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
 	}

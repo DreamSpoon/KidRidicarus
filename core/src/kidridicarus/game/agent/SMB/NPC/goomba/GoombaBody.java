@@ -52,7 +52,7 @@ public class GoombaBody extends AgentBody {
 		B2DFactory.makeBoxFixture(b2body, spine.createHorizontalMoveSensor(), MAIN_CFCAT, MAIN_CFMASK,
 				getBodySize().x, getBodySize().y);
 		// agent sensor fixture
-		AgentContactHoldSensor sensor = spine.createAgentContactSensor();
+		AgentContactHoldSensor sensor = spine.createAgentSensor();
 		sensor.chainTo(spine.createHeadBounceAndContactDamageSensor());
 		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, sensor, AS_CFCAT, AS_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);

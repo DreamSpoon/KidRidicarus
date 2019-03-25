@@ -93,9 +93,7 @@ public class SamusBody extends PlayerAgentBody {
 				getBodySize().x, getBodySize().y);
 
 		// create agent sensor fixture
-		fdef = new FixtureDef();
-		fdef.isSensor = true;
-		agentSensorFixture = B2DFactory.makeBoxFixture(b2body, fdef, spine.creatAgentContactSensor(),
+		agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.creatAgentContactSensor(),
 				AS_ENABLED_CFCAT, AS_ENABLED_CFMASK, getBodySize().x, getBodySize().y);
 		// create on ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),

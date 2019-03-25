@@ -43,6 +43,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	private boolean isDead;
 	// TODO: what if agent is removed/disposed while being targeted? Agent.isDisposed()?
 	private PlayerAgent target;
+	private boolean despawnMe;
 
 	public Skree(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -54,6 +55,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		velocityBeforeInjury = null;
 		health = 2f;
 		isDead = false;
+		despawnMe = false;
 		target = null;
 
 		body = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).add(SPECIAL_OFFSET));
@@ -85,12 +87,24 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	}
 
 	private void processContacts() {
+		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
+		if((!isDead && !body.getSpine().isTouchingKeepAlive()) || body.getSpine().isContactDespawn()) {
+			despawnMe = true;
+			return;
+		}
+
 		// if no target yet then check for new target
 		if(target == null)
 			target = body.getSpine().getPlayerContact();
 	}
 
 	private void processMove(float delta) {
+		// if despawning then dispose and exit
+		if(despawnMe) {
+			agency.disposeAgent(this);
+			return;
+		}
+
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case SLEEP:
@@ -126,10 +140,6 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
-	}
-
-	private void processSprite(float delta) {
-		sprite.update(delta, body.getPosition(), moveState);
 	}
 
 	private MoveState getNextMoveState() {
@@ -171,18 +181,14 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		agency.disposeAgent(this);
 	}
 
+	private void processSprite(float delta) {
+		sprite.update(delta, body.getPosition(), moveState);
+	}
+
 	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(sprite);
-	}
-
-	@Override
-	public Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return body.getBounds();
+		// draw if not despawning
+		if(!despawnMe)
+			batch.draw(sprite);
 	}
 
 	@Override
@@ -200,6 +206,16 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 			isInjured = true;
 		// took damage
 		return true;
+	}
+
+	@Override
+	public Vector2 getPosition() {
+		return body.getPosition();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return body.getBounds();
 	}
 
 	@Override

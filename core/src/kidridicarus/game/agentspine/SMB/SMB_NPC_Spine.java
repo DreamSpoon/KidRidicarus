@@ -4,35 +4,28 @@ import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
-import kidridicarus.common.agent.despawnbox.DespawnBox;
+import kidridicarus.common.agent.PlayerAgent;
+import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactBeginSensor;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
-import kidridicarus.common.agentspine.OnGroundSpine;
+import kidridicarus.common.agentspine.NPC_Spine;
 
-public class SMB_NPC_Spine extends OnGroundSpine {
-	protected AgentBody body;
-	private AgentContactHoldSensor agentHoldContactSensor;
-	private AgentContactBeginSensor agentBeginContactSensor; 
+public class SMB_NPC_Spine extends NPC_Spine {
+	private AgentContactBeginSensor headBounceSensor; 
 	// horizontal move sensor
 	private SolidContactSensor hmSensor;
 
 	public SMB_NPC_Spine(AgentBody body) {
-		this.body = body;
-		agentHoldContactSensor = null;
-		agentBeginContactSensor = null;
+		super(body);
+		headBounceSensor = null;
 		hmSensor = null;
 	}
 
-	public AgentContactHoldSensor createAgentContactSensor() {
-		agentHoldContactSensor = new AgentContactHoldSensor(body);
-		return agentHoldContactSensor;
-	}
-
 	public AgentContactBeginSensor createHeadBounceAndContactDamageSensor() {
-		agentBeginContactSensor = new AgentContactBeginSensor(body);
-		return agentBeginContactSensor;
+		headBounceSensor = new AgentContactBeginSensor(body);
+		return headBounceSensor;
 	}
 
 	public SolidContactSensor createHorizontalMoveSensor() {
@@ -42,10 +35,10 @@ public class SMB_NPC_Spine extends OnGroundSpine {
 
 	public boolean checkReverseVelocity(boolean isFacingRight, boolean useAgents) {
 		// if regular move is blocked...
-		if(isMoveBlocked(isFacingRight) ||
+		if(isMoveBlockedBySolid(isFacingRight) ||
 				(isMoveBlockedByAgent(isFacingRight)) && useAgents) {
 			// ... and reverse move is not also blocked then reverse 
-			if(!isMoveBlocked(!isFacingRight) && (!useAgents ||
+			if(!isMoveBlockedBySolid(!isFacingRight) && (!useAgents ||
 					!isMoveBlockedByAgent(!isFacingRight))) {
 				return true;
 			}
@@ -53,23 +46,29 @@ public class SMB_NPC_Spine extends OnGroundSpine {
 		return false;
 	}
 
-	private boolean isMoveBlocked(boolean moveRight) {
+	private boolean isMoveBlockedByAgent(boolean moveRight) {
+		for(Agent agent : agentSensor.getContacts()) {
+			// Do not check against players - just damage them or whatever, also don't check against
+			// some special things like RoomBox.
+			if(agent instanceof PlayerAgent || agent instanceof RoomBox || agent instanceof AgentSpawnTrigger ||
+					agent instanceof KeepAliveBox)
+				continue;
+
+			// If wants to move right and other agent is on the right side then move is blocked
+			if(moveRight && body.getPosition().x < agent.getPosition().x)
+				return true;
+			// If wants to move left and other agent is on the left side then move is blocked
+			else if(!moveRight && body.getPosition().x > agent.getPosition().x)
+				return true;
+		}
+		return false;
+	}
+
+	private boolean isMoveBlockedBySolid(boolean moveRight) {
 		return hmSensor.isSolidOnThisSide(body.getBounds(), moveRight);
 	}
 
-	private boolean isMoveBlockedByAgent(boolean moveRight) {
-		return AgentContactHoldSensor.isMoveBlockedByAgent(agentHoldContactSensor, body.getPosition(), moveRight);
-	}
-
-	public List<Agent> getAgentBeginContacts() {
-		return agentBeginContactSensor.getAndResetContacts();
-	}
-
-	public boolean isTouchingKeepAlive() {
-		return agentHoldContactSensor.getFirstContactByClass(KeepAliveBox.class) != null;
-	}
-
-	public boolean isContactDespawn() {
-		return agentHoldContactSensor.getFirstContactByClass(DespawnBox.class) != null;
+	public List<Agent> getHeadBounceBeginContacts() {
+		return headBounceSensor.getAndResetContacts();
 	}
 }

@@ -2,7 +2,6 @@ package kidridicarus.game.agent.SMB.item.staticcoin;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.AgentBody;
@@ -39,9 +38,7 @@ public class StaticCoinBody extends AgentBody {
 	}
 
 	private void createFixtures() {
-		FixtureDef fdef = new FixtureDef();
-		fdef.isSensor = true;
-		B2DFactory.makeBoxFixture(b2body, fdef, spine.createAgentSensor(),
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
 				CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 

@@ -1,17 +1,14 @@
 package kidridicarus.game.agent.Metroid.NPC.zoomer;
 
-import java.util.List;
-
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
+import kidridicarus.common.agentspine.NPC_Spine;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.DiagonalDir4;
 import kidridicarus.common.tool.Direction4;
 
-public class ZoomerSpine {
+public class ZoomerSpine extends NPC_Spine {
 	/*
 	 * MOVEVEL.x is the horizontal velocity when moving right, and
 	 * MOVEVEL.y is the vertical velocity when moving right,
@@ -30,11 +27,9 @@ public class ZoomerSpine {
 
 	private SolidContactSensor[] crawlSense;
 	private int[] contactCounts;
-	private ZoomerBody body;
-	private AgentContactBeginSensor agentBeginContactSensor;
 
 	public ZoomerSpine(ZoomerBody body) {
-		this.body = body;
+		super(body);
 
 		// 4 sensors: top-right, top-left, bottom-left, bottom-right
 		crawlSense = new SolidContactSensor[DiagonalDir4.values().length];
@@ -48,11 +43,6 @@ public class ZoomerSpine {
 		for(int i=0; i<crawlSense.length; i++)
 			crawlSense[i] = new SolidContactSensor(null);
 		return crawlSense;
-	}
-
-	public AgentContactBeginSensor createAgentSensor() {
-		agentBeginContactSensor = new AgentContactBeginSensor(body);
-		return agentBeginContactSensor;
 	}
 
 	private boolean isSensorContacting(DiagonalDir4 quad) {
@@ -248,9 +238,5 @@ public class ZoomerSpine {
 			default:
 				return Direction4.LEFT;
 		}
-	}
-
-	public List<ContactDmgTakeAgent> getContactDmgTakeAgents() {
-		return agentBeginContactSensor.getOnlyAndResetContacts(ContactDmgTakeAgent.class);
 	}
 }

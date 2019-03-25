@@ -72,7 +72,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 
 	private void doContactUpdate() {
 		boolean isHeadBounced = false;
-		for(Agent agent : body.getSpine().getAgentBeginContacts()) {
+		for(Agent agent : body.getSpine().getHeadBounceBeginContacts()) {
 			// if they take contact damage and give head bounces...
 			if(agent instanceof ContactDmgTakeAgent && agent instanceof HeadBounceGiveAgent) {
 				// if can't pull head bounce then try pushing contact damage

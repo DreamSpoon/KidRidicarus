@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
@@ -15,6 +16,10 @@ public class ZoomerBody extends AgentBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float SENSOR_SIZEFACTOR = 1.2f;
 	private static final float GRAVITY_SCALE = 0f;
+
+	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq AS_CFMASK =
+			new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.KEEP_ALIVE_BIT);
 
 	private ZoomerSpine spine;
 	private Vector2 prevPosition;
@@ -49,8 +54,8 @@ public class ZoomerBody extends AgentBody {
 	}
 
 	private void createAgentSensor() {
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
-				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, getBodySize().x, getBodySize().y);
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+				getBodySize().x, getBodySize().y);
 	}
 
 	private void createCrawlSensorFixtures() {

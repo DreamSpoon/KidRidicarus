@@ -43,6 +43,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	private boolean isInjured;
 	private float health;
 	private boolean isDead;
+	private boolean despawnMe;
 
 	public Zoomer(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -53,6 +54,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 		isInjured = false;
 		health = 2f;
 		isDead = false;
+		despawnMe = false;
 		moveState = MoveState.WALK;
 
 		body = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties));
@@ -87,6 +89,12 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	}
 
 	private void processContacts(float delta) {
+		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
+		if((!isDead && !body.getSpine().isTouchingKeepAlive()) || body.getSpine().isContactDespawn()) {
+			despawnMe = true;
+			return;
+		}
+
 		// don't change up direction during injury
 		if(isInjured) {
 			upDirChangeTimer = 0f;
@@ -106,6 +114,12 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	}
 
 	private void processMove(float delta) {
+		// if despawning then dispose self and exit
+		if(despawnMe) {
+			agency.disposeAgent(this);
+			return;
+		}
+
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case WALK:
@@ -156,7 +170,9 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(sprite);
+		// draw if not despawning
+		if(!despawnMe)
+			batch.draw(sprite);
 	}
 
 	@Override

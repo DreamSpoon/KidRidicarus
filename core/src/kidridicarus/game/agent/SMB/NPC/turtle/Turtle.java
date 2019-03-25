@@ -48,6 +48,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private boolean isDead;
 	private boolean deadBumpRight;
 	private Agent perp;
+	private boolean despawnMe;
 
 	public Turtle(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -59,6 +60,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		isDead = false;
 		deadBumpRight = false;
 		perp = null;
+		despawnMe = false;
 
 		body = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
@@ -78,7 +80,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 
 	private void doContactUpdate() {
 		HitType hitCheck = HitType.NONE;
-		for(Agent agent : body.getSpine().getAgentBeginContacts()) {
+		for(Agent agent : body.getSpine().getHeadBounceBeginContacts()) {
 			if(moveState == MoveState.SLIDE)
 				hitCheck = slideContact(agent);
 			else if(moveState.isKickable())
@@ -152,11 +154,23 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	}
 
 	private void doUpdate(float delta) {
+		processContacts();
 		processMove(delta);
 		processSprite(delta);
 	}
 
+	private void processContacts() {
+		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
+		if((!isDead && !body.getSpine().isTouchingKeepAlive()) || body.getSpine().isContactDespawn())
+			despawnMe = true;
+	}
+
 	private void processMove(float delta) {
+		if(despawnMe) {
+			agency.disposeAgent(this);
+			return;
+		}
+
 		boolean isSliding = moveState == MoveState.SLIDE;
 		if(body.getSpine().checkReverseVelocity(isFacingRight, !isSliding)) {
 			isFacingRight = !isFacingRight;
@@ -199,8 +213,8 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 					doStartDeath();
 					agency.createAgent(FloatingPoints.makeAP(500, true, body.getPosition(), perp));
 				}
-				// check the old deceased for timeout or despawn touch
-				else if(moveStateTimer > DIE_FALL_TIME || body.getSpine().isContactDespawn())
+				// check the old deceased for timeout
+				else if(moveStateTimer > DIE_FALL_TIME)
 					agency.disposeAgent(this);
 				break;
 		}
@@ -256,8 +270,10 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		sprite.update(delta, body.getPosition(), moveState, isFacingRight);
 	}
 
-	private void doDraw(AgencyDrawBatch batch){
-		batch.draw(sprite);
+	private void doDraw(AgencyDrawBatch batch) {
+		// if not despawning then draw
+		if(!despawnMe)
+			batch.draw(sprite);
 	}
 
 	// assume any amount of damage kills, for now...

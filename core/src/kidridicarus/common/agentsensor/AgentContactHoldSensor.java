@@ -3,15 +3,9 @@ package kidridicarus.common.agentsensor;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.badlogic.gdx.math.Vector2;
-
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.AgentContactSensor;
-import kidridicarus.common.agent.PlayerAgent;
-import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
-import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
-import kidridicarus.common.agent.roombox.RoomBox;
 
 /*
  * Keep track of agents contacted.
@@ -65,23 +59,5 @@ public class AgentContactHoldSensor extends AgentContactSensor {
 				cList.add((T) agent);
 		}
 		return cList;
-	}
-
-	public static boolean isMoveBlockedByAgent(AgentContactHoldSensor theSensor, Vector2 position, boolean moveRight) {
-		for(Agent agent : theSensor.getContacts()) {
-			// Do not check against players - just damage them or whatever, also don't check against
-			// some special things like RoomBox.
-			if(agent instanceof PlayerAgent || agent instanceof RoomBox || agent instanceof AgentSpawnTrigger ||
-					agent instanceof KeepAliveBox)
-				continue;
-
-			// If wants to move right and other agent is on the right side then move is blocked
-			if(moveRight && position.x < agent.getPosition().x)
-				return true;
-			// If wants to move left and other agent is on the left side then move is blocked
-			else if(!moveRight && position.x > agent.getPosition().x)
-				return true;
-		}
-		return false;
 	}
 }

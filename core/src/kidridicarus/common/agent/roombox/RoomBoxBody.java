@@ -2,8 +2,6 @@ package kidridicarus.common.agent.roombox;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.AgentBody;
@@ -17,18 +15,12 @@ public class RoomBoxBody extends AgentBody {
 
 	public RoomBoxBody(RoomBox parent, World world, Rectangle bounds) {
 		super(parent);
-		setBodySize(bounds.width, bounds.height);
 		defineBody(world, bounds);
 	}
 
 	private void defineBody(World world, Rectangle bounds) {
-		BodyDef bdef = new BodyDef();
-		bdef.type = BodyDef.BodyType.StaticBody;
-		bdef.position.set(bounds.getCenter(new Vector2()));
-		b2body = world.createBody(bdef);
-
-		FixtureDef fdef = new FixtureDef();
-		fdef.isSensor = true;
-		B2DFactory.makeBoxFixture(b2body, fdef, this, CFCAT_BITS, CFMASK_BITS, bounds.width, bounds.height);
+		setBodySize(bounds.width, bounds.height);
+		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
+		B2DFactory.makeBoxFixture(b2body, this, CFCAT_BITS, CFMASK_BITS, bounds.width, bounds.height);
 	}
 }
