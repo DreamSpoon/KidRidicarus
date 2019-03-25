@@ -90,6 +90,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private boolean isDeadBounce;
 	private Direction4 lastHorizontalMoveDir;
 	private boolean isDuckSlideRight;
+	private RoomBox lastKnownRoom;
 
 	public Mario(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -153,6 +154,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		didTakeDamage = false;
 		lastHorizontalMoveDir = Direction4.NONE;
 		isDuckSlideRight = false;
+		lastKnownRoom = null;
 	}
 
 	/*
@@ -608,6 +610,12 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private void doPostUpdate() {
 		// let body update previous position/velocity
 		body.postUpdate();
+		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
+		if(!moveState.isDead()) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom; 
+		}
 	}
 
 	private void processSprite(float delta) {
@@ -681,7 +689,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 
 	@Override
 	public RoomBox getCurrentRoom() {
-		return body.getSpine().getCurrentRoom();
+		return lastKnownRoom;
 	}
 
 	@Override

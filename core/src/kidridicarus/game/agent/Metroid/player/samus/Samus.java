@@ -97,6 +97,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private boolean isHeadBumped;
 	// list of powerups received during contact update
 	private LinkedList<Powerup> powerupsReceived;
+	private RoomBox lastKnownRoom;
 
 	public Samus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -146,6 +147,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		gaveHeadBounce = false;
 		isHeadBumped = false;
 		powerupsReceived = new LinkedList<Powerup>();
+		lastKnownRoom = null;
 	}
 
 	/*
@@ -617,6 +619,12 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private void doPostUpdate() {
 		// let body update previous position/velocity
 		body.postUpdate();
+		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
+		if(moveState != MoveState.DEAD) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom; 
+		}
 	}
 
 	private void processSprite(float delta) {
@@ -687,7 +695,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	@Override
 	public RoomBox getCurrentRoom() {
-		return body.getSpine().getCurrentRoom();
+		return lastKnownRoom;
 	}
 
 	@Override
