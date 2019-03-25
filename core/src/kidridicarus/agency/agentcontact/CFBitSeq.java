@@ -6,7 +6,8 @@ import java.util.Iterator;
 /*
  * Title: Contact Filter (CF) Bit Sequence
  * Desc:
- * A collection of contact filter bits, no duplicates. "Bitwise operations" supported:
+ * A collection of contact filter bits identified by String, no duplicates allowed.
+ * "Bitwise operations" supported:
  *   AND
  *   Set all bits to 0 (full off)
  *   Set all bits to 1 (full on)

@@ -14,7 +14,7 @@ public class CommonCF {
 		public static final String POWERUP_BIT = "bit_powerup";
 		public static final String ROOM_BIT = "bit_room";
 		public static final String SOLID_BOUND_BIT = "bit_solid_bound";
-		public static final String SPAWNBOX_BIT = "bit_spawnbox";
+//		public static final String SPAWNBOX_BIT = "bit_spawnbox";
 		public static final String SPAWNTRIGGER_BIT = "bit_spawntrigger";
 	}
 

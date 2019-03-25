@@ -41,6 +41,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private boolean deadBumpRight;
 	private Agent perp;	// perpetrator of squish, bump, and damage
 	private DeadState nextDeadState;
+	private boolean despawnMe;
 
 	public Goomba(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -50,6 +51,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		isFacingRight = false;
 		deadBumpRight = false;
 		perp = null;
+		despawnMe = false;
 		nextDeadState = DeadState.NONE;
 
 		body = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties));
@@ -94,11 +96,26 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	}
 
 	private void doUpdate(float delta) {
+		processContacts();
 		processMove(delta);
 		processSprite(delta);
 	}
 
+	private void processContacts() {
+		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
+		if((nextDeadState == DeadState.NONE && !body.getSpine().isTouchingKeepAlive()) ||
+				body.getSpine().isContactDespawn()) {
+			despawnMe = true;
+		}
+	}
+
 	private void processMove(float delta) {
+		// if despawning then dispose and exit
+		if(despawnMe) {
+			agency.disposeAgent(this);
+			return;
+		}
+
 		if(body.getSpine().checkReverseVelocity(isFacingRight, true))
 			isFacingRight = !isFacingRight;
 
@@ -115,7 +132,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				if(moveStateChanged)
 					startBump();
 				// wait a short time and disappear
-				else if(moveStateTimer > GOOMBA_BUMP_FALL_TIME || body.getSpine().isContactDespawn())
+				else if(moveStateTimer > GOOMBA_BUMP_FALL_TIME)
 					agency.disposeAgent(this);
 				break;
 			case DEAD_SQUISH:
@@ -123,7 +140,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				if(moveStateChanged)
 					startSquish();
 				// wait a short time and disappear
-				else if(moveStateTimer > GOOMBA_SQUISH_TIME || body.getSpine().isContactDespawn())
+				else if(moveStateTimer > GOOMBA_SQUISH_TIME)
 					agency.disposeAgent(this);
 				break;
 		}
@@ -163,7 +180,9 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	}
 
 	private void doDraw(AgencyDrawBatch batch){
-		batch.draw(sprite);
+		// draw if not despawned
+		if(!despawnMe)
+			batch.draw(sprite);
 	}
 
 	// assume any amount of damage kills, for now...

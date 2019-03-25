@@ -5,6 +5,7 @@ import java.util.List;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
+import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
@@ -62,6 +63,10 @@ public class SMB_NPC_Spine extends OnGroundSpine {
 
 	public List<Agent> getAgentBeginContacts() {
 		return agentBeginContactSensor.getAndResetContacts();
+	}
+
+	public boolean isTouchingKeepAlive() {
+		return agentHoldContactSensor.getFirstContactByClass(KeepAliveBox.class) != null;
 	}
 
 	public boolean isContactDespawn() {

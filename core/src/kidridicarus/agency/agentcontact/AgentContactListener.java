@@ -13,16 +13,10 @@ import com.badlogic.gdx.physics.box2d.Manifold;
  * sensor contact methods. Also use contact.isTouching() for more precise collision detection.
  */
 public class AgentContactListener implements ContactListener {
-	// I didn't want to remove and add Booleans from the HashMap whenever contact state changed, so here is the solution:
-	private class BooleanWrapper {	// TODO find better way to do this
-		public boolean isTrue;
-		public BooleanWrapper(boolean isTrue) { this.isTrue = isTrue; }
-	}
-
-	private HashMap<Integer, BooleanWrapper> allContacts;
+	private HashMap<Integer, Boolean> allContacts;
 
 	public AgentContactListener() {
-		allContacts = new HashMap<Integer, BooleanWrapper>();
+		allContacts = new HashMap<Integer, Boolean>();
 	}
 
 	@Override
@@ -34,7 +28,7 @@ public class AgentContactListener implements ContactListener {
 
 		// Use a hash value combo of fixtures A and B to index, because each contact is unique to the
 		// combo of fixtures A and B.
-		allContacts.put(Objects.hash(contact.getFixtureA(), contact.getFixtureB()), new BooleanWrapper(contact.isTouching()));
+		allContacts.put(Objects.hash(contact.getFixtureA(), contact.getFixtureB()), contact.isTouching());
 		// if actually touching on first contact then do actual begin
 		if(contact.isTouching())
 			actualBeginContact(contact);
@@ -47,10 +41,11 @@ public class AgentContactListener implements ContactListener {
 		if(!(contact.getFixtureB().getUserData() instanceof AgentBodyFilter))
 			return;
 
-		BooleanWrapper bw = allContacts.get(Objects.hash(contact.getFixtureA(), contact.getFixtureB()));
-		allContacts.remove(Objects.hash(contact.getFixtureA(), contact.getFixtureB()));
+		int hashAB = Objects.hash(contact.getFixtureA(), contact.getFixtureB());
+		Boolean wasTouching = allContacts.get(hashAB);
+		allContacts.remove(hashAB);
 		// if actually touching on last contact then do actual end
-		if(bw.isTrue)
+		if(wasTouching)
 			actualEndContact(contact);
 	}
 
@@ -61,13 +56,14 @@ public class AgentContactListener implements ContactListener {
 	// check for and do actual contact changes
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		BooleanWrapper bw = allContacts.get(Objects.hash(contact.getFixtureA(), contact.getFixtureB()));
-		if(!bw.isTrue && contact.isTouching()) {
-			bw.isTrue = true;
+		int hashAB = Objects.hash(contact.getFixtureA(), contact.getFixtureB());
+		Boolean wasToucing = allContacts.get(hashAB);
+		if(!wasToucing && contact.isTouching()) {
+			allContacts.put(hashAB, true);
 			actualBeginContact(contact);
 		}
-		else if(bw.isTrue && !contact.isTouching()) {
-			bw.isTrue = false;
+		else if(wasToucing && !contact.isTouching()) {
+			allContacts.put(hashAB, false);
 			actualEndContact(contact);
 		}
 	}

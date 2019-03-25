@@ -13,7 +13,7 @@ import kidridicarus.common.info.CommonCF;
 
 public class AgentSpawnTriggerBody extends FollowBoxBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SPAWNTRIGGER_BIT);
-	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.SPAWNBOX_BIT);
+	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
 	private AgentContactHoldSensor acSensor;
 

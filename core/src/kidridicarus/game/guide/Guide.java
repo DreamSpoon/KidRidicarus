@@ -20,6 +20,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
+import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
@@ -42,7 +43,9 @@ import kidridicarus.game.tool.QQ;
  */
 public class Guide implements Disposable {
 	private static final float SPAWN_TRIGGER_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 30);
-	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_X * 15);
+	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_Y * 15);
+	private static final float KEEP_ALIVE_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 34);
+	private static final float KEEP_ALIVE_HEIGHT = UInfo.P2M(UInfo.TILEPIX_Y * 15);
 	private static final Vector2 SAFETY_RESPAWN_OFFSET = UInfo.P2MVector(0f, 8f);
 
 	private AssetManager manager;
@@ -51,6 +54,7 @@ public class Guide implements Disposable {
 	private MoveAdvice inputMoveAdvice;
 	private PlayerAgent playerAgent;
 	private AgentSpawnTrigger spawnTrigger;
+	private KeepAliveBox keepAliveBox;
 
 	private String currentMainMusicName;
 	private Music currentMainMusic;
@@ -70,6 +74,7 @@ public class Guide implements Disposable {
 		inputMoveAdvice = new MoveAdvice();
 		playerAgent = null;
 		spawnTrigger = null;
+		keepAliveBox = null;
 		currentMainMusicName = "";
 		currentMainMusic = null;
 		isMainMusicPlaying = false;
@@ -100,8 +105,9 @@ public class Guide implements Disposable {
 		// get user input
 		handleInput();
 
-		// ensure spawn trigger follows view of player
+		// ensure spawn trigger and keep alive box follow view center
 		spawnTrigger.setTarget(getViewCenter());
+		keepAliveBox.setTarget(getViewCenter());
 		// pass user input to player agent's supervisor
 		playerAgent.getSupervisor().setMoveAdvice(inputMoveAdvice);
 		playerAgent.getSupervisor().preUpdateAgency(delta);
@@ -284,6 +290,8 @@ public class Guide implements Disposable {
 		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(
 				AgentSpawnTrigger.makeAP(getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 		spawnTrigger.setEnabled(true);
+		keepAliveBox = (KeepAliveBox) agency.createAgent(
+				KeepAliveBox.makeAP(getViewCenter(), KEEP_ALIVE_WIDTH, KEEP_ALIVE_HEIGHT));
 		switchHUDtoNewPlayerAgent();
 		return true;
 	}
