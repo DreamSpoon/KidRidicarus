@@ -76,7 +76,9 @@ public class CommonKV {
 
 	public class Room {
 		public static final String KEY_ROOMMUSIC = "roommusic";
+		public static final String KEY_ROOM_SCROLL_DIR = "scroll_direction";
 		public static final String KEY_VIEWOFFSET_Y = "viewoffset_y";
+
 		public static final String KEY_ROOMTYPE = "roomtype";
 		public static final String VAL_ROOMTYPE_CENTER = "center";
 		public static final String VAL_ROOMTYPE_HSCROLL = "hscroll";

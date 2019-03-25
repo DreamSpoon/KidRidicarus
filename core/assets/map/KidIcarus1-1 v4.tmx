@@ -47,7 +47,7 @@
   <object id="7" x="224" y="80" width="16" height="32"/>
   <object id="9" x="224" y="2496" width="16" height="32"/>
  </objectgroup>
- <objectgroup id="5" name="rooms" visible="0">
+ <objectgroup id="5" name="rooms">
   <properties>
    <property name="agentclass" value="room"/>
   </properties>
@@ -55,6 +55,7 @@
    <properties>
     <property name="roommusic" value="audio/music/KidIcarus/02_-_Kid_Icarus_-_NES_-_Stage_1.ogg"/>
     <property name="roomtype" value="vscroll"/>
+    <property name="scroll_direction" value="up"/>
    </properties>
   </object>
  </objectgroup>

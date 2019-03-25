@@ -137,7 +137,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="29" name="rooms" visible="0">
+ <objectgroup id="29" name="rooms">
   <properties>
    <property name="agentclass" value="room"/>
   </properties>
@@ -145,6 +145,7 @@
    <properties>
     <property name="roommusic" value="audio/music/SMB/01_-_Super_Mario_Bros._-_NES_-_Above_Ground_BGM.ogg"/>
     <property name="roomtype" value="hscroll"/>
+    <property name="scroll_direction" value="right"/>
     <property name="viewoffset_y" value="-112"/>
    </properties>
   </object>

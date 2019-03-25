@@ -9,6 +9,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
 
 /*
  * A box with properties applicable to a space, whose properties can be queried.
@@ -21,7 +22,8 @@ public class RoomBox extends Agent implements DisposableAgent {
 	private enum RoomType { CENTER, HSCROLL, VSCROLL }
 	private RoomType roomtype;
 	private String roommusic;
-	private float vOffset;
+	private float viewVerticalOffset;
+	private Direction4 viewScrollDir;
 
 	public RoomBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -39,24 +41,47 @@ public class RoomBox extends Agent implements DisposableAgent {
 		roommusic = properties.get(CommonKV.Room.KEY_ROOMMUSIC, "", String.class);
 		agency.getEar().registerMusic(roommusic);
 
-		vOffset = UInfo.P2M(properties.get(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
+		viewVerticalOffset = UInfo.P2M(properties.get(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
+		viewScrollDir = Direction4.fromString(properties.get(CommonKV.Room.KEY_ROOM_SCROLL_DIR, "", String.class));
 	}
 
-	public Vector2 getViewCenterForPos(Vector2 pos) {
+	public Vector2 getViewCenterForPos(Vector2 playerPosition, Vector2 incomingPrevCenter) {
+		Vector2 prevCenter;
+		if(incomingPrevCenter == null)
+			prevCenter = playerPosition.cpy();
+		else
+			prevCenter = incomingPrevCenter;
+
 		Vector2 center = new Vector2();
 		switch(roomtype) {
 			case HSCROLL:
-				center.x = pos.x;
-				center.y = rbody.getBounds().y + rbody.getBounds().height/2f + vOffset;
+				// if allowed only scroll right then allow only increase x position
+				if(viewScrollDir == Direction4.RIGHT)
+					center.x = playerPosition.x > prevCenter.x ? playerPosition.x : prevCenter.x;
+				// if allowed only scroll left then allow only decrease x position
+				else if(viewScrollDir == Direction4.LEFT)
+					center.x = playerPosition.x < prevCenter.x ? playerPosition.x : prevCenter.x;
+				else
+					center.x = playerPosition.x;
+
+				center.y = rbody.getBounds().y + rbody.getBounds().height/2f + viewVerticalOffset;
 				break;
 			case VSCROLL:
 				center.x = rbody.getBounds().x + rbody.getBounds().width/2f;
-				center.y = pos.y;
+
+				// if allowed only scroll up then allow only increase y position
+				if(viewScrollDir == Direction4.UP)
+					center.y = playerPosition.y > prevCenter.y ? playerPosition.y : prevCenter.y;
+				// if allowed only scroll left then allow only decrease x position
+				else if(viewScrollDir == Direction4.DOWN)
+					center.y = playerPosition.y < prevCenter.y ? playerPosition.y : prevCenter.y;
+				else
+					center.y = playerPosition.y;
 				break;
 			case CENTER:
 			default:
 				center.x = rbody.getBounds().x + rbody.getBounds().width/2f;
-				center.y = rbody.getBounds().y + rbody.getBounds().height/2f + vOffset;
+				center.y = rbody.getBounds().y + rbody.getBounds().height/2f + viewVerticalOffset;
 				break;
 		}
 		return center;

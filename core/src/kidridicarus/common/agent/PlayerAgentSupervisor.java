@@ -13,6 +13,7 @@ import kidridicarus.common.powerup.PowerupList;
 public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 	private RoomBox currentRoom;
 	private PowerupList nonCharPowerups;
+	private Vector2 lastKnownViewCenter;
 
 	public abstract void setStageHUD(Stage stageHUD);
 	public abstract void drawHUD();
@@ -21,6 +22,7 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 		super(agency, agent);
 		currentRoom = null;
 		nonCharPowerups = new PowerupList();
+		lastKnownViewCenter = null;
 	}
 
 	@Override
@@ -33,6 +35,11 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 			roomChange(nextRoom);
 			currentRoom = nextRoom;
 		}
+
+		// if current room is known the try to set last known view center
+		RoomBox room = ((PlayerAgent) playerAgent).getCurrentRoom();
+		if(room != null)
+			lastKnownViewCenter = room.getViewCenterForPos(playerAgent.getPosition(), lastKnownViewCenter);
 	}
 
 	public void roomChange(RoomBox newRoom) {
@@ -40,14 +47,11 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 			agency.getEar().changeAndStartMainMusic(newRoom.getRoommusic());
 	}
 
-	/*
-	 * Check current room to get view center, and retain last known view center if room becomes null.
-	 */
 	public Vector2 getViewCenter() {
 		RoomBox room = ((PlayerAgent) playerAgent).getCurrentRoom();
 		if(room == null)
 			return null;
-		return ((PlayerAgent) playerAgent).getCurrentRoom().getViewCenterForPos(playerAgent.getPosition());
+		return room.getViewCenterForPos(playerAgent.getPosition(), lastKnownViewCenter);
 	}
 
 	public void receiveNonCharPowerup(Powerup pow) {
