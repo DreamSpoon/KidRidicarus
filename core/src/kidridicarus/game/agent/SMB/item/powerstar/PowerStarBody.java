@@ -25,7 +25,6 @@ public class PowerStarBody extends AgentBody {
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-
 		createBody(world, position);
 		createFixtures();
 	}
@@ -33,7 +32,6 @@ public class PowerStarBody extends AgentBody {
 	private void createBody(World world, Vector2 position) {
 		b2body = B2DFactory.makeDynamicBody(world, position);
 		b2body.setGravityScale(GRAVITY_SCALE);
-
 		spine = new WalkPowerupSpine(this);
 	}
 

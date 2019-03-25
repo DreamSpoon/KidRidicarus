@@ -37,7 +37,6 @@ public class SamusShotBody extends AgentBody {
 
 	private void defineBody(World world, Vector2 position, Vector2 velocity) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-
 		createBody(world, position, velocity);
 		createFixtures();
 	}

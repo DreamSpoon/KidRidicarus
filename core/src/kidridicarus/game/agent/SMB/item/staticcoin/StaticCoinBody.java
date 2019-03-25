@@ -1,7 +1,6 @@
 package kidridicarus.game.agent.SMB.item.staticcoin;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.AgentBody;
@@ -23,18 +22,9 @@ public class StaticCoinBody extends AgentBody {
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		createBody(world, position);
-		createFixtures();
-	}
-	
-	private void createBody(World world, Vector2 position) {
-		BodyDef bdef;
-		bdef = new BodyDef();
-		bdef.position.set(position.x, position.y);
-		bdef.type = BodyDef.BodyType.StaticBody;
-		b2body = world.createBody(bdef);
-
+		b2body = B2DFactory.makeStaticBody(world, position);
 		spine = new PowerupSpine(this);
+		createFixtures();
 	}
 
 	private void createFixtures() {

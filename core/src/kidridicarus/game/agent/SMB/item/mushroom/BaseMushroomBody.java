@@ -24,13 +24,9 @@ public class BaseMushroomBody extends AgentBody {
 
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		createBody(world, position);
-		createFixtures();
-	}
-
-	private void createBody(World world, Vector2 position) {
 		b2body = B2DFactory.makeDynamicBody(world, position);
 		spine = new WalkPowerupSpine(this);
+		createFixtures();
 	}
 
 	private void createFixtures() {

@@ -22,12 +22,8 @@ public class FlagpoleBody extends AgentBody {
 
 	private void defineBody(World world, Rectangle bounds) {
 		setBodySize(bounds.width, bounds.height);
-		createBody(world, bounds);
-		createFixtures();
-	}
-
-	private void createBody(World world, Rectangle bounds) {
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
+		createFixtures();
 	}
 
 	private void createFixtures() {

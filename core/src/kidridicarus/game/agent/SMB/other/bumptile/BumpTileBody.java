@@ -19,19 +19,15 @@ public class BumpTileBody extends AgentBody {
 
 	public BumpTileBody(World world, BumpTile parent, Rectangle bounds) {
 		super(parent);
-		setBodySize(bounds.width, bounds.height);
 		defineBody(world, bounds);
 	}
 
 	private void defineBody(World world, Rectangle bounds) {
-		createMainBody(world, bounds.getCenter(new Vector2()));
-		createSpineAndMainSensor(bounds);
-	}
-
-	private void createMainBody(World world, Vector2 position) {
+		setBodySize(bounds.width, bounds.height);
 		// should be a static body, but it needs to be dynamic so collision map contact sensor will function
-		b2body = B2DFactory.makeDynamicBody(world, position);
+		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
 		b2body.setGravityScale(0f);
+		createSpineAndMainSensor(bounds);
 	}
 
 	private void createSpineAndMainSensor(Rectangle bounds) {

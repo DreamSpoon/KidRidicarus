@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -15,6 +14,7 @@ import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.B2DFactory;
 
 /*
  * Title: Orthogonal Tile Collision Map
@@ -239,20 +239,15 @@ public class CollisionTiledMap implements Disposable {
 	}
 
 	private Body defineLineBody(int startX, int startY, int endX, int endY, LineSeg seg) {
-		BodyDef bdef;
 		FixtureDef fdef;
 		EdgeShape edgeShape;
-		Body body;
+		Body body =
+				B2DFactory.makeStaticBody(world, UInfo.P2MVector(startX * widthInTiles, startY * heightInTiles));
 
-		bdef = new BodyDef();
-		bdef.position.set(UInfo.P2M(startX * widthInTiles), UInfo.P2M(startY * heightInTiles));
-		bdef.type = BodyDef.BodyType.StaticBody;
-		body = world.createBody(bdef);
-
-		fdef = new FixtureDef();
 		edgeShape = new EdgeShape();
-		edgeShape.set(0f, 0f, UInfo.P2M((endX - startX) * widthInTiles), UInfo.P2M((endY - startY) * heightInTiles));
-
+		edgeShape.set(0f, 0f,
+				UInfo.P2M((endX - startX) * widthInTiles), UInfo.P2M((endY - startY) * heightInTiles));
+		fdef = new FixtureDef();
 		fdef.shape = edgeShape;
 		body.createFixture(fdef).setUserData(new AgentBodyFilter(new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT),
 				new CFBitSeq(true), seg));

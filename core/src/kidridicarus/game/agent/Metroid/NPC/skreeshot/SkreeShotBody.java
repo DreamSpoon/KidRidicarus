@@ -27,18 +27,13 @@ public class SkreeShotBody extends AgentBody {
 
 	private void defineBody(World world, Vector2 position, Vector2 velocity) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-
 		createBody(world, position, velocity);
 		createFixtures();
 	}
 
 	private void createBody(World world, Vector2 position, Vector2 velocity) {
-		BodyDef bdef = new BodyDef();
-		bdef.type = BodyType.DynamicBody;
-		bdef.position.set(position);
-		bdef.linearVelocity.set(velocity);
-		bdef.gravityScale = 0f;
-		b2body = world.createBody(bdef);
+		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
+		b2body.setGravityScale(0f);
 	}
 
 	private void createFixtures() {

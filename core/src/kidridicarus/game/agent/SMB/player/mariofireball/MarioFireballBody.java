@@ -15,7 +15,7 @@ public class MarioFireballBody extends AgentBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(5f);
 	private static final float AGENT_SENSOR_WIDTH = UInfo.P2M(8f);
 	private static final float AGENT_SENSOR_HEIGHT = UInfo.P2M(8f);
-	private static final float GRAVITY_SCALE = 2f;
+	private static final float GRAVITY_SCALE = 2f;	// heavy
 
 	private static final CFBitSeq MAIN_CFCAT = CommonCF.SOLID_BODY_CFCAT;
 	private static final CFBitSeq MAIN_CFMASK = CommonCF.SOLID_BODY_CFMASK;
@@ -39,7 +39,7 @@ public class MarioFireballBody extends AgentBody {
 
 	private void createBody(World world, Vector2 position, Vector2 velocity) {
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
-		b2body.setGravityScale(GRAVITY_SCALE);	// heavy
+		b2body.setGravityScale(GRAVITY_SCALE);
 		spine = new MarioFireballSpine(this);
 		prevVelocity = velocity.cpy();
 	}
