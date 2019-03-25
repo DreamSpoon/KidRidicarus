@@ -13,7 +13,7 @@
  </layer>
  <layer id="7" name="scenery" width="16" height="176">
   <properties>
-   <property name="draworder" value="map_bottom"/>
+   <property name="draworder" value="map_top"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztmlsLgzAMhWXswi4Puwn7/790jO2hhLVLPNFm7fnAByFHY9s00TgM31l9jkisQXurfvPjHNFvFfqS/zujLz1inW+Jdb699aj/L6xxvAfvdwD1XqB71xHUnyrriR8Rc+HSoPvCGdRfQD0hcxI132j9yum1fuX0zGPEG82aLtlcFfqSzU2hL9ksoW+Ru9Fe1m2joy+kbdB8rtljSqAxPkVvjS/JnPHFdzCyFGnsTll3NWLXU0/65B9zFiHkDeOXkD5A+zEP8LppPyetkXPXleT6Oa31iWq/t7bSz0eoPQe9Mdeai1TfTPlWlur5LdoX7zUXZc+I8N9FjbGQz20dB/nc1nGQdUS0usKLJ+SnBJ0=
@@ -31,6 +31,7 @@
  <layer id="4" name="playerstart" width="16" height="176">
   <properties>
    <property name="agentclass" value="playerspawner"/>
+   <property name="direction" value="right"/>
    <property name="playeragentclass" value="mario"/>
    <property name="spawnmain" value="true"/>
   </properties>

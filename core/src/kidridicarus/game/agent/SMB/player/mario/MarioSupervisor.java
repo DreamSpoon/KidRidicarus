@@ -9,6 +9,7 @@ import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.SMB.player.mario.HUD.MarioHUD;
 
@@ -51,8 +52,11 @@ public class MarioSupervisor extends PlayerAgentSupervisor {
 		curState.scriptedSpriteState.visible = true;
 		curState.scriptedSpriteState.spriteState =
 				mario.getProperty(CommonKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
-		curState.scriptedSpriteState.isFacingRight = mario.getProperty(CommonKV.Script.KEY_FACINGRIGHT, false,
-				Boolean.class);
+		if(mario.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
+			curState.scriptedSpriteState.isFacingRight = true;
+		else
+			curState.scriptedSpriteState.isFacingRight = false;
+
 		return curState;
 	}
 

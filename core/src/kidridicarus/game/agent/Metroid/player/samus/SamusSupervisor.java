@@ -9,6 +9,7 @@ import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.Metroid.player.samus.HUD.SamusHUD;
 
@@ -44,16 +45,18 @@ public class SamusSupervisor extends PlayerAgentSupervisor {
 
 	@Override
 	protected ScriptedAgentState getCurrentScriptAgentState() {
-		ScriptedAgentState scriptedState = new ScriptedAgentState();
-		scriptedState.scriptedBodyState.contactEnabled = true;
-		scriptedState.scriptedBodyState.position.set(samus.getPosition());
-		scriptedState.scriptedSpriteState.visible = true;
-		scriptedState.scriptedSpriteState.position.set(samus.getPosition());
-		scriptedState.scriptedSpriteState.spriteState =
+		ScriptedAgentState curState = new ScriptedAgentState();
+		curState.scriptedBodyState.contactEnabled = true;
+		curState.scriptedBodyState.position.set(samus.getPosition());
+		curState.scriptedSpriteState.visible = true;
+		curState.scriptedSpriteState.position.set(samus.getPosition());
+		curState.scriptedSpriteState.spriteState =
 				samus.getProperty(CommonKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
-		scriptedState.scriptedSpriteState.isFacingRight =
-				samus.getProperty(CommonKV.Script.KEY_FACINGRIGHT, false, Boolean.class);
-		return scriptedState;
+		if(samus.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
+			curState.scriptedSpriteState.isFacingRight = true;
+		else
+			curState.scriptedSpriteState.isFacingRight = false;
+		return curState;
 	}
 
 	@Override

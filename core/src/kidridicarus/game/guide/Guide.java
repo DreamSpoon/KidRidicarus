@@ -302,7 +302,10 @@ public class Guide implements Disposable {
 			String initPlayClass = spawner.getProperty(CommonKV.Spawn.KEY_PLAYERAGENTCLASS, null, String.class);
 			if(initPlayClass == null)
 				return null;
-			return (PlayerAgent) agency.createAgent(Agent.createPointAP(initPlayClass, spawner.getPosition()));
+			ObjectProperties playerAP = Agent.createPointAP(initPlayClass, spawner.getPosition());
+			if(spawner.getProperty(CommonKV.KEY_DIRECTION, "", String.class).equals(CommonKV.VAL_RIGHT))
+				playerAP.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
+			return (PlayerAgent) agency.createAgent(playerAP);
 		}
 		// otherwise use agent properties and set start point to main spawn point
 		else {

@@ -57,6 +57,7 @@
  <layer id="10" name="playerstart" width="160" height="15">
   <properties>
    <property name="agentclass" value="playerspawner"/>
+   <property name="direction" value="right"/>
    <property name="playeragentclass" value="samus"/>
    <property name="spawnmain" value="true"/>
   </properties>
