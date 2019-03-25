@@ -31,6 +31,7 @@ public class CommonKV {
 		public static final String KEY_SPAWNTYPE = "spawntype";
 		public static final String KEY_SPAWNMAIN = "spawnmain";
 		public static final String KEY_SPAWNAGENTCLASS = "spawnagentclass";
+		public static final String KEY_PLAYERAGENTCLASS = "playeragentclass";
 		// passed to something that needs to expire immediately
 		public static final String KEY_EXPIRE = "expire";
 	}

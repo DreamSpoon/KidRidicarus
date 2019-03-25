@@ -23,7 +23,7 @@ public class AudioInfo {
 			private static final String DIR = "audio/sound/SMB/";
 			public static final String BREAK = DIR+"Break.wav";
 			public static final String BUMP = DIR+"Bump.wav";
-			public static final String COIN = DIR+"Coin.wav";
+			public static final String COIN = DIR+"Coin.ogg";
 			public static final String POWERUP_SPAWN = DIR+"Item.wav";
 			public static final String POWERUP_USE = DIR+"Powerup.wav";
 			public static final String POWERDOWN = DIR+"Warp.wav";

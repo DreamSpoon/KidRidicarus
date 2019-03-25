@@ -12,7 +12,6 @@ import kidridicarus.common.powerup.PowerupList;
 
 public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 	private RoomBox currentRoom;
-	private Vector2 lastViewCenter;
 	private PowerupList nonCharPowerups;
 
 	public abstract void setStageHUD(Stage stageHUD);
@@ -21,7 +20,6 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 	public PlayerAgentSupervisor(Agency agency, Agent agent) {
 		super(agency, agent);
 		currentRoom = null;
-		lastViewCenter = new Vector2(0f, 0f);
 		nonCharPowerups = new PowerupList();
 	}
 
@@ -48,10 +46,8 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 	public Vector2 getViewCenter() {
 		RoomBox room = ((PlayerAgent) playerAgent).getCurrentRoom();
 		if(room == null)
-			return lastViewCenter;
-		lastViewCenter.set(((PlayerAgent) playerAgent).getCurrentRoom().getViewCenterForPos(
-				playerAgent.getPosition()));
-		return lastViewCenter;
+			return null;
+		return ((PlayerAgent) playerAgent).getCurrentRoom().getViewCenterForPos(playerAgent.getPosition());
 	}
 
 	public void receiveNonCharPowerup(Powerup pow) {

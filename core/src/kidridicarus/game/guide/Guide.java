@@ -44,39 +44,41 @@ public class Guide implements Disposable {
 	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_X * 15);
 	private static final Vector2 SAFETY_RESPAWN_OFFSET = UInfo.P2MVector(0f, 8f);
 
-	private Agency agency;
-	private PlayerAgent myPlayerAgent;
-	private AgentSpawnTrigger spawnTrigger;
-	private MoveAdvice inputMoveAdvice;
+	private AssetManager manager;
 	private Stage stageHUD;
+	private Agency agency;
+	private MoveAdvice inputMoveAdvice;
+	private PlayerAgent playerAgent;
+	private AgentSpawnTrigger spawnTrigger;
 
 	private String currentMainMusicName;
 	private Music currentMainMusic;
 	private boolean isMainMusicPlaying;
 	private Music currentSinglePlayMusic;
-	private AssetManager manager;
+	private Vector2 lastViewCenter;
 
 	// TODO this is hack - remove!
 	private AgencyDirector director;
 
 	public Guide(AgencyDirector director, Agency agency, AssetManager manager, Stage stageHUD) {
 		this.director = director;
-		this.agency = agency;
 		this.manager = manager;
 		this.stageHUD = stageHUD;
+		this.agency = agency;
 
-		spawnTrigger = null;
-		myPlayerAgent = null;
 		inputMoveAdvice = new MoveAdvice();
+		playerAgent = null;
+		spawnTrigger = null;
 		currentMainMusicName = "";
 		currentMainMusic = null;
 		isMainMusicPlaying = false;
 		currentSinglePlayMusic = null;
+		lastViewCenter = new Vector2(0f, 0f);
 	}
 
 	private void switchHUDtoNewPlayerAgent() {
 		stageHUD.clear();
-		myPlayerAgent.getSupervisor().setStageHUD(stageHUD);
+		playerAgent.getSupervisor().setStageHUD(stageHUD);
 	}
 
 	private void handleInput() {
@@ -90,7 +92,7 @@ public class Guide implements Disposable {
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
 			QQ.toggleOn();
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP))
-			Powerup.tryPushPowerup(myPlayerAgent, new SMB_Pow.FireFlowerPow());
+			Powerup.tryPushPowerup(playerAgent, new SMB_Pow.FireFlowerPow());
 	}
 
 	public void preUpdateAgency(float delta) {
@@ -98,42 +100,42 @@ public class Guide implements Disposable {
 		handleInput();
 
 		// ensure spawn trigger follows view of player
-		spawnTrigger.setTarget(myPlayerAgent.getSupervisor().getViewCenter());
+		spawnTrigger.setTarget(getViewCenter());
 		// pass user input to player agent's supervisor
-		myPlayerAgent.getSupervisor().setMoveAdvice(inputMoveAdvice);
-		myPlayerAgent.getSupervisor().preUpdateAgency(delta);
+		playerAgent.getSupervisor().setMoveAdvice(inputMoveAdvice);
+		playerAgent.getSupervisor().preUpdateAgency(delta);
 	}
 
 	// check / do player agent power character changes 
 	public void updateAgency() {
 		// check for "out-of-character" powerup received and change to appropriate character for powerup
-		Powerup nonCharPowerup = myPlayerAgent.getSupervisor().getNonCharPowerups().getFirst();
-		myPlayerAgent.getSupervisor().clearNonCharPowerups();
+		Powerup nonCharPowerup = playerAgent.getSupervisor().getNonCharPowerups().getFirst();
+		playerAgent.getSupervisor().clearNonCharPowerups();
 		if(nonCharPowerup != null)
 			switchAgentType(nonCharPowerup.getPowerupCharacter());
 	}
 
 	public void postUpdateAgency() {
-		myPlayerAgent.getSupervisor().postUpdateAgency();
+		playerAgent.getSupervisor().postUpdateAgency();
 	}
 
 	private void switchAgentType(PowChar pc) {
 		Vector2 currentPos = new Vector2(0f, 0f);
-		if(myPlayerAgent != null) {
-			currentPos = myPlayerAgent.getPosition().add(SAFETY_RESPAWN_OFFSET);
-			agency.disposeAgent(myPlayerAgent);
-			myPlayerAgent = null;
+		if(playerAgent != null) {
+			currentPos = playerAgent.getPosition().add(SAFETY_RESPAWN_OFFSET);
+			agency.disposeAgent(playerAgent);
+			playerAgent = null;
 		}
 
 		switch(pc) {
 			default:
 			case MARIO:
-				myPlayerAgent = (PlayerAgent) agency.createAgent(
+				playerAgent = (PlayerAgent) agency.createAgent(
 						Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIO, currentPos));
 				switchHUDtoNewPlayerAgent();
 				break;
 			case SAMUS:
-				myPlayerAgent = (PlayerAgent) agency.createAgent(
+				playerAgent = (PlayerAgent) agency.createAgent(
 						Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS, currentPos));
 				switchHUDtoNewPlayerAgent();
 				break;
@@ -144,22 +146,22 @@ public class Guide implements Disposable {
 
 	public void updateCamera(OrthographicCamera gamecam) {
 		// if player is not dead then use their current room to determine the gamecam position
-		if(!myPlayerAgent.getSupervisor().isGameOver()) {
-			gamecam.position.set(myPlayerAgent.getSupervisor().getViewCenter(), 0f);
+		if(!playerAgent.getSupervisor().isGameOver()) {
+			gamecam.position.set(getViewCenter(), 0f);
 			gamecam.update();
 		}
 	}
 
 	public void postRenderFrame() {
-		myPlayerAgent.getSupervisor().drawHUD();
+		playerAgent.getSupervisor().drawHUD();
 	}
 
 	public boolean isGameWon() {
-		return myPlayerAgent.getSupervisor().isAtLevelEnd();
+		return playerAgent.getSupervisor().isAtLevelEnd();
 	}
 
 	public boolean isGameOver() {
-		return myPlayerAgent.getSupervisor().isGameOver();
+		return playerAgent.getSupervisor().isGameOver();
 	}
 
 	public Ear createEar() {
@@ -256,11 +258,11 @@ public class Guide implements Disposable {
 	}
 
 	public String getNextLevelFilename() {
-		return myPlayerAgent.getSupervisor().getNextLevelFilename();
+		return playerAgent.getSupervisor().getNextLevelFilename();
 	}
 
 	public ObjectProperties getCopyPlayerAgentProperties() {
-		return myPlayerAgent.getCopyAllProperties();
+		return playerAgent.getCopyAllProperties();
 	}
 
 	public boolean insertPlayerAgent(ObjectProperties playerAgentProperties) {
@@ -270,9 +272,9 @@ public class Guide implements Disposable {
 			return false;
 
 		// spawn player with properties at spawn location
-		myPlayerAgent = spawnPlayerAgentWithProperties(playerAgentProperties, spawner);
-		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(AgentSpawnTrigger.makeAP(
-				myPlayerAgent.getSupervisor().getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
+		playerAgent = spawnPlayerAgentWithProperties(playerAgentProperties, spawner);
+		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(
+				AgentSpawnTrigger.makeAP(getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 		spawnTrigger.setEnabled(true);
 		switchHUDtoNewPlayerAgent();
 		return true;
@@ -281,7 +283,7 @@ public class Guide implements Disposable {
 	private PlayerAgent spawnPlayerAgentWithProperties(ObjectProperties playerAgentProperties, Agent spawner) {
 		// if no agent properties given then use spawner to determine player class and position
 		if(playerAgentProperties == null) {
-			String initPlayClass = spawner.getProperty("playeragentclass", null, String.class);
+			String initPlayClass = spawner.getProperty(CommonKV.Spawn.KEY_PLAYERAGENTCLASS, null, String.class);
 			if(initPlayClass == null)
 				return null;
 			return (PlayerAgent) agency.createAgent(Agent.createPointAP(initPlayClass, spawner.getPosition()));
@@ -302,6 +304,16 @@ public class Guide implements Disposable {
 			return spawnList.iterator().next();
 		else
 			return null;
+	}
+
+	// safely get the view center - cannot return null, and tries to return a correct view center
+	private Vector2 getViewCenter() {
+		Vector2 vc = playerAgent.getSupervisor().getViewCenter();
+		if(vc == null)
+			vc = lastViewCenter;
+		else
+			lastViewCenter.set(vc);
+		return vc;
 	}
 
 	@Override
