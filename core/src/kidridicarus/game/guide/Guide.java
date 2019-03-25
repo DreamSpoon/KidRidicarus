@@ -21,6 +21,8 @@ import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
+import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agent.scrollpushbox.ScrollPushBox;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
@@ -34,6 +36,7 @@ import kidridicarus.game.tool.KeyboardMapping;
 import kidridicarus.game.tool.QQ;
 
 /*
+ * Guide AKA Player (not actually tho - eventually this class will split into Player and others).
  * Handles:
  *   -user input
  *   -camera
@@ -55,6 +58,7 @@ public class Guide implements Disposable {
 	private PlayerAgent playerAgent;
 	private AgentSpawnTrigger spawnTrigger;
 	private KeepAliveBox keepAliveBox;
+	private ScrollPushBox scrollPushBox;
 
 	private String currentMainMusicName;
 	private Music currentMainMusic;
@@ -75,6 +79,7 @@ public class Guide implements Disposable {
 		playerAgent = null;
 		spawnTrigger = null;
 		keepAliveBox = null;
+		scrollPushBox = null;
 		currentMainMusicName = "";
 		currentMainMusic = null;
 		isMainMusicPlaying = false;
@@ -108,6 +113,8 @@ public class Guide implements Disposable {
 		// ensure spawn trigger and keep alive box follow view center
 		spawnTrigger.setTarget(getViewCenter());
 		keepAliveBox.setTarget(getViewCenter());
+		if(scrollPushBox != null)
+			scrollPushBox.setTarget(getViewCenter());
 		// pass user input to player agent's supervisor
 		playerAgent.getSupervisor().setMoveAdvice(inputMoveAdvice);
 		playerAgent.getSupervisor().preUpdateAgency(delta);
@@ -124,6 +131,29 @@ public class Guide implements Disposable {
 
 	public void postUpdateAgency() {
 		playerAgent.getSupervisor().postUpdateAgency();
+
+		RoomBox currentRoom = playerAgent.getCurrentRoom();
+		if(currentRoom == null)
+			return;
+
+		// need to create a scroll push box?
+		if(scrollPushBox == null) {
+			Direction4 scrollDir = Direction4.fromString(
+					currentRoom.getProperty(CommonKV.Room.KEY_ROOM_SCROLL_DIR, "", String.class));
+			if(scrollDir != Direction4.NONE) {
+				scrollPushBox = (ScrollPushBox) agency.createAgent(
+						ScrollPushBox.makeAP(getViewCenter(), scrollDir));
+			}
+		}
+		// need to remove a scroll push box?
+		else {
+			Direction4 scrollDir = Direction4.fromString(
+					currentRoom.getProperty(CommonKV.Room.KEY_ROOM_SCROLL_DIR, "", String.class));
+			if(scrollDir == Direction4.NONE) {
+				agency.disposeAgent(scrollPushBox);
+				scrollPushBox = null;
+			}
+		}
 	}
 
 	private void switchAgentType(PowChar pc) {
@@ -287,12 +317,15 @@ public class Guide implements Disposable {
 
 		// spawn player with properties at spawn location
 		playerAgent = spawnPlayerAgentWithProperties(playerAgentProperties, spawner);
+		// create player's associated agents (generally, they follow player)
 		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(
 				AgentSpawnTrigger.makeAP(getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 		spawnTrigger.setEnabled(true);
 		keepAliveBox = (KeepAliveBox) agency.createAgent(
 				KeepAliveBox.makeAP(getViewCenter(), KEEP_ALIVE_WIDTH, KEEP_ALIVE_HEIGHT));
+
 		switchHUDtoNewPlayerAgent();
+
 		return true;
 	}
 

@@ -10,6 +10,7 @@ import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.info.CommonCF.Alias;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.agentbody.PlayerAgentBody;
@@ -29,8 +30,9 @@ public class MarioBody extends PlayerAgentBody {
 	private static final float SIDE_PW_SENSOR_HEIGHT = UInfo.P2M(5f);
 
 	// main body
-	private static final CFBitSeq MAIN_CFCAT = CommonCF.SOLID_BODY_CFCAT;
-	private static final CFBitSeq MAIN_CFMASK = CommonCF.SOLID_BODY_CFMASK;
+	private static final CFBitSeq MAIN_CFCAT = new CFBitSeq(Alias.AGENT_BIT);
+	private static final CFBitSeq MAIN_CFMASK =
+			new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.SCROLL_PUSH_BIT);
 	// agent sensor
 	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
@@ -82,9 +84,7 @@ public class MarioBody extends PlayerAgentBody {
 
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = FRICTION;
-		B2DFactory.makeBoxFixture(b2body, fdef, this,
-				MAIN_CFCAT, MAIN_CFMASK, getBodySize().x, getBodySize().y);
-
+		B2DFactory.makeBoxFixture(b2body, fdef, this, MAIN_CFCAT, MAIN_CFMASK, getBodySize().x, getBodySize().y);
 		spine = new MarioSpine(this);
 	}
 

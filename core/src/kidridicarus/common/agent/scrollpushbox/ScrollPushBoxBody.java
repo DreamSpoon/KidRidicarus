@@ -1,18 +1,19 @@
-package kidridicarus.common.agent.keepalivebox;
+package kidridicarus.common.agent.scrollpushbox;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.common.agent.followbox.FollowBox;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.info.CommonCF;
 
-public class KeepAliveBoxBody extends FollowBoxBody {
-	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.KEEP_ALIVE_BIT);
-	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
+public class ScrollPushBoxBody extends FollowBoxBody {
+	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SCROLL_PUSH_BIT);
+	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 
-	public KeepAliveBoxBody(KeepAliveBox parent, World world, Rectangle bounds) {
-		super(parent, world, bounds, true);
+	public ScrollPushBoxBody(FollowBox parent, World world, Rectangle bounds) {
+		super(parent, world, bounds, false);
 	}
 
 	@Override

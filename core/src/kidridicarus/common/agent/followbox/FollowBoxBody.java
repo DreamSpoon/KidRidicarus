@@ -18,16 +18,18 @@ public abstract class FollowBoxBody extends AgentBody {
 	// TODO: is 50 pixels right?
 	private static final float RESET_DIST = UInfo.P2M(50);
 
-	private MouseJoint mj;
 	private World world;
+	private MouseJoint mj;
+	private boolean isSensor;
 
 	protected abstract CFBitSeq getCatBits();
 	protected abstract CFBitSeq getMaskBits();
 	protected abstract Object getSensorBoxUserData();
 
-	public FollowBoxBody(FollowBox parent, World world, Rectangle bounds) {
+	public FollowBoxBody(FollowBox parent, World world, Rectangle bounds, boolean isSensor) {
 		super(parent);
 		this.world = world;
+		this.isSensor = isSensor;
 		defineBody(world, bounds);
 	}
 
@@ -46,8 +48,14 @@ public abstract class FollowBoxBody extends AgentBody {
 	private void createRegBody(World world, Rectangle bounds, CFBitSeq catBits, CFBitSeq maskBits) {
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
 		b2body.setGravityScale(0f);
-		B2DFactory.makeSensorBoxFixture(b2body, getSensorBoxUserData(), catBits, maskBits,
+		if(isSensor) {
+			B2DFactory.makeSensorBoxFixture(b2body, getSensorBoxUserData(), catBits, maskBits,
 				bounds.width, bounds.height);
+		}
+		else {
+			B2DFactory.makeBoxFixture(b2body, getSensorBoxUserData(), catBits, maskBits,
+					bounds.width, bounds.height);
+		}
 	}
 
 	// mouse joint allows body to quickly change position without destroying/recreating the body/fixture constantly

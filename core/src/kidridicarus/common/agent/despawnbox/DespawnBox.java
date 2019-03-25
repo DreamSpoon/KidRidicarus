@@ -9,25 +9,25 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 
 public class DespawnBox extends Agent implements DisposableAgent {
-	private DespawnBoxBody dsBody;
+	private DespawnBoxBody body;
 
 	public DespawnBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		dsBody = new DespawnBoxBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		body = new DespawnBoxBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 	}
 
 	@Override
 	public Vector2 getPosition() {
-		return dsBody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return dsBody.getBounds();
+		return body.getBounds();
 	}
 
 	@Override
 	public void disposeAgent() {
-		dsBody.dispose();
+		body.dispose();
 	}
 }

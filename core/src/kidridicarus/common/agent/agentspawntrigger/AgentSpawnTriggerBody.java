@@ -18,7 +18,7 @@ public class AgentSpawnTriggerBody extends FollowBoxBody {
 	private AgentContactHoldSensor acSensor;
 
 	public AgentSpawnTriggerBody(AgentSpawnTrigger parent, World world, Rectangle bounds) {
-		super(parent, world, bounds);
+		super(parent, world, bounds, true);
 		acSensor = new AgentContactHoldSensor(this);
 	}
 
