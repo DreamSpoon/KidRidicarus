@@ -53,7 +53,9 @@ public class CommonKV {
 		// name of agent, so agent can be targeted
 		public static final String KEY_NAME = "name";
 		// name of targeted agent
-		public static final String KEY_TARGETNAME = "targetname";
+		public static final String KEY_TARGETNAME = "target_name";
+		public static final String KEY_TARGET_LEFT = "target_left";
+		public static final String KEY_TARGET_RIGHT = "target_right";
 	}
 
 	public class Level {

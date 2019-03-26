@@ -1,4 +1,4 @@
-package kidridicarus.common.agent.levelendtrigger;
+package kidridicarus.game.agent.Metroid.other.metroiddoornexus;
 
 import java.util.List;
 
@@ -12,10 +12,11 @@ import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class LevelEndTriggerBody extends AgentBody {
+// TODO merge this body with LevelTriggerBody
+public class MetroidDoorNexusBody extends AgentBody {
 	private AgentContactBeginSensor playerSensor; 
 
-	public LevelEndTriggerBody(LevelEndTrigger parent, World world, Rectangle bounds) {
+	public MetroidDoorNexusBody(MetroidDoorNexus parent, World world, Rectangle bounds) {
 		super(parent);
 		defineBody(world, bounds);
 	}
@@ -32,8 +33,8 @@ public class LevelEndTriggerBody extends AgentBody {
 
 	private void createFixtures() {
 		playerSensor = new AgentContactBeginSensor(this);
-		B2DFactory.makeBoxFixture(b2body, playerSensor,
-				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, getBodySize().x, getBodySize().y);
+		B2DFactory.makeBoxFixture(b2body, playerSensor, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
+				getBodySize().x, getBodySize().y);
 	}
 
 	public List<PlayerAgent> getPlayerBeginContacts() {

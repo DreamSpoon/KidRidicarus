@@ -8,6 +8,7 @@ import kidridicarus.game.agent.Metroid.item.energy.Energy;
 import kidridicarus.game.agent.Metroid.item.marumari.MaruMari;
 import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
 import kidridicarus.game.agent.Metroid.other.metroiddoor.MetroidDoor;
+import kidridicarus.game.agent.Metroid.other.metroiddoornexus.MetroidDoorNexus;
 import kidridicarus.game.agent.Metroid.player.samus.Samus;
 import kidridicarus.game.agent.Metroid.player.samuschunk.SamusChunk;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
@@ -16,6 +17,7 @@ public class MetroidInfo {
 	public static final AgentClassList METROID_AGENT_CLASSLIST = new AgentClassList( 
 			GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, DeathPop.class,
 			GameKV.Metroid.AgentClassAlias.VAL_DOOR, MetroidDoor.class,
+			GameKV.Metroid.AgentClassAlias.VAL_DOOR_NEXUS, MetroidDoorNexus.class,
 			GameKV.Metroid.AgentClassAlias.VAL_ENERGY, Energy.class,
 			GameKV.Metroid.AgentClassAlias.VAL_MARUMARI, MaruMari.class,
 			GameKV.Metroid.AgentClassAlias.VAL_SAMUS, Samus.class,

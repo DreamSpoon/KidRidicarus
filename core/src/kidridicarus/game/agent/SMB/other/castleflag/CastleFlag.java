@@ -9,10 +9,11 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 
-public class CastleFlag extends Agent {
+public class CastleFlag extends Agent implements TriggerTakeAgent {
 	private static final float RISE_DIST = UInfo.P2M(32);
 	private static final float RISE_TIME = 1f;
 	private static final float BODY_WIDTH = UInfo.P2M(16f);
@@ -92,7 +93,8 @@ public class CastleFlag extends Agent {
 			batch.draw(flagSprite);
 	}
 
-	public void trigger() {
+	@Override
+	public void onTakeTrigger() {
 		isTriggered = true;
 		// enable updates
 		myUpdateListener = new AgentUpdateListener() {

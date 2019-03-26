@@ -120,7 +120,7 @@
    eJztzjENAAAIA7Dpwb9ARIyEp1XQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAIDWfAcAAAAAAAAAAAAAAAAAAAAAAADgyAIDKwAr
   </data>
  </layer>
- <objectgroup id="20" name="spawnplayer" visible="0">
+ <objectgroup id="20" name="spawnplayer">
   <properties>
    <property name="agentclass" value="playerspawner"/>
   </properties>
@@ -137,7 +137,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="29" name="rooms">
+ <objectgroup id="29" name="rooms" visible="0">
   <properties>
    <property name="agentclass" value="room"/>
   </properties>
@@ -157,20 +157,20 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="23" name="pipewarp" visible="0">
+ <objectgroup id="23" name="pipewarp">
   <properties>
    <property name="agentclass" value="pipewarp"/>
   </properties>
   <object id="231" x="912" y="384" width="32" height="16">
    <properties>
     <property name="direction" value="down"/>
-    <property name="targetname" value="level1coins"/>
+    <property name="target_name" value="level1coins"/>
    </properties>
   </object>
   <object id="233" x="896" y="672" width="16" height="32">
    <properties>
     <property name="direction" value="right"/>
-    <property name="targetname" value="level1coinsexit"/>
+    <property name="target_name" value="level1coinsexit"/>
    </properties>
   </object>
  </objectgroup>
@@ -190,8 +190,8 @@
   </properties>
   <object id="227" x="3280" y="416" width="16" height="32">
    <properties>
-    <property name="nextlevel_name" value="map/Metroid1-1 v7.tmx"/>
-    <property name="targetname" value="castleflagSMB1-1"/>
+    <property name="nextlevel_name" value="map/Metroid1-1 v8.tmx"/>
+    <property name="target_name" value="castleflagSMB1-1"/>
    </properties>
   </object>
  </objectgroup>

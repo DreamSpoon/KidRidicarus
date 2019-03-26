@@ -1,4 +1,4 @@
-package kidridicarus.common.agent.levelendtrigger;
+package kidridicarus.game.agent.Metroid.other.metroiddoornexus;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -9,17 +9,17 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.PlayerAgent;
-import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.game.agent.Metroid.other.metroiddoor.MetroidDoor;
 
-public class LevelEndTrigger extends Agent implements TriggerTakeAgent, DisposableAgent {
-	private LevelEndTriggerBody body;
+public class MetroidDoorNexus extends Agent implements DisposableAgent {
+	private MetroidDoorNexusBody body;
 
-	public LevelEndTrigger(Agency agency, ObjectProperties properties) {
+	public MetroidDoorNexus(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		body = new LevelEndTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		body = new MetroidDoorNexusBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -28,20 +28,23 @@ public class LevelEndTrigger extends Agent implements TriggerTakeAgent, Disposab
 
 	private void doContactUpdate() {
 		for(PlayerAgent agent : body.getPlayerBeginContacts()) {
-			agent.getSupervisor().startScript(
-					new LevelEndScript(this, getProperty(CommonKV.Level.VAL_NEXTLEVEL_NAME, "", String.class)));
+			boolean isTransitRight = agent.getPosition().x < body.getPosition().x;
+			agent.getSupervisor().startScript(new MetroidDoorNexusScript(this, isTransitRight,
+					getDoor(CommonKV.Script.KEY_TARGET_LEFT), getDoor(CommonKV.Script.KEY_TARGET_RIGHT),
+					agent.getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
 		}
 	}
 
-	@Override
-	public void onTakeTrigger() {
-		String targetNameStr = getProperty(CommonKV.Script.KEY_TARGETNAME, null, String.class);
+	private MetroidDoor getDoor(String str) {
+		String targetNameStr = getProperty(str, null, String.class);
 		if(targetNameStr == null)
-			return;
+			return null;
 		Agent agent = agency.getFirstAgentByProperties(
 				new String[] { CommonKV.Script.KEY_NAME }, new String[] { targetNameStr });
-		if(agent instanceof TriggerTakeAgent)
-			((TriggerTakeAgent) agent).onTakeTrigger();
+		if(agent instanceof MetroidDoor)
+			return (MetroidDoor) agent;
+		else
+			return null;
 	}
 
 	@Override

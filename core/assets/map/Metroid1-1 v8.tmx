@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="14">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="17">
  <tileset firstgid="1" name="MetroidTilesetV3" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="40" columns="8">
   <image source="MetroidTilesetV3.png" width="144" height="90"/>
  </tileset>
@@ -71,7 +71,24 @@
   </properties>
   <object id="6" x="2544" y="80" width="16" height="48">
    <properties>
-    <property name="nextlevel_name" value="map/KidIcarus1-1 v4.tmx"/>
+    <property name="nextlevel_name" value="map/KidIcarus1-1 v5.tmx"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="14" name="blue door nexus">
+  <properties>
+   <property name="agentclass" value="metroid_door_nexus"/>
+  </properties>
+  <object id="14" x="1264" y="80" width="32" height="48">
+   <properties>
+    <property name="target_left" value="door1_left"/>
+    <property name="target_right" value="door1_right"/>
+   </properties>
+  </object>
+  <object id="16" x="1520" y="80" width="32" height="48">
+   <properties>
+    <property name="target_left" value="door2_left"/>
+    <property name="target_right" value="door2_right"/>
    </properties>
   </object>
  </objectgroup>
@@ -82,21 +99,25 @@
   <object id="4" x="1256" y="80" width="8" height="48">
    <properties>
     <property name="direction" value="left"/>
+    <property name="name" value="door1_left"/>
    </properties>
   </object>
   <object id="7" x="1296" y="80" width="8" height="48">
    <properties>
     <property name="direction" value="right"/>
+    <property name="name" value="door1_right"/>
    </properties>
   </object>
   <object id="8" x="1512" y="80" width="8" height="48">
    <properties>
     <property name="direction" value="left"/>
+    <property name="name" value="door2_left"/>
    </properties>
   </object>
   <object id="9" x="1552" y="80" width="8" height="48">
    <properties>
     <property name="direction" value="right"/>
+    <property name="name" value="door2_right"/>
    </properties>
   </object>
   <object id="10" x="2536" y="80" width="8" height="48">
@@ -105,7 +126,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="4" name="rooms">
+ <objectgroup id="4" name="rooms" visible="0">
   <properties>
    <property name="agentclass" value="room"/>
   </properties>
@@ -123,8 +144,9 @@
     <property name="roomtype" value="hscroll"/>
    </properties>
   </object>
-  <object id="13" x="1280" y="0" width="256" height="240">
+  <object id="15" x="1280" y="0" width="256" height="240">
    <properties>
+    <property name="room_hbound" value="true"/>
     <property name="roommusic" value="audio/music/Metroid/03_-_Metroid_-_NES_-_Brinstar_(Rock_Stage).ogg"/>
     <property name="roomtype" value="center"/>
    </properties>

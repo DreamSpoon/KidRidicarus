@@ -42,12 +42,15 @@
  <objectgroup id="6" name="levelend">
   <properties>
    <property name="agentclass" value="levelend_trigger"/>
-   <property name="nextlevel_name" value="map/SMB1-1 v7.tmx"/>
   </properties>
   <object id="7" x="224" y="80" width="16" height="32"/>
-  <object id="9" x="224" y="2496" width="16" height="32"/>
+  <object id="9" x="224" y="2496" width="16" height="32">
+   <properties>
+    <property name="nextlevel_name" value="map/SMB1-1 v7.tmx"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup id="5" name="rooms">
+ <objectgroup id="5" name="rooms" visible="0">
   <properties>
    <property name="agentclass" value="room"/>
   </properties>
