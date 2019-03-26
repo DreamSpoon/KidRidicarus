@@ -23,11 +23,16 @@ public class MetroidDoorNexusScript implements AgentScript {
 	private ScriptedAgentState curScriptAgentState;
 	private float stateTimer;
 	private ScriptState curScriptState;
+	MetroidDoor triggerDoor;
 	private float exitPositionX;
 	private float exitPositionY;
 
 	public MetroidDoorNexusScript(MetroidDoorNexus parent, boolean isTransitRight, MetroidDoor leftDoor,
 			MetroidDoor rightDoor, Vector2 incomingAgentSize) {
+		if(isTransitRight)
+			triggerDoor = rightDoor;
+		else
+			triggerDoor = leftDoor;
 		// get right door exit position if transiting right
 		if(isTransitRight) {
 			if(rightDoor == null)
@@ -73,8 +78,10 @@ public class MetroidDoorNexusScript implements AgentScript {
 				break;
 			case SECOND_HALF:
 				// if first frame of second half then set body position to exit position
-				if(scriptStateChanged)
+				if(scriptStateChanged) {
 					curScriptAgentState.scriptedBodyState.position.set(exitPositionX, exitPositionY);
+					triggerDoor.onTakeTrigger();
+				}
 
 				// sprite position animates from player entry position to nexus exit position
 				curScriptAgentState.scriptedSpriteState.position.set(

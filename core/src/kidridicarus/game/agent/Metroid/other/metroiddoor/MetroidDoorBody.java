@@ -17,7 +17,7 @@ public class MetroidDoorBody extends AgentBody {
 
 	private static final CFBitSeq MAIN_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
 			CommonCF.Alias.SOLID_BOUND_BIT);
-	private static final CFBitSeq MAIN_ENABLED_CFMASK = new CFBitSeq(true);
+	private static final CFBitSeq MAIN_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq MAIN_DISABLED_CFCAT = CommonCF.NO_CONTACT_CFCAT;
 	private static final CFBitSeq MAIN_DISABLED_CFMASK = CommonCF.NO_CONTACT_CFMASK;
 

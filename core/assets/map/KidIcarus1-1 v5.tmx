@@ -43,10 +43,9 @@
   <properties>
    <property name="agentclass" value="levelend_trigger"/>
   </properties>
-  <object id="7" x="224" y="80" width="16" height="32"/>
   <object id="9" x="224" y="2496" width="16" height="32">
    <properties>
-    <property name="nextlevel_name" value="map/SMB1-1 v7.tmx"/>
+    <property name="nextlevel_name" value="map/SMB1-1 v8.tmx"/>
    </properties>
   </object>
  </objectgroup>

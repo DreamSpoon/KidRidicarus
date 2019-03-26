@@ -12,12 +12,14 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.info.AudioInfo;
 
-public class MetroidDoor extends Agent implements ContactDmgTakeAgent, DisposableAgent {
-	private static final float REMAIN_OPEN_DELAY = 77/30f;
+public class MetroidDoor extends Agent implements TriggerTakeAgent, ContactDmgTakeAgent, DisposableAgent {
+	private static final float LONG_OPEN_DELAY = 77/30f;
+	private static final float SHORT_OPEN_DELAY = 0.75f;
 	private static final float OPENCLOSE_DELAY1 = 1/5f;
 	private static final float OPENCLOSE_DELAY2 = 1/10f;
 
@@ -29,7 +31,10 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 	private float stateTimer;
 
 	private boolean isFacingRight;
+	// opening - when player shoots door
 	private boolean isOpening;
+	// quick opening and closing when player transits through door nexus and exits this door
+	private boolean isQuickOpenClose;
 
 	public MetroidDoor(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -39,6 +44,7 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 		isFacingRight = false;
 		isFacingRight = properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT);
 		isOpening = false;
+		isQuickOpenClose = false;
 
 		body = new MetroidDoorBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
@@ -65,6 +71,7 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 				// if first frame of closing then cancel isOpening flag, make door solid again, and play sound
 				if(moveStateChanged) {
 					isOpening = false;
+					isQuickOpenClose = false;
 					body.setMainSolid(true);
 					agency.getEar().playSound(AudioInfo.Sound.Metroid.DOOR);
 				}
@@ -108,35 +115,9 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 	 */
 	private MoveState getNextMoveState() {
 		// progress through opening and closing states by timed delays
-/*		switch(moveState) {
-			case CLOSED:
-				if(isOpening)
-					return MoveState.OPENING_WAIT1;
-				break;
-			case OPENING_WAIT1:
-				if(stateTimer > OPENCLOSE_DELAY1)
-					return MoveState.OPENING_WAIT2;
-				break;
-			case OPENING_WAIT2:
-				if(stateTimer > OPENCLOSE_DELAY2)
-					return MoveState.OPEN;
-				break;
-			case OPEN:
-				if(stateTimer > REMAIN_OPEN_DELAY)
-					return MoveState.CLOSING;
-				break;
-			case CLOSING:
-				if(isOpening)
-					return MoveState.OPENING_WAIT2;
-				else if(stateTimer > OPENCLOSE_DELAY2)
-					return MoveState.CLOSED;
-				break;
-		}
-		return moveState;
-*/
 		if(moveState == MoveState.CLOSED) {
 			// if triggered to open...
-			if(isOpening)
+			if(isOpening || isQuickOpenClose)
 				return MoveState.OPENING_WAIT1;
 			else
 				return MoveState.CLOSED;
@@ -157,7 +138,7 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 		}
 		else if(moveState == MoveState.OPEN) {
 			// if stay open delay has elapsed then change to closing
-			if(stateTimer > REMAIN_OPEN_DELAY)
+			if((isQuickOpenClose && stateTimer > SHORT_OPEN_DELAY) || stateTimer > LONG_OPEN_DELAY)
 				return MoveState.CLOSING;
 			// remain open
 			else
@@ -166,7 +147,7 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 		// MoveState.CLOSING
 		else {
 			// re-open before closing is finished?
-			if(isOpening)
+			if(isOpening || isQuickOpenClose)
 				return MoveState.OPENING_WAIT2;
 			// closing finished?
 			else if(stateTimer > OPENCLOSE_DELAY2)
@@ -183,6 +164,11 @@ public class MetroidDoor extends Agent implements ContactDmgTakeAgent, Disposabl
 
 	private void doDraw(AgencyDrawBatch batch) {
 		batch.draw(sprite);
+	}
+
+	@Override
+	public void onTakeTrigger() {
+		isQuickOpenClose = true;
 	}
 
 	@Override
