@@ -173,7 +173,7 @@ public class SamusBody extends PlayerAgentBody {
 		b2body.setGravityScale(0f);
 	}
 
-	public void allowOnlyDeadContacts() {
+	private void allowOnlyDeadContacts() {
 		// disable all, and...
 		disableAllContacts();
 		// ... re-enable the needed agent contact sensor bits

@@ -190,7 +190,7 @@ public class MarioSprite extends Sprite {
 		boolean spriteStateChanged = nextSpriteState != spriteState;
 		switch(nextSpriteState) {
 			case NORMAL:
-				processPowerState(delta, position, parentMoveState, parentPowerState, didShootFireball, isBlinking,
+				processPowerState(delta, position, parentMoveState, parentPowerState, didShootFireball,
 						isStarPowered, moveDir);
 				break;
 			case GROW:
@@ -246,8 +246,7 @@ public class MarioSprite extends Sprite {
 	}
 
 	private void processPowerState(float delta, Vector2 position, MoveState parentMoveState,
-			PowerState parentPowerState, boolean didShootFireball, boolean isBlinking,
-			boolean isStarPowered, Direction4 moveDir) {
+			PowerState parentPowerState, boolean didShootFireball, boolean isStarPowered, Direction4 moveDir) {
 		int group = SML_REG_GRP;
 
 		switch(parentPowerState) {

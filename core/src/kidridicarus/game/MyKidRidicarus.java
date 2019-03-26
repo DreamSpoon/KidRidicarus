@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.common.agencydirector.AgencyDirector;
@@ -23,7 +22,6 @@ import kidridicarus.game.screen.PlayScreen;
  */
 public class MyKidRidicarus extends Game {
 	public SpriteBatch batch;
-	public ShapeRenderer sr;
 	public AssetManager manager;
 	public AgencyDirector director;
 
@@ -32,7 +30,6 @@ public class MyKidRidicarus extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		sr = new ShapeRenderer();
 
 		atlas = new TextureAtlas(GameInfo.TA_MAIN_FILENAME);
 
@@ -79,7 +76,6 @@ public class MyKidRidicarus extends Game {
 			getScreen().dispose();
 		director.dispose();
 		batch.dispose();
-		sr.dispose();
 		manager.dispose();
 	}
 }

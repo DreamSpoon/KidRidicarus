@@ -29,11 +29,11 @@ import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.common.tool.QQ;
 import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.KeyboardMapping;
 import kidridicarus.game.powerup.SMB_Pow;
-import kidridicarus.game.tool.KeyboardMapping;
-import kidridicarus.game.tool.QQ;
 
 /*
  * Guide AKA Player (not actually tho - eventually this class will split into Player and others).
@@ -215,11 +215,11 @@ public class Guide implements Disposable {
 			@Override
 			public void playSound(String soundName) { doPlaySound(soundName); }
 			@Override
-			public void changeAndStartMainMusic(String musicName) { doChangeAndStartMainMusic(musicName); };
+			public void changeAndStartMainMusic(String musicName) { doChangeAndStartMainMusic(musicName); }
 			@Override
 			public void startSinglePlayMusic(String musicName) { doStartSinglePlayMusic(musicName); }
 			@Override
-			public void stopAllMusic() { doStopAllMusic(); };
+			public void stopAllMusic() { doStopAllMusic(); }
 		};
 	}
 

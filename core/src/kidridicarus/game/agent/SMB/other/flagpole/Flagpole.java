@@ -17,7 +17,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 
 public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent {
-	public static final float FLAGDROP_TIME = 1.35f;
+	static final float FLAGDROP_TIME = 1.35f;
 	// offset relative to the center of the top bound
 	private static final Vector2 FLAG_OFFSET_FROM_TOP = new Vector2(UInfo.P2M(-8), UInfo.P2M(-16));
 	// offset relative to the center of the bottom bound
@@ -59,7 +59,7 @@ public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent
 		for(PlayerAgent agent : body.getPlayerBeginContacts()) {
 			// give the flagpole script to the player and the script, if used, will trigger flag drop
 			agent.getSupervisor().startScript(new FlagpoleScript(this,
-					((Agent) agent).getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
+					agent.getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
 		}
 	}
 

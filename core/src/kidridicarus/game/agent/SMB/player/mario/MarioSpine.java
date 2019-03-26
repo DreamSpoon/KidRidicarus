@@ -135,9 +135,9 @@ public class MarioSpine extends PlayerSpine {
 	}
 
 	public boolean isBraking(boolean facingRight) {
-		if(facingRight && body.getVelocity().x < -MIN_WALKVEL)
-			return true;
-		else if(!facingRight && body.getVelocity().x > MIN_WALKVEL)
+		// if facing right and body is moving left, or if facing left and body is moving right then return true
+		if((facingRight && body.getVelocity().x < -MIN_WALKVEL) ||
+				(!facingRight && body.getVelocity().x > MIN_WALKVEL))
 			return true;
 		return false;
 	}

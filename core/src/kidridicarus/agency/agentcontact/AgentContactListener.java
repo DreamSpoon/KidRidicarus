@@ -11,6 +11,13 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 /*
  * Use a custom filtering (AgentBodyFilter) method to determine contact. When contact occurs, invoke the
  * sensor contact methods. Also use contact.isTouching() for more precise collision detection.
+ * From debugging experience, I've learned that the same Contact object is used for every call to
+ * beginContact and endContact. So a workaround was necessary...
+ * Treating each pair of fixtures in the contact as a single meta-object (by using the Objects.hash method)
+ * allows use of a HashMap to keep a list of current contacts with their isTouching states (since each contact
+ * is unique to it's { fixtureA, fixtureB } pair).
+ * For info on Objects.hash see:
+ *   https://stackoverflow.com/questions/11597386/objects-hash-vs-objects-hashcode-clarification-needed
  */
 public class AgentContactListener implements ContactListener {
 	private HashMap<Integer, Boolean> allContacts;
@@ -68,7 +75,7 @@ public class AgentContactListener implements ContactListener {
 		}
 	}
 
-	public void actualBeginContact(Contact contact) {
+	private void actualBeginContact(Contact contact) {
 		Object objA = ((AgentBodyFilter) contact.getFixtureA().getUserData()).userData;
 		Object objB = ((AgentBodyFilter) contact.getFixtureB().getUserData()).userData;
 		if(objA instanceof AgentContactSensor)
@@ -77,7 +84,7 @@ public class AgentContactListener implements ContactListener {
 			((AgentContactSensor) objB).onBeginContact((AgentBodyFilter) contact.getFixtureA().getUserData());
 	}
 
-	public void actualEndContact(Contact contact) {
+	private void actualEndContact(Contact contact) {
 		Object objA = ((AgentBodyFilter) contact.getFixtureA().getUserData()).userData;
 		Object objB = ((AgentBodyFilter) contact.getFixtureB().getUserData()).userData;
 		if(objA instanceof AgentContactSensor)

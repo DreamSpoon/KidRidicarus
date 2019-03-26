@@ -50,7 +50,7 @@ import kidridicarus.game.powerup.SMB_Pow;
  */
 public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
 		DisposableAgent {
-	public enum MoveState { STAND, BALL_GRND, RUN, RUNSHOOT, PRE_JUMPSHOOT, JUMPSHOOT, JUMPSPINSHOOT,
+	enum MoveState { STAND, BALL_GRND, RUN, RUNSHOOT, PRE_JUMPSHOOT, JUMPSHOOT, JUMPSPINSHOOT,
 		PRE_JUMPSPIN, JUMPSPIN, PRE_JUMP, JUMP, BALL_AIR, CLIMB, DEAD;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
@@ -194,7 +194,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		boolean moveStateChanged = nextMoveState != moveState;
 		if(nextMoveState == MoveState.DEAD)
-			processDeadMove(delta, moveStateChanged);
+			processDeadMove(moveStateChanged);
 		else if(nextMoveState.isGroundMove())
 			processGroundMove(delta, moveAdvice, nextMoveState);
 		else
@@ -384,7 +384,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			return MoveState.JUMP;
 	}
 
-	private void processDeadMove(float delta, boolean moveStateChanged) {
+	private void processDeadMove(boolean moveStateChanged) {
 		// if newly dead then disable contacts and start dead sound
 		if(moveStateChanged) {
 			body.applyDead();
@@ -515,14 +515,11 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			case PRE_JUMPSPIN:
 			case PRE_JUMP:
 			case PRE_JUMPSHOOT:
-				// if previously on ground then...
-				if(moveState.isGroundMove()) {
-					// if advised jump and allowed to jump then do it 
-					if(moveAdvice.action1 && isNextJumpAllowed) {
-						isNextJumpAllowed = false;
-						jumpForceTimer = JUMPUP_CONSTVEL_TIME+JUMPUP_FORCE_TIME;
-						agency.getEar().playSound(AudioInfo.Sound.Metroid.JUMP);
-					}
+				// if previously on ground and advised jump and allowed to jump then jump 
+				if(moveState.isGroundMove() && moveAdvice.action1 && isNextJumpAllowed) {
+					isNextJumpAllowed = false;
+					jumpForceTimer = JUMPUP_CONSTVEL_TIME+JUMPUP_FORCE_TIME;
+					agency.getEar().playSound(AudioInfo.Sound.Metroid.JUMP);
 				}
 				body.getSpine().applyJumpVelocity();
 				break;

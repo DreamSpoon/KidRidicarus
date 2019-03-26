@@ -28,7 +28,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
 	private static final float INJURY_TIME = 10f/60f;
 
-	public enum MoveState { WALK, INJURY, DEAD }
+	enum MoveState { WALK, INJURY, DEAD }
 
 	private ZoomerBody body;
 	private ZoomerSprite sprite;

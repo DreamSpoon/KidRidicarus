@@ -39,7 +39,7 @@ public class SamusHUD implements Disposable {
 		stage.addActor(table);
 	}
 
-	public void update() {
+	private void update() {
 		energyAmountLabel.setText(String.format("%02d",
 				samus.getProperty(GameKV.Metroid.KEY_ENERGY_SUPPLY, 0, Integer.class)));
 		stage.act();

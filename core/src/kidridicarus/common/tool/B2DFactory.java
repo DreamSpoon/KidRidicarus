@@ -39,7 +39,7 @@ public class B2DFactory {
 		return world.createBody(bdef);
 	}
 
-	public static Fixture makeBoxFixture(Body b2body, FixtureDef fdef, Object userData,
+	private static Fixture makeBoxFixture(Body b2body, FixtureDef fdef, Object userData,
 			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height, Vector2 position) {
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(width/2f, height/2f, position, 0f);

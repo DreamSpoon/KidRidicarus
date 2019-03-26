@@ -10,9 +10,9 @@ import kidridicarus.common.info.UInfo;
 
 public class LineSeg implements Disposable {
 	// if begin = end, it means the LineSeg is one tile wide
-	public int begin, end;	// in tile coordinates (not pixel coordinates), where begin <= end
+	int begin, end;	// in tile coordinates (not pixel coordinates), where begin <= end
 	private int otherOffset;
-	public Body body;
+	Body body;
 	public boolean isHorizontal;
 
 	/*
@@ -38,7 +38,7 @@ public class LineSeg implements Disposable {
 		this.upNormal = upNormal;
 	}
 
-	public static class LineSegComparator implements Comparator<LineSeg> {
+	static class LineSegComparator implements Comparator<LineSeg> {
 		// If segA is completely to the left of segB, with no overlap, then return -1.
 		// If segA is completely to the right of segB, with no overlap, then return +1.
 		// If overlap exists then return 0.

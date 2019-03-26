@@ -29,7 +29,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private static final float HIDE_DELAY = 1.7f;
 	private static final float WAKE_DELAY = 3f;
 
-	public enum MoveState { WALK, FALL, DEAD, HIDE, WAKE, SLIDE;
+	enum MoveState { WALK, FALL, DEAD, HIDE, WAKE, SLIDE;
 			public boolean equalsAny(MoveState ...otherStates) {
 				for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 			}

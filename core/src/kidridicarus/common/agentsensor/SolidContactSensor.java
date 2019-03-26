@@ -78,11 +78,10 @@ public class SolidContactSensor extends AgentContactSensor {
 			// Check for actual bound contact, not just close call...
 			// to know if this bound is blocking just a teensy bit or a large amount
 			if(line.dblCheckContact(testBounds)) {
-				// if moving right and there is a right wall on the right then return blocked true
-				if(rightSide && !line.upNormal && center.x <= line.getBounds().x)
-					return true;
-				// if moving left and there is a left wall on the left then return blocked true
-				else if(!rightSide && line.upNormal && center.x >= line.getBounds().x)
+				// If moving right and there is a right wall on the right then return blocked true, or
+				// if moving left and there is a left wall on the left then return blocked true.
+				if((rightSide && !line.upNormal && center.x <= line.getBounds().x) ||
+						(!rightSide && line.upNormal && center.x >= line.getBounds().x))
 					return true;
 			}
 		}
@@ -97,7 +96,7 @@ public class SolidContactSensor extends AgentContactSensor {
 					otherBounds.y+otherBounds.height <= testBounds.y)
 				continue;
 			// if testing for right side and center x of other is on right then return true 
-			else if(rightSide && otherBounds.x+otherBounds.width/2f > testBounds.x+testBounds.width/2f)
+			if(rightSide && otherBounds.x+otherBounds.width/2f > testBounds.x+testBounds.width/2f)
 				return true;
 			// if testing for left side and center x of other is on left then return true 
 			else if(!rightSide && otherBounds.x+otherBounds.width/2f < testBounds.x+testBounds.width/2f)

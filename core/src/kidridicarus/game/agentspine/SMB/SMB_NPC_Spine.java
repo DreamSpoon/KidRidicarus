@@ -34,14 +34,11 @@ public class SMB_NPC_Spine extends NPC_Spine {
 	}
 
 	public boolean checkReverseVelocity(boolean isFacingRight, boolean useAgents) {
-		// if regular move is blocked...
-		if(isMoveBlockedBySolid(isFacingRight) ||
-				(isMoveBlockedByAgent(isFacingRight)) && useAgents) {
-			// ... and reverse move is not also blocked then reverse 
-			if(!isMoveBlockedBySolid(!isFacingRight) && (!useAgents ||
-					!isMoveBlockedByAgent(!isFacingRight))) {
-				return true;
-			}
+		// If regular move is blocked...
+		// ... and reverse move is not also blocked then reverse.
+		if( (isMoveBlockedBySolid(isFacingRight) || (useAgents && isMoveBlockedByAgent(isFacingRight))) &&
+				(!isMoveBlockedBySolid(!isFacingRight) && (!useAgents || !isMoveBlockedByAgent(!isFacingRight))) ) {
+			return true;
 		}
 		return false;
 	}

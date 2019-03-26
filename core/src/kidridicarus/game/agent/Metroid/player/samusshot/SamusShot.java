@@ -22,7 +22,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 	private static final float EXPLODE_TIME = 3f/60f;
 	private static final float GIVE_DAMAGE = 1f;
 
-	public enum MoveState { LIVE, EXPLODE, DEAD }
+	enum MoveState { LIVE, EXPLODE, DEAD }
 
 	private Samus parent;
 	private SamusShotBody shotBody;

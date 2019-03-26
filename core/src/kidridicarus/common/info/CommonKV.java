@@ -47,7 +47,6 @@ public class CommonKV {
 	}
 
 	public class Script {
-		public static final String KEY_FACINGRIGHT = "facingright";
 		public static final String KEY_SPRITESTATE = "spritestate";
 		public static final String KEY_SPRITESIZE = "bodysize";
 		// name of agent, so agent can be targeted

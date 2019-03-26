@@ -21,10 +21,7 @@ import kidridicarus.game.info.GameKV;
 public class MarioFireball extends Agent implements DisposableAgent {
 	private static final float DAMAGE = 1f;
 
-//	private static final Vector2 MOVE_VEL = new Vector2(2.4f, -1.25f);
-//	private static final float MAX_Y_VEL = 2.0f;
-
-	public enum MoveState { FLY, EXPLODE }
+	enum MoveState { FLY, EXPLODE }
 	private enum HitType { NONE, BOUNDARY, AGENT }
 
 	private Mario parent;

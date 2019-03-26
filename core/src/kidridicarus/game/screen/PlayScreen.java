@@ -12,10 +12,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.QQ;
 import kidridicarus.game.MyKidRidicarus;
 import kidridicarus.game.guide.Guide;
-import kidridicarus.game.tool.KeyboardMapping;
-import kidridicarus.game.tool.QQ;
+import kidridicarus.game.info.KeyboardMapping;
 
 public class PlayScreen implements Screen {
 	/*

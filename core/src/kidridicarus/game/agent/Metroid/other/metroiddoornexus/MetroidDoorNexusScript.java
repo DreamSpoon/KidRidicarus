@@ -23,7 +23,7 @@ public class MetroidDoorNexusScript implements AgentScript {
 	private ScriptedAgentState curScriptAgentState;
 	private float stateTimer;
 	private ScriptState curScriptState;
-	MetroidDoor triggerDoor;
+	private MetroidDoor triggerDoor;
 	private float exitPositionX;
 	private float exitPositionY;
 

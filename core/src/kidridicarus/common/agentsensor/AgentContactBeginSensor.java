@@ -22,11 +22,9 @@ public class AgentContactBeginSensor extends AgentContactSensor {
 			contacts.add(agent);
 	}
 
-	/*
-	 * Only begin sense is needed.
-	 */
 	@Override
 	public void onEndSense(AgentBodyFilter abf) {
+		// only begin sense is needed
 	}
 
 	public List<Agent> getAndResetContacts() {

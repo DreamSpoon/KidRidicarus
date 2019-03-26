@@ -1,4 +1,4 @@
-package kidridicarus.game.tool;
+package kidridicarus.common.tool;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,8 +13,8 @@ import com.badlogic.gdx.math.Rectangle;
  * QQ the debug class.
  * With shortcut names to save typing. And other stuff.
  * QQ.pr() is so much faster than... ugh... System.out.println()
- * 
- * tempShowRects are shown and then thrown away, but showRects are kept until cleared manually. 
+ *
+ * tempShowRects are shown and then thrown away, but showRects are kept until cleared manually.
  */
 public class QQ {
 	@SuppressWarnings("serial")

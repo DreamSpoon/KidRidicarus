@@ -3,7 +3,8 @@ package kidridicarus.agency.agentscript;
 import kidridicarus.common.tool.MoveAdvice;
 
 /*
- * Basic info about a player agent, that the script can manipulate to achieve an effect.
+/*
+ * A "Voodoo doll" that the script uses to control the Agent.
  *   e.g. Move a sprite across the screen by manipulating the sprite's position over time.
  * Note: The information that this class contains is like a "snapshot" of the agent's state at a point in time.
  *   It can be updated on a frame by frame basis to achieve animation.

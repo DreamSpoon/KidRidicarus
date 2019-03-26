@@ -42,7 +42,7 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 			lastKnownViewCenter = room.getViewCenterForPos(playerAgent.getPosition(), lastKnownViewCenter);
 	}
 
-	public void roomChange(RoomBox newRoom) {
+	private void roomChange(RoomBox newRoom) {
 		if(newRoom != null)
 			agency.getEar().changeAndStartMainMusic(newRoom.getRoommusic());
 	}

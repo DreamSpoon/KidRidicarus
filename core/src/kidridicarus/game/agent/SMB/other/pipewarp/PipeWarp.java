@@ -15,9 +15,9 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 
 public class PipeWarp extends Agent implements DisposableAgent {
-	public class PipeWarpHorizon {
-		public Direction4 direction;
-		public Rectangle bounds; 
+	class PipeWarpHorizon {
+		Direction4 direction;
+		Rectangle bounds; 
 
 		public PipeWarpHorizon(Direction4 direction, Rectangle bounds) {
 			this.direction = direction;

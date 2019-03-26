@@ -19,7 +19,7 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
-import kidridicarus.game.tool.QQ;
+import kidridicarus.common.tool.QQ;
 
 /*
  * Run the agency, insert players into the agency, and take direction from the Agency to play sounds, music, etc.

@@ -29,7 +29,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 			UInfo.P2MVector(-4f, 8f), UInfo.P2MVector(4f, 8f),
 			UInfo.P2MVector(-8f, 0f), UInfo.P2MVector(8f, 0f) };
 
-	public enum MoveState { SLEEP, FALL, ONGROUND, INJURY, EXPLODE, DEAD }
+	enum MoveState { SLEEP, FALL, ONGROUND, INJURY, EXPLODE, DEAD }
 
 	private SkreeBody body;
 	private SkreeSprite sprite;

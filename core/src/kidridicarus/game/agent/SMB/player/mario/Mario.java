@@ -48,11 +48,11 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private static final float POWERSTAR_MAXTIME = 15f;
 	private static final float STARPOWER_DAMAGE = 1f;
 
-	public enum PowerState {
+	enum PowerState {
 		SMALL, BIG, FIRE;
 		public boolean isBigBody() { return !this.equals(SMALL); }
 	}
-	public enum MoveState {
+	enum MoveState {
 		STAND, RUN, BRAKE, FALL, DUCK, DUCKSLIDE, DUCKFALL, DUCKJUMP, JUMP, DEAD, DEAD_BOUNCE, CLIMB;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;

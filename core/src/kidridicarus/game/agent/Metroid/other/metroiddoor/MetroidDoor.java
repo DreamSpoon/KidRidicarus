@@ -23,7 +23,7 @@ public class MetroidDoor extends Agent implements TriggerTakeAgent, ContactDmgTa
 	private static final float OPENCLOSE_DELAY1 = 1/5f;
 	private static final float OPENCLOSE_DELAY2 = 1/10f;
 
-	public enum MoveState { CLOSED, OPENING_WAIT1, OPENING_WAIT2, OPEN, CLOSING }
+	enum MoveState { CLOSED, OPENING_WAIT1, OPENING_WAIT2, OPEN, CLOSING }
 
 	private MetroidDoorBody body;
 	private MetroidDoorSprite sprite;

@@ -23,7 +23,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
 
-	public enum MoveState { WALK, FALL, DEAD_BUMP, DEAD_SQUISH;
+	enum MoveState { WALK, FALL, DEAD_BUMP, DEAD_SQUISH;
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
