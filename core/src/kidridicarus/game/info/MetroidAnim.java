@@ -4,15 +4,17 @@ public class MetroidAnim {
 	public class NPC {
 		private static final String DIR = "NPC/metroid/";
 		public static final String DEATH_POP =	DIR+"explode_big";
+		public static final String DOOR_CLOSED =	DIR+"door_closed";
+		public static final String DOOR_CLOSING =	DIR+"door_closing";
+		public static final String DOOR_OPENED =	DIR+"door_opened";
+		public static final String DOOR_OPENING =	DIR+"door_opening";
+		public static final String RIO =		DIR+"rio";
+		public static final String RIO_HIT =	DIR+"rio_hit";
 		public static final String SKREE =		DIR+"skree";
 		public static final String SKREE_EXP =	DIR+"skree_exp";
 		public static final String SKREE_HIT =	DIR+"skree_hit";
 		public static final String ZOOMER =		DIR+"zoomer_orange";
 		public static final String ZOOMER_HIT =	DIR+"zoomer_hit";
-		public static final String DOOR_CLOSED = DIR+"door_closed";
-		public static final String DOOR_CLOSING = DIR+"door_closing";
-		public static final String DOOR_OPENED = DIR+"door_opened";
-		public static final String DOOR_OPENING = DIR+"door_opening";
 	}
 
 	public class Item {

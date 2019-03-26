@@ -438,135 +438,163 @@ NPC/metroid/explode_big
   orig: 32, 32
   offset: 0, 0
   index: 3
+NPC/metroid/rio
+  rotate: false
+  xy: 1, 1
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 1
+NPC/metroid/rio
+  rotate: false
+  xy: 103, 35
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 2
+NPC/metroid/rio_hit
+  rotate: false
+  xy: 27, 1
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 1
+NPC/metroid/rio_hit
+  rotate: false
+  xy: 129, 35
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: 2
+NPC/metroid/skree
+  rotate: false
+  xy: 53, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+NPC/metroid/skree
+  rotate: false
+  xy: 155, 35
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+NPC/metroid/skree
+  rotate: false
+  xy: 71, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+NPC/metroid/skree_hit
+  rotate: false
+  xy: 173, 35
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+NPC/metroid/skree_hit
+  rotate: false
+  xy: 191, 35
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+NPC/metroid/skree_hit
+  rotate: false
+  xy: 209, 35
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
 NPC/metroid/door_closed
   rotate: false
-  xy: 103, 11
+  xy: 227, 11
   size: 8, 48
   orig: 8, 48
   offset: 0, 0
   index: -1
 NPC/metroid/door_closing
   rotate: false
-  xy: 103, 11
+  xy: 227, 11
   size: 8, 48
   orig: 8, 48
   offset: 0, 0
   index: 2
 NPC/metroid/door_closing
   rotate: false
-  xy: 113, 11
+  xy: 237, 11
   size: 8, 48
   orig: 8, 48
   offset: 0, 0
   index: 1
 NPC/metroid/door_opening
   rotate: false
-  xy: 113, 11
+  xy: 237, 11
   size: 8, 48
   orig: 8, 48
   offset: 0, 0
   index: 1
 NPC/metroid/door_opened
   rotate: false
-  xy: 123, 11
+  xy: 247, 11
   size: 8, 48
   orig: 8, 48
   offset: 0, 0
   index: -1
 NPC/metroid/door_opening
   rotate: false
-  xy: 123, 11
+  xy: 247, 11
   size: 8, 48
   orig: 8, 48
   offset: 0, 0
   index: 2
-NPC/metroid/skree
-  rotate: false
-  xy: 1, 1
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
-  index: 1
-NPC/metroid/skree
-  rotate: false
-  xy: 133, 35
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
-  index: 2
-NPC/metroid/skree
-  rotate: false
-  xy: 19, 1
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
-  index: 3
-NPC/metroid/skree_hit
-  rotate: false
-  xy: 151, 35
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
-  index: 1
-NPC/metroid/skree_hit
-  rotate: false
-  xy: 37, 1
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
-  index: 2
-NPC/metroid/skree_hit
-  rotate: false
-  xy: 169, 35
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
-  index: 3
 NPC/metroid/zoomer_hit
   rotate: false
-  xy: 133, 17
+  xy: 89, 9
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 NPC/metroid/zoomer_hit
   rotate: false
-  xy: 55, 9
+  xy: 107, 17
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
 NPC/metroid/zoomer_orange
   rotate: false
-  xy: 187, 43
+  xy: 125, 17
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 NPC/metroid/zoomer_orange
   rotate: false
-  xy: 151, 17
+  xy: 143, 17
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
 NPC/metroid/zoomer_pink
   rotate: false
-  xy: 73, 9
+  xy: 161, 17
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 NPC/metroid/zoomer_pink
   rotate: false
-  xy: 205, 43
+  xy: 179, 17
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
 NPC/metroid/skree_exp
   rotate: false
-  xy: 169, 25
+  xy: 197, 25
   size: 8, 8
   orig: 8, 8
   offset: 0, 0

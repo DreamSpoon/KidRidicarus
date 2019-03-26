@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.Metroid.NPC.skree;
+package kidridicarus.game.agent.Metroid.NPC.rio;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -15,26 +15,17 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.GameKV;
 
-public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
-	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
 	private static final float INJURY_TIME = 10f/60f;
-	private static final float EXPLODE_WAIT = 1f;
-	private static final Vector2[] EXPLODE_VEL = new Vector2[] {
-			new Vector2(-1f, 2f), new Vector2(1f, 2f),
-			new Vector2(-2f, 0f), new Vector2(2f, 0f) };
-	private static final Vector2[] EXPLODE_OFFSET = new Vector2[] {
-			UInfo.P2MVector(-4f, 8f), UInfo.P2MVector(4f, 8f),
-			UInfo.P2MVector(-8f, 0f), UInfo.P2MVector(8f, 0f) };
 
-	enum MoveState { SLEEP, FALL, ONGROUND, INJURY, EXPLODE, DEAD }
+	enum MoveState { FLAP, SWOOP, INJURY, DEAD }
 
-	private SkreeBody body;
-	private SkreeSprite sprite;
+	private RioBody body;
+	private RioSprite sprite;
 	private MoveState moveState;
 	private float moveStateTimer;
 
@@ -47,10 +38,10 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	private PlayerAgent target;
 	private boolean despawnMe;
 
-	public Skree(Agency agency, ObjectProperties properties) {
+	public Rio(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		moveState = MoveState.SLEEP;
+		moveState = MoveState.FLAP;
 		moveStateTimer = 0f;
 		isInjured = false;
 		moveStateBeforeInjury = null;
@@ -60,7 +51,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		despawnMe = false;
 		target = null;
 
-		body = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).cpy().add(SPECIAL_OFFSET));
+		body = new RioBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -69,7 +60,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		sprite = new SkreeSprite(agency.getAtlas(), body.getPosition());
+		sprite = new RioSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
@@ -110,7 +101,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
-			case SLEEP:
+/*			case SLEEP:
 				break;
 			case FALL:
 				body.getSpine().doFall((Agent) target);
@@ -139,6 +130,30 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 				doPowerupDrop();
 				doDeathPop();
 				break;
+*/
+			case FLAP:
+				break;
+			case INJURY:
+				// first frame of injury?
+				if(moveState != nextMoveState) {
+					moveStateBeforeInjury = moveState;
+					velocityBeforeInjury = body.getVelocity().cpy();
+					body.zeroVelocity(true, true);
+				}
+				else if(moveStateTimer > INJURY_TIME) {
+					isInjured = false;
+					body.setVelocity(velocityBeforeInjury);
+					// return to state before injury started
+					nextMoveState = moveStateBeforeInjury;
+				}
+				break;
+			case SWOOP:
+				body.setVelocity(0f, -1f);
+				break;
+			case DEAD:
+				doPowerupDrop();
+				doDeathPop();
+				break;
 		}
 
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
@@ -146,7 +161,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	}
 
 	private MoveState getNextMoveState() {
-		if(isDead)
+/*		if(isDead)
 			return MoveState.DEAD;
 		else if(moveState == MoveState.EXPLODE)
 			return MoveState.EXPLODE;
@@ -158,19 +173,16 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 			return MoveState.ONGROUND;
 		else if(target != null)
 			return MoveState.FALL;
-		return MoveState.SLEEP;
-	}
-
-	private void doExplode() {
-		if(EXPLODE_OFFSET.length != EXPLODE_VEL.length)
-			throw new IllegalStateException("The Skree explosion offset array length does not equal the " +
-					"explode velocity array length.");
-		for(int i=0; i<EXPLODE_OFFSET.length; i++) {
-			agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SKREE_EXP,
-					body.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
-		}
-		agency.disposeAgent(this);
-		deadReturnToSpawner();
+		return MoveState.SLEEP;*/
+		if(isDead)
+			return MoveState.DEAD;
+		else if(isInjured)
+			return MoveState.INJURY;
+		else if(moveState == MoveState.SWOOP || target != null)
+			return MoveState.SWOOP;
+		else
+			return MoveState.FLAP;
+		
 	}
 
 	private void doPowerupDrop() {
