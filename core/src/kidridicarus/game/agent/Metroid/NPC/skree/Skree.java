@@ -12,7 +12,9 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.GameKV;
 
@@ -102,6 +104,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			agency.disposeAgent(this);
+			deadReturnToSpawner();
 			return;
 		}
 
@@ -167,6 +170,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 					body.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
 		}
 		agency.disposeAgent(this);
+		deadReturnToSpawner();
 	}
 
 	private void doPowerupDrop() {
@@ -179,6 +183,13 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	private void doDeathPop() {
 		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
 		agency.disposeAgent(this);
+		deadReturnToSpawner();
+	}
+
+	private void deadReturnToSpawner() {
+		Agent spawnerAgent = properties.get(CommonKV.Spawn.KEY_SPAWNER_AGENT, null, Agent.class);
+		if(spawnerAgent instanceof DeadReturnTakeAgent)
+			((DeadReturnTakeAgent) spawnerAgent).onTakeDeadReturn(this);
 	}
 
 	private void processSprite(float delta) {

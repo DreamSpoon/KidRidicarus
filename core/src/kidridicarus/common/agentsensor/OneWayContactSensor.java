@@ -1,5 +1,5 @@
 package kidridicarus.common.agentsensor;
-/*
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,16 +7,24 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.AgentContactSensor;
 
-public class AgentContactBeginSensor extends AgentContactSensor {
+/*
+ * Keep a list of either begin contacts, or end contacts, but not both.
+ */
+public class OneWayContactSensor extends AgentContactSensor {
 	private LinkedList<Agent> contacts;
+	private boolean isBeginSensor;
 
-	public AgentContactBeginSensor(Object parent) {
+	public OneWayContactSensor(Object parent, boolean isBeginSensor) {
 		super(parent);
+		this.isBeginSensor = isBeginSensor;
 		contacts = new LinkedList<Agent>();
 	}
 
 	@Override
 	public void onBeginSense(AgentBodyFilter abf) {
+		if(!isBeginSensor)
+			return;
+
 		Agent agent = AgentBodyFilter.getAgentFromFilter(abf);
 		if(agent != null && !contacts.contains(agent))
 			contacts.add(agent);
@@ -24,7 +32,12 @@ public class AgentContactBeginSensor extends AgentContactSensor {
 
 	@Override
 	public void onEndSense(AgentBodyFilter abf) {
-		// only begin sense is needed
+		if(isBeginSensor)
+			return;
+
+		Agent agent = AgentBodyFilter.getAgentFromFilter(abf);
+		if(agent != null && !contacts.contains(agent))
+			contacts.add(agent);
 	}
 
 	public List<Agent> getAndResetContacts() {
@@ -46,4 +59,3 @@ public class AgentContactBeginSensor extends AgentContactSensor {
 		return cList;
 	}
 }
-*/

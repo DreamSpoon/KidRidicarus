@@ -31,6 +31,7 @@
  <layer id="5" name="zoomer" width="160" height="15">
   <properties>
    <property name="agentclass" value="agentspawner"/>
+   <property name="respawn_dead" value="true"/>
    <property name="spawnagentclass" value="zoomer"/>
   </properties>
   <data encoding="base64" compression="zlib">
@@ -40,6 +41,7 @@
  <layer id="6" name="skree" width="160" height="15">
   <properties>
    <property name="agentclass" value="agentspawner"/>
+   <property name="respawn_dead" value="true"/>
    <property name="spawnagentclass" value="skree"/>
   </properties>
   <data encoding="base64" compression="zlib">

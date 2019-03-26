@@ -7,23 +7,22 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
-import kidridicarus.common.agent.optional.TriggerTakeAgent;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
+import kidridicarus.common.agent.optional.EnableTakeAgent;
+import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.info.CommonCF;
 
 public class AgentSpawnTriggerBody extends FollowBoxBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SPAWNTRIGGER_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
-	private AgentContactHoldSensor acSensor;
+	private OneWayContactSensor beginContactSensor;
+	private OneWayContactSensor endContactSensor;
 
 	public AgentSpawnTriggerBody(AgentSpawnTrigger parent, World world, Rectangle bounds) {
 		super(parent, world, bounds, true);
-		acSensor = new AgentContactHoldSensor(this);
-	}
-
-	public List<TriggerTakeAgent> getSpawnerContacts() {
-		return acSensor.getContactsByClass(TriggerTakeAgent.class);
+		beginContactSensor = new OneWayContactSensor(this, true);
+		endContactSensor = new OneWayContactSensor(this, false);
+		beginContactSensor.chainTo(endContactSensor);
 	}
 
 	@Override
@@ -38,6 +37,14 @@ public class AgentSpawnTriggerBody extends FollowBoxBody {
 
 	@Override
 	protected Object getSensorBoxUserData() {
-		return acSensor;
+		return beginContactSensor;
+	}
+
+	public List<EnableTakeAgent> getAndResetBeginContacts() {
+		return beginContactSensor.getOnlyAndResetContacts(EnableTakeAgent.class);
+	}
+
+	public List<EnableTakeAgent> getAndResetEndContacts() {
+		return endContactSensor.getOnlyAndResetContacts(EnableTakeAgent.class);
 	}
 }

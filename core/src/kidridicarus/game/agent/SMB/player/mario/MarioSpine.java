@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentsensor.AgentContactBeginSensor;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
+import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.game.agentspine.SMB.PlayerSpine;
@@ -41,7 +41,7 @@ public class MarioSpine extends PlayerSpine {
 	private static final float HEADBOUNCE_VEL = 2.8f;	// up velocity
 
 	private AgentContactHoldSensor agentSensor;
-	private AgentContactBeginSensor damagePushSensor; 
+	private OneWayContactSensor damagePushSensor;
 
 	public MarioSpine(MarioBody body) {
 		super(body);
@@ -52,7 +52,7 @@ public class MarioSpine extends PlayerSpine {
 	// main sensor for detecting general agent contacts and damage push begin contacts
 	public AgentContactHoldSensor createMainSensor() {
 		agentSensor = new AgentContactHoldSensor(body);
-		damagePushSensor = new AgentContactBeginSensor(body);
+		damagePushSensor = new OneWayContactSensor(body, true);
 		agentSensor.chainTo(damagePushSensor);
 		return agentSensor;
 	}

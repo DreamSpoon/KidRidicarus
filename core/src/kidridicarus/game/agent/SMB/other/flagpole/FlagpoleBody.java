@@ -8,12 +8,12 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.PlayerAgent;
-import kidridicarus.common.agentsensor.AgentContactBeginSensor;
+import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
 public class FlagpoleBody extends AgentBody {
-	private AgentContactBeginSensor agentBeginContactSensor; 
+	private OneWayContactSensor agentBeginContactSensor;
 
 	public FlagpoleBody(Flagpole parent, World world, Rectangle bounds) {
 		super(parent);
@@ -27,7 +27,7 @@ public class FlagpoleBody extends AgentBody {
 	}
 
 	private void createFixtures() {
-		agentBeginContactSensor = new AgentContactBeginSensor(this);
+		agentBeginContactSensor = new OneWayContactSensor(this, true);
 		B2DFactory.makeBoxFixture(b2body, agentBeginContactSensor,
 				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
 				getBodySize().x, getBodySize().y);

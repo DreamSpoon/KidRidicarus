@@ -39,6 +39,15 @@ public class ObjectProperties {
 			else if(test instanceof String)
 				return (T) Float.valueOf((String) test);
 		}
+		else if(Boolean.class.equals(cls)) {
+			Object test = properties.getOrDefault(key, defaultValue);
+			if(test == null)
+				return null;
+			else if(test instanceof Boolean)
+				return (T) test;
+			else if(test instanceof String)
+				return (T) Boolean.valueOf((String) test);
+		}
 		return (T) properties.getOrDefault(key, defaultValue);
 	}
 

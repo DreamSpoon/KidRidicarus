@@ -8,12 +8,12 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.PlayerAgent;
-import kidridicarus.common.agentsensor.AgentContactBeginSensor;
+import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
 public class LevelEndTriggerBody extends AgentBody {
-	private AgentContactBeginSensor playerSensor; 
+	private OneWayContactSensor playerSensor;
 
 	public LevelEndTriggerBody(LevelEndTrigger parent, World world, Rectangle bounds) {
 		super(parent);
@@ -31,7 +31,7 @@ public class LevelEndTriggerBody extends AgentBody {
 	}
 
 	private void createFixtures() {
-		playerSensor = new AgentContactBeginSensor(this);
+		playerSensor = new OneWayContactSensor(this, true);
 		B2DFactory.makeBoxFixture(b2body, playerSensor,
 				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, getBodySize().x, getBodySize().y);
 	}

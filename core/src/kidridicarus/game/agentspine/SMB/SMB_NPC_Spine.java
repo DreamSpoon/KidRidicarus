@@ -8,12 +8,12 @@ import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentsensor.AgentContactBeginSensor;
+import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.agentspine.NPC_Spine;
 
 public class SMB_NPC_Spine extends NPC_Spine {
-	private AgentContactBeginSensor headBounceSensor; 
+	private OneWayContactSensor headBounceSensor;
 	// horizontal move sensor
 	private SolidContactSensor hmSensor;
 
@@ -23,8 +23,8 @@ public class SMB_NPC_Spine extends NPC_Spine {
 		hmSensor = null;
 	}
 
-	public AgentContactBeginSensor createHeadBounceAndContactDamageSensor() {
-		headBounceSensor = new AgentContactBeginSensor(body);
+	public OneWayContactSensor createHeadBounceAndContactDamageSensor() {
+		headBounceSensor = new OneWayContactSensor(body, true);
 		return headBounceSensor;
 	}
 

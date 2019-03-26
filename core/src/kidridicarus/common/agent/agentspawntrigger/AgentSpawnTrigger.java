@@ -10,7 +10,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBox;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
-import kidridicarus.common.agent.optional.TriggerTakeAgent;
+import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 
@@ -33,8 +33,10 @@ public class AgentSpawnTrigger extends FollowBox implements DisposableAgent {
 	private void doUpdate() {
 		if(!enabled)
 			return;
-		for(TriggerTakeAgent agent : body.getSpawnerContacts())
-			agent.onTakeTrigger();
+		for(EnableTakeAgent agent : body.getAndResetBeginContacts())
+			agent.onTakeEnable(true);
+		for(EnableTakeAgent agent : body.getAndResetEndContacts())
+			agent.onTakeEnable(false);
 	}
 
 	public void setEnabled(boolean enabled) {
