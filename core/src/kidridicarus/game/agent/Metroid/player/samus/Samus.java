@@ -258,7 +258,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		// if a head bounce was given in the update frame then reset the flag and do bounce move
 		if(gaveHeadBounce) {
 			gaveHeadBounce = false;
-			body.getSpine().doHeadBounce();
+			body.getSpine().applyHeadBounce();
 		}
 	}
 

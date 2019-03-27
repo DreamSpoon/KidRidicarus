@@ -5,13 +5,9 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.playeragent.PlayerSpine;
-import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 
 /*
  * A "control center" for the body, to apply move impulses, etc. in an organized manner.
@@ -40,21 +36,17 @@ public class MarioSpine extends PlayerSpine {
 	private static final float DUCKSLIDE_XIMP = WALKMOVE_XIMP * 1f;
 	private static final float HEADBOUNCE_VEL = 2.8f;	// up velocity
 
-	private AgentContactHoldSensor agentSensor;
 	private OneWayContactSensor damagePushSensor;
 
 	public MarioSpine(MarioBody body) {
 		super(body);
-		agentSensor = null;
 		damagePushSensor = null;
 	}
 
-	// main sensor for detecting general agent contacts and damage push begin contacts
-	public AgentContactHoldSensor createMainSensor() {
-		agentSensor = new AgentContactHoldSensor(body);
+	// sensor for detecting damage push begin contacts
+	public OneWayContactSensor createDamagePushSensor() {
 		damagePushSensor = new OneWayContactSensor(body, true);
-		agentSensor.chainTo(damagePushSensor);
-		return agentSensor;
+		return damagePushSensor;
 	}
 
 	/*
@@ -130,8 +122,8 @@ public class MarioSpine extends PlayerSpine {
 		applyHorizImpulseAndCapVel(moveRight, DUCKSLIDE_XIMP, MAX_DUCKSLIDE_VEL);
 	}
 
-	public void doHeadBounce() {
-		applyHeadBounceMove(HEADBOUNCE_VEL);
+	public void applyHeadBounce() {
+		applyPlayerHeadBounce(HEADBOUNCE_VEL);
 	}
 
 	public boolean isBraking(boolean facingRight) {
@@ -144,19 +136,6 @@ public class MarioSpine extends PlayerSpine {
 
 	public List<Agent> getPushDamageContacts() {
 		return damagePushSensor.getAndResetContacts();
-	}
-
-	public boolean isMapTileSolid(Vector2 tileCoords) {
-		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
-		return ctMap == null ? false : ctMap.isMapTileSolid(tileCoords); 
-	}
-
-	public RoomBox getCurrentRoom() {
-		return agentSensor.getFirstContactByClass(RoomBox.class);
-	}
-
-	public boolean isContactDespawn() {
-		return agentSensor.getFirstContactByClass(DespawnBox.class) != null;
 	}
 
 	public void capFallVelocity() {

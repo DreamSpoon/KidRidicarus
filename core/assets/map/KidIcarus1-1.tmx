@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="18" height="176" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="10">
+ <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
+  <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
+ </tileset>
+ <layer id="9" name="background" width="18" height="176">
+  <properties>
+   <property name="draworder" value="map_background"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztwwENAAAMw6DOv+kruANIWDVVVVVVVVVVVVVVVVXfB6QuDGE=
+  </data>
+ </layer>
+ <layer id="10" name="scenery" width="18" height="176">
+  <properties>
+   <property name="draworder" value="map_top"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztmssOgyAQRU3TLvpY9LHp/39pN21iSYUMvehFz0lcmOAFx/EyCsMwze59OLMXXVercyicz62jui/Io4pr7XNupaPMl1r/OIr6P4l01Kg89SzSuZjpwPz0MNcvjcqXriKdm0gHoCd6mT+j45zSiY5zSof5GVyJvCu5tveATq7tI6CTa7uEDpSh3oWlUeVfxPNyqDxmK16Fh0CvjD3jnzx284yteA94wlwMAFHwDQBoiWr98inq59c66PhbpNTPh9I66FbWW93+R6x9H48Ct2cG37TO4bXWfdSPPrTKYVfvctyn5RCrNC61cUrjUhuntJ5yr69a8AKqyAQV
+  </data>
+ </layer>
+ <layer id="13" name="door" width="18" height="176">
+  <properties>
+   <property name="draworder" value="map_middle"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt2DERACAQA8GvwAD4t4oHJs9Q7Aq4Lk2q+N0IdWaoAwAAAPDSCnV2qAPcs2cAAAAAgH6+WIA+B6bkAIk=
+  </data>
+ </layer>
+ <layer id="11" name="collision" width="18" height="176">
+  <properties>
+   <property name="draworder" value="map_middle"/>
+   <property name="solidlayer" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztms2KxCAQhIW95JI9zmX3/Z9zGRjBbdr+LaORFDSEZPxSbasxM1PKOH2R0K5HwsOR7q958grF6fFGcLJ1yDJoTbP5IThRcTkdIA7KD4LjmW9Wjsd3Np8s5yj/6zrbD5pT87vSz/mJb0NYOFl5OBHPyOfETKFyOElkfaDGQcZDVKg+qP3AKTq/UF5LsXsdqYPE3bXyOkL3jNzxjkLldwXnPQfrXDjJeXqscTzHIzjtvEb5WUHZPdIMrba2rubHIulZyz3H6Ll2Lly9R0ZzuM9nOa9PSBzLvLNwLF57HHrPKEdq9xLCw5G4lVPHa5ZD/VDfUY5F9P2ltqXPnihH8sPlGeFo7FH1otd7tbJwsn689WpZln6W8kSMQ44TqZfmx1ovjZP1I9Wr53GkHy/nyvUQzeHGARetuHpF5zGa490fSWus5odr6+FQr71o94Mj/XAcSXT/vcP3L9xe+87q5bJTjm/tll8vnx30rBvr61k37pnfTutG5t2QctDfrT7e4kzOW+Q/AlqbSD/09sreftDu7X0/ka5bvHn7ovf5WRwv3yLUby5ID1HO4yHvAcHR3ru9bSMcjTWKE/lN82zaZpQdL3UdjbalHG8fZOs0g6PleZe8er6zfrRnM8f48afFcn5BnMj/NrWIjpuV4g8qqigg
+  </data>
+ </layer>
+ <layer id="12" name="playerstart" width="18" height="176">
+  <properties>
+   <property name="agentclass" value="playerspawner"/>
+   <property name="direction" value="right"/>
+   <property name="playeragentclass" value="mario"/>
+   <property name="spawnmain" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjEBAAAIA6AlsX9ME+zWAxKQAAAAAAAAAAAAAAAAH8x1gGoBYcgAHw==
+  </data>
+ </layer>
+ <objectgroup id="6" name="levelend">
+  <properties>
+   <property name="agentclass" value="levelend_trigger"/>
+  </properties>
+  <object id="9" x="240" y="2496" width="16" height="32">
+   <properties>
+    <property name="nextlevel_name" value="map/SMB1-1.tmx"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="rooms">
+  <properties>
+   <property name="agentclass" value="room"/>
+  </properties>
+  <object id="6" x="16" y="0" width="256" height="2816">
+   <properties>
+    <property name="roommusic" value="audio/music/KidIcarus/02_-_Kid_Icarus_-_NES_-_Stage_1.ogg"/>
+    <property name="roomtype" value="vscroll"/>
+    <property name="scroll_direction" value="up"/>
+    <property name="space_wrap_h" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

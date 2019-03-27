@@ -1,33 +1,20 @@
 package kidridicarus.common.agentspine;
 
-import java.util.List;
-
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
-import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
-import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 
-public class NPC_Spine extends OnGroundSpine {
-	protected AgentBody body;
-	protected AgentContactHoldSensor agentSensor;
+public class NPC_Spine extends GameAgentSpine {
 	private SolidContactSensor horizontalMoveSensor;
 
 	public NPC_Spine(AgentBody body) {
-		this.body = body;
-		agentSensor = null;
+		super(body);
 		horizontalMoveSensor = null;
-	}
-
-	public AgentContactHoldSensor createAgentSensor() {
-		agentSensor = new AgentContactHoldSensor(body);
-		return agentSensor;
 	}
 
 	public SolidContactSensor createHorizontalMoveSensor() {
@@ -67,19 +54,11 @@ public class NPC_Spine extends OnGroundSpine {
 		return horizontalMoveSensor.isSolidOnThisSide(body.getBounds(), moveRight);
 	}
 
-	public boolean isTouchingKeepAlive() {
-		return agentSensor.getFirstContactByClass(KeepAliveBox.class) != null;
-	}
-
-	public boolean isContactDespawn() {
-		return agentSensor.getFirstContactByClass(DespawnBox.class) != null;
-	}
-
-	public List<ContactDmgTakeAgent> getContactDmgTakeAgents() {
-		return agentSensor.getContactsByClass(ContactDmgTakeAgent.class);
-	}
-
 	public PowerupTakeAgent getTouchingPowerupTaker() {
 		return agentSensor.getFirstContactByClass(PowerupTakeAgent.class);
+	}
+
+	public boolean isTouchingKeepAlive() {
+		return agentSensor.getFirstContactByClass(KeepAliveBox.class) != null;
 	}
 }

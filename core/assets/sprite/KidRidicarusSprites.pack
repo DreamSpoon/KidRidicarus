@@ -1,5 +1,5 @@
 
-KidRid12.png
+KidRidicarusSprites.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -249,7 +249,7 @@ general/SMB/digit8
   offset: 0, 0
   index: -1
 
-KidRid122.png
+KidRidicarusSprites2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -296,7 +296,7 @@ item/metroid/energy
   offset: 0, 0
   index: 2
 
-KidRid123.png
+KidRidicarusSprites3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -413,7 +413,7 @@ item/SMB/powerstar
   offset: 0, 0
   index: 4
 
-KidRid124.png
+KidRidicarusSprites4.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -600,7 +600,7 @@ NPC/metroid/skree_exp
   offset: 0, 0
   index: -1
 
-KidRid125.png
+KidRidicarusSprites5.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -661,7 +661,7 @@ NPC/SMB/goomba_walk
   offset: 0, 0
   index: 2
 
-KidRid126.png
+KidRidicarusSprites6.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1079,7 +1079,7 @@ player/mario/big/mario_reg_run
   offset: 0, 0
   index: 3
 
-KidRid127.png
+KidRidicarusSprites7.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1315,7 +1315,7 @@ player/mario/sml/mario_reg_stand
   offset: 0, 0
   index: -1
 
-KidRid128.png
+KidRidicarusSprites8.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1488,7 +1488,7 @@ player/metroid/dead/top_right
   offset: 0, 0
   index: 4
 
-KidRid129.png
+KidRidicarusSprites9.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1514,7 +1514,7 @@ player/metroid/HUD/energy_tank_full
   offset: 0, 0
   index: -1
 
-KidRid1210.png
+KidRidicarusSprites10.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none

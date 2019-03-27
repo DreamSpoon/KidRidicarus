@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="17">
- <tileset firstgid="1" name="MetroidTilesetV3" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="40" columns="8">
-  <image source="MetroidTilesetV3.png" width="144" height="90"/>
+ <tileset firstgid="1" name="MetroidTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="40" columns="8">
+  <image source="MetroidTileset1-1.png" width="144" height="90"/>
  </tileset>
  <layer id="2" name="background" width="160" height="15">
   <properties>
@@ -83,7 +83,7 @@
   </properties>
   <object id="6" x="2544" y="80" width="16" height="48">
    <properties>
-    <property name="nextlevel_name" value="map/KidIcarus1-1 v5.tmx"/>
+    <property name="nextlevel_name" value="map/KidIcarus1-1.tmx"/>
    </properties>
   </object>
  </objectgroup>

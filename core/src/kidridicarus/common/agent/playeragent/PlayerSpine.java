@@ -8,24 +8,25 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.OnGroundSpine;
+import kidridicarus.common.agentspine.GameAgentSpine;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.agent.SMB.player.mario.MarioBody;
 
-public class PlayerSpine extends OnGroundSpine {
+public class PlayerSpine extends GameAgentSpine {
 	private static final float MIN_HEADBANG_VEL = 0.01f;
-	
-	protected PlayerAgentBody body;
+
 	private AgentContactHoldSensor tileBumpPushSensor;
 	private AgentContactHoldSensor pipeWarpSensor;
 
 	public PlayerSpine(PlayerAgentBody body) {
-		this.body = body;
+		super(body);
 		tileBumpPushSensor = null;
 		pipeWarpSensor = null;
 	}
@@ -47,8 +48,10 @@ public class PlayerSpine extends OnGroundSpine {
 	 */
 	public boolean checkDoHeadBump(TileBumpStrength bumpStrength) {
 		// exit if not moving up fast enough in this frame or previous frame
-		if(body.getVelocity().y < MIN_HEADBANG_VEL || body.getPrevVelocity().y < MIN_HEADBANG_VEL)
+		if(body.getVelocity().y < MIN_HEADBANG_VEL ||
+				((PlayerAgentBody) body).getPrevVelocity().y < MIN_HEADBANG_VEL) {
 			return false;
+		}
 		// create list of bumptiles, in order from closest to mario to farthest from mario
 		TreeSet<TileBumpTakeAgent> closestTilesList = 
 				new TreeSet<TileBumpTakeAgent>(new Comparator<TileBumpTakeAgent>() {
@@ -107,9 +110,47 @@ public class PlayerSpine extends OnGroundSpine {
 			body.setVelocity(body.getVelocity().x, -maxVelocity);
 	}
 
-	public void applyHeadBounceMove(float bounceVel) {
+	public void applyPlayerHeadBounce(float bounceVel) {
 		body.setVelocity(body.getVelocity().x, 0f);
 		body.applyImpulse(new Vector2(0f, bounceVel));
+	}
+
+	public void applyHeadBumpMove() {
+		// if moving upward then arrest upward movement, but continue horizontal movement unimpeded  
+		if(body.getVelocity().y > 0f)
+			body.setVelocity(body.getVelocity().x, 0f);
+	}
+
+	public PipeWarp getEnterPipeWarp(Direction4 moveDir) {
+		if(moveDir == null)
+			return null;
+		for(PipeWarp pw : pipeWarpSensor.getContactsByClass(PipeWarp.class)) {
+			if(pw.canBodyEnterPipe(body.getBounds(), moveDir))
+				return pw;
+		}
+		return null;
+	}
+
+	public boolean isMapPointSolid(Vector2 position) {
+		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+		return ctMap == null ? false : ctMap.isMapPointSolid(position); 
+	}
+
+	public boolean isMapTileSolid(Vector2 tileCoords) {
+		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+		return ctMap == null ? false : ctMap.isMapTileSolid(tileCoords); 
+	}
+
+	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {
+		// check bounds
+		Vector2 myPrevPosition = ((MarioBody) body).getPrevPosition();
+		float otherCenterY = otherBounds.y+otherBounds.height/2f;
+		return body.getBounds().y >= otherCenterY ||
+				myPrevPosition.y-body.getBounds().height/2f >= otherCenterY;
+	}
+
+	public RoomBox getCurrentRoom() {
+		return agentSensor.getFirstContactByClass(RoomBox.class);
 	}
 
 	/*
@@ -134,29 +175,5 @@ public class PlayerSpine extends OnGroundSpine {
 
 	public boolean isMovingLeft() {
 		return body.getVelocity().x < -UInfo.VEL_EPSILON;
-	}
-
-	public PipeWarp getEnterPipeWarp(Direction4 moveDir) {
-		if(moveDir == null)
-			return null;
-		for(PipeWarp pw : pipeWarpSensor.getContactsByClass(PipeWarp.class)) {
-			if(pw.canBodyEnterPipe(body.getBounds(), moveDir))
-				return pw;
-		}
-		return null;
-	}
-
-	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {
-		// check bounds
-		Vector2 myPrevPosition = ((MarioBody) body).getPrevPosition();
-		float otherCenterY = otherBounds.y+otherBounds.height/2f;
-		return body.getBounds().y >= otherCenterY ||
-				myPrevPosition.y-body.getBounds().height/2f >= otherCenterY;
-	}
-
-	public void applyHeadBumpMove() {
-		// if moving upward then arrest upward movement, but continue horizontal movement unimpeded  
-		if(body.getVelocity().y > 0f)
-			body.setVelocity(body.getVelocity().x, 0f);
 	}
 }

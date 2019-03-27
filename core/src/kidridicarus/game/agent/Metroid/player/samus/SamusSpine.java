@@ -1,15 +1,11 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agent.despawnbox.DespawnBox;
+import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agent.playeragent.PlayerSpine;
-import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 
 public class SamusSpine extends PlayerSpine {
 	private static final float GROUNDMOVE_XIMP = 0.28f;
@@ -26,23 +22,16 @@ public class SamusSpine extends PlayerSpine {
 	private static final float MAX_DOWN_VELOCITY = 2.5f;
 	private static final float HEADBOUNCE_VEL = 1.4f;	// up velocity
 
-	private AgentContactHoldSensor agentSensor;
 	private SolidContactSensor sbSensor;
 
 	public SamusSpine(SamusBody body) {
 		super(body);
-		agentSensor = null;
 		sbSensor = null;
 	}
 
 	public SolidContactSensor createSolidBodySensor() {
 		sbSensor = new SolidContactSensor(body);
 		return sbSensor;
-	}
-
-	public AgentContactHoldSensor creatAgentContactSensor() {
-		agentSensor = new AgentContactHoldSensor(body);
-		return agentSensor;
 	}
 
 	// apply walk impulse and cap horizontal velocity.
@@ -86,34 +75,12 @@ public class SamusSpine extends PlayerSpine {
 			body.applyImpulse(DAMAGE_KICK_UP_IMP);
 	}
 
-	public boolean isMapPointSolid(Vector2 position) {
-		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
-		return ctMap == null ? false : ctMap.isMapPointSolid(position); 
-	}
-
-	public boolean isMapTileSolid(Vector2 tileCoords) {
-		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
-		return ctMap == null ? false : ctMap.isMapTileSolid(tileCoords); 
-	}
-
 	public boolean isSolidOnThisSide(boolean isRightSide) {
 		return sbSensor.isSolidOnThisSide(body.getBounds(), isRightSide);
 	}
 
-	@Override
-	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {
-		// check bounds
-		float otherCenterY = otherBounds.y+otherBounds.height/2f;
-		return body.getBounds().y >= otherCenterY ||
-				body.getPrevPosition().y-body.getBounds().height/2f >= otherCenterY;
-	}
-
-	public void doHeadBounce() {
-		applyHeadBounceMove(HEADBOUNCE_VEL);
-	}
-
-	public RoomBox getCurrentRoom() {
-		return agentSensor.getFirstContactByClass(RoomBox.class);
+	public void applyHeadBounce() {
+		applyPlayerHeadBounce(HEADBOUNCE_VEL);
 	}
 
 	public boolean isNoHorizontalVelocity() {
@@ -124,21 +91,18 @@ public class SamusSpine extends PlayerSpine {
 		body.setVelocity(body.getVelocity().x, JUMPUP_CONSTVEL);
 	}
 
+	// check for bounce against solid floor
 	public void doBounceCheck() {
 		// Check for bounce up (no left/right bounces, no down bounces).
 		// Since body restitution=0, bounce occurs when current velocity=0 and previous velocity > 0.
 		// Check against 0 using velocity epsilon.
 		if(UInfo.epsCheck(body.getVelocity().y, 0f, UInfo.VEL_EPSILON)) {
-			float amount = -body.getPrevVelocity().y;
+			float amount = -((PlayerAgentBody) body).getPrevVelocity().y;
 			if(amount > MAX_DOWN_VELOCITY-UInfo.VEL_EPSILON)
 				amount = MAX_UP_VELOCITY-UInfo.VEL_EPSILON;
 			else
 				amount = amount * 0.6f;
 			body.setVelocity(body.getVelocity().x, amount);
 		}
-	}
-
-	public boolean isContactDespawn() {
-		return agentSensor.getFirstContactByClass(DespawnBox.class) != null;
 	}
 }

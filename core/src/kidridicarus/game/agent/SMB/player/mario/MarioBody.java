@@ -90,12 +90,14 @@ public class MarioBody extends PlayerAgentBody {
 
 	private void createFixtures() {
 		// create fixture for agent contact and damage push sensors
+		AgentContactHoldSensor agentSensor = spine.createAgentSensor();
+		agentSensor.chainTo(spine.createDamagePushSensor());
 		if(isAgentSensorEnabled) {
-			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createMainSensor(),
+			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, agentSensor,
 					AS_ENABLED_CFCAT, AS_ENABLED_CFMASK, getBodySize().x, getBodySize().y);
 		}
 		else {
-			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createMainSensor(),
+			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, agentSensor,
 					AS_DISABLED_CFCAT, AS_DISABLED_CFMASK, getBodySize().x, getBodySize().y);
 		}
 		// create fixture for ground sensor

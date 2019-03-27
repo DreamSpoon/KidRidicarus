@@ -11,10 +11,10 @@ public class CommonInfo {
 	// DEBUG: used to quickly change size of screen on desktop without affecting aspect ratio
 	public static final int DESKTOP_SCALE = 2;
 
-	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1 v8.tmx";
-	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1 v8.tmx";
-	public static final String GAMEMAP_FILENAME3 = "map/KidIcarus1-1 v5.tmx";
-	public static final String TA_MAIN_FILENAME = "sprite/KidRid12.pack";
+	public static final String GAMEMAP_FILENAME1 = "map/SMB1-1.tmx";
+	public static final String GAMEMAP_FILENAME2 = "map/Metroid1-1.tmx";
+	public static final String GAMEMAP_FILENAME3 = "map/KidIcarus1-1.tmx";
+	public static final String TA_MAIN_FILENAME = "sprite/KidRidicarusSprites.pack";
 
 	public static class LayerDrawOrder {
 		public static final AllowOrder NONE = AllowOrder.NOT_ALLOWED;
