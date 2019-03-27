@@ -297,6 +297,9 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			// TODO apply 1-UP mushroom
 		}
 		else if(pu instanceof SMB_Pow.PowerStarPow) {
+			// Reset the begin contacts list, so that any turtles that were head bounced don't instantly die
+			// when mario gets a powerstar.
+			body.getSpine().getPushDamageContacts();
 			starPowerCooldown = POWERSTAR_MAXTIME;
 			agency.getEar().startSinglePlayMusic(SMB_Audio.Music.STARPOWER);
 		}
