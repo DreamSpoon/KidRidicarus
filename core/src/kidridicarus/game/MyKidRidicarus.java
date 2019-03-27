@@ -18,8 +18,7 @@ import kidridicarus.game.info.SMB_Audio;
 import kidridicarus.game.screen.PlayScreen;
 
 /*
- * Main game asset loader class - or at least, it should be...
- * TODO: Load level assets here?
+ * Main game asset loader class.
  */
 public class MyKidRidicarus extends Game {
 	public SpriteBatch batch;
@@ -71,7 +70,7 @@ public class MyKidRidicarus extends Game {
 						MetroidAgentClassList.METROID_AGENT_CLASSLIST));
 
 		// start playing first level
-		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME1, null));
+		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME2, null));
 	}
 
 	@Override

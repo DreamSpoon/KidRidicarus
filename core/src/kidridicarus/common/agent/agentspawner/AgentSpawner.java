@@ -21,7 +21,7 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DeadReturnTa
 		super(agency, properties);
 		spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWNAGENTCLASS, "", String.class);
 		isUsed = false;
-		isRespawnDead = properties.get(CommonKV.Spawn.KEY_RESPAWN_DEAD, false, Boolean.class);;
+		isRespawnDead = properties.get(CommonKV.Spawn.KEY_RESPAWN_DEAD, false, Boolean.class);
 		sbody = new AgentSpawnerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 	}
 

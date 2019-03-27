@@ -15,7 +15,6 @@ public class ZoomerSpine extends NPC_Spine {
 	 * before MOVE_REDUCE_FACTOR is applied.
 	 * So, for example. If the zoomer is moving right on screen, and the zoomer's up direction is the screen
 	 * up direction, then the reduction factor is applied to the movement y velocity - to reduce the down velocity.
-	 * TODO: Refactor to simplify.
 	 * Zoomer moves against (presses against?) the surface it is crawling on, so that it will 'juke' downward
 	 * when it comes to a gap - the 'juke' is detected, and the zoomer turns down to crawl (down relative to
 	 * original orientation).

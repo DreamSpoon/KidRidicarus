@@ -37,8 +37,7 @@ public class SkreeSprite extends Sprite {
 		stateTimer = 0;
 
 		setRegion(spinAnim.getKeyFrame(0f));
-		// TODO: why +16f?
-		setBounds(getX(), getY()+UInfo.P2M(16f), SPRITE_WIDTH, SPRITE_HEIGHT);
+		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f + SPECIAL_OFFSET.x, position.y - getHeight()/2f + SPECIAL_OFFSET.y);
 	}
 

@@ -12,8 +12,9 @@ public class UInfo {
 	public static final float PPM = 100f;
 	public static final int TILEPIX_X = 16;
 	public static final int TILEPIX_Y = 16;
-	public static final float VEL_EPSILON = 0.0001f;	// velocity epsilon (TODO: verify value)
-	// TODO: this is a guess value (0.001f) - test more to refine - may depend upon Pixels Per Meter and Pixels Per Tile
+	// TODO verify / formulate explanation for reasonableness of these two epsilon values (e.g. should they
+	// vary by game / gametype?)
+	public static final float VEL_EPSILON = 0.0001f;
 	public static final float POS_EPSILON = 0.001f;
 
 	/*

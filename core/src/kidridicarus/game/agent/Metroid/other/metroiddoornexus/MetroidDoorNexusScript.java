@@ -8,12 +8,6 @@ import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.game.agent.Metroid.other.metroiddoor.MetroidDoor;
 
-/*
- * Note(s):
- *   -door exit positions are based on 1/4 the width of player sprite, to match look in original game,
- *   but for safety (to prevent automatically re-entering the door, and re-starting the door script) the
- *   exit position should be based on 1/2 the width of player body - how TODO? 
- */
 public class MetroidDoorNexusScript implements AgentScript {
 	private static final float TRANSIT_TIME = 3f;
 

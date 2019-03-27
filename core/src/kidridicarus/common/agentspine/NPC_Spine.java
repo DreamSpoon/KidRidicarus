@@ -39,11 +39,10 @@ public class NPC_Spine extends MobileAgentSpine {
 					agent instanceof KeepAliveBox)
 				continue;
 
-			// If wants to move right and other agent is on the right side then move is blocked
-			if(moveRight && body.getPosition().x < agent.getPosition().x)
-				return true;
-			// If wants to move left and other agent is on the left side then move is blocked
-			else if(!moveRight && body.getPosition().x > agent.getPosition().x)
+			// If wants to move right and other agent is on the right side then move is blocked, or
+			// if wants to move left and other agent is on the left side then move is blocked.
+			if((moveRight && body.getPosition().x < agent.getPosition().x) ||
+					(!moveRight && body.getPosition().x > agent.getPosition().x))
 				return true;
 		}
 		return false;

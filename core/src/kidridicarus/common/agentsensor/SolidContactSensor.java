@@ -100,11 +100,10 @@ public class SolidContactSensor extends AgentContactSensor {
 			if(otherBounds.y >= testBounds.y+testBounds.height ||
 					otherBounds.y+otherBounds.height <= testBounds.y)
 				continue;
-			// if testing for right side and center x of other is on right then return true 
-			if(rightSide && otherBounds.x+otherBounds.width/2f > testBounds.x+testBounds.width/2f)
-				return true;
-			// if testing for left side and center x of other is on left then return true 
-			else if(!rightSide && otherBounds.x+otherBounds.width/2f < testBounds.x+testBounds.width/2f)
+			// If testing for right side and center x of other is on right then return true, or
+			// if testing for left side and center x of other is on left then return true.
+			if((rightSide && otherBounds.x+otherBounds.width/2f > testBounds.x+testBounds.width/2f) ||
+					(!rightSide && otherBounds.x+otherBounds.width/2f < testBounds.x+testBounds.width/2f))
 				return true;
 		}
 		return false;

@@ -36,10 +36,6 @@ public class MetroidDoorBody extends AgentBody {
 			world.destroyBody(b2body);
 
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		// TODO: verify that catBits should be SOLID_BOUND_BIT, e.g.
-		//   -will this interfere with on ground detection?
-		//   -will zoomer be able to walk on door?
-		//   -will this agent be confused with a solid bound line seg from collision map?
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
 		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, this,
 				MAIN_ENABLED_CFCAT, MAIN_ENABLED_CFMASK, BODY_WIDTH, BODY_HEIGHT);
