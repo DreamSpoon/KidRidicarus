@@ -17,7 +17,6 @@ import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
-import kidridicarus.game.agent.SMB.player.mario.MarioBody;
 
 public class PlayerSpine extends MobileAgentSpine {
 	private static final float MIN_HEADBANG_VEL = 0.01f;
@@ -143,7 +142,7 @@ public class PlayerSpine extends MobileAgentSpine {
 
 	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {
 		// check bounds
-		Vector2 myPrevPosition = ((MarioBody) body).getPrevPosition();
+		Vector2 myPrevPosition = ((PlayerAgentBody) body).getPrevPosition();
 		float otherCenterY = otherBounds.y+otherBounds.height/2f;
 		return body.getBounds().y >= otherCenterY ||
 				myPrevPosition.y-body.getBounds().height/2f >= otherCenterY;
