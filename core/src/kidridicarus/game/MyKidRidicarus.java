@@ -70,7 +70,7 @@ public class MyKidRidicarus extends Game {
 						MetroidAgentClassList.METROID_AGENT_CLASSLIST));
 
 		// start playing first level
-		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME2, null));
+		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME1, null));
 	}
 
 	@Override

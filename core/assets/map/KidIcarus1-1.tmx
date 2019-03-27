@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="18" height="176" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="10">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="18" height="176" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="12">
  <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
   <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
  </tileset>
@@ -40,7 +40,7 @@
   <properties>
    <property name="agentclass" value="playerspawner"/>
    <property name="direction" value="right"/>
-   <property name="playeragentclass" value="mario"/>
+   <property name="playeragentclass" value="samus"/>
    <property name="spawnmain" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
@@ -56,8 +56,18 @@
     <property name="nextlevel_name" value="map/SMB1-1.tmx"/>
    </properties>
   </object>
+  <object id="10" x="240" y="80" width="16" height="32">
+   <properties>
+    <property name="nextlevel_name" value="map/SMB1-1.tmx"/>
+   </properties>
+  </object>
+  <object id="11" x="192" y="1056" width="16" height="32">
+   <properties>
+    <property name="nextlevel_name" value="map/SMB1-1.tmx"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup id="5" name="rooms">
+ <objectgroup id="5" name="rooms" visible="0">
   <properties>
    <property name="agentclass" value="room"/>
   </properties>

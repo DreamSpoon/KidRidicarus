@@ -196,6 +196,8 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			processHeadBouncesGiven();
 			processPipeWarps(moveAdvice);
 
+			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 			// make a note of the last direction in which mario was moving, for duck sliding
 			if(body.getSpine().isMovingRight())
 				lastHorizontalMoveDir = Direction4.RIGHT;
