@@ -71,4 +71,8 @@ public enum Direction4 {
 		else
 			return Direction4.NONE;
 	}
+
+	public boolean isRight() {
+		return this == Direction4.RIGHT;
+	}
 }

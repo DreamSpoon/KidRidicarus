@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
+import kidridicarus.common.agentspine.NPC_Spine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -15,7 +16,7 @@ public class BaseMushroomBody extends AgentBody {
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
-	private WalkPowerupSpine spine;
+	private NPC_Spine spine;
 
 	public BaseMushroomBody(BaseMushroom parent, World world, Vector2 position) {
 		super(parent);
@@ -25,14 +26,14 @@ public class BaseMushroomBody extends AgentBody {
 	private void defineBody(World world, Vector2 position) {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeDynamicBody(world, position);
-		spine = new WalkPowerupSpine(this);
+		spine = new NPC_Spine(this);
 		createFixtures();
 	}
 
 	private void createFixtures() {
 		// create main fixture with agent sensor chained to horizontal move sensor
 		AgentContactHoldSensor sensor = spine.createAgentSensor();
-		sensor.chainTo(spine.createHMSensor());
+		sensor.chainTo(spine.createHorizontalMoveSensor());
 		B2DFactory.makeBoxFixture(b2body, sensor,
 				CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 		// create on ground sensor fixture and attach to spine
@@ -41,7 +42,7 @@ public class BaseMushroomBody extends AgentBody {
 				new Vector2(0f, -BODY_HEIGHT/2f));
 	}
 
-	public WalkPowerupSpine getSpine() {
+	public NPC_Spine getSpine() {
 		return spine;
 	}
 }

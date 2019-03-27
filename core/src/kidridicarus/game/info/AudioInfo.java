@@ -44,6 +44,8 @@ public class AudioInfo {
 			public static final String JUMP = DIR+"jump.wav";
 			public static final String SHOOT = DIR+"shoot.wav";
 			public static final String STEP = DIR+"step.wav";
+			public static final String NPC_SMALL_HIT = DIR+"npc_small_hit.wav";
+			public static final String NPC_BIG_HIT = DIR+"npc_big_hit.ogg";
 		}
 	}
 }

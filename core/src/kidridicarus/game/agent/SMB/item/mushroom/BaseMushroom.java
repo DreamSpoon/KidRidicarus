@@ -113,8 +113,8 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 				isFacingRight = true;
 			body.applyImpulse(new Vector2(0f, BUMP_UPVEL));
 		}
-		// bounce off of vertical bounds
-		else if(body.getSpine().isHMoveBlocked(isFacingRight))
+		// bounce off of vertical bounds and not agents
+		else if(body.getSpine().isHorizontalMoveBlocked(isFacingRight, false))
 			isFacingRight = !isFacingRight;
 	}
 

@@ -35,7 +35,7 @@
    <property name="spawnagentclass" value="rio"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzjENAAAIA7DZwL9R3jkgJK2CJgAA8MdcBwAAAAAAAKAswl4AGg==
+   eJztzgENAAAIA6DXsH9RAzyAc4MEJAAAfDDXAQAAAAAAAKAs3CYAGg==
   </data>
  </layer>
  <layer id="5" name="zoomer" width="160" height="15">

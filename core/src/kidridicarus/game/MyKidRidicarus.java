@@ -59,6 +59,8 @@ public class MyKidRidicarus extends Game {
 		manager.load(AudioInfo.Sound.Metroid.JUMP, Sound.class);
 		manager.load(AudioInfo.Sound.Metroid.SHOOT, Sound.class);
 		manager.load(AudioInfo.Sound.Metroid.STEP, Sound.class);
+		manager.load(AudioInfo.Sound.Metroid.NPC_SMALL_HIT, Sound.class);
+		manager.load(AudioInfo.Sound.Metroid.NPC_BIG_HIT, Sound.class);
 		manager.finishLoading();
 
 		director = new AgencyDirector(manager, batch, atlas,
@@ -66,7 +68,7 @@ public class MyKidRidicarus extends Game {
 						MetroidInfo.METROID_AGENT_CLASSLIST));
 
 		// start playing first level
-		setScreen(new PlayScreen(this, GameInfo.GAMEMAP_FILENAME2, null));
+		setScreen(new PlayScreen(this, GameInfo.GAMEMAP_FILENAME1, null));
 	}
 
 	@Override

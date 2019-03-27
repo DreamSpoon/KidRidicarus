@@ -15,12 +15,15 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 
 public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+	private static final float MAX_HEALTH = 4f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
-	private static final float INJURY_TIME = 10f/60f;
+	private static final float INJURY_TIME = 3f/20f;
 
 	enum MoveState { FLAP, SWOOP, INJURY, DEAD }
 
@@ -28,28 +31,24 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private RioSprite sprite;
 	private MoveState moveState;
 	private float moveStateTimer;
-
 	private float health;
-	private boolean isInjured;
+	private Direction4 swoopDir;
+	private boolean hasSwoopDirChanged;
+	private Vector2 swoopLowPoint;
+	private boolean isSwoopUp;
 	private MoveState moveStateBeforeInjury;
 	private Vector2 velocityBeforeInjury;
-	private boolean isDead;
+
 	// TODO: what if agent is removed/disposed while being targeted? Agent.isDisposed()?
 	private PlayerAgent target;
+	private boolean isInjured;
+	private boolean isDead;
 	private boolean despawnMe;
 
 	public Rio(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		moveState = MoveState.FLAP;
-		moveStateTimer = 0f;
-		isInjured = false;
-		moveStateBeforeInjury = null;
-		velocityBeforeInjury = null;
-		health = 2f;
-		isDead = false;
-		despawnMe = false;
-		target = null;
+		setStateFromProperties();
 
 		body = new RioBody(this, agency.getWorld(), Agent.getStartPoint(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
@@ -65,6 +64,23 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
+	}
+
+	private void setStateFromProperties() {
+		moveState = MoveState.FLAP;
+		moveStateTimer = 0f;
+		health = MAX_HEALTH;
+		swoopDir = Direction4.NONE;
+		hasSwoopDirChanged = false;
+		swoopLowPoint = null;
+		isSwoopUp = false;
+		moveStateBeforeInjury = null;
+		velocityBeforeInjury = null;
+
+		target = null;
+		isInjured = false;
+		isDead = false;
+		despawnMe = false;
 	}
 
 	// apply damage to all contacting agents
@@ -100,45 +116,24 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 		}
 
 		MoveState nextMoveState = getNextMoveState();
+		boolean isMoveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
-/*			case SLEEP:
-				break;
-			case FALL:
-				body.getSpine().doFall((Agent) target);
-				break;
-			case INJURY:
-				// first frame of injury?
-				if(moveState != nextMoveState) {
-					moveStateBeforeInjury = moveState;
-					velocityBeforeInjury = body.getVelocity().cpy();
-					body.zeroVelocity(true, true);
-				}
-				else if(moveStateTimer > INJURY_TIME) {
-					isInjured = false;
-					body.setVelocity(velocityBeforeInjury);
-					// return to state before injury started
-					nextMoveState = moveStateBeforeInjury;
-				}
-				break;
-			case ONGROUND:
-				body.zeroVelocity(true, true);
-				break;
-			case EXPLODE:
-				doExplode();
-				break;
-			case DEAD:
-				doPowerupDrop();
-				doDeathPop();
-				break;
-*/
 			case FLAP:
+				// if previous move state was swoop then clear some flags
+				if(moveState == MoveState.SWOOP) {
+					target = null;
+					isSwoopUp = false;
+					hasSwoopDirChanged = false;
+					swoopLowPoint = null;
+				}
 				break;
 			case INJURY:
 				// first frame of injury?
-				if(moveState != nextMoveState) {
+				if(isMoveStateChanged) {
 					moveStateBeforeInjury = moveState;
 					velocityBeforeInjury = body.getVelocity().cpy();
 					body.zeroVelocity(true, true);
+					agency.getEar().playSound(AudioInfo.Sound.Metroid.NPC_BIG_HIT);
 				}
 				else if(moveStateTimer > INJURY_TIME) {
 					isInjured = false;
@@ -148,9 +143,45 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 				}
 				break;
 			case SWOOP:
-				body.setVelocity(0f, -1f);
+				// first frame of swoop?
+				if(isMoveStateChanged) {
+					// if target on left then swoop left
+					if(target.getPosition().x < body.getPosition().x)
+						swoopDir = Direction4.LEFT;
+					else
+						swoopDir = Direction4.RIGHT;
+				}
+
+				// if sideways move is blocked by solid...
+				if(body.getSpine().isHorizontalMoveBlocked(swoopDir.isRight(), false)) {
+					// if swoop dir has changed already then don't change again, just swoop up
+					if(hasSwoopDirChanged) {
+						isSwoopUp = true;
+						swoopLowPoint = body.getPosition().cpy();
+					}
+					else {
+						// switch swoop direction
+						swoopDir = swoopDir.isRight() ? Direction4.LEFT : Direction4.RIGHT;
+						hasSwoopDirChanged = true;
+					}
+				}
+
+				// if target is above rio by a certain amount then do swoop up
+				if(body.getSpine().isTargetAboveMe(target.getPosition())) {
+					isSwoopUp = true;
+					swoopLowPoint = body.getPosition().cpy();
+				}
+
+				// if swooping up then move up, away from swoop low point
+				if(isSwoopUp)
+					body.getSpine().setSwoopVelocity(swoopLowPoint, swoopDir, true);
+				// otherwise move down, hopefully toward, player target
+				else
+					body.getSpine().setSwoopVelocity(target.getPosition(), swoopDir, false);
+
 				break;
 			case DEAD:
+				agency.getEar().playSound(AudioInfo.Sound.Metroid.NPC_BIG_HIT);
 				doPowerupDrop();
 				doDeathPop();
 				break;
@@ -161,24 +192,17 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	}
 
 	private MoveState getNextMoveState() {
-/*		if(isDead)
-			return MoveState.DEAD;
-		else if(moveState == MoveState.EXPLODE)
-			return MoveState.EXPLODE;
-		else if(moveState == MoveState.ONGROUND && moveStateTimer > EXPLODE_WAIT)
-			return MoveState.EXPLODE;
-		else if(isInjured)
-			return MoveState.INJURY;
-		else if(body.getSpine().isOnGround())
-			return MoveState.ONGROUND;
-		else if(target != null)
-			return MoveState.FALL;
-		return MoveState.SLEEP;*/
 		if(isDead)
 			return MoveState.DEAD;
 		else if(isInjured)
 			return MoveState.INJURY;
-		else if(moveState == MoveState.SWOOP || target != null)
+		else if(moveState == MoveState.SWOOP) {
+			if(isSwoopUp && body.getSpine().isOnCeiling())
+				return MoveState.FLAP;
+			else
+				return MoveState.SWOOP;
+		}
+		else if(target != null)
 			return MoveState.SWOOP;
 		else
 			return MoveState.FLAP;

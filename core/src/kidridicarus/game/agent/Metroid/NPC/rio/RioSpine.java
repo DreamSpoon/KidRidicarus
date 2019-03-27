@@ -2,22 +2,29 @@ package kidridicarus.game.agent.Metroid.NPC.rio;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.agentspine.NPC_Spine;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
 
 public class RioSpine extends NPC_Spine {
-	private static final float FALL_IMPULSE = 0.07f;
-	private static final float FALL_SPEED_MAX = 2f;
-	private static final float SIDE_IMPULSE_MAX = 0.07f;
-	private static final float SIDE_SPEED_MAX = 0.8f;
+	private static final float SIDE_SPEED_MAX = 0.5f;
+	private static final float SWOOP_UP_MIN_VEL = 0.6f;
+	private static final float SWOOP_DOWN_MIN_VEL = 0.1f;
+	private static final float SWOOP_MAX_VEL = 4f;
+	// Rio will swoop this low below targeted player's Y coordinate before starting swoop up
+	private static final float SWOOP_EPS_DIST = UInfo.P2M(8);
+	private static final float SWOOP_VEL_FACTOR = 3f;
 
 	private AgentContactHoldSensor playerSensor;
+	private SolidContactSensor ocSensor;
 
 	public RioSpine(RioBody body) {
 		super(body);
 		playerSensor = null;
+		ocSensor = null;
 	}
 
 	public AgentContactHoldSensor createPlayerSensor() {
@@ -29,34 +36,37 @@ public class RioSpine extends NPC_Spine {
 		return playerSensor.getFirstContactByClass(PlayerAgent.class);
 	}
 
-	public void doFall(Agent target) {
-		// track target on the x axis
-		float xdiff = target.getPosition().x - body.getPosition().x;
-		if(xdiff > 0) {
-			if(body.getVelocity().x < SIDE_SPEED_MAX) {
-				if(xdiff < SIDE_IMPULSE_MAX)
-					body.applyImpulse(new Vector2(xdiff, 0f));
-				else
-					body.applyImpulse(new Vector2(SIDE_IMPULSE_MAX, 0f));
-			}
-			else
-				body.setVelocity(SIDE_SPEED_MAX, body.getVelocity().y);
+	public void setSwoopVelocity(Vector2 targetPos, Direction4 swoopDir, boolean swoopUp) {
+		float x = swoopDir.isRight() ? SIDE_SPEED_MAX : -SIDE_SPEED_MAX;
+		float y = (targetPos.y - body.getPosition().y) * SWOOP_VEL_FACTOR;
+		if(swoopUp) {
+			// if swooping up then move away from target
+			y = -y;
+			if(y < SWOOP_UP_MIN_VEL)
+				y = SWOOP_UP_MIN_VEL;
+			else if(y > SWOOP_MAX_VEL)
+				y = SWOOP_MAX_VEL;
 		}
-		else if(xdiff < 0) {
-			if(body.getVelocity().x > -SIDE_SPEED_MAX) {
-				if(xdiff > -SIDE_IMPULSE_MAX)
-					body.applyImpulse(new Vector2(xdiff, 0f));
-				else
-					body.applyImpulse(new Vector2(-SIDE_IMPULSE_MAX, 0f));
-			}
-			else
-				body.setVelocity(-SIDE_SPEED_MAX, body.getVelocity().y);
+		else {
+			if(y > -SWOOP_DOWN_MIN_VEL)
+				y = -SWOOP_DOWN_MIN_VEL;
+			else if(y < -SWOOP_MAX_VEL)
+				y = -SWOOP_MAX_VEL;
 		}
 
-		// fall downward
-		if(body.getVelocity().y > -FALL_SPEED_MAX)
-			body.applyImpulse(new Vector2(0f, -FALL_IMPULSE));
-		else
-			body.setVelocity(body.getVelocity().x, -FALL_SPEED_MAX);
+		body.setVelocity(x, y);
+	}
+
+	public boolean isTargetAboveMe(Vector2 targetPosition) {
+		return targetPosition.y > body.getPosition().y + SWOOP_EPS_DIST;
+	}
+
+	public SolidContactSensor createOnCeilingSensor() {
+		ocSensor = new SolidContactSensor(null);
+		return ocSensor;
+	}
+
+	public boolean isOnCeiling() {
+		return ocSensor.isContactCeiling();
 	}
 }

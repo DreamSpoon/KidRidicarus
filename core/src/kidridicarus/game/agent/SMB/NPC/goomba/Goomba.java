@@ -116,7 +116,8 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 			return;
 		}
 
-		if(body.getSpine().checkReverseVelocity(isFacingRight, true))
+		// if move is blocked by solid or an agent then change facing dir
+		if(body.getSpine().isHorizontalMoveBlocked(isFacingRight, true))
 			isFacingRight = !isFacingRight;
 
 		MoveState nextMoveState = getNextMoveState();

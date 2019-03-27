@@ -172,7 +172,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		}
 
 		boolean isSliding = moveState == MoveState.SLIDE;
-		if(body.getSpine().checkReverseVelocity(isFacingRight, !isSliding)) {
+		if(body.getSpine().isHorizontalMoveBlocked(isFacingRight, !isSliding)) {
 			isFacingRight = !isFacingRight;
 			if(isSliding)
 				agency.getEar().playSound(AudioInfo.Sound.SMB.BUMP);

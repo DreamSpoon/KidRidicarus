@@ -67,6 +67,11 @@ public class SolidContactSensor extends AgentContactSensor {
 		return !getLineSegsFiltered(true, true, true, true).isEmpty();
 	}
 
+	public boolean isContactCeiling() {
+		// return true if the contacts list contains at least 1 ceiling
+		return !getLineSegsFiltered(true, true, true, false).isEmpty();
+	}
+
 	public boolean isSolidOnThisSide(Rectangle testBounds, boolean rightSide) {
 		return isLineSegOnThisSide(testBounds, rightSide) || isAgentOnThisSide(testBounds, rightSide);
 	}

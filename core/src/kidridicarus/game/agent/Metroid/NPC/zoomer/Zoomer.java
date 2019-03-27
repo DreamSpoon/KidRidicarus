@@ -16,6 +16,7 @@ import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 
 /*
@@ -25,6 +26,7 @@ import kidridicarus.game.info.GameKV;
  * check the sensors.
  */
 public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 3/7f;
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float UPDIR_CHANGE_MINTIME = 0.1f;
@@ -54,7 +56,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 		upDir = Direction4.NONE;
 		upDirChangeTimer = 0f;
 		isInjured = false;
-		health = 2f;
+		health = MAX_HEALTH;
 		isDead = false;
 		despawnMe = false;
 		moveState = MoveState.WALK;
@@ -124,18 +126,23 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 		}
 
 		MoveState nextMoveState = getNextMoveState();
+		boolean isMoveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case WALK:
 				body.setVelocity(body.getSpine().getMoveVec(isWalkingRight, upDir));
 				break;
 			case INJURY:
 				body.zeroVelocity(true, true);
-				if(moveState == nextMoveState && moveStateTimer > INJURY_TIME)
+				// if first frame of injury then play sound
+				if(isMoveStateChanged)
+					agency.getEar().playSound(AudioInfo.Sound.Metroid.NPC_SMALL_HIT);
+				else if(moveStateTimer > INJURY_TIME)
 					isInjured = false;
 				break;
 			case DEAD:
 				doPowerupDrop();
 				doDeathPop();
+				agency.getEar().playSound(AudioInfo.Sound.Metroid.NPC_SMALL_HIT);
 				break;
 		}
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;

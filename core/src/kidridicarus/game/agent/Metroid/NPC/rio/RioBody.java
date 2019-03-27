@@ -13,10 +13,10 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
 public class RioBody extends AgentBody {
-	private static final float BODY_WIDTH = UInfo.P2M(16);
-	private static final float BODY_HEIGHT = UInfo.P2M(18);
-	private static final float FOOT_WIDTH = UInfo.P2M(18);
-	private static final float FOOT_HEIGHT = UInfo.P2M(2);
+	private static final float BODY_WIDTH = UInfo.P2M(20);
+	private static final float BODY_HEIGHT = UInfo.P2M(16);
+	private static final float HEAD_WIDTH = UInfo.P2M(18);
+	private static final float HEAD_HEIGHT = UInfo.P2M(2);
 	private static final float[] PLAYER_DETECTOR_SHAPE = new float[] {
 			UInfo.P2M(24), UInfo.P2M(16),
 			UInfo.P2M(-24), UInfo.P2M(16),
@@ -51,12 +51,12 @@ public class RioBody extends AgentBody {
 		createMainFixture();
 		createAgentSensorFixture();
 		createPlayerSensorFixture();
-		createGroundSensorFixture();
+		createCeilingSensorFixture();
 	}
 
 	private void createMainFixture() {
-		B2DFactory.makeBoxFixture(b2body, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, spine.createHorizontalMoveSensor(),
+				CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	// same size as main body, for detecting agents touching main body
@@ -78,10 +78,10 @@ public class RioBody extends AgentBody {
 	}
 
 	// create the foot sensor for detecting onGround
-	private void createGroundSensorFixture() {
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
+	private void createCeilingSensorFixture() {
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnCeilingSensor(),
 				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
+				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, BODY_HEIGHT/2f));
 	}
 
 	public RioSpine getSpine() {

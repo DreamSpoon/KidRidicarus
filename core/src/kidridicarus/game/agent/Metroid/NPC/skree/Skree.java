@@ -16,9 +16,11 @@ import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.game.info.AudioInfo;
 import kidridicarus.game.info.GameKV;
 
 public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
 	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
@@ -55,7 +57,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		isInjured = false;
 		moveStateBeforeInjury = null;
 		velocityBeforeInjury = null;
-		health = 2f;
+		health = MAX_HEALTH;
 		isDead = false;
 		despawnMe = false;
 		target = null;
@@ -109,6 +111,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		}
 
 		MoveState nextMoveState = getNextMoveState();
+		boolean isMoveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case SLEEP:
 				break;
@@ -117,10 +120,11 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 				break;
 			case INJURY:
 				// first frame of injury?
-				if(moveState != nextMoveState) {
+				if(isMoveStateChanged) {
 					moveStateBeforeInjury = moveState;
 					velocityBeforeInjury = body.getVelocity().cpy();
 					body.zeroVelocity(true, true);
+					agency.getEar().playSound(AudioInfo.Sound.Metroid.NPC_SMALL_HIT);
 				}
 				else if(moveStateTimer > INJURY_TIME) {
 					isInjured = false;
@@ -138,6 +142,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 			case DEAD:
 				doPowerupDrop();
 				doDeathPop();
+				agency.getEar().playSound(AudioInfo.Sound.Metroid.NPC_SMALL_HIT);
 				break;
 		}
 
