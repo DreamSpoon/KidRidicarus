@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.player.mariofireball.MarioFireball.MoveState;
-import kidridicarus.game.info.SMBAnim;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class MarioFireballSprite extends Sprite {
 	private static final float SPR_BALLWIDTH = UInfo.P2M(8);
@@ -25,10 +25,10 @@ public class MarioFireballSprite extends Sprite {
 
 	public MarioFireballSprite(TextureAtlas atlas, Vector2 position) {
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED_FLY,
-				atlas.findRegions(SMBAnim.General.FIREBALL), PlayMode.LOOP);
+				atlas.findRegions(SMB_Gfx.General.FIREBALL), PlayMode.LOOP);
 
 		explodeAnim = new Animation<TextureRegion>(ANIM_SPEED_EXP,
-				atlas.findRegions(SMBAnim.General.FIREBALL_EXP), PlayMode.NORMAL);
+				atlas.findRegions(SMB_Gfx.General.FIREBALL_EXP), PlayMode.NORMAL);
 
 		setRegion(ballAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPR_BALLWIDTH, SPR_BALLHEIGHT);

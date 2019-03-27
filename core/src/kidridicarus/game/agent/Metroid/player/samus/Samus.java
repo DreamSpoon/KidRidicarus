@@ -14,10 +14,10 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.PlayerAgent;
-import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -32,8 +32,8 @@ import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
-import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.MetroidAudio;
+import kidridicarus.game.info.MetroidKV;
 import kidridicarus.game.powerup.MetroidPow;
 import kidridicarus.game.powerup.SMB_Pow;
 
@@ -134,7 +134,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			isFacingRight = true;
 		isFacingUp = false;
 		noDamageCooldown = 0f;
-		energySupply = properties.get(GameKV.Metroid.KEY_ENERGY_SUPPLY, START_ENERGY_SUPPLY, Integer.class);
+		energySupply = properties.get(MetroidKV.KEY_ENERGY_SUPPLY, START_ENERGY_SUPPLY, Integer.class);
 
 		runStateTimer = 0f;
 		lastStepSoundTime = 0f;
@@ -224,7 +224,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	private void applyPowerup(Powerup pu) {
 		if(pu instanceof MetroidPow.EnergyPow)
-			agency.getEar().playSound(AudioInfo.Sound.Metroid.ENERGY_PICKUP);
+			agency.getEar().playSound(MetroidAudio.Sound.ENERGY_PICKUP);
 	}
 
 	private void processDamageTaken(float delta) {
@@ -251,7 +251,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		// reset take damage origin
 		takeDmgOrigin.set(0f, 0f);
 		// ouchie sound
-		agency.getEar().playSound(AudioInfo.Sound.Metroid.HURT);
+		agency.getEar().playSound(MetroidAudio.Sound.HURT);
 	}
 
 	private void processHeadBouncesGiven() {
@@ -390,7 +390,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			body.applyDead();
 			createDeathPop();
 			agency.getEar().stopAllMusic();
-			agency.getEar().startSinglePlayMusic(AudioInfo.Music.Metroid.SAMUS_DIE);
+			agency.getEar().startSinglePlayMusic(MetroidAudio.Music.SAMUS_DIE);
 		}
 		// ... and if died a long time ago then do game over
 		else if(moveStateTimer > DEAD_DELAY_TIME)
@@ -450,12 +450,12 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 		// if previous move air move then samus just landed, so play landing sound
 		if(!moveState.isGroundMove())
-			agency.getEar().playSound(AudioInfo.Sound.Metroid.STEP);
+			agency.getEar().playSound(MetroidAudio.Sound.STEP);
 		// if last move and this move are run moves then check/do step sound
 		else if(moveState.isRun() && nextMoveState.isRun()) {
 			if(runStateTimer - lastStepSoundTime >= STEP_SOUND_TIME) {
 				lastStepSoundTime = runStateTimer;
-				agency.getEar().playSound(AudioInfo.Sound.Metroid.STEP);
+				agency.getEar().playSound(MetroidAudio.Sound.STEP);
 			}
 		}
 		else
@@ -519,7 +519,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 				if(moveState.isGroundMove() && moveAdvice.action1 && isNextJumpAllowed) {
 					isNextJumpAllowed = false;
 					jumpForceTimer = JUMPUP_CONSTVEL_TIME+JUMPUP_FORCE_TIME;
-					agency.getEar().playSound(AudioInfo.Sound.Metroid.JUMP);
+					agency.getEar().playSound(MetroidAudio.Sound.JUMP);
 				}
 				body.getSpine().applyJumpVelocity();
 				break;
@@ -610,7 +610,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		if(body.getSpine().isMapPointSolid(position))
 			shotProps.put(CommonKV.Spawn.KEY_EXPIRE, true);
 		agency.createAgent(shotProps);
-		agency.getEar().playSound(AudioInfo.Sound.Metroid.SHOOT);
+		agency.getEar().playSound(MetroidAudio.Sound.SHOOT);
 	}
 
 	private void doPostUpdate() {
@@ -725,7 +725,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			Vector2 he = new Vector2(sprite.getWidth(), sprite.getHeight());
 			return (T) he;
 		}
-		else if(key.equals(GameKV.Metroid.KEY_ENERGY_SUPPLY) && Integer.class.equals(cls)) {
+		else if(key.equals(MetroidKV.KEY_ENERGY_SUPPLY) && Integer.class.equals(cls)) {
 			Integer he = energySupply;
 			return (T) he;
 		}
@@ -739,7 +739,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
 		else
 			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.LEFT);
-		myProperties.put(GameKV.Metroid.KEY_ENERGY_SUPPLY, energySupply);
+		myProperties.put(MetroidKV.KEY_ENERGY_SUPPLY, energySupply);
 		return myProperties;
 	}
 

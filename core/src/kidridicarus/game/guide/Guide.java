@@ -18,21 +18,22 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agencydirector.AgencyDirector;
-import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
+import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agent.scrollpushbox.ScrollPushBox;
+import kidridicarus.common.info.AudioInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.info.KeyboardMapping;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.common.tool.QQ;
-import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GameKV;
-import kidridicarus.game.info.KeyboardMapping;
+import kidridicarus.game.info.MetroidKV;
+import kidridicarus.game.info.SMB_KV;
 import kidridicarus.game.powerup.SMB_Pow;
 
 /*
@@ -170,10 +171,10 @@ public class Guide implements Disposable {
 		switch(pc) {
 			default:
 			case MARIO:
-				doAgentMake(GameKV.SMB.AgentClassAlias.VAL_MARIO, currentPos, facingRight);
+				doAgentMake(SMB_KV.AgentClassAlias.VAL_MARIO, currentPos, facingRight);
 				break;
 			case SAMUS:
-				doAgentMake(GameKV.Metroid.AgentClassAlias.VAL_SAMUS, currentPos, facingRight);
+				doAgentMake(MetroidKV.AgentClassAlias.VAL_SAMUS, currentPos, facingRight);
 				break;
 			case NONE:
 				break;

@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.NPC.goomba.Goomba.MoveState;
-import kidridicarus.game.info.SMBAnim;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class GoombaSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
@@ -22,8 +22,8 @@ public class GoombaSprite extends Sprite {
 
 	public GoombaSprite(TextureAtlas atlas, Vector2 position) {
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMBAnim.NPC.GOOMBA_WALK), PlayMode.LOOP);
-		squish = atlas.findRegion(SMBAnim.NPC.GOOMBA_SQUISH);
+				atlas.findRegions(SMB_Gfx.NPC.GOOMBA_WALK), PlayMode.LOOP);
+		squish = atlas.findRegion(SMB_Gfx.NPC.GOOMBA_SQUISH);
 
 		stateTimer = 0;
 

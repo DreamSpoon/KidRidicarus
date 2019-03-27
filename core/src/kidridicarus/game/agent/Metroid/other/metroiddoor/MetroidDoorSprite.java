@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.Metroid.other.metroiddoor.MetroidDoor.MoveState;
-import kidridicarus.game.info.MetroidAnim;
+import kidridicarus.game.info.MetroidGfx;
 
 public class MetroidDoorSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
@@ -25,13 +25,13 @@ public class MetroidDoorSprite extends Sprite {
 
 	public MetroidDoorSprite(TextureAtlas atlas, Vector2 position, boolean isFacingRight) {
 		closedAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.NPC.DOOR_CLOSED), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.DOOR_CLOSED), PlayMode.LOOP);
 		closingAnim = new Animation<TextureRegion>(ANIM_SPEED_CLOSE,
-				atlas.findRegions(MetroidAnim.NPC.DOOR_CLOSING), PlayMode.NORMAL);
+				atlas.findRegions(MetroidGfx.NPC.DOOR_CLOSING), PlayMode.NORMAL);
 		openedAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.NPC.DOOR_OPENED), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.DOOR_OPENED), PlayMode.LOOP);
 		openingAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.NPC.DOOR_OPENING), PlayMode.NORMAL);
+				atlas.findRegions(MetroidGfx.NPC.DOOR_OPENING), PlayMode.NORMAL);
 
 		this.isFacingRight = isFacingRight;
 		setRegion(closedAnim.getKeyFrame(0f));

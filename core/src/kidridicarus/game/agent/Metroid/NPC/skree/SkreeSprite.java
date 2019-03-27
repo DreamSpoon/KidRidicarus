@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.Metroid.NPC.skree.Skree.MoveState;
-import kidridicarus.game.info.MetroidAnim;
+import kidridicarus.game.info.MetroidGfx;
 
 public class SkreeSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
@@ -28,11 +28,11 @@ public class SkreeSprite extends Sprite {
 
 	public SkreeSprite(TextureAtlas atlas, Vector2 position) {
 		spinAnim = new Animation<TextureRegion>(ANIM_SPEED_REG,
-				atlas.findRegions(MetroidAnim.NPC.SKREE), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.SKREE), PlayMode.LOOP);
 		spinFastAnim = new Animation<TextureRegion>(ANIM_SPEED_FAST,
-				atlas.findRegions(MetroidAnim.NPC.SKREE), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.SKREE), PlayMode.LOOP);
 		injuryAnim = new Animation<TextureRegion>(ANIM_SPEED_FAST,
-				atlas.findRegions(MetroidAnim.NPC.SKREE_HIT), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.SKREE_HIT), PlayMode.LOOP);
 
 		stateTimer = 0;
 

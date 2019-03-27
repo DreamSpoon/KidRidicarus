@@ -9,11 +9,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.common.agencydirector.AgencyDirector;
+import kidridicarus.common.info.CommonAgentClassList;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GameInfo;
-import kidridicarus.game.info.MetroidInfo;
-import kidridicarus.game.info.SMBInfo;
+import kidridicarus.game.info.MetroidAgentClassList;
+import kidridicarus.game.info.MetroidAudio;
+import kidridicarus.game.info.SMB_AgentClassList;
+import kidridicarus.game.info.SMB_Audio;
 import kidridicarus.game.screen.PlayScreen;
 
 /*
@@ -31,44 +32,46 @@ public class MyKidRidicarus extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 
-		atlas = new TextureAtlas(GameInfo.TA_MAIN_FILENAME);
+		atlas = new TextureAtlas(CommonInfo.TA_MAIN_FILENAME);
 
 		manager = new AssetManager();
 		// other music files may be loaded later when a space is loaded
-		manager.load(AudioInfo.Music.SMB.LEVELEND, Music.class);
-		manager.load(AudioInfo.Music.SMB.STARPOWER, Music.class);
-		manager.load(AudioInfo.Music.Metroid.GET_ITEM, Music.class);
-		manager.load(AudioInfo.Music.Metroid.SAMUS_DIE, Music.class);
-		manager.load(AudioInfo.Sound.SMB.COIN, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.BUMP, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.BREAK, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.POWERUP_SPAWN, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.POWERUP_USE, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.POWERDOWN, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.STOMP, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.MARIO_DIE, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.MARIO_SMLJUMP, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.MARIO_BIGJUMP, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.KICK, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.FIREBALL, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.FLAGPOLE, Sound.class);
-		manager.load(AudioInfo.Sound.SMB.UP1, Sound.class);
-		manager.load(AudioInfo.Sound.Metroid.DOOR, Sound.class);
-		manager.load(AudioInfo.Sound.Metroid.ENERGY_PICKUP, Sound.class);
-		manager.load(AudioInfo.Sound.Metroid.HURT, Sound.class);
-		manager.load(AudioInfo.Sound.Metroid.JUMP, Sound.class);
-		manager.load(AudioInfo.Sound.Metroid.SHOOT, Sound.class);
-		manager.load(AudioInfo.Sound.Metroid.STEP, Sound.class);
-		manager.load(AudioInfo.Sound.Metroid.NPC_SMALL_HIT, Sound.class);
-		manager.load(AudioInfo.Sound.Metroid.NPC_BIG_HIT, Sound.class);
+		manager.load(SMB_Audio.Music.LEVELEND, Music.class);
+		manager.load(SMB_Audio.Music.STARPOWER, Music.class);
+		manager.load(MetroidAudio.Music.GET_ITEM, Music.class);
+		manager.load(MetroidAudio.Music.SAMUS_DIE, Music.class);
+
+		manager.load(SMB_Audio.Sound.COIN, Sound.class);
+		manager.load(SMB_Audio.Sound.BUMP, Sound.class);
+		manager.load(SMB_Audio.Sound.BREAK, Sound.class);
+		manager.load(SMB_Audio.Sound.POWERUP_SPAWN, Sound.class);
+		manager.load(SMB_Audio.Sound.POWERUP_USE, Sound.class);
+		manager.load(SMB_Audio.Sound.POWERDOWN, Sound.class);
+		manager.load(SMB_Audio.Sound.STOMP, Sound.class);
+		manager.load(SMB_Audio.Sound.MARIO_DIE, Sound.class);
+		manager.load(SMB_Audio.Sound.MARIO_SMLJUMP, Sound.class);
+		manager.load(SMB_Audio.Sound.MARIO_BIGJUMP, Sound.class);
+		manager.load(SMB_Audio.Sound.KICK, Sound.class);
+		manager.load(SMB_Audio.Sound.FIREBALL, Sound.class);
+		manager.load(SMB_Audio.Sound.FLAGPOLE, Sound.class);
+		manager.load(SMB_Audio.Sound.UP1, Sound.class);
+		manager.load(MetroidAudio.Sound.DOOR, Sound.class);
+		manager.load(MetroidAudio.Sound.ENERGY_PICKUP, Sound.class);
+		manager.load(MetroidAudio.Sound.HURT, Sound.class);
+		manager.load(MetroidAudio.Sound.JUMP, Sound.class);
+		manager.load(MetroidAudio.Sound.SHOOT, Sound.class);
+		manager.load(MetroidAudio.Sound.STEP, Sound.class);
+		manager.load(MetroidAudio.Sound.NPC_SMALL_HIT, Sound.class);
+		manager.load(MetroidAudio.Sound.NPC_BIG_HIT, Sound.class);
 		manager.finishLoading();
 
 		director = new AgencyDirector(manager, batch, atlas,
-				new AgentClassList(CommonInfo.CORE_AGENT_CLASS_LIST, SMBInfo.SMB_AGENT_CLASSLIST,
-						MetroidInfo.METROID_AGENT_CLASSLIST));
+				new AgentClassList(CommonAgentClassList.CORE_AGENT_CLASS_LIST,
+						SMB_AgentClassList.SMB_AGENT_CLASSLIST,
+						MetroidAgentClassList.METROID_AGENT_CLASSLIST));
 
 		// start playing first level
-		setScreen(new PlayScreen(this, GameInfo.GAMEMAP_FILENAME1, null));
+		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME1, null));
 	}
 
 	@Override

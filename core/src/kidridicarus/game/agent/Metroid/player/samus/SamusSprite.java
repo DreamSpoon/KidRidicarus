@@ -12,7 +12,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.Metroid.player.samus.Samus.MoveState;
-import kidridicarus.game.info.MetroidAnim;
+import kidridicarus.game.info.MetroidGfx;
 
 public class SamusSprite extends Sprite {
 	private static final float BIG_SPRITE_WIDTH = UInfo.P2M(32);
@@ -48,27 +48,27 @@ public class SamusSprite extends Sprite {
 
 	public SamusSprite(TextureAtlas atlas, Vector2 position) {
 		aimRightAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.AIMRIGHT), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.AIMRIGHT), PlayMode.LOOP);
 		aimUpAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.AIMUP), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.AIMUP), PlayMode.LOOP);
 		runAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.RUN), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.RUN), PlayMode.LOOP);
 		runAimRightAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.RUN_AIMRIGHT), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.RUN_AIMRIGHT), PlayMode.LOOP);
 		runAimUpAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.RUN_AIMUP), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.RUN_AIMUP), PlayMode.LOOP);
 		jumpAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.JUMP), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.JUMP), PlayMode.LOOP);
 		jumpAimRightAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.JUMP_AIMRIGHT), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.JUMP_AIMRIGHT), PlayMode.LOOP);
 		jumpAimUpAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.JUMP_AIMUP), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.JUMP_AIMUP), PlayMode.LOOP);
 		jumpSpinAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.JUMPSPIN), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.JUMPSPIN), PlayMode.LOOP);
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.BALL), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.BALL), PlayMode.LOOP);
 		climbAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.CLIMB), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.CLIMB), PlayMode.LOOP);
 
 		stateTimer = 0f;
 		curParentState = null;

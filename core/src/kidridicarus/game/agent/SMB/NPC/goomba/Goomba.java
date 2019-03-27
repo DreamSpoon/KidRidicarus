@@ -10,13 +10,13 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.SMB_Audio;
 
 public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 8f;
@@ -165,14 +165,14 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		body.getSpine().doDeadSquishContactsAndMove();
 		if(perp != null)
 			agency.createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
-		agency.getEar().playSound(AudioInfo.Sound.SMB.STOMP);
+		agency.getEar().playSound(SMB_Audio.Sound.STOMP);
 	}
 
 	private void startBump() {
 		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
 		if(perp != null)
 			agency.createAgent(FloatingPoints.makeAP(100, false, body.getPosition(), perp));
-		agency.getEar().playSound(AudioInfo.Sound.SMB.KICK);
+		agency.getEar().playSound(SMB_Audio.Sound.KICK);
 	}
 
 	private void processSprite(float delta) {

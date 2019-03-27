@@ -8,7 +8,7 @@ import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp.PipeWarpHorizon;
-import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.SMB_Audio;
 
 /*
  * Pipe Warp Script:
@@ -53,7 +53,7 @@ public class PipeWarpScript implements AgentScript {
 		curScriptAgentState.scriptedBodyState.contactEnabled = false;
 		curScriptAgentState.scriptedBodyState.gravityFactor = 0f;
 
-		agency.getEar().playSound(AudioInfo.Sound.SMB.POWERDOWN);
+		agency.getEar().playSound(SMB_Audio.Sound.POWERDOWN);
 	}
 
 	@Override

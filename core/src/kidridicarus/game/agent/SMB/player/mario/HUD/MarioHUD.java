@@ -6,14 +6,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.game.agent.SMB.player.mario.Mario;
-import kidridicarus.game.info.GameInfo;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.SMB_Gfx;
+import kidridicarus.game.info.SMB_KV;
 
 public class MarioHUD implements Disposable {
 	private Mario mario;
@@ -32,7 +32,7 @@ public class MarioHUD implements Disposable {
 		table.top();
 		table.setFillParent(true);
 
-		LabelStyle labelstyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal(GameInfo.SMB1_FONT), false),
+		LabelStyle labelstyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal(SMB_Gfx.SMB1_FONT), false),
 				Color.WHITE);
 		Label marioLabel = new Label("MARIO", labelstyle);
 		Label worldLabel = new Label("WORLD", labelstyle);
@@ -57,10 +57,10 @@ public class MarioHUD implements Disposable {
 
 	private void update() {
 		scoreVarLabel.setText(String.format("%06d",
-				mario.getProperty(GameKV.SMB.KEY_POINTAMOUNT, 0, Integer.class)));
+				mario.getProperty(SMB_KV.KEY_POINTAMOUNT, 0, Integer.class)));
 //		timeVarLabel.setText(String.format("%03d", (int) mario.getLevelTimeRemaining()));
 		coinVarLabel.setText(String.format("×%02d",
-				mario.getProperty(GameKV.SMB.KEY_COINAMOUNT, 0, Integer.class)));
+				mario.getProperty(SMB_KV.KEY_COINAMOUNT, 0, Integer.class)));
 		stage.act();
 	}
 

@@ -13,10 +13,10 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.PlayerAgent;
-import kidridicarus.common.agent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -30,8 +30,8 @@ import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.agent.SMB.player.mariofireball.MarioFireball;
-import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.SMB_Audio;
+import kidridicarus.game.info.SMB_KV;
 import kidridicarus.game.powerup.SMB_Pow;
 
 public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounceGiveAgent, PowerupTakeAgent,
@@ -252,7 +252,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			body.allowOnlyDeadContacts();
 			body.zeroVelocity(true, true);
 			agency.getEar().stopAllMusic();
-			agency.getEar().playSound(AudioInfo.Sound.SMB.MARIO_DIE);
+			agency.getEar().playSound(SMB_Audio.Sound.MARIO_DIE);
 
 			// do bounce up if needed
 			if(nextMoveState == MoveState.DEAD_BOUNCE)
@@ -280,7 +280,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			// if small then power up to big
 			if(powerState == PowerState.SMALL)
 				newPowerState = PowerState.BIG;
-			agency.getEar().playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+			agency.getEar().playSound(SMB_Audio.Sound.POWERUP_USE);
 		}
 		else if(pu instanceof SMB_Pow.FireFlowerPow) {
 			// if small then power up to big
@@ -289,24 +289,24 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			// if big then power up to fire
 			else if(powerState == PowerState.BIG)
 				newPowerState = PowerState.FIRE;
-			agency.getEar().playSound(AudioInfo.Sound.SMB.POWERUP_USE);
+			agency.getEar().playSound(SMB_Audio.Sound.POWERUP_USE);
 		}
 		else if(pu instanceof SMB_Pow.Mush1UpPow) {
 			// TODO apply 1-UP mushroom
 		}
 		else if(pu instanceof SMB_Pow.PowerStarPow) {
 			starPowerCooldown = POWERSTAR_MAXTIME;
-			agency.getEar().startSinglePlayMusic(AudioInfo.Music.SMB.STARPOWER);
+			agency.getEar().startSinglePlayMusic(SMB_Audio.Music.STARPOWER);
 		}
 		else if(pu instanceof SMB_Pow.CoinPow) {
-			int coinTotal = properties.get(GameKV.SMB.KEY_COINAMOUNT, 0, Integer.class);
+			int coinTotal = properties.get(SMB_KV.KEY_COINAMOUNT, 0, Integer.class);
 			coinTotal += 1;
-			properties.put(GameKV.SMB.KEY_COINAMOUNT, coinTotal);
+			properties.put(SMB_KV.KEY_COINAMOUNT, coinTotal);
 		}
 		else if(pu instanceof SMB_Pow.PointsPow) {
-			int pointsTotal = properties.get(GameKV.SMB.KEY_POINTAMOUNT, 0, Integer.class);
+			int pointsTotal = properties.get(SMB_KV.KEY_POINTAMOUNT, 0, Integer.class);
 			pointsTotal += 100;
-			properties.put(GameKV.SMB.KEY_POINTAMOUNT, pointsTotal);
+			properties.put(SMB_KV.KEY_POINTAMOUNT, pointsTotal);
 		}
 
 		// if growing then increase body size
@@ -329,7 +329,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 				offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
 			agency.createAgent(MarioFireball.makeAP(offset, isFacingRight, this));
-			agency.getEar().playSound(AudioInfo.Sound.SMB.FIREBALL);
+			agency.getEar().playSound(SMB_Audio.Sound.FIREBALL);
 		}
 	}
 
@@ -359,7 +359,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 				noDamageCooldown = NO_DAMAGE_TIME;
 				body.defineBody(body.getPosition().cpy().sub(GROW_OFFSET), body.getVelocity(), false, false);
 
-				agency.getEar().playSound(AudioInfo.Sound.SMB.POWERDOWN);
+				agency.getEar().playSound(SMB_Audio.Sound.POWERDOWN);
 				break;
 		}
 	}
@@ -454,9 +454,9 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 					body.getSpine().applyJumpImpulse();
 
 					if(powerState.isBigBody())
-						agency.getEar().playSound(AudioInfo.Sound.SMB.MARIO_BIGJUMP);
+						agency.getEar().playSound(SMB_Audio.Sound.MARIO_BIGJUMP);
 					else
-						agency.getEar().playSound(AudioInfo.Sound.SMB.MARIO_SMLJUMP);
+						agency.getEar().playSound(SMB_Audio.Sound.MARIO_SMLJUMP);
 				}
 				else {
 					if(!moveAdvice.action1)

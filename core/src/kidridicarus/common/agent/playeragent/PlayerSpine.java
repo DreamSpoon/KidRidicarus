@@ -1,4 +1,4 @@
-package kidridicarus.game.agentspine.SMB;
+package kidridicarus.common.agent.playeragent;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -16,7 +16,6 @@ import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.agent.SMB.player.mario.MarioBody;
-import kidridicarus.game.agentbody.PlayerAgentBody;
 
 public class PlayerSpine extends OnGroundSpine {
 	private static final float MIN_HEADBANG_VEL = 0.01f;

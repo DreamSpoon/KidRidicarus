@@ -15,8 +15,8 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.agent.SMB.player.mario.Mario;
-import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.SMB_Audio;
+import kidridicarus.game.info.SMB_KV;
 
 public class MarioFireball extends Agent implements DisposableAgent {
 	private static final float DAMAGE = 1f;
@@ -107,9 +107,9 @@ public class MarioFireball extends Agent implements DisposableAgent {
 					body.getSpine().startExplode();
 					// if hit agent then play different sound than if hit boundary line
 					if(hitType == HitType.AGENT)
-						agency.getEar().playSound(AudioInfo.Sound.SMB.KICK);
+						agency.getEar().playSound(SMB_Audio.Sound.KICK);
 					else
-						agency.getEar().playSound(AudioInfo.Sound.SMB.BUMP);
+						agency.getEar().playSound(SMB_Audio.Sound.BUMP);
 				}
 				// dispose agent after explode animation finishes
 				if(sprite.isExplodeAnimFinished())
@@ -162,7 +162,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, boolean right, Mario parentAgent) {
-		ObjectProperties props = Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_MARIOFIREBALL, position);
+		ObjectProperties props = Agent.createPointAP(SMB_KV.AgentClassAlias.VAL_MARIOFIREBALL, position);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		if(right)
 			props.put(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT);

@@ -15,7 +15,7 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.agent.Metroid.player.samus.Samus;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.MetroidKV;
 
 public class SamusShot extends Agent implements DisposableAgent {
 	private static final float LIVE_TIME = 0.217f;
@@ -136,7 +136,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 
 	// make the AgentProperties (AP) for this class of Agent
 	public static ObjectProperties makeAP(Samus parentAgent, Vector2 position, Vector2 velocity) {
-		ObjectProperties props = Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS_SHOT,
+		ObjectProperties props = Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SAMUS_SHOT,
 				position, velocity);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		return props;

@@ -10,12 +10,12 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.game.info.AudioInfo;
+import kidridicarus.game.info.MetroidAudio;
 
 public class MetroidDoor extends Agent implements TriggerTakeAgent, ContactDmgTakeAgent, DisposableAgent {
 	private static final float LONG_OPEN_DELAY = 77/30f;
@@ -73,7 +73,7 @@ public class MetroidDoor extends Agent implements TriggerTakeAgent, ContactDmgTa
 					isOpening = false;
 					isQuickOpenClose = false;
 					body.setMainSolid(true);
-					agency.getEar().playSound(AudioInfo.Sound.Metroid.DOOR);
+					agency.getEar().playSound(MetroidAudio.Sound.DOOR);
 				}
 				break;
 			case CLOSED:	// there must be a joke in this somewhere...
@@ -85,7 +85,7 @@ public class MetroidDoor extends Agent implements TriggerTakeAgent, ContactDmgTa
 				// if first frame of open then make the door non-solid
 				if(moveStateChanged) {
 					body.setMainSolid(false);
-					agency.getEar().playSound(AudioInfo.Sound.Metroid.DOOR);
+					agency.getEar().playSound(MetroidAudio.Sound.DOOR);
 				}
 				break;
 		}

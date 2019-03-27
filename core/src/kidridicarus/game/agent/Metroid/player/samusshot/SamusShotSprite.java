@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot.MoveState;
-import kidridicarus.game.info.MetroidAnim;
+import kidridicarus.game.info.MetroidGfx;
 
 public class SamusShotSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
@@ -24,9 +24,9 @@ public class SamusShotSprite extends Sprite {
 
 	public SamusShotSprite(TextureAtlas atlas, Vector2 position) {
 		liveAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Player.SHOT), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.SHOT), PlayMode.LOOP);
 		explodeAnim = new Animation<TextureRegion>(ANIM_SPEED,
-						atlas.findRegions(MetroidAnim.Player.SHOT_EXP), PlayMode.LOOP);
+						atlas.findRegions(MetroidGfx.Player.SHOT_EXP), PlayMode.LOOP);
 		stateTimer = 0f;
 		lastMoveState = null;
 		setRegion(liveAnim.getKeyFrame(0f));

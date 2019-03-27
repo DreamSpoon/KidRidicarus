@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.info.SMBAnim;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class PowerStarSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
@@ -20,7 +20,7 @@ public class PowerStarSprite extends Sprite {
 
 	public PowerStarSprite(TextureAtlas atlas, Vector2 position) {
 		starAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMBAnim.Item.POWERSTAR), PlayMode.LOOP);
+				atlas.findRegions(SMB_Gfx.Item.POWERSTAR), PlayMode.LOOP);
 
 		stateTimer = 0f;
 

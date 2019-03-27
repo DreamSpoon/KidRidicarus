@@ -12,8 +12,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.game.agent.Metroid.player.samus.Samus;
-import kidridicarus.game.info.GameInfo;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.MetroidKV;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class SamusHUD implements Disposable {
 	private Samus samus;
@@ -29,7 +29,7 @@ public class SamusHUD implements Disposable {
 		table.top();
 		table.setFillParent(true);
 
-		LabelStyle labelstyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal(GameInfo.SMB1_FONT), false),
+		LabelStyle labelstyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal(SMB_Gfx.SMB1_FONT), false),
 				Color.WHITE);
 		energyAmountLabel = new Label(String.format("%02d", 0), labelstyle);
 
@@ -41,7 +41,7 @@ public class SamusHUD implements Disposable {
 
 	private void update() {
 		energyAmountLabel.setText(String.format("%02d",
-				samus.getProperty(GameKV.Metroid.KEY_ENERGY_SUPPLY, 0, Integer.class)));
+				samus.getProperty(MetroidKV.KEY_ENERGY_SUPPLY, 0, Integer.class)));
 		stage.act();
 	}
 

@@ -8,12 +8,12 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
+import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.CommonCF.Alias;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
-import kidridicarus.game.agentbody.PlayerAgentBody;
 
 public class MarioBody extends PlayerAgentBody {
 	private static final Vector2 BIG_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(26f));

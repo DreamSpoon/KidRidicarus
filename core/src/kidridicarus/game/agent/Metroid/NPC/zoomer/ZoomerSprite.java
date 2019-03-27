@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.game.agent.Metroid.NPC.zoomer.Zoomer.MoveState;
-import kidridicarus.game.info.MetroidAnim;
+import kidridicarus.game.info.MetroidGfx;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 
@@ -23,9 +23,9 @@ public class ZoomerSprite extends Sprite {
 
 	public ZoomerSprite(TextureAtlas atlas, Vector2 position) {
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.NPC.ZOOMER), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.ZOOMER), PlayMode.LOOP);
 		injuryAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.NPC.ZOOMER_HIT), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.ZOOMER_HIT), PlayMode.LOOP);
 
 		stateTimer = 0;
 

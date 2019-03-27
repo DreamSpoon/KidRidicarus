@@ -15,7 +15,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.QQ;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.SMB_KV;
 import kidridicarus.game.powerup.SMB_Pow;
 
 /*
@@ -41,7 +41,7 @@ public class FloatingPoints extends Agent {
 		originalPosition = Agent.getStartPoint(properties);
 
 		// default to zero points
-		int amount = properties.get(GameKV.SMB.KEY_POINTAMOUNT, 0, Integer.class);
+		int amount = properties.get(SMB_KV.KEY_POINTAMOUNT, 0, Integer.class);
 		Powerup.tryPushPowerup(properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Agent.class),
 				new SMB_Pow.PointsPow(amount));
 if(amount == 0)
@@ -84,11 +84,11 @@ if(amount == 0)
 	public static ObjectProperties makeAP(int amount, boolean relative, Vector2 position, Agent parentAgent) {
 		// Create agent 1 tile above given position; for convenience since points usually start 1 tile above
 		// thing that caused points.
-		ObjectProperties props = Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_FLOATINGPOINTS,
+		ObjectProperties props = Agent.createPointAP(SMB_KV.AgentClassAlias.VAL_FLOATINGPOINTS,
 				position.cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y)));
-		props.put(GameKV.SMB.KEY_POINTAMOUNT, amount);
+		props.put(SMB_KV.KEY_POINTAMOUNT, amount);
 		if(relative)
-			props.put(GameKV.SMB.KEY_RELPOINTAMOUNT, CommonKV.VAL_TRUE);
+			props.put(SMB_KV.KEY_RELPOINTAMOUNT, CommonKV.VAL_TRUE);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		return props;
 	}

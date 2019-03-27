@@ -1,6 +1,6 @@
 package kidridicarus.game.info;
 
-public class MetroidAnim {
+public class MetroidGfx {
 	public class NPC {
 		private static final String DIR = "NPC/metroid/";
 		public static final String DEATH_POP =	DIR+"explode_big";

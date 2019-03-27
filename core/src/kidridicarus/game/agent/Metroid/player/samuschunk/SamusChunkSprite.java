@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction8;
-import kidridicarus.game.info.MetroidAnim;
+import kidridicarus.game.info.MetroidGfx;
 
 public class SamusChunkSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
@@ -24,27 +24,27 @@ public class SamusChunkSprite extends Sprite {
 		switch(startDir) {
 			case DOWN_RIGHT:
 				chunkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-						atlas.findRegions(MetroidAnim.Player.Dead.BOT_RIGHT), PlayMode.LOOP);
+						atlas.findRegions(MetroidGfx.Player.Dead.BOT_RIGHT), PlayMode.LOOP);
 				break;
 			case DOWN_LEFT:
 				chunkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-						atlas.findRegions(MetroidAnim.Player.Dead.BOT_LEFT), PlayMode.LOOP);
+						atlas.findRegions(MetroidGfx.Player.Dead.BOT_LEFT), PlayMode.LOOP);
 				break;
 			case RIGHT:
 				chunkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-						atlas.findRegions(MetroidAnim.Player.Dead.MID_RIGHT), PlayMode.LOOP);
+						atlas.findRegions(MetroidGfx.Player.Dead.MID_RIGHT), PlayMode.LOOP);
 				break;
 			case LEFT:
 				chunkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-						atlas.findRegions(MetroidAnim.Player.Dead.MID_LEFT), PlayMode.LOOP);
+						atlas.findRegions(MetroidGfx.Player.Dead.MID_LEFT), PlayMode.LOOP);
 				break;
 			case UP_RIGHT:
 				chunkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-						atlas.findRegions(MetroidAnim.Player.Dead.TOP_RIGHT), PlayMode.LOOP);
+						atlas.findRegions(MetroidGfx.Player.Dead.TOP_RIGHT), PlayMode.LOOP);
 				break;
 			case UP_LEFT:
 				chunkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-						atlas.findRegions(MetroidAnim.Player.Dead.TOP_LEFT), PlayMode.LOOP);
+						atlas.findRegions(MetroidGfx.Player.Dead.TOP_LEFT), PlayMode.LOOP);
 				break;
 			default:
 				throw new IllegalArgumentException("Cannot set sprite region for SamusChunk startDir = " + startDir);

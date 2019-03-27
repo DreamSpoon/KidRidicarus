@@ -4,12 +4,12 @@ import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
-import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;

@@ -14,18 +14,18 @@ import kidridicarus.game.agent.Metroid.player.samus.Samus;
 import kidridicarus.game.agent.Metroid.player.samuschunk.SamusChunk;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
 
-public class MetroidInfo {
+public class MetroidAgentClassList {
 	public static final AgentClassList METROID_AGENT_CLASSLIST = new AgentClassList( 
-			GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, DeathPop.class,
-			GameKV.Metroid.AgentClassAlias.VAL_DOOR, MetroidDoor.class,
-			GameKV.Metroid.AgentClassAlias.VAL_DOOR_NEXUS, MetroidDoorNexus.class,
-			GameKV.Metroid.AgentClassAlias.VAL_ENERGY, Energy.class,
-			GameKV.Metroid.AgentClassAlias.VAL_MARUMARI, MaruMari.class,
-			GameKV.Metroid.AgentClassAlias.VAL_SAMUS, Samus.class,
-			GameKV.Metroid.AgentClassAlias.VAL_SAMUS_CHUNK, SamusChunk.class,
-			GameKV.Metroid.AgentClassAlias.VAL_SAMUS_SHOT, SamusShot.class,
-			GameKV.Metroid.AgentClassAlias.VAL_RIO, Rio.class,
-			GameKV.Metroid.AgentClassAlias.VAL_SKREE, Skree.class,
-			GameKV.Metroid.AgentClassAlias.VAL_SKREE_EXP, SkreeShot.class,
-			GameKV.Metroid.AgentClassAlias.VAL_ZOOMER, Zoomer.class);
+			MetroidKV.AgentClassAlias.VAL_DEATH_POP, DeathPop.class,
+			MetroidKV.AgentClassAlias.VAL_DOOR, MetroidDoor.class,
+			MetroidKV.AgentClassAlias.VAL_DOOR_NEXUS, MetroidDoorNexus.class,
+			MetroidKV.AgentClassAlias.VAL_ENERGY, Energy.class,
+			MetroidKV.AgentClassAlias.VAL_MARUMARI, MaruMari.class,
+			MetroidKV.AgentClassAlias.VAL_SAMUS, Samus.class,
+			MetroidKV.AgentClassAlias.VAL_SAMUS_CHUNK, SamusChunk.class,
+			MetroidKV.AgentClassAlias.VAL_SAMUS_SHOT, SamusShot.class,
+			MetroidKV.AgentClassAlias.VAL_RIO, Rio.class,
+			MetroidKV.AgentClassAlias.VAL_SKREE, Skree.class,
+			MetroidKV.AgentClassAlias.VAL_SKREE_EXP, SkreeShot.class,
+			MetroidKV.AgentClassAlias.VAL_ZOOMER, Zoomer.class);
 }

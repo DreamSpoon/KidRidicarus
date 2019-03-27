@@ -4,12 +4,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.agent.despawnbox.DespawnBox;
+import kidridicarus.common.agent.playeragent.PlayerSpine;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
-import kidridicarus.game.agentspine.SMB.PlayerSpine;
 
 public class SamusSpine extends PlayerSpine {
 	private static final float GROUNDMOVE_XIMP = 0.28f;

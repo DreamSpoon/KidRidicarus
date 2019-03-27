@@ -7,7 +7,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.common.agent.PlayerAgentSupervisor;
+import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;

@@ -5,13 +5,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 
-import kidridicarus.game.info.MetroidAnim;
+import kidridicarus.game.info.MetroidGfx;
 
 public class EnergyTextDrawable extends BaseDrawable {
 	private TextureRegion textTexRegion;
 
 	public EnergyTextDrawable(TextureAtlas atlas) {
-		textTexRegion = atlas.findRegion(MetroidAnim.HUD.ENERGY_TEXT);
+		textTexRegion = atlas.findRegion(MetroidGfx.HUD.ENERGY_TEXT);
 		setMinWidth(24f);
 		setMinHeight(8f);
 	}

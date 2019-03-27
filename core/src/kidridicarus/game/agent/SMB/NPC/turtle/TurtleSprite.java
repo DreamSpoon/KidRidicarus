@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB.NPC.turtle.Turtle.MoveState;
-import kidridicarus.game.info.SMBAnim;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class TurtleSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
@@ -23,10 +23,10 @@ public class TurtleSprite extends Sprite {
 
 	public TurtleSprite(TextureAtlas atlas, Vector2 position) {
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMBAnim.NPC.TURTLE_WALK), PlayMode.LOOP);
+				atlas.findRegions(SMB_Gfx.NPC.TURTLE_WALK), PlayMode.LOOP);
 		wakeUpAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMBAnim.NPC.TURTLE_WAKEUP), PlayMode.LOOP);
-		insideShell = atlas.findRegion(SMBAnim.NPC.TURTLE_HIDE);
+				atlas.findRegions(SMB_Gfx.NPC.TURTLE_WAKEUP), PlayMode.LOOP);
+		insideShell = atlas.findRegion(SMB_Gfx.NPC.TURTLE_HIDE);
 
 		stateTimer = 0;
 

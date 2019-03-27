@@ -1,6 +1,8 @@
 package kidridicarus.game.info;
 
-public class SMBAnim {
+public class SMB_Gfx {
+	public static final String SMB1_FONT = "font/prstart.fnt";
+
 	public class General {
 		private static final String DIR = "general/SMB/";
 

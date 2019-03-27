@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.info.SMBAnim;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class BumpTileSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
@@ -25,8 +25,8 @@ public class BumpTileSprite extends Sprite {
 	// if prebumpTex is null it means this bumpable tile 
 	public BumpTileSprite(TextureAtlas atlas, TextureRegion prebumpTex) {
 		this.prebumpTex = prebumpTex;
-		emptyblockTex = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMBAnim.General.QBLOCKEMPTY), PlayMode.LOOP);
-		qBlockAnim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMBAnim.General.QBLOCK), PlayMode.LOOP);
+		emptyblockTex = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMB_Gfx.General.QBLOCKEMPTY), PlayMode.LOOP);
+		qBlockAnim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMB_Gfx.General.QBLOCK), PlayMode.LOOP);
 
 		doNotDraw = true;
 		if(prebumpTex != null) {

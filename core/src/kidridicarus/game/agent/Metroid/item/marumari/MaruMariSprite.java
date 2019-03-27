@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.info.MetroidAnim;
+import kidridicarus.game.info.MetroidGfx;
 
 public class MaruMariSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
@@ -20,7 +20,7 @@ public class MaruMariSprite extends Sprite {
 
 	public MaruMariSprite(TextureAtlas atlas, Vector2 position) {
 		mmAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidAnim.Item.MARUMARI), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Item.MARUMARI), PlayMode.LOOP);
 
 		stateTimer = 0f;
 		setRegion(mmAnim.getKeyFrame(0f));

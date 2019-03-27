@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.info.SMBAnim;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class FloatingPointsSprite extends Sprite {
 	private static final float DIGIT_W = UInfo.P2M(4);
@@ -24,19 +24,19 @@ public class FloatingPointsSprite extends Sprite {
 	public FloatingPointsSprite(TextureAtlas atlas, Vector2 position, int amount, boolean is1Up) {
 		this.position = position;
 		if(is1Up) {
-			sprite1UP = new Sprite(atlas.findRegion(SMBAnim.General.UP1DIGITS));
+			sprite1UP = new Sprite(atlas.findRegion(SMB_Gfx.General.UP1DIGITS));
 			sprite1UP.setBounds(sprite1UP.getX(), sprite1UP.getY(), DIGIT_W*4, DIGIT_H);
 			this.is1UP = true;
 			return;
 		}
 
 		dSprites = new Sprite[PDigit.values().length];
-		dSprites[PDigit.DIGIT_0.ordinal()] = new Sprite(atlas.findRegion(SMBAnim.General.POINTDIGIT0));
-		dSprites[PDigit.DIGIT_1.ordinal()] = new Sprite(atlas.findRegion(SMBAnim.General.POINTDIGIT1));
-		dSprites[PDigit.DIGIT_2.ordinal()] = new Sprite(atlas.findRegion(SMBAnim.General.POINTDIGIT2));
-		dSprites[PDigit.DIGIT_4.ordinal()] = new Sprite(atlas.findRegion(SMBAnim.General.POINTDIGIT4));
-		dSprites[PDigit.DIGIT_5.ordinal()] = new Sprite(atlas.findRegion(SMBAnim.General.POINTDIGIT5));
-		dSprites[PDigit.DIGIT_8.ordinal()] = new Sprite(atlas.findRegion(SMBAnim.General.POINTDIGIT8));
+		dSprites[PDigit.DIGIT_0.ordinal()] = new Sprite(atlas.findRegion(SMB_Gfx.General.POINTDIGIT0));
+		dSprites[PDigit.DIGIT_1.ordinal()] = new Sprite(atlas.findRegion(SMB_Gfx.General.POINTDIGIT1));
+		dSprites[PDigit.DIGIT_2.ordinal()] = new Sprite(atlas.findRegion(SMB_Gfx.General.POINTDIGIT2));
+		dSprites[PDigit.DIGIT_4.ordinal()] = new Sprite(atlas.findRegion(SMB_Gfx.General.POINTDIGIT4));
+		dSprites[PDigit.DIGIT_5.ordinal()] = new Sprite(atlas.findRegion(SMB_Gfx.General.POINTDIGIT5));
+		dSprites[PDigit.DIGIT_8.ordinal()] = new Sprite(atlas.findRegion(SMB_Gfx.General.POINTDIGIT8));
 
 		for(int i=0; i<PDigit.values().length; i++)
 			dSprites[i].setBounds(dSprites[i].getX(), dSprites[i].getY(), DIGIT_W, DIGIT_H);

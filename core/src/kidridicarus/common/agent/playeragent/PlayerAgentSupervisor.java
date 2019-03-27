@@ -1,4 +1,4 @@
-package kidridicarus.common.agent;
+package kidridicarus.common.agent.playeragent;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;

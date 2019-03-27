@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.Metroid.NPC.rio.Rio.MoveState;
-import kidridicarus.game.info.MetroidAnim;
+import kidridicarus.game.info.MetroidGfx;
 
 public class RioSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(24);
@@ -26,11 +26,11 @@ public class RioSprite extends Sprite {
 
 	public RioSprite(TextureAtlas atlas, Vector2 position) {
 		flapAnim = new Animation<TextureRegion>(ANIM_SPEED_FLAP,
-				atlas.findRegions(MetroidAnim.NPC.RIO), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.RIO), PlayMode.LOOP);
 		swoopAnim = new Animation<TextureRegion>(ANIM_SPEED_SWOOP,
-				atlas.findRegions(MetroidAnim.NPC.RIO),PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.RIO),PlayMode.LOOP);
 		injuryAnim = new Animation<TextureRegion>(ANIM_SPEED_FLAP,
-				atlas.findRegions(MetroidAnim.NPC.RIO_HIT), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.NPC.RIO_HIT), PlayMode.LOOP);
 
 		stateTimer = 0;
 

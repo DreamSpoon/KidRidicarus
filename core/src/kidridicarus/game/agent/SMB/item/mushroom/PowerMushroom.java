@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.powerup.Powerup;
-import kidridicarus.game.info.SMBAnim;
+import kidridicarus.game.info.SMB_Gfx;
 import kidridicarus.game.powerup.SMB_Pow;
 
 public class PowerMushroom extends BaseMushroom {
@@ -16,7 +16,7 @@ public class PowerMushroom extends BaseMushroom {
 
 	@Override
 	protected TextureRegion getMushroomTextureRegion(TextureAtlas atlas) {
-		return atlas.findRegion(SMBAnim.Item.MUSHROOM);
+		return atlas.findRegion(SMB_Gfx.Item.MUSHROOM);
 	}
 
 	@Override

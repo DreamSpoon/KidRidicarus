@@ -10,14 +10,14 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.PlayerAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.info.AudioInfo;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.MetroidAudio;
+import kidridicarus.game.info.MetroidKV;
 
 public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float MAX_HEALTH = 4f;
@@ -133,7 +133,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 					moveStateBeforeInjury = moveState;
 					velocityBeforeInjury = body.getVelocity().cpy();
 					body.zeroVelocity(true, true);
-					agency.getEar().playSound(AudioInfo.Sound.Metroid.NPC_BIG_HIT);
+					agency.getEar().playSound(MetroidAudio.Sound.NPC_BIG_HIT);
 				}
 				else if(moveStateTimer > INJURY_TIME) {
 					isInjured = false;
@@ -181,7 +181,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 
 				break;
 			case DEAD:
-				agency.getEar().playSound(AudioInfo.Sound.Metroid.NPC_BIG_HIT);
+				agency.getEar().playSound(MetroidAudio.Sound.NPC_BIG_HIT);
 				doPowerupDrop();
 				doDeathPop();
 				break;
@@ -213,11 +213,11 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 		// exit if drop not allowed
 		if(Math.random() > ITEM_DROP_RATE)
 			return;
-		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_ENERGY, body.getPosition()));
+		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_ENERGY, body.getPosition()));
 	}
 
 	private void doDeathPop() {
-		agency.createAgent(Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
+		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
 		agency.disposeAgent(this);
 		deadReturnToSpawner();
 	}

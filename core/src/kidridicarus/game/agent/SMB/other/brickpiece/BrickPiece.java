@@ -16,7 +16,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.SMB_KV;
 
 public class BrickPiece extends Agent implements DisposableAgent {
 	private static final float BODY_WIDTH = UInfo.P2M(8);
@@ -79,7 +79,7 @@ public class BrickPiece extends Agent implements DisposableAgent {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, Vector2 velocity, int startFrame) {
-		ObjectProperties props = Agent.createPointAP(GameKV.SMB.AgentClassAlias.VAL_BRICKPIECE, position, velocity);
+		ObjectProperties props = Agent.createPointAP(SMB_KV.AgentClassAlias.VAL_BRICKPIECE, position, velocity);
 		props.put(CommonKV.Sprite.KEY_STARTFRAME, startFrame);
 		return props;
 	}

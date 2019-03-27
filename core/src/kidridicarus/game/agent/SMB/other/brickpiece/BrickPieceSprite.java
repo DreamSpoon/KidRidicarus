@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.info.SMBAnim;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class BrickPieceSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
@@ -19,7 +19,7 @@ public class BrickPieceSprite extends Sprite {
 
 	public BrickPieceSprite(TextureAtlas atlas, Vector2 position, int startFrame) {
 		spinAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMBAnim.General.BRICKPIECE), PlayMode.LOOP);
+				atlas.findRegions(SMB_Gfx.General.BRICKPIECE), PlayMode.LOOP);
 
 		stateTimer = (float) startFrame * ANIM_SPEED;
 

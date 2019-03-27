@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.info.SMBAnim;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class StaticCoinSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
@@ -19,7 +19,7 @@ public class StaticCoinSprite extends Sprite {
 
 	public StaticCoinSprite(TextureAtlas atlas, Vector2 position) {
 		coinAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMBAnim.Item.COIN_STATIC), PlayMode.LOOP);
+				atlas.findRegions(SMB_Gfx.Item.COIN_STATIC), PlayMode.LOOP);
 
 		setRegion(coinAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);

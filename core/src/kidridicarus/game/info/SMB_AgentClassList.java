@@ -21,21 +21,21 @@ import kidridicarus.game.agent.SMB.player.mariofireball.MarioFireball;
  * Title: Super Mario Bros. Info
  * Desc: Info specific to Super Mario Bros.
  */
-public class SMBInfo {
+public class SMB_AgentClassList {
 	public static final AgentClassList SMB_AGENT_CLASSLIST = new AgentClassList( 
-			GameKV.SMB.AgentClassAlias.VAL_BRICKPIECE, BrickPiece.class,
-			GameKV.SMB.AgentClassAlias.VAL_BUMPTILE, BumpTile.class,
-			GameKV.SMB.AgentClassAlias.VAL_CASTLEFLAG, CastleFlag.class,
-			GameKV.SMB.AgentClassAlias.VAL_COIN, StaticCoin.class,
-			GameKV.SMB.AgentClassAlias.VAL_FIREFLOWER, FireFlower.class,
-			GameKV.SMB.AgentClassAlias.VAL_FLAGPOLE, Flagpole.class,
-			GameKV.SMB.AgentClassAlias.VAL_FLOATINGPOINTS, FloatingPoints.class,
-			GameKV.SMB.AgentClassAlias.VAL_GOOMBA, Goomba.class,
-			GameKV.SMB.AgentClassAlias.VAL_MARIO, Mario.class,
-			GameKV.SMB.AgentClassAlias.VAL_MARIOFIREBALL, MarioFireball.class,
-			GameKV.SMB.AgentClassAlias.VAL_MUSHROOM, PowerMushroom.class,
-			GameKV.SMB.AgentClassAlias.VAL_MUSH1UP, Mush1UP.class,
-			GameKV.SMB.AgentClassAlias.VAL_POWERSTAR, PowerStar.class,
-			GameKV.SMB.AgentClassAlias.VAL_SPINCOIN, SpinCoin.class,
-			GameKV.SMB.AgentClassAlias.VAL_TURTLE, Turtle.class);
+			SMB_KV.AgentClassAlias.VAL_BRICKPIECE, BrickPiece.class,
+			SMB_KV.AgentClassAlias.VAL_BUMPTILE, BumpTile.class,
+			SMB_KV.AgentClassAlias.VAL_CASTLEFLAG, CastleFlag.class,
+			SMB_KV.AgentClassAlias.VAL_COIN, StaticCoin.class,
+			SMB_KV.AgentClassAlias.VAL_FIREFLOWER, FireFlower.class,
+			SMB_KV.AgentClassAlias.VAL_FLAGPOLE, Flagpole.class,
+			SMB_KV.AgentClassAlias.VAL_FLOATINGPOINTS, FloatingPoints.class,
+			SMB_KV.AgentClassAlias.VAL_GOOMBA, Goomba.class,
+			SMB_KV.AgentClassAlias.VAL_MARIO, Mario.class,
+			SMB_KV.AgentClassAlias.VAL_MARIOFIREBALL, MarioFireball.class,
+			SMB_KV.AgentClassAlias.VAL_MUSHROOM, PowerMushroom.class,
+			SMB_KV.AgentClassAlias.VAL_MUSH1UP, Mush1UP.class,
+			SMB_KV.AgentClassAlias.VAL_POWERSTAR, PowerStar.class,
+			SMB_KV.AgentClassAlias.VAL_SPINCOIN, SpinCoin.class,
+			SMB_KV.AgentClassAlias.VAL_TURTLE, Turtle.class);
 }

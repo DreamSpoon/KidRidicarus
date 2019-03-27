@@ -17,7 +17,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.Direction8;
-import kidridicarus.game.info.GameKV;
+import kidridicarus.game.info.MetroidKV;
 
 public class SamusChunk extends Agent implements DisposableAgent {
 	private static final float BODY_WIDTH = UInfo.P2M(8);
@@ -86,7 +86,7 @@ public class SamusChunk extends Agent implements DisposableAgent {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, Vector2 velocity, Direction8 startDir) {
-		ObjectProperties props = Agent.createPointAP(GameKV.Metroid.AgentClassAlias.VAL_SAMUS_CHUNK,
+		ObjectProperties props = Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SAMUS_CHUNK,
 				position, velocity);
 		props.put(CommonKV.KEY_DIRECTION, startDir);
 		return props;

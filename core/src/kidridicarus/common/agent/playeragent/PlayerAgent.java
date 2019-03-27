@@ -1,4 +1,4 @@
-package kidridicarus.common.agent;
+package kidridicarus.common.agent.playeragent;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
