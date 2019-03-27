@@ -62,7 +62,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		perp = null;
 		despawnMe = false;
 
-		body = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		body = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

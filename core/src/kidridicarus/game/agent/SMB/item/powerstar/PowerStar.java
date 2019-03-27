@@ -102,7 +102,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 							public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 						};
 					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, drawListener);
-					body = new PowerStarBody(this, agency.getWorld(), initSpawnPosition);
+					body = new PowerStarBody(this, agency.getWorld(), initSpawnPosition, new Vector2(0f, 0f));
 
 					// start bounce to the right since this is first walk frame
 					body.applyImpulse(MAX_BOUNCE_VEL);

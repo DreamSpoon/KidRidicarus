@@ -104,7 +104,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 		setStateFromProperties(properties);
 
-		body = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		body = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f), false);
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -183,6 +183,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			processDamageTaken(delta);
 			processHeadBouncesGiven();
 			processPipeWarps(moveAdvice);
+
+			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 		}
 
 		// if a script is running with no move advice then switch to scripted body state and exit

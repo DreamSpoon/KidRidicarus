@@ -1,18 +1,17 @@
 package kidridicarus.common.agentspine;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
-import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 
-public class NPC_Spine extends GameAgentSpine {
+public class NPC_Spine extends MobileAgentSpine {
 	private SolidContactSensor horizontalMoveSensor;
 
-	public NPC_Spine(AgentBody body) {
+	public NPC_Spine(MobileAgentBody body) {
 		super(body);
 		horizontalMoveSensor = null;
 	}
@@ -52,13 +51,5 @@ public class NPC_Spine extends GameAgentSpine {
 
 	private boolean isMoveBlockedBySolid(boolean moveRight) {
 		return horizontalMoveSensor.isSolidOnThisSide(body.getBounds(), moveRight);
-	}
-
-	public PowerupTakeAgent getTouchingPowerupTaker() {
-		return agentSensor.getFirstContactByClass(PowerupTakeAgent.class);
-	}
-
-	public boolean isTouchingKeepAlive() {
-		return agentSensor.getFirstContactByClass(KeepAliveBox.class) != null;
 	}
 }

@@ -17,21 +17,19 @@ public class MetroidDoorNexusBody extends AgentBody {
 	private OneWayContactSensor playerSensor;
 
 	public MetroidDoorNexusBody(MetroidDoorNexus parent, World world, Rectangle bounds) {
-		super(parent);
-		defineBody(world, bounds);
+		super(parent, world);
+		defineBody(bounds);
 	}
 
-	private void defineBody(World world, Rectangle bounds) {
+	@Override
+	protected void defineBody(Rectangle bounds) {
+		// dispose the old body if it exists	
+		if(b2body != null)	
+			world.destroyBody(b2body);
+
 		setBodySize(bounds.width, bounds.height);
-		createBody(world, bounds);
-		createFixtures();
-	}
-
-	private void createBody(World world, Rectangle bounds) {
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
-	}
-
-	private void createFixtures() {
+		// player sensor fixture
 		playerSensor = new OneWayContactSensor(this, true);
 		B2DFactory.makeBoxFixture(b2body, playerSensor, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
 				getBodySize().x, getBodySize().y);

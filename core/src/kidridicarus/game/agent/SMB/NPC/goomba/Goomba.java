@@ -54,7 +54,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		despawnMe = false;
 		nextDeadState = DeadState.NONE;
 
-		body = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		body = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

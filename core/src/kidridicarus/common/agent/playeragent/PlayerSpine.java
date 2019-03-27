@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.GameAgentSpine;
+import kidridicarus.common.agentspine.MobileAgentSpine;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
@@ -19,7 +19,7 @@ import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 import kidridicarus.game.agent.SMB.player.mario.MarioBody;
 
-public class PlayerSpine extends GameAgentSpine {
+public class PlayerSpine extends MobileAgentSpine {
 	private static final float MIN_HEADBANG_VEL = 0.01f;
 
 	private AgentContactHoldSensor tileBumpPushSensor;

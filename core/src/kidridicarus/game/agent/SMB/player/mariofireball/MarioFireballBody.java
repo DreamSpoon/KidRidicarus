@@ -4,13 +4,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class MarioFireballBody extends AgentBody {
+public class MarioFireballBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(5f);
 	private static final float BODY_HEIGHT = UInfo.P2M(5f);
 	private static final float AGENT_SENSOR_WIDTH = UInfo.P2M(8f);
@@ -27,11 +27,16 @@ public class MarioFireballBody extends AgentBody {
 	private Vector2 prevVelocity;
 
 	public MarioFireballBody(MarioFireball parent, World world, Vector2 position, Vector2 velocity) {
-		super(parent);
-		defineBody(world, position, velocity);
+		super(parent, world);
+		defineBody(position, velocity);
 	}
 
-	private void defineBody(World world, Vector2 position, Vector2 velocity) {
+	@Override
+	protected void defineBody(Vector2 position, Vector2 velocity) {
+		// dispose the old body if it exists
+		if(b2body != null)
+			world.destroyBody(b2body);
+
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		createBody(world, position, velocity);
 		createFixtures();
@@ -57,7 +62,7 @@ public class MarioFireballBody extends AgentBody {
 	}
 
 	private void createAgentSensorFixture() {
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentContactSensor(), AS_CFCAT, AS_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				AGENT_SENSOR_WIDTH, AGENT_SENSOR_HEIGHT);
 	}
 

@@ -62,7 +62,8 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		despawnMe = false;
 		target = null;
 
-		body = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).cpy().add(SPECIAL_OFFSET));
+		body = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).cpy().add(SPECIAL_OFFSET),
+				new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

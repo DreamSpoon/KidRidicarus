@@ -16,11 +16,16 @@ public class LevelEndTriggerBody extends AgentBody {
 	private OneWayContactSensor playerSensor;
 
 	public LevelEndTriggerBody(LevelEndTrigger parent, World world, Rectangle bounds) {
-		super(parent);
-		defineBody(world, bounds);
+		super(parent, world);
+		defineBody(bounds);
 	}
 
-	private void defineBody(World world, Rectangle bounds) {
+	@Override
+	protected void defineBody(Rectangle bounds) {
+		// dispose the old body if it exists	
+		if(b2body != null)	
+			world.destroyBody(b2body);
+
 		setBodySize(bounds.width, bounds.height);
 		createBody(world, bounds);
 		createFixtures();

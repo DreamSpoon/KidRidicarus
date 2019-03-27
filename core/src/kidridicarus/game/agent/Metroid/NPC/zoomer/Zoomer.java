@@ -61,7 +61,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 		despawnMe = false;
 		moveState = MoveState.WALK;
 
-		body = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		body = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

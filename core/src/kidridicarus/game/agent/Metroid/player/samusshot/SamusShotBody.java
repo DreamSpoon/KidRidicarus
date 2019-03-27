@@ -5,15 +5,15 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SamusShotBody extends AgentBody {
+public class SamusShotBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(1);
 	private static final float BODY_HEIGHT = UInfo.P2M(1);
 	private static final float SENSOR_WIDTH = UInfo.P2M(3);
@@ -31,22 +31,19 @@ public class SamusShotBody extends AgentBody {
 	private AgentContactHoldSensor acSensor;
 
 	public SamusShotBody(SamusShot parent, World world, Vector2 position, Vector2 velocity) {
-		super(parent);
-		defineBody(world, position, velocity);
+		super(parent, world);
+		defineBody(position, velocity);
 	}
 
-	private void defineBody(World world, Vector2 position, Vector2 velocity) {
+	@Override
+	protected void defineBody(Vector2 position, Vector2 velocity) {
+		// dispose the old body if it exists	
+		if(b2body != null)	
+			world.destroyBody(b2body);
+
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		createBody(world, position, velocity);
-		createFixtures();
-	}
-
-	private void createBody(World world, Vector2 position, Vector2 velocity) {
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
-	}
-
-	private void createFixtures() {
 		// create main fixture
 		boundSensor = new SolidContactSensor(this);
 		B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_CFCAT, MAIN_CFMASK,

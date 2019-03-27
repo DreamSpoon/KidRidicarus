@@ -1,5 +1,6 @@
 package kidridicarus.game.agent.Metroid.other.metroiddoor;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
@@ -24,17 +25,22 @@ public class MetroidDoorBody extends AgentBody {
 	private Fixture mainBodyFixture;
 
 	public MetroidDoorBody(MetroidDoor parent, World world, Vector2 position) {
-		super(parent);
-		defineBody(world, position);
+		super(parent, world);
+		defineBody(new Rectangle(position.x, position.y, 0f, 0f));
 	}
 
-	private void defineBody(World world, Vector2 position) {
+	@Override
+	protected void defineBody(Rectangle bounds) {
+		// dispose the old body if it exists	
+		if(b2body != null)	
+			world.destroyBody(b2body);
+
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		// TODO: verify that catBits should be SOLID_BOUND_BIT, e.g.
 		//   -will this interfere with on ground detection?
 		//   -will zoomer be able to walk on door?
 		//   -will this agent be confused with a solid bound line seg from collision map?
-		b2body = B2DFactory.makeStaticBody(world, position);
+		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
 		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, this,
 				MAIN_ENABLED_CFCAT, MAIN_ENABLED_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}

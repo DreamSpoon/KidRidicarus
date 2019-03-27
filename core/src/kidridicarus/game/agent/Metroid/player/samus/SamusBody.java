@@ -49,22 +49,27 @@ public class SamusBody extends PlayerAgentBody {
 	private static final CFBitSeq PIPEWARP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq PIPEWARP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.PIPEWARP_BIT);
 
-	private World world;
 	private SamusSpine spine;
 	private boolean isAgentSensorEnabled;
 	private Fixture agentSensorFixture;
+	private boolean isBallForm;
 
-	public SamusBody(Samus parent, World world, Vector2 position) {
-		super(parent, position, new Vector2(0f, 0f));
+	public SamusBody(Samus parent, World world, Vector2 position, Vector2 velocity, boolean isBallForm) {
+		super(parent, world, position, new Vector2(0f, 0f));
 
+		this.isBallForm = isBallForm;
 		isAgentSensorEnabled = true;
 
-		this.world = world;
-		defineBody(position, false);
+		defineBody(position, velocity);
 	}
 
-	private void defineBody(Vector2 position, boolean ballForm) {
-		if(ballForm)
+	@Override
+	protected void defineBody(Vector2 position, Vector2 velocity) {
+		// dispose the old body if it exists	
+		if(b2body != null)	
+			world.destroyBody(b2body);
+
+		if(isBallForm)
 			setBodySize(BALL_BODY_WIDTH, BALL_BODY_HEIGHT);
 		else
 			setBodySize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
@@ -78,9 +83,6 @@ public class SamusBody extends PlayerAgentBody {
 	 * there's an opening that's barely large enough to enter (e.g. the starting point of metroid!).
 	 */
 	private void createBody(Vector2 position) {
-		// dispose the old body if it exists
-		if(b2body != null)
-			world.destroyBody(b2body);
 		b2body = B2DFactory.makeDynamicBody(world, position);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		resetPrevValues(position, new Vector2(0f, 0f));
@@ -132,12 +134,18 @@ public class SamusBody extends PlayerAgentBody {
 				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(getBodySize().x/2f, 0f));
 	}
 
-	public void setBallForm(boolean ballForm) {
+	public void setBallForm(boolean nextIsBallForm) {
+		// exit if no change in ball form
+		if(isBallForm == nextIsBallForm)
+			return;
+		// change form
 		Vector2 position = b2body.getPosition();
-		if(!ballForm)
+		if(!nextIsBallForm)
 			position.add(BALL_TO_STAND_OFFSET);
 
-		defineBody(position, ballForm);
+		isBallForm = nextIsBallForm;
+		// velocity is zeroed when switching forms
+		defineBody(position, new Vector2(0f, 0f));
 	}
 
 	public void useScriptedBodyState(ScriptedBodyState sbState) {
@@ -154,7 +162,7 @@ public class SamusBody extends PlayerAgentBody {
 			isAgentSensorEnabled = false;
 		}
 		if(!sbState.position.epsilonEquals(getPosition(), UInfo.POS_EPSILON))
-			defineBody(sbState.position, false);
+			defineBody(sbState.position, new Vector2(0f, 0f));
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 		if(sbState.gravityFactor != 0f ) {
 			// Body may "fall asleep" while no activity, also while gravityScale was zero,

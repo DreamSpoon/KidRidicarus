@@ -18,7 +18,6 @@ public abstract class FollowBoxBody extends AgentBody {
 	// TODO: is 50 pixels right?
 	private static final float RESET_DIST = UInfo.P2M(50);
 
-	private World world;
 	private MouseJoint mj;
 	private boolean isSensor;
 
@@ -27,13 +26,13 @@ public abstract class FollowBoxBody extends AgentBody {
 	protected abstract Object getSensorBoxUserData();
 
 	public FollowBoxBody(FollowBox parent, World world, Rectangle bounds, boolean isSensor) {
-		super(parent);
-		this.world = world;
+		super(parent, world);
 		this.isSensor = isSensor;
-		defineBody(world, bounds);
+		defineBody(bounds);
 	}
 
-	private void defineBody(World world, Rectangle bounds) {
+	@Override
+	protected void defineBody(Rectangle bounds) {
 		// destroy the old bodies if necessary
 		if(mj != null && mj.getBodyA() != null)
 			world.destroyBody(mj.getBodyA());	// destroy the temp bodyA used by mouse joint
@@ -91,7 +90,7 @@ public abstract class FollowBoxBody extends AgentBody {
 
 	private void resetPosition(Vector2 position) {
 		Rectangle oldBounds = getBounds();
-		defineBody(b2body.getWorld(), new Rectangle(position.x - oldBounds.width/2f,
+		defineBody(new Rectangle(position.x - oldBounds.width/2f,
 				position.y - oldBounds.height/2f, oldBounds.width, oldBounds.height));
 	}
 

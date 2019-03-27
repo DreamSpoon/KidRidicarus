@@ -49,21 +49,34 @@ public class MarioBody extends PlayerAgentBody {
 	private static final float FRICTION = 0f;
 	private static final float GRAVITY_SCALE = 2f;
 
-	private World world;
 	private MarioSpine spine;
 	private Fixture agentSensorFixture;
 	private boolean isAgentSensorEnabled;
+	private boolean isBigBody;
+	private boolean isDucking;
 
 	public MarioBody(Mario parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
 			boolean isDucking) {
-		super(parent, position, velocity);
+		super(parent, world, position, velocity);
 
-		this.world = world;
 		isAgentSensorEnabled = true;
-		defineBody(position, velocity, isBigBody, isDucking);
+		this.isBigBody = isBigBody;
+		this.isDucking = isDucking;
+		defineBody(position, velocity);
 	}
 
-	public void defineBody(Vector2 position, Vector2 velocity, boolean isBigBody, boolean isDucking) {
+	public void setMarioBodyStuff(Vector2 position, Vector2 velocity, boolean isBigBody, boolean isDucking) {
+		this.isBigBody = isBigBody;
+		this.isDucking = isDucking;
+		defineBody(position, velocity);
+	}
+
+	@Override
+	protected void defineBody(Vector2 position, Vector2 velocity) {
+		// dispose the old body if it exists
+		if(b2body != null)
+			world.destroyBody(b2body);
+
 		if(isBigBody && !isDucking)
 			setBodySize(BIG_BODY_SIZE.x, BIG_BODY_SIZE.y);
 		else
@@ -74,10 +87,6 @@ public class MarioBody extends PlayerAgentBody {
 	}
 
 	private void createBody(Vector2 position, Vector2 velocity) {
-		// dispose the old body if it exists
-		if(b2body != null)
-			world.destroyBody(b2body);
-
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		resetPrevValues(position, velocity);
@@ -160,8 +169,11 @@ public class MarioBody extends PlayerAgentBody {
 			agentSensorFixture.refilter();
 			isAgentSensorEnabled = false;
 		}
-		if(!sbState.position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON))
-			defineBody(sbState.position, new Vector2(0f, 0f), bigBody, false);
+		if(!sbState.position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON)) {
+			this.isBigBody = bigBody;
+			this.isDucking = false;
+			defineBody(sbState.position, new Vector2(0f, 0f));
+		}
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 	}
 }

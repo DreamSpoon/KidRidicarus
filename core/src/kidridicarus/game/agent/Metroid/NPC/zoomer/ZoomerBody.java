@@ -3,15 +3,15 @@ package kidridicarus.game.agent.Metroid.NPC.zoomer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.DiagonalDir4;
 
-public class ZoomerBody extends AgentBody {
+public class ZoomerBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float SENSOR_SIZEFACTOR = 1.2f;
@@ -24,38 +24,34 @@ public class ZoomerBody extends AgentBody {
 	private ZoomerSpine spine;
 	private Vector2 prevPosition;
 
-	public ZoomerBody(Zoomer parent, World world, Vector2 position) {
-		super(parent);
-		defineBody(world, position);
+	public ZoomerBody(Zoomer parent, World world, Vector2 position, Vector2 velocity) {
+		super(parent, world);
+		defineBody(position, velocity);
 	}
 
-	private void defineBody(World world, Vector2 position) {
+	@Override
+	protected void defineBody(Vector2 position, Vector2 velocity) {
+		// dispose the old body if it exists	
+		if(b2body != null)	
+			world.destroyBody(b2body);
+
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		createBody(world, position);
+		prevPosition = position.cpy();
+		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
+		b2body.setGravityScale(GRAVITY_SCALE);
+		spine = new ZoomerSpine(this);
 		createFixtures();
 	}
 
-	private void createBody(World world, Vector2 position) {
-		prevPosition = position.cpy();
-		b2body = B2DFactory.makeDynamicBody(world, position);
-		b2body.setGravityScale(GRAVITY_SCALE);
-		spine = new ZoomerSpine(this);
-	}
-
 	private void createFixtures() {
-		createMainFixture();
-		createAgentSensor();
-		createCrawlSensorFixtures();
-	}
-
-	private void createMainFixture() {
+		// main fixture
 		B2DFactory.makeBoxFixture(b2body, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
-	}
-
-	private void createAgentSensor() {
+		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				getBodySize().x, getBodySize().y);
+		// crawl sensor fixtures
+		createCrawlSensorFixtures();
 	}
 
 	private void createCrawlSensorFixtures() {
@@ -79,6 +75,17 @@ public class ZoomerBody extends AgentBody {
 
 	public void postUpdate() {
 		prevPosition.set(b2body.getPosition());
+	}
+
+	@Override
+	public void setPosition(Vector2 position, boolean keepVelocity) {
+		// exit if the new position is the same as current position and velocity can be maintained
+		if(position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON) && !keepVelocity)
+			return;
+		if(keepVelocity)
+			defineBody(position, b2body.getLinearVelocity());
+		else
+			defineBody(position, new Vector2(0f, 0f));
 	}
 
 	public Vector2 getPrevPosition() {

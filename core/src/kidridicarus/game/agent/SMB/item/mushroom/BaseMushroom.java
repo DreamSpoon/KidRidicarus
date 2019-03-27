@@ -131,7 +131,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 							public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 						};
 					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, drawListener);
-					body = new BaseMushroomBody(this, agency.getWorld(), initSpawnPosition);
+					body = new BaseMushroomBody(this, agency.getWorld(), initSpawnPosition, new Vector2(0f, 0f));
 				}
 				if(isFacingRight)
 					body.setVelocity(WALK_VEL, body.getVelocity().y);

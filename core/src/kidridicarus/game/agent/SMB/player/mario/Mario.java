@@ -311,7 +311,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 
 		// if growing then increase body size
 		if(newPowerState.isBigBody() && !powerState.isBigBody())
-			body.defineBody(body.getPosition().cpy().add(GROW_OFFSET), body.getVelocity(), true, false);
+			body.setMarioBodyStuff(body.getPosition().cpy().add(GROW_OFFSET), body.getVelocity(), true, false);
 		powerState = newPowerState;
 	}
 
@@ -357,8 +357,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			case FIRE:
 				powerState = PowerState.SMALL;
 				noDamageCooldown = NO_DAMAGE_TIME;
-				body.defineBody(body.getPosition().cpy().sub(GROW_OFFSET), body.getVelocity(), false, false);
-
+				body.setMarioBodyStuff(body.getPosition().cpy().sub(GROW_OFFSET), body.getVelocity(), false, false);
 				agency.getEar().playSound(SMB_Audio.Sound.POWERDOWN);
 				break;
 		}
@@ -367,12 +366,12 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
 		// if was not ducking and is now ducking then define ducking body
 		if(!moveState.isDuck() && nextMoveState.isDuck()) {
-			body.defineBody(body.getPosition().cpy().sub(DUCK_OFFSET), body.getVelocity(),
+			body.setMarioBodyStuff(body.getPosition().cpy().sub(DUCK_OFFSET), body.getVelocity(),
 					powerState.isBigBody(), true);
 		}
 		// if was ducking and is now now ducking then define regular body
 		else if(moveState.isDuck() && !nextMoveState.isDuck()) {
-			body.defineBody(body.getPosition().cpy().add(DUCK_OFFSET), body.getVelocity(),
+			body.setMarioBodyStuff(body.getPosition().cpy().add(DUCK_OFFSET), body.getVelocity(),
 					powerState.isBigBody(), false);
 		}
 

@@ -3,14 +3,14 @@ package kidridicarus.game.agentspine.SMB;
 import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.agentspine.NPC_Spine;
 
 public class HeadBounceSpine extends NPC_Spine {
 	private OneWayContactSensor headBounceSensor;
 
-	public HeadBounceSpine(AgentBody body) {
+	public HeadBounceSpine(MobileAgentBody body) {
 		super(body);
 		headBounceSensor = null;
 	}

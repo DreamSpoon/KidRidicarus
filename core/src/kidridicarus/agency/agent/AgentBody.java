@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
@@ -12,14 +13,22 @@ import kidridicarus.common.info.CommonCF;
 /*
  * Assume that an AgentBody can contain exactly one Box2D body. If more bodies are needed then a body lsit
  * scenario may be fruitful.
+ * Body is brute and dumb - any movements, forces, etc. can be accomplished simply by calling the body's methods,
+ * but the methods tend to the simple: setPosition, applyForce, applyImpulse, etc.
+ * However, for more organized/coordinated movements, use a spine instead (e.g. SamusSpine.applyDamageKick method).
  */
 public abstract class AgentBody implements Disposable {
 	private Agent parent;
+	protected World world;
 	protected Body b2body;
+	// bodySize is for information purposes only, it is not the current dimensions of b2body
 	private Vector2 bodySize;
 
-	public AgentBody(Agent parent) {
+	protected abstract void defineBody(Rectangle bounds);
+
+	public AgentBody(Agent parent, World world) {
 		this.parent = parent;
+		this.world = world;
 		b2body = null;
 		bodySize = new Vector2(0f, 0f);
 	}

@@ -50,7 +50,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 
 		setStateFromProperties();
 
-		body = new RioBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		body = new RioBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
