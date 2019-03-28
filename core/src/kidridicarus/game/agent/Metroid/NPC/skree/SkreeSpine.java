@@ -30,6 +30,18 @@ public class SkreeSpine extends NPC_Spine {
 	}
 
 	public void doFall(Agent target) {
+		// if the target exists then follow it horizontally...
+		if(target != null)
+			doHorizontalFollow(target);
+
+		// ... and fall downward.
+		if(body.getVelocity().y > -FALL_SPEED_MAX)
+			body.applyImpulse(new Vector2(0f, -FALL_IMPULSE));
+		else
+			body.setVelocity(body.getVelocity().x, -FALL_SPEED_MAX);
+	}
+
+	private void doHorizontalFollow(Agent target) {
 		// track target on the x axis
 		float xdiff = target.getPosition().x - body.getPosition().x;
 		if(xdiff > 0) {
@@ -52,11 +64,5 @@ public class SkreeSpine extends NPC_Spine {
 			else
 				body.setVelocity(-SIDE_SPEED_MAX, body.getVelocity().y);
 		}
-
-		// fall downward
-		if(body.getVelocity().y > -FALL_SPEED_MAX)
-			body.applyImpulse(new Vector2(0f, -FALL_IMPULSE));
-		else
-			body.setVelocity(body.getVelocity().x, -FALL_SPEED_MAX);
 	}
 }

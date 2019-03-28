@@ -37,7 +37,6 @@ public class CommonKV {
 		// passed to something that needs to expire immediately
 		public static final String KEY_EXPIRE = "expire";
 		public static final String KEY_RESPAWN_DEAD = "respawn_dead";
-		public static final String KEY_SPAWNER_AGENT = "spawner_agent";
 	}
 
 	public class DrawOrder {

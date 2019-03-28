@@ -5,13 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
 import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.info.CommonKV;
 
-public class AgentSpawner extends Agent implements EnableTakeAgent, DeadReturnTakeAgent, DisposableAgent {
+public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAgent {
 	private AgentSpawnerBody sbody;
 	private boolean isUsed;
 	private String spawnAgentClassAlias;
@@ -31,16 +31,13 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DeadReturnTa
 			return;
 
 		isUsed = true;
-		ObjectProperties props = Agent.createPointAP(spawnAgentClassAlias, sbody.getPosition());
-		// if spawned NPCs need to respawn then give them a ref to this spawner to allow callback when dead
-		if(isRespawnDead)
-			props.put(CommonKV.Spawn.KEY_SPAWNER_AGENT, this);
-		agency.createAgent(props);
-	}
-
-	@Override
-	public void onTakeDeadReturn(Agent deadAgent) {
-		isUsed = false;
+		Agent spawnedAgent = agency.createAgent(Agent.createPointAP(spawnAgentClassAlias, sbody.getPosition()));
+		if(isRespawnDead) {
+			agency.addAgentRemoveListener(this, new AgentRemoveListener(this, spawnedAgent) {
+					@Override
+					public void removedAgent() { isUsed = false; }
+				});
+		}
 	}
 
 	@Override

@@ -6,15 +6,14 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidKV;
@@ -38,9 +37,8 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private boolean isSwoopUp;
 	private MoveState moveStateBeforeInjury;
 	private Vector2 velocityBeforeInjury;
-
-	// TODO: what if agent is removed/disposed while being targeted? Agent.isDisposed()?
 	private PlayerAgent target;
+	private boolean isTargetRemoved;
 	private boolean isInjured;
 	private boolean isDead;
 	private boolean despawnMe;
@@ -76,8 +74,8 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 		isSwoopUp = false;
 		moveStateBeforeInjury = null;
 		velocityBeforeInjury = null;
-
 		target = null;
+		isTargetRemoved = false;
 		isInjured = false;
 		isDead = false;
 		despawnMe = false;
@@ -103,15 +101,22 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 		}
 
 		// if no target yet then check for new target
-		if(target == null)
+		if(target == null) {
 			target = body.getSpine().getPlayerContact();
+			// if found a target then add an AgentRemoveListener to allow de-targeting on death of target
+			if(target != null) {
+				agency.addAgentRemoveListener(this, new AgentRemoveListener(this, target) {
+						@Override
+						public void removedAgent() { isTargetRemoved = true; }
+					});
+			}
+		}
 	}
 
 	private void processMove(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			agency.disposeAgent(this);
-			deadReturnToSpawner();
 			return;
 		}
 
@@ -119,9 +124,11 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 		boolean isMoveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case FLAP:
-				// if previous move state was swoop then clear some flags
+				// if previous move state was swoop then zero velocity reset some flags
 				if(moveState == MoveState.SWOOP) {
+					body.zeroVelocity(true, true);
 					target = null;
+					isTargetRemoved = false;
 					isSwoopUp = false;
 					hasSwoopDirChanged = false;
 					swoopLowPoint = null;
@@ -143,33 +150,43 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 				}
 				break;
 			case SWOOP:
-				// first frame of swoop?
-				if(isMoveStateChanged) {
-					// if target on left then swoop left
-					if(target.getPosition().x < body.getPosition().x)
-						swoopDir = Direction4.LEFT;
-					else
-						swoopDir = Direction4.RIGHT;
-				}
-
-				// if sideways move is blocked by solid...
-				if(body.getSpine().isHorizontalMoveBlocked(swoopDir.isRight(), false)) {
-					// if swoop dir has changed already then don't change again, just swoop up
-					if(hasSwoopDirChanged) {
+				// If the target died / was removed then don't do the horizontal swoop check...
+				if(isTargetRemoved) {
+					// ... and if it's the first frame when the target has been removed then de-target and
+					// initiate swoop up.
+					if(target != null) {
+						target = null;
 						isSwoopUp = true;
 						swoopLowPoint = body.getPosition().cpy();
 					}
-					else {
-						// switch swoop direction
-						swoopDir = swoopDir.isRight() ? Direction4.LEFT : Direction4.RIGHT;
-						hasSwoopDirChanged = true;
-					}
 				}
-
-				// if target is above rio by a certain amount then do swoop up
-				if(body.getSpine().isTargetAboveMe(target.getPosition())) {
-					isSwoopUp = true;
-					swoopLowPoint = body.getPosition().cpy();
+				else {
+					// first frame of swoop?
+					if(isMoveStateChanged) {
+						// if target on left then swoop left
+						if(target.getPosition().x < body.getPosition().x)
+							swoopDir = Direction4.LEFT;
+						else
+							swoopDir = Direction4.RIGHT;
+					}
+					// if sideways move is blocked by solid...
+					if(body.getSpine().isHorizontalMoveBlocked(swoopDir.isRight(), false)) {
+						// if swoop dir has changed already then don't change again, just swoop up
+						if(hasSwoopDirChanged) {
+							isSwoopUp = true;
+							swoopLowPoint = body.getPosition().cpy();
+						}
+						else {
+							// switch swoop direction
+							swoopDir = swoopDir.isRight() ? Direction4.LEFT : Direction4.RIGHT;
+							hasSwoopDirChanged = true;
+						}
+					}
+					// if target is above rio by a certain amount then do swoop up
+					if(body.getSpine().isTargetAboveMe(target.getPosition())) {
+						isSwoopUp = true;
+						swoopLowPoint = body.getPosition().cpy();
+					}
 				}
 
 				// if swooping up then move up, away from swoop low point
@@ -202,7 +219,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 			else
 				return MoveState.SWOOP;
 		}
-		else if(target != null)
+		else if(target != null || isTargetRemoved)
 			return MoveState.SWOOP;
 		else
 			return MoveState.FLAP;
@@ -219,13 +236,6 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private void doDeathPop() {
 		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
 		agency.disposeAgent(this);
-		deadReturnToSpawner();
-	}
-
-	private void deadReturnToSpawner() {
-		Agent spawnerAgent = properties.get(CommonKV.Spawn.KEY_SPAWNER_AGENT, null, Agent.class);
-		if(spawnerAgent instanceof DeadReturnTakeAgent)
-			((DeadReturnTakeAgent) spawnerAgent).onTakeDeadReturn(this);
 	}
 
 	private void processSprite(float delta) {

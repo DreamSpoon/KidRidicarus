@@ -3,6 +3,7 @@ package kidridicarus.agency.agencychange;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.AllowOrder;
 
@@ -33,21 +34,27 @@ public class AgencyChangeQueue {
 		}
 	}
 
-	public void addAgentUpdateListener(AgentPlaceholder ap, AllowOrder newUpdateOrder,
-			AgentUpdateListener auListener) {
-		changeQ.add(new UpdateListenerChange(ap, newUpdateOrder, auListener, true));
+	public void addAgentUpdateListener(AgentPlaceholder ap, AllowOrder newUpdOrder, AgentUpdateListener auListener) {
+		changeQ.add(new AgentUpdateListenerChange(ap, newUpdOrder, auListener, true));
 	}
 
 	public void removeAgentUpdateListener(AgentPlaceholder ap, AgentUpdateListener auListener) {
-		changeQ.add(new UpdateListenerChange(ap, null, auListener, false));
+		changeQ.add(new AgentUpdateListenerChange(ap, null, auListener, false));
 	}
 
-	public void addAgentDrawListener(AgentPlaceholder ap, AllowOrder newDrawOrder,
-			AgentDrawListener adListener) {
-		changeQ.add(new DrawListenerChange(ap, newDrawOrder, adListener, true));
+	public void addAgentDrawListener(AgentPlaceholder ap, AllowOrder newDrawOrder, AgentDrawListener adListener) {
+		changeQ.add(new AgentDrawListenerChange(ap, newDrawOrder, adListener, true));
 	}
 
 	public void removeAgentDrawListener(AgentPlaceholder ap, AgentDrawListener adListener) {
-		changeQ.add(new DrawListenerChange(ap, null, adListener, false));
+		changeQ.add(new AgentDrawListenerChange(ap, null, adListener, false));
+	}
+
+	public void addAgentRemoveListener(AgentPlaceholder ap, AgentRemoveListener arListener) {
+		changeQ.add(new AgentRemoveListenerChange(ap, arListener, true));
+	}
+
+	public void removeAgentRemoveListener(AgentPlaceholder ap, AgentRemoveListener arListener) {
+		changeQ.add(new AgentRemoveListenerChange(ap, arListener, false));
 	}
 }

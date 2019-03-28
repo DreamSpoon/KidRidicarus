@@ -698,17 +698,11 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 
 	@Override
 	public Vector2 getPosition() {
-		// TODO replace this hack with creation of Agency.createAgentDisposeListener(samusAgent)
-		if(body == null)
-			return new Vector2();
 		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		// TODO replace this hack with creation of Agency.createAgentDisposeListener(samusAgent)
-		if(body == null)
-			return new Rectangle();
 		return body.getBounds();
 	}
 

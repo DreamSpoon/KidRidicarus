@@ -14,11 +14,13 @@ import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.agencychange.AgencyChangeQueue;
 import kidridicarus.agency.agencychange.AgencyChangeQueue.AgencyChangeCallback;
 import kidridicarus.agency.agencychange.AgentPlaceholder;
+import kidridicarus.agency.agencychange.AgentRemoveListenerChange;
 import kidridicarus.agency.agencychange.AllAgentListChange;
-import kidridicarus.agency.agencychange.DrawListenerChange;
-import kidridicarus.agency.agencychange.UpdateListenerChange;
+import kidridicarus.agency.agencychange.AgentDrawListenerChange;
+import kidridicarus.agency.agencychange.AgentUpdateListenerChange;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
@@ -112,10 +114,12 @@ public class Agency implements Disposable {
 				public void change(Object change) {
 					if(change instanceof AllAgentListChange)
 						doAgentListChange((AllAgentListChange) change);
-					else if(change instanceof UpdateListenerChange)
-						doUpdateListenerChange((UpdateListenerChange) change);
-					else if(change instanceof DrawListenerChange)
-						doDrawOrderChange((DrawListenerChange) change);
+					else if(change instanceof AgentUpdateListenerChange)
+						doUpdateListenerChange((AgentUpdateListenerChange) change);
+					else if(change instanceof AgentDrawListenerChange)
+						doDrawListenerChange((AgentDrawListenerChange) change);
+					else if(change instanceof AgentRemoveListenerChange)
+						doAgentRemoveListenerChange((AgentRemoveListenerChange) change);
 					else {
 						throw new IllegalArgumentException(
 								"Cannot process agency change; unknown agent change class: " + change);
@@ -131,18 +135,25 @@ public class Agency implements Disposable {
 			agencyIndex.removeAgent(alc.ap.agent);
 	}
 
-	private void doUpdateListenerChange(UpdateListenerChange ulc) {
+	private void doUpdateListenerChange(AgentUpdateListenerChange ulc) {
 		if(ulc.add)
 			agencyIndex.addUpdateListener(ulc.ap.agent, ulc.updateOrder, ulc.auListener);
 		else
 			agencyIndex.removeUpdateListener(ulc.ap.agent, ulc.auListener);
 	}
 
-	private void doDrawOrderChange(DrawListenerChange dlc) {
+	private void doDrawListenerChange(AgentDrawListenerChange dlc) {
 		if(dlc.add)
 			agencyIndex.addDrawListener(dlc.ap.agent, dlc.drawOrder, dlc.adListener);
 		else
 			agencyIndex.removeDrawListener(dlc.ap.agent, dlc.adListener);
+	}
+
+	private void doAgentRemoveListenerChange(AgentRemoveListenerChange change) {
+		if(change.add)
+			agencyIndex.addAgentRemoveListener(change.ap.agent, change.arListener);
+		else
+			agencyIndex.removeAgentRemoveListener(change.ap.agent, change.arListener);
 	}
 
 	public void createAgents(Collection<ObjectProperties> agentProps) {
@@ -205,6 +216,14 @@ public class Agency implements Disposable {
 
 	public void removeAgentDrawListener(Agent agent, AgentDrawListener adListener) {
 		agencyChangeQ.removeAgentDrawListener(new AgentPlaceholder(agent), adListener);
+	}
+
+	public void addAgentRemoveListener(Agent listeningAgent, AgentRemoveListener arListener) {
+		agencyChangeQ.addAgentRemoveListener(new AgentPlaceholder(listeningAgent), arListener);
+	}
+
+	public void removeAgentRemoveListener(Agent agent, AgentRemoveListener arListener) {
+		agencyChangeQ.removeAgentRemoveListener(new AgentPlaceholder(agent), arListener);
 	}
 
 	public void setAtlas(TextureAtlas atlas) {

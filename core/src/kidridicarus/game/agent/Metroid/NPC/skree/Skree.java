@@ -6,15 +6,14 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidKV;
@@ -45,9 +44,9 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	private MoveState moveStateBeforeInjury;
 	private Vector2 velocityBeforeInjury;
 	private boolean isDead;
-	// TODO: what if agent is removed/disposed while being targeted? Agent.isDisposed()?
-	private PlayerAgent target;
 	private boolean despawnMe;
+	private PlayerAgent target;
+	private boolean isTargetRemoved;
 
 	public Skree(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -61,6 +60,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		isDead = false;
 		despawnMe = false;
 		target = null;
+		isTargetRemoved = false;
 
 		body = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).cpy().add(SPECIAL_OFFSET),
 				new Vector2(0f, 0f));
@@ -99,15 +99,22 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		}
 
 		// if no target yet then check for new target
-		if(target == null)
+		if(target == null) {
 			target = body.getSpine().getPlayerContact();
+			// if found a target then add an AgentRemoveListener to allow de-targeting on death of target
+			if(target != null) {
+				agency.addAgentRemoveListener(this, new AgentRemoveListener(this, target) {
+						@Override
+						public void removedAgent() { isTargetRemoved = true; }
+					});
+			}
+		}
 	}
 
 	private void processMove(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			agency.disposeAgent(this);
-			deadReturnToSpawner();
 			return;
 		}
 
@@ -117,6 +124,10 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 			case SLEEP:
 				break;
 			case FALL:
+				// if the target has been removed then de-target
+				if(isTargetRemoved)
+					target = null;
+				// continue the fall, if the target is null then it will be ignored, and down move will continue
 				body.getSpine().doFall((Agent) target);
 				break;
 			case INJURY:
@@ -162,7 +173,8 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 			return MoveState.INJURY;
 		else if(body.getSpine().isOnGround())
 			return MoveState.ONGROUND;
-		else if(target != null)
+		// if something was targeted, even if it was removed, then do FALL state 
+		else if(target != null || isTargetRemoved)
 			return MoveState.FALL;
 		return MoveState.SLEEP;
 	}
@@ -176,7 +188,6 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 					body.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
 		}
 		agency.disposeAgent(this);
-		deadReturnToSpawner();
 	}
 
 	private void doPowerupDrop() {
@@ -189,13 +200,6 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	private void doDeathPop() {
 		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
 		agency.disposeAgent(this);
-		deadReturnToSpawner();
-	}
-
-	private void deadReturnToSpawner() {
-		Agent spawnerAgent = properties.get(CommonKV.Spawn.KEY_SPAWNER_AGENT, null, Agent.class);
-		if(spawnerAgent instanceof DeadReturnTakeAgent)
-			((DeadReturnTakeAgent) spawnerAgent).onTakeDeadReturn(this);
 	}
 
 	private void processSprite(float delta) {

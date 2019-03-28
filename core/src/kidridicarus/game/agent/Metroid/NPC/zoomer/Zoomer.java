@@ -11,10 +11,8 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.optional.DeadReturnTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidKV;
@@ -121,7 +119,6 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 		// if despawning then dispose self and exit
 		if(despawnMe) {
 			agency.disposeAgent(this);
-			deadReturnToSpawner();
 			return;
 		}
 
@@ -168,13 +165,6 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	private void doDeathPop() {
 		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
 		agency.disposeAgent(this);
-		deadReturnToSpawner();
-	}
-
-	private void deadReturnToSpawner() {
-		Agent spawnerAgent = properties.get(CommonKV.Spawn.KEY_SPAWNER_AGENT, null, Agent.class);
-		if(spawnerAgent instanceof DeadReturnTakeAgent)
-			((DeadReturnTakeAgent) spawnerAgent).onTakeDeadReturn(this);
 	}
 
 	private void doPostUpdate() {

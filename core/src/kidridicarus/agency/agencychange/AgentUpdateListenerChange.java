@@ -3,13 +3,13 @@ package kidridicarus.agency.agencychange;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.AllowOrder;
 
-public class UpdateListenerChange {
+public class AgentUpdateListenerChange {
 	public AgentPlaceholder ap;
 	public AllowOrder updateOrder;
 	public AgentUpdateListener auListener;
 	public boolean add;
 
-	public UpdateListenerChange(AgentPlaceholder ap, AllowOrder newUpdateOrder, AgentUpdateListener auListener,
+	public AgentUpdateListenerChange(AgentPlaceholder ap, AllowOrder newUpdateOrder, AgentUpdateListener auListener,
 			boolean add) {
 		this.ap = ap;
 		this.updateOrder = newUpdateOrder;
