@@ -297,7 +297,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 				new Vector2(-BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0));
 
 		agency.getEar().playSound(SMB_Audio.Sound.BREAK);
-		agency.disposeAgent(this);
+		agency.removeAgent(this);
 
 		Powerup.tryPushPowerup(bumpingAgent, new SMB_Pow.PointsPow(100));
 	}

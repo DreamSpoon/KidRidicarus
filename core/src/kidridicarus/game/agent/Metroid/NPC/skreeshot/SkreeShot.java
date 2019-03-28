@@ -49,7 +49,7 @@ public class SkreeShot extends Agent implements DisposableAgent {
 
 	private void doUpdate(float delta) {
 		if(moveStateTimer > LIVE_TIME) {
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 		}
 		else {
 			sprite.update(body.getPosition());

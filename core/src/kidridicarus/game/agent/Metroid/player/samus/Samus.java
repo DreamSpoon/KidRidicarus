@@ -9,7 +9,6 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
@@ -48,8 +47,7 @@ import kidridicarus.game.powerup.SMB_Pow;
  * TODO:
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
-public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTakeAgent, HeadBounceGiveAgent,
-		DisposableAgent {
+public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTakeAgent, HeadBounceGiveAgent {
 	enum MoveState { STAND, BALL_GRND, RUN, RUNSHOOT, PRE_JUMPSHOOT, JUMPSHOOT, JUMPSPINSHOOT,
 		PRE_JUMPSPIN, JUMPSPIN, PRE_JUMP, JUMP, BALL_AIR, CLIMB, DEAD;
 		public boolean equalsAny(MoveState ...otherStates) {
@@ -169,29 +167,34 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	private void doUpdate(float delta) {
-		processMove(delta, supervisor.pollMoveAdvice());
+		MoveAdvice moveAdvice = supervisor.pollMoveAdvice();
+		processContacts(delta, moveAdvice);
+		processMove(delta, moveAdvice);
 		processSprite(delta);
 	}
 
+	private void processContacts(float delta, MoveAdvice moveAdvice) {
+		if(supervisor.isRunningScriptNoMoveAdvice())
+			return;
+
+		// since body has zero bounciness, a manual check is needed while in ball form 
+		if(moveState.isBall())
+			body.getSpine().doBounceCheck();
+
+		processPowerupsReceived();
+		processDamageTaken(delta);
+		processHeadBouncesGiven();
+		processPipeWarps(moveAdvice);
+	}
+
 	private void processMove(float delta, MoveAdvice moveAdvice) {
-		if(!supervisor.isRunningScriptNoMoveAdvice()) {
-			// since body has zero bounciness, a manual check is needed while in ball form 
-			if(moveState.isBall())
-				body.getSpine().doBounceCheck();
-
-			processPowerupsReceived();
-			processDamageTaken(delta);
-			processHeadBouncesGiven();
-			processPipeWarps(moveAdvice);
-
-			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-		}
-
 		// if a script is running with no move advice then switch to scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
 			body.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
 			return;
 		}
+
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		boolean moveStateChanged = nextMoveState != moveState;
@@ -202,10 +205,11 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		else
 			processAirMove(delta, moveAdvice, nextMoveState);
 
+		if(nextMoveState != MoveState.DEAD)
+			processShoot(delta, moveAdvice);
+
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
-
-		processShoot(delta, moveAdvice);
 	}
 
 	private void processPowerupsReceived() {
@@ -230,8 +234,13 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	private void processDamageTaken(float delta) {
+		// check for contact with scroll kill box (insta-kill)
+		if(body.getSpine().isContactScrollKillBox()) {
+			energySupply = 0;
+			return;
+		}
 		// if invulnerable to damage then exit
-		if(noDamageCooldown > 0f) {
+		else if(noDamageCooldown > 0f) {
 			noDamageCooldown -= delta;
 			takeDamageAmount = 0f;
 			takeDmgOrigin.set(0f, 0f);
@@ -746,7 +755,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	@Override
-	public void disposeAgent() {
+	public void dispose() {
 		body.dispose();
 	}
 }

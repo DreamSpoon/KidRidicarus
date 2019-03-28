@@ -22,6 +22,8 @@ import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agent.scrollbox.ScrollBox;
+import kidridicarus.common.agent.scrollkillbox.ScrollKillBox;
 import kidridicarus.common.agent.scrollpushbox.ScrollPushBox;
 import kidridicarus.common.info.AudioInfo;
 import kidridicarus.common.info.CommonKV;
@@ -59,7 +61,7 @@ public class Guide implements Disposable {
 	private PlayerAgent playerAgent;
 	private AgentSpawnTrigger spawnTrigger;
 	private KeepAliveBox keepAliveBox;
-	private ScrollPushBox scrollPushBox;
+	private ScrollBox scrollBox;
 
 	private String currentMainMusicName;
 	private Music currentMainMusic;
@@ -67,7 +69,8 @@ public class Guide implements Disposable {
 	private Music currentSinglePlayMusic;
 	private Vector2 lastViewCenter;
 
-	// TODO this is hack - remove!
+	// TODO This is hack - remove! -used for registerMusic when rooms are spawned (rooms register their music
+	//   via Agency's Ear).
 	private AgencyDirector director;
 
 	public Guide(AgencyDirector director, Agency agency, AssetManager manager, Stage stageHUD) {
@@ -80,7 +83,7 @@ public class Guide implements Disposable {
 		playerAgent = null;
 		spawnTrigger = null;
 		keepAliveBox = null;
-		scrollPushBox = null;
+		scrollBox = null;
 		currentMainMusicName = "";
 		currentMainMusic = null;
 		isMainMusicPlaying = false;
@@ -114,14 +117,13 @@ public class Guide implements Disposable {
 		// ensure spawn trigger and keep alive box follow view center
 		spawnTrigger.setTarget(getViewCenter());
 		keepAliveBox.setTarget(getViewCenter());
-		if(scrollPushBox != null)
-			scrollPushBox.setTarget(getViewCenter());
+		if(scrollBox != null)
+			scrollBox.setTarget(getViewCenter());
 		// pass user input to player agent's supervisor
 		playerAgent.getSupervisor().setMoveAdvice(inputMoveAdvice);
 		playerAgent.getSupervisor().preUpdateAgency(delta);
 	}
 
-	// check / do player agent power character changes 
 	public void updateAgency() {
 		// check for "out-of-character" powerup received and change to appropriate character for powerup
 		Powerup nonCharPowerup = playerAgent.getSupervisor().getNonCharPowerups().getFirst();
@@ -132,28 +134,46 @@ public class Guide implements Disposable {
 
 	public void postUpdateAgency() {
 		playerAgent.getSupervisor().postUpdateAgency();
+		checkCreateScrollBox();
+	}
 
+	/*
+	 * As the player moves into and out of rooms, the scroll box may need to be created / removed / changed.
+	 */
+	private void checkCreateScrollBox() {
 		RoomBox currentRoom = playerAgent.getCurrentRoom();
 		if(currentRoom == null)
 			return;
 
-		// need to create a scroll push box?
-		if(scrollPushBox == null) {
-			Direction4 scrollDir = Direction4.fromString(
-					currentRoom.getProperty(CommonKV.Room.KEY_ROOM_SCROLL_DIR, "", String.class));
-			if(scrollDir != Direction4.NONE) {
-				scrollPushBox = (ScrollPushBox) agency.createAgent(
-						ScrollPushBox.makeAP(getViewCenter(), scrollDir));
+		Direction4 scrollDir = Direction4.fromString(
+				currentRoom.getProperty(CommonKV.Room.KEY_ROOM_SCROLL_DIR, "", String.class));
+		// if current room has scroll push box property = true then create/change to scroll push box
+		if(currentRoom.getProperty(CommonKV.Room.VAL_SCROLL_PUSH_BOX, false, Boolean.class)) {
+			if(scrollBox != null && !(scrollBox instanceof ScrollPushBox)) {
+				agency.removeAgent(scrollBox);
+				scrollBox.dispose();
+				scrollBox = null;
 			}
+			// if scroll box needs to be created and a valid scroll direction is given then create push box
+			if(scrollBox == null && scrollDir != Direction4.NONE)
+				scrollBox = (ScrollPushBox) agency.createAgent(ScrollPushBox.makeAP(getViewCenter(), scrollDir));
 		}
-		// need to remove a scroll push box?
-		else {
-			Direction4 scrollDir = Direction4.fromString(
-					currentRoom.getProperty(CommonKV.Room.KEY_ROOM_SCROLL_DIR, "", String.class));
-			if(scrollDir == Direction4.NONE) {
-				agency.disposeAgent(scrollPushBox);
-				scrollPushBox = null;
+		// if current room has scroll kill box property = true then create/change to scroll kill box
+		else if(currentRoom.getProperty(CommonKV.Room.VAL_SCROLL_KILL_BOX, false, Boolean.class)) {
+			if(scrollBox != null && !(scrollBox instanceof ScrollKillBox)) {
+				agency.removeAgent(scrollBox);
+				scrollBox.dispose();
+				scrollBox = null;
 			}
+			// if scroll box needs to be created and a valid scroll direction is given then create kill box
+			if(scrollBox == null && scrollDir != Direction4.NONE)
+				scrollBox = (ScrollKillBox) agency.createAgent(ScrollKillBox.makeAP(getViewCenter(), scrollDir));
+		}
+		// need to remove a scroll box?
+		else if(scrollBox != null) {
+			agency.removeAgent(scrollBox);
+			scrollBox.dispose();
+			scrollBox = null;
 		}
 	}
 
@@ -164,7 +184,8 @@ public class Guide implements Disposable {
 			currentPos = playerAgent.getPosition().add(SAFETY_RESPAWN_OFFSET);
 			facingRight = playerAgent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE,
 					Direction4.class) == Direction4.RIGHT;
-			agency.disposeAgent(playerAgent);
+			agency.removeAgent(playerAgent);
+			playerAgent.dispose();
 			playerAgent = null;
 		}
 
@@ -197,6 +218,7 @@ public class Guide implements Disposable {
 		}
 	}
 
+	// draw the player HUD after the game world has been rendered
 	public void postRenderFrame() {
 		playerAgent.getSupervisor().drawHUD();
 	}
@@ -209,6 +231,7 @@ public class Guide implements Disposable {
 		return playerAgent.getSupervisor().isGameOver();
 	}
 
+	// create an Ear to give to Agency, so that Guide can receive sound/music callbacks from Agency
 	public Ear createEar() {
 		return new Ear() {
 			@Override
@@ -311,6 +334,9 @@ public class Guide implements Disposable {
 	}
 
 	public boolean insertPlayerAgent(ObjectProperties playerAgentProperties) {
+		if(playerAgent != null)
+			throw new IllegalStateException("Guide can only insert one Agent (do more code;).");
+
 		// find main player spawner and return fail if none found
 		Agent spawner = getMainPlayerSpawner();
 		if(spawner == null)
@@ -371,6 +397,14 @@ public class Guide implements Disposable {
 
 	@Override
 	public void dispose() {
+		if(scrollBox != null)
+			scrollBox.dispose();
+		if(keepAliveBox != null)
+			keepAliveBox.dispose();
+		if(spawnTrigger != null)
+			spawnTrigger.dispose();
+		if(playerAgent != null)
+			playerAgent.dispose();
 		doStopMainMusic();
 		stageHUD.clear();
 	}

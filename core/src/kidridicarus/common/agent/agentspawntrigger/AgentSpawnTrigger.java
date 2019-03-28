@@ -2,11 +2,11 @@ package kidridicarus.common.agent.agentspawntrigger;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBox;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
@@ -14,7 +14,7 @@ import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 
-public class AgentSpawnTrigger extends FollowBox implements DisposableAgent {
+public class AgentSpawnTrigger extends FollowBox implements Disposable {
 	private AgentSpawnTriggerBody body;
 	private boolean enabled;
 
@@ -55,5 +55,10 @@ public class AgentSpawnTrigger extends FollowBox implements DisposableAgent {
 	public static ObjectProperties makeAP(Vector2 position, float width, float height) {
 		return Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_AGENTSPAWN_TRIGGER,
 				new Rectangle(position.x - width/2f, position.y - height/2f, width, height));
+	}
+
+	@Override
+	public void dispose() {
+		body.dispose();
 	}
 }

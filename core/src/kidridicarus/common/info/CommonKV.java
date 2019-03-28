@@ -27,6 +27,7 @@ public class CommonKV {
 		public static final String VAL_TILEMAP_META = "tilemap_meta";
 		public static final String VAL_KEEP_ALIVE_BOX = "keep_alive_box";
 		public static final String VAL_SCROLL_PUSH_BOX = "scroll_push_box";
+		public static final String VAL_SCROLL_KILL_BOX = "scroll_kill_box";
 	}
 
 	public class Spawn {
@@ -87,6 +88,9 @@ public class CommonKV {
 		public static final String VAL_ROOMTYPE_CENTER = "center";
 		public static final String VAL_ROOMTYPE_HSCROLL = "hscroll";
 		public static final String VAL_ROOMTYPE_VSCROLL = "vscroll";
+
+		public static final String VAL_SCROLL_PUSH_BOX = "scroll_push_box";
+		public static final String VAL_SCROLL_KILL_BOX = "scroll_kill_box";
 	}
 
 	public class Powerup {

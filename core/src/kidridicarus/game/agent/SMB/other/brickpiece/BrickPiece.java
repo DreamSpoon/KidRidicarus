@@ -54,7 +54,7 @@ public class BrickPiece extends Agent implements DisposableAgent {
 	private void doUpdate(float delta) {
 		bpSprite.update(b2body.getPosition(), delta);
 		if(b2body.getPosition().y < 0f || stateTimer > BRICK_DIE_TIME)
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 		stateTimer += delta;
 	}
 

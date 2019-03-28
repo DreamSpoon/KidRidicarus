@@ -129,7 +129,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 			case END:
 				agency.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(), powerupTaker));
 				// powerup used, so dispose this agent
-				agency.disposeAgent(this);
+				agency.removeAgent(this);
 				break;
 		}
 

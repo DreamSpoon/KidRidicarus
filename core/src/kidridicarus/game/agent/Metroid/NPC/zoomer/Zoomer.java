@@ -118,7 +118,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	private void processMove(float delta) {
 		// if despawning then dispose self and exit
 		if(despawnMe) {
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 			return;
 		}
 
@@ -164,7 +164,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 
 	private void doDeathPop() {
 		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
-		agency.disposeAgent(this);
+		agency.removeAgent(this);
 	}
 
 	private void doPostUpdate() {

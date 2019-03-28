@@ -116,7 +116,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private void processMove(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 			return;
 		}
 
@@ -235,7 +235,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 
 	private void doDeathPop() {
 		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
-		agency.disposeAgent(this);
+		agency.removeAgent(this);
 	}
 
 	private void processSprite(float delta) {

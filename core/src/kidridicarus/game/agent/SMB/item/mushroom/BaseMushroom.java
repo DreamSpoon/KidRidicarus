@@ -145,7 +145,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 			case END:
 				agency.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(), powerupTaker));
 				// powerup used, so dispose this agent
-				agency.disposeAgent(this);
+				agency.removeAgent(this);
 				break;
 		}
 

@@ -53,7 +53,7 @@ public class SpinCoin extends Agent implements DisposableAgent {
 		coinSprite.update(delta, b2body.getPosition());
 		stateTimer += delta;
 		if(stateTimer > COIN_SPIN_TIME)
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {

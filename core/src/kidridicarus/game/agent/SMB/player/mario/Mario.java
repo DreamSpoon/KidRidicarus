@@ -9,7 +9,6 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -34,8 +33,7 @@ import kidridicarus.game.info.SMB_Audio;
 import kidridicarus.game.info.SMB_KV;
 import kidridicarus.game.powerup.SMB_Pow;
 
-public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounceGiveAgent, PowerupTakeAgent,
-		DisposableAgent {
+public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounceGiveAgent, PowerupTakeAgent {
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
 	private static final Vector2 GROW_OFFSET = DUCK_OFFSET;
 	private static final float DEAD_DELAY_TIME = 3f;
@@ -498,7 +496,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
 		if(moveState.isDead())
 			return moveState;
-		else if(body.getSpine().isContactDespawn())
+		else if(body.getSpine().isContactDespawn() || body.getSpine().isContactScrollKillBox())
 			return MoveState.DEAD;
 		else if(isDeadBounce)
 			return MoveState.DEAD_BOUNCE;
@@ -746,7 +744,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	@Override
-	public void disposeAgent() {
+	public void dispose() {
 		body.dispose();
 	}
 }

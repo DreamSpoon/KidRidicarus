@@ -58,7 +58,7 @@ public class StaticCoin extends Agent implements DisposableAgent {
 	private void doUpdate() {
 		if(isPowerupUsed) {
 			agency.getEar().playSound(SMB_Audio.Sound.COIN);
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 		}
 
 		sprite.update(agency.getGlobalTimer());

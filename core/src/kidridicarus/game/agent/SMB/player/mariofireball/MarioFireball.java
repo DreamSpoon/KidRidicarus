@@ -110,7 +110,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 				}
 				// dispose agent after explode animation finishes
 				if(sprite.isExplodeAnimFinished())
-					agency.disposeAgent(this);
+					agency.removeAgent(this);
 				break;
 			case FLY:
 				// check for bounce (y velocity) and maintain x velocity

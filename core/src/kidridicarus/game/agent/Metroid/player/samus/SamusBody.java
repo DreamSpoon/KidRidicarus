@@ -40,7 +40,7 @@ public class SamusBody extends PlayerAgentBody {
 	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_ENABLED_CFMASK =
 			new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT,
-					CommonCF.Alias.POWERUP_BIT, CommonCF.Alias.DESPAWN_BIT);
+					CommonCF.Alias.POWERUP_BIT, CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.SCROLL_KILL_BIT);
 	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_DISABLED_CFMASK =
 			new CFBitSeq(CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
@@ -73,7 +73,7 @@ public class SamusBody extends PlayerAgentBody {
 			setBodySize(BALL_BODY_WIDTH, BALL_BODY_HEIGHT);
 		else
 			setBodySize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
-		createBody(position);
+		createBody(position, velocity);
 		createFixtures();
 	}
 
@@ -82,8 +82,8 @@ public class SamusBody extends PlayerAgentBody {
 	 * go round) so that it will "catch" on to ledges when samus is falling and is moving toward a wall and
 	 * there's an opening that's barely large enough to enter (e.g. the starting point of metroid!).
 	 */
-	private void createBody(Vector2 position) {
-		b2body = B2DFactory.makeDynamicBody(world, position);
+	private void createBody(Vector2 position, Vector2 velocity) {
+		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		resetPrevValues(position, new Vector2(0f, 0f));
 

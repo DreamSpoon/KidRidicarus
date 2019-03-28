@@ -59,7 +59,7 @@ public class Energy extends Agent implements DisposableAgent {
 
 	private void doUpdate(float delta) {
 		if(isPowerupUsed || moveStateTimer > LIVE_TIME)
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 
 		sprite.update(delta, body.getPosition());
 

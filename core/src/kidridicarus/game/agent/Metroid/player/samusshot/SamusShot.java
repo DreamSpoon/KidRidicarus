@@ -89,7 +89,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 				shotBody.zeroVelocity(true, true);
 				break;
 			case DEAD:
-				agency.disposeAgent(this);
+				agency.removeAgent(this);
 				break;
 		}
 

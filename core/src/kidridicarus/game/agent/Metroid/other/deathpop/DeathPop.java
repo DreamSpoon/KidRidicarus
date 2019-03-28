@@ -35,7 +35,7 @@ public class DeathPop extends Agent {
 
 	private void doUpdate(float delta) {
 		if(stateTimer > POP_TIME)
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 		dpSprite.update(delta);
 		stateTimer += delta;
 	}

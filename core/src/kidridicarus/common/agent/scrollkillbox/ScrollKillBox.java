@@ -1,4 +1,4 @@
-package kidridicarus.common.agent.scrollpushbox;
+package kidridicarus.common.agent.scrollkillbox;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -12,18 +12,18 @@ import kidridicarus.common.agent.scrollbox.ScrollBox;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
 
-public class ScrollPushBox extends ScrollBox {
-	public ScrollPushBox(Agency agency, ObjectProperties properties) {
+public class ScrollKillBox extends ScrollBox {
+	public ScrollKillBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 	}
 
 	@Override
 	public FollowBoxBody createScrollBoxBody(ScrollBox parent, World world, Rectangle bounds) {
-		return new ScrollPushBoxBody(parent, world, bounds);
+		return new ScrollKillBoxBody(parent, world, bounds);
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, Direction4 scrollDir) {
-		ObjectProperties ap = Agent.createPointAP(CommonKV.AgentClassAlias.VAL_SCROLL_PUSH_BOX, position);
+		ObjectProperties ap = Agent.createPointAP(CommonKV.AgentClassAlias.VAL_SCROLL_KILL_BOX, position);
 		ap.put(CommonKV.KEY_DIRECTION, scrollDir);
 		return ap;
 	}

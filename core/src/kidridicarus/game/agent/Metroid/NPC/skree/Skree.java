@@ -114,7 +114,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	private void processMove(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 			return;
 		}
 
@@ -187,7 +187,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 			agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SKREE_EXP,
 					body.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
 		}
-		agency.disposeAgent(this);
+		agency.removeAgent(this);
 	}
 
 	private void doPowerupDrop() {
@@ -199,7 +199,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 
 	private void doDeathPop() {
 		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
-		agency.disposeAgent(this);
+		agency.removeAgent(this);
 	}
 
 	private void processSprite(float delta) {

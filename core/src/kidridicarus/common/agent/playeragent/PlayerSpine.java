@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agent.scrollkillbox.ScrollKillBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.MobileAgentSpine;
 import kidridicarus.common.info.UInfo;
@@ -150,6 +151,10 @@ public class PlayerSpine extends MobileAgentSpine {
 
 	public RoomBox getCurrentRoom() {
 		return agentSensor.getFirstContactByClass(RoomBox.class);
+	}
+
+	public boolean isContactScrollKillBox() {
+		return agentSensor.getFirstContactByClass(ScrollKillBox.class) != null;
 	}
 
 	/*

@@ -97,6 +97,6 @@ public abstract class FollowBoxBody extends AgentBody {
 	@Override
 	public void dispose() {
 		world.destroyBody(mj.getBodyA());	// destroy the temp bodyA used by mouse joint
-		world.destroyBody(b2body);
+		super.dispose();
 	}
 }

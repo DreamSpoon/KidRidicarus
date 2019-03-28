@@ -64,7 +64,7 @@ if(amount == 0)
 		pointsSprite.update(originalPosition.cpy().add(0f, yOffset));
 		stateTimer += delta;
 		if(stateTimer > FLOAT_TIME)
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 	}
 
 	private void doDraw(AgencyDrawBatch batch){

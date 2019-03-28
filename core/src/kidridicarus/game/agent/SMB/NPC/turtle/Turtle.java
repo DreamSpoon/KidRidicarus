@@ -167,7 +167,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 
 	private void processMove(float delta) {
 		if(despawnMe) {
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 			return;
 		}
 
@@ -215,7 +215,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				}
 				// check the old deceased for timeout
 				else if(moveStateTimer > DIE_FALL_TIME)
-					agency.disposeAgent(this);
+					agency.removeAgent(this);
 				break;
 		}
 

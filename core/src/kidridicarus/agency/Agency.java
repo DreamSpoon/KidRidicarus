@@ -198,7 +198,7 @@ public class Agency implements Disposable {
 		return newlyCreatedAgent;
 	}
 
-	public void disposeAgent(Agent agent) {
+	public void removeAgent(Agent agent) {
 		agencyChangeQ.removeAgent(new AgentPlaceholder(agent));
 	}
 

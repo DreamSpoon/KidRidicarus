@@ -112,7 +112,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private void processMove(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 			return;
 		}
 
@@ -134,7 +134,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 					startBump();
 				// wait a short time and disappear
 				else if(moveStateTimer > GOOMBA_BUMP_FALL_TIME)
-					agency.disposeAgent(this);
+					agency.removeAgent(this);
 				break;
 			case DEAD_SQUISH:
 				// new squish?
@@ -142,7 +142,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 					startSquish();
 				// wait a short time and disappear
 				else if(moveStateTimer > GOOMBA_SQUISH_TIME)
-					agency.disposeAgent(this);
+					agency.removeAgent(this);
 				break;
 		}
 

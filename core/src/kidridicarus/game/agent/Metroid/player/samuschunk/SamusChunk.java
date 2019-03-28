@@ -59,7 +59,7 @@ public class SamusChunk extends Agent implements DisposableAgent {
 	private void doUpdate(float delta) {
 		sprite.update(b2body.getPosition(), delta);
 		if(b2body.getPosition().y < 0f || stateTimer > MAX_DROP_TIME)
-			agency.disposeAgent(this);
+			agency.removeAgent(this);
 		isDrawAllowed = !isDrawAllowed;	// flicker the sprite
 		stateTimer += delta;
 	}
