@@ -11,7 +11,7 @@ public class EnergyTextDrawable extends BaseDrawable {
 	private TextureRegion textTexRegion;
 
 	public EnergyTextDrawable(TextureAtlas atlas) {
-		textTexRegion = atlas.findRegion(MetroidGfx.HUD.ENERGY_TEXT);
+		textTexRegion = atlas.findRegion(MetroidGfx.Player.HUD.ENERGY_TEXT);
 		setMinWidth(24f);
 		setMinHeight(8f);
 	}

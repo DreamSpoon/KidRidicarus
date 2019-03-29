@@ -24,7 +24,7 @@ public class FloatingPointsSprite extends Sprite {
 	public FloatingPointsSprite(TextureAtlas atlas, Vector2 position, int amount, boolean is1Up) {
 		this.position = position;
 		if(is1Up) {
-			sprite1UP = new Sprite(atlas.findRegion(SMB_Gfx.General.UP1DIGITS));
+			sprite1UP = new Sprite(atlas.findRegion(SMB_Gfx.General.DIGITS_1UP));
 			sprite1UP.setBounds(sprite1UP.getX(), sprite1UP.getY(), DIGIT_W*4, DIGIT_H);
 			this.is1UP = true;
 			return;

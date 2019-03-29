@@ -1,10 +1,10 @@
 package kidridicarus.game.agent.SMB.player.mariofireball;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
@@ -25,10 +25,10 @@ public class MarioFireballSprite extends Sprite {
 
 	public MarioFireballSprite(TextureAtlas atlas, Vector2 position) {
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED_FLY,
-				atlas.findRegions(SMB_Gfx.General.FIREBALL), PlayMode.LOOP);
+				atlas.findRegions(SMB_Gfx.Player.MarioFireball.FIREBALL), PlayMode.LOOP);
 
 		explodeAnim = new Animation<TextureRegion>(ANIM_SPEED_EXP,
-				atlas.findRegions(SMB_Gfx.General.FIREBALL_EXP), PlayMode.NORMAL);
+				atlas.findRegions(SMB_Gfx.Player.MarioFireball.FIREBALL_EXP), PlayMode.NORMAL);
 
 		setRegion(ballAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPR_BALLWIDTH, SPR_BALLHEIGHT);

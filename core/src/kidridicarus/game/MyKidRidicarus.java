@@ -11,6 +11,7 @@ import kidridicarus.agency.AgentClassList;
 import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.info.CommonAgentClassList;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.game.info.KidIcarusAgentClassList;
 import kidridicarus.game.info.MetroidAgentClassList;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.SMB_AgentClassList;
@@ -67,10 +68,11 @@ public class MyKidRidicarus extends Game {
 		director = new AgencyDirector(manager, batch, atlas,
 				new AgentClassList(CommonAgentClassList.CORE_AGENT_CLASS_LIST,
 						SMB_AgentClassList.SMB_AGENT_CLASSLIST,
-						MetroidAgentClassList.METROID_AGENT_CLASSLIST));
+						MetroidAgentClassList.METROID_AGENT_CLASSLIST,
+						KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST));
 
 		// start playing first level
-		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME1, null));
+		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME3, null));
 	}
 
 	@Override

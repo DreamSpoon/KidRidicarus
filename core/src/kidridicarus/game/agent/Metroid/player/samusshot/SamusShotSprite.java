@@ -1,10 +1,10 @@
 package kidridicarus.game.agent.Metroid.player.samusshot;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
@@ -24,9 +24,9 @@ public class SamusShotSprite extends Sprite {
 
 	public SamusShotSprite(TextureAtlas atlas, Vector2 position) {
 		liveAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(MetroidGfx.Player.SHOT), PlayMode.LOOP);
+				atlas.findRegions(MetroidGfx.Player.SamusShot.SHOT), PlayMode.LOOP);
 		explodeAnim = new Animation<TextureRegion>(ANIM_SPEED,
-						atlas.findRegions(MetroidGfx.Player.SHOT_EXP), PlayMode.LOOP);
+						atlas.findRegions(MetroidGfx.Player.SamusShot.SHOT_EXP), PlayMode.LOOP);
 		stateTimer = 0f;
 		lastMoveState = null;
 		setRegion(liveAnim.getKeyFrame(0f));

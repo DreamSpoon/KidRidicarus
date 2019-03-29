@@ -13,6 +13,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB.player.mario.Mario.MoveState;
 import kidridicarus.game.agent.SMB.player.mario.Mario.PowerState;
+import kidridicarus.game.info.SMB_Gfx;
 
 public class MarioSprite extends Sprite {
 	private static final float SMLSPR_WIDTH = UInfo.P2M(16);
@@ -37,7 +38,6 @@ public class MarioSprite extends Sprite {
 	private static final int DEAD_POSE = 8;
 	private static final int CLIMB_POSE = 9;
 
-	private static final String[] GRP_NAMES = new String[] { "reg", "inv1", "inv2", "inv3", "fire" };
 	// big has exactly 1 more group than small, but the number are the same, sortof...
 	private static final int BIG_NUM_GRPS = 5;
 	private static final int BIG_REG_GRP = 0;
@@ -123,64 +123,76 @@ public class MarioSprite extends Sprite {
 		// brake
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[BRAKE_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_brake"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.SML_BRAKE + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[BRAKE_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_brake"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.BIG_BRAKE + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 
 		// climb
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[CLIMB_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_climb"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.SML_CLIMB + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[CLIMB_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_climb"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.BIG_CLIMB + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 
 		// dead
 		smlAnim[DEAD_POSE][SML_REG_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_reg_dead"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.SML_DEAD), PlayMode.LOOP);
 
 		// duck
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[DUCK_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_duck"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.BIG_DUCK + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 
 		// grow
 		bigAnim[GROW_POSE][BIG_REG_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-				atlas.findRegions("player/mario/big/mario_reg_grow"), PlayMode.NORMAL);
+				atlas.findRegions(SMB_Gfx.Player.Mario.BIG_GROW), PlayMode.NORMAL);
 
 		// jump
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[JUMP_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_jump"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.SML_JUMP + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[JUMP_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_jump"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.BIG_JUMP + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 
 		// run
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[RUN_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_run"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.SML_RUN + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[RUN_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_run"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.BIG_RUN + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 
 		// shrink
 		bigAnim[SHRINK_POSE][BIG_REG_GRP] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-				atlas.findRegions("player/mario/big/mario_reg_shrink"), PlayMode.NORMAL);
+				atlas.findRegions(SMB_Gfx.Player.Mario.BIG_SHRINK), PlayMode.NORMAL);
 
 		// stand
 		for(int i=0; i<SML_NUM_GRPS; i++)
 			smlAnim[STAND_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/sml/mario_" + GRP_NAMES[i] + "_stand"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.SML_STAND + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[STAND_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_stand"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.BIG_STAND + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 
 		// throw fireball
 		for(int i=0; i<BIG_NUM_GRPS; i++)
 			bigAnim[THROW_POSE][i] = new Animation<TextureRegion>(REG_ANIM_SPEED,
-					atlas.findRegions("player/mario/big/mario_" + GRP_NAMES[i] + "_throw"), PlayMode.LOOP);
+					atlas.findRegions(SMB_Gfx.Player.Mario.BIG_THROW + SMB_Gfx.Player.Mario.GRP_STR[i]),
+					PlayMode.LOOP);
 	}
 
 	public void update(float delta, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,

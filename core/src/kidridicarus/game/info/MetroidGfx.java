@@ -1,8 +1,10 @@
 package kidridicarus.game.info;
 
 public class MetroidGfx {
+	private static final String BASEDIR = "Metroid/";
+
 	public class NPC {
-		private static final String DIR = "NPC/metroid/";
+		private static final String DIR = BASEDIR+"NPC/";
 		public static final String DEATH_POP =	DIR+"explode_big";
 		public static final String DOOR_CLOSED =	DIR+"door_closed";
 		public static final String DOOR_CLOSING =	DIR+"door_closing";
@@ -18,30 +20,37 @@ public class MetroidGfx {
 	}
 
 	public class Item {
-		private static final String DIR = "item/metroid/";
+		private static final String DIR = BASEDIR+"item/";
 		public static final String ENERGY = DIR+"energy";
 		public static final String MARUMARI = DIR+"marumari";
 	}
 
 	public class Player {
-		private static final String DIR = "player/metroid/";
-		public static final String AIMRIGHT = DIR+"samus_aim_right";
-		public static final String AIMUP = DIR+"samus_aim_up";
-		public static final String BALL = DIR+"samus_ball";
-		public static final String CLIMB = DIR+"samus_climb";
-		public static final String JUMP = DIR+"samus_jump";
-		public static final String JUMP_AIMRIGHT = DIR+"samus_jump_aimright";
-		public static final String JUMP_AIMUP = DIR+"samus_jump_aimup";
-		public static final String JUMPSPIN = DIR+"samus_jumpspin";
-		public static final String RUN = DIR+"samus_run";
-		public static final String RUN_AIMRIGHT = DIR+"samus_run_aimright";
-		public static final String RUN_AIMUP = DIR+"samus_run_aimup";
-		public static final String SHOT = DIR+"shot_regular";
-		public static final String SHOT_EXP = DIR+"shot_explode";
+		private static final String DIR = BASEDIR+"player/";
+
+		public class Samus {
+			private static final String SUBDIR = DIR+"Samus/";
+			public static final String AIMRIGHT = SUBDIR+"samus_aim_right";
+			public static final String AIMUP = SUBDIR+"samus_aim_up";
+			public static final String BALL = SUBDIR+"samus_ball";
+			public static final String CLIMB = SUBDIR+"samus_climb";
+			public static final String JUMP = SUBDIR+"samus_jump";
+			public static final String JUMP_AIMRIGHT = SUBDIR+"samus_jump_aimright";
+			public static final String JUMP_AIMUP = SUBDIR+"samus_jump_aimup";
+			public static final String JUMPSPIN = SUBDIR+"samus_jumpspin";
+			public static final String RUN = SUBDIR+"samus_run";
+			public static final String RUN_AIMRIGHT = SUBDIR+"samus_run_aimright";
+			public static final String RUN_AIMUP = SUBDIR+"samus_run_aimup";
+		}
+
+		public class SamusShot {
+			private static final String SUBDIR = DIR+"SamusShot/";
+			public static final String SHOT = SUBDIR+"shot_regular";
+			public static final String SHOT_EXP = SUBDIR+"shot_explode";
+		}
 
 		public class Dead {
-			private static final String SUBDIR = DIR + "dead/";
-
+			private static final String SUBDIR = DIR + "SamusChunk/";
 			public static final String BOT_LEFT = SUBDIR + "bot_left";
 			public static final String MID_LEFT = SUBDIR + "mid_left";
 			public static final String TOP_LEFT = SUBDIR + "top_left";
@@ -49,13 +58,12 @@ public class MetroidGfx {
 			public static final String MID_RIGHT = SUBDIR + "mid_right";
 			public static final String TOP_RIGHT = SUBDIR + "top_right";
 		}
-	}
 
-	public class HUD {
-		private static final String DIR = "player/metroid/HUD/";
-
-		public static final String ENERGY_TEXT = DIR+"energy_text";
-		public static final String ENERGY_TANK_FULL = DIR+"energy_tank_full";
-		public static final String ENERGY_TANK_EMPTY = DIR+"energy_tank_empty";
+		public class HUD {
+			private static final String SUBDIR = DIR+"SamusHUD/";
+			public static final String ENERGY_TEXT = SUBDIR+"energy_text";
+			public static final String ENERGY_TANK_FULL = SUBDIR+"energy_tank_full";
+			public static final String ENERGY_TANK_EMPTY = SUBDIR+"energy_tank_empty";
+		}
 	}
 }
