@@ -17,6 +17,7 @@ public class CommonCF {
 		public static final String SPAWNTRIGGER_BIT = "bit_spawntrigger";
 		public static final String SCROLL_PUSH_BIT = "bit_scroll_push";
 		public static final String SCROLL_KILL_BIT = "bit_scroll_kill";
+		public static final String SEMISOLID_FLOOR_BIT = "bit_semisolid_floor";
 	}
 
 	public static final CFBitSeq NO_CONTACT_CFCAT = new CFBitSeq();

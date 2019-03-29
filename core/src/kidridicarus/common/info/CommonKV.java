@@ -28,6 +28,7 @@ public class CommonKV {
 		public static final String VAL_KEEP_ALIVE_BOX = "keep_alive_box";
 		public static final String VAL_SCROLL_PUSH_BOX = "scroll_push_box";
 		public static final String VAL_SCROLL_KILL_BOX = "scroll_kill_box";
+		public static final String VAL_SEMI_SOLID_FLOOR = "semi_solid_floor";
 	}
 
 	public class Spawn {

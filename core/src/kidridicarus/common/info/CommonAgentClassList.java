@@ -10,6 +10,7 @@ import kidridicarus.common.agent.playerspawner.PlayerSpawner;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agent.scrollkillbox.ScrollKillBox;
 import kidridicarus.common.agent.scrollpushbox.ScrollPushBox;
+import kidridicarus.common.agent.semisolidfloor.SemiSolidFloor;
 import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.metaagent.tiledmap.drawlayer.DrawLayerAgent;
@@ -29,5 +30,6 @@ public class CommonAgentClassList {
 			CommonKV.AgentClassAlias.VAL_ROOM, RoomBox.class,
 			CommonKV.AgentClassAlias.VAL_SCROLL_KILL_BOX, ScrollKillBox.class,
 			CommonKV.AgentClassAlias.VAL_SCROLL_PUSH_BOX, ScrollPushBox.class,
+			CommonKV.AgentClassAlias.VAL_SEMI_SOLID_FLOOR, SemiSolidFloor.class,
 			CommonKV.AgentClassAlias.VAL_TILEMAP_META, TiledMapMetaAgent.class);
 }

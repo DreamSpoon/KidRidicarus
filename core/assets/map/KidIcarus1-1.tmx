@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="18" height="176" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="12">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="18" height="176" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="15">
  <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
   <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
  </tileset>
@@ -8,7 +8,7 @@
    <property name="draworder" value="map_background"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztwwENAAAMw6DOv+kruANIWDVVVVVVVVVVVVVVVVXfB6QuDGE=
+   eJztzjERAAAIBKB3s39ia6jHwE4lKQAAAAAAAAAA4LxecAAAAPhqAAJpDGg=
   </data>
  </layer>
  <layer id="10" name="scenery" width="18" height="176">
@@ -44,7 +44,7 @@
    <property name="spawnmain" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzjEBAAAIA6AlsX9ME+zWAxKQAAAAAAAAAAAAAAAAH8x1gGoBYcgAHw==
+   eJztzjENAAAIA7Apwb9MRCyEp1XQBAAAAAAAAAAA4NZ8BwAAAEoLst8AHw==
   </data>
  </layer>
  <layer id="14" name="shemum" width="18" height="176">
@@ -56,7 +56,13 @@
    eJztzgEJAAAMA6A1eP+2jzEYmsAEAAAAAAAAAAAAAIBV1w7AiAdi9AAQ
   </data>
  </layer>
- <objectgroup id="6" name="levelend">
+ <objectgroup id="15" name="semisolid_floor">
+  <properties>
+   <property name="agentclass" value="semi_solid_floor"/>
+  </properties>
+  <object id="14" x="48" y="2048" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="6" name="levelend" visible="0">
   <properties>
    <property name="agentclass" value="levelend_trigger"/>
   </properties>
@@ -76,7 +82,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="rooms">
+ <objectgroup id="5" name="rooms" visible="0">
   <properties>
    <property name="agentclass" value="room"/>
   </properties>

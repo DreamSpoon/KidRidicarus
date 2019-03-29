@@ -34,8 +34,8 @@ public class SamusBody extends PlayerAgentBody {
 
 	// main body
 	private static final CFBitSeq MAINBODY_CFCAT = new CFBitSeq(Alias.AGENT_BIT);
-	private static final CFBitSeq MAINBODY_CFMASK =
-			new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.SCROLL_PUSH_BIT);
+	private static final CFBitSeq MAINBODY_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
+			CommonCF.Alias.SCROLL_PUSH_BIT, CommonCF.Alias.SEMISOLID_FLOOR_BIT);
 	// agent sensor
 	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_ENABLED_CFMASK =
@@ -48,6 +48,10 @@ public class SamusBody extends PlayerAgentBody {
 	private static final CFBitSeq TILEBUMP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 	private static final CFBitSeq PIPEWARP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq PIPEWARP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.PIPEWARP_BIT);
+
+	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
+			CommonCF.Alias.SEMISOLID_FLOOR_BIT);
 
 	private SamusSpine spine;
 	private boolean isAgentSensorEnabled;
@@ -108,7 +112,7 @@ public class SamusBody extends PlayerAgentBody {
 		}
 		// create on ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
-				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
+				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create tilebump sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createTileBumpPushSensor(),
