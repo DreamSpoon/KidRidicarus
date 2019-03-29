@@ -12,6 +12,7 @@ import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.info.CommonAgentClassList;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.info.KidIcarusAgentClassList;
+import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.MetroidAgentClassList;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.SMB_AgentClassList;
@@ -55,6 +56,8 @@ public class MyKidRidicarus extends Game {
 		manager.load(SMB_Audio.Sound.FIREBALL, Sound.class);
 		manager.load(SMB_Audio.Sound.FLAGPOLE, Sound.class);
 		manager.load(SMB_Audio.Sound.UP1, Sound.class);
+		manager.load(KidIcarusAudio.Sound.SMALL_POOF, Sound.class);
+		manager.load(KidIcarusAudio.Sound.HEART_PICKUP, Sound.class);
 		manager.load(MetroidAudio.Sound.DOOR, Sound.class);
 		manager.load(MetroidAudio.Sound.ENERGY_PICKUP, Sound.class);
 		manager.load(MetroidAudio.Sound.HURT, Sound.class);
@@ -72,7 +75,7 @@ public class MyKidRidicarus extends Game {
 						KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST));
 
 		// start playing first level
-		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME1, null));
+		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME3, null));
 	}
 
 	@Override

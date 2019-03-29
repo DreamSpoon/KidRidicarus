@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.KidIcarus.NPC.smallpoof;
+package kidridicarus.game.agent.KidIcarus.other.smallpoof;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;

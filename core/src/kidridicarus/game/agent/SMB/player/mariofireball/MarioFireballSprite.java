@@ -42,6 +42,7 @@ public class MarioFireballSprite extends Sprite {
 		boolean parentMoveStateChanged = parentMoveState != parentPrevMoveState;
 		switch(parentMoveState) {
 			case FLY:
+			case DESPAWN:
 				setRegion(ballAnim.getKeyFrame(stateTimer));
 				break;
 			case EXPLODE:

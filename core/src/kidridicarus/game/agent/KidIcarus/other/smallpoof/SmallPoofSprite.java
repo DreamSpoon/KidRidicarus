@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.KidIcarus.NPC.smallpoof;
+package kidridicarus.game.agent.KidIcarus.other.smallpoof;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;

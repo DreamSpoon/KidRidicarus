@@ -14,13 +14,14 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
+import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusKV;
 
 public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final float STRIKE_DELAY = 1/6f;
 
-	enum MoveState { WALK, FALL, DEAD, STRIKE_GROUND }
+	private enum MoveState { WALK, FALL, DEAD, STRIKE_GROUND }
 
 	private float moveStateTimer;
 	private MoveState moveState;
@@ -101,7 +102,10 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 			case DEAD:
 				agency.createAgent(
 						Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_SMALL_POOF, body.getPosition()));
+				agency.createAgent(
+						Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_HEART1, body.getPosition()));
 				agency.removeAgent(this);
+				agency.getEar().playSound(KidIcarusAudio.Sound.SMALL_POOF);
 				break;
 		}
 

@@ -220,7 +220,7 @@ public class AgencyIndex {
 	 * 2) Disassociate all listeners associated with the given Agent,
 	 * 3) Ensuring other Agent's references to these listeners are also disassociated. 
 	 */
-	public void removeAllAgentRemoveListeners(Agent agent) {
+	private void removeAllAgentRemoveListeners(Agent agent) {
 		AgentWrapper myWrapper = safeGetAgentWrapper(agent);
 
 		// first, do all Agent removal callbacks (the other Agents are listening for this Agent's removal)
