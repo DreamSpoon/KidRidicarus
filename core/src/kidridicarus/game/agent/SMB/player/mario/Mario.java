@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.AgencyDrawBatch;
@@ -37,10 +38,8 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
 	private static final Vector2 GROW_OFFSET = DUCK_OFFSET;
 	private static final float DEAD_DELAY_TIME = 3f;
-	private static final float MAX_FIREBALL_JUICE = 2f;
-	private static final float JUICE_PER_FIREBALL = 1.3f;
 	private static final float FIREBALL_OFFSET = UInfo.P2M(8f);
-	private static final float COOLDOWN_PER_FIREBALL = 0.25f;
+	private static final float SHOOT_COOLDOWN = 1/20f;
 	private static final float NO_DAMAGE_TIME = 3f;
 	private static final Vector2 DEAD_BOUNCE_IMP = new Vector2(0, 6f);
 	private static final float POWERSTAR_MAXTIME = 15f;
@@ -78,8 +77,9 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private boolean isJumpForceContinue;
 	// next head bump is denied immediately following headbump and lasts until Agent moves downward
 	private boolean isHeadBumped;
-	private float fireballJuice;
+	private int activeFireballCount;
 	private float shootCooldown;
+	private boolean shootAdviceReset;
 	private boolean didShootFireballThisFrame;
 	private boolean gaveHeadBounce;
 	// list of powerups received during contact update
@@ -144,8 +144,9 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		isNextJumpDelayed = false;
 		isJumpForceContinue = false;
 		isHeadBumped = false;
-		fireballJuice = MAX_FIREBALL_JUICE;
+		activeFireballCount = 0;
 		shootCooldown = 0f;
+		shootAdviceReset = true;
 		didShootFireballThisFrame = false;
 		gaveHeadBounce = false;
 		powerupsReceived = new LinkedList<Powerup>();
@@ -221,8 +222,6 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		else
 			processAirMove(moveAdvice, nextMoveState);
 
-		// recharge the fireball juice, stopping at max fill line
-		fireballJuice = fireballJuice+delta > MAX_FIREBALL_JUICE ? MAX_FIREBALL_JUICE : fireballJuice+delta;
 		// decrement fireball shoot cooldown timer
 		shootCooldown = shootCooldown < delta ? 0f : shootCooldown-delta;
 		// decrement starpower cooldown timer
@@ -321,19 +320,34 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private void processFireball(MoveAdvice moveAdvice) {
 		// check do shoot fireball
 		didShootFireballThisFrame = false;
-		if(moveAdvice.action0 && isFireBallAllowed()) {
-			fireballJuice -= JUICE_PER_FIREBALL;
-			shootCooldown += COOLDOWN_PER_FIREBALL;
-			didShootFireballThisFrame = true;
-			Vector2 offset;
-			if(isFacingRight)
-				offset = body.getPosition().cpy().add(FIREBALL_OFFSET, 0f);
-			else
-				offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
-
-			agency.createAgent(MarioFireball.makeAP(offset, isFacingRight, this));
-			agency.getEar().playSound(SMB_Audio.Sound.FIREBALL);
+		if(!moveAdvice.action0) {
+			shootAdviceReset = true;
+			return;
 		}
+		if(!isFireBallAllowed())
+			return;
+
+		activeFireballCount++;
+		shootCooldown += SHOOT_COOLDOWN;
+		didShootFireballThisFrame = true;
+		// do not shoot again until shoot advice has been deactivated for at least 1 frame
+		shootAdviceReset = false;
+
+		Vector2 offset;
+		if(isFacingRight)
+			offset = body.getPosition().cpy().add(FIREBALL_OFFSET, 0f);
+		else
+			offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
+
+		// create fireball with remove listener attached, so new fireballs can be created when old ones expire
+		MarioFireball fireball = (MarioFireball) agency.createAgent(
+				MarioFireball.makeAP(offset, isFacingRight, this));
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, fireball) {
+				@Override
+				public void removedAgent() { activeFireballCount--; }
+			});
+		// boom goes the dynamite
+		agency.getEar().playSound(SMB_Audio.Sound.FIREBALL);
 	}
 
 	private void processDamageTaken(float delta) {
@@ -509,8 +523,8 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	private boolean isFireBallAllowed() {
-		return !(fireballJuice <= 0f || powerState != PowerState.FIRE || shootCooldown > 0f ||
-				moveState.isDuckNoSlide());
+		return activeFireballCount < 2 && powerState == PowerState.FIRE && shootCooldown <= 0f &&
+				!moveState.isDuckNoSlide() && shootAdviceReset;
 	}
 
 	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {

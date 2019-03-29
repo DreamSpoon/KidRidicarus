@@ -21,7 +21,7 @@ import kidridicarus.game.info.SMB_KV;
 public class MarioFireball extends Agent implements DisposableAgent {
 	private static final float DAMAGE = 1f;
 
-	enum MoveState { FLY, EXPLODE }
+	enum MoveState { FLY, EXPLODE, DESPAWN }
 	private enum HitType { NONE, BOUNDARY, AGENT }
 
 	private Mario parent;
@@ -99,6 +99,10 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		MoveState nextMoveState = getNextMoveState();
 		boolean moveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
+			case FLY:
+				// check for bounce (y velocity) and maintain x velocity
+				body.getSpine().doVelocityCheck();
+				break;
 			case EXPLODE:
 				if(moveStateChanged) {
 					body.getSpine().startExplode();
@@ -112,9 +116,8 @@ public class MarioFireball extends Agent implements DisposableAgent {
 				if(sprite.isExplodeAnimFinished())
 					agency.removeAgent(this);
 				break;
-			case FLY:
-				// check for bounce (y velocity) and maintain x velocity
-				body.getSpine().doVelocityCheck();
+			case DESPAWN:
+				agency.removeAgent(this);
 				break;
 		}
 
@@ -123,9 +126,15 @@ public class MarioFireball extends Agent implements DisposableAgent {
 	}
 
 	private MoveState getNextMoveState() {
-		if(hitType == HitType.NONE && moveState == MoveState.FLY)
+		// if hit something then do explode
+		if(hitType != HitType.NONE)
+			return MoveState.EXPLODE;
+		// if out of bounds then despawn, so new fireballs can be made
+		else if(!body.getSpine().isTouchingKeepAlive())
+			return MoveState.DESPAWN;
+		// otherwise fly
+		else
 			return MoveState.FLY;
-		return MoveState.EXPLODE;
 	}
 
 	private void doPostUpdate() {

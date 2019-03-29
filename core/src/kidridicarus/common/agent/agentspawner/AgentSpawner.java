@@ -33,7 +33,7 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 		isUsed = true;
 		Agent spawnedAgent = agency.createAgent(Agent.createPointAP(spawnAgentClassAlias, sbody.getPosition()));
 		if(isRespawnDead) {
-			agency.addAgentRemoveListener(this, new AgentRemoveListener(this, spawnedAgent) {
+			agency.addAgentRemoveListener(new AgentRemoveListener(this, spawnedAgent) {
 					@Override
 					public void removedAgent() { isUsed = false; }
 				});

@@ -103,7 +103,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 			target = body.getSpine().getPlayerContact();
 			// if found a target then add an AgentRemoveListener to allow de-targeting on death of target
 			if(target != null) {
-				agency.addAgentRemoveListener(this, new AgentRemoveListener(this, target) {
+				agency.addAgentRemoveListener(new AgentRemoveListener(this, target) {
 						@Override
 						public void removedAgent() { isTargetRemoved = true; }
 					});

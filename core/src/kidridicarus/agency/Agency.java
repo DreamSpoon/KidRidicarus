@@ -218,12 +218,12 @@ public class Agency implements Disposable {
 		agencyChangeQ.removeAgentDrawListener(new AgentPlaceholder(agent), adListener);
 	}
 
-	public void addAgentRemoveListener(Agent listeningAgent, AgentRemoveListener arListener) {
-		agencyChangeQ.addAgentRemoveListener(new AgentPlaceholder(listeningAgent), arListener);
+	public void addAgentRemoveListener(AgentRemoveListener arListener) {
+		agencyChangeQ.addAgentRemoveListener(new AgentPlaceholder(arListener.getListeningAgent()), arListener);
 	}
 
-	public void removeAgentRemoveListener(Agent agent, AgentRemoveListener arListener) {
-		agencyChangeQ.removeAgentRemoveListener(new AgentPlaceholder(agent), arListener);
+	public void removeAgentRemoveListener(AgentRemoveListener arListener) {
+		agencyChangeQ.removeAgentRemoveListener(new AgentPlaceholder(arListener.getListeningAgent()), arListener);
 	}
 
 	public void setAtlas(TextureAtlas atlas) {
