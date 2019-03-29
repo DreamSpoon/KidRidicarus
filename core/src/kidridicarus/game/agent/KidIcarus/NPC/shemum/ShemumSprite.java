@@ -8,22 +8,19 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.agent.KidIcarus.NPC.shemum.Shemum.MoveState;
-import kidridicarus.game.info.SMB_Gfx;
+import kidridicarus.game.info.KidIcarusGfx;
 
 public class ShemumSprite extends Sprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
-	private static final float ANIM_SPEED = 0.4f;
+	private static final float ANIM_SPEED = 2/15f;
 
 	private Animation<TextureRegion> walkAnim;
-	private TextureRegion squish;
 	private float stateTimer;
 
 	public ShemumSprite(TextureAtlas atlas, Vector2 position) {
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMB_Gfx.NPC.GOOMBA_WALK), PlayMode.LOOP);
-		squish = atlas.findRegion(SMB_Gfx.NPC.GOOMBA_SQUISH);
+				atlas.findRegions(KidIcarusGfx.NPC.SHEMUM), PlayMode.LOOP);
 
 		stateTimer = 0;
 
@@ -32,25 +29,11 @@ public class ShemumSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, MoveState moveState) {
-		switch(moveState) {
-			case DEAD_SQUISH:
-				setRegion(squish);
-				break;
-			case DEAD_BUMP:
-				// no walking after bopping
-				setRegion(walkAnim.getKeyFrame(0f));
-				// upside down when bopped
-				if(!isFlipY())
-					flip(false,  true);
-				break;
-			default:
-				setRegion(walkAnim.getKeyFrame(stateTimer));
-				break;
-		}
-
-		stateTimer += delta;
-
+	public void update(float delta, Vector2 position, boolean isFacingRight) {
+		setRegion(walkAnim.getKeyFrame(stateTimer));
+		if((isFacingRight && isFlipX()) || (!isFacingRight && !isFlipX()))
+			flip(true,  false);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+		stateTimer += delta;
 	}
 }

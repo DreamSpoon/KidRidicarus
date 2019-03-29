@@ -53,7 +53,7 @@
    <property name="spawnagentclass" value="shemum"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzjEBAAAIA6BlsH9YC+zXAxKQAAAAAAAAAAAAAAAAzVwHeGMBVlgAEw==
+   eJztzgEJAAAMA6A1eP+2jzEYmsAEAAAAAAAAAAAAAIBV1w7AiAdi9AAQ
   </data>
  </layer>
  <objectgroup id="6" name="levelend">

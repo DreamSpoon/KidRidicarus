@@ -3,6 +3,311 @@ KidRidicarusSprites.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+KidIcarus/general/big_poof
+  rotate: false
+  xy: 1, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+KidIcarus/general/big_poof
+  rotate: false
+  xy: 19, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+KidIcarus/general/big_poof
+  rotate: false
+  xy: 37, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+KidIcarus/general/small_poof
+  rotate: false
+  xy: 55, 1
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: 1
+KidIcarus/general/small_poof
+  rotate: false
+  xy: 65, 1
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: 2
+KidIcarus/general/small_poof
+  rotate: false
+  xy: 75, 1
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: 3
+
+KidRidicarusSprites2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+KidIcarus/item/harp
+  rotate: false
+  xy: 1, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/item/heart10
+  rotate: false
+  xy: 19, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/item/chalice
+  rotate: false
+  xy: 37, 11
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/item/hammer
+  rotate: false
+  xy: 47, 11
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/item/heart5
+  rotate: false
+  xy: 57, 11
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/item/heart1
+  rotate: false
+  xy: 1, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+
+KidRidicarusSprites3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+KidIcarus/NPC/moneye
+  rotate: false
+  xy: 1, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/NPC/shemum
+  rotate: false
+  xy: 19, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+KidIcarus/NPC/shemum
+  rotate: false
+  xy: 37, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+
+KidRidicarusSprites4.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+KidIcarus/player/Pit/pit_aimup
+  rotate: false
+  xy: 1, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/pit_aimup_shoot
+  rotate: false
+  xy: 19, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/pit_dead
+  rotate: false
+  xy: 37, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/pit_jump
+  rotate: false
+  xy: 55, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/pit_jump
+  rotate: false
+  xy: 73, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/pit_jump_shoot
+  rotate: false
+  xy: 91, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/pit_jump_shoot
+  rotate: false
+  xy: 109, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/pit_walk
+  rotate: false
+  xy: 127, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/pit_walk
+  rotate: false
+  xy: 145, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/pit_walk
+  rotate: false
+  xy: 163, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+KidIcarus/player/Pit/pit_walk
+  rotate: false
+  xy: 181, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 4
+KidIcarus/player/Pit/pit_walk_shoot
+  rotate: false
+  xy: 199, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/pit_walk_shoot
+  rotate: false
+  xy: 217, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/pit_walk_shoot
+  rotate: false
+  xy: 235, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+KidIcarus/player/Pit/pit_walk_shoot
+  rotate: false
+  xy: 253, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 4
+KidIcarus/player/Pit/pit_duck
+  rotate: false
+  xy: 271, 15
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/pit_arrow
+  rotate: false
+  xy: 1, 1
+  size: 8, 4
+  orig: 8, 4
+  offset: 0, 0
+  index: -1
+
+KidRidicarusSprites5.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+KidIcarus/player/PitHUD/health_bar0
+  rotate: false
+  xy: 1, 21
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+KidIcarus/player/PitHUD/health_bar1
+  rotate: false
+  xy: 1, 11
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+KidIcarus/player/PitHUD/health_bar2
+  rotate: false
+  xy: 11, 21
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+KidIcarus/player/PitHUD/health_bar3
+  rotate: false
+  xy: 1, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+KidIcarus/player/PitHUD/health_bar4
+  rotate: false
+  xy: 11, 11
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+KidIcarus/player/PitHUD/health_bar5
+  rotate: false
+  xy: 21, 21
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+KidIcarus/player/PitHUD/health_bar6
+  rotate: false
+  xy: 11, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+KidIcarus/player/PitHUD/health_bar7
+  rotate: false
+  xy: 21, 11
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+
+KidRidicarusSprites6.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 Metroid/item/marumari
   rotate: false
   xy: 1, 11
@@ -46,7 +351,7 @@ Metroid/item/energy
   offset: 0, 0
   index: 2
 
-KidRidicarusSprites2.png
+KidRidicarusSprites7.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -233,7 +538,7 @@ Metroid/NPC/skree_exp
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites3.png
+KidRidicarusSprites8.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -420,7 +725,7 @@ Metroid/player/Samus/samus_ball
   offset: 0, 0
   index: 4
 
-KidRidicarusSprites4.png
+KidRidicarusSprites9.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -593,7 +898,7 @@ Metroid/player/SamusChunk/top_right
   offset: 0, 0
   index: 4
 
-KidRidicarusSprites5.png
+KidRidicarusSprites10.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -619,7 +924,7 @@ Metroid/player/SamusHUD/energy_tank_full
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites6.png
+KidRidicarusSprites11.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -652,7 +957,7 @@ Metroid/player/SamusShot/shot_regular
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites7.png
+KidRidicarusSprites12.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -853,7 +1158,7 @@ SMB1/general/digit8
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites8.png
+KidRidicarusSprites13.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -970,7 +1275,7 @@ SMB1/item/static_coin
   offset: 0, 0
   index: 5
 
-KidRidicarusSprites9.png
+KidRidicarusSprites14.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1031,7 +1336,7 @@ SMB1/NPC/goomba_walk
   offset: 0, 0
   index: 2
 
-KidRidicarusSprites10.png
+KidRidicarusSprites15.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1449,7 +1754,7 @@ SMB1/player/Mario/big/mario_throw_inv3
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites11.png
+KidRidicarusSprites16.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1685,7 +1990,7 @@ SMB1/player/Mario/sml/mario_stand_reg
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites12.png
+KidRidicarusSprites17.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none

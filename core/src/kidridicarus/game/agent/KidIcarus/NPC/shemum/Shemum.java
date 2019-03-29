@@ -13,25 +13,14 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.tool.QQ;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
-import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
-import kidridicarus.game.agent.SMB.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.info.SMB_Audio;
+import kidridicarus.game.info.KidIcarusKV;
 
 public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
-	private static final float GIVE_DAMAGE = 8f;
-	private static final float GOOMBA_SQUISH_TIME = 2f;
-	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
+	private static final float GIVE_DAMAGE = 1f;
+	private static final float STRIKE_DELAY = 1/6f;
 
-	enum MoveState { WALK, FALL, DEAD_BUMP, DEAD_SQUISH;
-		public boolean equalsAny(MoveState ...otherStates) {
-			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
-		}
-		public boolean isDead() { return this.equalsAny(DEAD_BUMP, DEAD_SQUISH); }
-	}
-
-	private enum DeadState { NONE, BUMP, SQUISH }
+	enum MoveState { WALK, FALL, DEAD, STRIKE_GROUND }
 
 	private float moveStateTimer;
 	private MoveState moveState;
@@ -39,21 +28,17 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private ShemumSprite sprite;
 
 	private boolean isFacingRight;
-	private boolean deadBumpRight;
-	private Agent perp;	// perpetrator of squish, bump, and damage
-	private DeadState nextDeadState;
+	private boolean isDead;
 	private boolean despawnMe;
 
 	public Shemum(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-QQ.pr("I am Shemum! Oy vey!");
+
 		moveStateTimer = 0f;
 		moveState = MoveState.WALK;
 		isFacingRight = false;
-		deadBumpRight = false;
-		perp = null;
+		isDead = false;
 		despawnMe = false;
-		nextDeadState = DeadState.NONE;
 
 		body = new ShemumBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
@@ -72,28 +57,9 @@ QQ.pr("I am Shemum! Oy vey!");
 	}
 
 	private void doContactUpdate() {
-		boolean isHeadBounced = false;
-		for(Agent agent : body.getSpine().getHeadBounceBeginContacts()) {
-			// if they take contact damage and give head bounces...
-			if(agent instanceof ContactDmgTakeAgent && agent instanceof HeadBounceGiveAgent) {
-				// if can't pull head bounce then try pushing contact damage
-				if(((HeadBounceGiveAgent) agent).onGiveHeadBounce(this)) {
-					isHeadBounced = true;
-					perp = agent;
-				}
-				else
-					((ContactDmgTakeAgent) agent).onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
-			}
-			// pull head bounces from head bounce agents
-			else if(agent instanceof HeadBounceGiveAgent)
-				isHeadBounced = ((HeadBounceGiveAgent) agent).onGiveHeadBounce(this);
-			// push damage to contact damage agents
-			else if(agent instanceof ContactDmgTakeAgent)
-				((ContactDmgTakeAgent) agent).onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
-		}
-
-		if(isHeadBounced)
-			nextDeadState = DeadState.SQUISH;
+		// push damage to contact damage agents
+		for(ContactDmgTakeAgent agent : body.getSpine().getContactDmgTakeAgents())
+			agent.onTakeDamage(this, GIVE_DAMAGE, body.getPosition());
 	}
 
 	private void doUpdate(float delta) {
@@ -104,10 +70,8 @@ QQ.pr("I am Shemum! Oy vey!");
 
 	private void processContacts() {
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if((nextDeadState == DeadState.NONE && !body.getSpine().isTouchingKeepAlive()) ||
-				body.getSpine().isContactDespawn()) {
+		if((!isDead && !body.getSpine().isTouchingKeepAlive()) || body.getSpine().isContactDespawn())
 			despawnMe = true;
-		}
 	}
 
 	private void processMove(float delta) {
@@ -117,8 +81,8 @@ QQ.pr("I am Shemum! Oy vey!");
 			return;
 		}
 
-		// if move is blocked by solid or an agent then change facing dir
-		if(body.getSpine().isHorizontalMoveBlocked(isFacingRight, true))
+		// if move is blocked by solid then change facing dir
+		if(body.getSpine().isHorizontalMoveBlocked(isFacingRight, false))
 			isFacingRight = !isFacingRight;
 
 		MoveState nextMoveState = getNextMoveState();
@@ -128,22 +92,16 @@ QQ.pr("I am Shemum! Oy vey!");
 				body.getSpine().doWalkMove(isFacingRight);
 				break;
 			case FALL:
-				break;	// do nothing if falling
-			case DEAD_BUMP:
-				// new bump?
+				// if first frame of fall then zero X velocity, to fall straight down
 				if(moveStateChanged)
-					startBump();
-				// wait a short time and disappear
-				else if(moveStateTimer > GOOMBA_BUMP_FALL_TIME)
-					agency.removeAgent(this);
+					body.zeroVelocity(true, false);
 				break;
-			case DEAD_SQUISH:
-				// new squish?
-				if(moveStateChanged)
-					startSquish();
-				// wait a short time and disappear
-				else if(moveStateTimer > GOOMBA_SQUISH_TIME)
-					agency.removeAgent(this);
+			case STRIKE_GROUND:
+				break;
+			case DEAD:
+				agency.createAgent(
+						Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_SMALL_POOF, body.getPosition()));
+				agency.removeAgent(this);
 				break;
 		}
 
@@ -152,38 +110,27 @@ QQ.pr("I am Shemum! Oy vey!");
 	}
 
 	private MoveState getNextMoveState() {
-		if(nextDeadState == DeadState.BUMP)
-			return MoveState.DEAD_BUMP;
-		else if(nextDeadState == DeadState.SQUISH)
-			return MoveState.DEAD_SQUISH;
-		else if(body.getSpine().isOnGround())
-			return MoveState.WALK;
+		if(isDead || moveState == MoveState.DEAD)
+			return MoveState.DEAD;
+		else if(body.getSpine().isOnGround()) {
+			if(moveState == MoveState.FALL ||
+					(moveState == MoveState.STRIKE_GROUND && moveStateTimer <= STRIKE_DELAY))
+				return MoveState.STRIKE_GROUND;
+			else
+				return MoveState.WALK;
+		}
 		else
 			return MoveState.FALL;
 	}
 
-	private void startSquish() {
-		body.getSpine().doDeadSquishContactsAndMove();
-		if(perp != null)
-			agency.createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
-		agency.getEar().playSound(SMB_Audio.Sound.STOMP);
-	}
-
-	private void startBump() {
-		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
-		if(perp != null)
-			agency.createAgent(FloatingPoints.makeAP(100, false, body.getPosition(), perp));
-		agency.getEar().playSound(SMB_Audio.Sound.KICK);
-	}
-
 	private void processSprite(float delta) {
 		// update sprite position and graphic
-		sprite.update(delta, body.getPosition(), moveState);
+		sprite.update(delta, body.getPosition(), isFacingRight);
 	}
 
 	private void doDraw(AgencyDrawBatch batch){
-		// draw if not despawned
-		if(!despawnMe)
+		// draw if not despawned and not dead
+		if(!despawnMe && !isDead)
 			batch.draw(sprite);
 	}
 
@@ -191,23 +138,16 @@ QQ.pr("I am Shemum! Oy vey!");
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
 		// if dead already or the damage is from the same team then return no damage taken
-		if(nextDeadState != DeadState.NONE || !(agent instanceof PlayerAgent))
+		if(isDead || !(agent instanceof PlayerAgent))
 			return false;
 
-		this.perp = agent;
-		nextDeadState = DeadState.BUMP;
-		deadBumpRight = body.getSpine().isDeadBumpRight(dmgOrigin);
+		isDead = true;
 		return true;
 	}
 
 	@Override
 	public void onTakeBump(Agent agent) {
-		if(nextDeadState != DeadState.NONE)
-			return;
-
-		this.perp = agent;
-		nextDeadState = DeadState.BUMP;
-		deadBumpRight = body.getSpine().isDeadBumpRight(perp.getPosition());
+		isDead = true;
 	}
 
 	@Override

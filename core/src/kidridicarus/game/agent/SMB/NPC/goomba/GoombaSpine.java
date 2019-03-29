@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.game.agentspine.SMB.HeadBounceSpine;
 
 public class GoombaSpine extends HeadBounceSpine {
-	private static final float GOOMBA_WALK_VEL = 0.4f;
+	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 0.4f;
 
@@ -15,9 +15,9 @@ public class GoombaSpine extends HeadBounceSpine {
 
 	public void doWalkMove(boolean isFacingRight) {
 		if(isFacingRight)
-			body.setVelocity(GOOMBA_WALK_VEL, body.getVelocity().y);
+			body.setVelocity(WALK_VEL, body.getVelocity().y);
 		else
-			body.setVelocity(-GOOMBA_WALK_VEL, body.getVelocity().y);
+			body.setVelocity(-WALK_VEL, body.getVelocity().y);
 	}
 
 	public void doDeadSquishContactsAndMove() {
