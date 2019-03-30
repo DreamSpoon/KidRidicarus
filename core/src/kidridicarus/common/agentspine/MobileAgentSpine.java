@@ -41,6 +41,6 @@ public class MobileAgentSpine extends BasicAgentSpine {
 	}
 
 	public boolean isOnGround() {
-		return ogSensor.isContactFloor();
+		return ogSensor.isContactFloor() || ogSensor.isContactAgent();
 	}
 }

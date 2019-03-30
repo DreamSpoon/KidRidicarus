@@ -31,8 +31,8 @@ public class MarioBody extends PlayerAgentBody {
 
 	// main body
 	private static final CFBitSeq MAIN_CFCAT = new CFBitSeq(Alias.AGENT_BIT);
-	private static final CFBitSeq MAIN_CFMASK =
-			new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT, CommonCF.Alias.SCROLL_PUSH_BIT);
+	private static final CFBitSeq MAIN_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
+			CommonCF.Alias.SCROLL_PUSH_BIT, CommonCF.Alias.SEMISOLID_FLOOR_BIT);
 	// agent sensor
 	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
@@ -45,6 +45,10 @@ public class MarioBody extends PlayerAgentBody {
 	private static final CFBitSeq TILEBUMP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 	private static final CFBitSeq PIPEWARP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq PIPEWARP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.PIPEWARP_BIT);
+
+	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
+			CommonCF.Alias.SEMISOLID_FLOOR_FOOT_BIT);
 
 	private static final float FRICTION = 0f;
 	private static final float GRAVITY_SCALE = 2f;
@@ -111,7 +115,7 @@ public class MarioBody extends PlayerAgentBody {
 		}
 		// create fixture for ground sensor
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
-				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
+				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create fixture for tilebump sensor
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createTileBumpPushSensor(),

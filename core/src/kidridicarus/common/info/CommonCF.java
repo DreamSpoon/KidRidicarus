@@ -18,10 +18,12 @@ public class CommonCF {
 		public static final String SCROLL_PUSH_BIT = "bit_scroll_push";
 		public static final String SCROLL_KILL_BIT = "bit_scroll_kill";
 		public static final String SEMISOLID_FLOOR_BIT = "bit_semisolid_floor";
+		// testing, for use by OnGround sensor
+		public static final String SEMISOLID_FLOOR_FOOT_BIT = "bit_semisolid_floor_foot";
 	}
 
-	public static final CFBitSeq NO_CONTACT_CFCAT = new CFBitSeq();
-	public static final CFBitSeq NO_CONTACT_CFMASK = new CFBitSeq();
+	public static final CFBitSeq NO_CONTACT_CFCAT = new CFBitSeq(false);
+	public static final CFBitSeq NO_CONTACT_CFMASK = new CFBitSeq(false);
 
 	public static final CFBitSeq AGENT_SENSOR_CFCAT = new CFBitSeq(Alias.AGENT_BIT);
 	public static final CFBitSeq AGENT_SENSOR_CFMASK = new CFBitSeq(Alias.AGENT_BIT);

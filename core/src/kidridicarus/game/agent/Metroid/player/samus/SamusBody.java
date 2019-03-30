@@ -38,12 +38,12 @@ public class SamusBody extends PlayerAgentBody {
 			CommonCF.Alias.SCROLL_PUSH_BIT, CommonCF.Alias.SEMISOLID_FLOOR_BIT);
 	// agent sensor
 	private static final CFBitSeq AS_ENABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_ENABLED_CFMASK =
-			new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT,
-					CommonCF.Alias.POWERUP_BIT, CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.SCROLL_KILL_BIT);
+	private static final CFBitSeq AS_ENABLED_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
+			CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT, CommonCF.Alias.POWERUP_BIT,
+			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.SCROLL_KILL_BIT);
 	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_DISABLED_CFMASK =
-			new CFBitSeq(CommonCF.Alias.ROOM_BIT, CommonCF.Alias.COLLISIONMAP_BIT);
+	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.ROOM_BIT,
+			CommonCF.Alias.COLLISIONMAP_BIT);
 	private static final CFBitSeq TILEBUMP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq TILEBUMP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 	private static final CFBitSeq PIPEWARP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
@@ -51,7 +51,7 @@ public class SamusBody extends PlayerAgentBody {
 
 	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
-			CommonCF.Alias.SEMISOLID_FLOOR_BIT);
+			CommonCF.Alias.SEMISOLID_FLOOR_FOOT_BIT);
 
 	private SamusSpine spine;
 	private boolean isAgentSensorEnabled;

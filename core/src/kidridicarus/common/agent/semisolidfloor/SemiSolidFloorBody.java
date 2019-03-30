@@ -11,7 +11,8 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
 public class SemiSolidFloorBody extends AgentBody {
-	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SEMISOLID_FLOOR_BIT);
+	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SEMISOLID_FLOOR_BIT,
+			CommonCF.Alias.SEMISOLID_FLOOR_FOOT_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
 	public SemiSolidFloorBody(Agent parent, World world, Rectangle bounds) {

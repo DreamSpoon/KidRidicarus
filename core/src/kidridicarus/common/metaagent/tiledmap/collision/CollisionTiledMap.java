@@ -249,8 +249,8 @@ public class CollisionTiledMap implements Disposable {
 				UInfo.P2M((endX - startX) * widthInTiles), UInfo.P2M((endY - startY) * heightInTiles));
 		fdef = new FixtureDef();
 		fdef.shape = edgeShape;
-		body.createFixture(fdef).setUserData(new AgentBodyFilter(new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT),
-				new CFBitSeq(true), seg));
+		body.createFixture(fdef).setUserData(new AgentBodyFilter(
+				new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT), new CFBitSeq(true), seg));
 
 		return body;
 	}

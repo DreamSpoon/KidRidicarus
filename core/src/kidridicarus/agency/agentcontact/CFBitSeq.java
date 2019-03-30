@@ -16,11 +16,11 @@ import java.util.Iterator;
  * an alias to a bit. Thus, collision filter bits can be added and removed "on the fly" by simply using a
  * new unique String.
  * 
- * If isOne = false then bits are "additive".
- * If isOne = true then bits are "subtractive".
+ * If isOneMinus = false then bits are "additive".
+ * If isOneMinus = true then bits are "subtractive".
  * In other words:
- *   If isOne = false, bits are interpreted as adding from zero.
- *   If isOne = false, bits are interpreted as subtracting from one.
+ *   If isOneMinus = false, bits are interpreted as adding from zero.
+ *   If isOneMinus = false, bits are interpreted as subtracting from one.
  *   
  * But what if a bit sequence is initially set to one and then "all" the "bits" are subtracted/removed?
  * The bit sequence is still one, and the bits subtracted are stored in the bits set. If, subsequently,
@@ -41,58 +41,57 @@ import java.util.Iterator;
  * one-down
  */
 public class CFBitSeq {
-	private boolean isOne;
+	private boolean isOneMinus;
 	private HashSet<String> bits;
 
-	public CFBitSeq(boolean isOne) {
-		this.isOne = isOne;
+	public CFBitSeq(boolean isOneMinus) {
+		this.isOneMinus = isOneMinus;
 		bits = new HashSet<String>();
 	}
 
 	public CFBitSeq(String ...bitsInput) {
-		this.isOne = false;
+		this.isOneMinus = false;
 		bits = new HashSet<String>();
-		for(String b : bitsInput)
-			bits.add(b);
+		for(String bit : bitsInput)
+			bits.add(bit);
 	}
 
-	public CFBitSeq(CFBitSeq seqInput) {
-		this.isOne = false;
+	public CFBitSeq(boolean isOneMinus, String ...bitsInput) {
+		this.isOneMinus = isOneMinus;
 		bits = new HashSet<String>();
-		if(seqInput.isOne)
-			this.isOne = true;
-		else {
-			Iterator<String> bitsIter = seqInput.bits.iterator();
-			while(bitsIter.hasNext())
-				this.bits.add(bitsIter.next());
-		}
+		for(String bit : bitsInput)
+			bits.add(bit);
 	}
 
-	public CFBitSeq(HashSet<String> bits) {
-		this.isOne = false;
+	public CFBitSeq(boolean isOneMinus, HashSet<String> bits) {
+		this.isOneMinus = isOneMinus;
 		this.bits = new HashSet<String>(bits);
+	}
+
+	public CFBitSeq and(String ...bitsInput) {
+		return and(new CFBitSeq(bitsInput));
 	}
 
 	public CFBitSeq and(CFBitSeq otherSeq) {
 		HashSet<String> andBits = new HashSet<String>();
 
 		// if this and other sequence are both 1- then the AND operation is just a join of the two bit sets
-		if(this.isOne && otherSeq.isOne) {
+		if(this.isOneMinus && otherSeq.isOneMinus) {
 			andBits.addAll(this.bits);
 			andBits.addAll(otherSeq.bits);
-			return new CFBitSeq(andBits);
+			return new CFBitSeq(true, andBits);
 		}
 		// if this and the other sequence are both 0+ then do a traditional AND operation
-		else if(!this.isOne && !otherSeq.isOne) {
+		else if(!this.isOneMinus && !otherSeq.isOneMinus) {
 			// check each of our bits against the bitsInput for matching bits, keep track of matching bits 
 			for(String otherBit : otherSeq.bits) {
 				if(this.bits.contains(otherBit))
 					andBits.add(otherBit);
 			}
-			return new CFBitSeq(andBits);
+			return new CFBitSeq(false, andBits);
 		}
 		// if this sequence is 1- and the other sequence is 0+
-		else if(this.isOne && !otherSeq.isOne) {
+		else if(this.isOneMinus && !otherSeq.isOneMinus) {
 			// zero plus: start with zero, add all of other sequence's "additive" bits
 			andBits.addAll(otherSeq.bits);
 			// one minus: remove all of this sequence's "subtractive" bits
@@ -100,7 +99,7 @@ public class CFBitSeq {
 				if(andBits.contains(bit))
 					andBits.remove(bit);
 			}
-			return new CFBitSeq(andBits);
+			return new CFBitSeq(false, andBits);
 		}
 		// if this sequence is 0+ and the other sequence is 1-
 		else {
@@ -111,18 +110,18 @@ public class CFBitSeq {
 				if(andBits.contains(otherBit))
 					andBits.remove(otherBit);
 			}
-			return new CFBitSeq(andBits);
+			return new CFBitSeq(false, andBits);
 		}
 	}
 
 	public void setZero() {
 		bits.clear();
-		isOne = false;
+		isOneMinus = false;
 	}
 
 	public void setOne() {
 		bits.clear();
-		isOne = true;
+		isOneMinus = true;
 	}
 
 	/*
@@ -130,7 +129,7 @@ public class CFBitSeq {
 	 * Otherwise return false.
 	 */
 	public boolean isZero() {
-		return !isOne && bits.isEmpty();
+		return !isOneMinus && bits.isEmpty();
 	}
 
 	/*
@@ -138,7 +137,7 @@ public class CFBitSeq {
 	 * Otherwise return false.
 	 */
 	public boolean isOne() {
-		return isOne && bits.isEmpty();
+		return isOneMinus && bits.isEmpty();
 	}
 
 	/*
@@ -149,7 +148,7 @@ public class CFBitSeq {
 	 *   isNonZero = isNonOne
 	 */
 	public boolean isNonZero() {
-		return isOne || !bits.isEmpty(); 
+		return isOneMinus || !bits.isEmpty(); 
 	}
 
 	/*
