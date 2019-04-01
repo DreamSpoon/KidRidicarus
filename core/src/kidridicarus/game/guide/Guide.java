@@ -34,6 +34,7 @@ import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.common.tool.QQ;
+import kidridicarus.game.info.KidIcarusKV;
 import kidridicarus.game.info.MetroidKV;
 import kidridicarus.game.info.SMB_KV;
 import kidridicarus.game.powerup.SMB_Pow;
@@ -193,6 +194,9 @@ public class Guide implements Disposable {
 			default:
 			case MARIO:
 				doAgentMake(SMB_KV.AgentClassAlias.VAL_MARIO, currentPos, facingRight);
+				break;
+			case PIT:
+				doAgentMake(KidIcarusKV.AgentClassAlias.VAL_PIT, currentPos, facingRight);
 				break;
 			case SAMUS:
 				doAgentMake(MetroidKV.AgentClassAlias.VAL_SAMUS, currentPos, facingRight);

@@ -53,7 +53,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		public boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-		public boolean isGroundMove() { return this.equalsAny(STAND, BALL_GRND, RUN, RUNSHOOT); }
+		public boolean isGround() { return this.equalsAny(STAND, BALL_GRND, RUN, RUNSHOOT); }
 		public boolean isRun() { return this.equalsAny(RUN, RUNSHOOT); }
 		public boolean isJumpSpin() { return this.equalsAny(PRE_JUMPSPIN, JUMPSPIN, JUMPSPINSHOOT); }
 		public boolean isBall() { return this.equalsAny(BALL_GRND, BALL_AIR); }
@@ -64,10 +64,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private static final float JUMPUP_CONSTVEL_TIME = 0.017f;
 	private static final float JUMPUP_FORCE_TIME = 0.75f;
 	private static final float JUMPSHOOT_RESPIN_DELAY = 0.05f;
+	private static final float SHOOT_COOLDOWN = 0.15f;
+	private static final float SHOT_VEL = 2f;
 	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
-	private static final float SHOT_VEL = 2f;
-	private static final float SHOOT_COOLDOWN = 0.15f;
 	private static final float NO_DAMAGE_TIME = 0.8f;
 	private static final float DEAD_DELAY_TIME = 3f;
 	private static final int START_ENERGY_SUPPLY = 30;
@@ -86,10 +86,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	private float runStateTimer;
 	private float lastStepSoundTime;
-	private float jumpForceTimer;
 	private boolean isNextJumpAllowed;
+	private float jumpForceTimer;
 	private float shootCooldownTimer;
-	private float takeDamageAmount;
+	private int takeDamageAmount;
 	private Vector2 takeDmgOrigin;
 	private boolean gaveHeadBounce;
 	private boolean isHeadBumped;
@@ -136,11 +136,11 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 		runStateTimer = 0f;
 		lastStepSoundTime = 0f;
-		jumpForceTimer = 0f;
 		// player must land on ground before first jump is allowed
 		isNextJumpAllowed = false;
+		jumpForceTimer = 0f;
 		shootCooldownTimer = 0f;
-		takeDamageAmount = 0f;
+		takeDamageAmount = 0;
 		takeDmgOrigin = new Vector2();
 		gaveHeadBounce = false;
 		isHeadBumped = false;
@@ -194,19 +194,18 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			return;
 		}
 
-		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
 		boolean moveStateChanged = nextMoveState != moveState;
 		if(nextMoveState == MoveState.DEAD)
 			processDeadMove(moveStateChanged);
-		else if(nextMoveState.isGroundMove())
-			processGroundMove(delta, moveAdvice, nextMoveState);
-		else
-			processAirMove(delta, moveAdvice, nextMoveState);
-
-		if(nextMoveState != MoveState.DEAD)
+		else {
+			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+			if(nextMoveState.isGround())
+				processGroundMove(delta, moveAdvice, nextMoveState);
+			else
+				processAirMove(delta, moveAdvice, nextMoveState);
 			processShoot(delta, moveAdvice);
+		}
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
@@ -242,19 +241,19 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		// if invulnerable to damage then exit
 		else if(noDamageCooldown > 0f) {
 			noDamageCooldown -= delta;
-			takeDamageAmount = 0f;
+			takeDamageAmount = 0;
 			takeDmgOrigin.set(0f, 0f);
 			return;
 		}
 		// if no damage taken this frame then exit
 		else if(takeDamageAmount == 0f)
 			return;
-		// apply damage against energy supply
-		energySupply -= takeDamageAmount;
-		if(energySupply < 0)
-			energySupply = 0;
+
+		// apply damage against health, health cannot be less than zero
+		energySupply = energySupply-takeDamageAmount > 0 ? energySupply-takeDamageAmount : 0;
+
 		// reset frame take damage amount
-		takeDamageAmount = 0f;
+		takeDamageAmount = 0;
 		// start no damage period
 		noDamageCooldown = NO_DAMAGE_TIME;
 		// push player away from damage origin
@@ -283,7 +282,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn() || energySupply <= 0)
 			return MoveState.DEAD;
 		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
-		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && !moveState.isGroundMove()))
+		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && !moveState.isGround()))
 			return getNextMoveStateGround(moveAdvice);
 		// do air move
 		else
@@ -460,7 +459,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			isFacingUp = false;
 
 		// if previous move air move then samus just landed, so play landing sound
-		if(!moveState.isGroundMove())
+		if(!moveState.isGround())
 			agency.getEar().playSound(MetroidAudio.Sound.STEP);
 		// if last move and this move are run moves then check/do step sound
 		else if(moveState.isRun() && nextMoveState.isRun()) {
@@ -526,8 +525,9 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			case PRE_JUMPSPIN:
 			case PRE_JUMP:
 			case PRE_JUMPSHOOT:
+				// TODO remove "&& isNextJumpAllowed" in the following if stmt, it's redundant
 				// if previously on ground and advised jump and allowed to jump then jump 
-				if(moveState.isGroundMove() && moveAdvice.action1 && isNextJumpAllowed) {
+				if(moveState.isGround() && moveAdvice.action1 && isNextJumpAllowed) {
 					isNextJumpAllowed = false;
 					jumpForceTimer = JUMPUP_CONSTVEL_TIME+JUMPUP_FORCE_TIME;
 					agency.getEar().playSound(MetroidAudio.Sound.JUMP);
@@ -554,7 +554,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 				throw new IllegalStateException("Wrong air nextMoveState = " + nextMoveState);
 		}
 
-		// disallow jump force until next jump when [jump advice stops] or [body stops moving up]
+		// disallow jump force until next jump if [jump advice stops] or [body stops moving up]
 		if(!moveAdvice.action1 || !body.getSpine().isMovingUp())
 			jumpForceTimer = 0f;
 
@@ -583,14 +583,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	private void processShoot(float delta, MoveAdvice moveAdvice) {
-		if(moveAdvice.action0 && isShootAllowed() && !moveState.isBall())
+		if(moveAdvice.action0 && shootCooldownTimer <= 0f && !moveState.isBall())
 			doShoot();
 		// decrememnt shoot cooldown timer
 		shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
-	}
-
-	private boolean isShootAllowed() {
-		return shootCooldownTimer <= 0f;
 	}
 
 	private void doShoot() {
@@ -677,11 +673,11 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
-		// don't take more damage if damage taken already this frame, or if invulnerable
-		if(takeDamageAmount > 0f || noDamageCooldown > 0f)
+		// don't take more damage if dead, or if damage already taken in this frame, or if invulnerable
+		if(moveState == MoveState.DEAD || takeDamageAmount > 0f || noDamageCooldown > 0f)
 			return false;
 		// keep damage info
-		takeDamageAmount = amount;
+		takeDamageAmount = (int) amount;
 		takeDmgOrigin.set(dmgOrigin);
 		return true;
 	}

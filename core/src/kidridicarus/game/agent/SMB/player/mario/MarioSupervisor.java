@@ -14,16 +14,16 @@ import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.SMB.player.mario.HUD.MarioHUD;
 
 public class MarioSupervisor extends PlayerAgentSupervisor {
-	private Mario mario;
+	private Mario playerAgent;
 	private MoveAdvice userMoveAdvice;
 	private String nextLevelFilename;
 	private boolean isGameOver;
-	private MarioHUD marioHUD;
+	private MarioHUD playerHUD;
 	private TextureAtlas atlas;
 
-	public MarioSupervisor(Agency agency, Mario mario, TextureAtlas atlas) {
-		super(agency, mario);
-		this.mario = mario;
+	public MarioSupervisor(Agency agency, Mario playerAgent, TextureAtlas atlas) {
+		super(agency, playerAgent);
+		this.playerAgent = playerAgent;
 		this.atlas = atlas;
 		userMoveAdvice = new MoveAdvice();
 		nextLevelFilename = null;
@@ -46,13 +46,13 @@ public class MarioSupervisor extends PlayerAgentSupervisor {
 	protected ScriptedAgentState getCurrentScriptAgentState() {
 		ScriptedAgentState curState = new ScriptedAgentState();
 		curState.scriptedBodyState.contactEnabled = true;
-		curState.scriptedBodyState.position.set(mario.getPosition());
+		curState.scriptedBodyState.position.set(playerAgent.getPosition());
 
-		curState.scriptedSpriteState.position.set(mario.getPosition());
+		curState.scriptedSpriteState.position.set(playerAgent.getPosition());
 		curState.scriptedSpriteState.visible = true;
 		curState.scriptedSpriteState.spriteState =
-				mario.getProperty(CommonKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
-		if(mario.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
+				playerAgent.getProperty(CommonKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
+		if(playerAgent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
 			curState.scriptedSpriteState.isFacingRight = true;
 		else
 			curState.scriptedSpriteState.isFacingRight = false;
@@ -91,11 +91,11 @@ public class MarioSupervisor extends PlayerAgentSupervisor {
 
 	@Override
 	public void setStageHUD(Stage stageHUD) {
-		marioHUD = new MarioHUD((Mario) playerAgent, atlas, stageHUD);
+		playerHUD = new MarioHUD((Mario) playerAgent, atlas, stageHUD);
 	}
 
 	@Override
 	public void drawHUD() {
-		marioHUD.draw();
+		playerHUD.draw();
 	}
 }

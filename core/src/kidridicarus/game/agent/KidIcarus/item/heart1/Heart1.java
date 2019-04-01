@@ -54,13 +54,13 @@ public class Heart1 extends Agent implements DisposableAgent {
 		PowerupTakeAgent taker = body.getSpine().getTouchingPowerupTaker();
 		if(taker == null)
 			return;
-		if(taker.onTakePowerup(new KidIcarusPow.Heart1Pow()))
+		if(taker.onTakePowerup(new KidIcarusPow.HeartsPow(1)))
 			isPowerupUsed = true;
 	}
 
 	private void doUpdate(float delta) {
 		if(isPowerupUsed)
-			agency.getEar().playSound(KidIcarusAudio.Sound.HEART_PICKUP);
+			agency.getEar().playSound(KidIcarusAudio.Sound.General.HEART_PICKUP);
 		if(isPowerupUsed || moveStateTimer > LIVE_TIME)
 			agency.removeAgent(this);
 

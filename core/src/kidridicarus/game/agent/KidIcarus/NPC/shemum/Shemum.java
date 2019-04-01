@@ -105,7 +105,7 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				agency.createAgent(
 						Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_HEART1, body.getPosition()));
 				agency.removeAgent(this);
-				agency.getEar().playSound(KidIcarusAudio.Sound.SMALL_POOF);
+				agency.getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
 				break;
 		}
 

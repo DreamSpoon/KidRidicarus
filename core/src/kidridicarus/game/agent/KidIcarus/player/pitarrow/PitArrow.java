@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.Metroid.player.samusshot;
+package kidridicarus.game.agent.KidIcarus.player.pitarrow;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -14,43 +14,37 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
-import kidridicarus.game.agent.Metroid.player.samus.Samus;
-import kidridicarus.game.info.MetroidKV;
+import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.agent.KidIcarus.player.pit.Pit;
+import kidridicarus.game.info.KidIcarusKV;
 
-public class SamusShot extends Agent implements DisposableAgent {
+public class PitArrow extends Agent implements DisposableAgent {
 	private static final float LIVE_TIME = 0.217f;
-	private static final float EXPLODE_TIME = 3f/60f;
 	private static final float GIVE_DAMAGE = 1f;
 
-	enum MoveState { LIVE, EXPLODE, DEAD }
-
-	private Samus parent;
-	private SamusShotBody body;
-	private SamusShotSprite sprite;
-	private MoveState moveState;
+	private Pit parent;
+	private PitArrowBody body;
+	private PitArrowSprite sprite;
 	private float moveStateTimer;
-	private boolean isExploding;
+	private boolean isDead;
 
-	public SamusShot(Agency agency, ObjectProperties properties) {
+	public PitArrow(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		moveStateTimer = 0f;
-		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Samus.class);
+		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Pit.class);
 
 		// check the definition properties, maybe the shot needs to expire immediately
-		isExploding = properties.containsKey(CommonKV.Spawn.KEY_EXPIRE);
-		if(isExploding)
-			moveState = MoveState.EXPLODE;
-		else
-			moveState = MoveState.LIVE;
+		isDead = properties.containsKey(CommonKV.Spawn.KEY_EXPIRE);
 
-		body = new SamusShotBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+		Direction4 arrowDir = properties.get(CommonKV.KEY_DIRECTION, null, Direction4.class);
+		body = new PitArrowBody(this, agency.getWorld(), Agent.getStartPoint(properties),
 				Agent.getStartVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
 		});
-		sprite = new SamusShotSprite(agency.getAtlas(), body.getPosition());
+		sprite = new PitArrowSprite(agency.getAtlas(), body.getPosition(), arrowDir);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
@@ -70,51 +64,28 @@ public class SamusShot extends Agent implements DisposableAgent {
 			if(agent == parent)
 				continue;
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
-			isExploding = true;
+			isDead = true;
 			return;
 		}
-		// if hit a wall then explode
+		// if hit a wall then die
 		if(body.isHitBound())
-			isExploding = true;
+			isDead = true;
 	}
 
 	private void processMove(float delta) {
-		MoveState nextMoveState = getNextMoveState();
-		switch(nextMoveState) {
-			case LIVE:
-				break;
-			case EXPLODE:
-				body.disableAllContacts();
-				body.zeroVelocity(true, true);
-				break;
-			case DEAD:
-				agency.removeAgent(this);
-				break;
-		}
-
-		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
-		moveState = nextMoveState;
-	}
-
-	private MoveState getNextMoveState() {
-		// is it dead?
-		if(moveState == MoveState.DEAD ||
-				(moveState == MoveState.EXPLODE && moveStateTimer > EXPLODE_TIME) ||
-				(moveState == MoveState.LIVE && moveStateTimer > LIVE_TIME))
-			return MoveState.DEAD;
-		// if not dead, then is it exploding?
-		else if(isExploding || moveState == MoveState.EXPLODE)
-			return MoveState.EXPLODE;
-		else
-			return MoveState.LIVE;
+		if(moveStateTimer > LIVE_TIME)
+			isDead = true;
+		if(isDead)
+			agency.removeAgent(this);
+		moveStateTimer += delta;
 	}
 
 	private void processSprite(float delta) {
-		sprite.update(delta, body.getPosition(), moveState);
+		sprite.update(body.getPosition());
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
-		if(moveState != MoveState.DEAD)
+		if(!isDead)
 			batch.draw(sprite);
 	}
 
@@ -134,8 +105,8 @@ public class SamusShot extends Agent implements DisposableAgent {
 	}
 
 	// make the AgentProperties (AP) for this class of Agent
-	public static ObjectProperties makeAP(Samus parentAgent, Vector2 position, Vector2 velocity) {
-		ObjectProperties props = Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SAMUS_SHOT,
+	public static ObjectProperties makeAP(Pit parentAgent, Vector2 position, Vector2 velocity) {
+		ObjectProperties props = Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_PIT_ARROW,
 				position, velocity);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
 		return props;

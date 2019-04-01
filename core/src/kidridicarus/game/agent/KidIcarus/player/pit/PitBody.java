@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.Metroid.player.samus;
+package kidridicarus.game.agent.KidIcarus.player.pit;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -15,16 +15,16 @@ import kidridicarus.common.info.CommonCF.Alias;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SamusBody extends PlayerAgentBody {
-	private static final float STAND_BODY_WIDTH = UInfo.P2M(5f);
-	private static final float STAND_BODY_HEIGHT = UInfo.P2M(25f);
-	private static final float BALL_BODY_WIDTH = UInfo.P2M(8f);
-	private static final float BALL_BODY_HEIGHT = UInfo.P2M(10f);
+public class PitBody extends PlayerAgentBody {
+	private static final float STAND_BODY_WIDTH = UInfo.P2M(8f);
+	private static final float STAND_BODY_HEIGHT = UInfo.P2M(16f);
+	private static final float DUCKING_BODY_WIDTH = UInfo.P2M(8f);
+	private static final float DUCKING_BODY_HEIGHT = UInfo.P2M(10f);
 	private static final float FOOT_WIDTH = UInfo.P2M(4f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
-	private static final float GRAVITY_SCALE = 0.5f;	// floaty
+	private static final float GRAVITY_SCALE = 1f;
 	private static final float FRICTION = 0f;	// (default is 0.2f)
-	private static final Vector2 BALL_TO_STAND_OFFSET = UInfo.P2MVector(0f, 8f);
+	private static final Vector2 DUCK_TO_STAND_OFFSET = UInfo.P2MVector(0f, 8f);
 	private static final float HEAD_WIDTH = UInfo.P2M(10f);
 	private static final float HEAD_HEIGHT = UInfo.P2M(12f);
 	private static final float TOPBOT_PW_SENSOR_WIDTH = UInfo.P2M(5f);
@@ -53,17 +53,15 @@ public class SamusBody extends PlayerAgentBody {
 	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
 			CommonCF.Alias.SEMISOLID_FLOOR_FOOT_BIT);
 
-	private SamusSpine spine;
+	private PitSpine spine;
 	private boolean isAgentSensorEnabled;
 	private Fixture agentSensorFixture;
-	private boolean isBallForm;
+	private boolean isDuckingForm;
 
-	public SamusBody(Samus parent, World world, Vector2 position, Vector2 velocity, boolean isBallForm) {
+	public PitBody(Pit parent, World world, Vector2 position, Vector2 velocity, boolean isDuckingForm) {
 		super(parent, world, position, new Vector2(0f, 0f));
-
-		this.isBallForm = isBallForm;
 		isAgentSensorEnabled = true;
-
+		this.isDuckingForm = isDuckingForm;
 		defineBody(position, velocity);
 	}
 
@@ -73,25 +71,20 @@ public class SamusBody extends PlayerAgentBody {
 		if(b2body != null)	
 			world.destroyBody(b2body);
 
-		if(isBallForm)
-			setBodySize(BALL_BODY_WIDTH, BALL_BODY_HEIGHT);
+		if(isDuckingForm)
+			setBodySize(DUCKING_BODY_WIDTH, DUCKING_BODY_HEIGHT);
 		else
 			setBodySize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
 		createBody(position, velocity);
 		createFixtures();
 	}
 
-	/*
-	 * TODO: Make samus' body a trapezoid shape (she's a fat bottomed girl, and she makes the rockin' world
-	 * go round) so that it will "catch" on to ledges when samus is falling and is moving toward a wall and
-	 * there's an opening that's barely large enough to enter (e.g. the starting point of metroid!).
-	 */
 	private void createBody(Vector2 position, Vector2 velocity) {
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		resetPrevValues(position, velocity);
 
-		spine = new SamusSpine(this);
+		spine = new PitSpine(this);
 	}
 
 	private void createFixtures() {
@@ -138,20 +131,6 @@ public class SamusBody extends PlayerAgentBody {
 				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(getBodySize().x/2f, 0f));
 	}
 
-	public void setBallForm(boolean nextIsBallForm) {
-		// exit if no change in ball form
-		if(isBallForm == nextIsBallForm)
-			return;
-		// change form
-		Vector2 position = b2body.getPosition();
-		if(!nextIsBallForm)
-			position.add(BALL_TO_STAND_OFFSET);
-
-		isBallForm = nextIsBallForm;
-		// velocity is zeroed when switching forms
-		defineBody(position, new Vector2(0f, 0f));
-	}
-
 	public void useScriptedBodyState(ScriptedBodyState sbState) {
 		if(sbState.contactEnabled && !isAgentSensorEnabled) {
 			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_ENABLED_CFCAT;
@@ -175,10 +154,6 @@ public class SamusBody extends PlayerAgentBody {
 		}
 	}
 
-	public SamusSpine getSpine() {
-		return spine;
-	}
-
 	public void applyDead() {
 		allowOnlyDeadContacts();
 		zeroVelocity(true, true);
@@ -193,5 +168,26 @@ public class SamusBody extends PlayerAgentBody {
 		((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
 		agentSensorFixture.refilter();
 		isAgentSensorEnabled = false;
+	}
+
+	public PitSpine getSpine() {
+		return spine;
+	}
+
+	public void setDuckingForm(boolean isDuckingForm) {
+		// if currently ducking and instructed to change to standing form...
+		if(this.isDuckingForm && !isDuckingForm) {
+			this.isDuckingForm = isDuckingForm;
+			defineBody(b2body.getPosition().cpy().add(DUCK_TO_STAND_OFFSET), b2body.getLinearVelocity());
+		}
+		// if currently standing and instructed to change to ducking form...
+		else if(!this.isDuckingForm && isDuckingForm) {
+			this.isDuckingForm = isDuckingForm;
+			defineBody(b2body.getPosition().cpy().sub(DUCK_TO_STAND_OFFSET), b2body.getLinearVelocity());
+		}
+	}
+
+	public boolean isDuckingForm() {
+		return isDuckingForm;
 	}
 }
