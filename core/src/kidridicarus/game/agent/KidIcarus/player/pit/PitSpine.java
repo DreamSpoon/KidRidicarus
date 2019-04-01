@@ -14,7 +14,7 @@ public class PitSpine extends PlayerSpine {
 	private static final float STOPMOVE_XIMP = 0.08f;
 	private static final float AIRMOVE_XIMP = GROUNDMOVE_XIMP * 0.7f;
 	private static final float MAX_AIRMOVE_VEL = MAX_GROUNDMOVE_VEL;
-	private static final float JUMPUP_FORCE = 6.15f;
+	private static final float JUMPUP_FORCE = 15.7f;
 	private static final float JUMPUP_CONSTVEL = 1.6f;
 	private static final float HEADBOUNCE_VEL = 1.4f;	// up velocity
 

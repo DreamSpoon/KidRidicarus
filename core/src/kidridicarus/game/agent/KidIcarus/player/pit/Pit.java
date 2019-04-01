@@ -64,10 +64,9 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private static final int MAX_HEARTS_COLLECTED = 999;
 	private static final int START_HEALTH = 7;
 	private static final float NO_DAMAGE_TIME = 1f;
-	private static final float PRE_JUMP_TIME = 0.25f;
-	private static final float JUMPUP_CONSTVEL_TIME = 0.017f;
+	private static final float PRE_JUMP_TIME = 0.1f;
 	private static final float JUMPUP_FORCE_TIME = 0.5f;
-	private static final float SHOOT_COOLDOWN = 0.15f;
+	private static final float SHOOT_COOLDOWN = 0.3f;
 	private static final float SHOT_VEL = 2f;
 	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(4, 1);
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 5);
@@ -81,6 +80,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private boolean isFacingRight;
 	private boolean isNextJumpAllowed;
 	private float jumpForceTimer;
+	private boolean isNextShotAllowed;
 	private float shootCooldownTimer;
 	private boolean takeDamageThisFrame;
 	private float noDamageCooldown;
@@ -124,6 +124,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			isFacingRight = true;
 		isNextJumpAllowed = false;	// false until land on solid ground
 		jumpForceTimer = 0f;
+		isNextShotAllowed = true;
 		shootCooldownTimer = 0f;
 		isOnGroundHeadInTile = false;
 		powerupsReceived = new LinkedList<Powerup>();
@@ -182,7 +183,12 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			processShoot(delta, moveAdvice);
 		}
 
-		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		if((moveState.isPreJump() && nextMoveState.isPreJump()) ||
+				(moveState.isJump() && nextMoveState.isJump())) {
+			moveStateTimer += delta;
+		}
+		else
+			moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
 	}
 
@@ -375,10 +381,12 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				// if previously on ground and advised jump then jump 
 				if(moveState.isGround() && moveAdvice.action1) {
 					isNextJumpAllowed = false;
-					jumpForceTimer = JUMPUP_CONSTVEL_TIME+JUMPUP_FORCE_TIME;
+					jumpForceTimer = PRE_JUMP_TIME+JUMPUP_FORCE_TIME;
+					body.getSpine().applyJumpVelocity();
 					agency.getEar().playSound(KidIcarusAudio.Sound.Pit.JUMP);
 				}
-				body.getSpine().applyJumpVelocity();
+				else if(moveStateTimer <= PRE_JUMP_TIME)
+					body.getSpine().applyJumpVelocity();
 				break;
 			case JUMP:
 			case JUMP_DUCK:
@@ -390,7 +398,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 
 				// if jump force continues and jump is advised then do jump force
 				if(jumpForceTimer > 0f && moveAdvice.action1)
-					body.getSpine().applyJumpForce(jumpForceTimer-JUMPUP_CONSTVEL_TIME, JUMPUP_FORCE_TIME);
+					body.getSpine().applyJumpForce(jumpForceTimer-PRE_JUMP_TIME, JUMPUP_FORCE_TIME);
 				break;
 			default:
 				throw new IllegalStateException("Wrong air nextMoveState = " + nextMoveState);
@@ -416,13 +424,17 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	}
 
 	private void processShoot(float delta, MoveAdvice moveAdvice) {
-		if(moveAdvice.action0 && shootCooldownTimer <= 0f && !moveState.isDuck())
+		if(moveAdvice.action0 && isNextShotAllowed && shootCooldownTimer <= 0f && !moveState.isDuck())
 			doShoot();
+		else if(!moveAdvice.action0)
+			isNextShotAllowed = true;
+
 		// decrement shoot cooldown timer
 		shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
 	}
 
 	private void doShoot() {
+		isNextShotAllowed = false;
 		shootCooldownTimer = SHOOT_COOLDOWN;
 
 		// calculate position and velocity of shot based on samus' orientation

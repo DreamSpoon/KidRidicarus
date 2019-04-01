@@ -16,7 +16,7 @@ import kidridicarus.common.tool.Direction4;
 
 public class PitArrowBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(3);
-	private static final float BODY_HEIGHT = UInfo.P2M(1);
+	private static final float BODY_HEIGHT = UInfo.P2M(3);
 
 	private static final float GRAVITY_SCALE = 0f;
 
