@@ -27,25 +27,24 @@ public class PitArrow extends Agent implements DisposableAgent {
 	private PitArrowSprite sprite;
 	private float moveStateTimer;
 	private boolean isDead;
+	private Direction4 arrowDir;
 
 	public PitArrow(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		moveStateTimer = 0f;
 		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Pit.class);
-
 		// check the definition properties, maybe the shot needs to expire immediately
 		isDead = properties.containsKey(CommonKV.Spawn.KEY_EXPIRE);
-
-		Direction4 arrowDir = properties.get(CommonKV.KEY_DIRECTION, null, Direction4.class);
+		arrowDir = properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
 		body = new PitArrowBody(this, agency.getWorld(), Agent.getStartPoint(properties),
-				Agent.getStartVelocity(properties));
+				Agent.getStartVelocity(properties), arrowDir);
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
 		});
 		sprite = new PitArrowSprite(agency.getAtlas(), body.getPosition(), arrowDir);
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
@@ -81,7 +80,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 	}
 
 	private void processSprite(float delta) {
-		sprite.update(body.getPosition());
+		sprite.update(body.getPosition(), arrowDir);
 	}
 
 	private void doDraw(AgencyDrawBatch batch) {
@@ -105,10 +104,12 @@ public class PitArrow extends Agent implements DisposableAgent {
 	}
 
 	// make the AgentProperties (AP) for this class of Agent
-	public static ObjectProperties makeAP(Pit parentAgent, Vector2 position, Vector2 velocity) {
+	public static ObjectProperties makeAP(Pit parentAgent, Vector2 position, Vector2 velocity,
+			Direction4 arrowDir) {
 		ObjectProperties props = Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_PIT_ARROW,
 				position, velocity);
 		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
+		props.put(CommonKV.KEY_DIRECTION, arrowDir);
 		return props;
 	}
 }

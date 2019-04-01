@@ -45,6 +45,7 @@ public class MarioFireballBody extends MobileAgentBody {
 	private void createBody(World world, Vector2 position, Vector2 velocity) {
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
+		b2body.setBullet(true);
 		spine = new MarioFireballSpine(this);
 		prevVelocity = velocity.cpy();
 	}

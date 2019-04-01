@@ -9,9 +9,9 @@ import kidridicarus.common.info.UInfo;
 public class PitSpine extends PlayerSpine {
 	private static final float MIN_WALK_VEL = 0.1f;
 
-	private static final float GROUNDMOVE_XIMP = 0.28f;
-	private static final float MAX_GROUNDMOVE_VEL = 0.85f;
-	private static final float STOPMOVE_XIMP = 0.15f;
+	private static final float GROUNDMOVE_XIMP = 0.2f;
+	private static final float MAX_GROUNDMOVE_VEL = 0.65f;
+	private static final float STOPMOVE_XIMP = 0.08f;
 	private static final float AIRMOVE_XIMP = GROUNDMOVE_XIMP * 0.7f;
 	private static final float MAX_AIRMOVE_VEL = MAX_GROUNDMOVE_VEL;
 	private static final float JUMPUP_FORCE = 6.15f;
@@ -78,7 +78,15 @@ public class PitSpine extends PlayerSpine {
 			((PitBody) body).setDuckingForm(true);
 	}
 
-	public boolean isHeadStuckInTile() {
+	public boolean isHeadInTile() {
 		return isMapTileSolid(UInfo.getM2PTileForPos(body.getPosition()).add(0, 1));
+	}
+
+	public boolean isWalkingRight() {
+		return body.getVelocity().x > MIN_WALK_VEL;
+	}
+
+	public boolean isWalkingLeft() {
+		return body.getVelocity().x < -MIN_WALK_VEL;
 	}
 }

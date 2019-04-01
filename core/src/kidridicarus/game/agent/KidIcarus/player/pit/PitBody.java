@@ -24,7 +24,7 @@ public class PitBody extends PlayerAgentBody {
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 	private static final float GRAVITY_SCALE = 1f;
 	private static final float FRICTION = 0f;	// (default is 0.2f)
-	private static final Vector2 DUCK_TO_STAND_OFFSET = UInfo.P2MVector(0f, 8f);
+	private static final Vector2 DUCK_TO_STAND_OFFSET = UInfo.P2MVector(0f, 3f);
 	private static final float HEAD_WIDTH = UInfo.P2M(10f);
 	private static final float HEAD_HEIGHT = UInfo.P2M(12f);
 	private static final float TOPBOT_PW_SENSOR_WIDTH = UInfo.P2M(5f);

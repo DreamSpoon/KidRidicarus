@@ -45,6 +45,7 @@ public class SamusShotBody extends MobileAgentBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
+		b2body.setBullet(true);
 		// create main fixture
 		boundSensor = new SolidContactSensor(this);
 		B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_CFCAT, MAIN_CFMASK,

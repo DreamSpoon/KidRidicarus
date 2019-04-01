@@ -12,12 +12,11 @@ import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
+import kidridicarus.common.tool.Direction4;
 
 public class PitArrowBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(3);
 	private static final float BODY_HEIGHT = UInfo.P2M(1);
-	private static final float SENSOR_WIDTH = UInfo.P2M(3);
-	private static final float SENSOR_HEIGHT = UInfo.P2M(1);
 
 	private static final float GRAVITY_SCALE = 0f;
 
@@ -29,9 +28,11 @@ public class PitArrowBody extends MobileAgentBody {
 
 	private SolidContactSensor boundSensor;
 	private AgentContactHoldSensor acSensor;
+	private Direction4 arrowDir;
 
-	public PitArrowBody(PitArrow parent, World world, Vector2 position, Vector2 velocity) {
+	public PitArrowBody(PitArrow parent, World world, Vector2 position, Vector2 velocity, Direction4 arrowDir) {
 		super(parent, world);
+		this.arrowDir = arrowDir;
 		defineBody(position, velocity);
 	}
 
@@ -41,17 +42,21 @@ public class PitArrowBody extends MobileAgentBody {
 		if(b2body != null)	
 			world.destroyBody(b2body);
 
-		setBodySize(BODY_WIDTH, BODY_HEIGHT);
+		if(arrowDir.isHorizontal()) {
+			setBodySize(BODY_WIDTH, BODY_HEIGHT);
+		}
+		else
+			setBodySize(BODY_HEIGHT, BODY_WIDTH);
+
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
+		b2body.setBullet(true);
 		// create main fixture
 		boundSensor = new SolidContactSensor(this);
-		B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_CFCAT, MAIN_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_CFCAT, MAIN_CFMASK, getBodySize().x, getBodySize().y);
 		// create agent contact sensor fixture
 		acSensor = new AgentContactHoldSensor(this);
-		B2DFactory.makeSensorBoxFixture(b2body, acSensor, AS_CFCAT, AS_CFMASK,
-				SENSOR_WIDTH, SENSOR_HEIGHT);
+		B2DFactory.makeSensorBoxFixture(b2body, acSensor, AS_CFCAT, AS_CFMASK, getBodySize().x, getBodySize().y);
 	}
 
 	public boolean isHitBound() {

@@ -56,6 +56,8 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		public boolean isGround() { return this.equalsAny(STAND, WALK, DUCK, AIMUP); }
 		public boolean isDuck() { return this.equalsAny(DUCK, PRE_JUMP_DUCK, JUMP_DUCK); }
 		public boolean isPreJump() { return this.equalsAny(PRE_JUMP, PRE_JUMP_DUCK, PRE_JUMP_AIMUP); }
+		public boolean isJump() { return this.equalsAny(PRE_JUMP, PRE_JUMP_DUCK, PRE_JUMP_AIMUP, JUMP,
+				JUMP_AIMUP, JUMP_DUCK); }
 		public boolean isAimUp() { return this.equalsAny(AIMUP, PRE_JUMP_AIMUP, JUMP_AIMUP); }
 	}
 
@@ -64,11 +66,11 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private static final float NO_DAMAGE_TIME = 1f;
 	private static final float PRE_JUMP_TIME = 0.25f;
 	private static final float JUMPUP_CONSTVEL_TIME = 0.017f;
-	private static final float JUMPUP_FORCE_TIME = 0.75f;
+	private static final float JUMPUP_FORCE_TIME = 0.5f;
 	private static final float SHOOT_COOLDOWN = 0.15f;
 	private static final float SHOT_VEL = 2f;
-	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
-	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
+	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(4, 1);
+	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 5);
 	private static final float DEAD_DELAY_TIME = 3f;
 
 	private PitSupervisor supervisor;
@@ -82,6 +84,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private float shootCooldownTimer;
 	private boolean takeDamageThisFrame;
 	private float noDamageCooldown;
+	private boolean isOnGroundHeadInTile;
 	private boolean gaveHeadBounce;
 	private boolean isHeadBumped;
 	// list of powerups received during contact update
@@ -122,6 +125,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		isNextJumpAllowed = false;	// false until land on solid ground
 		jumpForceTimer = 0f;
 		shootCooldownTimer = 0f;
+		isOnGroundHeadInTile = false;
 		powerupsReceived = new LinkedList<Powerup>();
 		health = START_HEALTH;
 		noDamageCooldown = 0f;
@@ -170,9 +174,9 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				processAirMove(delta, moveAdvice, nextMoveState);
 
 			// check/do facing direction change
-			if(body.getSpine().isMovingRight())
+			if(body.getSpine().isWalkingRight())
 				isFacingRight = true;
-			else if(body.getSpine().isMovingLeft())
+			else if(body.getSpine().isWalkingLeft())
 				isFacingRight = false;
 
 			processShoot(delta, moveAdvice);
@@ -309,6 +313,9 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		if(!moveAdvice.action1)
 			isNextJumpAllowed = true;
 
+		// update the "head-in-tile" flag, will be used by sprite for correct sprite offset
+		isOnGroundHeadInTile = body.getSpine().isHeadInTile();
+
 		Direction4 moveDir = Direction4.NONE;
 		switch(nextMoveState) {
 			case STAND:
@@ -319,6 +326,15 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 					moveDir = Direction4.RIGHT;
 				else if(moveAdvice.moveLeft)
 					moveDir = Direction4.LEFT;
+
+				// if head is in tile and body is not moving, then facing direction can change
+				if(isOnGroundHeadInTile && body.getSpine().isStandingStill()) {
+					if(moveAdvice.moveRight)
+						isFacingRight = true;
+					else if(moveAdvice.moveLeft)
+						isFacingRight = false;
+				}
+
 				break;
 			case AIMUP:
 				// Aimup freezes x velocity while on ground - by not zeroing Y velocity, this code should
@@ -326,13 +342,17 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				// platforms though - unless zeroVelocity checks for relative velocity and uses relative zero?
 				// TODO !
 				body.zeroVelocity(true, false);
+				if(moveAdvice.moveRight)
+					isFacingRight = true;
+				else if(moveAdvice.moveLeft)
+					isFacingRight = false;
 				break;
 			default:
 				throw new IllegalStateException("Wrong ground nextMoveState = " + nextMoveState);
 		}
 
 		// if not ducking and head is stuck in tile then disable horizontal move
-		boolean disableHMove = !nextMoveState.isDuck() && body.getSpine().isHeadStuckInTile();
+		boolean disableHMove = !nextMoveState.isDuck() && isOnGroundHeadInTile;
 		// move right advice takes priority over move left advice, but disable move is highest priority
 		if(!disableHMove && moveDir == Direction4.RIGHT)
 			body.getSpine().applyWalkMove(true);
@@ -347,6 +367,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	}
 
 	private void processAirMove(float delta, MoveAdvice moveAdvice, MoveState nextMoveState) {
+		isOnGroundHeadInTile = false;
 		switch(nextMoveState) {
 			case PRE_JUMP:
 			case PRE_JUMP_DUCK:
@@ -405,9 +426,11 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		shootCooldownTimer = SHOOT_COOLDOWN;
 
 		// calculate position and velocity of shot based on samus' orientation
+		Direction4 arrowDir;
 		Vector2 velocity = new Vector2();
 		Vector2 position = new Vector2();
 		if(moveState.isAimUp()) {
+			arrowDir = Direction4.UP;
 			velocity.set(0f, SHOT_VEL);
 			if(isFacingRight)
 				position.set(SHOT_OFFSET_UP).add(body.getPosition());
@@ -415,16 +438,18 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				position.set(SHOT_OFFSET_UP).scl(-1, 1).add(body.getPosition());
 		}
 		else if(isFacingRight) {
+			arrowDir = Direction4.RIGHT;
 			velocity.set(SHOT_VEL, 0f);
 			position.set(SHOT_OFFSET_RIGHT).add(body.getPosition());
 		}
 		else {
+			arrowDir = Direction4.LEFT;
 			velocity.set(-SHOT_VEL, 0f);
 			position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(body.getPosition());
 		}
 
 		// create shot
-		ObjectProperties shotProps = PitArrow.makeAP(this, position, velocity);
+		ObjectProperties shotProps = PitArrow.makeAP(this, position, velocity, arrowDir);
 		// if the spawn point of shot is in a solid tile then the shot must show for a short time
 		if(body.getSpine().isMapPointSolid(position))
 			shotProps.put(CommonKV.Spawn.KEY_EXPIRE, true);
@@ -460,11 +485,11 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 					break;
 			}
 
-			sprite.update(delta, sss.position, scriptedMoveState, sss.isFacingRight, false, false, sss.moveDir);
+			sprite.update(delta, sss.position, scriptedMoveState, sss.isFacingRight, false, false, false, sss.moveDir);
 		}
 		else {
 			sprite.update(delta, body.getPosition(), moveState, isFacingRight, (shootCooldownTimer > 0f),
-					(noDamageCooldown > 0f), Direction4.NONE);
+					(noDamageCooldown > 0f), isOnGroundHeadInTile, Direction4.NONE);
 		}
 	}
 

@@ -16,11 +16,12 @@ import kidridicarus.game.info.KidIcarusGfx;
 public class PitSprite extends Sprite {
 	private static final float BIG_SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float BIG_SPRITE_HEIGHT = UInfo.P2M(24);
-	private static final Vector2 BIG_SPRITE_OFFSET = UInfo.P2MVector(0, 0);
+	private static final Vector2 BIG_SPRITE_OFFSET = UInfo.P2MVector(0, 1);
+	private static final Vector2 BIG_SPRITE_STUCK_OFFSET = UInfo.P2MVector(0, 5);
 
 	private static final float SML_SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SML_SPRITE_HEIGHT = UInfo.P2M(16);
-	private static final Vector2 SML_SPRITE_OFFSET = UInfo.P2MVector(0, 0);
+	private static final Vector2 SML_SPRITE_OFFSET = UInfo.P2MVector(0, 1);
 
 	private static final float ANIM_SPEED = 1/15f;
 	private static final int ANIM_HOLD = 0;
@@ -84,7 +85,7 @@ public class PitSprite extends Sprite {
 	}
 
 	public void update(float delta, Vector2 position, MoveState nextParentState, boolean isFacingRight,
-			boolean isDmgFrame, boolean isShooting, Direction4 climbDir) {
+			boolean isDmgFrame, boolean isShooting, boolean isHeadInTile, Direction4 climbDir) {
 		Animation<TextureRegion> nextAnim = null;
 		boolean isBigSprite = true;
 		switch(nextParentState) {
@@ -144,23 +145,30 @@ public class PitSprite extends Sprite {
 		if(nextAnim != null)
 			setRegion(nextAnim.getKeyFrame(spriteStateTimer));
 
+		Vector2 offset = new Vector2(0f, 0f);
 		// check sprite size, set bounds and position
 		if(isBigSprite) {
+			if(isHeadInTile)
+				offset.set(BIG_SPRITE_STUCK_OFFSET);
+			else
+				offset.set(BIG_SPRITE_OFFSET);
 			setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
-			setPosition(position.x - getWidth()/2 + BIG_SPRITE_OFFSET.x,
-					position.y - getHeight()/2 + BIG_SPRITE_OFFSET.y);
 		}
 		else {
+			offset.set(SML_SPRITE_OFFSET);
 			setBounds(getX(), getY(), SML_SPRITE_WIDTH, SML_SPRITE_HEIGHT);
-			setPosition(position.x - getWidth()/2 + SML_SPRITE_OFFSET.x,
-					position.y - getHeight()/2 + SML_SPRITE_OFFSET.y);
 		}
+		setPosition(position.x - getWidth()/2f + offset.x,
+				position.y - getHeight()/2f + offset.y);
 
 		// should the sprite be flipped on X due to facing direction?
 		if((isFacingRight && isFlipX()) || (!isFacingRight && !isFlipX()))
 			flip(true,  false);
 
-		spriteStateTimer = prevParentState == nextParentState ? spriteStateTimer+delta : 0f;
+		if(prevParentState != null && prevParentState.isJump() && nextParentState.isJump())
+			spriteStateTimer += delta;
+		else
+			spriteStateTimer = prevParentState == nextParentState ? spriteStateTimer+delta : 0f;
 		prevParentState = nextParentState;
 	}
 }
