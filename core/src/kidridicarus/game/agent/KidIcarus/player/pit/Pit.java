@@ -26,12 +26,12 @@ import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.KidIcarus.player.pitarrow.PitArrow;
-import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
-import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
+import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
+import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusKV;
 import kidridicarus.game.powerup.KidIcarusPow;
-import kidridicarus.game.powerup.SMB_Pow;
+import kidridicarus.game.powerup.SMB1_Pow;
 
 /*
  * Notes:
@@ -174,7 +174,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			body.getSpine().checkDoBodySizeChange(nextMoveState.isDuck());
 
 			if(nextMoveState.isGround())
-				processGroundMove(delta, moveAdvice, nextMoveState);
+				processGroundMove(moveAdvice, nextMoveState);
 			else
 				processAirMove(delta, moveAdvice, nextMoveState);
 
@@ -204,7 +204,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 					heartsCollected = MAX_HEARTS_COLLECTED;
 			}
 			// TODO: implement ignore points pow for pit somewhere better
-			else if(pu.getPowerupCharacter() != PowChar.PIT && !(pu instanceof SMB_Pow.PointsPow))
+			else if(pu.getPowerupCharacter() != PowChar.PIT && !(pu instanceof SMB1_Pow.PointsPow))
 				supervisor.receiveNonCharPowerup(pu);
 		}
 		powerupsReceived.clear();
@@ -318,7 +318,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		// ... else do nothing.
 	}
 
-	private void processGroundMove(float delta, MoveAdvice moveAdvice, MoveState nextMoveState) {
+	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
 		// next jump changes to allowed when on ground and not advising jump move 
 		if(!moveAdvice.action1)
 			isNextJumpAllowed = true;

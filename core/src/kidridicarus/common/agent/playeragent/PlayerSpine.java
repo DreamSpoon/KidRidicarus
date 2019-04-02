@@ -15,9 +15,9 @@ import kidridicarus.common.agentspine.MobileAgentSpine;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
-import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
-import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
+import kidridicarus.game.agent.SMB1.TileBumpTakeAgent;
+import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
 
 public class PlayerSpine extends MobileAgentSpine {
 	private static final float MIN_HEADBANG_VEL = 0.01f;

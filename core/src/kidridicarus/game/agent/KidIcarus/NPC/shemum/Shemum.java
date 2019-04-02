@@ -13,7 +13,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.game.agent.SMB.BumpTakeAgent;
+import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusKV;
 

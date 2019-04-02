@@ -85,6 +85,7 @@ public class CommonKV {
 		public static final String KEY_VIEWOFFSET_Y = "viewoffset_y";
 		public static final String KEY_SPACE_WRAP_H = "space_wrap_h";
 		public static final String KEY_ROOM_SCROLL_VELOCITY = "scroll_velocity";
+		public static final String KEY_SCROLL_BOUND_H = "scroll_bound_h";
 
 		public static final String KEY_ROOMTYPE = "roomtype";
 		public static final String VAL_ROOMTYPE_CENTER = "center";

@@ -7,6 +7,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
@@ -25,6 +26,7 @@ public class RoomBox extends Agent implements DisposableAgent {
 	private float viewVerticalOffset;
 	private Direction4 viewScrollDir;
 	private Float scrollVelocity;
+	private boolean isScrollBoundH;
 
 	public RoomBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -47,6 +49,7 @@ public class RoomBox extends Agent implements DisposableAgent {
 		scrollVelocity = properties.get(CommonKV.Room.KEY_ROOM_SCROLL_VELOCITY, null, Float.class);
 		if(scrollVelocity != null)
 			scrollVelocity = UInfo.P2M(scrollVelocity);
+		isScrollBoundH = properties.get(CommonKV.Room.KEY_SCROLL_BOUND_H, false, Boolean.class);
 	}
 
 	public Vector2 getViewCenterForPos(Vector2 playerPosition, Vector2 incomingPrevCenter) {
@@ -59,10 +62,10 @@ public class RoomBox extends Agent implements DisposableAgent {
 		Vector2 center;
 		switch(roomType) {
 			case HSCROLL:
-				center = getScrollViewCenter(playerPosition, prevCenter);
+				center = getScrollViewCenter(playerPosition, prevCenter, true);
 				break;
 			case VSCROLL:
-				center = getScrollViewCenter(playerPosition, prevCenter);
+				center = getScrollViewCenter(playerPosition, prevCenter, false);
 				break;
 			case CENTER:
 			default:
@@ -72,13 +75,13 @@ public class RoomBox extends Agent implements DisposableAgent {
 		return center;
 	}
 
-	private Vector2 getScrollViewCenter(Vector2 playerPosition, Vector2 prevCenter) {
+	private Vector2 getScrollViewCenter(Vector2 playerPosition, Vector2 prevCenter, boolean isScrollH) {
 		// return previous center as default if needed
-		Vector2 nextCenter = prevCenter == null ? null : prevCenter.cpy();
-
+		Vector2 nextCenter = null;
+		Vector2 safePrevCenter = prevCenter == null ? playerPosition.cpy() : prevCenter.cpy();
 		// if scrolling horizontally then check/do view center move, cap velocity, and apply offset
 		if(viewScrollDir.isHorizontal()) {
-			float moveX = playerPosition.x - prevCenter.x;
+			float moveX = playerPosition.x - safePrevCenter.x;
 			if(viewScrollDir == Direction4.RIGHT) {
 				if(moveX < 0f)
 					moveX = 0f;
@@ -91,12 +94,12 @@ public class RoomBox extends Agent implements DisposableAgent {
 				else if(scrollVelocity != null && moveX < -scrollVelocity)
 					moveX = -scrollVelocity;
 			}
-			nextCenter = new Vector2(prevCenter.x+moveX,
+			nextCenter = new Vector2(safePrevCenter.x+moveX,
 					body.getBounds().y + body.getBounds().height/2f + viewVerticalOffset);
 		}
 		// if scrolling vertically then check/do view center move, cap velocity
 		else if(viewScrollDir.isVertical()) {
-			float moveY = playerPosition.y - prevCenter.y;
+			float moveY = playerPosition.y - safePrevCenter.y;
 			if(viewScrollDir == Direction4.UP) {
 				if(moveY < 0f)
 					moveY = 0f;
@@ -109,8 +112,27 @@ public class RoomBox extends Agent implements DisposableAgent {
 				else if(scrollVelocity != null && moveY < -scrollVelocity)
 					moveY = -scrollVelocity;
 			}
-			// TODO nexCener.y += viewHorizontalOffset;
-			nextCenter = new Vector2(body.getBounds().x + body.getBounds().width/2f, prevCenter.y+moveY);
+			// TODO nexCenter.y += viewHorizontalOffset;
+			nextCenter = new Vector2(body.getBounds().x + body.getBounds().width/2f, safePrevCenter.y+moveY);
+		}
+		else {
+			if(isScrollH) {
+				nextCenter = new Vector2(playerPosition.x,
+						body.getBounds().y + body.getBounds().height/2f + viewVerticalOffset);
+			}
+			else
+				nextCenter = new Vector2(body.getBounds().x + body.getBounds().width/2f, playerPosition.y);
+		}
+
+		if(isScrollBoundH) {
+			// minX = far left of room + half of screen width
+			float minX = body.getBounds().x + UInfo.P2M(CommonInfo.V_WIDTH)/2f;
+			// maxX = far right of room - half of screen width
+			float maxX = body.getBounds().x + body.getBounds().width - UInfo.P2M(CommonInfo.V_WIDTH)/2f;
+			if(nextCenter.x < minX)
+				nextCenter.x = minX;
+			else if(nextCenter.x > maxX)
+				nextCenter.x = maxX;
 		}
 
 		return nextCenter;

@@ -28,13 +28,13 @@ import kidridicarus.common.tool.Direction8;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.Metroid.player.samuschunk.SamusChunk;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
-import kidridicarus.game.agent.SMB.HeadBounceGiveAgent;
-import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
-import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
+import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
+import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidKV;
 import kidridicarus.game.powerup.MetroidPow;
-import kidridicarus.game.powerup.SMB_Pow;
+import kidridicarus.game.powerup.SMB1_Pow;
 
 /*
  * If Samus has zero energy tanks, then max energy is 99
@@ -220,7 +220,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 					energySupply = MAX_ENERGY_SUPPLY;
 			}
 			// TODO: implement ignore points pow for samus somewhere better
-			else if(pu.getPowerupCharacter() != PowChar.SAMUS && !(pu instanceof SMB_Pow.PointsPow))
+			else if(pu.getPowerupCharacter() != PowChar.SAMUS && !(pu instanceof SMB1_Pow.PointsPow))
 				supervisor.receiveNonCharPowerup(pu);
 
 			applyPowerup(pu);

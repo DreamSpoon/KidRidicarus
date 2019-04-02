@@ -36,10 +36,10 @@ import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.common.tool.QQ;
 import kidridicarus.game.info.KidIcarusKV;
 import kidridicarus.game.info.MetroidKV;
-import kidridicarus.game.info.SMB_KV;
+import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.powerup.KidIcarusPow;
 import kidridicarus.game.powerup.MetroidPow;
-import kidridicarus.game.powerup.SMB_Pow;
+import kidridicarus.game.powerup.SMB1_Pow;
 
 /*
  * Guide AKA Player (not actually tho - eventually this class will split into Player and others).
@@ -110,7 +110,7 @@ public class Guide implements Disposable {
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
 			QQ.toggleOn();
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP_MARIO))
-			Powerup.tryPushPowerup(playerAgent, new SMB_Pow.FireFlowerPow());
+			Powerup.tryPushPowerup(playerAgent, new SMB1_Pow.FireFlowerPow());
 		else if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP_SAMUS))
 			Powerup.tryPushPowerup(playerAgent, new MetroidPow.EnergyPow());
 		else if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP_PIT))
@@ -199,7 +199,7 @@ public class Guide implements Disposable {
 		switch(pc) {
 			default:
 			case MARIO:
-				doAgentMake(SMB_KV.AgentClassAlias.VAL_MARIO, currentPos, facingRight);
+				doAgentMake(SMB1_KV.AgentClassAlias.VAL_MARIO, currentPos, facingRight);
 				break;
 			case PIT:
 				doAgentMake(KidIcarusKV.AgentClassAlias.VAL_PIT, currentPos, facingRight);

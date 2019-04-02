@@ -2,7 +2,7 @@ package kidridicarus.game.info;
 
 public class KidIcarusAudio {
 	public class Sound {
-		private static final String DIR = "audio/sound/KidIcarus/";
+		private static final String DIR = "KidIcarus/sound/";
 		public class General {
 			public static final String HEART_PICKUP = DIR+"heart_pickup.wav";
 			public static final String SMALL_POOF = DIR+"small_poof.wav";
@@ -15,7 +15,7 @@ public class KidIcarusAudio {
 	}
 
 	public class Music {
-		private static final String DIR = "audio/music/KidIcarus/";
+		private static final String DIR = "KidIcarus/music/";
 		public static final String PIT_DIE = DIR+"11_-_Kid_Icarus_-_NES_-_Game_Over.ogg";
 	}
 }
