@@ -37,6 +37,8 @@ import kidridicarus.common.tool.QQ;
 import kidridicarus.game.info.KidIcarusKV;
 import kidridicarus.game.info.MetroidKV;
 import kidridicarus.game.info.SMB_KV;
+import kidridicarus.game.powerup.KidIcarusPow;
+import kidridicarus.game.powerup.MetroidPow;
 import kidridicarus.game.powerup.SMB_Pow;
 
 /*
@@ -107,8 +109,12 @@ public class Guide implements Disposable {
 
 		if(Gdx.input.isKeyJustPressed(KeyboardMapping.DEBUG_TOGGLE))
 			QQ.toggleOn();
-		if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP))
+		if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP_MARIO))
 			Powerup.tryPushPowerup(playerAgent, new SMB_Pow.FireFlowerPow());
+		else if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP_SAMUS))
+			Powerup.tryPushPowerup(playerAgent, new MetroidPow.EnergyPow());
+		else if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP_PIT))
+			Powerup.tryPushPowerup(playerAgent, new KidIcarusPow.HeartsPow(1));
 	}
 
 	public void preUpdateAgency(float delta) {

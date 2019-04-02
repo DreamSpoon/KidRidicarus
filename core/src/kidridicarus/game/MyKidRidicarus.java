@@ -17,7 +17,7 @@ import kidridicarus.game.info.MetroidAgentClassList;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.SMB_AgentClassList;
 import kidridicarus.game.info.SMB_Audio;
-import kidridicarus.game.screen.PlayScreen;
+import kidridicarus.game.screen.InstructionsScreen;
 
 /*
  * Main game asset loader class.
@@ -78,8 +78,8 @@ public class MyKidRidicarus extends Game {
 						MetroidAgentClassList.METROID_AGENT_CLASSLIST,
 						KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST));
 
-		// start playing first level
-		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME3, null));
+		// show intro/instructions screen
+		setScreen(new InstructionsScreen(this, CommonInfo.GAMEMAP_FILENAME3));
 	}
 
 	@Override

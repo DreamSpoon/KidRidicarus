@@ -1,0 +1,136 @@
+package kidridicarus.game.screen;
+
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
+import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.KeyboardMapping;
+import kidridicarus.game.MyKidRidicarus;
+
+public class InstructionsScreen implements Screen {
+	private Viewport viewport;
+	private Stage stage;
+	private Game game;
+	private InputProcessor oldInPr;
+	private String nextLevelFilename;
+	private boolean goRedTeamGo;
+
+	public InstructionsScreen(Game game, String nextLevelFilename) {
+		this.game = game;
+		this.nextLevelFilename = nextLevelFilename;
+		viewport = new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera());
+		stage = new Stage(viewport, ((MyKidRidicarus) game).batch);
+
+		goRedTeamGo = false;
+
+		setupStage();
+
+		oldInPr = Gdx.input.getInputProcessor();
+		Gdx.input.setInputProcessor(new MyLittleInPr());
+	}
+
+	private void setupStage() {
+		BitmapFont realFont = new BitmapFont();
+		LabelStyle labelFont = new LabelStyle(realFont, Color.WHITE);
+
+		Table table = new Table();
+		table.center();
+		table.setFillParent(true);
+		Label instructionsLabel = new Label(getInstructionsString(), labelFont);
+		table.add(instructionsLabel).expandX().padTop(10f);
+		table.row();
+		Label playAgainLabel = new Label("press SPACE to play", labelFont);
+		table.add(playAgainLabel).expandX().padTop(10f);
+
+		stage.addActor(table);
+	}
+
+	private CharSequence getInstructionsString() {
+		return "KEY - ACTION\n" +
+				Input.Keys.toString(KeyboardMapping.MOVE_LEFT).toUpperCase() + "  - move LEFT\n" +
+				Input.Keys.toString(KeyboardMapping.MOVE_RIGHT).toUpperCase() + "  - move RIGHT\n" +
+				Input.Keys.toString(KeyboardMapping.MOVE_UP).toUpperCase() + "  - move UP\n" +
+				Input.Keys.toString(KeyboardMapping.MOVE_DOWN).toUpperCase() + "  - move DOWN\n" +
+				Input.Keys.toString(KeyboardMapping.MOVE_RUNSHOOT).toUpperCase() + "  - run/shoot\n" +
+				Input.Keys.toString(KeyboardMapping.MOVE_JUMP).toUpperCase() + "  - jump\n";
+	}
+
+	private class MyLittleInPr implements InputProcessor {
+		// return true for all the following to relay that the event was handled
+		@Override
+		public boolean keyDown(int keycode) { return true; }
+		@Override
+		public boolean keyUp(int keycode) { return doKeyUp(keycode); }
+		@Override
+		public boolean keyTyped(char character) { return true; }
+		@Override
+		public boolean touchDown(int screenX, int screenY, int pointer, int button) { return true; }
+		@Override
+		public boolean touchUp(int screenX, int screenY, int pointer, int button) { return true; }
+		@Override
+		public boolean touchDragged(int screenX, int screenY, int pointer) { return true; }
+		@Override
+		public boolean mouseMoved(int screenX, int screenY) { return true; }
+		@Override
+		public boolean scrolled(int amount) { return true; }
+	}
+
+	@Override
+	public void show() {
+	}
+
+	public boolean doKeyUp(int keycode) {
+		if(keycode == Input.Keys.SPACE)
+			goRedTeamGo = true;
+			
+		return true;
+	}
+
+	@Override
+	public void render(float delta) {
+		if(goRedTeamGo) {
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename, null));
+			dispose();
+		}
+
+		Gdx.gl.glClearColor(0,  0,  0,  1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		stage.draw();
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		viewport.update(width, height);
+	}
+
+	@Override
+	public void pause() {
+	}
+
+	@Override
+	public void resume() {
+	}
+
+	@Override
+	public void hide() {
+	}
+
+	@Override
+	public void dispose() {
+		Gdx.input.setInputProcessor(oldInPr);
+		stage.dispose();
+	}
+}
