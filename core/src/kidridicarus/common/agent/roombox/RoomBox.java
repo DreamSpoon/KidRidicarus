@@ -7,7 +7,6 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
@@ -25,6 +24,7 @@ public class RoomBox extends Agent implements DisposableAgent {
 	private String roomMusicStr;
 	private float viewVerticalOffset;
 	private Direction4 viewScrollDir;
+	private Float scrollVelocity;
 
 	public RoomBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -44,6 +44,9 @@ public class RoomBox extends Agent implements DisposableAgent {
 
 		viewVerticalOffset = UInfo.P2M(properties.get(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
 		viewScrollDir = Direction4.fromString(properties.get(CommonKV.Room.KEY_ROOM_SCROLL_DIR, "", String.class));
+		scrollVelocity = properties.get(CommonKV.Room.KEY_ROOM_SCROLL_VELOCITY, null, Float.class);
+		if(scrollVelocity != null)
+			scrollVelocity = UInfo.P2M(scrollVelocity);
 	}
 
 	public Vector2 getViewCenterForPos(Vector2 playerPosition, Vector2 incomingPrevCenter) {
@@ -56,62 +59,64 @@ public class RoomBox extends Agent implements DisposableAgent {
 		Vector2 center;
 		switch(roomType) {
 			case HSCROLL:
-				center = getHscrollCenter(playerPosition, prevCenter);
+				center = getScrollViewCenter(playerPosition, prevCenter);
 				break;
 			case VSCROLL:
-				center = getVscrollCenter(playerPosition, prevCenter);
+				center = getScrollViewCenter(playerPosition, prevCenter);
 				break;
 			case CENTER:
 			default:
-				center = getCenterCenter();
+				center = getCenterViewCenter();
 				break;
 		}
 		return center;
 	}
 
-	private Vector2 getHscrollCenter(Vector2 playerPosition, Vector2 prevCenter) {
-		Vector2 nextCenter = playerPosition.cpy();
-		// if allowed only scroll right then allow only increase x position
-		if(viewScrollDir == Direction4.RIGHT)
-			nextCenter.x = playerPosition.x > prevCenter.x ? playerPosition.x : prevCenter.x;
-		// if allowed only scroll left then allow only decrease x position
-		else if(viewScrollDir == Direction4.LEFT)
-			nextCenter.x = playerPosition.x < prevCenter.x ? playerPosition.x : prevCenter.x;
-		else
-			nextCenter.x = playerPosition.x;
+	private Vector2 getScrollViewCenter(Vector2 playerPosition, Vector2 prevCenter) {
+		// return previous center as default if needed
+		Vector2 nextCenter = prevCenter == null ? null : prevCenter.cpy();
 
-		// minX = left bound of room + half screen width
-		float minX = body.getBounds().x + UInfo.P2M(CommonInfo.V_WIDTH)/2f;
-		if(nextCenter.x < minX)
-			nextCenter.x = minX;
-		// maxX = right bound of room - half screen width
-		float maxX = body.getBounds().x + body.getBounds().width - UInfo.P2M(CommonInfo.V_WIDTH)/2f;
-		if(nextCenter.x > maxX)
-			nextCenter.x = maxX;
-
-		nextCenter.y = body.getBounds().y + body.getBounds().height/2f + viewVerticalOffset;
+		// if scrolling horizontally then check/do view center move, cap velocity, and apply offset
+		if(viewScrollDir.isHorizontal()) {
+			float moveX = playerPosition.x - prevCenter.x;
+			if(viewScrollDir == Direction4.RIGHT) {
+				if(moveX < 0f)
+					moveX = 0f;
+				else if(scrollVelocity != null && moveX > scrollVelocity)
+					moveX = scrollVelocity;
+			}
+			else if(viewScrollDir == Direction4.LEFT) {
+				if(moveX > 0f)
+					moveX = 0f;
+				else if(scrollVelocity != null && moveX < -scrollVelocity)
+					moveX = -scrollVelocity;
+			}
+			nextCenter = new Vector2(prevCenter.x+moveX,
+					body.getBounds().y + body.getBounds().height/2f + viewVerticalOffset);
+		}
+		// if scrolling vertically then check/do view center move, cap velocity
+		else if(viewScrollDir.isVertical()) {
+			float moveY = playerPosition.y - prevCenter.y;
+			if(viewScrollDir == Direction4.UP) {
+				if(moveY < 0f)
+					moveY = 0f;
+				else if(scrollVelocity != null && moveY > scrollVelocity)
+					moveY = scrollVelocity;
+			}
+			else if(viewScrollDir == Direction4.DOWN) {
+				if(moveY > 0f)
+					moveY = 0f;
+				else if(scrollVelocity != null && moveY < -scrollVelocity)
+					moveY = -scrollVelocity;
+			}
+			// TODO nexCener.y += viewHorizontalOffset;
+			nextCenter = new Vector2(body.getBounds().x + body.getBounds().width/2f, prevCenter.y+moveY);
+		}
 
 		return nextCenter;
 	}
 
-	private Vector2 getVscrollCenter(Vector2 playerPosition, Vector2 prevCenter) {
-		Vector2 nextCenter = playerPosition.cpy();
-
-		nextCenter.x = body.getBounds().x + body.getBounds().width/2f;
-
-		// if allowed only scroll up then allow only increase y position
-		if(viewScrollDir == Direction4.UP)
-			nextCenter.y = playerPosition.y > prevCenter.y ? playerPosition.y : prevCenter.y;
-		// if allowed only scroll left then allow only decrease x position
-		else if(viewScrollDir == Direction4.DOWN)
-			nextCenter.y = playerPosition.y < prevCenter.y ? playerPosition.y : prevCenter.y;
-		else
-			nextCenter.y = playerPosition.y;
-
-		return nextCenter;
-	}
-
-	private Vector2 getCenterCenter() {
+	private Vector2 getCenterViewCenter() {
 		return new Vector2(body.getBounds().x + body.getBounds().width/2f,
 				body.getBounds().y + body.getBounds().height/2f + viewVerticalOffset);
 	}
