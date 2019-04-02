@@ -3,24 +3,24 @@ package kidridicarus.game.info;
 public class KidIcarusGfx {
 	private static final String BASEDIR = "KidIcarus/";
 
-	public class General {
+	public static class General {
 		private static final String DIR = BASEDIR+"general/";
 		public static final String SMALL_POOF =	DIR+"small_poof";
 	}
 
-	public class Item {
+	public static class Item {
 		private static final String DIR = BASEDIR+"item/";
 		public static final String HEART1 =	DIR+"heart1";
 	}
 
-	public class NPC {
+	public static class NPC {
 		private static final String DIR = BASEDIR+"NPC/";
 		public static final String SHEMUM =	DIR+"shemum";
 	}
 
-	public class Player {
+	public static class Player {
 		private static final String DIR = BASEDIR+"player/";
-		public class Pit {
+		public static class Pit {
 			private static final String SUBDIR = DIR+"Pit/";
 			public static final String AIMUP =			SUBDIR+"pit_aimup";
 			public static final String AIMUP_SHOOT =	SUBDIR+"pit_aimup_shoot";
@@ -34,9 +34,16 @@ public class KidIcarusGfx {
 			public static final String WALK =			SUBDIR+"pit_walk";
 			public static final String WALK_SHOOT =		SUBDIR+"pit_walk_shoot";
 		}
-		public class PitArrow {
+		public static class PitArrow {
 			private static final String SUBDIR = DIR+"Pit/";
-			public static final String ARROW =			SUBDIR+"pit_arrow";
+			public static final String ARROW = SUBDIR+"pit_arrow";
+		}
+
+		public static class HUD {
+			private static final String SUBDIR = DIR+"PitHUD/";
+			public static final String[] HEALTH_BAR = { SUBDIR+"health_bar0", SUBDIR+"health_bar1",
+					SUBDIR+"health_bar2", SUBDIR+"health_bar3", SUBDIR+"health_bar4", SUBDIR+"health_bar5",
+					SUBDIR+"health_bar6", SUBDIR+"health_bar7" };
 		}
 	}
 }

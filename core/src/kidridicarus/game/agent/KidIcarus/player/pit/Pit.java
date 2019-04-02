@@ -601,6 +601,10 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			Integer he = health;
 			return (T) he;
 		}
+		else if(key.equals(KidIcarusKV.KEY_HEARTS_COLLECTED) && Integer.class.equals(cls)) {
+			Integer he = heartsCollected;
+			return (T) he;
+		}
 		return super.getProperty(key, defaultValue, cls);
 	}
 
@@ -612,6 +616,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		else
 			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.LEFT);
 		myProperties.put(KidIcarusKV.KEY_HEALTH, health);
+		myProperties.put(KidIcarusKV.KEY_HEARTS_COLLECTED, heartsCollected);
 		return myProperties;
 	}
 

@@ -39,7 +39,7 @@ public class Heart1 extends Agent implements DisposableAgent {
 				public void update(float delta) { doUpdate(delta); }
 			});
 		sprite = new Heart1Sprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
 				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 			});

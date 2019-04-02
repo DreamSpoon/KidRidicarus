@@ -11,12 +11,13 @@ import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.game.agent.KidIcarus.player.pit.HUD.PitHUD;
 
 public class PitSupervisor extends PlayerAgentSupervisor {
 	private MoveAdvice moveAdvice;
 	private Pit playerAgent;
 	private TextureAtlas atlas;
-//	private PitHUD playerHUD;
+	private PitHUD playerHUD;
 	private String nextLevelName;
 	private boolean isGameOver;
 
@@ -89,11 +90,11 @@ public class PitSupervisor extends PlayerAgentSupervisor {
 
 	@Override
 	public void setStageHUD(Stage stageHUD) {
-//		playerHUD = new PitHUD((Pit) playerAgent, atlas, stageHUD);
+		playerHUD = new PitHUD((Pit) playerAgent, atlas, stageHUD);
 	}
 
 	@Override
 	public void drawHUD() {
-//		playerHUD.draw();
+		playerHUD.draw();
 	}
 }

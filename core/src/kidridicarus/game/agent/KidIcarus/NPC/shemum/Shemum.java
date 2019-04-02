@@ -51,7 +51,7 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				public void update(float delta) { doUpdate(delta); }
 			});
 		sprite = new ShemumSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
 				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 			});

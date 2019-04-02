@@ -10,4 +10,5 @@ public class KidIcarusKV {
 	}
 
 	public static final String KEY_HEALTH = "key_health";
+	public static final String KEY_HEARTS_COLLECTED = "key_heart_count";
 }
