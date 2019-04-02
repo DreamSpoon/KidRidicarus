@@ -183,16 +183,14 @@ public class PlayScreen implements Screen {
 
 		// change to next level?
 		if(guide.isGameWon()) {
-			game.director.disposeAndRemoveAllAgents();
+			dispose();
 			game.setScreen(new LevelTransitScreen(game, guide.getNextLevelFilename(),
 					guide.getCopyPlayerAgentProperties()));
-			dispose();
 		}
 		// change to game over screen?
 		else if(guide.isGameOver()) {
-			game.director.disposeAndRemoveAllAgents();
-			game.setScreen(new GameOverScreen(game, false, currentLevelFilename));
 			dispose();
+			game.setScreen(new GameOverScreen(game, false, currentLevelFilename));
 		}
 	}
 
@@ -222,5 +220,6 @@ public class PlayScreen implements Screen {
 		guide.dispose();
 		stageHUD.dispose();
 		b2dr.dispose();
+		game.director.disposeAndRemoveAllAgents();
 	}
 }

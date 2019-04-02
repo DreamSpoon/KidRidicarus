@@ -397,7 +397,9 @@ public class Guide implements Disposable {
 
 	// safely get the view center - cannot return null, and tries to return a correct view center
 	private Vector2 getViewCenter() {
-		Vector2 vc = playerAgent.getSupervisor().getViewCenter();
+		Vector2 vc = null;
+		if(playerAgent != null)
+			vc = playerAgent.getSupervisor().getViewCenter();
 		if(vc == null)
 			vc = lastViewCenter;
 		else

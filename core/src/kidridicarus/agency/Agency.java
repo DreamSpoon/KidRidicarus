@@ -13,11 +13,11 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.agencychange.AgencyChangeQueue;
 import kidridicarus.agency.agencychange.AgencyChangeQueue.AgencyChangeCallback;
+import kidridicarus.agency.agencychange.AgentDrawListenerChange;
 import kidridicarus.agency.agencychange.AgentPlaceholder;
 import kidridicarus.agency.agencychange.AgentRemoveListenerChange;
-import kidridicarus.agency.agencychange.AllAgentListChange;
-import kidridicarus.agency.agencychange.AgentDrawListenerChange;
 import kidridicarus.agency.agencychange.AgentUpdateListenerChange;
+import kidridicarus.agency.agencychange.AllAgentListChange;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
@@ -26,9 +26,9 @@ import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AllowOrder;
+import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.EarPlug;
-import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.ObjectProperties;
 
 /*

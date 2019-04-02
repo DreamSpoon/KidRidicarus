@@ -167,8 +167,10 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 
 	@Override
 	public void disposeAgent() {
-		solidTileMapAgent.dispose();
-		tiledMap.dispose();
+		if(solidTileMapAgent != null)
+			solidTileMapAgent.dispose();
+		if(tiledMap != null)
+			tiledMap.dispose();
 	}
 
 	public static ObjectProperties makeAP(TiledMap tiledMap) {

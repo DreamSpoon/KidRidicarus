@@ -1,6 +1,5 @@
 package kidridicarus.game.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -18,28 +17,45 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.KeyboardMapping;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.game.MyKidRidicarus;
 
 public class InstructionsScreen implements Screen {
+	private MyKidRidicarus game;
+	private OrthographicCamera gamecam;
 	private Viewport viewport;
 	private Stage stage;
-	private Game game;
 	private InputProcessor oldInPr;
+
 	private String nextLevelFilename;
 	private boolean goRedTeamGo;
 
-	public InstructionsScreen(Game game, String nextLevelFilename) {
+	public InstructionsScreen(MyKidRidicarus game, String nextLevelFilename) {
 		this.game = game;
 		this.nextLevelFilename = nextLevelFilename;
-		viewport = new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera());
-		stage = new Stage(viewport, ((MyKidRidicarus) game).batch);
-
 		goRedTeamGo = false;
 
+		gamecam = new OrthographicCamera();
+		viewport = new FitViewport(UInfo.P2M(CommonInfo.V_WIDTH), UInfo.P2M(CommonInfo.V_HEIGHT), gamecam);
+		// set position so bottom left of view screen is (0, 0) in Box2D world 
+		gamecam.position.set(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f, 0);
+		// camera for stage is different from camera for game world
+		stage = new Stage(new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera()),
+				game.batch);
 		setupStage();
 
 		oldInPr = Gdx.input.getInputProcessor();
 		Gdx.input.setInputProcessor(new MyLittleInPr());
+
+		game.director.getAgency().setEar(null);
+		// load the game map
+		game.director.createMapAgent(CommonInfo.INSTRO_FILENAME);
+		// run one update to let the map create the solid tile map and draw layer agents
+		game.director.update(1f/60f);
+		game.director.postUpdate();
+		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
+		game.director.update(1f/60f);
+		game.director.postUpdate();
 	}
 
 	private void setupStage() {
@@ -101,14 +117,32 @@ public class InstructionsScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-		if(goRedTeamGo) {
-			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename, null));
-			dispose();
-		}
+		update(delta);
+		drawScreen();
+	}
 
-		Gdx.gl.glClearColor(0,  0,  0,  1);
+	private void update(float delta) {
+		// update the game world
+		game.director.update(delta);
+		// post processing of changes during update
+		game.director.postUpdate();
+	}
+
+	private void drawScreen() {
+		// clear screen
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		// draw screen
+		game.director.draw(gamecam);
+
+		// draw HUD last
 		stage.draw();
+
+		if(goRedTeamGo) {
+			dispose();
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename, null));
+		}
 	}
 
 	@Override
@@ -132,5 +166,6 @@ public class InstructionsScreen implements Screen {
 	public void dispose() {
 		Gdx.input.setInputProcessor(oldInPr);
 		stage.dispose();
+		game.director.disposeAndRemoveAllAgents();
 	}
 }

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="16" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="2">
+ <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
+  <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
+ </tileset>
+ <tileset firstgid="36" name="MetroidTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="40" columns="8">
+  <image source="MetroidTileset1-1.png" width="144" height="90"/>
+ </tileset>
+ <tileset firstgid="76" name="SMBTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="48" columns="8">
+  <image source="SMBTileset1-1.png" width="144" height="108"/>
+ </tileset>
+ <layer id="2" name="background" width="16" height="15">
+  <properties>
+   <property name="draworder" value="map_background"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYCQC++DAulTQjwsTo58Yu0f1j+ofrvoB1O8crw==
+  </data>
+ </layer>
+ <layer id="3" name="scenery_bottom" width="16" height="15">
+  <properties>
+   <property name="draworder" value="map_bottom"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYKAtSAHiVChOI0N/DhDnQnEeFd1FTWBMoX5TCvVbUKh/FJAO4oE4YaAdAQQAXuQEqA==
+  </data>
+ </layer>
+ <layer id="8" name="scenery_top" width="16" height="15">
+  <properties>
+   <property name="draworder" value="map_top"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBhegJNC/VxUccUooAbgRKNJBQJQWoJM/YJo9GAEAIVwAHA=
+  </data>
+ </layer>
+ <layer id="1" name="collision" width="16" height="15">
+  <properties>
+   <property name="draworder" value="map_middle"/>
+   <property name="solidlayer" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBhYkIwDk6KfUvspAUZDXL8mFKsAsSqUJgWo4dHDh4RxAZBebRLtpES/PxAHoOnXJ0F/OBBHoOnXgGIYmw8LTseBtaBYDYnmxYJx6QcASywOBg==
+  </data>
+ </layer>
+ <objectgroup id="9" name="keepalivebox">
+  <properties>
+   <property name="agentclass" value="keep_alive_box"/>
+  </properties>
+  <object id="1" x="0" y="0" width="256" height="240"/>
+ </objectgroup>
+ <layer id="4" name="zoomer" width="16" height="15">
+  <properties>
+   <property name="agentclass" value="zoomer"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFowA3sB5oB4wCvAAAY6AAPA==
+  </data>
+ </layer>
+ <layer id="5" name="shemum" width="16" height="15">
+  <properties>
+   <property name="agentclass" value="shemum"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBgF1AD8SHgUjAJ6AQByJAAu
+  </data>
+ </layer>
+ <layer id="6" name="turtle" width="16" height="15">
+  <properties>
+   <property name="agentclass" value="turtle"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUwED5QDuARAAAVZAAeA==
+  </data>
+ </layer>
+ <layer id="7" name="goomba" width="16" height="15">
+  <properties>
+   <property name="agentclass" value="goomba"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUEAJlA+0AHAAASdAAdw==
+  </data>
+ </layer>
+</map>
