@@ -38,13 +38,15 @@ import kidridicarus.game.powerup.SMB_Pow;
  * Upon receiving damage contact, pit immediately moves 4 pixels to the left, with no change in velocity.
  *   (double check 4 pixels)
  * 
- * Pit faces right these directions in these conditions:
+ * Pit faces these directions under these conditions:
  *   -if not aiming up
- *     -faces right when moving right
- *     -faces left when moving left
+ *     -faces right when moving right (or if stopped and advised move right)
+ *     -faces left when moving left (or if stopped and advised move left)
  *   -otherwise, aiming up:
  *     -if move right/left advice is given then use move advice to determine facing direction
  *     -otherwise retain previous facing direction
+ * Glitches implemented:
+ *   -duck, unduck re-shoot - if pit shoots, then quickly ducks and unducks, he can shoot more often than normal
  */
 public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTakeAgent, HeadBounceGiveAgent {
 	enum MoveState {
@@ -71,6 +73,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(4, 1);
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 5);
 	private static final float DEAD_DELAY_TIME = 3f;
+	private static final Vector2 SHOT_OFFSET_HEAD_IN_TILE = UInfo.P2MVector(0, 4);
 
 	private PitSupervisor supervisor;
 	private PitBody body;
@@ -429,8 +432,11 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		else if(!moveAdvice.action0)
 			isNextShotAllowed = true;
 
-		// decrement shoot cooldown timer
-		shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
+		// GLITCH when Pit ducks, the shoot cooldown timer resets and Pit can shoot again immediately
+		if(moveState.isDuck())
+			shootCooldownTimer = 0f;
+		else
+			shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
 	}
 
 	private void doShoot() {
@@ -449,15 +455,20 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			else
 				position.set(SHOT_OFFSET_UP).scl(-1, 1).add(body.getPosition());
 		}
-		else if(isFacingRight) {
-			arrowDir = Direction4.RIGHT;
-			velocity.set(SHOT_VEL, 0f);
-			position.set(SHOT_OFFSET_RIGHT).add(body.getPosition());
-		}
 		else {
-			arrowDir = Direction4.LEFT;
-			velocity.set(-SHOT_VEL, 0f);
-			position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(body.getPosition());
+			if(isFacingRight) {
+				arrowDir = Direction4.RIGHT;
+				velocity.set(SHOT_VEL, 0f);
+				position.set(SHOT_OFFSET_RIGHT).add(body.getPosition());
+			}
+			else {
+				arrowDir = Direction4.LEFT;
+				velocity.set(-SHOT_VEL, 0f);
+				position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(body.getPosition());
+			}
+
+			if(isOnGroundHeadInTile)
+				position.add(SHOT_OFFSET_HEAD_IN_TILE);
 		}
 
 		// create shot
@@ -497,11 +508,12 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 					break;
 			}
 
-			sprite.update(delta, sss.position, scriptedMoveState, sss.isFacingRight, false, false, false, sss.moveDir);
+			sprite.update(delta, sss.position, scriptedMoveState, sss.isFacingRight, false, false, false, false,
+					sss.moveDir);
 		}
 		else {
 			sprite.update(delta, body.getPosition(), moveState, isFacingRight, (shootCooldownTimer > 0f),
-					(noDamageCooldown > 0f), isOnGroundHeadInTile, Direction4.NONE);
+					(noDamageCooldown > 0f), isOnGroundHeadInTile, body.getSpine().isMovingUp(), Direction4.NONE);
 		}
 	}
 

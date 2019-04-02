@@ -193,13 +193,6 @@ KidIcarus/player/Pit/pit_stand
   orig: 16, 24
   offset: 0, 0
   index: -1
-KidIcarus/player/Pit/pit_walk
-  rotate: false
-  xy: 163, 7
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
-  index: 1
 KidIcarus/player/Pit/pit_stand_shoot
   rotate: false
   xy: 181, 7
@@ -207,16 +200,16 @@ KidIcarus/player/Pit/pit_stand_shoot
   orig: 16, 24
   offset: 0, 0
   index: -1
-KidIcarus/player/Pit/pit_walk_shoot
+KidIcarus/player/Pit/pit_walk
   rotate: false
-  xy: 181, 7
+  xy: 199, 7
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 1
 KidIcarus/player/Pit/pit_walk
   rotate: false
-  xy: 199, 7
+  xy: 217, 7
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
@@ -227,17 +220,24 @@ KidIcarus/player/Pit/pit_walk
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
-  index: 3
+  index: 4
 KidIcarus/player/Pit/pit_walk
   rotate: false
   xy: 235, 7
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
-  index: 4
+  index: 3
 KidIcarus/player/Pit/pit_walk_shoot
   rotate: false
   xy: 253, 7
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/pit_walk_shoot
+  rotate: false
+  xy: 271, 7
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
@@ -248,14 +248,14 @@ KidIcarus/player/Pit/pit_walk_shoot
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
-  index: 3
+  index: 4
 KidIcarus/player/Pit/pit_walk_shoot
   rotate: false
   xy: 289, 7
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
-  index: 4
+  index: 3
 KidIcarus/player/Pit/pit_duck
   rotate: false
   xy: 307, 15

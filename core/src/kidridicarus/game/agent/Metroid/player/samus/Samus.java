@@ -61,7 +61,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	private static final float STEP_SOUND_TIME = 0.167f;
 	private static final float POSTPONE_RUN_DELAY = 0.15f;
-	private static final float JUMPUP_CONSTVEL_TIME = 0.017f;
+	private static final float PRE_JUMP_TIME = 0.1f;
+	private static final float JUMPUP_VEL_TIME = 0.05f;
 	private static final float JUMPUP_FORCE_TIME = 0.75f;
 	private static final float JUMPSHOOT_RESPIN_DELAY = 0.05f;
 	private static final float SHOOT_COOLDOWN = 0.15f;
@@ -370,7 +371,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 		else if(moveState == MoveState.PRE_JUMPSPIN) {
 			// is change to jumpspin allowed?
-			if(moveStateTimer > JUMPUP_CONSTVEL_TIME) {
+			if(moveStateTimer > PRE_JUMP_TIME) {
 				// if shooting then enter jumpspin with shoot
 				if(moveAdvice.action0)
 					return MoveState.JUMPSPINSHOOT;
@@ -383,7 +384,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 				return MoveState.PRE_JUMPSPIN;
 		}
 		else if(moveState == MoveState.PRE_JUMP) {
-			if(moveStateTimer > JUMPUP_CONSTVEL_TIME)
+			if(moveStateTimer > PRE_JUMP_TIME)
 				return MoveState.JUMP;
 			else
 				return MoveState.PRE_JUMP;
@@ -529,10 +530,14 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 				// if previously on ground and advised jump and allowed to jump then jump 
 				if(moveState.isGround() && moveAdvice.action1 && isNextJumpAllowed) {
 					isNextJumpAllowed = false;
-					jumpForceTimer = JUMPUP_CONSTVEL_TIME+JUMPUP_FORCE_TIME;
+					jumpForceTimer = PRE_JUMP_TIME+JUMPUP_FORCE_TIME;
+					body.getSpine().applyJumpVelocity();
 					agency.getEar().playSound(MetroidAudio.Sound.JUMP);
 				}
-				body.getSpine().applyJumpVelocity();
+				else if(moveStateTimer <= JUMPUP_VEL_TIME)
+					body.getSpine().applyJumpVelocity();
+				else if(jumpForceTimer > 0f && moveAdvice.action1)
+					body.getSpine().applyJumpForce(jumpForceTimer-PRE_JUMP_TIME, JUMPUP_FORCE_TIME);
 				break;
 			case JUMP:
 			case JUMPSPIN:
@@ -545,7 +550,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 				// if jump force continues and jump is advised then do jump force
 				if(jumpForceTimer > 0f && moveAdvice.action1)
-					body.getSpine().applyJumpForce(jumpForceTimer-JUMPUP_CONSTVEL_TIME, JUMPUP_FORCE_TIME);
+					body.getSpine().applyJumpForce(jumpForceTimer-PRE_JUMP_TIME, JUMPUP_FORCE_TIME);
 
 				break;
 			case BALL_AIR:

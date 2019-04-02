@@ -85,7 +85,7 @@ public class PitSprite extends Sprite {
 	}
 
 	public void update(float delta, Vector2 position, MoveState nextParentState, boolean isFacingRight,
-			boolean isDmgFrame, boolean isShooting, boolean isHeadInTile, Direction4 climbDir) {
+			boolean isDmgFrame, boolean isShooting, boolean isHeadInTile, boolean isJumpUp, Direction4 climbDir) {
 		Animation<TextureRegion> nextAnim = null;
 		boolean isBigSprite = true;
 		switch(nextParentState) {
@@ -105,10 +105,20 @@ public class PitSprite extends Sprite {
 				break;
 			case PRE_JUMP:
 			case JUMP:
-				if(isShooting)
-					nextAnim = jumpAnim[ANIM_SHOOT];
-				else
-					nextAnim = jumpAnim[ANIM_HOLD];
+				// if parent is in the "move up" phase of jump then show jump animation 
+				if(isJumpUp) {
+					if(isShooting)
+						nextAnim = jumpAnim[ANIM_SHOOT];
+					else
+						nextAnim = jumpAnim[ANIM_HOLD];
+				}
+				// otherwise show first frame of jump animation
+				else {
+					if(isShooting) 
+						setRegion(jumpAnim[ANIM_SHOOT].getKeyFrame(0f));
+					else
+						setRegion(jumpAnim[ANIM_HOLD].getKeyFrame(0f));
+				}
 				break;
 			case STAND:
 				if(isShooting)

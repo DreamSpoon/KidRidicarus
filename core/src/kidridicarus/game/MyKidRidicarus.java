@@ -79,7 +79,7 @@ public class MyKidRidicarus extends Game {
 						KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST));
 
 		// start playing first level
-		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME1, null));
+		setScreen(new PlayScreen(this, CommonInfo.GAMEMAP_FILENAME3, null));
 	}
 
 	@Override
