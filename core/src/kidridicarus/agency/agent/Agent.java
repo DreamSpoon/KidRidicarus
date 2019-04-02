@@ -16,7 +16,7 @@ import kidridicarus.common.tool.Direction8;
 /*
  * The Agent can interact with other Agents (like Body in Box2D).
  * The Agent can have ContactSensors (equivalent to Fixture in Box2D).
- * The ContactSensors are used to detect when Agent is on ground, collisions between Agents, etc.
+ * The ContactSensors are used to detect when Agent is on ground, when Agents start/end contact, etc.
  */
 public abstract class Agent {
 	protected Agency agency;

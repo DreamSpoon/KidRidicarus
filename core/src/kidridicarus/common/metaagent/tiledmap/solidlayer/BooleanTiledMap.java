@@ -1,4 +1,4 @@
-package kidridicarus.common.metaagent.tiledmap.collision;
+package kidridicarus.common.metaagent.tiledmap.solidlayer;
 
 import java.util.Collection;
 import java.util.Iterator;

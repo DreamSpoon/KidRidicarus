@@ -1,16 +1,16 @@
-package kidridicarus.common.metaagent.tiledmap.collision;
+package kidridicarus.common.metaagent.tiledmap.solidlayer;
 
 import java.util.Iterator;
 import java.util.TreeSet;
 
-public class LineSegList {
-	TreeSet<LineSeg> lineSegs;
+public class SolidLineSegList {
+	TreeSet<SolidLineSeg> lineSegs;
 
-	public LineSegList() {
-		lineSegs = new TreeSet<LineSeg>(new LineSeg.LineSegComparator());
+	public SolidLineSegList() {
+		lineSegs = new TreeSet<SolidLineSeg>(new SolidLineSeg.LineSegComparator());
 	}
 
-	public boolean add(LineSeg seg) {
+	public boolean add(SolidLineSeg seg) {
 		// check for segment overlap/adjacency with segments already in the list
 		if(lineSegs.contains(seg))
 			throw new IllegalArgumentException("Segment is already in segment list - overlap/adjacency is not allowed.");
@@ -18,11 +18,11 @@ public class LineSegList {
 		return lineSegs.add(seg);
 	}
 
-	public boolean remove(LineSeg seg) {
+	public boolean remove(SolidLineSeg seg) {
 		return lineSegs.remove(seg);
 	}
 
-	public Iterator<LineSeg> getIterator() {
+	public Iterator<SolidLineSeg> getIterator() {
 		return lineSegs.iterator();
 	}
 }

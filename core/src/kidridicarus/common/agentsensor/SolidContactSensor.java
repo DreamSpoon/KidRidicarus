@@ -9,15 +9,15 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.AgentContactSensor;
-import kidridicarus.common.metaagent.tiledmap.collision.LineSeg;
+import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidLineSeg;
 
 public class SolidContactSensor extends AgentContactSensor {
-	private LinkedList<LineSeg> lineSegContacts;
+	private LinkedList<SolidLineSeg> lineSegContacts;
 	private LinkedList<Agent> agentContacts;
 
 	public SolidContactSensor(Object parent) {
 		super(parent);
-		lineSegContacts = new LinkedList<LineSeg>();
+		lineSegContacts = new LinkedList<SolidLineSeg>();
 		agentContacts = new LinkedList<Agent>();
 	}
 
@@ -28,8 +28,8 @@ public class SolidContactSensor extends AgentContactSensor {
 			if(!agentContacts.contains(agent))
 				agentContacts.add(agent);
 		}
-		else if(abf.userData instanceof LineSeg) {
-			LineSeg ls = (LineSeg) abf.userData;
+		else if(abf.userData instanceof SolidLineSeg) {
+			SolidLineSeg ls = (SolidLineSeg) abf.userData;
 			if(!lineSegContacts.contains(ls))
 				lineSegContacts.add(ls);
 		}
@@ -42,17 +42,17 @@ public class SolidContactSensor extends AgentContactSensor {
 			if(agentContacts.contains(agent))
 				agentContacts.remove(agent);
 		}
-		else if(abf.userData instanceof LineSeg) {
-			LineSeg ls = (LineSeg) abf.userData;
+		else if(abf.userData instanceof SolidLineSeg) {
+			SolidLineSeg ls = (SolidLineSeg) abf.userData;
 			if(lineSegContacts.contains(ls))
 				lineSegContacts.remove(ls);
 		}
 	}
 
-	private List<LineSeg> getLineSegsFiltered(boolean filterHorV, boolean isHorizontal, boolean filterUpNormal,
+	private List<SolidLineSeg> getLineSegsFiltered(boolean filterHorV, boolean isHorizontal, boolean filterUpNormal,
 			boolean upNormal) {
-		List<LineSeg> list = new LinkedList<LineSeg>();
-		for(LineSeg ls : lineSegContacts) {
+		List<SolidLineSeg> list = new LinkedList<SolidLineSeg>();
+		for(SolidLineSeg ls : lineSegContacts) {
 			if(filterHorV && ls.isHorizontal != isHorizontal)
 				continue;
 			if(filterUpNormal && ls.upNormal != upNormal)
@@ -79,7 +79,7 @@ public class SolidContactSensor extends AgentContactSensor {
 	private boolean isLineSegOnThisSide(Rectangle testBounds, boolean rightSide) {
 		Vector2 center = testBounds.getCenter(new Vector2());
 		// loop through list of walls contacted
-		for(LineSeg line : getLineSegsFiltered(true, false, false, false)) {
+		for(SolidLineSeg line : getLineSegsFiltered(true, false, false, false)) {
 			// Check for actual bound contact, not just close call...
 			// to know if this bound is blocking just a teensy bit or a large amount
 			if(line.dblCheckContact(testBounds)) {

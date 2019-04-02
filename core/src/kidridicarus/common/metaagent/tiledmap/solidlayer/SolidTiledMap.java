@@ -1,4 +1,4 @@
-package kidridicarus.common.metaagent.tiledmap.collision;
+package kidridicarus.common.metaagent.tiledmap.solidlayer;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,7 +17,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
 /*
- * Title: Orthogonal Tile Collision Map
+ * Title: Solid Orthogonal Tile Map
  * Desc:
  * -boolean tile map at it's core to differentiate solid tiles from non-solid tiles
  *   -this tile map can be queried
@@ -30,20 +30,20 @@ import kidridicarus.common.tool.B2DFactory;
  * 
  * The forest and the trees:
  *   1) The Forest:
- *     Collision Map - Picture a bounds box around the entirety of the tiles in the map.
+ *     Solid Tile Map - Picture a bounds box around the entirety of the tiles in the map.
  *   2) The Trees:
- *     The individual tiles within the tile collision map. They are abstracted as bound lines. The
- *     bound lines are just a representation of the tiles, ergo I consider the bounds lines to be Trees.
+ *     The individual tiles within the solid tile map. They are abstracted as bound lines. The
+ *     bound lines are just a representation of the tiles, ergo the bound lines are Trees.
  */
-public class CollisionTiledMap implements Disposable {
+public class SolidTiledMap implements Disposable {
 	private World world;
 	private BooleanTiledMap bTileMap;
 	private int widthInTiles;
 	private int heightInTiles;
-	private LineSegList[] hLines;
-	private LineSegList[] vLines;
+	private SolidLineSegList[] hLines;
+	private SolidLineSegList[] vLines;
 
-	public CollisionTiledMap(World world, Collection<TiledMapTileLayer> solidLayers) {
+	public SolidTiledMap(World world, Collection<TiledMapTileLayer> solidLayers) {
 		this.world = world;
 
 		bTileMap = new BooleanTiledMap(solidLayers);
@@ -54,21 +54,21 @@ public class CollisionTiledMap implements Disposable {
 		heightInTiles = (int) a.getTileHeight();
 
 		// allocate lists for horizontal bound lines
-		hLines = new LineSegList[bTileMap.getHeight()+1];
+		hLines = new SolidLineSegList[bTileMap.getHeight()+1];
 		for(int i=0; i<=bTileMap.getHeight(); i++)
-			hLines[i] = new LineSegList();
+			hLines[i] = new SolidLineSegList();
 
 		// allocate lists for vertical bound lines
-		vLines = new LineSegList[bTileMap.getWidth()+1];
+		vLines = new SolidLineSegList[bTileMap.getWidth()+1];
 		for(int i=0; i<=bTileMap.getWidth(); i++)
-			vLines[i] = new LineSegList();
+			vLines[i] = new SolidLineSegList();
 
 		calculateLineSegs();
 		createBodies();
 	}
 
 	/*
-	 * Create a minimal line segment based boundary set based on the tile map input - for collision geometry
+	 * Create a minimal line segment based boundary set based on the tile map input - for solid geometry
 	 * creation/tracking/removal.
 	 * Use one dimensional integer based line segments.
 	 * The goal: Each non-empty (non-null) tile in the map layer will be surrounded by bounding lines (a bounding
@@ -101,7 +101,7 @@ public class CollisionTiledMap implements Disposable {
 	 *         Other shapes may not be compatible, and may be added later using a different algorithm (?).
 	 */
 	private void calculateLineSegs() {
-		LineSeg currentSeg;
+		SolidLineSeg currentSeg;
 
 		// Create horizontal lines.
 		// Note the less than or equal (<=) compare on the 'y' iterator only.
@@ -135,14 +135,14 @@ public class CollisionTiledMap implements Disposable {
 					upNormal = (!me && belowMe);
 					// start a new segment if none currently exists
 					if(currentSeg == null)
-						currentSeg = new LineSeg(x, x, y, true, upNormal);
+						currentSeg = new SolidLineSeg(x, x, y, true, upNormal);
 					// end the current segment and start a new one if the upNormal changed
 					else if(upNormal != currentSeg.upNormal) {
 						currentSeg.end = x-1;
 						hLines[y].add(currentSeg);
 
 						// start new segment with new upNormal
-						currentSeg = new LineSeg(x, x, y, true, upNormal);
+						currentSeg = new SolidLineSeg(x, x, y, true, upNormal);
 					}
 				}
 			}
@@ -183,14 +183,14 @@ public class CollisionTiledMap implements Disposable {
 					upNormal = (!me && leftOfMe);
 					// start a new segment if none currently exists
 					if(currentSeg == null)
-						currentSeg = new LineSeg(y, y, x, false, upNormal);
+						currentSeg = new SolidLineSeg(y, y, x, false, upNormal);
 					// end the current segment and start a new one if the upNormal changed
 					else if(upNormal != currentSeg.upNormal) {
 						currentSeg.end = y-1;
 						vLines[x].add(currentSeg);
 
 						// start new segment with new upNormal
-						currentSeg = new LineSeg(y, y, x, false, upNormal);
+						currentSeg = new SolidLineSeg(y, y, x, false, upNormal);
 					}
 				}
 			}
@@ -209,9 +209,9 @@ public class CollisionTiledMap implements Disposable {
 		// loop through rows
 		for(int y=0; y<=bTileMap.getHeight(); y++) {
 			// loop through row's line segments
-			Iterator<LineSeg> segIter = hLines[y].getIterator();
+			Iterator<SolidLineSeg> segIter = hLines[y].getIterator();
 			while(segIter.hasNext()) {
-				LineSeg seg = segIter.next();
+				SolidLineSeg seg = segIter.next();
 				seg.body = defineHLineBody(y, seg);
 			}
 		}
@@ -219,26 +219,26 @@ public class CollisionTiledMap implements Disposable {
 		// loop through columns
 		for(int x=0; x<=bTileMap.getWidth(); x++) {
 			// loop through row's line segments
-			Iterator<LineSeg> segIter = vLines[x].getIterator();
+			Iterator<SolidLineSeg> segIter = vLines[x].getIterator();
 			while(segIter.hasNext()) {
-				LineSeg seg = segIter.next();
+				SolidLineSeg seg = segIter.next();
 				seg.body = defineVLineBody(x, seg);
 			}
 		}
 	}
 
-	private Body defineHLineBody(int yRow, LineSeg seg) {
+	private Body defineHLineBody(int yRow, SolidLineSeg seg) {
 		// Add +1 to end, because the line segment ends on the right side of end.
 		// Consider the case where the segment is one wide. Then seg.begin would equal seg.end.
 		// So we need to add one.
 		return defineLineBody(seg.begin, yRow, seg.end+1, yRow, seg);
 	}
 
-	private Body defineVLineBody(int xCol, LineSeg seg) {
+	private Body defineVLineBody(int xCol, SolidLineSeg seg) {
 		return defineLineBody(xCol, seg.begin, xCol, seg.end+1, seg);
 	}
 
-	private Body defineLineBody(int startX, int startY, int endX, int endY, LineSeg seg) {
+	private Body defineLineBody(int startX, int startY, int endX, int endY, SolidLineSeg seg) {
 		FixtureDef fdef;
 		EdgeShape edgeShape;
 		Body body =
@@ -314,28 +314,28 @@ public class CollisionTiledMap implements Disposable {
 		// if the tile on the right exists then create a right wall lineSeg, since it is solid on the right
 		if(bTileMap.gracefulGetCell(x+1, y))
 			addVLineSegment(x+1, y, false);
-		// otherwise remove the lineSeg since both tiles are empty, no collision possible
+		// otherwise remove the lineSeg since both tiles are empty
 		else
 			removeVLineSegment(x+1, y);
 
 		// if the tile on the left exists then create a left wall lineSeg, since it is solid on the left
 		if(bTileMap.gracefulGetCell(x-1, y))
 			addVLineSegment(x, y, true);
-		// otherwise remove the lineSeg since both tiles are empty, no collision possible
+		// otherwise remove the lineSeg since both tiles are empty
 		else
 			removeVLineSegment(x, y);
 
 		// if the tile above exists then create a ceiling lineSeg, since it is solid above
 		if(bTileMap.gracefulGetCell(x, y+1))
 			addHLineSegment(x, y+1, false);
-		// otherwise remove the lineSeg since both tiles are empty, no collision possible
+		// otherwise remove the lineSeg since both tiles are empty
 		else
 			removeHLineSegment(x, y+1);
 
 		// if the tile below exists then create a floor lineSeg, since it is solid below
 		if(bTileMap.gracefulGetCell(x, y-1))
 			addHLineSegment(x, y, true);
-		// otherwise remove the lineSeg since both tiles are empty, no collision possible
+		// otherwise remove the lineSeg since both tiles are empty
 		else
 			removeHLineSegment(x, y);
 
@@ -349,12 +349,12 @@ public class CollisionTiledMap implements Disposable {
 	private void addVLineSegment(int x, int y, boolean upNormal) {
 		addLineSegment(vLines, false, y, x, upNormal);
 	}
-	private void addLineSegment(LineSegList[] horvLines, boolean isHorizontal, int x, int y, boolean upNormal) {
-		LineSeg newSeg;
-		LineSeg floorSeg;
-		LineSeg higherSeg;
+	private void addLineSegment(SolidLineSegList[] horvLines, boolean isHorizontal, int x, int y, boolean upNormal) {
+		SolidLineSeg newSeg;
+		SolidLineSeg floorSeg;
+		SolidLineSeg higherSeg;
 
-		newSeg = new LineSeg(x, x, y, isHorizontal, upNormal);
+		newSeg = new SolidLineSeg(x, x, y, isHorizontal, upNormal);
 		// floor gives <= x
 		// (usually overlap may occur, but since we are adding, the overlap is assumed to be impossible)
 		floorSeg = horvLines[y].lineSegs.floor(newSeg);
@@ -396,17 +396,17 @@ public class CollisionTiledMap implements Disposable {
 	private void removeVLineSegment(int x, int y) {
 		removeLineSegment(vLines, false, y, x);
 	}
-	private void removeLineSegment(LineSegList[] horvLines, boolean isHorizontal, int x, int y) {
-		LineSeg testSeg;
-		LineSeg floorSeg;
-		LineSeg newSeg;
+	private void removeLineSegment(SolidLineSegList[] horvLines, boolean isHorizontal, int x, int y) {
+		SolidLineSeg testSeg;
+		SolidLineSeg floorSeg;
+		SolidLineSeg newSeg;
 		int leftBegin;
 		int leftEnd;
 		int rightBegin;
 		int rightEnd;
 
 		// upNormal is arbitrary
-		testSeg = new LineSeg(x, x, y, isHorizontal, false);
+		testSeg = new SolidLineSeg(x, x, y, isHorizontal, false);
 		// floor gives <= x
 		// (usually overlap may occur, but since we are adding, the overlap is assumed to be impossible)
 		floorSeg = horvLines[y].lineSegs.floor(testSeg);
@@ -425,7 +425,7 @@ public class CollisionTiledMap implements Disposable {
 		rightEnd = floorSeg.end;
 		// need to create new lineSeg on left?
 		if(leftBegin <= leftEnd) {
-			newSeg = new LineSeg(leftBegin, leftEnd, y, floorSeg.isHorizontal, floorSeg.upNormal);
+			newSeg = new SolidLineSeg(leftBegin, leftEnd, y, floorSeg.isHorizontal, floorSeg.upNormal);
 			if(isHorizontal)
 				newSeg.body = defineHLineBody(y, newSeg);
 			else
@@ -434,7 +434,7 @@ public class CollisionTiledMap implements Disposable {
 		}
 		// need to create new lineSeg on right?
 		if(rightBegin <= rightEnd) {
-			newSeg = new LineSeg(rightBegin, rightEnd, y, floorSeg.isHorizontal, floorSeg.upNormal);
+			newSeg = new SolidLineSeg(rightBegin, rightEnd, y, floorSeg.isHorizontal, floorSeg.upNormal);
 			if(isHorizontal)
 				newSeg.body = defineHLineBody(y, newSeg);
 			else
@@ -445,7 +445,7 @@ public class CollisionTiledMap implements Disposable {
 
 	@Override
 	public void dispose() {
-		Iterator<LineSeg> iter;
+		Iterator<SolidLineSeg> iter;
 		if(hLines != null) {
 			// destroy any B2 bodies attached to line segments
 			for(int y=0; y<bTileMap.getHeight()+1; y++) {

@@ -20,16 +20,16 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.metaagent.tiledmap.drawlayer.DrawLayerAgent;
+import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 
 /*
- * A "parent" or "meta" agent that has a collision map, drawable layers, and a batch of initial spawn agents.
+ * A "parent" or "meta" agent that has a solid tile map, drawable layers, and a batch of initial spawn agents.
  * This agent does not load anything from file, rather it is given a TiledMap object that has been preloaded.
  */
 public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	private TiledMap tiledMap;
-	private CollisionTiledMapAgent collisionMapAgent;
+	private SolidTiledMapAgent solidTileMapAgent;
 	private LinkedList<DrawLayerAgent> drawLayerAgents;
 	private Rectangle bounds;
 	private boolean otherSpawnDone;
@@ -51,7 +51,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 		otherSpawnDone = false;
 	}
 
-	// create the Agents for the collision map and the drawable layers
+	// create the Agents for the solid tile map and the drawable layers
 	private void createInitialSubAgents() {
 		// get lists of solid and draw layers (there may be overlap between the two, that's okay)
 		LinkedList<TiledMapTileLayer> solidLayers = new LinkedList<TiledMapTileLayer>(); 
@@ -70,17 +70,17 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 				drawLayers.add((TiledMapTileLayer) layer);
 		}
 
-		createCollisionMapAgent(solidLayers);
+		createSolidTileMapAgent(solidLayers);
 		createDrawLayerAgents(drawLayers);
 	}
 
-	private void createCollisionMapAgent(LinkedList<TiledMapTileLayer> solidLayers) {
+	private void createSolidTileMapAgent(LinkedList<TiledMapTileLayer> solidLayers) {
 		if(solidLayers.isEmpty())
 			return;
-		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_ORTHOCOLLISION_TILEMAP,
+		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_ORTHO_SOLID_TILEMAP,
 				Agent.getStartBounds(properties));
 		cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAPTILELAYER_LIST, solidLayers);
-		collisionMapAgent = (CollisionTiledMapAgent) agency.createAgent(cmProps);
+		solidTileMapAgent = (SolidTiledMapAgent) agency.createAgent(cmProps);
 	}
 
 	private void createDrawLayerAgents(LinkedList<TiledMapTileLayer> drawLayers) {
@@ -167,7 +167,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 
 	@Override
 	public void disposeAgent() {
-		collisionMapAgent.dispose();
+		solidTileMapAgent.dispose();
 		tiledMap.dispose();
 	}
 

@@ -12,8 +12,8 @@ import kidridicarus.common.agent.scrollkillbox.ScrollKillBox;
 import kidridicarus.common.agent.scrollpushbox.ScrollPushBox;
 import kidridicarus.common.agent.semisolidfloor.SemiSolidFloor;
 import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
-import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
 import kidridicarus.common.metaagent.tiledmap.drawlayer.DrawLayerAgent;
+import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.game.agent.SMB.other.pipewarp.PipeWarp;
 
 public class CommonAgentClassList {
@@ -24,7 +24,7 @@ public class CommonAgentClassList {
 			CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP, DrawLayerAgent.class,
 			CommonKV.AgentClassAlias.VAL_KEEP_ALIVE_BOX, KeepAliveBox.class,
 			CommonKV.AgentClassAlias.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
-			CommonKV.AgentClassAlias.VAL_ORTHOCOLLISION_TILEMAP, CollisionTiledMapAgent.class,
+			CommonKV.AgentClassAlias.VAL_ORTHO_SOLID_TILEMAP, SolidTiledMapAgent.class,
 			CommonKV.AgentClassAlias.VAL_PIPEWARP_SPAWN, PipeWarp.class,
 			CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, PlayerSpawner.class,
 			CommonKV.AgentClassAlias.VAL_ROOM, RoomBox.class,

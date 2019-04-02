@@ -13,7 +13,7 @@ import kidridicarus.common.agent.scrollkillbox.ScrollKillBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.MobileAgentSpine;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
+import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB.other.bumptile.BumpTile.TileBumpStrength;
@@ -132,12 +132,12 @@ public class PlayerSpine extends MobileAgentSpine {
 	}
 
 	public boolean isMapPointSolid(Vector2 position) {
-		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+		SolidTiledMapAgent ctMap = agentSensor.getFirstContactByClass(SolidTiledMapAgent.class);
 		return ctMap == null ? false : ctMap.isMapPointSolid(position); 
 	}
 
 	public boolean isMapTileSolid(Vector2 tileCoords) {
-		CollisionTiledMapAgent ctMap = agentSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+		SolidTiledMapAgent ctMap = agentSensor.getFirstContactByClass(SolidTiledMapAgent.class);
 		return ctMap == null ? false : ctMap.isMapTileSolid(tileCoords); 
 	}
 

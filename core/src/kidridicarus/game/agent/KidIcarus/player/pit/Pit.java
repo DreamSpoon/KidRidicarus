@@ -74,6 +74,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 5);
 	private static final float DEAD_DELAY_TIME = 3f;
 	private static final Vector2 SHOT_OFFSET_HEAD_IN_TILE = UInfo.P2MVector(0, 4);
+	private static final Vector2 DUCK_POS_OFFSET = UInfo.P2MVector(0, 4);
 
 	private PitSupervisor supervisor;
 	private PitBody body;
@@ -564,7 +565,11 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 
 	@Override
 	public Vector2 getPosition() {
-		return body.getPosition();
+		// use the "real" position of Pit, which is independent of body size, to improve smooth screen scroll
+		Vector2 offset = new Vector2(0f, 0f);
+		if(isOnGroundHeadInTile || moveState.isDuck())
+			offset.set(DUCK_POS_OFFSET);
+		return body.getPosition().cpy().add(offset);
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package kidridicarus.game.agent.SMB.other.bumptile;
 
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
+import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 
 public class BumpTileSpine {
 	private BumpTileBody body;
@@ -17,9 +17,9 @@ public class BumpTileSpine {
 		return mainSensor;
 	}
 
-	public CollisionTiledMapAgent getCollisionMap() {
+	public SolidTiledMapAgent getSolidTileMap() {
 		if(mainSensor == null)
 			return null;
-		return mainSensor.getFirstContactByClass(CollisionTiledMapAgent.class);
+		return mainSensor.getFirstContactByClass(SolidTiledMapAgent.class);
 	}
 }

@@ -1,4 +1,4 @@
-package kidridicarus.common.metaagent.tiledmap.collision;
+package kidridicarus.common.metaagent.tiledmap.solidlayer;
 
 import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,24 +16,24 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 
-public class CollisionTiledMapAgent extends Agent implements Disposable {
-	private CollisionTiledMap otcMap;
-	private CollisionTiledMapBody tmBody;
-	private LinkedBlockingQueue<TileChange> tileChangeQ;
+public class SolidTiledMapAgent extends Agent implements Disposable {
+	private SolidTiledMap otcMap;
+	private SolidTiledMapBody tmBody;
+	private LinkedBlockingQueue<SolidTileChange> tileChangeQ;
 
 	@SuppressWarnings("unchecked")
-	public CollisionTiledMapAgent(Agency agency, ObjectProperties properties) {
+	public SolidTiledMapAgent(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		Collection<TiledMapTileLayer> solidLayers =
 				properties.get(CommonKV.AgentMapParams.KEY_TILEDMAPTILELAYER_LIST, null, Collection.class);
 		if(solidLayers == null || solidLayers.isEmpty())
 			throw new IllegalArgumentException("Layers array was null or empty.");
 		// changes are made in batches, so keep a queue of pending changes
-		tileChangeQ = new LinkedBlockingQueue<TileChange>();
+		tileChangeQ = new LinkedBlockingQueue<SolidTileChange>();
 		// The OTC map will create bodies with the World...
-		otcMap = new CollisionTiledMap(agency.getWorld(), solidLayers);
+		otcMap = new SolidTiledMap(agency.getWorld(), solidLayers);
 		// ... and a meta-body will be created that encompasses all the solid bound line bodies.
-		tmBody = new CollisionTiledMapBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		tmBody = new SolidTiledMapBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 		// Agent has post update because:
 		//   -it may receive requests to modify the solid state of tiles inside itself during the regular Agency update
 		//   -it will process these requests in batch format during post-update
@@ -49,20 +49,16 @@ public class CollisionTiledMapAgent extends Agent implements Disposable {
 			doChange(tileChangeQ.poll());
 	}
 
-	private void doChange(TileChange change) {
+	private void doChange(SolidTileChange change) {
 		if(change.solid) {
-			if(otcMap.isTileExist(change.x, change.y)) {
-				throw new IllegalStateException(
-						"Cannot add solid tile where solid tile already exists in collision map.");
-			}
+			if(otcMap.isTileExist(change.x, change.y))
+				throw new IllegalStateException("Cannot add solid tile because tile already exists in map.");
 			otcMap.addTile(change.x, change.y);
 		}
 		// change from to solid non-solid
 		else {
-			if(!otcMap.isTileExist(change.x, change.y)) {
-				throw new IllegalStateException(
-						"Cannot remove solid tile where solid tile does not already exist in collision map.");
-			}
+			if(!otcMap.isTileExist(change.x, change.y))
+				throw new IllegalStateException("Cannot remove solid tile since tile does not already exist in map.");
 			otcMap.removeTile(change.x, change.y);
 		}
 	}
@@ -73,7 +69,7 @@ public class CollisionTiledMapAgent extends Agent implements Disposable {
 	 */
 	public void setTileSolidStateAtPos(Vector2 position, boolean solid) {
 		Vector2 tileCoords = UInfo.getM2PTileForPos(position);
-		tileChangeQ.add(new TileChange((int) tileCoords.x, (int) tileCoords.y, solid));
+		tileChangeQ.add(new SolidTileChange((int) tileCoords.x, (int) tileCoords.y, solid));
 	}
 
 	public boolean isMapTileSolid(Vector2 tileCoords) {

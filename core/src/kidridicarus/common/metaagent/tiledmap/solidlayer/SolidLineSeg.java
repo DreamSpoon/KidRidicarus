@@ -1,4 +1,4 @@
-package kidridicarus.common.metaagent.tiledmap.collision;
+package kidridicarus.common.metaagent.tiledmap.solidlayer;
 
 import java.util.Comparator;
 
@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.common.info.UInfo;
 
-public class LineSeg implements Disposable {
+public class SolidLineSeg implements Disposable {
 	// if begin = end, it means the LineSeg is one tile wide
 	int begin, end;	// in tile coordinates (not pixel coordinates), where begin <= end
 	private int otherOffset;
@@ -28,7 +28,7 @@ public class LineSeg implements Disposable {
 	 */
 	public boolean upNormal;
 
-	public LineSeg(int begin, int end, int otherOffset, boolean isHorizontal, boolean upNormal) {
+	public SolidLineSeg(int begin, int end, int otherOffset, boolean isHorizontal, boolean upNormal) {
 		if(begin > end)
 			throw new IllegalArgumentException("Line segment begin > end exception, begin = " + begin + ", end = " + end);
 		this.begin = begin;
@@ -38,7 +38,7 @@ public class LineSeg implements Disposable {
 		this.upNormal = upNormal;
 	}
 
-	static class LineSegComparator implements Comparator<LineSeg> {
+	static class LineSegComparator implements Comparator<SolidLineSeg> {
 		// If segA is completely to the left of segB, with no overlap, then return -1.
 		// If segA is completely to the right of segB, with no overlap, then return +1.
 		// If overlap exists then return 0.
@@ -79,7 +79,7 @@ public class LineSeg implements Disposable {
 		// Although horizontal and vertical line segments cannot be compared, segments with upNormal = true can be
 		// compared to segments with upNormal = false. 
 		@Override
-		public int compare(LineSeg segA, LineSeg segB) {
+		public int compare(SolidLineSeg segA, SolidLineSeg segB) {
 			if((segA.isHorizontal && !segB.isHorizontal) ||
 				(!segA.isHorizontal && segB.isHorizontal)) {
 				throw new IllegalArgumentException("Cannot compare horizontal and vertical line segments.");

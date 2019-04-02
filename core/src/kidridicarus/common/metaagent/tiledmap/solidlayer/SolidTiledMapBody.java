@@ -1,4 +1,4 @@
-package kidridicarus.common.metaagent.tiledmap.collision;
+package kidridicarus.common.metaagent.tiledmap.solidlayer;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -9,11 +9,11 @@ import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class CollisionTiledMapBody extends AgentBody {
-	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.COLLISIONMAP_BIT);
+public class SolidTiledMapBody extends AgentBody {
+	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SOLID_MAP_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
-	public CollisionTiledMapBody(CollisionTiledMapAgent parent, World world, Rectangle bounds) {
+	public SolidTiledMapBody(SolidTiledMapAgent parent, World world, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}

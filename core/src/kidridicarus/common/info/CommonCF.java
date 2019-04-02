@@ -3,11 +3,11 @@ package kidridicarus.common.info;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 
 public class CommonCF {
-	// Contact Filter Bit list (for collision detection)
+	// Contact Filter Bit list (for contact detection)
 	public class Alias {
 		public static final String AGENT_BIT = "bit_agent";
 		public static final String BUMPABLE_BIT = "bit_bumpable";
-		public static final String COLLISIONMAP_BIT = "bit_collision_map";
+		public static final String SOLID_MAP_BIT = "bit_solid_map";
 		public static final String DESPAWN_BIT = "bit_despawn";
 		public static final String KEEP_ALIVE_BIT = "bit_keep_alive";
 		public static final String PIPEWARP_BIT = "bit_pipewarp";

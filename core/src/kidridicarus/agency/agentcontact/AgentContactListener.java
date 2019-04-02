@@ -13,7 +13,7 @@ import kidridicarus.common.info.CommonCF;
 
 /*
  * Use a custom filtering (AgentBodyFilter) method to determine contact. When contact occurs, invoke the
- * sensor contact methods. Also use contact.isTouching() for more precise collision detection.
+ * sensor contact methods. Also use contact.isTouching() for more precise contact detection.
  * From debugging experience, I've learned that the same Contact object is used for every call to
  * beginContact and endContact. So a workaround was necessary...
  * Treating each pair of fixtures in the contact as a single meta-object (by using the Objects.hash method)

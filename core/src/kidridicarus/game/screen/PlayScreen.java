@@ -76,7 +76,7 @@ public class PlayScreen implements Screen {
 
 		// load the game map
 		game.director.createMapAgent(levelFilename);
-		// run one update to let the map create the collision map and draw layer agents
+		// run one update to let the map create the solid tile map and draw layer agents
 		game.director.update(1f/60f);
 		game.director.postUpdate();
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)

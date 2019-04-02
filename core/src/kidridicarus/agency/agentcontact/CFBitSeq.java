@@ -13,7 +13,7 @@ import java.util.Iterator;
  *   Set all bits to 1 (full on)
  * 
  * Implemented with a boolean to indicate full on or full off, and a hashset of Strings where each String is
- * an alias to a bit. Thus, collision filter bits can be added and removed "on the fly" by simply using a
+ * an alias to a bit. Thus, contact filter bits can be added and removed "on the fly" by simply using a
  * new unique String.
  * 
  * If isOneMinus = false then bits are "additive".

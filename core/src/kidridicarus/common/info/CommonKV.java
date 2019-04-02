@@ -20,7 +20,7 @@ public class CommonKV {
 		public static final String VAL_DESPAWN = "despawn";
 		public static final String VAL_DRAWABLE_TILEMAP = "drawable_tilemap";
 		public static final String VAL_LEVELEND_TRIGGER = "levelend_trigger";
-		public static final String VAL_ORTHOCOLLISION_TILEMAP = "orthocollision_tilemap";
+		public static final String VAL_ORTHO_SOLID_TILEMAP = "solid_tilemap";
 		public static final String VAL_PIPEWARP_SPAWN = "pipewarp";
 		public static final String VAL_PLAYERSPAWNER = "playerspawner";
 		public static final String VAL_ROOM = "room";

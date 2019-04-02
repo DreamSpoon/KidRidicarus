@@ -7,8 +7,8 @@ package kidridicarus.agency.agent;
  * does not change that.
  * This class exists to allow for "meta-Agents", or Agents made up of multiple sub-Agents.
  *   e.g. The level map is a "meta-Agent" made up of sub-Agents:
- *     -collision map
- *     -drawable background and scenery Agents
+ *     -solid tile map
+ *     -drawable background and scenery
  *     -initial spawn Agents
  *     When the level map is disposed, it will dispose of its sub-Agents.
  * When a meta-Agent is disposed, it will choose to call the dispose methods (if any) of its sub-Agents.

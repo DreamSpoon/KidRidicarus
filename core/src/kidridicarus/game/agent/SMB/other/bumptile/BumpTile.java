@@ -19,7 +19,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.common.metaagent.tiledmap.collision.CollisionTiledMapAgent;
+import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.game.agent.SMB.BumpTakeAgent;
 import kidridicarus.game.agent.SMB.TileBumpTakeAgent;
@@ -59,7 +59,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 
 	private TileBumpStrength bumpStrength;
 	private Agent bumpingAgent;
-	private CollisionTiledMapAgent collisionMap; 
+	private SolidTiledMapAgent solidTileMap; 
 	private MoveState moveState;
 	private float moveStateTimer;
 
@@ -95,7 +95,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 			blockItem = BlockItem.MUSH1UP;
 		isItemAvailable = blockItem != BlockItem.NONE;
 
-		collisionMap = null;
+		solidTileMap = null;
 
 		body = new BumpTileBody(agency.getWorld(), this, Agent.getStartBounds(properties));
 		sprite = new BumpTileSprite(agency.getAtlas(), Agent.getStartTexRegion(properties));
@@ -119,12 +119,12 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case PRESOLID:
-				// Check for first contact with collision map every frame until found,
+				// Check for first contact with solid tile map every frame until found,
 				// make the tile solid in the tile physics layer if it is not a secret block. 
-				collisionMap = body.getSpine().getCollisionMap();
-				if(collisionMap != null &&
+				solidTileMap = body.getSpine().getSolidTileMap();
+				if(solidTileMap != null &&
 						!properties.containsKV(SMB_KV.KEY_SECRETBLOCK, CommonKV.VAL_TRUE)) {
-					collisionMap.setTileSolidStateAtPos(body.getPosition(), true);
+					solidTileMap.setTileSolidStateAtPos(body.getPosition(), true);
 				}
 				break;
 			case PREBUMP:
@@ -173,7 +173,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 		}
 		else if(bumpStrength != TileBumpStrength.NONE)
 			return MoveState.MIDBUMP;
-		else if(collisionMap != null)
+		else if(solidTileMap != null)
 			return MoveState.PREBUMP;
 		return MoveState.PRESOLID;
 	}
@@ -186,7 +186,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 		else {
 			// if the tile was a secret block then it was not solid, so make it solid 
 			if(properties.get(SMB_KV.KEY_SECRETBLOCK, "", String.class).equals(CommonKV.VAL_TRUE))
-				collisionMap.setTileSolidStateAtPos(body.getPosition(), true);
+				solidTileMap.setTileSolidStateAtPos(body.getPosition(), true);
 
 			switch(blockItem) {
 				case COIN:
@@ -281,7 +281,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 	}
 
 	private void startBreakTile() {
-		collisionMap.setTileSolidStateAtPos(body.getPosition(), false);
+		solidTileMap.setTileSolidStateAtPos(body.getPosition(), false);
 
 		// create 4 brick pieces in the 4 corners of the original space and blast them upwards
 		float right = body.getBounds().width / 4f;
