@@ -513,8 +513,8 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 					sss.moveDir);
 		}
 		else {
-			sprite.update(delta, body.getPosition(), moveState, isFacingRight, (shootCooldownTimer > 0f),
-					(noDamageCooldown > 0f), isOnGroundHeadInTile, body.getSpine().isMovingUp(), Direction4.NONE);
+			sprite.update(delta, body.getPosition(), moveState, isFacingRight, (noDamageCooldown > 0f),
+					(shootCooldownTimer > 0f), isOnGroundHeadInTile, body.getSpine().isMovingUp(), Direction4.NONE);
 		}
 	}
 

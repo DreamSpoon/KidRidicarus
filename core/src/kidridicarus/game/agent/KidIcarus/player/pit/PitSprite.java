@@ -24,68 +24,82 @@ public class PitSprite extends Sprite {
 	private static final Vector2 SML_SPRITE_OFFSET = UInfo.P2MVector(0, 1);
 
 	private static final float ANIM_SPEED = 1/15f;
+	private static final float DMG_ANIM_SPEED = 1/60f;
+
 	private static final int ANIM_HOLD = 0;
 	private static final int ANIM_SHOOT = 1;
 
-	private Animation<TextureRegion>[] aimUpAnim;
-	private Animation<TextureRegion>[] jumpAnim;
-	private Animation<TextureRegion>[] standAnim;
-	private Animation<TextureRegion>[] walkAnim;
+	private static final int ANIM_GRP_REG = 0;
 
-	private Animation<TextureRegion> climbAnim;
-	private Animation<TextureRegion> duckAnim;
+	private Animation<TextureRegion>[][] aimUpAnim;
+	private Animation<TextureRegion>[][] jumpAnim;
+	private Animation<TextureRegion>[][] standAnim;
+	private Animation<TextureRegion>[][] walkAnim;
+
+	private Animation<TextureRegion>[] climbAnim;
+	private Animation<TextureRegion>[] duckAnim;
 
 	private Animation<TextureRegion> deadAnim;
 
 	private MoveState prevParentState;
 	private float spriteStateTimer;
 	private float climbAnimTimer;
+	private float dmgFrameTimer;
 
 	@SuppressWarnings("unchecked")
 	public PitSprite(TextureAtlas atlas, Vector2 position) {
-		aimUpAnim = new Animation[2];
-		jumpAnim = new Animation[2];
-		standAnim = new Animation[2];
-		walkAnim = new Animation[2];
+		aimUpAnim = new Animation[KidIcarusGfx.Player.Pit.GRPDIR.length][2];
+		jumpAnim = new Animation[KidIcarusGfx.Player.Pit.GRPDIR.length][2];
+		standAnim = new Animation[KidIcarusGfx.Player.Pit.GRPDIR.length][2];
+		walkAnim = new Animation[KidIcarusGfx.Player.Pit.GRPDIR.length][2];
+		climbAnim = new Animation[KidIcarusGfx.Player.Pit.GRPDIR.length];
+		duckAnim = new Animation[KidIcarusGfx.Player.Pit.GRPDIR.length];
 
 		// PlayMode.NORMAL with shoot animations so that Pit shows arrow empty until isShooting = false in
 		// the update() method. Regular animations use PlayMode.LOOP, e.g. so that walking animation repeats.
-		aimUpAnim[ANIM_HOLD] = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.AIMUP), PlayMode.LOOP);
-		aimUpAnim[ANIM_SHOOT] = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.AIMUP_SHOOT), PlayMode.NORMAL);
-		jumpAnim[ANIM_HOLD] = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.JUMP), PlayMode.NORMAL);
-		jumpAnim[ANIM_SHOOT] = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.JUMP_SHOOT), PlayMode.NORMAL);
-		standAnim[ANIM_HOLD] = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.STAND), PlayMode.LOOP);
-		standAnim[ANIM_SHOOT] = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.STAND_SHOOT), PlayMode.NORMAL);
-		walkAnim[ANIM_HOLD] = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.WALK), PlayMode.LOOP);
-		walkAnim[ANIM_SHOOT] = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.WALK_SHOOT), PlayMode.NORMAL);
+		for(int i=0; i<KidIcarusGfx.Player.Pit.GRPDIR.length; i++) {
+			aimUpAnim[i][ANIM_HOLD] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.AIMUP), PlayMode.LOOP);
+			aimUpAnim[i][ANIM_SHOOT] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.AIMUP_SHOOT), PlayMode.NORMAL);
+			jumpAnim[i][ANIM_HOLD] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.JUMP), PlayMode.NORMAL);
+			jumpAnim[i][ANIM_SHOOT] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.JUMP_SHOOT), PlayMode.NORMAL);
+			standAnim[i][ANIM_HOLD] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.STAND), PlayMode.LOOP);
+			standAnim[i][ANIM_SHOOT] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.STAND_SHOOT), PlayMode.NORMAL);
+			walkAnim[i][ANIM_HOLD] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.WALK), PlayMode.LOOP);
+			walkAnim[i][ANIM_SHOOT] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.WALK_SHOOT), PlayMode.NORMAL);
 
-		climbAnim = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.CLIMB), PlayMode.LOOP);
-		duckAnim = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.DUCK), PlayMode.LOOP);
-
-		deadAnim = new Animation<TextureRegion>
-				(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.Player.Pit.DEAD), PlayMode.LOOP);
+			climbAnim[i] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.CLIMB), PlayMode.LOOP);
+			duckAnim[i] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.DUCK), PlayMode.LOOP);
+		}
+		deadAnim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
+				KidIcarusGfx.Player.Pit.GRPDIR[ANIM_GRP_REG]+KidIcarusGfx.Player.Pit.DEAD), PlayMode.LOOP);
 
 		prevParentState = null;
 		spriteStateTimer = 0f;
 		climbAnimTimer = 0f;
+		dmgFrameTimer = -1f;
 
-		setRegion(standAnim[0].getKeyFrame(0f));
+		setRegion(standAnim[ANIM_GRP_REG][ANIM_HOLD].getKeyFrame(0f));
 		setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
 	public void update(float delta, Vector2 position, MoveState nextParentState, boolean isFacingRight,
 			boolean isDmgFrame, boolean isShooting, boolean isHeadInTile, boolean isJumpUp, Direction4 climbDir) {
+		if(!isDmgFrame)
+			dmgFrameTimer = -1f;
+		else
+			dmgFrameTimer = dmgFrameTimer == -1 ? 0f : dmgFrameTimer+delta;
+
 		Animation<TextureRegion> nextAnim = null;
 		boolean isBigSprite = true;
 		switch(nextParentState) {
@@ -93,14 +107,14 @@ public class PitSprite extends Sprite {
 			case PRE_JUMP_AIMUP:
 			case JUMP_AIMUP:
 				if(isShooting)
-					nextAnim = aimUpAnim[ANIM_SHOOT];
+					nextAnim = aimUpAnim[getGrpForDmgTimer()][ANIM_SHOOT];
 				else
-					nextAnim = aimUpAnim[ANIM_HOLD];
+					nextAnim = aimUpAnim[getGrpForDmgTimer()][ANIM_HOLD];
 				break;
 			case DUCK:
 			case PRE_JUMP_DUCK:
 			case JUMP_DUCK:
-				nextAnim = duckAnim;
+				nextAnim = duckAnim[getGrpForDmgTimer()];
 				isBigSprite = false;
 				break;
 			case PRE_JUMP:
@@ -108,29 +122,29 @@ public class PitSprite extends Sprite {
 				// if parent is in the "move up" phase of jump then show jump animation 
 				if(isJumpUp) {
 					if(isShooting)
-						nextAnim = jumpAnim[ANIM_SHOOT];
+						nextAnim = jumpAnim[getGrpForDmgTimer()][ANIM_SHOOT];
 					else
-						nextAnim = jumpAnim[ANIM_HOLD];
+						nextAnim = jumpAnim[getGrpForDmgTimer()][ANIM_HOLD];
 				}
 				// otherwise show first frame of jump animation
 				else {
 					if(isShooting) 
-						setRegion(jumpAnim[ANIM_SHOOT].getKeyFrame(0f));
+						setRegion(jumpAnim[getGrpForDmgTimer()][ANIM_SHOOT].getKeyFrame(0f));
 					else
-						setRegion(jumpAnim[ANIM_HOLD].getKeyFrame(0f));
+						setRegion(jumpAnim[getGrpForDmgTimer()][ANIM_HOLD].getKeyFrame(0f));
 				}
 				break;
 			case STAND:
 				if(isShooting)
-					nextAnim = standAnim[ANIM_SHOOT];
+					nextAnim = standAnim[getGrpForDmgTimer()][ANIM_SHOOT];
 				else
-					nextAnim = standAnim[ANIM_HOLD];
+					nextAnim = standAnim[getGrpForDmgTimer()][ANIM_HOLD];
 				break;
 			case WALK:
 				if(isShooting)
-					nextAnim = walkAnim[ANIM_SHOOT];
+					nextAnim = walkAnim[getGrpForDmgTimer()][ANIM_SHOOT];
 				else
-					nextAnim = walkAnim[ANIM_HOLD];
+					nextAnim = walkAnim[getGrpForDmgTimer()][ANIM_HOLD];
 				break;
 			case CLIMB:
 				// if this is first frame of climb animation then reset climb anim timer
@@ -142,9 +156,9 @@ public class PitSprite extends Sprite {
 				// if climbing down then reverse the animation
 				else if(climbDir == Direction4.DOWN) {
 					climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - delta,
-							climbAnim.getAnimationDuration());
+							climbAnim[getGrpForDmgTimer()].getAnimationDuration());
 				}
-				setRegion(climbAnim.getKeyFrame(climbAnimTimer));
+				setRegion(climbAnim[getGrpForDmgTimer()].getKeyFrame(climbAnimTimer));
 				break;
 			case DEAD:
 				nextAnim = deadAnim;
@@ -180,5 +194,12 @@ public class PitSprite extends Sprite {
 		else
 			spriteStateTimer = prevParentState == nextParentState ? spriteStateTimer+delta : 0f;
 		prevParentState = nextParentState;
+	}
+
+	private int getGrpForDmgTimer() {
+		if(dmgFrameTimer == -1f)
+			return ANIM_GRP_REG;
+		else
+			return Math.floorMod((int) (dmgFrameTimer / DMG_ANIM_SPEED), KidIcarusGfx.Player.Pit.GRPDIR.length);
 	}
 }

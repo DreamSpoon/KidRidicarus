@@ -123,146 +123,420 @@ KidRidicarusSprites4.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-KidIcarus/player/Pit/pit_aimup
+KidIcarus/player/Pit/inv1/pit_aimup
   rotate: false
-  xy: 1, 7
+  xy: 1, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: -1
-KidIcarus/player/Pit/pit_aimup_shoot
+KidIcarus/player/Pit/inv1/pit_aimup_shoot
   rotate: false
-  xy: 19, 7
+  xy: 19, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: -1
-KidIcarus/player/Pit/pit_climb
+KidIcarus/player/Pit/inv1/pit_climb
   rotate: false
-  xy: 37, 7
+  xy: 37, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 1
-KidIcarus/player/Pit/pit_climb
+KidIcarus/player/Pit/inv1/pit_climb
   rotate: false
-  xy: 55, 7
+  xy: 55, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 2
-KidIcarus/player/Pit/pit_dead
+KidIcarus/player/Pit/inv1/pit_jump
   rotate: false
-  xy: 73, 7
-  size: 16, 24
-  orig: 16, 24
-  offset: 0, 0
-  index: -1
-KidIcarus/player/Pit/pit_jump
-  rotate: false
-  xy: 91, 7
+  xy: 73, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 1
-KidIcarus/player/Pit/pit_jump
+KidIcarus/player/Pit/inv1/pit_jump
   rotate: false
-  xy: 109, 7
+  xy: 91, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 2
-KidIcarus/player/Pit/pit_jump_shoot
+KidIcarus/player/Pit/inv1/pit_jump_shoot
   rotate: false
-  xy: 127, 7
+  xy: 109, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 1
-KidIcarus/player/Pit/pit_jump_shoot
+KidIcarus/player/Pit/inv1/pit_jump_shoot
   rotate: false
-  xy: 145, 7
+  xy: 127, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 2
-KidIcarus/player/Pit/pit_stand
+KidIcarus/player/Pit/inv1/pit_stand
   rotate: false
-  xy: 163, 7
+  xy: 145, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: -1
-KidIcarus/player/Pit/pit_stand_shoot
+KidIcarus/player/Pit/inv1/pit_stand_shoot
   rotate: false
-  xy: 181, 7
+  xy: 163, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: -1
-KidIcarus/player/Pit/pit_walk
+KidIcarus/player/Pit/inv1/pit_walk
   rotate: false
-  xy: 199, 7
+  xy: 181, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 1
-KidIcarus/player/Pit/pit_walk
+KidIcarus/player/Pit/inv1/pit_walk
   rotate: false
-  xy: 217, 7
+  xy: 199, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 2
-KidIcarus/player/Pit/pit_walk
+KidIcarus/player/Pit/inv1/pit_walk
   rotate: false
-  xy: 217, 7
+  xy: 199, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 4
-KidIcarus/player/Pit/pit_walk
+KidIcarus/player/Pit/inv1/pit_walk
   rotate: false
-  xy: 235, 7
+  xy: 217, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 3
-KidIcarus/player/Pit/pit_walk_shoot
+KidIcarus/player/Pit/inv1/pit_walk_shoot
   rotate: false
-  xy: 253, 7
+  xy: 235, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 1
-KidIcarus/player/Pit/pit_walk_shoot
+KidIcarus/player/Pit/inv1/pit_walk_shoot
   rotate: false
-  xy: 271, 7
+  xy: 253, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 2
-KidIcarus/player/Pit/pit_walk_shoot
+KidIcarus/player/Pit/inv1/pit_walk_shoot
   rotate: false
-  xy: 271, 7
+  xy: 253, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 4
-KidIcarus/player/Pit/pit_walk_shoot
+KidIcarus/player/Pit/inv1/pit_walk_shoot
   rotate: false
-  xy: 289, 7
+  xy: 271, 1
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: 3
-KidIcarus/player/Pit/pit_duck
+KidIcarus/player/Pit/inv1/pit_duck
   rotate: false
-  xy: 307, 15
+  xy: 289, 9
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
+
+KidRidicarusSprites5.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+KidIcarus/player/Pit/inv2/pit_aimup
+  rotate: false
+  xy: 1, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/inv2/pit_aimup_shoot
+  rotate: false
+  xy: 19, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/inv2/pit_climb
+  rotate: false
+  xy: 37, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv2/pit_climb
+  rotate: false
+  xy: 55, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv2/pit_jump
+  rotate: false
+  xy: 73, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv2/pit_jump
+  rotate: false
+  xy: 91, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv2/pit_jump_shoot
+  rotate: false
+  xy: 109, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv2/pit_jump_shoot
+  rotate: false
+  xy: 127, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv2/pit_stand
+  rotate: false
+  xy: 145, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/inv2/pit_stand_shoot
+  rotate: false
+  xy: 163, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/inv2/pit_walk
+  rotate: false
+  xy: 181, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv2/pit_walk
+  rotate: false
+  xy: 199, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv2/pit_walk
+  rotate: false
+  xy: 199, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 4
+KidIcarus/player/Pit/inv2/pit_walk
+  rotate: false
+  xy: 217, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+KidIcarus/player/Pit/inv2/pit_walk_shoot
+  rotate: false
+  xy: 235, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv2/pit_walk_shoot
+  rotate: false
+  xy: 253, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv2/pit_walk_shoot
+  rotate: false
+  xy: 253, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 4
+KidIcarus/player/Pit/inv2/pit_walk_shoot
+  rotate: false
+  xy: 271, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+KidIcarus/player/Pit/inv2/pit_duck
+  rotate: false
+  xy: 289, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+
+KidRidicarusSprites6.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+KidIcarus/player/Pit/inv3/pit_aimup
+  rotate: false
+  xy: 1, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/inv3/pit_aimup_shoot
+  rotate: false
+  xy: 19, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/inv3/pit_climb
+  rotate: false
+  xy: 37, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv3/pit_climb
+  rotate: false
+  xy: 55, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv3/pit_jump
+  rotate: false
+  xy: 73, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv3/pit_jump
+  rotate: false
+  xy: 91, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv3/pit_jump_shoot
+  rotate: false
+  xy: 109, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv3/pit_jump_shoot
+  rotate: false
+  xy: 127, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv3/pit_stand
+  rotate: false
+  xy: 145, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/inv3/pit_stand_shoot
+  rotate: false
+  xy: 163, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/inv3/pit_walk
+  rotate: false
+  xy: 181, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv3/pit_walk
+  rotate: false
+  xy: 199, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv3/pit_walk
+  rotate: false
+  xy: 199, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 4
+KidIcarus/player/Pit/inv3/pit_walk
+  rotate: false
+  xy: 217, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+KidIcarus/player/Pit/inv3/pit_walk_shoot
+  rotate: false
+  xy: 235, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/inv3/pit_walk_shoot
+  rotate: false
+  xy: 253, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/inv3/pit_walk_shoot
+  rotate: false
+  xy: 253, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 4
+KidIcarus/player/Pit/inv3/pit_walk_shoot
+  rotate: false
+  xy: 271, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+KidIcarus/player/Pit/inv3/pit_duck
+  rotate: false
+  xy: 289, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+
+KidRidicarusSprites7.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 KidIcarus/player/Pit/pit_arrow
   rotate: false
   xy: 1, 1
@@ -271,7 +545,152 @@ KidIcarus/player/Pit/pit_arrow
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites5.png
+KidRidicarusSprites8.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+KidIcarus/player/Pit/reg/pit_aimup
+  rotate: false
+  xy: 1, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/reg/pit_aimup_shoot
+  rotate: false
+  xy: 19, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/reg/pit_climb
+  rotate: false
+  xy: 37, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/reg/pit_climb
+  rotate: false
+  xy: 55, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/reg/pit_dead
+  rotate: false
+  xy: 73, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/reg/pit_jump
+  rotate: false
+  xy: 91, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/reg/pit_jump
+  rotate: false
+  xy: 109, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/reg/pit_jump_shoot
+  rotate: false
+  xy: 127, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/reg/pit_jump_shoot
+  rotate: false
+  xy: 145, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/reg/pit_stand
+  rotate: false
+  xy: 163, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/reg/pit_stand_shoot
+  rotate: false
+  xy: 181, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/player/Pit/reg/pit_walk
+  rotate: false
+  xy: 199, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/reg/pit_walk
+  rotate: false
+  xy: 217, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/reg/pit_walk
+  rotate: false
+  xy: 217, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 4
+KidIcarus/player/Pit/reg/pit_walk
+  rotate: false
+  xy: 235, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+KidIcarus/player/Pit/reg/pit_walk_shoot
+  rotate: false
+  xy: 253, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/player/Pit/reg/pit_walk_shoot
+  rotate: false
+  xy: 271, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/player/Pit/reg/pit_walk_shoot
+  rotate: false
+  xy: 271, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 4
+KidIcarus/player/Pit/reg/pit_walk_shoot
+  rotate: false
+  xy: 289, 1
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+KidIcarus/player/Pit/reg/pit_duck
+  rotate: false
+  xy: 307, 9
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+
+KidRidicarusSprites9.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -332,7 +751,7 @@ KidIcarus/player/PitHUD/health_bar7
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites6.png
+KidRidicarusSprites10.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -379,7 +798,7 @@ Metroid/item/energy
   offset: 0, 0
   index: 2
 
-KidRidicarusSprites7.png
+KidRidicarusSprites11.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -566,7 +985,7 @@ Metroid/NPC/skree_exp
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites8.png
+KidRidicarusSprites12.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -753,7 +1172,7 @@ Metroid/player/Samus/samus_ball
   offset: 0, 0
   index: 4
 
-KidRidicarusSprites9.png
+KidRidicarusSprites13.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -926,7 +1345,7 @@ Metroid/player/SamusChunk/top_right
   offset: 0, 0
   index: 4
 
-KidRidicarusSprites10.png
+KidRidicarusSprites14.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -952,7 +1371,7 @@ Metroid/player/SamusHUD/energy_tank_full
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites11.png
+KidRidicarusSprites15.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -985,7 +1404,7 @@ Metroid/player/SamusShot/shot_regular
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites12.png
+KidRidicarusSprites16.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1186,7 +1605,7 @@ SMB1/general/digit8
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites13.png
+KidRidicarusSprites17.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1303,7 +1722,7 @@ SMB1/item/static_coin
   offset: 0, 0
   index: 5
 
-KidRidicarusSprites14.png
+KidRidicarusSprites18.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1364,7 +1783,7 @@ SMB1/NPC/goomba_walk
   offset: 0, 0
   index: 2
 
-KidRidicarusSprites15.png
+KidRidicarusSprites19.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -1782,7 +2201,7 @@ SMB1/player/Mario/big/mario_throw_inv3
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites16.png
+KidRidicarusSprites20.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -2018,7 +2437,7 @@ SMB1/player/Mario/sml/mario_stand_reg
   offset: 0, 0
   index: -1
 
-KidRidicarusSprites17.png
+KidRidicarusSprites21.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
