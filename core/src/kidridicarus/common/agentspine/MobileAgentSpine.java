@@ -23,7 +23,7 @@ public class MobileAgentSpine extends BasicAgentSpine {
 	public void checkDoSpaceWrap(RoomBox curRoom) {
 		if(curRoom == null)
 			return;
-		if(!curRoom.getProperty(CommonKV.Room.KEY_SPACE_WRAP_H, false, Boolean.class))
+		if(!curRoom.getProperty(CommonKV.Room.KEY_SPACEWRAP_X, false, Boolean.class))
 			return;
 		
 		// if body position is outside room on left...

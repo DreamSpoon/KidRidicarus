@@ -5,7 +5,7 @@
  </tileset>
  <layer id="82" name="background" width="230" height="46">
   <properties>
-   <property name="draworder" value="map_background"/>
+   <property name="layer_draworder" value="map_background"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt0zENwDAQwMAURfgz7dy5GRz9nWQIXgsAAAAAAAAAAAAAAIBJHkmSJEmSJEmSJEmSJEmSJEmSJEmSJH26yf4ZcJ4voceX0ONL6PEl9PgSenwJPb6EHl9Cjy+hx5fQ40vo8SX0+BJ6fAk9vmSKF3jbJWE=
@@ -13,7 +13,7 @@
  </layer>
  <layer id="83" name="scenery" width="230" height="46">
   <properties>
-   <property name="draworder" value="map_bottom"/>
+   <property name="layer_draworder" value="map_bottom"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt1dFKwzAUBuCgV9Mrt6moF6Li9Mr3fzwjGAhh7dalTev8PjhQaJvzk3DaEAAAAAAAAAAAAAAAAAAAAP6Ph1iPsZ5GWKN2nZre8st/WfHu0rzEeo311nE/37OufUtr9K0zxJCzll/+ZF30bP2Nainfs7HO/dieY/SS//Sefy1/mssx8wN11ocfARozl7A85hKWZ99cPmcFtLdvLt9j7WJ9NMxx0bDXFOSf17nlL+fy5x/5lVWLf+Yq1k2s6xPfn/tM5J/XOeYv53L3W5/ZdTJF/pTpKtYm9O/tNtZtVneh/0y22XM18r7lWvJPnz9kPUtl/iFa5u9y7P6nWbzPrg/lBwAAAAAAAAAAAAAAAAAAAGjpGw6BF7Y=
@@ -21,8 +21,8 @@
  </layer>
  <layer id="84" name="collision" width="230" height="46">
   <properties>
-   <property name="draworder" value="map_middle"/>
-   <property name="solidlayer" value="true"/>
+   <property name="layer_draworder" value="map_middle"/>
+   <property name="layer_solid" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt2UEOwiAQQFGO4cKQ3v+UbnSjgIQiDs17ySTtol1M+OmiKQEAAAAAAAAAAAAAAAAAAAAAAMC4/Bwghpx0CZHkpEuI5L1JXXIFuXLd89zos7OUmtQluyu11XOuSw2sbqLWpC7ZWaut1tmuNbCyi1aTumRXPW2VznergVVtfGuy93v/T3fzMTN2Y8dz92nMy4x3nH3PFcYexncGAAD8xq1wXxtgDb1BPLqEeHQJ8egS4tElxKNLiEeXEI//lxCPLiEeXUI8x8kB5jtODuziAZ3zQt8=
@@ -30,8 +30,8 @@
  </layer>
  <layer id="95" name="pipes" width="230" height="46">
   <properties>
-   <property name="draworder" value="map_top"/>
-   <property name="solidlayer" value="true"/>
+   <property name="layer_draworder" value="map_top"/>
+   <property name="layer_solid" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt2zsOwjAUBEAX/Irwuf9peWUkihgFwjrMSNtZ0ZPsjSu3BgAAAAAAAAAAAAAAAAAAAAAAAAAAAJ9zqBy/sBa2NNrZXJp3qlw7v/XOWthSytns/T8szauX+7P27hjp7jlVzpVLyzibvR3Ry/+zdp9G2udb5V55tHFmBgAAAIBe068HAF7oJeTRS8ijl5BHLyGPXkIevYQ8egl59BJyzN+5ARnm79wAANiPJ2JQAnY=
@@ -85,8 +85,8 @@
  </layer>
  <layer id="90" name="goombatiles" width="230" height="46">
   <properties>
-   <property name="agentclass" value="agentspawner"/>
-   <property name="spawnagentclass" value="goomba"/>
+   <property name="agentclass" value="agent_spawner"/>
+   <property name="spawn_agent_class" value="goomba"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt2TEKACAIBVDv4/3v1x4EBRKR7y0u8hVXIwAAAAAAAAAAAAAAAAAAAAAAesupAgAAAAAAAO+p/OedZmXx/Bsqdt7JWPV0vRkAAAAAAAAAAAAAAAAAAADALwaZRwKx
@@ -94,8 +94,8 @@
  </layer>
  <layer id="91" name="turtletiles" width="230" height="46">
   <properties>
-   <property name="agentclass" value="agentspawner"/>
-   <property name="spawnagentclass" value="turtle"/>
+   <property name="agentclass" value="agent_spawner"/>
+   <property name="spawn_agent_class" value="turtle"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztzgENAAAIA6AHsn8+Y9xNSEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAN9MOAAAAAAAAAAAAAAAAAAAAAHDWAhjUAC0=
@@ -111,10 +111,10 @@
  </layer>
  <layer id="94" name="playerstart" width="230" height="46">
   <properties>
-   <property name="agentclass" value="playerspawner"/>
+   <property name="agentclass" value="player_spawner"/>
    <property name="direction" value="right"/>
-   <property name="playeragentclass" value="mario"/>
-   <property name="spawnmain" value="true"/>
+   <property name="player_agent_class" value="mario"/>
+   <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztzjENAAAIA7Dpwb9ARIyEp1XQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAIDWfAcAAAAAAAAAAAAAAAAAAAAAAADgyAIDKwAr
@@ -122,7 +122,7 @@
  </layer>
  <objectgroup id="20" name="spawnplayer">
   <properties>
-   <property name="agentclass" value="playerspawner"/>
+   <property name="agentclass" value="player_spawner"/>
   </properties>
   <object id="232" x="720" y="560" width="16" height="16">
    <properties>
@@ -133,7 +133,7 @@
    <properties>
     <property name="direction" value="up"/>
     <property name="name" value="level1coinsexit"/>
-    <property name="spawntype" value="pipewarp"/>
+    <property name="spawn_type" value="pipe_warp"/>
    </properties>
   </object>
  </objectgroup>
@@ -143,24 +143,24 @@
   </properties>
   <object id="238" x="0" y="0" width="3680" height="480">
    <properties>
-    <property name="roommusic" value="SMB1/music/01_-_Super_Mario_Bros._-_NES_-_Above_Ground_BGM.ogg"/>
-    <property name="roomtype" value="hscroll"/>
-    <property name="scroll_direction" value="right"/>
-    <property name="scroll_push_box" value="true"/>
-    <property name="viewoffset_y" value="-112"/>
+    <property name="room_music" value="SMB1/music/01_-_Super_Mario_Bros._-_NES_-_Above_Ground_BGM.ogg"/>
+    <property name="room_type" value="scroll_x"/>
+    <property name="room_scroll_direction" value="right"/>
+    <property name="room_scroll_push_box" value="true"/>
+    <property name="room_view_offset_y" value="-112"/>
    </properties>
   </object>
   <object id="239" x="688" y="480" width="256" height="256">
    <properties>
-    <property name="roommusic" value="SMB1/music/03_-_Super_Mario_Bros._-_NES_-_Underground_BGM.ogg"/>
-    <property name="roomtype" value="center"/>
-    <property name="viewoffset_y" value="0"/>
+    <property name="room_music" value="SMB1/music/03_-_Super_Mario_Bros._-_NES_-_Underground_BGM.ogg"/>
+    <property name="room_type" value="center"/>
+    <property name="room_view_offset_y" value="0"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="23" name="pipewarp">
+ <objectgroup id="23" name="pipe_warp">
   <properties>
-   <property name="agentclass" value="pipewarp"/>
+   <property name="agentclass" value="pipe_warp"/>
   </properties>
   <object id="231" x="912" y="384" width="32" height="16">
    <properties>
@@ -187,11 +187,11 @@
  </objectgroup>
  <objectgroup id="22" name="levelend">
   <properties>
-   <property name="agentclass" value="levelend_trigger"/>
+   <property name="agentclass" value="level_end_trigger"/>
   </properties>
   <object id="227" x="3280" y="416" width="16" height="32">
    <properties>
-    <property name="nextlevel_name" value="Metroid/map/Metroid1-1.tmx"/>
+    <property name="next_level_filename" value="Metroid/map/Metroid1-1.tmx"/>
     <property name="target_name" value="castleflagSMB1-1"/>
    </properties>
   </object>

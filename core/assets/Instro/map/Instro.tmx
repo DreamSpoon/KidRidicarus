@@ -11,7 +11,7 @@
  </tileset>
  <layer id="2" name="background" width="16" height="15">
   <properties>
-   <property name="draworder" value="map_background"/>
+   <property name="layer_draworder" value="map_background"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJxjZGBgYCQC++DAulTQjwsTo58Yu0f1j+ofrvoB1O8crw==
@@ -19,7 +19,7 @@
  </layer>
  <layer id="3" name="scenery_bottom" width="16" height="15">
   <properties>
-   <property name="draworder" value="map_bottom"/>
+   <property name="layer_draworder" value="map_bottom"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJxjYKAtSAHiVChOI0N/DhDnQnEeFd1FTWBMoX5TCvVbUKh/FJAO4oE4YaAdAQQAXuQEqA==
@@ -27,7 +27,7 @@
  </layer>
  <layer id="8" name="scenery_top" width="16" height="15">
   <properties>
-   <property name="draworder" value="map_top"/>
+   <property name="layer_draworder" value="map_top"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJxjYBhegJNC/VxUccUooAbgRKNJBQJQWoJM/YJo9GAEAIVwAHA=
@@ -35,8 +35,8 @@
  </layer>
  <layer id="1" name="collision" width="16" height="15">
   <properties>
-   <property name="draworder" value="map_middle"/>
-   <property name="solidlayer" value="true"/>
+   <property name="layer_draworder" value="map_middle"/>
+   <property name="layer_solid" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJxjYBhYkIwDk6KfUvspAUZDXL8mFKsAsSqUJgWo4dHDh4RxAZBebRLtpES/PxAHoOnXJ0F/OBBHoOnXgGIYmw8LTseBtaBYDYnmxYJx6QcASywOBg==

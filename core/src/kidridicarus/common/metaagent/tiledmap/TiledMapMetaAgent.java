@@ -61,12 +61,12 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 				continue;
 
 			// is solid layer property set to true?
-			if(layer.getProperties().get(CommonKV.Layer.KEY_SOLIDLAYER,
+			if(layer.getProperties().get(CommonKV.Layer.KEY_LAYER_SOLID,
 					CommonKV.VAL_FALSE, String.class).equals(CommonKV.VAL_TRUE)) {
 				solidLayers.add((TiledMapTileLayer) layer);
 			}
 			// does this layer have a draw order?
-			if(layer.getProperties().get(CommonKV.DrawOrder.KEY_DRAWORDER, null, String.class) != null)
+			if(layer.getProperties().get(CommonKV.Layer.KEY_LAYER_DRAWORDER, null, String.class) != null)
 				drawLayers.add((TiledMapTileLayer) layer);
 		}
 
@@ -77,9 +77,9 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	private void createSolidTileMapAgent(LinkedList<TiledMapTileLayer> solidLayers) {
 		if(solidLayers.isEmpty())
 			return;
-		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_ORTHO_SOLID_TILEMAP,
+		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_SOLID_TILEDMAP,
 				Agent.getStartBounds(properties));
-		cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAPTILELAYER_LIST, solidLayers);
+		cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER_LIST, solidLayers);
 		solidTileMapAgent = (SolidTiledMapAgent) agency.createAgent(cmProps);
 	}
 
@@ -91,7 +91,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 		for(TiledMapTileLayer layer : drawLayers) {
 			ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP,
 					Agent.getStartBounds(properties));
-			cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAPTILELAYER, layer);
+			cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER, layer);
 			drawLayerAgents.add((DrawLayerAgent) agency.createAgent(cmProps));
 		}
 	}
@@ -181,7 +181,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 					"is not positive: width = " + width + ", height = " + height);
 		}
 
-		ObjectProperties props = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_TILEMAP_META,
+		ObjectProperties props = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_META_TILEDMAP,
 				new Rectangle(0f, 0f, UInfo.P2M(width * UInfo.TILEPIX_X), UInfo.P2M(height * UInfo.TILEPIX_Y)));
 		props.put(CommonKV.AgentMapParams.KEY_TILEDMAP, tiledMap);
 

@@ -34,7 +34,7 @@ public class BrickPiece extends Agent implements DisposableAgent {
 
 		defineBody(Agent.getStartPoint(properties), Agent.getStartVelocity(properties));
 		bpSprite = new BrickPieceSprite(agency.getAtlas(), b2body.getPosition(),
-				properties.get(CommonKV.Sprite.KEY_STARTFRAME, 0, Integer.class));
+				properties.get(CommonKV.Sprite.KEY_START_FRAME, 0, Integer.class));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
@@ -80,7 +80,7 @@ public class BrickPiece extends Agent implements DisposableAgent {
 
 	public static ObjectProperties makeAP(Vector2 position, Vector2 velocity, int startFrame) {
 		ObjectProperties props = Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_BRICKPIECE, position, velocity);
-		props.put(CommonKV.Sprite.KEY_STARTFRAME, startFrame);
+		props.put(CommonKV.Sprite.KEY_START_FRAME, startFrame);
 		return props;
 	}
 }

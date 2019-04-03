@@ -23,7 +23,7 @@ public class ScrollPushBox extends ScrollBox {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, Direction4 scrollDir) {
-		ObjectProperties ap = Agent.createPointAP(CommonKV.AgentClassAlias.VAL_SCROLL_PUSH_BOX, position);
+		ObjectProperties ap = Agent.createPointAP(CommonKV.AgentClassAlias.VAL_SCROLL_PUSHBOX, position);
 		ap.put(CommonKV.KEY_DIRECTION, scrollDir);
 		return ap;
 	}

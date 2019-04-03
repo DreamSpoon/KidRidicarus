@@ -31,7 +31,7 @@ public class MetroidDoorNexus extends Agent implements DisposableAgent {
 			boolean isTransitRight = agent.getPosition().x < body.getPosition().x;
 			agent.getSupervisor().startScript(new MetroidDoorNexusScript(this, isTransitRight,
 					getDoor(CommonKV.Script.KEY_TARGET_LEFT), getDoor(CommonKV.Script.KEY_TARGET_RIGHT),
-					agent.getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
+					agent.getProperty(CommonKV.Script.KEY_SPRITE_SIZE, null, Vector2.class)));
 		}
 	}
 

@@ -153,9 +153,9 @@ public class Guide implements Disposable {
 			return;
 
 		Direction4 scrollDir = Direction4.fromString(
-				currentRoom.getProperty(CommonKV.Room.KEY_ROOM_SCROLL_DIR, "", String.class));
+				currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_DIR, "", String.class));
 		// if current room has scroll push box property = true then create/change to scroll push box
-		if(currentRoom.getProperty(CommonKV.Room.VAL_SCROLL_PUSH_BOX, false, Boolean.class)) {
+		if(currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_PUSHBOX, false, Boolean.class)) {
 			if(scrollBox != null && !(scrollBox instanceof ScrollPushBox)) {
 				agency.removeAgent(scrollBox);
 				scrollBox.dispose();
@@ -166,7 +166,7 @@ public class Guide implements Disposable {
 				scrollBox = (ScrollPushBox) agency.createAgent(ScrollPushBox.makeAP(getViewCenter(), scrollDir));
 		}
 		// if current room has scroll kill box property = true then create/change to scroll kill box
-		else if(currentRoom.getProperty(CommonKV.Room.VAL_SCROLL_KILL_BOX, false, Boolean.class)) {
+		else if(currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_KILLBOX, false, Boolean.class)) {
 			if(scrollBox != null && !(scrollBox instanceof ScrollKillBox)) {
 				agency.removeAgent(scrollBox);
 				scrollBox.dispose();
@@ -369,7 +369,7 @@ public class Guide implements Disposable {
 	private PlayerAgent spawnPlayerAgentWithProperties(ObjectProperties playerAgentProperties, Agent spawner) {
 		// if no agent properties given then use spawner to determine player class and position
 		if(playerAgentProperties == null) {
-			String initPlayClass = spawner.getProperty(CommonKV.Spawn.KEY_PLAYERAGENTCLASS, null, String.class);
+			String initPlayClass = spawner.getProperty(CommonKV.Spawn.KEY_PLAYER_AGENTCLASS, null, String.class);
 			if(initPlayClass == null)
 				return null;
 			ObjectProperties playerAP = Agent.createPointAP(initPlayClass, spawner.getPosition());
@@ -387,7 +387,7 @@ public class Guide implements Disposable {
 	private Agent getMainPlayerSpawner() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
 		Collection<Agent> spawnList = agency.getAgentsByProperties(
-				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, CommonKV.Spawn.KEY_SPAWNMAIN },
+				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, CommonKV.Spawn.KEY_SPAWN_MAIN },
 				new String[] { CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, CommonKV.VAL_TRUE });
 		if(!spawnList.isEmpty())
 			return spawnList.iterator().next();

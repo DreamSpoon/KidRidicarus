@@ -730,7 +730,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 				he = Direction4.LEFT;
 			return (T) he;
 		}
-		else if(key.equals(CommonKV.Script.KEY_SPRITESIZE) && Vector2.class.equals(cls)) {
+		else if(key.equals(CommonKV.Script.KEY_SPRITE_SIZE) && Vector2.class.equals(cls)) {
 			Vector2 he = new Vector2(sprite.getWidth(), sprite.getHeight());
 			return (T) he;
 		}

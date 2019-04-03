@@ -5,7 +5,7 @@
  </tileset>
  <layer id="9" name="background" width="18" height="176">
   <properties>
-   <property name="draworder" value="map_background"/>
+   <property name="layer_draworder" value="map_background"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztwwENAAAMw6DOv+kruANIWDVVVVVVVVVVVVVVVVXfB6QuDGE=
@@ -13,7 +13,7 @@
  </layer>
  <layer id="10" name="scenery" width="18" height="176">
   <properties>
-   <property name="draworder" value="map_top"/>
+   <property name="layer_draworder" value="map_top"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztmssOgyAQRU3TLvpY9LHp/39pN21iSYUMvehFz0lcmOAFx/EyCsMwze59OLMXXVercyicz62jui/Io4pr7XNupaPMl1r/OIr6P4l01Kg89SzSuZjpwPz0MNcvjcqXriKdm0gHoCd6mT+j45zSiY5zSof5GVyJvCu5tveATq7tI6CTa7uEDpSh3oWlUeVfxPNyqDxmK16Fh0CvjD3jnzx284yteA94wlwMAFHwDQBoiWr98inq59c66PhbpNTPh9I66FbWW93+R6x9H48Ct2cG37TO4bXWfdSPPrTKYVfvctyn5RCrNC61cUrjUhuntJ5yr69a8AKqyAQV
@@ -21,7 +21,7 @@
  </layer>
  <layer id="13" name="door" width="18" height="176">
   <properties>
-   <property name="draworder" value="map_middle"/>
+   <property name="layer_draworder" value="map_middle"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt2DERACAQA8GvwAD4t4oHJs9Q7Aq4Lk2q+N0IdWaoAwAAAPDSCnV2qAPcs2cAAAAAgH6+WIA+B6bkAIk=
@@ -29,8 +29,8 @@
  </layer>
  <layer id="11" name="collision" width="18" height="176">
   <properties>
-   <property name="draworder" value="map_middle"/>
-   <property name="solidlayer" value="true"/>
+   <property name="layer_draworder" value="map_middle"/>
+   <property name="layer_solid" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztmcuKhjAMhQuzrks3M+//nIMwQsnknljbnxwoXvN50tZatbUcfRH7xqI5DvdJxRLDXZ/yRMVKyuJQvCc41rq31J+lHVv7702bWxZnh/ZagWO537Qci++MnG7OuCzOs5yDOaf/lUMokm5OVBbOlZ/VN+zjmtxWVNYY00GJ+sjqBxEPXnm9H4gHikP1U6vvSD1rvZb0io7VTwrOGbH1T1RWfjM43bCexeG0GmcVRedJpT0V7aMdLHflwPOv7TPIueM5jua+03A08yaKA6/p5XBxJ1GsHIo7gwO9SxzYJhY/8P1lJgfLc4xfvb3G41xbaTgZfqxMC4fL8w0/Xo62vWb5oc7HPK5UzzuOq+M29Zw4kXiO47mP3+ZwY7XEwWI/jVMqlUqlUqk0U1lzkIuR/W21vPmZmDfr92/MG/yO5qmHDpbUtTwceFz7fiJxNN4kjtbfWxyOf8nTN7P6duR+s34HLg/PecjgSO/d1ljvu3g252gyR/qvwo0D0WdLtL/cOXpjIcfyXzejnd7gaNp7h7wo31E/0rMZY3zb00I5P0kc65xMU7z9ZqXyCzYrJTI=
@@ -38,10 +38,10 @@
  </layer>
  <layer id="12" name="playerstart" width="18" height="176">
   <properties>
-   <property name="agentclass" value="playerspawner"/>
+   <property name="agentclass" value="player_spawner"/>
    <property name="direction" value="right"/>
-   <property name="playeragentclass" value="pit"/>
-   <property name="spawnmain" value="true"/>
+   <property name="player_agent_class" value="pit"/>
+   <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztzgEJAAAMA6Alef+YjzEYmsAEAAAAAAAAAAAAAABYcO3AsAdaSAAf
@@ -49,8 +49,8 @@
  </layer>
  <layer id="14" name="shemum" width="18" height="176">
   <properties>
-   <property name="agentclass" value="agentspawner"/>
-   <property name="spawnagentclass" value="shemum"/>
+   <property name="agentclass" value="agent_spawner"/>
+   <property name="spawn_agent_class" value="shemum"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt1EEJAAAMA7E5mH+3M1EYhURBH0dnAAAAAAAAAAAAOu33AKCGvyBBR7TSLmQc9asAPQ==
@@ -58,7 +58,7 @@
  </layer>
  <layer id="16" name="smilesolid_tiles" width="18" height="176">
   <properties>
-   <property name="draworder" value="map_middle"/>
+   <property name="layer_draworder" value="map_middle"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt1sEKgCAQAFGP/v8XhwcvkmEQuTvOgy6ddjDNUiT9oe4eQJ+rhb2u9D5JaurwSKcj7QVSS2bR1iDaPCueZr77j43vMjaLj/xdEtuITR2xjdjUEduITV3ktkx3pNVZozaNM0Wd8w3afXvWQmpsaH2zHgLPjfg8N3L2kc8NSZIkSdrhAooeAtk=
@@ -111,21 +111,21 @@
  </objectgroup>
  <objectgroup id="6" name="levelend">
   <properties>
-   <property name="agentclass" value="levelend_trigger"/>
+   <property name="agentclass" value="level_end_trigger"/>
   </properties>
   <object id="9" x="240" y="2496" width="16" height="32">
    <properties>
-    <property name="nextlevel_name" value="SMB1/map/SMB1-1.tmx"/>
+    <property name="next_level_filename" value="SMB1/map/SMB1-1.tmx"/>
    </properties>
   </object>
   <object id="10" x="240" y="80" width="16" height="32">
    <properties>
-    <property name="nextlevel_name" value="KidIcarus/map/KidIcarus1-1.tmx"/>
+    <property name="next_level_filename" value="KidIcarus/map/KidIcarus1-1.tmx"/>
    </properties>
   </object>
   <object id="11" x="192" y="1072" width="16" height="16">
    <properties>
-    <property name="nextlevel_name" value="Metroid/map/Metroid1-1.tmx"/>
+    <property name="next_level_filename" value="Metroid/map/Metroid1-1.tmx"/>
    </properties>
   </object>
  </objectgroup>
@@ -135,12 +135,12 @@
   </properties>
   <object id="6" x="16" y="0" width="256" height="2816">
    <properties>
-    <property name="roommusic" value="KidIcarus/music/02_-_Kid_Icarus_-_NES_-_Stage_1.ogg"/>
-    <property name="roomtype" value="vscroll"/>
-    <property name="scroll_direction" value="up"/>
-    <property name="scroll_kill_box" value="true"/>
-    <property name="scroll_velocity" value="1.0667"/>
-    <property name="space_wrap_h" value="true"/>
+    <property name="room_music" value="KidIcarus/music/02_-_Kid_Icarus_-_NES_-_Stage_1.ogg"/>
+    <property name="room_type" value="scroll_y"/>
+    <property name="room_scroll_direction" value="up"/>
+    <property name="room_scroll_kill_box" value="true"/>
+    <property name="room_scroll_velocity" value="1.0667"/>
+    <property name="room_space_wrap_x" value="true"/>
    </properties>
   </object>
  </objectgroup>

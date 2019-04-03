@@ -75,7 +75,7 @@ public class PipeWarp extends Agent implements DisposableAgent {
 	 * Returns null if exit spawner is not found.
 	 */
 	public PlayerSpawner getExitAgentSpawner() {
-		Agent agent = CommonInfo.getTargetAgent(agency, properties.get(CommonKV.Script.KEY_TARGETNAME, "",
+		Agent agent = CommonInfo.getTargetAgent(agency, properties.get(CommonKV.Script.KEY_TARGET_NAME, "",
 				String.class));
 		if(agent instanceof PlayerSpawner)
 			return (PlayerSpawner) agent;
@@ -97,7 +97,7 @@ public class PipeWarp extends Agent implements DisposableAgent {
 
 		return ((PlayerAgent) agent).getSupervisor().startScript(
 				new PipeWarpScript(exitPos, getEntryHorizon(), getExitHorizon(),
-				agent.getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
+				agent.getProperty(CommonKV.Script.KEY_SPRITE_SIZE, null, Vector2.class)));
 	}
 
 	private PipeWarpHorizon getEntryHorizon() {
@@ -133,8 +133,8 @@ public class PipeWarp extends Agent implements DisposableAgent {
 		if(gs == null)
 			return null;
 		// if the exit spawner doesn't have a pipe warp spawn property then quit method
-		if(!gs.getProperty(CommonKV.Spawn.KEY_SPAWNTYPE, "", String.class).
-				equals(CommonKV.AgentClassAlias.VAL_PIPEWARP_SPAWN))
+		if(!gs.getProperty(CommonKV.Spawn.KEY_SPAWN_TYPE, "", String.class).
+				equals(CommonKV.AgentClassAlias.VAL_PIPEWARP))
 			return null;
 
 		// if the exit spawner doesn't have a direction property then quit the method

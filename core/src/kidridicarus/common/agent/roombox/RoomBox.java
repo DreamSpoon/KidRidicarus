@@ -34,22 +34,22 @@ public class RoomBox extends Agent implements DisposableAgent {
 		body = new RoomBoxBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 
 		roomType = RoomType.CENTER;
-		String roomTypeStr = properties.get(CommonKV.Room.KEY_ROOMTYPE, "", String.class);
-		if(roomTypeStr.equals(CommonKV.Room.VAL_ROOMTYPE_HSCROLL))
+		String roomTypeStr = properties.get(CommonKV.Room.KEY_TYPE, "", String.class);
+		if(roomTypeStr.equals(CommonKV.Room.VAL_TYPE_SCROLL_X))
 			roomType = RoomType.HSCROLL;
-		else if(roomTypeStr.equals(CommonKV.Room.VAL_ROOMTYPE_VSCROLL))
+		else if(roomTypeStr.equals(CommonKV.Room.VAL_TYPE_SCROLL_Y))
 			roomType = RoomType.VSCROLL;
-		else if(roomTypeStr.equals(CommonKV.Room.VAL_ROOMTYPE_CENTER))
+		else if(roomTypeStr.equals(CommonKV.Room.VAL_TYPE_CENTER))
 			roomType = RoomType.CENTER;
-		roomMusicStr = properties.get(CommonKV.Room.KEY_ROOMMUSIC, "", String.class);
+		roomMusicStr = properties.get(CommonKV.Room.KEY_MUSIC, "", String.class);
 		agency.getEar().registerMusic(roomMusicStr);
 
 		viewVerticalOffset = UInfo.P2M(properties.get(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
-		viewScrollDir = Direction4.fromString(properties.get(CommonKV.Room.KEY_ROOM_SCROLL_DIR, "", String.class));
-		scrollVelocity = properties.get(CommonKV.Room.KEY_ROOM_SCROLL_VELOCITY, null, Float.class);
+		viewScrollDir = Direction4.fromString(properties.get(CommonKV.Room.KEY_SCROLL_DIR, "", String.class));
+		scrollVelocity = properties.get(CommonKV.Room.KEY_SCROLL_VEL, null, Float.class);
 		if(scrollVelocity != null)
 			scrollVelocity = UInfo.P2M(scrollVelocity);
-		isScrollBoundH = properties.get(CommonKV.Room.KEY_SCROLL_BOUND_H, false, Boolean.class);
+		isScrollBoundH = properties.get(CommonKV.Room.KEY_SCROLL_BOUND_X, false, Boolean.class);
 	}
 
 	public Vector2 getViewCenterForPos(Vector2 playerPosition, Vector2 incomingPrevCenter) {

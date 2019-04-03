@@ -19,7 +19,7 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 
 	public AgentSpawner(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWNAGENTCLASS, "", String.class);
+		spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWN_AGENTCLASS, "", String.class);
 		isUsed = false;
 		isRespawnDead = properties.get(CommonKV.Spawn.KEY_RESPAWN_DEAD, false, Boolean.class);
 		sbody = new AgentSpawnerBody(this, agency.getWorld(), Agent.getStartBounds(properties));

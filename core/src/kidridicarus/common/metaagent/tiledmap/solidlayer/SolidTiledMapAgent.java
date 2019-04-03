@@ -25,7 +25,7 @@ public class SolidTiledMapAgent extends Agent implements Disposable {
 	public SolidTiledMapAgent(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		Collection<TiledMapTileLayer> solidLayers =
-				properties.get(CommonKV.AgentMapParams.KEY_TILEDMAPTILELAYER_LIST, null, Collection.class);
+				properties.get(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER_LIST, null, Collection.class);
 		if(solidLayers == null || solidLayers.isEmpty())
 			throw new IllegalArgumentException("Layers array was null or empty.");
 		// changes are made in batches, so keep a queue of pending changes

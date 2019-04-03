@@ -21,7 +21,7 @@ public class DrawLayerAgent extends Agent {
 	public DrawLayerAgent(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		this.bounds = Agent.getStartBounds(properties);
-		drawLayer = properties.get(CommonKV.AgentMapParams.KEY_TILEDMAPTILELAYER, null, TiledMapTileLayer.class);
+		drawLayer = properties.get(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER, null, TiledMapTileLayer.class);
 		if(drawLayer == null)
 			throw new IllegalArgumentException("Agents needs TiledMapTileLayer in its construction properties.");
 		agency.addAgentDrawListener(this, getDrawOrderForLayer(drawLayer, CommonInfo.KIDRID_DRAWORDER_ALIAS),
@@ -39,13 +39,13 @@ public class DrawLayerAgent extends Agent {
 		// does the layer contain a draw order key with a float value?
 		Float drawOrderFloat = null;
 		try {
-			drawOrderFloat = layer.getProperties().get(CommonKV.DrawOrder.KEY_DRAWORDER, null, Float.class);
+			drawOrderFloat = layer.getProperties().get(CommonKV.Layer.KEY_LAYER_DRAWORDER, null, Float.class);
 		}
 		catch(ClassCastException cce1) {
 			// no float value, does the layer contain a draw order key with a string value?
 			String drawOrderStr = null;
 			try {
-				drawOrderStr = layer.getProperties().get(CommonKV.DrawOrder.KEY_DRAWORDER, null, String.class);
+				drawOrderStr = layer.getProperties().get(CommonKV.Layer.KEY_LAYER_DRAWORDER, null, String.class);
 			}
 			catch(ClassCastException cce2) {
 				// return null because no float value and no string found to indicate draw order for layer

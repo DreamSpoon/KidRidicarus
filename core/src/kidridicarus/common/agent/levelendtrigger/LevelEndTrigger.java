@@ -29,13 +29,13 @@ public class LevelEndTrigger extends Agent implements TriggerTakeAgent, Disposab
 	private void doContactUpdate() {
 		for(PlayerAgent agent : body.getPlayerBeginContacts()) {
 			agent.getSupervisor().startScript(
-					new LevelEndScript(this, getProperty(CommonKV.Level.VAL_NEXTLEVEL_NAME, "", String.class)));
+					new LevelEndScript(this, getProperty(CommonKV.Level.VAL_NEXTLEVEL_FILENAME, "", String.class)));
 		}
 	}
 
 	@Override
 	public void onTakeTrigger() {
-		String targetNameStr = getProperty(CommonKV.Script.KEY_TARGETNAME, null, String.class);
+		String targetNameStr = getProperty(CommonKV.Script.KEY_TARGET_NAME, null, String.class);
 		if(targetNameStr == null)
 			return;
 		Agent agent = agency.getFirstAgentByProperties(

@@ -22,14 +22,14 @@ public class CommonAgentClassList {
 			CommonKV.AgentClassAlias.VAL_AGENTSPAWN_TRIGGER, AgentSpawnTrigger.class,
 			CommonKV.AgentClassAlias.VAL_DESPAWN, DespawnBox.class,
 			CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP, DrawLayerAgent.class,
-			CommonKV.AgentClassAlias.VAL_KEEP_ALIVE_BOX, KeepAliveBox.class,
+			CommonKV.AgentClassAlias.VAL_KEEPALIVE_BOX, KeepAliveBox.class,
 			CommonKV.AgentClassAlias.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
-			CommonKV.AgentClassAlias.VAL_ORTHO_SOLID_TILEMAP, SolidTiledMapAgent.class,
-			CommonKV.AgentClassAlias.VAL_PIPEWARP_SPAWN, PipeWarp.class,
+			CommonKV.AgentClassAlias.VAL_SOLID_TILEDMAP, SolidTiledMapAgent.class,
+			CommonKV.AgentClassAlias.VAL_PIPEWARP, PipeWarp.class,
 			CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, PlayerSpawner.class,
 			CommonKV.AgentClassAlias.VAL_ROOM, RoomBox.class,
-			CommonKV.AgentClassAlias.VAL_SCROLL_KILL_BOX, ScrollKillBox.class,
-			CommonKV.AgentClassAlias.VAL_SCROLL_PUSH_BOX, ScrollPushBox.class,
-			CommonKV.AgentClassAlias.VAL_SEMI_SOLID_FLOOR, SemiSolidFloor.class,
-			CommonKV.AgentClassAlias.VAL_TILEMAP_META, TiledMapMetaAgent.class);
+			CommonKV.AgentClassAlias.VAL_SCROLL_KILLBOX, ScrollKillBox.class,
+			CommonKV.AgentClassAlias.VAL_SCROLL_PUSHBOX, ScrollPushBox.class,
+			CommonKV.AgentClassAlias.VAL_SEMISOLID_FLOOR, SemiSolidFloor.class,
+			CommonKV.AgentClassAlias.VAL_META_TILEDMAP, TiledMapMetaAgent.class);
 }

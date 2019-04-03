@@ -59,7 +59,7 @@ public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent
 		for(PlayerAgent agent : body.getPlayerBeginContacts()) {
 			// give the flagpole script to the player and the script, if used, will trigger flag drop
 			agent.getSupervisor().startScript(new FlagpoleScript(this,
-					agent.getProperty(CommonKV.Script.KEY_SPRITESIZE, null, Vector2.class)));
+					agent.getProperty(CommonKV.Script.KEY_SPRITE_SIZE, null, Vector2.class)));
 		}
 	}
 

@@ -51,7 +51,7 @@ public class SamusSupervisor extends PlayerAgentSupervisor {
 		curState.scriptedSpriteState.visible = true;
 		curState.scriptedSpriteState.position.set(playerAgent.getPosition());
 		curState.scriptedSpriteState.spriteState =
-				playerAgent.getProperty(CommonKV.Script.KEY_SPRITESTATE, SpriteState.STAND, SpriteState.class);
+				playerAgent.getProperty(CommonKV.Script.KEY_SPRITE_STATE, SpriteState.STAND, SpriteState.class);
 		if(playerAgent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
 			curState.scriptedSpriteState.isFacingRight = true;
 		else
