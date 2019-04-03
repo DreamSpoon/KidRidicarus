@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
@@ -32,23 +33,26 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	private SolidTiledMapAgent solidTileMapAgent;
 	private LinkedList<DrawLayerAgent> drawLayerAgents;
 	private Rectangle bounds;
-	private boolean otherSpawnDone;
+	private LinkedList<Disposable> manualDisposeAgents;
+	private AgentUpdateListener myUpdateListener;
 
 	public TiledMapMetaAgent(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		this.bounds = Agent.getStartBounds(properties);
 
+		manualDisposeAgents = new LinkedList<Disposable>();
+
+		bounds = Agent.getStartBounds(properties);
 		tiledMap = properties.get(CommonKV.AgentMapParams.KEY_TILEDMAP, null, TiledMap.class);
 		if(tiledMap == null)
 			throw new IllegalArgumentException("Tiled map property not set, unable to create agent.");
-
 		createInitialSubAgents();
 
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		// keep ref to update listener for removal
+		myUpdateListener = new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(); }
-			});
-		otherSpawnDone = false;
+			};
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, myUpdateListener);
 	}
 
 	// create the Agents for the solid tile map and the drawable layers
@@ -102,13 +106,23 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	 *   -in the previous update
 	 * So there was previously no solid stuff for the initial spawn agents to land on, so they needed to be
 	 * spawned later.
+	 * Note: Only one update, then update listener is removed.
 	 */
 	private void doUpdate() {
-		if(!otherSpawnDone) {
-			otherSpawnDone = true;
-			// create the other agents (typically spawn boxes, rooms, player start, etc.)
-			LinkedList<ObjectProperties> temp = makeAgentPropsFromLayers(tiledMap.getLayers());
-			agency.createAgents(temp);
+		agency.removeAgentUpdateListener(this, myUpdateListener);
+		createOtherAgents();
+	}
+
+	/*
+	 * Non-disposable Agents (e.g. KeepAliveBox) may be created by this Agent, so keep a list of Agents for
+	 * manual disposal.
+	 */
+	private void createOtherAgents() {
+		// create the other agents (typically spawn boxes, rooms, player start, etc.)
+		LinkedList<Agent> createdAgents = agency.createAgents(makeAgentPropsFromLayers(tiledMap.getLayers()));
+		for(Agent agent : createdAgents) {
+			if(agent instanceof Disposable)
+				manualDisposeAgents.add((Disposable) agent);
 		}
 	}
 
@@ -167,6 +181,8 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 
 	@Override
 	public void disposeAgent() {
+		for(Disposable agent: manualDisposeAgents)
+			agent.dispose();
 		if(solidTileMapAgent != null)
 			solidTileMapAgent.dispose();
 		if(tiledMap != null)

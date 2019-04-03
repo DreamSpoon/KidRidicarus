@@ -156,12 +156,17 @@ public class Agency implements Disposable {
 			agencyIndex.removeAgentRemoveListener(change.ap.agent, change.arListener);
 	}
 
-	public void createAgents(Collection<ObjectProperties> agentProps) {
+	/*
+	 * Create many agents from a collection of agent properties, and return a list of the created Agents.
+	 */
+	public LinkedList<Agent> createAgents(Collection<ObjectProperties> agentProps) {
+		LinkedList<Agent> aList = new LinkedList<Agent>();
 		Iterator<ObjectProperties> apIter = agentProps.iterator();
 		while(apIter.hasNext()) {
 			ObjectProperties aDef = apIter.next();
-			createAgent(aDef);
+			aList.add(createAgent(aDef));
 		}
+		return aList;
 	}
 
 	/*
