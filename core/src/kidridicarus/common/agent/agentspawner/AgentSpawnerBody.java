@@ -12,7 +12,9 @@ import kidridicarus.common.tool.B2DFactory;
 
 public class AgentSpawnerBody extends AgentBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.SPAWNTRIGGER_BIT);
+	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.SPAWNTRIGGER_BIT,
+			CommonCF.Alias.SOLID_MAP_BIT);
+	private static final float GRAVITY_SCALE = 0f;
 
 	private AgentContactHoldSensor agentSensor;
 
@@ -28,7 +30,8 @@ public class AgentSpawnerBody extends AgentBody {
 			world.destroyBody(b2body);
 
 		setBodySize(bounds.width, bounds.height);
-		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
+		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
+		b2body.setGravityScale(GRAVITY_SCALE);
 		agentSensor = new AgentContactHoldSensor(this);
 		B2DFactory.makeSensorBoxFixture(b2body, agentSensor, CFCAT_BITS, CFMASK_BITS, bounds.width, bounds.height);
 	}

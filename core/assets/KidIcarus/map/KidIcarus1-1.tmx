@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="18" height="176" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="58">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="18" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="25" nextobjectid="62">
  <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
   <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
  </tileset>
- <layer id="9" name="background" width="18" height="176">
+ <layer id="18" name="background" width="18" height="180">
   <properties>
    <property name="layer_draworder" value="map_background"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztwwENAAAMw6DOv+kruANIWDVVVVVVVVVVVVVVVVXfB6QuDGE=
+   eJztw0ENAAAMA6Grf9PzsDckrJqqqqqqqqqqqqqqqqo+H7swDKk=
   </data>
  </layer>
- <layer id="10" name="scenery" width="18" height="176">
+ <layer id="19" name="scenery" width="18" height="180">
   <properties>
    <property name="layer_draworder" value="map_top"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztmssOgyAQRU3TLvpY9LHp/39pN21iSYUMvehFz0lcmOAFx/EyCsMwze59OLMXXVercyicz62jui/Io4pr7XNupaPMl1r/OIr6P4l01Kg89SzSuZjpwPz0MNcvjcqXriKdm0gHoCd6mT+j45zSiY5zSof5GVyJvCu5tveATq7tI6CTa7uEDpSh3oWlUeVfxPNyqDxmK16Fh0CvjD3jnzx284yteA94wlwMAFHwDQBoiWr98inq59c66PhbpNTPh9I66FbWW93+R6x9H48Ct2cG37TO4bXWfdSPPrTKYVfvctyn5RCrNC61cUrjUhuntJ5yr69a8AKqyAQV
+   eJztmssOgyAQRU3TLvpY9LHp/39pN21iSYXM9CKDnJO4MMELjuNlFKYJvOzeR2T2ouu8OofC+do6qvuCPKq4ep9zLR1lvnj94yjq/yTSUaPy1LNI5xJMB9anh7m+NSpfuop0biIdgJ7oZf60jnNJxzrOJR3mZ4iK5V3Jtb0bdHJtHwadXNsWOlCGehdao8o/i+flUHnMKF6Fh0CvzD3jnzyO5hmjeA/EhLkYAKzgGwBQE9X65VPUz6910Pm3SKmfD6V10FHWW6P9j9j6Ph4F0Z4ZfFM7h7da91E/xqFWDkf1roj7tCLEKo2LN05pXLxxSuup6PVVDV6r6AQV
   </data>
  </layer>
- <layer id="13" name="door" width="18" height="176">
+ <layer id="20" name="door" width="18" height="180">
   <properties>
    <property name="layer_draworder" value="map_middle"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt2DERACAQA8GvwAD4t4oHJs9Q7Aq4Lk2q+N0IdWaoAwAAAPDSCnV2qAPcs2cAAAAAgH6+WIA+B6bkAIk=
+   eJzt2LENACAMA8FUsADsvyo7IAcJ6W6A79y4Cv42Qp0Z6gAAAAC8tEKdHeoA9+wZAAAAAKCfLxagzwGoBACJ
   </data>
  </layer>
- <layer id="11" name="collision" width="18" height="176">
+ <layer id="21" name="collision" width="18" height="180">
   <properties>
    <property name="layer_draworder" value="map_middle"/>
    <property name="layer_solid" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztmcuKhjAMhQuzrks3M+//nIMwQsnknljbnxwoXvN50tZatbUcfRH7xqI5DvdJxRLDXZ/yRMVKyuJQvCc41rq31J+lHVv7702bWxZnh/ZagWO537Qci++MnG7OuCzOs5yDOaf/lUMokm5OVBbOlZ/VN+zjmtxWVNYY00GJ+sjqBxEPXnm9H4gHikP1U6vvSD1rvZb0io7VTwrOGbH1T1RWfjM43bCexeG0GmcVRedJpT0V7aMdLHflwPOv7TPIueM5jua+03A08yaKA6/p5XBxJ1GsHIo7gwO9SxzYJhY/8P1lJgfLc4xfvb3G41xbaTgZfqxMC4fL8w0/Xo62vWb5oc7HPK5UzzuOq+M29Zw4kXiO47mP3+ZwY7XEwWI/jVMqlUqlUqk0U1lzkIuR/W21vPmZmDfr92/MG/yO5qmHDpbUtTwceFz7fiJxNN4kjtbfWxyOf8nTN7P6duR+s34HLg/PecjgSO/d1ljvu3g252gyR/qvwo0D0WdLtL/cOXpjIcfyXzejnd7gaNp7h7wo31E/0rMZY3zb00I5P0kc65xMU7z9ZqXyCzYrJTI=
+   eJztmcuKhjAMhQuzrks3M+//nIMwQsnknljbnxwoXvN50tZatbXSDH0R+8aiOQ73ScUSw12f8kTFSsriULwnONa6t9SfpR1b++9Nm1sWZ4f2WoFjud+0HIvvjJxuzrgszrOcgzmn/5VDKJJuTlQWzpWf1Tfs45rcVlTWGNNBifrI6gcRD155vR+IB4pD9VOr70g9a72W9IqO1U8Kzhmx9U9UVn4zON2wnsXhtBpnFUXnSaU9Fe2jHSx35cDzr+0zyLnjOY7mvtNwNPMmigOv6eVwcSdRrByKO4MDvUsc2CYWP/D9ZSYHy3OMX729xuNcW2k4GX6sTAuHy/MNP16Otr1m+aHOxzyuVM87jqvjNvWcOJF4juO5j9/mcGO1xMFiP41TKpVKpVKpNFNZc5CLkf1ttbz5mZg36/dvzBv8juaphw6W1LU8HHhc+34icTTeJI7W31scjn/J0zez+nbkfrN+By4Pz3nI4Ejv3dZY77t4NudoMkf6r8KNA9FnS7S/3Dl6YyHH8l83o53e4Gjae4e8KN9RP9KzGWN829NCOT9JHOucTFO8/Wal8gs3SyUy
   </data>
  </layer>
- <layer id="12" name="playerstart" width="18" height="176">
+ <layer id="22" name="playerstart" width="18" height="180">
   <properties>
    <property name="agent_class" value="player_spawner"/>
    <property name="direction" value="right"/>
@@ -44,22 +44,10 @@
    <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzgEJAAAMA6Alef+YjzEYmsAEAAAAAAAAAAAAAABYcO3AsAdaSAAf
+   eJztzgEJAAAMA6Alef+YjzEYmsAEAAAAAAAAAAAAAABg37UDwx5baAAf
   </data>
  </layer>
- <layer id="14" name="shemum" width="18" height="176">
-  <properties>
-   <property name="agent_class" value="agent_spawner"/>
-   <property name="spawn_agent_class" value="shemum"/>
-   <property name="spawn_multi_count" value="4"/>
-   <property name="spawn_multi_grp_count" value="4"/>
-   <property name="spawn_multi_rate" value="1"/>
-  </properties>
-  <data encoding="base64" compression="zlib">
-   eJztzgENAAAIA6A3sH9bY3xOSEACAAAAAAAAAABw07QDAADAGwvtAAAQ
-  </data>
- </layer>
- <objectgroup id="17" name="spawntest">
+ <objectgroup id="17" name="shemum">
   <properties>
    <property name="agent_class" value="agent_spawner"/>
    <property name="spawn_agent_class" value="shemum"/>
@@ -68,76 +56,78 @@
    <property name="spawn_multi_rate" value="1"/>
    <property name="spawn_scroll_direction" value="up"/>
   </properties>
-  <object id="57" x="144" y="2416" width="16" height="176"/>
+  <object id="57" x="144" y="2480" width="16" height="176"/>
+  <object id="58" x="144" y="2352" width="16" height="112"/>
+  <object id="61" x="144" y="2144" width="16" height="192"/>
  </objectgroup>
- <layer id="16" name="smilesolid_tiles" width="18" height="176">
+ <layer id="24" name="smilesolid_tiles" width="18" height="180">
   <properties>
    <property name="layer_draworder" value="map_middle"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt1sEKgCAQAFGP/v8XhwcvkmEQuTvOgy6ddjDNUiT9oe4eQJ+rhb2u9D5JaurwSKcj7QVSS2bR1iDaPCueZr77j43vMjaLj/xdEtuITR2xjdjUEduITV3ktkx3pNVZozaNM0Wd8w3afXvWQmpsaH2zHgLPjfg8N3L2kc8NSZIkSdrhAooeAtk=
+   eJzt1sEKgCAQAFGP+/9fHB68SIZB4O40D7p02sE0W5Ok8+L0APpcNPa60vskqYvpkf6OtBdILZVlW4Ns8+x4mvnuPza/q9gsPvJ3SWwjNg3ENmLTQGwjNg2Z2yrdkXZnzdo0z5R1zjdo9+1VC6mxo/Wtegg8N/Lz3KjZRz43JEmSJOmEC4s+Atk=
   </data>
  </layer>
  <objectgroup id="15" name="semisolid_floor">
   <properties>
    <property name="agent_class" value="semi_solid_floor"/>
   </properties>
-  <object id="15" x="96" y="2048" width="32" height="16"/>
-  <object id="16" x="160" y="2048" width="32" height="16"/>
-  <object id="17" x="128" y="2000" width="32" height="16"/>
-  <object id="18" x="192" y="2000" width="64" height="16"/>
-  <object id="19" x="64" y="1952" width="64" height="16"/>
-  <object id="20" x="160" y="1952" width="64" height="16"/>
-  <object id="22" x="96" y="1904" width="80" height="16"/>
-  <object id="23" x="112" y="1856" width="16" height="16"/>
-  <object id="24" x="176" y="1856" width="32" height="16"/>
-  <object id="25" x="96" y="1808" width="32" height="16"/>
-  <object id="26" x="160" y="1808" width="32" height="16"/>
-  <object id="27" x="128" y="1760" width="32" height="16"/>
-  <object id="28" x="192" y="1760" width="64" height="16"/>
-  <object id="29" x="64" y="1712" width="64" height="16"/>
-  <object id="30" x="160" y="1712" width="64" height="16"/>
-  <object id="31" x="96" y="1664" width="80" height="16"/>
-  <object id="32" x="112" y="1616" width="16" height="16"/>
-  <object id="33" x="80" y="1584" width="32" height="16"/>
-  <object id="34" x="96" y="1536" width="32" height="16"/>
-  <object id="35" x="208" y="1568" width="32" height="16"/>
-  <object id="36" x="176" y="1616" width="32" height="16"/>
-  <object id="37" x="48" y="1504" width="16" height="16"/>
-  <object id="38" x="32" y="1456" width="16" height="16"/>
-  <object id="39" x="48" y="1408" width="16" height="16"/>
-  <object id="40" x="32" y="1360" width="16" height="16"/>
-  <object id="41" x="48" y="1312" width="16" height="16"/>
-  <object id="42" x="32" y="1264" width="16" height="16"/>
-  <object id="43" x="48" y="1216" width="16" height="16"/>
-  <object id="44" x="32" y="1168" width="16" height="16"/>
-  <object id="45" x="0" y="1008" width="16" height="16"/>
-  <object id="46" x="112" y="1008" width="64" height="16"/>
-  <object id="47" x="192" y="1008" width="80" height="16"/>
-  <object id="48" x="144" y="960" width="16" height="16"/>
-  <object id="49" x="144" y="928" width="16" height="16"/>
-  <object id="50" x="16" y="848" width="32" height="16"/>
-  <object id="51" x="64" y="800" width="32" height="16"/>
-  <object id="52" x="80" y="624" width="64" height="16"/>
-  <object id="53" x="224" y="336" width="32" height="16"/>
-  <object id="54" x="192" y="288" width="32" height="16"/>
-  <object id="56" x="48" y="192" width="16" height="16"/>
+  <object id="15" x="96" y="2112" width="32" height="16"/>
+  <object id="16" x="160" y="2112" width="32" height="16"/>
+  <object id="17" x="128" y="2064" width="32" height="16"/>
+  <object id="18" x="192" y="2064" width="64" height="16"/>
+  <object id="19" x="64" y="2016" width="64" height="16"/>
+  <object id="20" x="160" y="2016" width="64" height="16"/>
+  <object id="22" x="96" y="1968" width="80" height="16"/>
+  <object id="23" x="112" y="1920" width="16" height="16"/>
+  <object id="24" x="176" y="1920" width="32" height="16"/>
+  <object id="25" x="96" y="1872" width="32" height="16"/>
+  <object id="26" x="160" y="1872" width="32" height="16"/>
+  <object id="27" x="128" y="1824" width="32" height="16"/>
+  <object id="28" x="192" y="1824" width="64" height="16"/>
+  <object id="29" x="64" y="1776" width="64" height="16"/>
+  <object id="30" x="160" y="1776" width="64" height="16"/>
+  <object id="31" x="96" y="1728" width="80" height="16"/>
+  <object id="32" x="112" y="1680" width="16" height="16"/>
+  <object id="33" x="80" y="1648" width="32" height="16"/>
+  <object id="34" x="96" y="1600" width="32" height="16"/>
+  <object id="35" x="208" y="1632" width="32" height="16"/>
+  <object id="36" x="176" y="1680" width="32" height="16"/>
+  <object id="37" x="48" y="1568" width="16" height="16"/>
+  <object id="38" x="32" y="1520" width="16" height="16"/>
+  <object id="39" x="48" y="1472" width="16" height="16"/>
+  <object id="40" x="32" y="1424" width="16" height="16"/>
+  <object id="41" x="48" y="1376" width="16" height="16"/>
+  <object id="42" x="32" y="1328" width="16" height="16"/>
+  <object id="43" x="48" y="1280" width="16" height="16"/>
+  <object id="44" x="32" y="1232" width="16" height="16"/>
+  <object id="45" x="0" y="1072" width="16" height="16"/>
+  <object id="46" x="112" y="1072" width="64" height="16"/>
+  <object id="47" x="192" y="1072" width="80" height="16"/>
+  <object id="48" x="144" y="1024" width="16" height="16"/>
+  <object id="49" x="144" y="992" width="16" height="16"/>
+  <object id="50" x="16" y="912" width="32" height="16"/>
+  <object id="51" x="64" y="864" width="32" height="16"/>
+  <object id="52" x="80" y="688" width="64" height="16"/>
+  <object id="53" x="224" y="400" width="32" height="16"/>
+  <object id="54" x="192" y="352" width="32" height="16"/>
+  <object id="56" x="48" y="256" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="6" name="levelend">
   <properties>
    <property name="agent_class" value="level_end_trigger"/>
   </properties>
-  <object id="9" x="240" y="2496" width="16" height="32">
+  <object id="9" x="240" y="2560" width="16" height="32">
    <properties>
     <property name="next_level_filename" value="SMB1/map/SMB1-1.tmx"/>
    </properties>
   </object>
-  <object id="10" x="240" y="80" width="16" height="32">
+  <object id="10" x="240" y="144" width="16" height="32">
    <properties>
     <property name="next_level_filename" value="KidIcarus/map/KidIcarus1-1.tmx"/>
    </properties>
   </object>
-  <object id="11" x="192" y="1072" width="16" height="16">
+  <object id="11" x="192" y="1136" width="16" height="16">
    <properties>
     <property name="next_level_filename" value="Metroid/map/Metroid1-1.tmx"/>
    </properties>
@@ -147,9 +137,10 @@
   <properties>
    <property name="agent_class" value="room"/>
   </properties>
-  <object id="6" x="16" y="0" width="256" height="2816">
+  <object id="6" x="16" y="0" width="256" height="2872">
    <properties>
     <property name="room_music" value="KidIcarus/music/02_-_Kid_Icarus_-_NES_-_Stage_1.ogg"/>
+    <property name="room_scroll_bound_y" value="true"/>
     <property name="room_scroll_direction" value="up"/>
     <property name="room_scroll_kill_box" value="true"/>
     <property name="room_scroll_velocity" value="1.0667"/>

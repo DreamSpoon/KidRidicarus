@@ -91,6 +91,7 @@ public class CommonKV {
 		public static final String KEY_SCROLL_DIR = "room_scroll_direction";
 		public static final String KEY_SCROLL_VEL = "room_scroll_velocity";
 		public static final String KEY_SCROLL_BOUND_X = "room_scroll_bound_x";
+		public static final String KEY_SCROLL_BOUND_Y = "room_scroll_bound_y";
 		public static final String KEY_SCROLL_PUSHBOX = "room_scroll_push_box";
 		public static final String KEY_SCROLL_KILLBOX = "room_scroll_kill_box";
 		public static final String KEY_SPACEWRAP_X = "room_space_wrap_x";
