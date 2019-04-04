@@ -16,6 +16,7 @@ public class KidIcarusGfx {
 	public static class NPC {
 		private static final String DIR = BASEDIR+"NPC/";
 		public static final String SHEMUM =	DIR+"shemum";
+		public static final String MONOEYE = DIR+"monoeye";
 	}
 
 	public static class Player {

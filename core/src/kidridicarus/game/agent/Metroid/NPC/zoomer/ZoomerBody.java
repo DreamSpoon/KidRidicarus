@@ -78,7 +78,7 @@ public class ZoomerBody extends MobileAgentBody {
 	}
 
 	@Override
-	public void setPosition(Vector2 position, boolean keepVelocity) {
+	public void resetPosition(Vector2 position, boolean keepVelocity) {
 		// exit if the new position is the same as current position and velocity can be maintained
 		if(position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON) && !keepVelocity)
 			return;

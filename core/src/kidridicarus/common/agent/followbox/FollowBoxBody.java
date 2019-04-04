@@ -34,8 +34,10 @@ public abstract class FollowBoxBody extends AgentBody {
 	@Override
 	protected void defineBody(Rectangle bounds) {
 		// destroy the old bodies if necessary
-		if(mj != null && mj.getBodyA() != null)
-			world.destroyBody(mj.getBodyA());	// destroy the temp bodyA used by mouse joint
+		if(mj != null && mj.getBodyA() != null) {
+			// destroy the temp bodyA used by mouse joint, and the mouse joint
+			world.destroyBody(mj.getBodyA());
+		}
 		if(b2body != null)
 			world.destroyBody(b2body);
 
@@ -83,12 +85,12 @@ public abstract class FollowBoxBody extends AgentBody {
 	public void setPosition(Vector2 position) {
 		Vector2 diff = position.cpy().sub(b2body.getPosition());
 		if(diff.len() >= RESET_DIST)
-			resetPosition(position);
+			resetFollowBoxPosition(position);
 		else
 			mj.setTarget(position);
 	}
 
-	private void resetPosition(Vector2 position) {
+	private void resetFollowBoxPosition(Vector2 position) {
 		Rectangle oldBounds = getBounds();
 		defineBody(new Rectangle(position.x - oldBounds.width/2f,
 				position.y - oldBounds.height/2f, oldBounds.width, oldBounds.height));

@@ -36,6 +36,10 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 		super(agency, properties);
 
 		spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWN_AGENTCLASS, "", String.class);
+		if(!agency.isValidAgentClassAlias(spawnAgentClassAlias)) {
+			throw new IllegalStateException("Cannot create AgentSpawner with non-valid agent class alias =" +
+					spawnAgentClassAlias);
+		}
 		isRespawnDead = properties.get(CommonKV.Spawn.KEY_RESPAWN_DEAD, false, Boolean.class);
 		spawnMultiCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_COUNT, 0, Integer.class);
 		spawnMultiGrpCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_GRP_COUNT, 0, Integer.class);
@@ -113,6 +117,8 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 			if(isMultiSpawnAllowed())
 				return true;
 		}
+		else if(numSpawns == 0)
+			return true;
 		return false;
 	}
 

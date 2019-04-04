@@ -318,4 +318,8 @@ public class Agency implements Disposable {
 		disposeAndRemoveAllAgents();
 		world.dispose();
 	}
+
+	public boolean isValidAgentClassAlias(String agentClassAlias) {
+		return allAgentsClassList.get(agentClassAlias) != null;
+	}
 }

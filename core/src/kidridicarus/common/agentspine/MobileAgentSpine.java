@@ -29,13 +29,13 @@ public class MobileAgentSpine extends BasicAgentSpine {
 		// if body position is outside room on left...
 		if(body.getPosition().x < curRoom.getBounds().x) {
 			// true because I want keep velocity=true
-			((MobileAgentBody) body).setPosition(
+			((MobileAgentBody) body).resetPosition(
 					new Vector2(curRoom.getBounds().x+curRoom.getBounds().width, body.getPosition().y), true);
 		}
 		// if body position is outside room on right...
 		else if(body.getPosition().x > curRoom.getBounds().x+curRoom.getBounds().width) {
 			// true because I want keep velocity=true
-			((MobileAgentBody) body).setPosition(
+			((MobileAgentBody) body).resetPosition(
 					new Vector2(curRoom.getBounds().x, body.getPosition().y), true);
 		}
 	}

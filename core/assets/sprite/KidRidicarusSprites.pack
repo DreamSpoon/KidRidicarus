@@ -97,7 +97,7 @@ KidRidicarusSprites3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-KidIcarus/NPC/moneye
+KidIcarus/NPC/monoeye
   rotate: false
   xy: 1, 1
   size: 16, 16

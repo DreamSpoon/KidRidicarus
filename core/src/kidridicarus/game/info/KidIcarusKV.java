@@ -7,6 +7,7 @@ public class KidIcarusKV {
 		public static final String VAL_HEART1 = "heart1";
 		public static final String VAL_PIT = "pit";
 		public static final String VAL_PIT_ARROW = "pit_arrow";
+		public static final String VAL_MONOEYE = "monoeye";
 	}
 
 	public static final String KEY_HEALTH = "key_health";
