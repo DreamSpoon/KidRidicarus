@@ -57,6 +57,7 @@ public enum Direction4 {
 		}
 	}
 
+	
 	public static Direction4 fromString(String str) {
 		if(str == null)
 			return Direction4.NONE;

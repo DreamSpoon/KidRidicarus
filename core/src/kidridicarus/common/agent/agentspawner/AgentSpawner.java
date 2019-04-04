@@ -9,12 +9,16 @@ import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
+import kidridicarus.common.tool.Direction4;
 
 public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAgent {
-	private AgentSpawnerBody sbody;
+	private AgentSpawnerBody body;
 	private String spawnAgentClassAlias;
 
 	private boolean isEnabled;
@@ -22,6 +26,7 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 	private int spawnMultiCount;
 	private int spawnMultiGrpCount;
 	private float spawnMultiRate;
+	private Direction4 spawnScrollDir;
 
 	private int numSpawns;
 	private int numSpawnsDisposed;
@@ -35,12 +40,13 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 		spawnMultiCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_COUNT, 0, Integer.class);
 		spawnMultiGrpCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_GRP_COUNT, 0, Integer.class);
 		spawnMultiRate = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_RATE, 0f, Float.class);
+		spawnScrollDir = properties.get(CommonKV.Spawn.KEY_SPAWN_SCROLL_DIR, Direction4.NONE, Direction4.class);
 
 		numSpawns = 0;
 		numSpawnsDisposed = 0;
 		spawnTimer = 0f;
 
-		sbody = new AgentSpawnerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		body = new AgentSpawnerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
@@ -51,62 +57,107 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 		// DEBUG: error state check
 		if(numSpawnsDisposed > numSpawns)
 			throw new IllegalStateException("numSpawnsDisposed ("+numSpawnsDisposed+" > numSpawns ("+numSpawns+")");
-		// if not enabled then exit
-		if(!isEnabled)
-			return;
-		// if spawned at least one thing and not a multi-spawner then exit
-		if(numSpawns > 0 && spawnMultiCount == 0)
-			return;
-		// if doing multi-group spawns, and if all groups have been spawned, then exit
-		if(spawnMultiCount > 0 && spawnMultiGrpCount > 0 && numSpawns == spawnMultiCount * spawnMultiGrpCount)
+		// If not enabled then exit. If spawned at least one thing and not a multi-spawner then exit.
+		// If doing multi-group spawns, and if all groups have been spawned, then exit.
+		if(!isEnabled || (numSpawns > 0 && spawnMultiCount == 0) ||
+				(spawnMultiCount > 0 && spawnMultiGrpCount > 0 && numSpawns == spawnMultiCount * spawnMultiGrpCount))
 			return;
 
-		boolean doSpawn = false;
+		// if this spawner has a scroll direction property then get scroll spawn position, or exit if unavailable
+		Vector2 spawnPos = body.getPosition();
+		if(spawnScrollDir != Direction4.NONE) {
+			AgentSpawnTrigger spawnTrigger = body.getFirstContactByClass(AgentSpawnTrigger.class);
+			if(spawnTrigger == null)
+				return;
+
+			if(spawnScrollDir != Direction4.UP)
+				throw new IllegalStateException("do more code");
+
+			// AgentSpawnTrigger is contacting, so X value is okay...
+			// Check only Y bounds for overlap and where empty tiles available...
+			Rectangle spawnerTiles = UInfo.RectangleM2T(body.getBounds());
+			Rectangle triggerTiles = UInfo.RectangleM2T(spawnTrigger.getBounds());
+			// if top of AgentSpawnTrigger is at least as high as top of AgentSpawner then disallow spawn
+			if(triggerTiles.y+triggerTiles.height >= spawnerTiles.y+spawnerTiles.height)
+				return;
+
+			int topY = (int) (triggerTiles.y + triggerTiles.height-1);
+			int bottomY = (int) spawnerTiles.y;
+			Integer topNonSolidY = null;
+			// tileX = tile X coordinate of middle of AgentSpawner
+			int tileX = (int) (spawnerTiles.x + (spawnerTiles.width-1)/2);
+			for(int tileY=topY; tileY >= bottomY;tileY--) {
+				if(!isMapTileSolid(new Vector2(tileX, tileY))) {
+					topNonSolidY = tileY;
+					break;
+				}
+			}
+			if(topNonSolidY != null)
+				spawnPos = UInfo.VectorT2M(tileX, topNonSolidY);
+		}
+
+		if(isSpawnAllowed())
+			doSpawn(spawnPos);
+
+		spawnTimer += delta;
+	}
+
+	private boolean isSpawnAllowed() {
 		if(isRespawnDead) {
 			// if all spawns have been disposed then do respawn
 			if(numSpawns == numSpawnsDisposed)
-				doSpawn = true;
+				return true;
 		}
 		// if doing multi-spawn, or multi-spawn groups...
 		else if(spawnMultiCount > 0) {
-			// if doing first spawn then don't wait
-			if(numSpawns == 0)
-				doSpawn = true;
-			// If doing second, third, fourth, etc. spawns then wait between spawns - 
-			// If wait time has elapsed...
-			else if(spawnTimer > spawnMultiRate) {
-				// if doing multiple spawn groups...
-				if(spawnMultiGrpCount > 0) {
-					// how many individuals have been spawned within current group?
-					int numSpawnsCurrentGrp = Math.floorMod(numSpawns, spawnMultiCount);
-					// If full group has been spawned then wait for last member of group to be disposed before
-					// spawning next Agent.
-					if(numSpawnsCurrentGrp == 0) {
-						if(numSpawns == numSpawnsDisposed)
-							doSpawn = true;
-					}
-					// if less than the full group has been spawned, then spawn another individual Agent
-					else if(numSpawnsCurrentGrp < spawnMultiCount)
-						doSpawn = true;
+			if(isMultiSpawnAllowed())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean isMultiSpawnAllowed() {
+		// if doing first spawn then don't wait
+		if(numSpawns == 0)
+			return true;
+		// If doing second, third, fourth, etc. spawns then wait between spawns - 
+		// If wait time has elapsed...
+		else if(spawnTimer > spawnMultiRate) {
+			// if doing multiple spawn groups...
+			if(spawnMultiGrpCount > 0) {
+				// how many individuals have been spawned within current group?
+				int numSpawnsCurrentGrp = Math.floorMod(numSpawns, spawnMultiCount);
+				// If full group has been spawned then wait for last member of group to be disposed before
+				// spawning next Agent.
+				if(numSpawnsCurrentGrp == 0) {
+					if(numSpawns == numSpawnsDisposed)
+						return true;
 				}
-				// Not doing multiple spawn groups; if less than the full group has been spawned, then spawn
-				// another individual Agent.
-				else if(numSpawns < spawnMultiCount)
-					doSpawn = true;
+				// if less than the full group has been spawned, then spawn another individual Agent
+				else if(numSpawnsCurrentGrp < spawnMultiCount)
+					return true;
 			}
+			// Not doing multiple spawn groups; if less than the full group has been spawned, then spawn
+			// another individual Agent.
+			else if(numSpawns < spawnMultiCount)
+				return true;
 		}
+		return false;
+	}
 
-		if(doSpawn) {
-			numSpawns++;
-			spawnTimer = 0f;
-			Agent spawnedAgent = agency.createAgent(Agent.createPointAP(spawnAgentClassAlias, sbody.getPosition()));
-			agency.addAgentRemoveListener(new AgentRemoveListener(this, spawnedAgent) {
-				@Override
-				public void removedAgent() { numSpawnsDisposed++; }
-			});
-		}
+	private void doSpawn(Vector2 spawnPos) {
+		numSpawns++;
+		spawnTimer = 0f;
+		Agent spawnedAgent = agency.createAgent(Agent.createPointAP(spawnAgentClassAlias, spawnPos));
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, spawnedAgent) {
+			@Override
+			public void removedAgent() { numSpawnsDisposed++; }
+		});
+	}
 
-		spawnTimer += delta;
+	public boolean isMapTileSolid(Vector2 tileCoords) {
+		SolidTiledMapAgent ctMap = body.getFirstContactByClass(SolidTiledMapAgent.class);
+		return ctMap == null ? false : ctMap.isMapTileSolid(tileCoords); 
 	}
 
 	@Override
@@ -116,16 +167,16 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 
 	@Override
 	public Vector2 getPosition() {
-		return sbody.getPosition();
+		return body.getPosition();
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return sbody.getBounds();
+		return body.getBounds();
 	}
 
 	@Override
 	public void disposeAgent() {
-		sbody.dispose();
+		body.dispose();
 	}
 }

@@ -71,7 +71,7 @@ public class PitSpine extends PlayerSpine {
 
 	public void checkDoBodySizeChange(boolean isNextDucking) {
 		boolean isCurrentlyDucking = ((PitBody) body).isDuckingForm();
-		boolean isSolidTileAbove = isMapTileSolid(UInfo.getM2PTileForPos(body.getPosition()).add(0, 1));
+		boolean isSolidTileAbove = isMapTileSolid(UInfo.VectorM2T(body.getPosition()).add(0, 1));
 		if(isCurrentlyDucking && !isNextDucking && !isSolidTileAbove)
 			((PitBody) body).setDuckingForm(false);
 		else if(!isCurrentlyDucking && isNextDucking)
@@ -79,7 +79,7 @@ public class PitSpine extends PlayerSpine {
 	}
 
 	public boolean isHeadInTile() {
-		return isMapTileSolid(UInfo.getM2PTileForPos(body.getPosition()).add(0, 1));
+		return isMapTileSolid(UInfo.VectorM2T(body.getPosition()).add(0, 1));
 	}
 
 	public boolean isWalkingRight() {

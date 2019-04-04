@@ -22,15 +22,15 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
-	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, -4f);
+	private static final Vector2 SPECIAL_OFFSET = UInfo.VectorP2M(0f, -4f);
 	private static final float INJURY_TIME = 10f/60f;
 	private static final float EXPLODE_WAIT = 1f;
 	private static final Vector2[] EXPLODE_VEL = new Vector2[] {
 			new Vector2(-1f, 2f), new Vector2(1f, 2f),
 			new Vector2(-2f, 0f), new Vector2(2f, 0f) };
 	private static final Vector2[] EXPLODE_OFFSET = new Vector2[] {
-			UInfo.P2MVector(-4f, 8f), UInfo.P2MVector(4f, 8f),
-			UInfo.P2MVector(-8f, 0f), UInfo.P2MVector(8f, 0f) };
+			UInfo.VectorP2M(-4f, 8f), UInfo.VectorP2M(4f, 8f),
+			UInfo.VectorP2M(-8f, 0f), UInfo.VectorP2M(8f, 0f) };
 
 	enum MoveState { SLEEP, FALL, ONGROUND, INJURY, EXPLODE, DEAD }
 

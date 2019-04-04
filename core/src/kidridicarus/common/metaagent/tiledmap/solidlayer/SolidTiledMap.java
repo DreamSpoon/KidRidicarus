@@ -242,7 +242,7 @@ public class SolidTiledMap implements Disposable {
 		FixtureDef fdef;
 		EdgeShape edgeShape;
 		Body body =
-				B2DFactory.makeStaticBody(world, UInfo.P2MVector(startX * widthInTiles, startY * heightInTiles));
+				B2DFactory.makeStaticBody(world, UInfo.VectorP2M(startX * widthInTiles, startY * heightInTiles));
 
 		edgeShape = new EdgeShape();
 		edgeShape.set(0f, 0f,

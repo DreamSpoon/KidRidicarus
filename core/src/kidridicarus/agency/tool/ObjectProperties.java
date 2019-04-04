@@ -2,6 +2,8 @@ package kidridicarus.agency.tool;
 
 import java.util.HashMap;
 
+import kidridicarus.common.tool.Direction4;
+
 /*
  * HashMap based generic properties list, with String keys.
  * Some conversion may occur when getting properties with certain class return types.
@@ -56,6 +58,15 @@ public class ObjectProperties {
 				return (T) test;
 			else if(test instanceof String)
 				return (T) Boolean.valueOf((String) test);
+		}
+		else if(Direction4.class.equals(cls)) {
+			Object test = properties.getOrDefault(key, defaultValue);
+			if(test == null)
+				return null;
+			else if(test instanceof Direction4)
+				return (T) test;
+			else if(test instanceof String)
+				return (T) Direction4.fromString((String) test);
 		}
 		return (T) properties.getOrDefault(key, defaultValue);
 	}

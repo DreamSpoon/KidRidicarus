@@ -68,7 +68,7 @@ public class SolidTiledMapAgent extends Agent implements Disposable {
 	 * the tile solid state will be set using the tile coordinates.
 	 */
 	public void setTileSolidStateAtPos(Vector2 position, boolean solid) {
-		Vector2 tileCoords = UInfo.getM2PTileForPos(position);
+		Vector2 tileCoords = UInfo.VectorM2T(position);
 		tileChangeQ.add(new SolidTileChange((int) tileCoords.x, (int) tileCoords.y, solid));
 	}
 
@@ -78,7 +78,7 @@ public class SolidTiledMapAgent extends Agent implements Disposable {
 
 	public boolean isMapPointSolid(Vector2 position) {
 		// convert the point position to tile coordinates
-		Vector2 tileCoords = UInfo.getM2PTileForPos(position);
+		Vector2 tileCoords = UInfo.VectorM2T(position);
 		return otcMap.isTileExist((int) tileCoords.x, (int) tileCoords.y);
 	}
 

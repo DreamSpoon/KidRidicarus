@@ -51,7 +51,7 @@ public class MarioSprite extends Sprite {
 	private static final int SML_INV2_GRP = 2;
 	private static final int SML_INV3_GRP = 3;
 
-	private static final Vector2 SPRITE_DUCK_OFFSET = UInfo.P2MVector(0f, 8f);
+	private static final Vector2 SPRITE_DUCK_OFFSET = UInfo.VectorP2M(0f, 8f);
 	private static final float SHRINK_OFFSET_Y = UInfo.P2M(8);
 
 	/*

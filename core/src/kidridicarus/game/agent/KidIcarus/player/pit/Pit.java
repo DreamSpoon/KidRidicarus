@@ -70,11 +70,11 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private static final float JUMPUP_FORCE_TIME = 0.5f;
 	private static final float SHOOT_COOLDOWN = 0.3f;
 	private static final float SHOT_VEL = 2f;
-	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(4, 1);
-	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 5);
+	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.VectorP2M(4, 1);
+	private static final Vector2 SHOT_OFFSET_UP = UInfo.VectorP2M(1, 5);
 	private static final float DEAD_DELAY_TIME = 3f;
-	private static final Vector2 SHOT_OFFSET_HEAD_IN_TILE = UInfo.P2MVector(0, 4);
-	private static final Vector2 DUCK_POS_OFFSET = UInfo.P2MVector(0, 4);
+	private static final Vector2 SHOT_OFFSET_HEAD_IN_TILE = UInfo.VectorP2M(0, 4);
+	private static final Vector2 DUCK_POS_OFFSET = UInfo.VectorP2M(0, 4);
 
 	private PitSupervisor supervisor;
 	private PitBody body;

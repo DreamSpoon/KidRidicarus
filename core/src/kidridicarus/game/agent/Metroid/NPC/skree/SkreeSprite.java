@@ -17,7 +17,7 @@ public class SkreeSprite extends Sprite {
 	private static final float ANIM_SPEED_REG = 0.17f;
 	private static final float ANIM_SPEED_FAST = ANIM_SPEED_REG / 3f;
 
-	private static final Vector2 SPECIAL_OFFSET = UInfo.P2MVector(0f, 2f);
+	private static final Vector2 SPECIAL_OFFSET = UInfo.VectorP2M(0f, 2f);
 
 	// regular and fast spinning animations
 	private Animation<TextureRegion> spinAnim;

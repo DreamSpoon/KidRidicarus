@@ -67,8 +67,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private static final float JUMPSHOOT_RESPIN_DELAY = 0.05f;
 	private static final float SHOOT_COOLDOWN = 0.15f;
 	private static final float SHOT_VEL = 2f;
-	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.P2MVector(11, 7);
-	private static final Vector2 SHOT_OFFSET_UP = UInfo.P2MVector(1, 20);
+	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.VectorP2M(11, 7);
+	private static final Vector2 SHOT_OFFSET_UP = UInfo.VectorP2M(1, 20);
 	private static final float NO_DAMAGE_TIME = 0.8f;
 	private static final float DEAD_DELAY_TIME = 3f;
 	private static final int START_ENERGY_SUPPLY = 30;
@@ -294,7 +294,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		if(moveState.isBall()) {
 			// if advised move up and not move down, and map tile above player is not solid, then change to stand
 			if(moveAdvice.moveUp && !moveAdvice.moveDown &&
-					!body.getSpine().isMapTileSolid(UInfo.getM2PTileForPos(body.getPosition()).add(0, 1)))
+					!body.getSpine().isMapTileSolid(UInfo.VectorM2T(body.getPosition()).add(0, 1)))
 				return MoveState.STAND;
 			// continue current ball state
 			else
@@ -342,7 +342,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			// If advised to move up and not move down and tile above samus head is not solid then change to
 			// standing type state.
 			if(moveAdvice.moveUp && !moveAdvice.moveDown &&
-					!body.getSpine().isMapTileSolid(UInfo.getM2PTileForPos(body.getPosition()).add(0, 1)))
+					!body.getSpine().isMapTileSolid(UInfo.VectorM2T(body.getPosition()).add(0, 1)))
 				return MoveState.JUMP;
 			// continue air ball state if already in air ball state, or change from ground to air ball state
 			else

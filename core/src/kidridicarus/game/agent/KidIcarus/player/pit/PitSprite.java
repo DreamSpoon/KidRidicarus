@@ -16,12 +16,12 @@ import kidridicarus.game.info.KidIcarusGfx;
 public class PitSprite extends Sprite {
 	private static final float BIG_SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float BIG_SPRITE_HEIGHT = UInfo.P2M(24);
-	private static final Vector2 BIG_SPRITE_OFFSET = UInfo.P2MVector(0, 1);
-	private static final Vector2 BIG_SPRITE_STUCK_OFFSET = UInfo.P2MVector(0, 5);
+	private static final Vector2 BIG_SPRITE_OFFSET = UInfo.VectorP2M(0, 1);
+	private static final Vector2 BIG_SPRITE_STUCK_OFFSET = UInfo.VectorP2M(0, 5);
 
 	private static final float SML_SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SML_SPRITE_HEIGHT = UInfo.P2M(16);
-	private static final Vector2 SML_SPRITE_OFFSET = UInfo.P2MVector(0, 1);
+	private static final Vector2 SML_SPRITE_OFFSET = UInfo.VectorP2M(0, 1);
 
 	private static final float ANIM_SPEED = 1/15f;
 	private static final float DMG_ANIM_SPEED = 1/60f;

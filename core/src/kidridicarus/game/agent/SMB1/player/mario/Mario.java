@@ -545,7 +545,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 				return MoveState.DUCK;
 			if(!moveState.isOnGround())
 				return MoveState.STAND;
-			Vector2 bodyTilePos = UInfo.getM2PTileForPos(body.getPosition());
+			Vector2 bodyTilePos = UInfo.VectorM2T(body.getPosition());
 
 			// Check the space above and around mario to test if mario can unduck normally, or if he is in a
 			// tight spot:
@@ -554,7 +554,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			if(!body.getSpine().isMapTileSolid(bodyTilePos.cpy().add(0, 1)))
 				return MoveState.STAND;
 
-			Vector2 subTilePos = UInfo.getSubTileCoordsForMPos(body.getPosition());
+			Vector2 subTilePos = UInfo.VectorM2SubT(body.getPosition());
 			// If the player's last velocity direction was rightward, and their position is in the left half
 			// of the tile, and the tile above and to the left of them is solid, then the player should
 			// duckslide right.

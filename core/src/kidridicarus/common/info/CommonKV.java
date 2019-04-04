@@ -36,6 +36,7 @@ public class CommonKV {
 		public static final String KEY_SPAWN_MULTI_COUNT = "spawn_multi_count";
 		public static final String KEY_SPAWN_MULTI_GRP_COUNT = "spawn_multi_grp_count";
 		public static final String KEY_SPAWN_MULTI_RATE = "spawn_multi_rate";
+		public static final String KEY_SPAWN_SCROLL_DIR = "spawn_scroll_direction";
 		public static final String KEY_SPAWN_MAIN = "spawn_main";
 		public static final String KEY_SPAWN_AGENTCLASS = "spawn_agent_class";
 		public static final String KEY_PLAYER_AGENTCLASS = "player_agent_class";

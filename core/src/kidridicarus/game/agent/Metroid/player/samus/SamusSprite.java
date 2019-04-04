@@ -17,15 +17,15 @@ import kidridicarus.game.info.MetroidGfx;
 public class SamusSprite extends Sprite {
 	private static final float BIG_SPRITE_WIDTH = UInfo.P2M(32);
 	private static final float BIG_SPRITE_HEIGHT = UInfo.P2M(40);
-	private static final Vector2 BIG_SPRITE_OFFSET = UInfo.P2MVector(0, 5);
+	private static final Vector2 BIG_SPRITE_OFFSET = UInfo.VectorP2M(0, 5);
 
 	private static final float MED_SPRITE_WIDTH = UInfo.P2M(24);
 	private static final float MED_SPRITE_HEIGHT = UInfo.P2M(24);
-	private static final Vector2 MED_SPRITE_OFFSET = UInfo.P2MVector(0, 5);
+	private static final Vector2 MED_SPRITE_OFFSET = UInfo.VectorP2M(0, 5);
 
 	private static final float SML_SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SML_SPRITE_HEIGHT = UInfo.P2M(16);
-	private static final Vector2 SML_SPRITE_OFFSET = UInfo.P2MVector(0, 0);
+	private static final Vector2 SML_SPRITE_OFFSET = UInfo.VectorP2M(0, 0);
 
 	private static final float ANIM_SPEED = 0.05f;
 
