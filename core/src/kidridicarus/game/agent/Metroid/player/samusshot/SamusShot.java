@@ -35,7 +35,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 		super(agency, properties);
 
 		moveStateTimer = 0f;
-		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Samus.class);
+		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENT_AGENT, null, Samus.class);
 
 		// check the definition properties, maybe the shot needs to expire immediately
 		isExploding = properties.containsKey(CommonKV.Spawn.KEY_EXPIRE);
@@ -137,7 +137,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 	public static ObjectProperties makeAP(Samus parentAgent, Vector2 position, Vector2 velocity) {
 		ObjectProperties props = Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SAMUS_SHOT,
 				position, velocity);
-		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
+		props.put(AgencyKV.Spawn.KEY_START_PARENT_AGENT, parentAgent);
 		return props;
 	}
 }

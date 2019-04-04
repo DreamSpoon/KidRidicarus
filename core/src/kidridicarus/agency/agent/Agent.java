@@ -52,15 +52,15 @@ public abstract class Agent {
 	public static ObjectProperties createPointAP(String agentClassAlias, Vector2 position) {
 		ObjectProperties ret = new ObjectProperties();
 		ret.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClassAlias);
-		ret.put(AgencyKV.Spawn.KEY_START_POINT, position);
+		ret.put(AgencyKV.Spawn.KEY_START_POS, position);
 		return ret;
 	}
 
 	public static ObjectProperties createPointAP(String agentClassAlias, Vector2 position, Vector2 velocity) {
 		ObjectProperties ret = new ObjectProperties();
 		ret.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClassAlias);
-		ret.put(AgencyKV.Spawn.KEY_START_POINT, position);
-		ret.put(AgencyKV.Spawn.KEY_START_VELOCITY, velocity);
+		ret.put(AgencyKV.Spawn.KEY_START_POS, position);
+		ret.put(AgencyKV.Spawn.KEY_START_VEL, velocity);
 		return ret;
 	}
 
@@ -100,7 +100,7 @@ public abstract class Agent {
 	}
 
 	public static Vector2 getStartPoint(ObjectProperties agentProps) {
-		Vector2 point = agentProps.get(AgencyKV.Spawn.KEY_START_POINT, null, Vector2.class);
+		Vector2 point = agentProps.get(AgencyKV.Spawn.KEY_START_POS, null, Vector2.class);
 		if(point != null)
 			return point;
 		Rectangle bounds = agentProps.get(AgencyKV.Spawn.KEY_START_BOUNDS, null, Rectangle.class);
@@ -114,7 +114,7 @@ public abstract class Agent {
 	}
 
 	public static Vector2 getStartVelocity(ObjectProperties agentProps) {
-		return agentProps.get(AgencyKV.Spawn.KEY_START_VELOCITY, null, Vector2.class);
+		return agentProps.get(AgencyKV.Spawn.KEY_START_VEL, null, Vector2.class);
 	}
 
 	public static TextureRegion getStartTexRegion(ObjectProperties agentProps) {

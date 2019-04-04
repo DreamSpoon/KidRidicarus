@@ -33,7 +33,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 		super(agency, properties);
 
 		moveStateTimer = 0f;
-		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Pit.class);
+		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENT_AGENT, null, Pit.class);
 		// check the definition properties, maybe the shot needs to expire immediately
 		isDead = properties.containsKey(CommonKV.Spawn.KEY_EXPIRE);
 		arrowDir = properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
@@ -108,7 +108,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 			Direction4 arrowDir) {
 		ObjectProperties props = Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_PIT_ARROW,
 				position, velocity);
-		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
+		props.put(AgencyKV.Spawn.KEY_START_PARENT_AGENT, parentAgent);
 		props.put(CommonKV.KEY_DIRECTION, arrowDir);
 		return props;
 	}

@@ -162,10 +162,8 @@ public class Agency implements Disposable {
 	public LinkedList<Agent> createAgents(Collection<ObjectProperties> agentProps) {
 		LinkedList<Agent> aList = new LinkedList<Agent>();
 		Iterator<ObjectProperties> apIter = agentProps.iterator();
-		while(apIter.hasNext()) {
-			ObjectProperties aDef = apIter.next();
-			aList.add(createAgent(aDef));
-		}
+		while(apIter.hasNext())
+			aList.add(createAgent(apIter.next()));
 		return aList;
 	}
 
@@ -177,7 +175,7 @@ public class Agency implements Disposable {
 	public Agent createAgent(ObjectProperties properties) {
 		String agentClassAlias = properties.get(AgencyKV.Spawn.KEY_AGENTCLASS, null, String.class);
 		if(agentClassAlias == null)
-			throw new IllegalArgumentException("'agentclass' key not found in agent definition.");
+			throw new IllegalArgumentException(AgencyKV.Spawn.KEY_AGENTCLASS + " key not found in agent definition.");
 
 		Class<?> agentClass = allAgentsClassList.get(agentClassAlias);
 		if(agentClass == null)
@@ -207,16 +205,16 @@ public class Agency implements Disposable {
 		agencyChangeQ.removeAgent(new AgentPlaceholder(agent));
 	}
 
-	public void addAgentUpdateListener(Agent agent, AllowOrder newUpdateOrder, AgentUpdateListener auListener) {
-		agencyChangeQ.addAgentUpdateListener(new AgentPlaceholder(agent), newUpdateOrder, auListener);
+	public void addAgentUpdateListener(Agent agent, AllowOrder updateOrder, AgentUpdateListener auListener) {
+		agencyChangeQ.addAgentUpdateListener(new AgentPlaceholder(agent), updateOrder, auListener);
 	}
 
 	public void removeAgentUpdateListener(Agent agent, AgentUpdateListener auListener) {
 		agencyChangeQ.removeAgentUpdateListener(new AgentPlaceholder(agent), auListener);
 	}
 
-	public void addAgentDrawListener(Agent agent, AllowOrder newDrawOrder, AgentDrawListener adListener) {
-		agencyChangeQ.addAgentDrawListener(new AgentPlaceholder(agent), newDrawOrder, adListener);
+	public void addAgentDrawListener(Agent agent, AllowOrder drawOrder, AgentDrawListener adListener) {
+		agencyChangeQ.addAgentDrawListener(new AgentPlaceholder(agent), drawOrder, adListener);
 	}
 
 	public void removeAgentDrawListener(Agent agent, AgentDrawListener adListener) {

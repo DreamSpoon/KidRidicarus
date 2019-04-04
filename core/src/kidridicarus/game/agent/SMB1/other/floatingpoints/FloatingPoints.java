@@ -42,7 +42,7 @@ public class FloatingPoints extends Agent {
 
 		// default to zero points
 		int amount = properties.get(SMB1_KV.KEY_POINTAMOUNT, 0, Integer.class);
-		Powerup.tryPushPowerup(properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Agent.class),
+		Powerup.tryPushPowerup(properties.get(AgencyKV.Spawn.KEY_START_PARENT_AGENT, null, Agent.class),
 				new SMB1_Pow.PointsPow(amount));
 if(amount == 0)
 	QQ.pr("Floating points with amount=0 created");
@@ -89,7 +89,7 @@ if(amount == 0)
 		props.put(SMB1_KV.KEY_POINTAMOUNT, amount);
 		if(relative)
 			props.put(SMB1_KV.KEY_RELPOINTAMOUNT, CommonKV.VAL_TRUE);
-		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
+		props.put(AgencyKV.Spawn.KEY_START_PARENT_AGENT, parentAgent);
 		return props;
 	}
 /*	// https://www.mariowiki.com/Point

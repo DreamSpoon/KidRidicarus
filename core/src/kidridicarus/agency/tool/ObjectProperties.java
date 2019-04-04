@@ -29,8 +29,17 @@ public class ObjectProperties {
 
 	@SuppressWarnings("unchecked")
 	public <T> T get(String key, Object defaultValue, Class<T> cls) {
+		if(Integer.class.equals(cls)) {
+			Object test = properties.getOrDefault(key, defaultValue);
+			if(test == null)
+				return null;
+			else if(test instanceof Integer)
+				return (T) test;
+			else if(test instanceof String)
+				return (T) Integer.valueOf((String) test);
+		}
 		// if the requested return type is Float
-		if(Float.class.equals(cls)) {
+		else if(Float.class.equals(cls)) {
 			Object test = properties.getOrDefault(key, defaultValue);
 			if(test == null)
 				return null;
@@ -66,5 +75,13 @@ public class ObjectProperties {
 				return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(String key : properties.keySet())
+			sb.append("[Key][Val]=[" + key + "][" + properties.get(key) + "]\n");
+		return sb.toString();
 	}
 }

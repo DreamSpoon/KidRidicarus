@@ -379,7 +379,7 @@ public class Guide implements Disposable {
 		}
 		// otherwise use agent properties and set start point to main spawn point
 		else {
-			playerAgentProperties.put(AgencyKV.Spawn.KEY_START_POINT, spawner.getPosition());
+			playerAgentProperties.put(AgencyKV.Spawn.KEY_START_POS, spawner.getPosition());
 			return (PlayerAgent) agency.createAgent(playerAgentProperties);
 		}
 	}

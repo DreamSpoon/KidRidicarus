@@ -44,13 +44,13 @@
  </layer>
  <objectgroup id="9" name="keepalivebox">
   <properties>
-   <property name="agentclass" value="keep_alive_box"/>
+   <property name="agent_class" value="keep_alive_box"/>
   </properties>
   <object id="1" x="0" y="0" width="256" height="240"/>
  </objectgroup>
  <layer id="4" name="zoomer" width="16" height="15">
   <properties>
-   <property name="agentclass" value="zoomer"/>
+   <property name="agent_class" value="zoomer"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJxjYBgFowA3sB5oB4wCvAAAY6AAPA==
@@ -58,7 +58,7 @@
  </layer>
  <layer id="5" name="shemum" width="16" height="15">
   <properties>
-   <property name="agentclass" value="shemum"/>
+   <property name="agent_class" value="shemum"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJxjYBgF1AD8SHgUjAJ6AQByJAAu
@@ -66,7 +66,7 @@
  </layer>
  <layer id="6" name="turtle" width="16" height="15">
   <properties>
-   <property name="agentclass" value="turtle"/>
+   <property name="agent_class" value="turtle"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJxjYBgFo2AUwED5QDuARAAAVZAAeA==
@@ -74,7 +74,7 @@
  </layer>
  <layer id="7" name="goomba" width="16" height="15">
   <properties>
-   <property name="agentclass" value="goomba"/>
+   <property name="agent_class" value="goomba"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJxjYBgFo2AUEAJlA+0AHAAASdAAdw==

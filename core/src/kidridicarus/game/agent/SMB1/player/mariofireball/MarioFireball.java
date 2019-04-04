@@ -36,7 +36,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 	public MarioFireball(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENTAGENT, null, Mario.class);
+		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENT_AGENT, null, Mario.class);
 
 		moveStateTimer = 0f;
 		moveState = MoveState.FLY;
@@ -169,7 +169,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 
 	public static ObjectProperties makeAP(Vector2 position, boolean right, Mario parentAgent) {
 		ObjectProperties props = Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_MARIOFIREBALL, position);
-		props.put(AgencyKV.Spawn.KEY_START_PARENTAGENT, parentAgent);
+		props.put(AgencyKV.Spawn.KEY_START_PARENT_AGENT, parentAgent);
 		if(right)
 			props.put(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT);
 		else

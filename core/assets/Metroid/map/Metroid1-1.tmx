@@ -30,7 +30,7 @@
  </layer>
  <layer id="15" name="rio" width="160" height="15">
   <properties>
-   <property name="agentclass" value="agent_spawner"/>
+   <property name="agent_class" value="agent_spawner"/>
    <property name="respawn_dead" value="true"/>
    <property name="spawn_agent_class" value="rio"/>
   </properties>
@@ -40,7 +40,7 @@
  </layer>
  <layer id="5" name="zoomer" width="160" height="15">
   <properties>
-   <property name="agentclass" value="agent_spawner"/>
+   <property name="agent_class" value="agent_spawner"/>
    <property name="respawn_dead" value="true"/>
    <property name="spawn_agent_class" value="zoomer"/>
   </properties>
@@ -50,7 +50,7 @@
  </layer>
  <layer id="6" name="skree" width="160" height="15">
   <properties>
-   <property name="agentclass" value="agent_spawner"/>
+   <property name="agent_class" value="agent_spawner"/>
    <property name="respawn_dead" value="true"/>
    <property name="spawn_agent_class" value="skree"/>
   </properties>
@@ -60,7 +60,7 @@
  </layer>
  <layer id="9" name="marumari" width="160" height="15">
   <properties>
-   <property name="agentclass" value="marumari"/>
+   <property name="agent_class" value="marumari"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztzjENAAAIA7AJwb9O3jkgJK2CJgAAAAAA8MdcBwAAAKAsv+8AHQ==
@@ -68,7 +68,7 @@
  </layer>
  <layer id="10" name="playerstart" width="160" height="15">
   <properties>
-   <property name="agentclass" value="player_spawner"/>
+   <property name="agent_class" value="player_spawner"/>
    <property name="direction" value="right"/>
    <property name="player_agent_class" value="samus"/>
    <property name="spawn_main" value="true"/>
@@ -79,7 +79,7 @@
  </layer>
  <objectgroup id="13" name="levelend">
   <properties>
-   <property name="agentclass" value="level_end_trigger"/>
+   <property name="agent_class" value="level_end_trigger"/>
   </properties>
   <object id="6" x="2544" y="80" width="16" height="48">
    <properties>
@@ -89,7 +89,7 @@
  </objectgroup>
  <objectgroup id="14" name="blue door nexus">
   <properties>
-   <property name="agentclass" value="metroid_door_nexus"/>
+   <property name="agent_class" value="metroid_door_nexus"/>
   </properties>
   <object id="14" x="1264" y="80" width="32" height="48">
    <properties>
@@ -106,7 +106,7 @@
  </objectgroup>
  <objectgroup id="12" name="blue door">
   <properties>
-   <property name="agentclass" value="metroid_door"/>
+   <property name="agent_class" value="metroid_door"/>
   </properties>
   <object id="4" x="1256" y="80" width="8" height="48">
    <properties>
@@ -140,7 +140,7 @@
  </objectgroup>
  <objectgroup id="4" name="rooms" visible="0">
   <properties>
-   <property name="agentclass" value="room"/>
+   <property name="agent_class" value="room"/>
   </properties>
   <object id="2" x="0" y="0" width="1280" height="240">
    <properties>
