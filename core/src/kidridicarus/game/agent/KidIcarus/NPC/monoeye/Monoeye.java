@@ -19,7 +19,7 @@ import kidridicarus.game.info.KidIcarusKV;
 public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 1f;
 
-	private enum MoveState { FLY, DEAD }
+	private enum MoveState { FLY_RIGHT, FLY_LEFT, DEAD }
 
 	private MonoeyeBody body;
 	private MonoeyeSprite sprite;
@@ -33,12 +33,13 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 	public Monoeye(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		moveStateTimer = 0f;
-		moveState = MoveState.FLY;
-		isFacingRight = false;
+		moveState = MoveState.FLY_RIGHT;
+		isFacingRight = true;
 		isDead = false;
 		despawnMe = false;
-
-		body = new MonoeyeBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
+		
+		Vector2 startPoint = Agent.getStartPoint(properties);
+		body = new MonoeyeBody(this, agency.getWorld(), startPoint, new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -82,8 +83,11 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 		MoveState nextMoveState = getNextMoveState();
 		boolean moveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
-			case FLY:
-//				body.setPosition(position, keepVelocity);
+			case FLY_RIGHT:
+				body.getSpine().applyHorizontalMove(true);
+				break;
+			case FLY_LEFT:
+				body.getSpine().applyHorizontalMove(false);
 				break;
 			case DEAD:
 				agency.createAgent(
@@ -95,6 +99,14 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 				break;
 		}
 
+		if(body.getSpine().isFarRight())
+			isFacingRight = false;
+		else if(body.getSpine().isFarLeft())
+			isFacingRight = true;
+		// facing left when moving left, otherwise facing right
+		else
+			isFacingRight = body.getVelocity().x >= 0f;
+
 		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
 	}
@@ -102,8 +114,19 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 	private MoveState getNextMoveState() {
 		if(isDead || moveState == MoveState.DEAD)
 			return MoveState.DEAD;
-		else
-			return MoveState.FLY;
+		else if(moveState == MoveState.FLY_RIGHT) {
+			if(body.getSpine().isFarRight())
+				return MoveState.FLY_LEFT;
+			else
+				return MoveState.FLY_RIGHT;
+		}
+		// MoveState.FLY_LEFT
+		else {
+			if(body.getSpine().isFarLeft())
+				return MoveState.FLY_RIGHT;
+			else
+				return MoveState.FLY_LEFT;
+		}
 	}
 
 	private void processSprite(float delta) {

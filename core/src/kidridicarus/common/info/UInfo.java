@@ -38,6 +38,22 @@ public class UInfo {
 	}
 
 	/*
+	 * Input unit: Meters
+	 * Output unit: Tiles
+	 */
+	public static int M2Tx(float x) {
+		return (int) ((x * PPM) / TILEPIX_X);
+	}
+
+	/*
+	 * Input unit: Meters
+	 * Output unit: Tiles (including subtile offset)
+	 */
+	public static float FloatM2Tx(float x) {
+		return (x * PPM) / TILEPIX_X;
+	}
+
+	/*
 	 * Input unit: Pixels
 	 * Output unit: Meters
 	 */
@@ -55,7 +71,7 @@ public class UInfo {
 
 	/*
 	 * Get rectangle bounds of tile at (x, y), in meters.
-	 * Input unit: Tile coordinates
+	 * Input unit: Tiles (integer)
 	 * Output unit: Meters
 	 */
 	public static Rectangle RectangleT2M(int x, int y) {
@@ -64,7 +80,7 @@ public class UInfo {
 
 	/*
 	 * Input unit: Meters
-	 * Output unit: Tile coordinates
+	 * Output unit: Tiles (integer)
 	 */
 	public static Vector2 VectorM2T(Vector2 position) {
 		return new Vector2((int) (M2P(position.x) / TILEPIX_X), (int) (M2P(position.y) / TILEPIX_Y));
@@ -72,7 +88,7 @@ public class UInfo {
 
 	/*
 	 * Get center of tile given by (tileX, tileY) .
-	 * Input unit: Tile coordinates
+	 * Input unit: Tiles (integer)
 	 * Output unit: Meters
 	 */
 	public static Vector2 VectorT2M(int tileX, int tileY) {
@@ -82,7 +98,7 @@ public class UInfo {
 	/*
 	 * Returns the sub-tile position within the tile for each axis, as a ratio of the tile size on each axis.
 	 * Input unit: Meters
-	 * Output unit: Sub-tile
+	 * Output unit: Sub-tile (floating point)
 	 * e.g. if TILEPIX_X = 16 and positionX = 19, then returnsX 3/16=0.1875
 	 * e.g. if TILEPIX_Y = 16 and positionY = 42, then returnsY 10/16=0.625
 	 */
@@ -98,7 +114,7 @@ public class UInfo {
 
 	/*
 	 * Input unit: Meters
-	 * Output unit: Tile coordinates
+	 * Output unit: Tiles
 	 * I left the code in "long form" because I was confused when I changed it to short form (the cast to int
 	 * makes it difficult to combine the +0.5f and -0.5f .
 	 * Note: This is a wonky tile bounds conversion - it offsets the bounds inwards to get the tile coordinates.
