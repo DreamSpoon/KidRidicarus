@@ -19,11 +19,13 @@ import kidridicarus.game.info.KidIcarusKV;
 public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 1f;
 
-	private enum MoveState { FLY_RIGHT, FLY_LEFT, DEAD }
+	private enum MoveState { FLY, DEAD }
 
 	private MonoeyeBody body;
 	private MonoeyeSprite sprite;
 	private MoveState moveState;
+	private boolean isMovingRight;
+	private boolean isMovingUp;
 	private float moveStateTimer;
 
 	private boolean isFacingRight;
@@ -33,11 +35,13 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 	public Monoeye(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		moveStateTimer = 0f;
-		moveState = MoveState.FLY_RIGHT;
+		moveState = MoveState.FLY;
+		isMovingRight = true;
+		isMovingUp = false;
 		isFacingRight = true;
 		isDead = false;
 		despawnMe = false;
-		
+
 		Vector2 startPoint = Agent.getStartPoint(properties);
 		body = new MonoeyeBody(this, agency.getWorld(), startPoint, new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
@@ -83,11 +87,8 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 		MoveState nextMoveState = getNextMoveState();
 		boolean moveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
-			case FLY_RIGHT:
-				body.getSpine().applyHorizontalMove(true);
-				break;
-			case FLY_LEFT:
-				body.getSpine().applyHorizontalMove(false);
+			case FLY:
+				doFlyMove();
 				break;
 			case DEAD:
 				agency.createAgent(
@@ -111,22 +112,26 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 		moveState = nextMoveState;
 	}
 
+	// this eye can do some pretty fly moves
+	private void doFlyMove() {
+		if(isMovingRight && body.getSpine().isFarRight())
+			isMovingRight = false;
+		else if(!isMovingRight && body.getSpine().isFarLeft())
+			isMovingRight = true;
+
+		if(isMovingUp && body.getSpine().isFarTop())
+			isMovingUp = false;
+		else if(!isMovingUp && body.getSpine().isFarBottom())
+			isMovingUp = true;
+
+		body.getSpine().applyMoveBodyUpdate(isMovingRight, isMovingUp);
+	}
+
 	private MoveState getNextMoveState() {
 		if(isDead || moveState == MoveState.DEAD)
 			return MoveState.DEAD;
-		else if(moveState == MoveState.FLY_RIGHT) {
-			if(body.getSpine().isFarRight())
-				return MoveState.FLY_LEFT;
-			else
-				return MoveState.FLY_RIGHT;
-		}
-		// MoveState.FLY_LEFT
-		else {
-			if(body.getSpine().isFarLeft())
-				return MoveState.FLY_RIGHT;
-			else
-				return MoveState.FLY_LEFT;
-		}
+		else
+			return MoveState.FLY;
 	}
 
 	private void processSprite(float delta) {

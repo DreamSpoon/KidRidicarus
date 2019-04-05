@@ -47,10 +47,26 @@ public class UInfo {
 
 	/*
 	 * Input unit: Meters
+	 * Output unit: Tiles
+	 */
+	public static int M2Ty(float y) {
+		return (int) ((y * PPM) / TILEPIX_Y);
+	}
+
+	/*
+	 * Input unit: Meters
 	 * Output unit: Tiles (including subtile offset)
 	 */
 	public static float FloatM2Tx(float x) {
 		return (x * PPM) / TILEPIX_X;
+	}
+
+	/*
+	 * Input unit: Meters
+	 * Output unit: Tiles (including subtile offset)
+	 */
+	public static float FloatM2Ty(float y) {
+		return (y * PPM) / TILEPIX_Y;
 	}
 
 	/*
