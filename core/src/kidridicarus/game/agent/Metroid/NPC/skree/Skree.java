@@ -125,8 +125,10 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 				break;
 			case FALL:
 				// if the target has been removed then de-target
-				if(isTargetRemoved)
+				if(isTargetRemoved) {
+					isTargetRemoved = false;
 					target = null;
+				}
 				// continue the fall, if the target is null then it will be ignored, and down move will continue
 				body.getSpine().doFall((Agent) target);
 				break;

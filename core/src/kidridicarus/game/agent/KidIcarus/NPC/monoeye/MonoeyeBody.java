@@ -12,6 +12,8 @@ import kidridicarus.common.tool.B2DFactory;
 public class MonoeyeBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
+	private static final float PLAYER_SENSOR_WIDTH = UInfo.P2M(128);
+	private static final float PLAYER_SENSOR_HEIGHT = UInfo.P2M(176);
 	private static final float GRAVITY_SCALE = 0f;
 
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
@@ -39,7 +41,11 @@ public class MonoeyeBody extends MobileAgentBody {
 		spine = new MonoeyeSpine(this, UInfo.M2Tx(position.x));
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+				getBodySize().x, getBodySize().y);
+		// create player sensor fixture that "hangs" down from the top of Monoeye and detects players to target
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createPlayerSensor(), CommonCF.AGENT_SENSOR_CFCAT,
+				CommonCF.AGENT_SENSOR_CFMASK, PLAYER_SENSOR_WIDTH, PLAYER_SENSOR_HEIGHT,
+				new Vector2(0f, getBodySize().y/2f - PLAYER_SENSOR_HEIGHT/2f));
 	}
 
 	public MonoeyeSpine getSpine() {
