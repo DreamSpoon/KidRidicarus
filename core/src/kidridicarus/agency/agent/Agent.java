@@ -27,6 +27,11 @@ public abstract class Agent {
 		this.properties = properties;
 	}
 
+	// for use only by package member classes
+	Agency getAgency() {
+		return agency;
+	}
+
 	// TODO Remove these 2 methods, replace with calls to getProperty with something like "current_position",
 	//   or "current_bounds". Thus all queries for agent properties are routed through the getProperty method.
 	public abstract Vector2 getPosition();

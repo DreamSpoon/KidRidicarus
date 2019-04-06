@@ -1,4 +1,4 @@
-package kidridicarus.game.guide;
+package kidridicarus.common.guide;
 
 import java.util.Collection;
 
@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.Ear;
@@ -59,7 +58,6 @@ public class Guide implements Disposable {
 
 	private AssetManager manager;
 	private Stage stageHUD;
-	private Agency agency;
 	private MoveAdvice inputMoveAdvice;
 	private PlayerAgent playerAgent;
 	private AgentSpawnTrigger spawnTrigger;
@@ -72,15 +70,12 @@ public class Guide implements Disposable {
 	private Music currentSinglePlayMusic;
 	private Vector2 lastViewCenter;
 
-	// TODO This is hack - remove! -used for registerMusic when rooms are spawned (rooms register their music
-	//   via Agency's Ear).
 	private AgencyDirector director;
 
-	public Guide(AgencyDirector director, Agency agency, AssetManager manager, Stage stageHUD) {
+	public Guide(AgencyDirector director, AssetManager manager, Stage stageHUD) {
 		this.director = director;
 		this.manager = manager;
 		this.stageHUD = stageHUD;
-		this.agency = agency;
 
 		inputMoveAdvice = new MoveAdvice();
 		playerAgent = null;
@@ -157,28 +152,28 @@ public class Guide implements Disposable {
 		// if current room has scroll push box property = true then create/change to scroll push box
 		if(currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_PUSHBOX, false, Boolean.class)) {
 			if(scrollBox != null && !(scrollBox instanceof ScrollPushBox)) {
-				agency.removeAgent(scrollBox);
+				director.getAgency().removeAgent(scrollBox);
 				scrollBox.dispose();
 				scrollBox = null;
 			}
 			// if scroll box needs to be created and a valid scroll direction is given then create push box
 			if(scrollBox == null && scrollDir != Direction4.NONE)
-				scrollBox = (ScrollPushBox) agency.createAgent(ScrollPushBox.makeAP(getViewCenter(), scrollDir));
+				scrollBox = (ScrollPushBox) director.getAgency().createAgent(ScrollPushBox.makeAP(getViewCenter(), scrollDir));
 		}
 		// if current room has scroll kill box property = true then create/change to scroll kill box
 		else if(currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_KILLBOX, false, Boolean.class)) {
 			if(scrollBox != null && !(scrollBox instanceof ScrollKillBox)) {
-				agency.removeAgent(scrollBox);
+				director.getAgency().removeAgent(scrollBox);
 				scrollBox.dispose();
 				scrollBox = null;
 			}
 			// if scroll box needs to be created and a valid scroll direction is given then create kill box
 			if(scrollBox == null && scrollDir != Direction4.NONE)
-				scrollBox = (ScrollKillBox) agency.createAgent(ScrollKillBox.makeAP(getViewCenter(), scrollDir));
+				scrollBox = (ScrollKillBox) director.getAgency().createAgent(ScrollKillBox.makeAP(getViewCenter(), scrollDir));
 		}
 		// need to remove a scroll box?
 		else if(scrollBox != null) {
-			agency.removeAgent(scrollBox);
+			director.getAgency().removeAgent(scrollBox);
 			scrollBox.dispose();
 			scrollBox = null;
 		}
@@ -191,7 +186,7 @@ public class Guide implements Disposable {
 			currentPos = playerAgent.getPosition().add(SAFETY_RESPAWN_OFFSET);
 			facingRight = playerAgent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE,
 					Direction4.class) == Direction4.RIGHT;
-			agency.removeAgent(playerAgent);
+			director.getAgency().removeAgent(playerAgent);
 			playerAgent.dispose();
 			playerAgent = null;
 		}
@@ -216,7 +211,7 @@ public class Guide implements Disposable {
 		ObjectProperties props = Agent.createPointAP(classAlias, position);
 		if(facingRight)
 			props.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
-		playerAgent = (PlayerAgent) agency.createAgent(props);
+		playerAgent = (PlayerAgent) director.getAgency().createAgent(props);
 		switchHUDtoNewPlayerAgent();
 	}
 
@@ -355,10 +350,10 @@ public class Guide implements Disposable {
 		// spawn player with properties at spawn location
 		playerAgent = spawnPlayerAgentWithProperties(playerAgentProperties, spawner);
 		// create player's associated agents (generally, they follow player)
-		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(
+		spawnTrigger = (AgentSpawnTrigger) director.getAgency().createAgent(
 				AgentSpawnTrigger.makeAP(getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 		spawnTrigger.setEnabled(true);
-		keepAliveBox = (KeepAliveBox) agency.createAgent(
+		keepAliveBox = (KeepAliveBox) director.getAgency().createAgent(
 				KeepAliveBox.makeAP(getViewCenter(), KEEP_ALIVE_WIDTH, KEEP_ALIVE_HEIGHT));
 
 		switchHUDtoNewPlayerAgent();
@@ -375,18 +370,18 @@ public class Guide implements Disposable {
 			ObjectProperties playerAP = Agent.createPointAP(initPlayClass, spawner.getPosition());
 			if(spawner.getProperty(CommonKV.KEY_DIRECTION, "", String.class).equals(CommonKV.VAL_RIGHT))
 				playerAP.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
-			return (PlayerAgent) agency.createAgent(playerAP);
+			return (PlayerAgent) director.getAgency().createAgent(playerAP);
 		}
 		// otherwise use agent properties and set start point to main spawn point
 		else {
 			playerAgentProperties.put(AgencyKV.Spawn.KEY_START_POS, spawner.getPosition());
-			return (PlayerAgent) agency.createAgent(playerAgentProperties);
+			return (PlayerAgent) director.getAgency().createAgent(playerAgentProperties);
 		}
 	}
 
 	private Agent getMainPlayerSpawner() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
-		Collection<Agent> spawnList = agency.getAgentsByProperties(
+		Collection<Agent> spawnList = director.getAgency().getAgentsByProperties(
 				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, CommonKV.Spawn.KEY_SPAWN_MAIN },
 				new String[] { CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, CommonKV.VAL_TRUE });
 		if(!spawnList.isEmpty())

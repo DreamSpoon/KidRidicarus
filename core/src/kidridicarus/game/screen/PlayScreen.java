@@ -10,12 +10,12 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.guide.Guide;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.KeyboardMapping;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.QQ;
 import kidridicarus.game.MyKidRidicarus;
-import kidridicarus.game.guide.Guide;
 
 public class PlayScreen implements Screen {
 	/*
@@ -71,7 +71,7 @@ public class PlayScreen implements Screen {
 		b2dr = new Box2DDebugRenderer();
 
 		// create guide and set event listener for Agency
-		guide = new Guide(game.director, game.director.getAgency(), game.manager, stageHUD);
+		guide = new Guide(game.director, game.manager, stageHUD);
 		game.director.getAgency().setEar(guide.createEar());
 
 		// load the game map

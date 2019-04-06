@@ -9,6 +9,7 @@ import kidridicarus.common.agentspine.NPC_Spine;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.common.tool.QQ;
 
 public class MonoeyeSpine extends NPC_Spine {
 	private static final float ACCEL_X = UInfo.P2M(180);
@@ -90,7 +91,6 @@ public class MonoeyeSpine extends NPC_Spine {
 		return scrollTopY;
 	}
 
-	// This eye can do some pretty fly moves...
 	public void applyFlyMoveUpdate() {
 		if(isMovingUp && isFlyFarTop())
 			isMovingUp = false;
@@ -126,39 +126,41 @@ public class MonoeyeSpine extends NPC_Spine {
 	private void applyHorizontalMove(boolean isMoveRight) {
 		float dirMult = isMoveRight ? 1f : -1f;
 		// if in acceleration zone then apply acceleration
-		if((isMoveRight && isFlyFarLeft()) || (!isMoveRight && isFlyFarRight()))
+		if(isInAccelZone())
 			body.applyForce(new Vector2(ACCEL_X * dirMult, 0f));
 		// else set high velocity
 		else
 			body.setVelocity(HIGHVEL_X * dirMult, body.getVelocity().y);
 	}
 
-	// ... but get it mad, and you better hope the pirate look is in this season - you might lose an eye...
 	public void applyOgleMoveUpdate(float otherPosX) {
-		// check horizontal move direction against accel zones
-		if(isMovingRight && isOgleFarRight(otherPosX))
-			isMovingRight = false;
-		else if(!isMovingRight && isOgleFarLeft(otherPosX))
-			isMovingRight = true;
-		// if out of acceleration zone, check for horizontal move direction change 
 		if(!isInAccelZone()) {
+			accelEndTileRight = null;
+			accelEndTileLeft = null;
+			// check horizontal move direction against accel zones
 			if(isMovingRight && isOgleFarRight(otherPosX)) {
 				isMovingRight = false;
-				accelEndTileLeft = UInfo.FloatM2Tx(otherPosX) + OGLE_ACCEL_OFFSET_RIGHT;
+				accelEndTileRight = UInfo.FloatM2Tx(otherPosX) + OGLE_ACCEL_OFFSET_RIGHT;
+QQ.pr("ogle accel end tile right="+accelEndTileRight);
 			}
-			else if(!isMovingRight && isFlyFarLeft()) {
+			else if(!isMovingRight && isOgleFarLeft(otherPosX)) {
 				isMovingRight = true;
-				accelEndTileRight = UInfo.FloatM2Tx(otherPosX) + OGLE_ACCEL_OFFSET_LEFT;
+				accelEndTileLeft = UInfo.FloatM2Tx(otherPosX) + OGLE_ACCEL_OFFSET_LEFT;
+QQ.pr("ogle accel end tile left="+accelEndTileLeft);
 			}
 		}
 
 		float dirMult = isMovingRight ? 1f : -1f;
 		// if in acceleration zone then apply acceleration
-		if((isMovingRight && isOgleFarLeft(otherPosX)) || (!isMovingRight && isOgleFarRight(otherPosX)))
+		if(isInAccelZone()) {
+QQ.pr("ogle accel " + dirMult);
 			body.applyForce(new Vector2(OGLE_ACCEL_X * dirMult, 0f));
+		}
 		// else set high velocity
-		else
+		else {
+QQ.pr("ogle vel " + dirMult + "");
 			body.setVelocity(OGLE_VEL_X * dirMult, -HIGHVEL_Y);
+		}
 	}
 
 	public AgentContactHoldSensor createPlayerSensor() {

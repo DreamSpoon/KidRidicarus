@@ -44,7 +44,7 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 
 	private void roomChange(RoomBox newRoom) {
 		if(newRoom != null)
-			agency.getEar().changeAndStartMainMusic(newRoom.getRoommusic());
+			getAgency().getEar().changeAndStartMainMusic(newRoom.getRoommusic());
 	}
 
 	public Vector2 getViewCenter() {

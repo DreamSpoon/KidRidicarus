@@ -15,7 +15,6 @@ import kidridicarus.common.tool.MoveAdvice;
  *   -...
  */
 public abstract class AgentSupervisor {
-	protected Agency agency;
 	protected Agent playerAgent;
 	private AgentScriptRunner scriptRunner;
 
@@ -36,8 +35,7 @@ public abstract class AgentSupervisor {
 	protected abstract AgentScriptHooks getAgentScriptHooks();
 
 	public AgentSupervisor(Agency agency, Agent agent) {
-		this.agency = agency;
-		scriptRunner = new AgentScriptRunner(agency);
+		scriptRunner = new AgentScriptRunner(this);
 		if(!(agent instanceof PlayerAgent))
 			throw new IllegalArgumentException("agent is not instanceof PlayerAgent: " + agent);
 		this.playerAgent = agent;
@@ -84,5 +82,9 @@ public abstract class AgentSupervisor {
 			return scriptRunner.getScriptAgentState().scriptedMoveAdvice;
 		else
 			return internalPollMoveAdvice();
+	}
+
+	public Agency getAgency() {
+		return playerAgent.getAgency();
 	}
 }

@@ -90,7 +90,7 @@ public class MarioSupervisor extends PlayerAgentSupervisor {
 
 	@Override
 	public void setStageHUD(Stage stageHUD) {
-		playerHUD = new MarioHUD(agency, (Mario) playerAgent, atlas, stageHUD);
+		playerHUD = new MarioHUD(getAgency(), (Mario) playerAgent, atlas, stageHUD);
 	}
 
 	@Override
