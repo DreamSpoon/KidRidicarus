@@ -24,9 +24,9 @@ public class MonoeyeBody extends MobileAgentBody {
 
 	private MonoeyeSpine spine;
 
-	public MonoeyeBody(Monoeye parent, World world, Vector2 position, Vector2 velocity) {
+	public MonoeyeBody(Monoeye parent, World world, Vector2 position) {
 		super(parent, world);
-		defineBody(position, velocity);
+		defineBody(position, new Vector2(0f, 0f));
 	}
 
 	@Override

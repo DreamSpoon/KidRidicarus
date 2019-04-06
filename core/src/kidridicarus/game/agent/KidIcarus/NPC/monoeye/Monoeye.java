@@ -30,8 +30,6 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 	private MonoeyeBody body;
 	private MonoeyeSprite sprite;
 	private MoveState moveState;
-	private boolean isMovingRight;
-	private boolean isMovingUp;
 	private float moveStateTimer;
 
 	private boolean isFacingRight;
@@ -42,10 +40,9 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 
 	public Monoeye(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
+
 		moveStateTimer = 0f;
 		moveState = MoveState.FLY;
-		isMovingRight = true;
-		isMovingUp = false;
 		isFacingRight = true;
 		isDead = false;
 		despawnMe = false;
@@ -53,7 +50,7 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 		isTargetRemoved = false;
 
 		Vector2 startPoint = Agent.getStartPoint(properties);
-		body = new MonoeyeBody(this, agency.getWorld(), startPoint, new Vector2(0f, 0f));
+		body = new MonoeyeBody(this, agency.getWorld(), startPoint);
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -100,7 +97,16 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 		boolean moveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case FLY:
-				doFlyMove();
+				body.getSpine().applyFlyMoveUpdate();
+
+				// facing direction changes when moved into accel zone
+				if(body.getSpine().isFlyFarRight())
+					isFacingRight = false;
+				else if(body.getSpine().isFlyFarLeft())
+					isFacingRight = true;
+				// facing left when moving left, otherwise facing right
+				else
+					isFacingRight = body.getVelocity().x >= 0f;
 				break;
 			case OGLE:
 				// if the target has been removed then de-target
@@ -108,8 +114,18 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 					isTargetRemoved = false;
 					ogleTarget = null;
 				}
+				if(ogleTarget != null) {
+					body.getSpine().applyOgleMoveUpdate(ogleTarget.getPosition().x);
 
-				doOgleMove();
+					// facing direction changes when moved into accel zone
+					if(body.getSpine().isOgleFarRight(ogleTarget.getPosition().x))
+						isFacingRight = false;
+					else if(body.getSpine().isOgleFarLeft(ogleTarget.getPosition().x))
+						isFacingRight = true;
+					// facing left when moving left, otherwise facing right
+					else
+						isFacingRight = body.getVelocity().x >= 0f;
+				}
 				break;
 			case DEAD:
 				agency.createAgent(
@@ -121,75 +137,37 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 				break;
 		}
 
-		// facing direction changes when moved into accel zone
-		if(body.getSpine().isFlyFarRight())
-			isFacingRight = false;
-		else if(body.getSpine().isFlyFarLeft())
-			isFacingRight = true;
-		// facing left when moving left, otherwise facing right
-		else
-			isFacingRight = body.getVelocity().x >= 0f;
-
 		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
 	}
 
 	private void processGawkers() {
+		// lose target if moving up
+		if(body.getSpine().isMovingUp()) {
+			ogleTarget = null;
+			return;
+		}
+		// exit if an ogle target already exists
+		if(ogleTarget != null)
+			return;
 
-		// If a gawker is gawking the Monoeye, and if Moneye is moving down while just about to enter
-		// acceleration zone, then start to target the gawker for ogling in a downward direction.
-		PlayerAgent testGawker = body.getSpine().getGawker(isFacingRight);
-		if(testGawker != null && !isMovingUp && body.getSpine().isFlyFarBottom()) {
-			ogleTarget = testGawker;
-			// if found a target then add an AgentRemoveListener to allow de-targeting on death of target
-			if(ogleTarget != null) {
-				agency.addAgentRemoveListener(new AgentRemoveListener(this, ogleTarget) {
-						@Override
-						public void removedAgent() { isTargetRemoved = true; }
-					});
-			}
+		ogleTarget = body.getSpine().getGawker(isFacingRight);
+		if(ogleTarget != null) {
+			// add an AgentRemoveListener to allow de-targeting on death of target
+			agency.addAgentRemoveListener(new AgentRemoveListener(this, ogleTarget) {
+					@Override
+					public void removedAgent() { isTargetRemoved = true; }
+				});
 		}
 	}
 
 	private MoveState getNextMoveState() {
 		if(isDead || moveState == MoveState.DEAD)
 			return MoveState.DEAD;
-		else if(ogleTarget != null)
+		else if(moveState == MoveState.OGLE || (ogleTarget != null && body.getSpine().canAcquireTarget()))
 			return MoveState.OGLE;
 		else
 			return MoveState.FLY;
-	}
-
-	// This eye can do some pretty fly moves...
-	private void doFlyMove() {
-		if(isMovingRight && body.getSpine().isFlyFarRight())
-			isMovingRight = false;
-		else if(!isMovingRight && body.getSpine().isFlyFarLeft())
-			isMovingRight = true;
-
-		if(isMovingUp && body.getSpine().isFlyFarTop())
-			isMovingUp = false;
-		else if(!isMovingUp && body.getSpine().isFlyFarBottom())
-			isMovingUp = true;
-
-		body.getSpine().applyFlyMoveUpdate(isMovingRight, isMovingUp);
-	}
-
-	// ... but get it mad, and you better hope the pirate look is in this season - you might lose an eye...
-	private void doOgleMove() {
-		if(ogleTarget == null)
-			return;
-
-		// continuously face ogleTarget - to maximize ogling
-		float ogleTargetX = ogleTarget.getPosition().x;
-		isFacingRight = body.getPosition().x <= ogleTargetX;
-		// check horizontal move direction against accel zones
-		if(isMovingRight && body.getSpine().isOgleFarRight(ogleTargetX))
-			isMovingRight = false;
-		else if(!isMovingRight && body.getSpine().isOgleFarLeft(ogleTargetX))
-			isMovingRight = true;
-
-		body.getSpine().applyOgleMoveUpdate(isMovingRight, ogleTarget.getPosition().x);
 	}
 
 	private void processSprite(float delta) {

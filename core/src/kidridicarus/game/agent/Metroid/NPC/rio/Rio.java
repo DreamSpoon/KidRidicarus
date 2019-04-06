@@ -18,6 +18,9 @@ import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidKV;
 
+/*
+ * TODO Check that Rio can re-target: as in, lose a target, then wait a bit, then gain a new target successfully.
+ */
 public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float MAX_HEALTH = 4f;
 	private static final float ITEM_DROP_RATE = 1/3f;

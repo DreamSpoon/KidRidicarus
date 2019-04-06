@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="18" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="26" nextobjectid="62">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="18" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="28" nextobjectid="64">
  <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
   <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
  </tileset>
@@ -60,13 +60,25 @@
   <object id="58" x="144" y="2352" width="16" height="112"/>
   <object id="61" x="144" y="2144" width="16" height="192"/>
  </objectgroup>
- <layer id="25" name="monoeye" width="18" height="180">
+ <objectgroup id="26" name="monoeye">
   <properties>
    <property name="agent_class" value="agent_spawner"/>
    <property name="spawn_agent_class" value="monoeye"/>
+   <property name="spawn_multi_count" value="4"/>
+   <property name="spawn_multi_grp_count" value="4"/>
+   <property name="spawn_multi_rate" value="0.25"/>
+   <property name="spawn_scroll_direction" value="up"/>
+  </properties>
+  <object id="62" x="96" y="1696" width="16" height="416"/>
+  <object id="63" x="96" y="1120" width="16" height="368"/>
+ </objectgroup>
+ <layer id="27" name="one eye" width="18" height="180">
+  <properties>
+   <property name="argent_class" value="agent_spawner"/>
+   <property name="spawn_agent_class" value="monoeye"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzjEBAAAMAiBbrH/ThfDwgQQkAAAAAAAAAAAALN06AAAAUHpaFwAY
+   eJztzjENAAAIA7C5wL9TDOwnJK2CJgAAAAAAAAAAAD/MdQAAAIBqAW1/ABg=
   </data>
  </layer>
  <layer id="24" name="smilesolid_tiles" width="18" height="180">
