@@ -72,4 +72,10 @@ public class DrawLayerAgent extends Agent {
 	public Rectangle getBounds() {
 		return bounds;
 	}
+
+	public static ObjectProperties makeAP(Rectangle bounds, TiledMapTileLayer layer) {
+		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP, bounds);
+		cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER, layer);
+		return cmProps;
+	}
 }

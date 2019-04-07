@@ -1,6 +1,7 @@
 package kidridicarus.common.metaagent.tiledmap.solidlayer;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -96,5 +97,11 @@ public class SolidTiledMapAgent extends Agent implements Disposable {
 	public void dispose() {
 		otcMap.dispose();
 		tmBody.dispose();
+	}
+
+	public static ObjectProperties makeAP(Rectangle bounds, LinkedList<TiledMapTileLayer> solidLayers) {
+		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_SOLID_TILEDMAP, bounds);
+		cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER_LIST, solidLayers);
+		return cmProps;
 	}
 }

@@ -81,10 +81,8 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	private void createSolidTileMapAgent(LinkedList<TiledMapTileLayer> solidLayers) {
 		if(solidLayers.isEmpty())
 			return;
-		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_SOLID_TILEDMAP,
-				Agent.getStartBounds(properties));
-		cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER_LIST, solidLayers);
-		solidTileMapAgent = (SolidTiledMapAgent) agency.createAgent(cmProps);
+		solidTileMapAgent = (SolidTiledMapAgent) agency.createAgent(
+				SolidTiledMapAgent.makeAP(Agent.getStartBounds(properties), solidLayers));
 	}
 
 	private void createDrawLayerAgents(LinkedList<TiledMapTileLayer> drawLayers) {
@@ -93,10 +91,8 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 		drawLayerAgents = new LinkedList<DrawLayerAgent>();
 		// loop through each draw layer in the list, adding each and passing a ref to its tiled map layer
 		for(TiledMapTileLayer layer : drawLayers) {
-			ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP,
-					Agent.getStartBounds(properties));
-			cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER, layer);
-			drawLayerAgents.add((DrawLayerAgent) agency.createAgent(cmProps));
+			drawLayerAgents.add((DrawLayerAgent) agency.createAgent(
+					DrawLayerAgent.makeAP(Agent.getStartBounds(properties), layer)));
 		}
 	}
 

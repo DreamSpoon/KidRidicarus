@@ -24,13 +24,13 @@ public class KeepAliveBox extends FollowBox implements Disposable {
 		return body;
 	}
 
-	public static ObjectProperties makeAP(Vector2 position, float width, float height) {
-		return Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_KEEPALIVE_BOX,
-				new Rectangle(position.x - width/2f, position.y - height/2f, width, height));
-	}
-
 	@Override
 	public void dispose() {
 		body.dispose();
+	}
+
+	public static ObjectProperties makeAP(Vector2 position, float width, float height) {
+		return Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_KEEPALIVE_BOX,
+				new Rectangle(position.x - width/2f, position.y - height/2f, width, height));
 	}
 }
