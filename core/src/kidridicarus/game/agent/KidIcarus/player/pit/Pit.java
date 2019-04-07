@@ -221,8 +221,8 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 
 	private void processPowerupsReceived() {
 		for(Powerup pu : powerupsReceived) {
-			if(pu instanceof KidIcarusPow.HeartsPow) {
-				heartsCollected += ((KidIcarusPow.HeartsPow) pu).getNumHearts();  
+			if(pu instanceof KidIcarusPow.AngelHeartPow) {
+				heartsCollected += ((KidIcarusPow.AngelHeartPow) pu).getNumHearts();  
 				if(heartsCollected > MAX_HEARTS_COLLECTED)
 					heartsCollected = MAX_HEARTS_COLLECTED;
 			}
@@ -624,7 +624,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			Integer he = health;
 			return (T) he;
 		}
-		else if(key.equals(KidIcarusKV.KEY_HEARTS_COLLECTED) && Integer.class.equals(cls)) {
+		else if(key.equals(KidIcarusKV.KEY_HEART_COUNT) && Integer.class.equals(cls)) {
 			Integer he = heartsCollected;
 			return (T) he;
 		}
@@ -639,7 +639,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		else
 			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.LEFT);
 		myProperties.put(KidIcarusKV.KEY_HEALTH, health);
-		myProperties.put(KidIcarusKV.KEY_HEARTS_COLLECTED, heartsCollected);
+		myProperties.put(KidIcarusKV.KEY_HEART_COUNT, heartsCollected);
 		return myProperties;
 	}
 

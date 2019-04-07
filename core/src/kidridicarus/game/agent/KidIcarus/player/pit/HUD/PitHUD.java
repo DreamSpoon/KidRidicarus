@@ -48,7 +48,7 @@ public class PitHUD implements Disposable {
 
 	private void update() {
 		heartCountLabel.setText(String.format("%03d",
-				playerAgent.getProperty(KidIcarusKV.KEY_HEARTS_COLLECTED, 0, Integer.class)));
+				playerAgent.getProperty(KidIcarusKV.KEY_HEART_COUNT, 0, Integer.class)));
 		healthBar.setHealth(playerAgent.getProperty(KidIcarusKV.KEY_HEALTH, 0, Integer.class));
 		stage.act();
 	}

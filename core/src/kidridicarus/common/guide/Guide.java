@@ -109,7 +109,7 @@ public class Guide implements Disposable {
 		else if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP_SAMUS))
 			Powerup.tryPushPowerup(playerAgent, new MetroidPow.EnergyPow());
 		else if(Gdx.input.isKeyJustPressed(KeyboardMapping.CHEAT_POWERUP_PIT))
-			Powerup.tryPushPowerup(playerAgent, new KidIcarusPow.HeartsPow(1));
+			Powerup.tryPushPowerup(playerAgent, new KidIcarusPow.AngelHeartPow(5));
 	}
 
 	public void preUpdateAgency(float delta) {

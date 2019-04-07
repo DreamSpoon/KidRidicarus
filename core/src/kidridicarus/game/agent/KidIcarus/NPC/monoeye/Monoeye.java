@@ -16,8 +16,9 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.game.agent.KidIcarus.item.angelheart.AngelHeart;
+import kidridicarus.game.agent.KidIcarus.other.vanishpoof.VanishPoof;
 import kidridicarus.game.info.KidIcarusAudio;
-import kidridicarus.game.info.KidIcarusKV;
 
 /*
  * Monoeye doesn't like it when gawkers stare at Monoeye, so Monoeye will target the gawker and attempt to
@@ -26,6 +27,7 @@ import kidridicarus.game.info.KidIcarusKV;
  */
 public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 1f;
+	private static final int DROP_HEART_COUNT = 5;
 
 	private enum MoveState { FLY, OGLE, DEAD }
 	enum AxisGoState {
@@ -140,10 +142,8 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 				}
 				break;
 			case DEAD:
-				agency.createAgent(
-						Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_SMALL_POOF, body.getPosition()));
-				agency.createAgent(
-						Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_HEART1, body.getPosition()));
+				agency.createAgent(VanishPoof.makeAP(body.getPosition(), true));
+				agency.createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
 				agency.removeAgent(this);
 				agency.getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
 				break;

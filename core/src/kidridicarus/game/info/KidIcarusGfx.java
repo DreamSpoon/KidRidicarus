@@ -6,11 +6,14 @@ public class KidIcarusGfx {
 	public static class General {
 		private static final String DIR = BASEDIR+"general/";
 		public static final String SMALL_POOF =	DIR+"small_poof";
+		public static final String BIG_POOF = DIR+"big_poof";
 	}
 
 	public static class Item {
 		private static final String DIR = BASEDIR+"item/";
 		public static final String HEART1 =	DIR+"heart1";
+		public static final String HEART5 =	DIR+"heart5";
+		public static final String HEART10 =	DIR+"heart10";
 	}
 
 	public static class NPC {

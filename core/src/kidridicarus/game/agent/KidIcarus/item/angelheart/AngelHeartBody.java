@@ -1,4 +1,4 @@
-package kidridicarus.game.agent.KidIcarus.item.heart1;
+package kidridicarus.game.agent.KidIcarus.item.angelheart;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -10,13 +10,13 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class Heart1Body extends AgentBody {
+public class AngelHeartBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(3f);
 	private static final float BODY_HEIGHT = UInfo.P2M(3f);
 
 	private BasicAgentSpine spine;
 
-	public Heart1Body(Heart1 parent, World world, Vector2 position) {
+	public AngelHeartBody(AngelHeart parent, World world, Vector2 position) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f));
 	}

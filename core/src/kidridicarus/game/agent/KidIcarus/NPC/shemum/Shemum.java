@@ -13,13 +13,15 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.game.agent.KidIcarus.item.angelheart.AngelHeart;
+import kidridicarus.game.agent.KidIcarus.other.vanishpoof.VanishPoof;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.info.KidIcarusAudio;
-import kidridicarus.game.info.KidIcarusKV;
 
 public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final float STRIKE_DELAY = 1/6f;
+	private static final int DROP_HEART_COUNT = 1;
 
 	private enum MoveState { WALK, FALL, DEAD, STRIKE_GROUND }
 
@@ -100,10 +102,8 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 			case STRIKE_GROUND:
 				break;
 			case DEAD:
-				agency.createAgent(
-						Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_SMALL_POOF, body.getPosition()));
-				agency.createAgent(
-						Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_HEART1, body.getPosition()));
+				agency.createAgent(VanishPoof.makeAP(body.getPosition(), false));
+				agency.createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
 				agency.removeAgent(this);
 				agency.getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
 				break;
