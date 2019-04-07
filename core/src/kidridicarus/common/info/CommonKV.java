@@ -32,7 +32,9 @@ public class CommonKV {
 	}
 
 	public class Spawn {
-		public static final String KEY_SPAWN_TYPE = "spawn_type";
+		public static final String KEY_SPAWNER_TYPE = "spawner_type";
+		public static final String VAL_SPAWNER_TYPE_RESPAWN = "spawner_type_respawn";
+		public static final String VAL_SPAWNER_TYPE_MULTI = "spawner_type_multi";
 		public static final String KEY_SPAWN_MULTI_COUNT = "spawn_multi_count";
 		public static final String KEY_SPAWN_MULTI_GRP_COUNT = "spawn_multi_grp_count";
 		public static final String KEY_SPAWN_MULTI_RATE = "spawn_multi_rate";
@@ -40,9 +42,10 @@ public class CommonKV {
 		public static final String KEY_SPAWN_MAIN = "spawn_main";
 		public static final String KEY_SPAWN_AGENTCLASS = "spawn_agent_class";
 		public static final String KEY_PLAYER_AGENTCLASS = "player_agent_class";
-		// passed to something that needs to expire immediately
+		// something that needs to expire immediately
 		public static final String KEY_EXPIRE = "expire";
-		public static final String KEY_RESPAWN_DEAD = "respawn_dead";
+		public static final String KEY_SPAWN_SCRIPT = "spawn_script";
+		public static final String VAL_SPAWN_SCRIPT_PIPEWARP = "spawn_script_pipe_warp";
 	}
 
 	public class Layer {

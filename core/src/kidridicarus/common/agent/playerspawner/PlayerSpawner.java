@@ -26,13 +26,10 @@ public class PlayerSpawner extends Agent implements DisposableAgent {
 
 		// immediate is the default spawn case
 		spawntype = SpawnType.IMMEDIATE;
-		if(properties.containsKey(CommonKV.Spawn.KEY_SPAWN_TYPE)) {
-			String str = properties.get(CommonKV.Spawn.KEY_SPAWN_TYPE, "", String.class);
-			if(str.equals(CommonKV.AgentClassAlias.VAL_PIPEWARP) &&
-					properties.containsKey(CommonKV.KEY_DIRECTION)) {
-				spawntype = SpawnType.PIPEWARP;
-				direction = Direction4.fromString(properties.get(CommonKV.KEY_DIRECTION, "", String.class));
-			}
+		String str = properties.get(CommonKV.Spawn.KEY_SPAWN_SCRIPT, "", String.class);
+		if(str.equals(CommonKV.Spawn.VAL_SPAWN_SCRIPT_PIPEWARP) && properties.containsKey(CommonKV.KEY_DIRECTION)) {
+			spawntype = SpawnType.PIPEWARP;
+			direction = Direction4.fromString(properties.get(CommonKV.KEY_DIRECTION, "", String.class));
 		}
 
 		psbody = new PlayerSpawnerBody(agency.getWorld(), this, Agent.getStartBounds(properties));

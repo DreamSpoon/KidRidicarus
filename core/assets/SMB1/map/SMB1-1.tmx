@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="230" height="46" tilewidth="16" tileheight="16" infinite="0" nextlayerid="96" nextobjectid="307">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="230" height="46" tilewidth="16" tileheight="16" infinite="0" nextlayerid="96" nextobjectid="307">
  <tileset firstgid="1" name="SMBTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="48" columns="8">
   <image source="SMBTileset1-1.png" width="144" height="108"/>
  </tileset>
@@ -133,7 +133,7 @@
    <properties>
     <property name="direction" value="up"/>
     <property name="name" value="level1coinsexit"/>
-    <property name="spawn_type" value="pipe_warp"/>
+    <property name="spawn_script" value="spawn_script_pipe_warp"/>
    </properties>
   </object>
  </objectgroup>
@@ -144,9 +144,9 @@
   <object id="238" x="0" y="0" width="3680" height="480">
    <properties>
     <property name="room_music" value="SMB1/music/01_-_Super_Mario_Bros._-_NES_-_Above_Ground_BGM.ogg"/>
-    <property name="room_type" value="scroll_x"/>
     <property name="room_scroll_direction" value="right"/>
     <property name="room_scroll_push_box" value="true"/>
+    <property name="room_type" value="scroll_x"/>
     <property name="room_view_offset_y" value="-112"/>
    </properties>
   </object>

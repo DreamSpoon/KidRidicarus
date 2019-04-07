@@ -27,8 +27,7 @@ public abstract class Agent {
 		this.properties = properties;
 	}
 
-	// for use only by package member classes
-	Agency getAgency() {
+	public Agency getAgency() {
 		return agency;
 	}
 

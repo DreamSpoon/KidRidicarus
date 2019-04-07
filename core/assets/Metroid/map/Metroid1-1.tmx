@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="17">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="160" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="17">
  <tileset firstgid="1" name="MetroidTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="40" columns="8">
   <image source="MetroidTileset1-1.png" width="144" height="90"/>
  </tileset>
@@ -31,8 +31,8 @@
  <layer id="15" name="rio" width="160" height="15">
   <properties>
    <property name="agent_class" value="agent_spawner"/>
-   <property name="respawn_dead" value="true"/>
    <property name="spawn_agent_class" value="rio"/>
+   <property name="spawner_type" value="spawner_type_respawn"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztzgENAAAIA6DXsH9RAzyAc4MEJAAAfDDXAQAAAAAAAKAs3CYAGg==
@@ -41,8 +41,8 @@
  <layer id="5" name="zoomer" width="160" height="15">
   <properties>
    <property name="agent_class" value="agent_spawner"/>
-   <property name="respawn_dead" value="true"/>
    <property name="spawn_agent_class" value="zoomer"/>
+   <property name="spawner_type" value="spawner_type_respawn"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt1jsOABAMANAew/1PKgaLGBBC5L2xQ9ulnwgAXpEm4wAAhV8BgMpNAIA/ufGwz815amuf6GU052pt+wigLwMX8gEJ
@@ -51,8 +51,8 @@
  <layer id="6" name="skree" width="160" height="15">
   <properties>
    <property name="agent_class" value="agent_spawner"/>
-   <property name="respawn_dead" value="true"/>
    <property name="spawn_agent_class" value="skree"/>
+   <property name="spawner_type" value="spawner_type_respawn"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt0YkJACAMBMH0Yf99WoEI4kPiTAW3SQSwS3s94JJR5y/92WX604mtmfozq3Ln1Y4q/QAAAAAAAMBcB5jXAPQ=
@@ -145,15 +145,15 @@
   <object id="2" x="0" y="0" width="1280" height="240">
    <properties>
     <property name="room_music" value="Metroid/music/03_-_Metroid_-_NES_-_Brinstar_(Rock_Stage).ogg"/>
-    <property name="room_type" value="scroll_x"/>
     <property name="room_scroll_bound_x" value="true"/>
+    <property name="room_type" value="scroll_x"/>
    </properties>
   </object>
   <object id="12" x="1536" y="0" width="1024" height="240">
    <properties>
     <property name="room_music" value="Metroid/music/03_-_Metroid_-_NES_-_Brinstar_(Rock_Stage).ogg"/>
-    <property name="room_type" value="scroll_x"/>
     <property name="room_scroll_bound_x" value="true"/>
+    <property name="room_type" value="scroll_x"/>
    </properties>
   </object>
   <object id="15" x="1280" y="0" width="256" height="240">
