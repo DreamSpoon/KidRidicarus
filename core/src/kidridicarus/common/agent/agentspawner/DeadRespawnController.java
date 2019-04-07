@@ -3,18 +3,14 @@ package kidridicarus.common.agent.agentspawner;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.info.CommonKV;
 
 public class DeadRespawnController extends SpawnController {
-	private AgentSpawner spawner;
-	private String spawnAgentClassAlias;
 	private boolean isSpawnReset;
 	private int numSpawns;
 	private int numSpawnsDisposed;
 
 	public DeadRespawnController(AgentSpawner spawner, ObjectProperties properties) {
-		this.spawner = spawner;
-		this.spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWN_AGENTCLASS, "", String.class);
+		super(spawner, properties);
 		isSpawnReset = true;
 		numSpawns = 0;
 		numSpawnsDisposed = 0;

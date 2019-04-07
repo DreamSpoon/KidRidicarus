@@ -13,9 +13,7 @@ import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
 
 public class MultiSpawnController extends SpawnController {
-	private AgentSpawner agentSpawner;
 	private AgentSpawnerBody body;
-	private String spawnAgentClassAlias;
 	private int multiCount;
 	private int multiGrpCount;
 	private float spawnRate;
@@ -25,10 +23,9 @@ public class MultiSpawnController extends SpawnController {
 	private int numSpawnsDisposed;
 	private float spawnTimer;
 
-	public MultiSpawnController(AgentSpawner agentSpawner, AgentSpawnerBody body, ObjectProperties properties) {
-		this.agentSpawner = agentSpawner;
+	public MultiSpawnController(AgentSpawner spawner, AgentSpawnerBody body, ObjectProperties properties) {
+		super(spawner, properties);
 		this.body = body;
-		this.spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWN_AGENTCLASS, "", String.class);
 		this.multiCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_COUNT, 0, Integer.class);
 		this.multiGrpCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_GRP_COUNT, 0, Integer.class);
 		this.spawnRate = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_RATE, 0f, Float.class);
@@ -123,10 +120,10 @@ public class MultiSpawnController extends SpawnController {
 	private void doSpawn(Vector2 spawnPos) {
 		numSpawns++;
 		spawnTimer = 0f;
-		Agent spawnedAgent = agentSpawner.getAgency().createAgent(Agent.createPointAP(spawnAgentClassAlias, spawnPos));
-		agentSpawner.getAgency().addAgentRemoveListener(new AgentRemoveListener(agentSpawner, spawnedAgent) {
-			@Override
-			public void removedAgent() { numSpawnsDisposed++; }
-		});
+		Agent spawnedAgent = spawner.getAgency().createAgent(Agent.createPointAP(spawnAgentClassAlias, spawnPos));
+		spawner.getAgency().addAgentRemoveListener(new AgentRemoveListener(spawner, spawnedAgent) {
+				@Override
+				public void removedAgent() { numSpawnsDisposed++; }
+			});
 	}
 }
