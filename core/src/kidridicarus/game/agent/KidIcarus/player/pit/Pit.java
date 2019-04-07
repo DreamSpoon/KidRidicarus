@@ -27,6 +27,7 @@ import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.KidIcarus.player.pitarrow.PitArrow;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
+import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusKV;
@@ -103,6 +104,10 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		setStateFromProperties(properties);
 
 		body = new PitBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f), false);
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
@@ -118,6 +123,24 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		});
 
 		supervisor = new PitSupervisor(agency, this, agency.getAtlas());
+	}
+
+	/*
+	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
+	 * by way of regular update. Also apply star power damage if needed.
+	 */
+	private void doContactUpdate() {
+		if(supervisor.isRunningScriptNoMoveAdvice())
+			return;
+		// exit if head bump flag hasn't reset
+		if(isHeadBumped)
+			return;
+		// if ducking then hit soft
+		if(this.moveState.isDuck())
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
+		// otherwise hit hard
+		else
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
 	}
 
 	private void setStateFromProperties(ObjectProperties properties) {

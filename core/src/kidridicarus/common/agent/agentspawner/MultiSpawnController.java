@@ -46,41 +46,46 @@ public class MultiSpawnController extends SpawnController {
 
 		// if this spawner has a scroll direction property then get scroll spawn position, or exit if unavailable
 		Vector2 spawnPos = body.getPosition();
-		if(scrollDir != Direction4.NONE) {
-			AgentSpawnTrigger spawnTrigger = body.getFirstContactByClass(AgentSpawnTrigger.class);
-			if(spawnTrigger == null)
-				return;
+		if(scrollDir != Direction4.NONE)
+			spawnPos = getScrollSpawnPos();
 
-			if(scrollDir != Direction4.UP)
-				throw new IllegalStateException("do more code");
-
-			// AgentSpawnTrigger is contacting, so X value is okay...
-			// Check only Y bounds for overlap and where empty tiles available...
-			Rectangle spawnerTiles = UInfo.RectangleM2T(body.getBounds());
-			Rectangle triggerTiles = UInfo.RectangleM2T(spawnTrigger.getBounds());
-			// if top of AgentSpawnTrigger is at least as high as top of AgentSpawner then disallow spawn
-			if(triggerTiles.y+triggerTiles.height >= spawnerTiles.y+spawnerTiles.height)
-				return;
-
-			int topY = (int) (triggerTiles.y + triggerTiles.height-1);
-			int bottomY = (int) spawnerTiles.y;
-			Integer topNonSolidY = null;
-			// tileX = tile X coordinate of middle of AgentSpawner
-			int tileX = (int) (spawnerTiles.x + (spawnerTiles.width-1)/2);
-			for(int tileY=topY; tileY >= bottomY;tileY--) {
-				if(!isMapTileSolid(new Vector2(tileX, tileY))) {
-					topNonSolidY = tileY;
-					break;
-				}
-			}
-			if(topNonSolidY != null)
-				spawnPos = UInfo.VectorT2M(tileX, topNonSolidY);
-		}
-
-		if(isSpawnAllowed())
+		if(spawnPos != null && isSpawnAllowed())
 			doSpawn(spawnPos);
 
 		spawnTimer += delta;
+	}
+
+	private Vector2 getScrollSpawnPos() {
+		AgentSpawnTrigger spawnTrigger = body.getFirstContactByClass(AgentSpawnTrigger.class);
+		if(spawnTrigger == null)
+			return null;
+
+		if(scrollDir != Direction4.UP)
+			throw new IllegalStateException("do more code");
+
+		// AgentSpawnTrigger is contacting, so X value is okay...
+		// Check only Y bounds for overlap and where empty tiles available...
+		Rectangle spawnerTiles = UInfo.RectangleM2T(body.getBounds());
+		Rectangle triggerTiles = UInfo.RectangleM2T(spawnTrigger.getBounds());
+		// if top of AgentSpawnTrigger is at least as high as top of AgentSpawner then disallow spawn
+		if(triggerTiles.y+triggerTiles.height >= spawnerTiles.y+spawnerTiles.height)
+			return null;
+
+		int topY = (int) (triggerTiles.y + triggerTiles.height-1);
+		int bottomY = (int) spawnerTiles.y;
+		Integer topNonSolidY = null;
+		// tileX = tile X coordinate of middle of AgentSpawner
+		int tileX = (int) (spawnerTiles.x + (spawnerTiles.width-1)/2);
+		for(int tileY=topY; tileY >= bottomY;tileY--) {
+			if(!isMapTileSolid(new Vector2(tileX, tileY))) {
+				topNonSolidY = tileY;
+				break;
+			}
+		}
+
+		if(topNonSolidY == null)
+			return null;
+		return UInfo.VectorT2M(tileX, topNonSolidY);
 	}
 
 	private boolean isSpawnAllowed() {
