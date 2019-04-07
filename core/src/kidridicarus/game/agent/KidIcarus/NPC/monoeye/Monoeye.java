@@ -108,14 +108,14 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 
 		processGawkers();
 
-		AxisGoState nextHorizGoState = getNextAxisGoState(true, horizGoState);
+		AxisGoState nextHorizGoState = getNextHorizontalGoState(horizGoState);
 		AxisGoState nextVertGoState = getNextAxisGoState(false, vertGoState);
+		isFacingRight = nextHorizGoState.isPlus();
 
 		MoveState nextMoveState = getNextMoveState();
 		boolean moveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case FLY:
-				isFacingRight = horizGoState.isPlus();
 				break;
 			case OGLE:
 				// if the target has been removed then de-target
@@ -125,6 +125,18 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 				}
 				// ogle the target if it exists
 				if(ogleTarget != null) {
+					nextVertGoState = AxisGoState.VEL_MINUS;
+
+					// if changed to plus acceleration then set left accel zone tile and reset right accel zone tile
+					if(nextHorizGoState == AxisGoState.ACCEL_PLUS && horizGoState != AxisGoState.ACCEL_PLUS) {
+						body.getSpine().setLeftAccelZoneToCurrentPos();
+						body.getSpine().resetRightAccelZone();
+					}
+					// if changed to minus acceleration then set right accel zone tile and reset left accel zone tile
+					else if(nextHorizGoState == AxisGoState.ACCEL_MINUS && horizGoState != AxisGoState.ACCEL_MINUS) {
+						body.getSpine().setRightAccelZoneToCurrentPos();
+						body.getSpine().resetLeftAccelZone();
+					}
 				}
 				break;
 			case DEAD:
@@ -147,30 +159,61 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 
 	private AxisGoState getNextAxisGoState(boolean isHorizontal, AxisGoState currentGoState) {
 		if(currentGoState == AxisGoState.ACCEL_PLUS) {
-			if(body.getSpine().shouldContinueAcceleration(isHorizontal, true))
+			if(body.getSpine().isContinueAcceleration(isHorizontal, true))
 				return AxisGoState.ACCEL_PLUS;
 			else
 				return AxisGoState.VEL_PLUS;
 		}
 		else if(currentGoState == AxisGoState.VEL_PLUS) {
-			if(body.getSpine().shouldChangeDirection(isHorizontal, true))
+			if(body.getSpine().isChangeDirection(isHorizontal, true))
 				return AxisGoState.ACCEL_MINUS;
 			else
 				return AxisGoState.VEL_PLUS;
 		}
 		else if(currentGoState == AxisGoState.ACCEL_MINUS) {
-			if(body.getSpine().shouldContinueAcceleration(isHorizontal, false))
+			if(body.getSpine().isContinueAcceleration(isHorizontal, false))
 				return AxisGoState.ACCEL_MINUS;
 			else
 				return AxisGoState.VEL_MINUS;
 		}
 		// VEL_MINUS
 		else {
-			if(body.getSpine().shouldChangeDirection(isHorizontal, false))
+			if(body.getSpine().isChangeDirection(isHorizontal, false))
 				return AxisGoState.ACCEL_PLUS;
 			else
 				return AxisGoState.VEL_MINUS;
 		}
+	}
+
+	private AxisGoState getNextHorizontalGoState(AxisGoState currentGoState) {
+		if(ogleTarget != null) {
+			// if accelerating right
+			if(currentGoState == AxisGoState.ACCEL_PLUS) {
+				// change to velocity in same direction after acceleration is finished
+				return body.getSpine().isContinueAcceleration(true, true) ?
+						AxisGoState.ACCEL_PLUS : AxisGoState.VEL_PLUS;
+			}
+			// if moving right
+			else if(currentGoState == AxisGoState.VEL_PLUS) {
+				// if target is on left then change direction
+				return body.getSpine().isTargetOnLeft(ogleTarget.getPosition().x) ?
+						AxisGoState.ACCEL_MINUS : AxisGoState.VEL_PLUS;
+			}
+			// if accelerating left
+			else if(currentGoState == AxisGoState.ACCEL_MINUS) {
+				// change to velocity in same direction after acceleration is finished
+				return body.getSpine().isContinueAcceleration(true, false) ?
+						AxisGoState.ACCEL_MINUS : AxisGoState.VEL_MINUS;
+			}
+			// if moving left
+			else {
+				// if target is on right then change direction
+				return body.getSpine().isTargetOnRight(ogleTarget.getPosition().x) ?
+						AxisGoState.ACCEL_PLUS : AxisGoState.VEL_MINUS;
+			}
+		}
+		else
+			return getNextAxisGoState(true, currentGoState);
 	}
 
 	private void processGawkers() {
@@ -196,8 +239,8 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 	private MoveState getNextMoveState() {
 		if(isDead || moveState == MoveState.DEAD)
 			return MoveState.DEAD;
-//		else if(moveState == MoveState.OGLE || (ogleTarget != null && body.getSpine().canAcquireTarget()))
-//			return MoveState.OGLE;
+		else if(moveState == MoveState.OGLE || ogleTarget != null)
+			return MoveState.OGLE;
 		else
 			return MoveState.FLY;
 	}

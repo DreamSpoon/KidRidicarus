@@ -44,7 +44,7 @@
    <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzgEJAAAIA7AnsX9M4SVE2BIsAQAAAAAAAAAAgJ/mOgAAANQCjvcAHw==
+   eJztzgENAAAIA6AnsX9MY3xOSEACAAAAAAAAAAAAv007AAAAxy2GhwAf
   </data>
  </layer>
  <objectgroup id="17" name="shemum">
@@ -62,7 +62,7 @@
  </objectgroup>
  <objectgroup id="26" name="monoeye">
   <properties>
-   <property name="agent_class" value="agent_spawner"/>
+   <property name="argent_class" value="agent_spawner"/>
    <property name="spawn_agent_class" value="monoeye"/>
    <property name="spawn_multi_count" value="4"/>
    <property name="spawn_multi_grp_count" value="4"/>

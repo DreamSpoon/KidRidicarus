@@ -17,9 +17,6 @@ public class MonoeyeSpine extends NPC_Spine {
 	private static final float ACCEL_Y = UInfo.P2M(450);
 	private static final float VEL_Y = UInfo.P2M(60);
 
-//	private static final float OGLE_ACCEL_X = UInfo.P2M(240);
-//	private static final float OGLE_VEL_X = UInfo.P2M(120);
-
 	private static final float CENTER_OFFSET_X = 3f;	// offset from spawn, in tiles
 	private static final int ACCEL_OFFSET_RIGHT = 4;
 	private static final int ACCEL_OFFSET_LEFT = -5;
@@ -27,21 +24,20 @@ public class MonoeyeSpine extends NPC_Spine {
 	private static final int ACCEL_OFFSET_TOP = -1;
 	private static final int ACCEL_OFFSET_BOTTOM = -5;
 
-//	private static final int OGLE_ACCEL_OFFSET_RIGHT = 2;
-//	private static final int OGLE_ACCEL_OFFSET_LEFT = -2;
-
 	private AgentContactHoldSensor playerSensor;
-	private int spawnTileX;
-	private Float rightAccelZoneTile;
-	private Float leftAccelZoneTile;
+	private float initRightAccelZoneTile;
+	private float rightAccelZoneTile;
+	private float initLeftAccelZoneTile;
+	private float leftAccelZoneTile;
 
 	public MonoeyeSpine(MonoeyeBody body, int spawnTileX) {
 		super(body);
 
-		this.spawnTileX = spawnTileX;
 		// initialize far right and left of normal velocity "window"
-		rightAccelZoneTile = spawnTileX + CENTER_OFFSET_X + ACCEL_OFFSET_RIGHT;
-		leftAccelZoneTile = spawnTileX + CENTER_OFFSET_X + ACCEL_OFFSET_LEFT;
+		initRightAccelZoneTile = spawnTileX + CENTER_OFFSET_X + ACCEL_OFFSET_RIGHT;
+		rightAccelZoneTile = initRightAccelZoneTile;
+		initLeftAccelZoneTile = spawnTileX + CENTER_OFFSET_X + ACCEL_OFFSET_LEFT;
+		leftAccelZoneTile = initLeftAccelZoneTile;
 		// the far top and bottom are relative to the scrolling player's screen, cannot init here
 	}
 
@@ -89,8 +85,8 @@ public class MonoeyeSpine extends NPC_Spine {
 	public PlayerAgent getGawker(boolean isFacingRight) {
 		PlayerAgent playerAgent = playerSensor.getFirstContactByClass(PlayerAgent.class);
 		if(isOtherGawking(isFacingRight, playerAgent) &&
-				UInfo.M2Tx(playerAgent.getPosition().x) >= spawnTileX + CENTER_OFFSET_X + ACCEL_OFFSET_LEFT &&
-				UInfo.M2Tx(playerAgent.getPosition().x) <= spawnTileX + CENTER_OFFSET_X + ACCEL_OFFSET_RIGHT)
+				UInfo.M2Tx(playerAgent.getPosition().x) >= initLeftAccelZoneTile &&
+				UInfo.M2Tx(playerAgent.getPosition().x) <= initRightAccelZoneTile)
 			return playerAgent;
 		return null;
 	}
@@ -110,49 +106,152 @@ public class MonoeyeSpine extends NPC_Spine {
 		return false;
 	}
 
-	public boolean shouldContinueAcceleration(boolean isHorizontal, boolean isPlus) {
+	public boolean isContinueAcceleration(boolean isHorizontal, boolean isPlus) {
 		if(isHorizontal) {
+			int myTileX = UInfo.M2Tx(body.getPosition().x);
 			// if moving right and current position is within left acceleration zone then continue acceleration
-			if(isPlus && UInfo.M2Tx(body.getPosition().x) <= leftAccelZoneTile)
+			if(isPlus && isTileInOneAccelZone(true, myTileX, false))
 				return true;
 			// if moving left and current position is within right acceleration zone then continue acceleration
-			else if(!isPlus && UInfo.M2Tx(body.getPosition().x) >= rightAccelZoneTile)
+			else if(!isPlus && isTileInOneAccelZone(true, myTileX, true))
 				return true;
 		}
 		// vertical
 		else {
+			int myTileY = UInfo.M2Tx(body.getPosition().y);
 			// if moving up and current position is within bottom acceleration zone then continue acceleration
-			if(isPlus && UInfo.M2Tx(body.getPosition().y) <= getScrollTopY() + ACCEL_OFFSET_BOTTOM)
+			if(isPlus && isTileInOneAccelZone(false, myTileY, false))
 				return true;
 			// if moving down and current position is within top acceleration zone then continue acceleration
-			else if(!isPlus && UInfo.M2Tx(body.getPosition().y) >= getScrollTopY() + ACCEL_OFFSET_TOP)
+			else if(!isPlus && isTileInOneAccelZone(false, myTileY, true))
 				return true;
 		}
 		// discontinue acceleration
 		return false;
 	}
 
-	public boolean shouldChangeDirection(boolean isHorizontal, boolean isPlus) {
+	public boolean isChangeDirection(boolean isHorizontal, boolean isPlus) {
 		if(isHorizontal) {
+			int myTileX = UInfo.M2Tx(body.getPosition().x);
 			// if moving right and current position is within right acceleration zone then change direction
-			if(isPlus && UInfo.M2Tx(body.getPosition().x) >= rightAccelZoneTile)
+			if(isPlus && isTileInOneAccelZone(true, myTileX, true))
 				return true;
 			// if moving left and current position is within left acceleration zone then change direction
-			else if(!isPlus && UInfo.M2Tx(body.getPosition().x) <= leftAccelZoneTile)
+			else if(!isPlus && isTileInOneAccelZone(true, myTileX, false))
 				return true;
 		}
 		// vertical
 		else {
+			int myTileY = UInfo.M2Tx(body.getPosition().y);
 			// if moving up and current position is within top acceleration zone then change direction
-			if(isPlus && UInfo.M2Tx(body.getPosition().y) >= getScrollTopY() + ACCEL_OFFSET_TOP)
+			if(isPlus && isTileInOneAccelZone(false, myTileY, true))
 				return true;
 			// if moving down and current position is within bottom acceleration zone then change direction
-			else if(!isPlus && UInfo.M2Tx(body.getPosition().y) <= getScrollTopY() + ACCEL_OFFSET_BOTTOM)
+			else if(!isPlus && isTileInOneAccelZone(false, myTileY, false))
 				return true;
 		}
 		// don't change direction
 		return false;
 	}
+
+	private boolean isTileInOneAccelZone(boolean isHorizontal, int tileOffset, boolean isPlus) {
+		if(isHorizontal) {
+			// if checking left acceleration zone and offset is within zone then return true
+			if(!isPlus && tileOffset <= leftAccelZoneTile)
+				return true;
+			// if checking right acceleration zone and offset is within zone then return true
+			else if(isPlus && tileOffset >= rightAccelZoneTile)
+				return true;
+		}
+		// vertical
+		else {
+			Integer scrollTopY = getScrollTopY();
+			if(scrollTopY == null)
+				return false;
+
+			// if checking bottom acceleration zone and offset is within zone then return true
+			if(!isPlus && tileOffset <= getScrollTopY() + ACCEL_OFFSET_BOTTOM)
+				return true;
+			// if checking top acceleration zone and offset is within zone then return true
+			else if(isPlus && tileOffset >= getScrollTopY() + ACCEL_OFFSET_TOP)
+				return true;
+		}
+		// return false because tile is not in either one of the acceleration zones
+		return false;
+	}
+
+	public boolean isTargetOnLeft(float posX) {
+		return UInfo.M2Tx(posX) < UInfo.M2Tx(body.getPosition().x);
+	}
+
+	public boolean isTargetOnRight(float posX) {
+		return UInfo.M2Tx(posX) > UInfo.M2Tx(body.getPosition().x);
+	}
+
+	public void setRightAccelZoneToCurrentPos() {
+		rightAccelZoneTile = (float) UInfo.M2Tx(body.getPosition().x);
+		if(rightAccelZoneTile > initRightAccelZoneTile)
+			rightAccelZoneTile = initRightAccelZoneTile;
+	}
+
+	public void resetRightAccelZone() {
+		rightAccelZoneTile = initRightAccelZoneTile;
+	}
+
+	public void setLeftAccelZoneToCurrentPos() {
+		leftAccelZoneTile = (float) UInfo.M2Tx(body.getPosition().x);
+		if(leftAccelZoneTile < initLeftAccelZoneTile)
+			leftAccelZoneTile = initLeftAccelZoneTile;
+	}
+
+	public void resetLeftAccelZone() {
+		leftAccelZoneTile = initLeftAccelZoneTile;
+	}
+
+/*	private boolean isTileInEitherAccelZone(boolean isHorizontal, int tileOffset) {
+		if(isHorizontal) {
+			if(tileOffset <= leftAccelZoneTile)
+				return true;
+			else if(tileOffset >= rightAccelZoneTile)
+				return true;
+		}
+		// vertical
+		else {
+			Integer scrollTopY = getScrollTopY();
+			if(scrollTopY == null)
+				return false;
+	
+			if(tileOffset <= getScrollTopY() + ACCEL_OFFSET_BOTTOM)
+				return true;
+			else if(tileOffset >= getScrollTopY() + ACCEL_OFFSET_TOP)
+				return true;
+		}
+		// return false because tile is not in either zone
+		return false;
+	}
+*/
+/*	// track ogle target, horizontal tracking only - only called when out of acceleration zone
+	public void doTrackTarget(float targetX, boolean isPlus) {
+		int myTileX = UInfo.M2Tx(body.getPosition().x);
+		int targetTileX = UInfo.M2Tx(targetX);
+		// if moving right and target is on left...
+		if(isPlus && targetTileX < myTileX) {
+QQ.pr("moving right, target is on left");
+			// set right acceleration zone based on current position
+			rightAccelZoneTile = (float) (myTileX + OGLE_ACCEL_OFFSET_RIGHT);
+			// reset left acceleration zone to default
+			leftAccelZoneTile = spawnTileX + CENTER_OFFSET_X + ACCEL_OFFSET_LEFT;
+		}
+		// if moving left and target is on right...
+		else if(!isPlus && targetTileX > myTileX) {
+QQ.pr("moving left, target is on right");
+			// reset right acceleration zone to default
+			rightAccelZoneTile = spawnTileX + CENTER_OFFSET_X + ACCEL_OFFSET_RIGHT;
+			// set left acceleration zone based on current position
+			leftAccelZoneTile = (float) (myTileX + OGLE_ACCEL_OFFSET_LEFT);
+		}
+	}
+*/
 }
 /*
 public class MonoeyeSpine extends NPC_Spine {
