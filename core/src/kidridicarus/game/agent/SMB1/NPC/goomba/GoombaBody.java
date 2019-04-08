@@ -54,7 +54,7 @@ public class GoombaBody extends MobileAgentBody {
 				getBodySize().x, getBodySize().y);
 		// agent sensor fixture
 		AgentContactHoldSensor sensor = spine.createAgentSensor();
-		sensor.chainTo(spine.createHeadBounceAndContactDamageSensor());
+		sensor.chainTo(spine.createHeadBounceSensor());
 		agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, sensor, AS_CFCAT, AS_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
 		// ground sensor fixture

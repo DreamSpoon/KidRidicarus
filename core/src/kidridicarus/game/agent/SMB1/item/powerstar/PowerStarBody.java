@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.NPC_Spine;
+import kidridicarus.common.agentspine.SMB_NPC_Spine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -16,7 +16,7 @@ public class PowerStarBody extends MobileAgentBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float GRAVITY_SCALE = 0.5f;
 
-	private NPC_Spine spine;
+	private SMB_NPC_Spine spine;
 
 	public PowerStarBody(PowerStar parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
@@ -32,7 +32,7 @@ public class PowerStarBody extends MobileAgentBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
-		spine = new NPC_Spine(this);
+		spine = new SMB_NPC_Spine(this);
 		// agent and horiztonal move sensor fixture
 		FixtureDef fdef = new FixtureDef();
 		fdef.restitution = 1f;	// bouncy
@@ -42,7 +42,7 @@ public class PowerStarBody extends MobileAgentBody {
 				CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
-	public NPC_Spine getSpine() {
+	public SMB_NPC_Spine getSpine() {
 		return spine;
 	}
 }

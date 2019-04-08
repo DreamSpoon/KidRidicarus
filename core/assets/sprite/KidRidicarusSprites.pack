@@ -1609,118 +1609,118 @@ KidRidicarusSprites17.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-SMB1/item/fireflower
+SMB1/item/fire_flower
   rotate: false
   xy: 1, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
-SMB1/item/fireflower
+SMB1/item/fire_flower
   rotate: false
   xy: 19, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
-SMB1/item/fireflower
+SMB1/item/fire_flower
   rotate: false
   xy: 37, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 3
-SMB1/item/fireflower
+SMB1/item/fire_flower
   rotate: false
   xy: 55, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 4
-SMB1/item/mush1up
+SMB1/item/magic_mushroom
   rotate: false
   xy: 73, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-SMB1/item/mushroom
+SMB1/item/power_star
   rotate: false
   xy: 91, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: -1
-SMB1/item/powerstar
+  index: 1
+SMB1/item/power_star
   rotate: false
   xy: 109, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: 1
-SMB1/item/powerstar
+  index: 2
+SMB1/item/power_star
   rotate: false
   xy: 127, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: 2
-SMB1/item/powerstar
+  index: 3
+SMB1/item/power_star
   rotate: false
   xy: 145, 1
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 3
-SMB1/item/powerstar
-  rotate: false
-  xy: 163, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 4
 SMB1/item/static_coin
   rotate: false
-  xy: 181, 1
+  xy: 163, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 SMB1/item/static_coin
   rotate: false
-  xy: 181, 1
+  xy: 163, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
 SMB1/item/static_coin
   rotate: false
-  xy: 181, 1
+  xy: 163, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 3
 SMB1/item/static_coin
   rotate: false
-  xy: 199, 1
+  xy: 181, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 4
 SMB1/item/static_coin
   rotate: false
-  xy: 199, 1
+  xy: 181, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 6
 SMB1/item/static_coin
   rotate: false
-  xy: 217, 1
+  xy: 199, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 5
+SMB1/item/up1_mushroom
+  rotate: false
+  xy: 217, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 
 KidRidicarusSprites18.png
 format: RGBA8888

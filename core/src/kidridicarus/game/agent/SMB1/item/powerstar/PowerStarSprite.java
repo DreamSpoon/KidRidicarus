@@ -20,7 +20,7 @@ public class PowerStarSprite extends Sprite {
 
 	public PowerStarSprite(TextureAtlas atlas, Vector2 position) {
 		starAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMB1_Gfx.Item.POWERSTAR), PlayMode.LOOP);
+				atlas.findRegions(SMB1_Gfx.Item.POWER_STAR), PlayMode.LOOP);
 
 		stateTimer = 0f;
 

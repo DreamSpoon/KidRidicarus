@@ -2,12 +2,17 @@ package kidridicarus.common.agentspine;
 
 import java.util.List;
 
+import com.badlogic.gdx.math.Vector2;
+
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
+import kidridicarus.common.info.CommonKV;
 
 /*
  * Complement of the AgentBody, the Agent spine allows for better organization/coordination of movement than
@@ -41,5 +46,29 @@ public class BasicAgentSpine {
 
 	public List<ContactDmgTakeAgent> getContactDmgTakeAgents() {
 		return agentSensor.getContactsByClass(ContactDmgTakeAgent.class);
+	}
+
+	public RoomBox getCurrentRoom() {
+		return agentSensor.getFirstContactByClass(RoomBox.class);
+	}
+
+	public void checkDoSpaceWrap(RoomBox curRoom) {
+		if(curRoom == null)
+			return;
+		if(!curRoom.getProperty(CommonKV.Room.KEY_SPACEWRAP_X, false, Boolean.class))
+			return;
+
+		// if body position is outside room on left...
+		if(body.getPosition().x < curRoom.getBounds().x) {
+			// true because I want keep velocity=true
+			((MobileAgentBody) body).resetPosition(
+					new Vector2(curRoom.getBounds().x+curRoom.getBounds().width, body.getPosition().y), true);
+		}
+		// if body position is outside room on right...
+		else if(body.getPosition().x > curRoom.getBounds().x+curRoom.getBounds().width) {
+			// true because I want keep velocity=true
+			((MobileAgentBody) body).resetPosition(
+					new Vector2(curRoom.getBounds().x, body.getPosition().y), true);
+		}
 	}
 }

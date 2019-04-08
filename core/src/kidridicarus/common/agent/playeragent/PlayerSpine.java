@@ -11,7 +11,9 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agent.scrollkillbox.ScrollKillBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.MobileAgentSpine;
+import kidridicarus.common.agentsensor.SolidContactSensor;
+import kidridicarus.common.agentspine.BasicAgentSpine;
+import kidridicarus.common.agentspine.OnGroundNerve;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
@@ -19,16 +21,22 @@ import kidridicarus.game.agent.SMB1.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
 
-public class PlayerSpine extends MobileAgentSpine {
+public class PlayerSpine extends BasicAgentSpine {
 	private static final float MIN_HEADBANG_VEL = 0.01f;
 
 	private AgentContactHoldSensor tileBumpPushSensor;
 	private AgentContactHoldSensor pipeWarpSensor;
+	private OnGroundNerve ogNerve;
 
 	public PlayerSpine(PlayerAgentBody body) {
 		super(body);
 		tileBumpPushSensor = null;
 		pipeWarpSensor = null;
+		ogNerve = new OnGroundNerve();
+	}
+
+	public SolidContactSensor createOnGroundSensor() {
+		return ogNerve.createOnGroundSensor();
 	}
 
 	public AgentContactHoldSensor createTileBumpPushSensor() {
@@ -139,6 +147,10 @@ public class PlayerSpine extends MobileAgentSpine {
 	public boolean isMapTileSolid(Vector2 tileCoords) {
 		SolidTiledMapAgent ctMap = agentSensor.getFirstContactByClass(SolidTiledMapAgent.class);
 		return ctMap == null ? false : ctMap.isMapTileSolid(tileCoords); 
+	}
+
+	public boolean isOnGround() {
+		return ogNerve.isOnGround();
 	}
 
 	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {

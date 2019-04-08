@@ -5,13 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.NPC_Spine;
+import kidridicarus.common.agentspine.SMB_NPC_Spine;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.KidIcarus.NPC.monoeye.Monoeye.AxisGoState;
 
-public class MonoeyeSpine extends NPC_Spine {
+public class MonoeyeSpine extends SMB_NPC_Spine {
 	private static final float ACCEL_X = UInfo.P2M(180);
 	private static final float VEL_X = UInfo.P2M(120);
 	private static final float ACCEL_Y = UInfo.P2M(450);

@@ -1,5 +1,5 @@
 package kidridicarus.game.agentspine.SMB1;
-
+/*
 import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
@@ -24,3 +24,4 @@ public class HeadBounceSpine extends NPC_Spine {
 		return headBounceSensor.getAndResetContacts();
 	}
 }
+*/

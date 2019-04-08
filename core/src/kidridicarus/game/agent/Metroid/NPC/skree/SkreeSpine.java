@@ -5,9 +5,9 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.NPC_Spine;
+import kidridicarus.common.agentspine.SMB_NPC_Spine;
 
-public class SkreeSpine extends NPC_Spine {
+public class SkreeSpine extends SMB_NPC_Spine {
 	private static final float FALL_IMPULSE = 0.07f;
 	private static final float FALL_SPEED_MAX = 2f;
 	private static final float SIDE_IMPULSE_MAX = 0.07f;

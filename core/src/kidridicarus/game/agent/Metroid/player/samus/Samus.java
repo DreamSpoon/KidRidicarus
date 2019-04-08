@@ -200,12 +200,13 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		if(nextMoveState == MoveState.DEAD)
 			processDeadMove(moveStateChanged);
 		else {
-			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 			if(nextMoveState.isGround())
 				processGroundMove(delta, moveAdvice, nextMoveState);
 			else
 				processAirMove(delta, moveAdvice, nextMoveState);
 			processShoot(delta, moveAdvice);
+			// do space wrap last so that contacts are maintained
+			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 		}
 
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;

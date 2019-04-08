@@ -25,10 +25,10 @@ public class SMB1_Gfx {
 
 	public class Item {
 		private static final String DIR = BASEDIR+"item/";
-		public static final String UP1_MUSHROOM =	DIR+"mush1up";
-		public static final String MAGIC_MUSHROOM =	DIR+"mushroom";
-		public static final String FIREFLOWER =	DIR+"fireflower";
-		public static final String POWERSTAR =	DIR+"powerstar";
+		public static final String UP1_MUSHROOM =	DIR+"up1_mushroom";
+		public static final String MAGIC_MUSHROOM =	DIR+"magic_mushroom";
+		public static final String FIRE_FLOWER =	DIR+"fire_flower";
+		public static final String POWER_STAR =	DIR+"power_star";
 		public static final String COIN_STATIC =	DIR+"static_coin";
 	}
 

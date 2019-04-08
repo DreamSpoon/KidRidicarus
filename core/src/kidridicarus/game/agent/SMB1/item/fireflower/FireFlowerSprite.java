@@ -20,7 +20,7 @@ public class FireFlowerSprite extends Sprite {
 
 	public FireFlowerSprite(TextureAtlas atlas, Vector2 position) {
 		flowerAnim = new Animation<TextureRegion>(ANIM_SPEED,
-				atlas.findRegions(SMB1_Gfx.Item.FIREFLOWER), PlayMode.LOOP);
+				atlas.findRegions(SMB1_Gfx.Item.FIRE_FLOWER), PlayMode.LOOP);
 
 		stateTimer = 0f;
 		setRegion(flowerAnim.getKeyFrame(0f));

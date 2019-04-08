@@ -52,7 +52,7 @@ public class TurtleBody extends MobileAgentBody {
 				MAIN_CFCAT, MAIN_CFMASK, getBodySize().x, getBodySize().y);
 		// create agent sensor fixture
 		AgentContactHoldSensor sensor = spine.createAgentSensor();
-		sensor.chainTo(spine.createHeadBounceAndContactDamageSensor());
+		sensor.chainTo(spine.createHeadBounceSensor());
 		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, sensor,
 				AS_CFCAT, AS_CFMASK, getBodySize().x, getBodySize().y);
 		// create ground sensor fixture

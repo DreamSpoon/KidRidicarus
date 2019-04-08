@@ -12,6 +12,7 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.agent.SMB1.player.mario.Mario;
@@ -32,6 +33,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 	private MoveState moveState;
 	private boolean isFacingRight;
 	private HitType hitType;
+	private RoomBox lastKnownRoom;
 
 	public MarioFireball(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -41,6 +43,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		moveStateTimer = 0f;
 		moveState = MoveState.FLY;
 		hitType = HitType.NONE;
+		lastKnownRoom = null;
 
 		// fireball on right?
 		if(properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT)) {
@@ -121,6 +124,9 @@ public class MarioFireball extends Agent implements DisposableAgent {
 				break;
 		}
 
+		// do space wrap last so that contacts are maintained (e.g. keep alive box contact)
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
 	}
@@ -139,6 +145,12 @@ public class MarioFireball extends Agent implements DisposableAgent {
 
 	private void doPostUpdate() {
 		body.postUpdate();
+		// update last known room if not dead
+		if(moveState == MoveState.FLY) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom; 
+		}
 	}
 
 	private void processSprite(float delta) {

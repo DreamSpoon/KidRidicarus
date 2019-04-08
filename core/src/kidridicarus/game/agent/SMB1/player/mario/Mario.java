@@ -195,8 +195,6 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			processHeadBouncesGiven();
 			processPipeWarps(moveAdvice);
 
-			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-
 			// make a note of the last direction in which mario was moving, for duck sliding
 			if(body.getSpine().isMovingRight())
 				lastHorizontalMoveDir = Direction4.RIGHT;
@@ -215,12 +213,17 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		// if mario is dead...
 		if(nextMoveState.isDead())
 			processDeadMove(moveStateChanged, nextMoveState);
-		// if on ground...
-		else if(nextMoveState.isOnGround())
-			processGroundMove(moveAdvice, nextMoveState);
-		// else do air move
-		else
-			processAirMove(moveAdvice, nextMoveState);
+		else {
+			// if on ground...
+			if(nextMoveState.isOnGround())
+				processGroundMove(moveAdvice, nextMoveState);
+			// else do air move
+			else
+				processAirMove(moveAdvice, nextMoveState);
+
+			// do space wrap last so that contacts are maintained
+			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+		}
 
 		// decrement fireball shoot cooldown timer
 		shootCooldown = shootCooldown < delta ? 0f : shootCooldown-delta;

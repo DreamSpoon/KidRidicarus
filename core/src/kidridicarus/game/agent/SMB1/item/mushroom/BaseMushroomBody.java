@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.NPC_Spine;
+import kidridicarus.common.agentspine.SMB_NPC_Spine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -16,7 +16,7 @@ public class BaseMushroomBody extends MobileAgentBody {
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
-	private NPC_Spine spine;
+	private SMB_NPC_Spine spine;
 
 	public BaseMushroomBody(BaseMushroom parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
@@ -31,7 +31,7 @@ public class BaseMushroomBody extends MobileAgentBody {
 
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
-		spine = new NPC_Spine(this);
+		spine = new SMB_NPC_Spine(this);
 		createFixtures();
 	}
 
@@ -47,7 +47,7 @@ public class BaseMushroomBody extends MobileAgentBody {
 				new Vector2(0f, -BODY_HEIGHT/2f));
 	}
 
-	public NPC_Spine getSpine() {
+	public SMB_NPC_Spine getSpine() {
 		return spine;
 	}
 }

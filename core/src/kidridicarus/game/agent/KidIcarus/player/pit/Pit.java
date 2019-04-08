@@ -193,7 +193,6 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		if(nextMoveState == MoveState.DEAD)
 			processDeadMove(moveStateChanged);
 		else {
-			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 			body.getSpine().checkDoBodySizeChange(nextMoveState.isDuck());
 
 			if(nextMoveState.isGround())
@@ -208,6 +207,9 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				isFacingRight = false;
 
 			processShoot(delta, moveAdvice);
+
+			// do space wrap last so that contacts are maintained
+			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 		}
 
 		if((moveState.isPreJump() && nextMoveState.isPreJump()) ||

@@ -5,11 +5,11 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
-import kidridicarus.common.agentspine.NPC_Spine;
+import kidridicarus.common.agentspine.SMB_NPC_Spine;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 
-public class RioSpine extends NPC_Spine {
+public class RioSpine extends SMB_NPC_Spine {
 	private static final float SIDE_SPEED_MAX = 0.5f;
 	private static final float SWOOP_UP_MIN_VEL = 0.6f;
 	private static final float SWOOP_DOWN_MIN_VEL = 0.1f;

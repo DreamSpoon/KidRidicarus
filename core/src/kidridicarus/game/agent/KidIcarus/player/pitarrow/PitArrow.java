@@ -12,9 +12,11 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.common.tool.QQ;
 import kidridicarus.game.agent.KidIcarus.player.pit.Pit;
 import kidridicarus.game.info.KidIcarusKV;
 
@@ -28,11 +30,13 @@ public class PitArrow extends Agent implements DisposableAgent {
 	private float moveStateTimer;
 	private boolean isDead;
 	private Direction4 arrowDir;
+	private RoomBox lastKnownRoom;
 
 	public PitArrow(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		moveStateTimer = 0f;
+		lastKnownRoom = null;
 		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENT_AGENT, null, Pit.class);
 		// check the definition properties, maybe the shot needs to expire immediately
 		isDead = properties.containsKey(CommonKV.Spawn.KEY_EXPIRE);
@@ -42,6 +46,10 @@ public class PitArrow extends Agent implements DisposableAgent {
 		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
+		});
+		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
 		});
 		sprite = new PitArrowSprite(agency.getAtlas(), body.getPosition(), arrowDir);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
@@ -58,7 +66,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 
 	private void processContacts() {
 		// check for agents needing damage, and damage the first one
-		for(ContactDmgTakeAgent agent : body.getContactAgentsByClass(ContactDmgTakeAgent.class)) {
+		for(ContactDmgTakeAgent agent : body.getSpine().getContactDmgTakeAgents()) {
 			// do not hit parent
 			if(agent == parent)
 				continue;
@@ -67,7 +75,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 			return;
 		}
 		// if hit a wall then die
-		if(body.isHitBound())
+		if(body.getSpine().isHitBound(arrowDir.isRight()))
 			isDead = true;
 	}
 
@@ -76,7 +84,17 @@ public class PitArrow extends Agent implements DisposableAgent {
 			isDead = true;
 		if(isDead)
 			agency.removeAgent(this);
+		// do space wrap last so that contacts are maintained
+QQ.pr("before space wrap pos="+body.getPosition() + "room="+lastKnownRoom);
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+QQ.pr("after space wrap pos="+body.getPosition());
 		moveStateTimer += delta;
+	}
+
+	private void doPostUpdate() {
+		RoomBox nextRoom = body.getSpine().getCurrentRoom();
+		if(nextRoom != null)
+			lastKnownRoom = nextRoom; 
 	}
 
 	private void processSprite(float delta) {

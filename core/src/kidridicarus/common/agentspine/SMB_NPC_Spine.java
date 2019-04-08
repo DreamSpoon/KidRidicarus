@@ -1,24 +1,44 @@
 package kidridicarus.common.agentspine;
 
+import java.util.List;
+
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.agency.agentcontact.AgentContactSensor;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentbody.MobileAgentBody;
+import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
+import kidridicarus.game.agentspine.SMB1.HeadBounceNerve;
 
-public class NPC_Spine extends MobileAgentSpine {
-	private SolidContactSensor horizontalMoveSensor;
+public class SMB_NPC_Spine extends BasicAgentSpine {
+	private OnGroundNerve ogNerve;
+	private HorizontalMoveNerve hmNerve;
+	private HeadBounceNerve hbNerve;
 
-	public NPC_Spine(MobileAgentBody body) {
+	public SMB_NPC_Spine(AgentBody body) {
 		super(body);
-		horizontalMoveSensor = null;
+		ogNerve = new OnGroundNerve();
+		hmNerve = new HorizontalMoveNerve();
+		hbNerve = new HeadBounceNerve();
 	}
 
-	public SolidContactSensor createHorizontalMoveSensor() {
-		horizontalMoveSensor = new SolidContactSensor(body);
-		return horizontalMoveSensor;
+	public SolidContactSensor createOnGroundSensor() {
+		return ogNerve.createOnGroundSensor();
+	}
+
+	public AgentContactSensor createHorizontalMoveSensor() {
+		return hmNerve.createHorizontalMoveSensor(body);
+	}
+
+	public OneWayContactSensor createHeadBounceSensor() {
+		return hbNerve.createHeadBounceSensor(body);
+	}
+
+	public boolean isOnGround() {
+		return ogNerve.isOnGround();
 	}
 
 	public boolean isHorizontalMoveBlocked(boolean isFacingRight, boolean useAgents) {
@@ -49,6 +69,10 @@ public class NPC_Spine extends MobileAgentSpine {
 	}
 
 	private boolean isMoveBlockedBySolid(boolean moveRight) {
-		return horizontalMoveSensor.isSolidOnThisSide(body.getBounds(), moveRight);
+		return hmNerve.isSolidOnThisSide(body.getBounds(), moveRight);
+	}
+
+	public List<Agent> getHeadBounceBeginContacts() {
+		return hbNerve.getHeadBounceBeginContacts();
 	}
 }
