@@ -36,4 +36,4 @@ Multiple Platform Game Emulator (MPGE)
 
 * Kid Ridicarus emulates multiple games in the platform game genre
 
-### See wiki for info on keys to play game, game snapshots, etc.
+### See wiki for info for game snapshots and more info.
