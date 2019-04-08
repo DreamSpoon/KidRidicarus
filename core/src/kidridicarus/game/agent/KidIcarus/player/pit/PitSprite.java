@@ -59,7 +59,7 @@ public class PitSprite extends Sprite {
 		// the update() method. Regular animations use PlayMode.LOOP, e.g. so that walking animation repeats.
 		for(int i=0; i<KidIcarusGfx.Player.Pit.GRPDIR.length; i++) {
 			aimUpAnim[i][ANIM_HOLD] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
-					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.AIMUP), PlayMode.LOOP);
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.AIMUP), PlayMode.NORMAL);
 			aimUpAnim[i][ANIM_SHOOT] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
 					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.AIMUP_SHOOT), PlayMode.NORMAL);
 			jumpAnim[i][ANIM_HOLD] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
@@ -67,21 +67,21 @@ public class PitSprite extends Sprite {
 			jumpAnim[i][ANIM_SHOOT] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
 					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.JUMP_SHOOT), PlayMode.NORMAL);
 			standAnim[i][ANIM_HOLD] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
-					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.STAND), PlayMode.LOOP);
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.STAND), PlayMode.NORMAL);
 			standAnim[i][ANIM_SHOOT] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
 					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.STAND_SHOOT), PlayMode.NORMAL);
 			walkAnim[i][ANIM_HOLD] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
 					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.WALK), PlayMode.LOOP);
 			walkAnim[i][ANIM_SHOOT] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
-					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.WALK_SHOOT), PlayMode.NORMAL);
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.WALK_SHOOT), PlayMode.LOOP);
 
 			climbAnim[i] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
 					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.CLIMB), PlayMode.LOOP);
 			duckAnim[i] = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
-					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.DUCK), PlayMode.LOOP);
+					KidIcarusGfx.Player.Pit.GRPDIR[i]+KidIcarusGfx.Player.Pit.DUCK), PlayMode.NORMAL);
 		}
 		deadAnim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(
-				KidIcarusGfx.Player.Pit.GRPDIR[ANIM_GRP_REG]+KidIcarusGfx.Player.Pit.DEAD), PlayMode.LOOP);
+				KidIcarusGfx.Player.Pit.GRPDIR[ANIM_GRP_REG]+KidIcarusGfx.Player.Pit.DEAD), PlayMode.NORMAL);
 
 		prevParentState = null;
 		spriteStateTimer = 0f;
