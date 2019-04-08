@@ -28,7 +28,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 	private enum MoveState { SPROUT, WALK, FALL, END }
 
 	private BaseMushroomBody body;
-	private MushroomSprite sprite;
+	private BaseMushroomSprite sprite;
 	private AgentDrawListener drawListener;
 
 	private float moveStateTimer;
@@ -67,7 +67,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 				public void update(float delta) { doUpdate(delta); }
 			});
 		// sprout from bottom layer and switch to next layer on finish sprout
-		sprite = new MushroomSprite(getMushroomTextureRegion(agency.getAtlas()),
+		sprite = new BaseMushroomSprite(getMushroomTextureRegion(agency.getAtlas()),
 				initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
 		drawListener = new AgentDrawListener() {
 				@Override

@@ -15,6 +15,9 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.game.agent.Metroid.NPC.skreeshot.SkreeShot;
+import kidridicarus.game.agent.Metroid.item.energy.Energy;
+import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidKV;
 
@@ -154,8 +157,9 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 				doExplode();
 				break;
 			case DEAD:
+				agency.removeAgent(this);
+				agency.createAgent(DeathPop.makeAP(body.getPosition()));
 				doPowerupDrop();
-				doDeathPop();
 				agency.getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
 				break;
 		}
@@ -185,10 +189,8 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		if(EXPLODE_OFFSET.length != EXPLODE_VEL.length)
 			throw new IllegalStateException("The Skree explosion offset array length does not equal the " +
 					"explode velocity array length.");
-		for(int i=0; i<EXPLODE_OFFSET.length; i++) {
-			agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SKREE_EXP,
-					body.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
-		}
+		for(int i=0; i<EXPLODE_OFFSET.length; i++)
+			agency.createAgent(SkreeShot.makeAP(body.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
 		agency.removeAgent(this);
 	}
 
@@ -196,12 +198,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		// exit if drop not allowed
 		if(Math.random() > ITEM_DROP_RATE)
 			return;
-		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_ENERGY, body.getPosition()));
-	}
-
-	private void doDeathPop() {
-		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
-		agency.removeAgent(this);
+		agency.createAgent(Energy.makeAP(body.getPosition()));
 	}
 
 	private void processSprite(float delta) {

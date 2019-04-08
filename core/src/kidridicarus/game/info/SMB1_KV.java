@@ -12,8 +12,8 @@ public class SMB1_KV {
 		public static final String VAL_GOOMBA = "goomba";
 		public static final String VAL_MARIO = "mario";
 		public static final String VAL_MARIOFIREBALL = "mariofireball";
-		public static final String VAL_MUSHROOM = "mushroom";
-		public static final String VAL_MUSH1UP = "mushroom1up";
+		public static final String VAL_MAGIC_MUSHROOM = "magic_mushroom";
+		public static final String VAL_UP1_MUSHROOM = "mushroom1up";
 		public static final String VAL_POWERSTAR = "powerstar";
 		public static final String VAL_SPINCOIN = "spincoin";
 		public static final String VAL_TURTLE = "turtle";

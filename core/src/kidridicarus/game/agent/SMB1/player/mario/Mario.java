@@ -340,8 +340,8 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
 		// create fireball with remove listener attached, so new fireballs can be created when old ones expire
-		MarioFireball fireball = (MarioFireball) agency.createAgent(
-				MarioFireball.makeAP(offset, isFacingRight, this));
+		MarioFireball fireball =
+				(MarioFireball) agency.createAgent(MarioFireball.makeAP(offset, isFacingRight, this));
 		agency.addAgentRemoveListener(new AgentRemoveListener(this, fireball) {
 				@Override
 				public void removedAgent() { activeFireballCount--; }

@@ -399,7 +399,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		// if newly dead then disable contacts and start dead sound
 		if(moveStateChanged) {
 			body.applyDead();
-			createDeathPop();
+			doDeathBurst();
 			agency.getEar().stopAllMusic();
 			agency.getEar().startSinglePlayMusic(MetroidAudio.Music.SAMUS_DIE);
 		}
@@ -419,7 +419,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private static final float TOP_VEL_Y = 0.9f; 
 	// 6 pieces burst in 6 different directions
 	// 2 columns and 3 rows of 8x8 sprite animation
-	private void createDeathPop() {
+	private void doDeathBurst() {
 		agency.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, -CHUNK_OFFSET_Y),
 				new Vector2(BOT_VEL_X, BOT_VEL_Y), Direction8.DOWN_RIGHT));
 		agency.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, -CHUNK_OFFSET_Y),
@@ -616,12 +616,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			position.set(SHOT_OFFSET_RIGHT).scl(-1, 1).add(body.getPosition());
 		}
 
-		// create shot
-		ObjectProperties shotProps = SamusShot.makeAP(this, position, velocity);
-		// if the spawn point of shot is in a solid tile then the shot must immediately explode
-		if(body.getSpine().isMapPointSolid(position))
-			shotProps.put(CommonKV.Spawn.KEY_EXPIRE, true);
-		agency.createAgent(shotProps);
+		// create shot; if the spawn point of shot is in a solid tile then the shot must immediately explode
+		agency.createAgent(SamusShot.makeAP(this, position, velocity, body.getSpine().isMapPointSolid(position)));
 		agency.getEar().playSound(MetroidAudio.Sound.SHOOT);
 	}
 

@@ -138,7 +138,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 
 	private static LinkedList<ObjectProperties> makeAgentPropsFromTileLayer(TiledMapTileLayer layer) {
 		LinkedList<ObjectProperties> agentProps = new LinkedList<ObjectProperties>();
-		if(!layer.getProperties().containsKey(AgencyKV.Spawn.KEY_AGENTCLASS))
+		if(!layer.getProperties().containsKey(AgencyKV.Spawn.KEY_AGENT_CLASS))
 			return agentProps;	// if no agentclass then return empty list of agent properties
 
 		// create list of AgentProperties objects with some tile info and info from the layer's MapProperties
@@ -146,7 +146,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 			for(int x=0; x<layer.getWidth(); x++) {
 				// only spawn an agent if the cell exists and an agent class key/value is available
 				if(layer.getCell(x, y) == null || layer.getCell(x, y).getTile() == null ||
-						!layer.getProperties().containsKey(AgencyKV.Spawn.KEY_AGENTCLASS))
+						!layer.getProperties().containsKey(AgencyKV.Spawn.KEY_AGENT_CLASS))
 					continue;
 
 				agentProps.add(Agent.createTileAP(layer.getProperties(), UInfo.RectangleT2M(x, y),
@@ -164,7 +164,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 			combined.putAll(layer.getProperties());
 			combined.putAll(rect.getProperties());
 			// only spawn an agent if an agent class key/value is available
-			if(combined.containsKey(AgencyKV.Spawn.KEY_AGENTCLASS))
+			if(combined.containsKey(AgencyKV.Spawn.KEY_AGENT_CLASS))
 				agentProps.add(Agent.createRectangleAP(combined, UInfo.RectangleP2M(rect.getRectangle())));
 		}
 		return agentProps;

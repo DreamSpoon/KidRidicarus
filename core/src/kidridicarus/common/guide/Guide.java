@@ -363,15 +363,8 @@ public class Guide implements Disposable {
 
 	private PlayerAgent spawnPlayerAgentWithProperties(ObjectProperties playerAgentProperties, Agent spawner) {
 		// if no agent properties given then use spawner to determine player class and position
-		if(playerAgentProperties == null) {
-			String initPlayClass = spawner.getProperty(CommonKV.Spawn.KEY_PLAYER_AGENTCLASS, null, String.class);
-			if(initPlayClass == null)
-				return null;
-			ObjectProperties playerAP = Agent.createPointAP(initPlayClass, spawner.getPosition());
-			if(spawner.getProperty(CommonKV.KEY_DIRECTION, "", String.class).equals(CommonKV.VAL_RIGHT))
-				playerAP.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
-			return (PlayerAgent) director.getAgency().createAgent(playerAP);
-		}
+		if(playerAgentProperties == null)
+			return spawnPlayerAgentWithSpawnerProperties(spawner);
 		// otherwise use agent properties and set start point to main spawn point
 		else {
 			playerAgentProperties.put(AgencyKV.Spawn.KEY_START_POS, spawner.getPosition());
@@ -379,11 +372,21 @@ public class Guide implements Disposable {
 		}
 	}
 
+	private PlayerAgent spawnPlayerAgentWithSpawnerProperties(Agent spawner) {
+		String initPlayClass = spawner.getProperty(CommonKV.Spawn.KEY_PLAYER_AGENTCLASS, null, String.class);
+		if(initPlayClass == null)
+			return null;
+		ObjectProperties playerAP = Agent.createPointAP(initPlayClass, spawner.getPosition());
+		if(spawner.getProperty(CommonKV.KEY_DIRECTION, "", String.class).equals(CommonKV.VAL_RIGHT))
+			playerAP.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
+		return (PlayerAgent) director.getAgency().createAgent(playerAP);
+	}
+
 	private Agent getMainPlayerSpawner() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
 		Collection<Agent> spawnList = director.getAgency().getAgentsByProperties(
-				new String[] { AgencyKV.Spawn.KEY_AGENTCLASS, CommonKV.Spawn.KEY_SPAWN_MAIN },
-				new String[] { CommonKV.AgentClassAlias.VAL_PLAYERSPAWNER, CommonKV.VAL_TRUE });
+				new String[] { AgencyKV.Spawn.KEY_AGENT_CLASS, CommonKV.Spawn.KEY_SPAWN_MAIN },
+				new String[] { CommonKV.AgentClassAlias.VAL_PLAYER_SPAWNER, CommonKV.VAL_TRUE });
 		if(!spawnList.isEmpty())
 			return spawnList.iterator().next();
 		else

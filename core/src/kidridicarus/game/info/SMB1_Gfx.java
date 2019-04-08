@@ -25,8 +25,8 @@ public class SMB1_Gfx {
 
 	public class Item {
 		private static final String DIR = BASEDIR+"item/";
-		public static final String MUSH1UP =	DIR+"mush1up";
-		public static final String MUSHROOM =	DIR+"mushroom";
+		public static final String UP1_MUSHROOM =	DIR+"mush1up";
+		public static final String MAGIC_MUSHROOM =	DIR+"mushroom";
 		public static final String FIREFLOWER =	DIR+"fireflower";
 		public static final String POWERSTAR =	DIR+"powerstar";
 		public static final String COIN_STATIC =	DIR+"static_coin";

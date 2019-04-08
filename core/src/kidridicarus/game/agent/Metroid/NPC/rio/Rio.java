@@ -15,8 +15,9 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.agent.Metroid.item.energy.Energy;
+import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
-import kidridicarus.game.info.MetroidKV;
 
 /*
  * TODO Check that Rio can re-target: as in, lose a target, then wait a bit, then gain a new target successfully.
@@ -201,9 +202,10 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 
 				break;
 			case DEAD:
-				agency.getEar().playSound(MetroidAudio.Sound.NPC_BIG_HIT);
+				agency.removeAgent(this);
+				agency.createAgent(DeathPop.makeAP(body.getPosition()));
 				doPowerupDrop();
-				doDeathPop();
+				agency.getEar().playSound(MetroidAudio.Sound.NPC_BIG_HIT);
 				break;
 		}
 
@@ -233,12 +235,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 		// exit if drop not allowed
 		if(Math.random() > ITEM_DROP_RATE)
 			return;
-		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_ENERGY, body.getPosition()));
-	}
-
-	private void doDeathPop() {
-		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
-		agency.removeAgent(this);
+		agency.createAgent(Energy.makeAP(body.getPosition()));
 	}
 
 	private void processSprite(float delta) {

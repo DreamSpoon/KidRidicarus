@@ -26,6 +26,6 @@ public class MetroidAgentClassList {
 			MetroidKV.AgentClassAlias.VAL_SAMUS_SHOT, SamusShot.class,
 			MetroidKV.AgentClassAlias.VAL_RIO, Rio.class,
 			MetroidKV.AgentClassAlias.VAL_SKREE, Skree.class,
-			MetroidKV.AgentClassAlias.VAL_SKREE_EXP, SkreeShot.class,
+			MetroidKV.AgentClassAlias.VAL_SKREE_SHOT, SkreeShot.class,
 			MetroidKV.AgentClassAlias.VAL_ZOOMER, Zoomer.class);
 }

@@ -5,7 +5,7 @@ package kidridicarus.agency.info;
  */
 public class AgencyKV {
 	public class Spawn {
-		public static final String KEY_AGENTCLASS = "agent_class";
+		public static final String KEY_AGENT_CLASS = "agent_class";
 
 		public static final String KEY_START_POS = "start_position";
 		public static final String KEY_START_BOUNDS = "start_bounds";

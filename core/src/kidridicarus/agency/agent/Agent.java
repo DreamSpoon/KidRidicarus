@@ -55,14 +55,14 @@ public abstract class Agent {
 
 	public static ObjectProperties createPointAP(String agentClassAlias, Vector2 position) {
 		ObjectProperties ret = new ObjectProperties();
-		ret.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClassAlias);
+		ret.put(AgencyKV.Spawn.KEY_AGENT_CLASS, agentClassAlias);
 		ret.put(AgencyKV.Spawn.KEY_START_POS, position);
 		return ret;
 	}
 
 	public static ObjectProperties createPointAP(String agentClassAlias, Vector2 position, Vector2 velocity) {
 		ObjectProperties ret = new ObjectProperties();
-		ret.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClassAlias);
+		ret.put(AgencyKV.Spawn.KEY_AGENT_CLASS, agentClassAlias);
 		ret.put(AgencyKV.Spawn.KEY_START_POS, position);
 		ret.put(AgencyKV.Spawn.KEY_START_VEL, velocity);
 		return ret;
@@ -70,7 +70,7 @@ public abstract class Agent {
 
 	public static ObjectProperties createRectangleAP(String agentClassAlias, Rectangle bounds) {
 		ObjectProperties ret = new ObjectProperties();
-		ret.put(AgencyKV.Spawn.KEY_AGENTCLASS, agentClassAlias);
+		ret.put(AgencyKV.Spawn.KEY_AGENT_CLASS, agentClassAlias);
 		ret.put(AgencyKV.Spawn.KEY_START_BOUNDS, bounds);
 		return ret;
 	}

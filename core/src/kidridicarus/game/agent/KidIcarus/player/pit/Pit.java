@@ -495,12 +495,9 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				position.add(SHOT_OFFSET_HEAD_IN_TILE);
 		}
 
-		// create shot
-		ObjectProperties shotProps = PitArrow.makeAP(this, position, velocity, arrowDir);
-		// if the spawn point of shot is in a solid tile then the shot must show for a short time
-		if(body.getSpine().isMapPointSolid(position))
-			shotProps.put(CommonKV.Spawn.KEY_EXPIRE, true);
-		agency.createAgent(shotProps);
+		// create shot; if the spawn point of shot is in a solid tile then the shot must show for a short time
+		agency.createAgent(PitArrow.makeAP(
+				this, position, velocity, arrowDir, body.getSpine().isMapPointSolid(position)));
 		agency.getEar().playSound(KidIcarusAudio.Sound.Pit.SHOOT);
 	}
 
@@ -604,16 +601,16 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
-		if(key.equals(CommonKV.KEY_DIRECTION) && Direction4.class.equals(cls)) {
+		if(key.equals(CommonKV.Script.KEY_SPRITE_STATE) && SpriteState.class.equals(cls)) {
+			SpriteState he = SpriteState.STAND;
+			return (T) he;
+		}
+		else if(key.equals(CommonKV.KEY_DIRECTION) && Direction4.class.equals(cls)) {
 			Direction4 he;
 			if(isFacingRight)
 				he = Direction4.RIGHT;
 			else
 				he = Direction4.LEFT;
-			return (T) he;
-		}
-		else if(key.equals(CommonKV.Script.KEY_SPRITE_STATE) && SpriteState.class.equals(cls)) {
-			SpriteState he = SpriteState.STAND;
 			return (T) he;
 		}
 		else if(key.equals(CommonKV.Script.KEY_SPRITE_SIZE) && Vector2.class.equals(cls)) {

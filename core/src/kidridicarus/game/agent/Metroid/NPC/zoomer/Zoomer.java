@@ -14,8 +14,9 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.agent.Metroid.item.energy.Energy;
+import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
-import kidridicarus.game.info.MetroidKV;
 
 /*
  * The sensor code. It seems like a million cases due to the 4 possible "up" directions of the zoomer,
@@ -159,11 +160,11 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 		// exit if drop not allowed
 		if(Math.random() > ITEM_DROP_RATE)
 			return;
-		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_ENERGY, body.getPosition()));
+		agency.createAgent(Energy.makeAP(body.getPosition()));
 	}
 
 	private void doDeathPop() {
-		agency.createAgent(Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, body.getPosition()));
+		agency.createAgent(DeathPop.makeAP(body.getPosition()));
 		agency.removeAgent(this);
 	}
 

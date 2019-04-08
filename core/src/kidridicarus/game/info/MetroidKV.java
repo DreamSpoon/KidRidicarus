@@ -10,7 +10,7 @@ public class MetroidKV {
 		public static final String VAL_SAMUS_CHUNK = "samus_chunk";
 		public static final String VAL_SAMUS_SHOT = "samus_shot";
 		public static final String VAL_SKREE = "skree";
-		public static final String VAL_SKREE_EXP = "skree_exp";
+		public static final String VAL_SKREE_SHOT = "skree_shot";
 		public static final String VAL_ZOOMER = "zoomer";
 		public static final String VAL_DOOR_NEXUS = "metroid_door_nexus";
 		public static final String VAL_RIO = "rio";

@@ -15,6 +15,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.powerup.SMB1_Pow;
 
 /*
@@ -190,5 +191,9 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 	@Override
 	public void disposeAgent() {
 		body.dispose();
+	}
+
+	public static ObjectProperties makeAP(Vector2 position) {
+		return Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_POWERSTAR, position);
 	}
 }

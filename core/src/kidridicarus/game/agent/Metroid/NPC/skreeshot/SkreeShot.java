@@ -12,6 +12,7 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.game.info.MetroidKV;
 
 public class SkreeShot extends Agent implements DisposableAgent {
 	private static final float LIVE_TIME = 0.167f;
@@ -74,5 +75,9 @@ public class SkreeShot extends Agent implements DisposableAgent {
 	@Override
 	public void disposeAgent() {
 		body.dispose();
+	}
+
+	public static ObjectProperties makeAP(Vector2 add, Vector2 position) {
+		return Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SKREE_SHOT, position);
 	}
 }

@@ -12,6 +12,7 @@ import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.game.info.MetroidKV;
 import kidridicarus.game.powerup.MetroidPow;
 
 public class Energy extends Agent implements DisposableAgent {
@@ -87,5 +88,9 @@ public class Energy extends Agent implements DisposableAgent {
 	@Override
 	public void disposeAgent() {
 		body.dispose();
+	}
+
+	public static ObjectProperties makeAP(Vector2 position) {
+		return Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_ENERGY, position);
 	}
 }

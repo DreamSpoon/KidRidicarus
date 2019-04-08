@@ -23,8 +23,13 @@ import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.TileBumpTakeAgent;
+import kidridicarus.game.agent.SMB1.item.fireflower.FireFlower;
+import kidridicarus.game.agent.SMB1.item.mushroom.Up1Mushroom;
+import kidridicarus.game.agent.SMB1.item.powerstar.PowerStar;
+import kidridicarus.game.agent.SMB1.item.mushroom.MagicMushroom;
 import kidridicarus.game.agent.SMB1.other.brickpiece.BrickPiece;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.agent.SMB1.other.spincoin.SpinCoin;
 import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.powerup.SMB1_Pow;
@@ -45,7 +50,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 
 	// only blocks with items can reach the empty state
 	private enum MoveState { PRESOLID, PREBUMP, MIDBUMP, EMPTY }
-	private enum BlockItem { NONE, COIN, COIN10, MUSHROOM, STAR, MUSH1UP }
+	private enum BlockItem { NONE, COIN, COIN10, MAGIC_MUSHROOM, UP1_MUSHROOM, STAR }
 
 	private BumpTileBody body;
 	private BumpTileSprite sprite;
@@ -87,12 +92,12 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 			coin10BumpResetTimer = 0f;
 			coin10EndTimer = 0f;
 		}
-		else if(spawnItem.equals(SMB1_KV.AgentClassAlias.VAL_MUSHROOM))
-			blockItem = BlockItem.MUSHROOM;
+		else if(spawnItem.equals(SMB1_KV.AgentClassAlias.VAL_MAGIC_MUSHROOM))
+			blockItem = BlockItem.MAGIC_MUSHROOM;
 		else if(spawnItem.equals(SMB1_KV.AgentClassAlias.VAL_POWERSTAR))
 			blockItem = BlockItem.STAR;
-		else if(spawnItem.equals(SMB1_KV.AgentClassAlias.VAL_MUSH1UP))
-			blockItem = BlockItem.MUSH1UP;
+		else if(spawnItem.equals(SMB1_KV.AgentClassAlias.VAL_UP1_MUSHROOM))
+			blockItem = BlockItem.UP1_MUSHROOM;
 		isItemAvailable = blockItem != BlockItem.NONE;
 
 		solidTileMap = null;
@@ -255,21 +260,21 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 	private void onBounceEnd() {
 		Vector2 pos = body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y));
 		switch(blockItem) {
-			case MUSH1UP:
+			case UP1_MUSHROOM:
+				agency.createAgent(Up1Mushroom.makeAP(pos));
 				agency.getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
-				agency.createAgent(Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_MUSH1UP, pos));
 				break;
-			case MUSHROOM:
-				agency.getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
+			case MAGIC_MUSHROOM:
 				// hard bump gives a fireflower, soft bump gives mushroom
 				if(bumpStrength == TileBumpStrength.HARD)
-					agency.createAgent(Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_FIREFLOWER, pos));
+					agency.createAgent(FireFlower.makeAP(pos));
 				else
-					agency.createAgent(Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_MUSHROOM, pos));
+					agency.createAgent(MagicMushroom.makeAP(pos));
+				agency.getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
 				break;
 			case STAR:
+				agency.createAgent(PowerStar.makeAP(pos));
 				agency.getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
-				agency.createAgent(Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_POWERSTAR, pos));
 				break;
 			default:
 				break;
@@ -303,14 +308,11 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 	}
 
 	private void startSpinningCoin() {
-		agency.getEar().playSound(SMB1_Audio.Sound.COIN);
 		agency.createAgent(FloatingPoints.makeAP(200, false, body.getPosition(), bumpingAgent));
-
 		// spawn a coin one tile's height above the current tile position
-		agency.createAgent(Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_SPINCOIN,
-				body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y))));
-
-		// push coin powerup to powerup take agent if we have one
+		agency.createAgent(SpinCoin.makeAP(body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y))));
+		agency.getEar().playSound(SMB1_Audio.Sound.COIN);
+		// push coin powerup to powerup take Agent if Agent exists
 		Powerup.tryPushPowerup(bumpingAgent, new SMB1_Pow.CoinPow());
 	}
 

@@ -23,7 +23,7 @@ public class CommonKV {
 		public static final String VAL_LEVELEND_TRIGGER = "level_end_trigger";
 		public static final String VAL_META_TILEDMAP = "meta_tiled_map";
 		public static final String VAL_PIPEWARP = "pipe_warp";
-		public static final String VAL_PLAYERSPAWNER = "player_spawner";
+		public static final String VAL_PLAYER_SPAWNER = "player_spawner";
 		public static final String VAL_ROOM = "room";
 		public static final String VAL_SCROLL_PUSHBOX = "scroll_push_box";
 		public static final String VAL_SCROLL_KILLBOX = "scroll_kill_box";

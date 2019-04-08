@@ -105,11 +105,13 @@ public class PitArrow extends Agent implements DisposableAgent {
 
 	// make the AgentProperties (AP) for this class of Agent
 	public static ObjectProperties makeAP(Pit parentAgent, Vector2 position, Vector2 velocity,
-			Direction4 arrowDir) {
+			Direction4 arrowDir, boolean isExpireImmediately) {
 		ObjectProperties props = Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_PIT_ARROW,
 				position, velocity);
 		props.put(AgencyKV.Spawn.KEY_START_PARENT_AGENT, parentAgent);
 		props.put(CommonKV.KEY_DIRECTION, arrowDir);
+		if(isExpireImmediately)
+			props.put(CommonKV.Spawn.KEY_EXPIRE, true);
 		return props;
 	}
 }

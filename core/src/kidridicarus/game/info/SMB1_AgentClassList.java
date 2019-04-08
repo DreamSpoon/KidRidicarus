@@ -4,8 +4,8 @@ import kidridicarus.agency.AgentClassList;
 import kidridicarus.game.agent.SMB1.NPC.goomba.Goomba;
 import kidridicarus.game.agent.SMB1.NPC.turtle.Turtle;
 import kidridicarus.game.agent.SMB1.item.fireflower.FireFlower;
-import kidridicarus.game.agent.SMB1.item.mushroom.Mush1UP;
-import kidridicarus.game.agent.SMB1.item.mushroom.PowerMushroom;
+import kidridicarus.game.agent.SMB1.item.mushroom.Up1Mushroom;
+import kidridicarus.game.agent.SMB1.item.mushroom.MagicMushroom;
 import kidridicarus.game.agent.SMB1.item.powerstar.PowerStar;
 import kidridicarus.game.agent.SMB1.item.staticcoin.StaticCoin;
 import kidridicarus.game.agent.SMB1.other.brickpiece.BrickPiece;
@@ -33,8 +33,8 @@ public class SMB1_AgentClassList {
 			SMB1_KV.AgentClassAlias.VAL_GOOMBA, Goomba.class,
 			SMB1_KV.AgentClassAlias.VAL_MARIO, Mario.class,
 			SMB1_KV.AgentClassAlias.VAL_MARIOFIREBALL, MarioFireball.class,
-			SMB1_KV.AgentClassAlias.VAL_MUSHROOM, PowerMushroom.class,
-			SMB1_KV.AgentClassAlias.VAL_MUSH1UP, Mush1UP.class,
+			SMB1_KV.AgentClassAlias.VAL_MAGIC_MUSHROOM, MagicMushroom.class,
+			SMB1_KV.AgentClassAlias.VAL_UP1_MUSHROOM, Up1Mushroom.class,
 			SMB1_KV.AgentClassAlias.VAL_POWERSTAR, PowerStar.class,
 			SMB1_KV.AgentClassAlias.VAL_SPINCOIN, SpinCoin.class,
 			SMB1_KV.AgentClassAlias.VAL_TURTLE, Turtle.class);

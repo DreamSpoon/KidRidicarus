@@ -58,7 +58,7 @@
   <properties>
    <property name="agent_class" value="bumptile"/>
    <property name="qblock" value=""/>
-   <property name="spawnitem" value="mushroom"/>
+   <property name="spawnitem" value="magic_mushroom"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt1zEBAAAIwzDs4N8gKoBjiYLuXBUAAAAAAAAAAAAAAAAAAAAAAAD9HQAAAHAk4f8kbAQAAAAAAAAAAAAAAAAAAAAAAADYNGx4AHw=

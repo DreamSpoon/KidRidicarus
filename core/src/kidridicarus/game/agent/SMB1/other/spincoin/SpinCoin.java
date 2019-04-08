@@ -15,6 +15,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
+import kidridicarus.game.info.SMB1_KV;
 
 public class SpinCoin extends Agent implements DisposableAgent {
 	private static final float BODY_WIDTH = UInfo.P2M(7f);
@@ -74,5 +75,9 @@ public class SpinCoin extends Agent implements DisposableAgent {
 	@Override
 	public void disposeAgent() {
 		b2body.getWorld().destroyBody(b2body);
+	}
+
+	public static ObjectProperties makeAP(Vector2 position) {
+		return Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_SPINCOIN, position);
 	}
 }

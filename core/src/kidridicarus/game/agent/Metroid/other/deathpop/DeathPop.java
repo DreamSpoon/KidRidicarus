@@ -10,6 +10,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.game.info.MetroidKV;
 
 public class DeathPop extends Agent {
 	private static final float POP_TIME = 3f/60f;
@@ -52,5 +53,9 @@ public class DeathPop extends Agent {
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(position.x, position.y, 0f, 0f);
+	}
+
+	public static ObjectProperties makeAP(Vector2 position) {
+		return Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, position);
 	}
 }
