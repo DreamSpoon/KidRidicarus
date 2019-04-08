@@ -4,12 +4,12 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.SolidContactSensor;
-import kidridicarus.common.agentspine.SMB_NPC_Spine;
+import kidridicarus.common.agentspine.CeilingWallContactSpine;
+import kidridicarus.common.agentspine.PlayerContactNerve;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 
-public class RioSpine extends SMB_NPC_Spine {
+public class RioSpine extends CeilingWallContactSpine {
 	private static final float SIDE_SPEED_MAX = 0.5f;
 	private static final float SWOOP_UP_MIN_VEL = 0.6f;
 	private static final float SWOOP_DOWN_MIN_VEL = 0.1f;
@@ -18,22 +18,19 @@ public class RioSpine extends SMB_NPC_Spine {
 	private static final float SWOOP_EPS_DIST = UInfo.P2M(8);
 	private static final float SWOOP_VEL_FACTOR = 3f;
 
-	private AgentContactHoldSensor playerSensor;
-	private SolidContactSensor ocSensor;
+	private PlayerContactNerve pcNerve;
 
 	public RioSpine(RioBody body) {
 		super(body);
-		playerSensor = null;
-		ocSensor = null;
+		pcNerve = new PlayerContactNerve();
 	}
 
 	public AgentContactHoldSensor createPlayerSensor() {
-		playerSensor = new AgentContactHoldSensor(null);
-		return playerSensor;
+		return pcNerve.createPlayerSensor();
 	}
 
 	public PlayerAgent getPlayerContact() {
-		return playerSensor.getFirstContactByClass(PlayerAgent.class);
+		return pcNerve.getFirstPlayerContact();
 	}
 
 	public void setSwoopVelocity(Vector2 targetPos, Direction4 swoopDir, boolean swoopUp) {
@@ -59,14 +56,5 @@ public class RioSpine extends SMB_NPC_Spine {
 
 	public boolean isTargetAboveMe(Vector2 targetPosition) {
 		return targetPosition.y > body.getPosition().y + SWOOP_EPS_DIST;
-	}
-
-	public SolidContactSensor createOnCeilingSensor() {
-		ocSensor = new SolidContactSensor(null);
-		return ocSensor;
-	}
-
-	public boolean isOnCeiling() {
-		return ocSensor.isContactCeiling();
 	}
 }

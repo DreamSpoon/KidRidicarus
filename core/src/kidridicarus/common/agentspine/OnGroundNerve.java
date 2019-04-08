@@ -11,6 +11,8 @@ public class OnGroundNerve {
 	}
 
 	public boolean isOnGround() {
+		if(ogSensor == null)
+			return false;
 		return ogSensor.isContactFloor() || ogSensor.isContactAgent();
 	}
 }

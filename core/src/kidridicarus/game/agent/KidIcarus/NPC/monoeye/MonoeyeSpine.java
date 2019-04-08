@@ -5,13 +5,14 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.SMB_NPC_Spine;
+import kidridicarus.common.agentspine.BasicAgentSpine;
+import kidridicarus.common.agentspine.PlayerContactNerve;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.KidIcarus.NPC.monoeye.Monoeye.AxisGoState;
 
-public class MonoeyeSpine extends SMB_NPC_Spine {
+public class MonoeyeSpine extends BasicAgentSpine {
 	private static final float ACCEL_X = UInfo.P2M(180);
 	private static final float VEL_X = UInfo.P2M(120);
 	private static final float ACCEL_Y = UInfo.P2M(450);
@@ -24,7 +25,7 @@ public class MonoeyeSpine extends SMB_NPC_Spine {
 	private static final int ACCEL_OFFSET_TOP = -1;
 	private static final int ACCEL_OFFSET_BOTTOM = -6;
 
-	private AgentContactHoldSensor playerSensor;
+	private PlayerContactNerve pcNerve;
 	private float initRightAccelZoneTile;
 	private float rightAccelZoneTile;
 	private float initLeftAccelZoneTile;
@@ -32,7 +33,7 @@ public class MonoeyeSpine extends SMB_NPC_Spine {
 
 	public MonoeyeSpine(MonoeyeBody body, int spawnTileX) {
 		super(body);
-
+		pcNerve = new PlayerContactNerve();
 		// initialize far right and left of normal velocity "window"
 		initRightAccelZoneTile = spawnTileX + CENTER_OFFSET_X + ACCEL_OFFSET_RIGHT;
 		rightAccelZoneTile = initRightAccelZoneTile;
@@ -42,22 +43,21 @@ public class MonoeyeSpine extends SMB_NPC_Spine {
 	}
 
 	public AgentContactHoldSensor createPlayerSensor() {
-		playerSensor = new AgentContactHoldSensor(null);
-		return playerSensor;
+		return pcNerve.createPlayerSensor(); 
 	}
 
 	public void applyAxisMoves(AxisGoState horizGoState, AxisGoState vertGoState) {
-		Vector2 force = new Vector2(0f, 0f);
-		Vector2 velocity = body.getVelocity().cpy();
-
+		// get x velocity and force
 		int dirMult = 1;
 		if(!horizGoState.isPlus())
 			dirMult = -1;
+		Vector2 force = new Vector2(0f, 0f);
+		Vector2 velocity = body.getVelocity().cpy();
 		if(horizGoState.isAccel())
 			force.x = ACCEL_X * dirMult;
 		else
 			velocity.x = VEL_X * dirMult;
-
+		// get y velocity and force
 		dirMult = 1;
 		if(!vertGoState.isPlus())
 			dirMult = -1;
@@ -65,7 +65,7 @@ public class MonoeyeSpine extends SMB_NPC_Spine {
 			force.y = ACCEL_Y * dirMult;
 		else
 			velocity.y = VEL_Y * dirMult;
-
+		// apply velocity and force to x and y concurrently
 		body.setVelocity(velocity);
 		body.applyForce(force);
 	}
@@ -83,7 +83,7 @@ public class MonoeyeSpine extends SMB_NPC_Spine {
 	 * Otherwise return null.
 	 */
 	public PlayerAgent getGawker(boolean isFacingRight) {
-		PlayerAgent playerAgent = playerSensor.getFirstContactByClass(PlayerAgent.class);
+		PlayerAgent playerAgent = pcNerve.getFirstPlayerContact();
 		if(isOtherGawking(isFacingRight, playerAgent) &&
 				UInfo.M2Tx(playerAgent.getPosition().x) >= initLeftAccelZoneTile &&
 				UInfo.M2Tx(playerAgent.getPosition().x) <= initRightAccelZoneTile)
@@ -180,12 +180,12 @@ public class MonoeyeSpine extends SMB_NPC_Spine {
 		return false;
 	}
 
-	public boolean isTargetOnLeft(float posX) {
-		return UInfo.M2Tx(posX) < UInfo.M2Tx(body.getPosition().x);
-	}
-
 	public boolean isTargetOnRight(float posX) {
 		return UInfo.M2Tx(posX) > UInfo.M2Tx(body.getPosition().x);
+	}
+
+	public boolean isTargetOnLeft(float posX) {
+		return UInfo.M2Tx(posX) < UInfo.M2Tx(body.getPosition().x);
 	}
 
 	public void setRightAccelZoneToCurrentPos() {

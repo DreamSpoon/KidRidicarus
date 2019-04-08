@@ -16,7 +16,6 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.QQ;
 import kidridicarus.game.agent.KidIcarus.player.pit.Pit;
 import kidridicarus.game.info.KidIcarusKV;
 
@@ -75,7 +74,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 			return;
 		}
 		// if hit a wall then die
-		if(body.getSpine().isHitBound(arrowDir.isRight()))
+		if(body.getSpine().isSolidOnThisSide(arrowDir.isRight()))
 			isDead = true;
 	}
 
@@ -85,9 +84,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 		if(isDead)
 			agency.removeAgent(this);
 		// do space wrap last so that contacts are maintained
-QQ.pr("before space wrap pos="+body.getPosition() + "room="+lastKnownRoom);
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-QQ.pr("after space wrap pos="+body.getPosition());
 		moveStateTimer += delta;
 	}
 

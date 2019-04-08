@@ -6,11 +6,7 @@ import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 
 public class HorizontalMoveNerve {
-	private SolidContactSensor horizontalMoveSensor;
-
-	public HorizontalMoveNerve() {
-		horizontalMoveSensor = null;
-	}
+	private SolidContactSensor horizontalMoveSensor = null;
 
 	public SolidContactSensor createHorizontalMoveSensor(AgentBody body) {
 		horizontalMoveSensor = new SolidContactSensor(body);
@@ -18,6 +14,8 @@ public class HorizontalMoveNerve {
 	}
 
 	public boolean isSolidOnThisSide(Rectangle bounds, boolean moveRight) {
+		if(horizontalMoveSensor == null)
+			return false;
 		return horizontalMoveSensor.isSolidOnThisSide(bounds, moveRight);
 	}
 }

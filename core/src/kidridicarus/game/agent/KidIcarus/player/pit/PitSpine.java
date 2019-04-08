@@ -3,7 +3,6 @@ package kidridicarus.game.agent.KidIcarus.player.pit;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.agent.playeragent.PlayerSpine;
-import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.UInfo;
 
 public class PitSpine extends PlayerSpine {
@@ -18,16 +17,8 @@ public class PitSpine extends PlayerSpine {
 	private static final float JUMPUP_CONSTVEL = 1.6f;
 	private static final float HEADBOUNCE_VEL = 1.4f;	// up velocity
 
-	private SolidContactSensor sbSensor;
-
 	public PitSpine(PitBody body) {
 		super(body);
-		sbSensor = null;
-	}
-
-	public SolidContactSensor createSolidBodySensor() {
-		sbSensor = new SolidContactSensor(body);
-		return sbSensor;
 	}
 
 	// apply walk impulse and cap horizontal velocity.

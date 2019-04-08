@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentbody.MobileAgentBody;
+import kidridicarus.common.agentspine.WallContactSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -24,7 +25,7 @@ public class PitArrowBody extends MobileAgentBody {
 			CommonCF.Alias.ROOM_BIT);
 
 	private Direction4 arrowDir;
-	private PitArrowSpine spine;
+	private WallContactSpine spine;
 
 	public PitArrowBody(PitArrow parent, World world, Vector2 position, Vector2 velocity, Direction4 arrowDir) {
 		super(parent, world);
@@ -48,7 +49,7 @@ public class PitArrowBody extends MobileAgentBody {
 		b2body.setGravityScale(GRAVITY_SCALE);
 		b2body.setBullet(true);
 
-		spine = new PitArrowSpine(this);
+		spine = new WallContactSpine(this);
 
 		// create main fixture
 		B2DFactory.makeBoxFixture(b2body, spine.createHorizontalMoveSensor(), MAIN_CFCAT, MAIN_CFMASK,
@@ -57,7 +58,7 @@ public class PitArrowBody extends MobileAgentBody {
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK, getBodySize().x, getBodySize().y);
 	}
 
-	public PitArrowSpine getSpine() {
+	public WallContactSpine getSpine() {
 		return spine;
 	}
 }

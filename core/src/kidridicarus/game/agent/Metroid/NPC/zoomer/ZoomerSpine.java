@@ -3,12 +3,12 @@ package kidridicarus.game.agent.Metroid.NPC.zoomer;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.agentsensor.SolidContactSensor;
-import kidridicarus.common.agentspine.SMB_NPC_Spine;
+import kidridicarus.common.agentspine.BasicAgentSpine;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.DiagonalDir4;
 import kidridicarus.common.tool.Direction4;
 
-public class ZoomerSpine extends SMB_NPC_Spine {
+public class ZoomerSpine extends BasicAgentSpine {
 	/*
 	 * MOVEVEL.x is the horizontal velocity when moving right, and
 	 * MOVEVEL.y is the vertical velocity when moving right,

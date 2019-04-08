@@ -6,10 +6,10 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.SMB_NPC_Spine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
+import kidridicarus.game.agentspine.SMB1.SMB_NPC_Spine;
 
 public class PowerStarBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);

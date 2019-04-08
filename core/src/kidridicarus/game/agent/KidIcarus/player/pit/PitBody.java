@@ -91,7 +91,7 @@ public class PitBody extends PlayerAgentBody {
 		// create main fixture
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = FRICTION;
-		B2DFactory.makeBoxFixture(b2body, fdef, spine.createSolidBodySensor(), MAINBODY_CFCAT, MAINBODY_CFMASK,
+		B2DFactory.makeBoxFixture(b2body, fdef, this, MAINBODY_CFCAT, MAINBODY_CFMASK,
 				getBodySize().x, getBodySize().y);
 
 		// create agent sensor fixture

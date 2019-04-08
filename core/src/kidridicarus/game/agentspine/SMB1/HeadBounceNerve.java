@@ -15,6 +15,8 @@ public class HeadBounceNerve {
 	}
 
 	public List<Agent> getHeadBounceBeginContacts() {
+		if(headBounceSensor == null)
+			return null;
 		return headBounceSensor.getAndResetContacts();
 	}
 }
