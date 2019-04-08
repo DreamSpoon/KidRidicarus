@@ -120,11 +120,6 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 			case FLY:
 				break;
 			case OGLE:
-				// if the target has been removed then de-target
-				if(isTargetRemoved) {
-					isTargetRemoved = false;
-					ogleTarget = null;
-				}
 				// ogle the target if it exists
 				if(ogleTarget != null) {
 					nextVertGoState = AxisGoState.VEL_MINUS;
@@ -217,6 +212,11 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 	}
 
 	private void processGawkers() {
+		// if the target has been removed then de-target
+		if(isTargetRemoved) {
+			isTargetRemoved = false;
+			ogleTarget = null;
+		}
 		// lose target if moving up
 		if(vertGoState.isPlus()) {
 			ogleTarget = null;
@@ -228,6 +228,7 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 
 		ogleTarget = body.getSpine().getGawker(isFacingRight);
 		if(ogleTarget != null) {
+			isTargetRemoved = false;
 			// add an AgentRemoveListener to allow de-targeting on death of target
 			agency.addAgentRemoveListener(new AgentRemoveListener(this, ogleTarget) {
 					@Override

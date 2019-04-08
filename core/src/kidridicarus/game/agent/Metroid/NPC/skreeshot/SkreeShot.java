@@ -77,7 +77,7 @@ public class SkreeShot extends Agent implements DisposableAgent {
 		body.dispose();
 	}
 
-	public static ObjectProperties makeAP(Vector2 add, Vector2 position) {
-		return Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SKREE_SHOT, position);
+	public static ObjectProperties makeAP(Vector2 position, Vector2 velocity) {
+		return Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SKREE_SHOT, position, velocity);
 	}
 }

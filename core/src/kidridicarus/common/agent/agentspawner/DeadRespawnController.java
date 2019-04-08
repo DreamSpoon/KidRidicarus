@@ -18,8 +18,11 @@ public class DeadRespawnController extends SpawnController {
 
 	@Override
 	public void update(float delta, boolean isEnabled) {
-		if(!isEnabled)
-			isSpawnReset = true;
+		if(!isEnabled) {
+			// if all spawns have died, and the spawner is not enabled, then reset so another spawn can occur 
+			if(numSpawns == numSpawnsDisposed)
+				isSpawnReset = true;
+		}
 		else if(isSpawnAllowed())
 			doSpawn();
 	}

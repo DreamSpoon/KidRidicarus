@@ -3,7 +3,7 @@
  <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
   <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
  </tileset>
- <layer id="18" name="background" width="18" height="180" visible="0">
+ <layer id="18" name="background" width="18" height="180">
   <properties>
    <property name="layer_draworder" value="map_background"/>
   </properties>

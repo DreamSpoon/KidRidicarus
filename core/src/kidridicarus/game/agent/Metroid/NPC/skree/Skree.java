@@ -19,7 +19,6 @@ import kidridicarus.game.agent.Metroid.NPC.skreeshot.SkreeShot;
 import kidridicarus.game.agent.Metroid.item.energy.Energy;
 import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
-import kidridicarus.game.info.MetroidKV;
 
 public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float MAX_HEALTH = 2f;
