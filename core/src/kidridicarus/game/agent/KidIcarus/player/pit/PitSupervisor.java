@@ -1,8 +1,5 @@
 package kidridicarus.game.agent.KidIcarus.player.pit;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
@@ -11,18 +8,14 @@ import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
-import kidridicarus.game.agent.KidIcarus.player.pit.HUD.PitHUD;
 
 public class PitSupervisor extends PlayerAgentSupervisor {
 	private MoveAdvice moveAdvice;
-	private TextureAtlas atlas;
-	private PitHUD playerHUD;
 	private String nextLevelName;
 	private boolean isGameOver;
 
-	public PitSupervisor(Agency agency, Pit pit, TextureAtlas atlas) {
+	public PitSupervisor(Agency agency, Pit pit) {
 		super(agency, pit);
-		this.atlas = atlas;
 
 		moveAdvice = new MoveAdvice();
 		nextLevelName = null;
@@ -84,15 +77,5 @@ public class PitSupervisor extends PlayerAgentSupervisor {
 	@Override
 	public boolean isGameOver() {
 		return isGameOver;
-	}
-
-	@Override
-	public void setStageHUD(Stage stageHUD) {
-		playerHUD = new PitHUD((Pit) playerAgent, atlas, stageHUD);
-	}
-
-	@Override
-	public void drawHUD() {
-		playerHUD.draw();
 	}
 }

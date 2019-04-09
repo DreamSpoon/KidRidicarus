@@ -1,8 +1,5 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
@@ -11,18 +8,14 @@ import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
-import kidridicarus.game.agent.Metroid.player.samus.HUD.SamusHUD;
 
 public class SamusSupervisor extends PlayerAgentSupervisor {
 	private MoveAdvice moveAdvice;
-	private TextureAtlas atlas;
-	private SamusHUD playerHUD;
 	private String nextLevelName;
 	private boolean isGameOver;
 
-	public SamusSupervisor(Agency agency, Samus playerAgent, TextureAtlas atlas) {
+	public SamusSupervisor(Agency agency, Samus playerAgent) {
 		super(agency, playerAgent);
-		this.atlas = atlas;
 
 		moveAdvice = new MoveAdvice();
 		nextLevelName = null;
@@ -84,15 +77,5 @@ public class SamusSupervisor extends PlayerAgentSupervisor {
 	@Override
 	public boolean isGameOver() {
 		return isGameOver;
-	}
-
-	@Override
-	public void setStageHUD(Stage stageHUD) {
-		playerHUD = new SamusHUD((Samus) playerAgent, atlas, stageHUD);
-	}
-
-	@Override
-	public void drawHUD() {
-		playerHUD.draw();
 	}
 }

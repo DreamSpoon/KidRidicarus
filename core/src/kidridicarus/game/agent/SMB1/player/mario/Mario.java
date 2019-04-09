@@ -29,6 +29,7 @@ import kidridicarus.common.tool.MoveAdvice;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
+import kidridicarus.game.agent.SMB1.player.mario.HUD.MarioHUD;
 import kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireball;
 import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_KV;
@@ -64,6 +65,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private MarioSupervisor supervisor;
 	private MarioBody body;
 	private MarioSprite sprite;
+	private MarioHUD playerHUD;
 
 	private MoveState moveState;
 	private float moveStateTimer;
@@ -112,10 +114,15 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		sprite = new MarioSprite(agency.getAtlas(), body.getPosition(), powerState, isFacingRight);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+		});
+		playerHUD = new MarioHUD(this, agency.getAtlas());
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.PLAYER_HUD, new AgentDrawListener() {
+			@Override
+			public void draw(AgencyDrawBatch adBatch) { doDrawHUD(adBatch); }
 		});
 
-		supervisor = new MarioSupervisor(agency, this, agency.getAtlas());
+		supervisor = new MarioSupervisor(agency, this);
 	}
 
 	private void setStateFromProperties(ObjectProperties properties) {
@@ -671,6 +678,11 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
 			return;
 		batch.draw(sprite);
+	}
+
+	private void doDrawHUD(AgencyDrawBatch adBatch) {
+		playerHUD.update(agency.getGlobalTimer());
+		playerHUD.draw(adBatch);
 	}
 
 	@Override

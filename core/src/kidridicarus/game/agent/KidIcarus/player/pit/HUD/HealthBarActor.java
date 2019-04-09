@@ -2,7 +2,7 @@ package kidridicarus.game.agent.KidIcarus.player.pit.HUD;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
-import kidridicarus.common.playerHUD.TexRegionActor;
+import kidridicarus.common.agent.playeragent.playerHUD.TexRegionActor;
 import kidridicarus.game.info.KidIcarusGfx;
 
 public class HealthBarActor extends TexRegionActor {

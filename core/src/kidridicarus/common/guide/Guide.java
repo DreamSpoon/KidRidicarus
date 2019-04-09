@@ -9,7 +9,6 @@ import com.badlogic.gdx.audio.Music.OnCompletionListener;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.agent.Agent;
@@ -57,7 +56,6 @@ public class Guide implements Disposable {
 	private static final Vector2 SAFETY_RESPAWN_OFFSET = UInfo.VectorP2M(0f, 8f);
 
 	private AssetManager manager;
-	private Stage stageHUD;
 	private MoveAdvice inputMoveAdvice;
 	private PlayerAgent playerAgent;
 	private AgentSpawnTrigger spawnTrigger;
@@ -72,10 +70,9 @@ public class Guide implements Disposable {
 
 	private AgencyDirector director;
 
-	public Guide(AgencyDirector director, AssetManager manager, Stage stageHUD) {
+	public Guide(AgencyDirector director, AssetManager manager) {
 		this.director = director;
 		this.manager = manager;
-		this.stageHUD = stageHUD;
 
 		inputMoveAdvice = new MoveAdvice();
 		playerAgent = null;
@@ -87,11 +84,6 @@ public class Guide implements Disposable {
 		isMainMusicPlaying = false;
 		currentSinglePlayMusic = null;
 		lastViewCenter = new Vector2(0f, 0f);
-	}
-
-	private void switchHUDtoNewPlayerAgent() {
-		stageHUD.clear();
-		playerAgent.getSupervisor().setStageHUD(stageHUD);
 	}
 
 	private void handleInput() {
@@ -212,7 +204,6 @@ public class Guide implements Disposable {
 		if(facingRight)
 			props.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
 		playerAgent = (PlayerAgent) director.getAgency().createAgent(props);
-		switchHUDtoNewPlayerAgent();
 	}
 
 	public void updateCamera(OrthographicCamera gamecam) {
@@ -221,11 +212,6 @@ public class Guide implements Disposable {
 			gamecam.position.set(getViewCenter(), 0f);
 			gamecam.update();
 		}
-	}
-
-	// draw the player HUD after the game world has been rendered
-	public void postRenderFrame() {
-		playerAgent.getSupervisor().drawHUD();
 	}
 
 	public boolean isGameWon() {
@@ -356,8 +342,6 @@ public class Guide implements Disposable {
 		keepAliveBox = (KeepAliveBox) director.getAgency().createAgent(
 				KeepAliveBox.makeAP(getViewCenter(), KEEP_ALIVE_WIDTH, KEEP_ALIVE_HEIGHT));
 
-		switchHUDtoNewPlayerAgent();
-
 		return true;
 	}
 
@@ -416,6 +400,5 @@ public class Guide implements Disposable {
 		if(playerAgent != null)
 			playerAgent.dispose();
 		doStopMainMusic();
-		stageHUD.clear();
 	}
 }

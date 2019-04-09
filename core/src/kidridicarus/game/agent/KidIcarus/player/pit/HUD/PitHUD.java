@@ -9,25 +9,28 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.playerHUD.TexRegionActor;
+import kidridicarus.common.agent.playeragent.playerHUD.PlayerHUD;
+import kidridicarus.common.agent.playeragent.playerHUD.TexRegionActor;
 import kidridicarus.game.info.KidIcarusGfx;
 import kidridicarus.game.info.KidIcarusKV;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class PitHUD implements Disposable {
+public class PitHUD extends PlayerHUD {
 	private PlayerAgent playerAgent;
-	private Stage stage;
+	private TextureAtlas atlas;
 
 	private Label heartCountLabel;
 	private HealthBarActor healthBar;
 
-	public PitHUD(PlayerAgent playerAgent, TextureAtlas atlas, Stage stage) {
+	public PitHUD(PlayerAgent playerAgent, TextureAtlas atlas) {
 		this.playerAgent = playerAgent;
-		this.stage = stage;
+		this.atlas = atlas;
+	}
 
+	@Override
+	public void setupStage(Stage stage) {
 		Table table = new Table();
 		table.top();
 		table.setFillParent(true);
@@ -46,21 +49,10 @@ public class PitHUD implements Disposable {
 		stage.addActor(table);
 	}
 
-	private void update() {
+	@Override
+	protected void preDrawStage() {
 		heartCountLabel.setText(String.format("%03d",
 				playerAgent.getProperty(KidIcarusKV.KEY_HEART_COUNT, 0, Integer.class)));
 		healthBar.setHealth(playerAgent.getProperty(KidIcarusKV.KEY_HEALTH, 0, Integer.class));
-		stage.act();
-	}
-
-	public void draw() {
-		update();
-		stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
-		stage.draw();
-	}
-
-	@Override
-	public void dispose() {
-		stage.dispose();
 	}
 }

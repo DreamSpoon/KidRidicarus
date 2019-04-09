@@ -12,31 +12,35 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.Agency;
-import kidridicarus.common.playerHUD.AnimationActor;
-import kidridicarus.game.agent.SMB1.player.mario.Mario;
+import kidridicarus.agency.agent.Agent;
+import kidridicarus.common.agent.playeragent.playerHUD.AnimationActor;
+import kidridicarus.common.agent.playeragent.playerHUD.PlayerHUD;
 import kidridicarus.game.info.SMB1_Gfx;
 import kidridicarus.game.info.SMB1_KV;
 
-public class MarioHUD implements Disposable {
+public class MarioHUD extends PlayerHUD {
 	private static final float COIN_ANIM_SPEED = 0.133f;
-	private Mario mario;
-	private Stage stage;
+
+	private Agent playerAgent;
+	private TextureAtlas atlas;
 
 	private Label scoreVarLabel;
 	private Label coinVarLabel;
 	private Label worldVarLabel;
 	private Label timeVarLabel;
 	private AnimationActor animatingCoin;
-	private Agency agency;
 
-	public MarioHUD(Agency agency, Mario agent, TextureAtlas atlas, Stage stage) {
-		this.agency = agency;
-		this.mario = agent;
-		this.stage = stage;
+	private float globalTimer;
 
+	public MarioHUD(Agent playerAgent, TextureAtlas atlas) {
+		this.playerAgent = playerAgent;
+		this.atlas = atlas;
+		globalTimer = 0f;
+	}
+
+	@Override
+	protected void setupStage(Stage stage) {
 		Table table = new Table();
 		table.top();
 		table.setFillParent(true);
@@ -56,10 +60,9 @@ public class MarioHUD implements Disposable {
 		table.add(timeLabel).align(Align.left).expandX().padTop(16);
 		table.row();
 		table.add(scoreVarLabel).align(Align.left).expandX().padLeft(24);
-//		table.add(new HudCoin(atlas)).align(Align.right);
 
-		animatingCoin = new AnimationActor(new Animation<TextureRegion>(COIN_ANIM_SPEED, atlas.findRegions(SMB1_Gfx.General.HUD_COIN),
-				PlayMode.LOOP));
+		animatingCoin = new AnimationActor(new Animation<TextureRegion>(COIN_ANIM_SPEED,
+				atlas.findRegions(SMB1_Gfx.General.HUD_COIN), PlayMode.LOOP));
 		table.add(animatingCoin).align(Align.right);
 
 		table.add(coinVarLabel).align(Align.left).expandX();
@@ -69,27 +72,16 @@ public class MarioHUD implements Disposable {
 		stage.addActor(table);
 	}
 
-	public void draw() {
-		update();
-		stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
-		stage.draw();
+	public void update(float globalTimer) {
+		this.globalTimer = globalTimer;
 	}
-
-	private void update() {
-		scoreVarLabel.setText(String.format("%06d",
-				mario.getProperty(SMB1_KV.KEY_POINTAMOUNT, 0, Integer.class)));
-//		timeVarLabel.setText(String.format("%03d", (int) mario.getLevelTimeRemaining()));
-		coinVarLabel.setText(String.format("×%02d",
-				mario.getProperty(SMB1_KV.KEY_COINAMOUNT, 0, Integer.class)));
-
-		animatingCoin.setStateTimer(agency.getGlobalTimer());
-
-		stage.act();
-	}
-
 
 	@Override
-	public void dispose() {
-		stage.dispose();
+	protected void preDrawStage() {
+		scoreVarLabel.setText(String.format("%06d",
+				playerAgent.getProperty(SMB1_KV.KEY_POINTAMOUNT, 0, Integer.class)));
+		coinVarLabel.setText(String.format("×%02d",
+				playerAgent.getProperty(SMB1_KV.KEY_COINAMOUNT, 0, Integer.class)));
+		animatingCoin.setStateTimer(globalTimer);
 	}
 }

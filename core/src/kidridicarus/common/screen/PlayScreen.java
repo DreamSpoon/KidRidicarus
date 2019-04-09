@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -43,7 +42,6 @@ public class PlayScreen implements Screen {
 	private MyKidRidicarus game;
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
-	private Stage stageHUD;
 	private Guide guide;
 
 	private boolean useForcedUpdateFramerate;
@@ -65,13 +63,10 @@ public class PlayScreen implements Screen {
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
 		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
 
-		stageHUD = new Stage(new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera()),
-				game.batch);
-
 		b2dr = new Box2DDebugRenderer();
 
 		// create guide and set event listener for Agency
-		guide = new Guide(game.director, game.manager, stageHUD);
+		guide = new Guide(game.director, game.manager);
 		game.director.getAgency().setEar(guide.createEar());
 
 		// load the game map
@@ -178,9 +173,6 @@ public class PlayScreen implements Screen {
 		if(QQ.isOn())
 			b2dr.render(game.director.getAgency().getWorld(), gamecam.combined);
 
-		// draw HUD last
-		guide.postRenderFrame();
-
 		// change to next level?
 		if(guide.isGameWon()) {
 			dispose();
@@ -218,7 +210,6 @@ public class PlayScreen implements Screen {
 	@Override
 	public void dispose() {
 		guide.dispose();
-		stageHUD.dispose();
 		b2dr.dispose();
 		game.director.disposeAndRemoveAllAgents();
 	}

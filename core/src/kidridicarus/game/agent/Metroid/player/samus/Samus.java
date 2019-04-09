@@ -26,6 +26,7 @@ import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.Direction8;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.game.agent.Metroid.player.samus.HUD.SamusHUD;
 import kidridicarus.game.agent.Metroid.player.samuschunk.SamusChunk;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
@@ -78,6 +79,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private SamusSupervisor supervisor;
 	private SamusBody body;
 	private SamusSprite sprite;
+	private SamusHUD playerHUD;
 	private MoveState moveState;
 	private float moveStateTimer;
 	private boolean isFacingRight;
@@ -121,8 +123,13 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
+		playerHUD = new SamusHUD(this, agency.getAtlas());
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.PLAYER_HUD, new AgentDrawListener() {
+			@Override
+			public void draw(AgencyDrawBatch adBatch) { playerHUD.draw(adBatch); }
+		});
 
-		supervisor = new SamusSupervisor(agency, this, agency.getAtlas());
+		supervisor = new SamusSupervisor(agency, this);
 	}
 
 	private void setStateFromProperties(ObjectProperties properties) {

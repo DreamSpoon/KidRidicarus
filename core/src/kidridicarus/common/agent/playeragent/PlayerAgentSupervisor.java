@@ -1,7 +1,6 @@
 package kidridicarus.common.agent.playeragent;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
@@ -14,9 +13,6 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 	private RoomBox currentRoom;
 	private PowerupList nonCharPowerups;
 	private Vector2 lastKnownViewCenter;
-
-	public abstract void setStageHUD(Stage stageHUD);
-	public abstract void drawHUD();
 
 	public PlayerAgentSupervisor(Agency agency, Agent agent) {
 		super(agency, agent);

@@ -28,6 +28,8 @@ public class CommonInfo {
 		public static final AllowOrder SPRITE_MIDDLE = new AllowOrder(true, 3f);
 		public static final AllowOrder SPRITE_TOP = new AllowOrder(true, 5f);
 		public static final AllowOrder SPRITE_TOPFRONT = new AllowOrder(true, 7f);
+		// it's not over 9000
+		public static final AllowOrder PLAYER_HUD = new AllowOrder(true, 9000f);
 	}
 
 	public static final DrawOrderAlias[] KIDRID_DRAWORDER_ALIAS = new DrawOrderAlias[] {

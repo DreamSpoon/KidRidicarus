@@ -25,6 +25,7 @@ import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.game.agent.KidIcarus.player.pit.HUD.PitHUD;
 import kidridicarus.game.agent.KidIcarus.player.pitarrow.PitArrow;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
@@ -80,6 +81,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private PitSupervisor supervisor;
 	private PitBody body;
 	private PitSprite sprite;
+	private PitHUD playerHUD;
 	private MoveState moveState;
 	private float moveStateTimer;
 	private boolean isFacingRight;
@@ -121,8 +123,13 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			@Override
 			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
 		});
+		playerHUD = new PitHUD(this, agency.getAtlas());
+		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.PLAYER_HUD, new AgentDrawListener() {
+			@Override
+			public void draw(AgencyDrawBatch adBatch) { playerHUD.draw(adBatch); }
+		});
 
-		supervisor = new PitSupervisor(agency, this, agency.getAtlas());
+		supervisor = new PitSupervisor(agency, this);
 	}
 
 	/*

@@ -1,8 +1,5 @@
 package kidridicarus.game.agent.SMB1.player.mario;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
@@ -11,19 +8,15 @@ import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
-import kidridicarus.game.agent.SMB1.player.mario.HUD.MarioHUD;
 
 public class MarioSupervisor extends PlayerAgentSupervisor {
 	private MoveAdvice userMoveAdvice;
 	private String nextLevelFilename;
 	private boolean isGameOver;
-	private MarioHUD playerHUD;
-	private TextureAtlas atlas;
 
-	public MarioSupervisor(Agency agency, Mario playerAgent, TextureAtlas atlas) {
+	public MarioSupervisor(Agency agency, Mario playerAgent) {
 		super(agency, playerAgent);
 		this.playerAgent = playerAgent;
-		this.atlas = atlas;
 		userMoveAdvice = new MoveAdvice();
 		nextLevelFilename = null;
 		isGameOver = false;
@@ -86,15 +79,5 @@ public class MarioSupervisor extends PlayerAgentSupervisor {
 	@Override
 	public boolean isGameOver() {
 		return isGameOver;
-	}
-
-	@Override
-	public void setStageHUD(Stage stageHUD) {
-		playerHUD = new MarioHUD(getAgency(), (Mario) playerAgent, atlas, stageHUD);
-	}
-
-	@Override
-	public void drawHUD() {
-		playerHUD.draw();
 	}
 }

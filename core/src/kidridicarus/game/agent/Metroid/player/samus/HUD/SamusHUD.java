@@ -9,24 +9,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.playerHUD.TexRegionActor;
+import kidridicarus.agency.agent.Agent;
+import kidridicarus.common.agent.playeragent.playerHUD.PlayerHUD;
+import kidridicarus.common.agent.playeragent.playerHUD.TexRegionActor;
 import kidridicarus.game.info.MetroidGfx;
 import kidridicarus.game.info.MetroidKV;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class SamusHUD implements Disposable {
-	private PlayerAgent playerAgent;
-	private Stage stage;
-
+public class SamusHUD extends PlayerHUD {
+	private Agent playerAgent;
+	private TextureAtlas atlas;
 	private Label energyAmountLabel;
 
-	public SamusHUD(PlayerAgent playerAgent, TextureAtlas atlas, Stage stage) {
+	public SamusHUD(Agent playerAgent, TextureAtlas atlas) {
 		this.playerAgent = playerAgent;
-		this.stage = stage;
+		this.atlas = atlas;
+	}
 
+	@Override
+	public void setupStage(Stage stage) {
 		Table table = new Table();
 		table.top();
 		table.setFillParent(true);
@@ -43,20 +45,9 @@ public class SamusHUD implements Disposable {
 		stage.addActor(table);
 	}
 
-	private void update() {
+	@Override
+	protected void preDrawStage() {
 		energyAmountLabel.setText(String.format("%02d",
 				playerAgent.getProperty(MetroidKV.KEY_ENERGY_SUPPLY, 0, Integer.class)));
-		stage.act();
-	}
-
-	public void draw() {
-		update();
-		stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
-		stage.draw();
-	}
-
-	@Override
-	public void dispose() {
-		stage.dispose();
 	}
 }

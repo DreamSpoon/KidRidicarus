@@ -5,6 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import kidridicarus.common.info.CommonInfo;
 
 /*
  * A wrapper class which enables agents to draw sprites, tiled map layers, etc.
@@ -37,5 +41,15 @@ public class AgencyDrawBatch {
 
 	public void end() {
 		batch.end();
+	}
+
+	// it is a bit odd to create Stage here
+	public Stage createStage() {
+		return new Stage(new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera()),
+				batch);
+	}
+
+	public boolean isDrawing() {
+		return batch.isDrawing();
 	}
 }

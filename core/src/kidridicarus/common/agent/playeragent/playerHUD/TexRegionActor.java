@@ -1,4 +1,4 @@
-package kidridicarus.common.playerHUD;
+package kidridicarus.common.agent.playeragent.playerHUD;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
