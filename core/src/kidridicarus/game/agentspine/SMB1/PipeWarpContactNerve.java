@@ -1,4 +1,4 @@
-package kidridicarus.common.agentspine;
+package kidridicarus.game.agentspine.SMB1;
 
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;

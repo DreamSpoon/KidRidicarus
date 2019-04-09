@@ -36,6 +36,7 @@ public class MarioSpine extends PlayerSpine {
 	private static final float DUCKSLIDE_XIMP = WALKMOVE_XIMP * 1f;
 	private static final float HEADBOUNCE_VEL = 2.8f;	// up velocity
 
+	// TODO refactor damagePushSensor into a Nerve class
 	private OneWayContactSensor damagePushSensor;
 
 	public MarioSpine(MarioBody body) {

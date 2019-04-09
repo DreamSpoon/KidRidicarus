@@ -5,12 +5,12 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.agent.scrollkillbox.ScrollKillBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentspine.PipeWarpContactNerve;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
+import kidridicarus.game.agentspine.SMB1.PipeWarpContactNerve;
 import kidridicarus.game.agentspine.SMB1.TileBumpContactNerve;
 
 public class PlayerSpine extends SolidContactSpine {
