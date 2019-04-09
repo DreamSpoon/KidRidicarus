@@ -34,7 +34,6 @@ public class VanishPoofSprite extends Sprite {
 		}
 		stateTimer = 0f;
 		setRegion(poofAnim.getKeyFrame(0f));
-//		setOrigin(SPRITE_WIDTH/2f, SPRITE_HEIGHT/2f);
 		setPosition(pos.x - getWidth()/2f, pos.y - getHeight()/2f);
 	}
 

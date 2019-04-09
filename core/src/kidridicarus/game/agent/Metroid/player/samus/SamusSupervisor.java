@@ -15,7 +15,6 @@ import kidridicarus.game.agent.Metroid.player.samus.HUD.SamusHUD;
 
 public class SamusSupervisor extends PlayerAgentSupervisor {
 	private MoveAdvice moveAdvice;
-	private Samus playerAgent;
 	private TextureAtlas atlas;
 	private SamusHUD playerHUD;
 	private String nextLevelName;
@@ -23,7 +22,6 @@ public class SamusSupervisor extends PlayerAgentSupervisor {
 
 	public SamusSupervisor(Agency agency, Samus playerAgent, TextureAtlas atlas) {
 		super(agency, playerAgent);
-		this.playerAgent = playerAgent;
 		this.atlas = atlas;
 
 		moveAdvice = new MoveAdvice();

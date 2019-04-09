@@ -108,7 +108,7 @@ public class InstructionsScreen implements Screen {
 	public void show() {
 	}
 
-	public boolean doKeyUp(int keycode) {
+	private boolean doKeyUp(int keycode) {
 		if(keycode == Input.Keys.SPACE)
 			goRedTeamGo = true;
 			

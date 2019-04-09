@@ -10,11 +10,12 @@ import kidridicarus.common.info.UInfo;
 
 public class SolidLineSeg implements Disposable {
 	// if begin = end, it means the LineSeg is one tile wide
-	int begin, end;	// in tile coordinates (not pixel coordinates), where begin <= end
-	private int otherOffset;
+	int begin;	// in tile coordinates (not pixel coordinates), where begin <= end
+	int end;
+	private final int otherOffset;
 	Body body;
-	public boolean isHorizontal;
 
+	public final boolean isHorizontal;
 	/*
 	 * Conceptually, each LineSeg has a 2D normal vector. "Up" means +y or +x as the case may be.
 	 * Horizontal lines can be floors or ceilings. For horizontal lines:
@@ -26,7 +27,7 @@ public class SolidLineSeg implements Disposable {
 	 * Note: upNormal instead of rightNormal to prevent confusion by way of left walls with right normals.
 	 *       Also, more word variety so more interesting.  
 	 */
-	public boolean upNormal;
+	public final boolean upNormal;
 
 	public SolidLineSeg(int begin, int end, int otherOffset, boolean isHorizontal, boolean upNormal) {
 		if(begin > end)
@@ -38,46 +39,47 @@ public class SolidLineSeg implements Disposable {
 		this.upNormal = upNormal;
 	}
 
+	/*
+	 * If segA is completely to the left of segB, with no overlap, then return -1.
+	 * If segA is completely to the right of segB, with no overlap, then return +1.
+	 * If overlap exists then return 0.
+	 * Overlap examples:
+	 * -----------------
+	 * E.g. 0)
+	 *     If:
+	 *         segA begins at 2 and ends at 4, and
+	 *         segB begins at 4 and ends at 4
+	 *     Then:
+	 *         segA and segB overlap
+	 *
+	 * E.g. 1)
+	 *     If:
+	 *         segA begins at 2 and ends at 4, and
+	 *         segB begins at 4 and ends at 10
+	 *     Then:
+	 *         segA and segB overlap
+	 *
+	 * E.g. 2)
+	 *     If:
+	 *         segA begins at 2 and ends at 4, and
+	 *         segB begins at 5 and ends at 10
+	 *     Then:
+	 *         segA and segB do not overlap
+	 *
+	 * E.g. 3)
+	 *     If:
+	 *         segA begins at 2 and ends at 4, and
+	 *         segB begins at 6 and ends at 10
+	 *     Then:
+	 *         segA and segB do not overlap
+	 * etc.
+	 * Assumption is made that horizontal lines will be compared only with horizontal lines and vertical lines
+	 * will be compared only with vertical lines. Horizontal lines should be in separate list(s) from vertical
+	 * lines.
+	 * Although horizontal and vertical line segments cannot be compared, segments with upNormal = true can be
+	 * compared to segments with upNormal = false.
+	 */
 	static class LineSegComparator implements Comparator<SolidLineSeg> {
-		// If segA is completely to the left of segB, with no overlap, then return -1.
-		// If segA is completely to the right of segB, with no overlap, then return +1.
-		// If overlap exists then return 0.
-		//
-		// Overlap examples:
-		// -----------------
-		// E.g. 0)
-		//     If:
-		//         segA begins at 2 and ends at 4, and
-		//         segB begins at 4 and ends at 4
-		//     Then:
-		//         segA and segB overlap
-		//
-		// E.g. 1)
-		//     If:
-		//         segA begins at 2 and ends at 4, and
-		//         segB begins at 4 and ends at 10
-		//     Then:
-		//         segA and segB overlap
-		//
-		// E.g. 2)
-		//     If:
-		//         segA begins at 2 and ends at 4, and
-		//         segB begins at 5 and ends at 10
-		//     Then:
-		//         segA and segB do not overlap
-		//
-		// E.g. 3)
-		//     If:
-		//         segA begins at 2 and ends at 4, and
-		//         segB begins at 6 and ends at 10
-		//     Then:
-		//         segA and segB do not overlap
-		// etc.
-		// Assumption is made that horizontal lines will be compared only with horizontal lines and vertical lines
-		// will be compared only with vertical lines. Horizontal lines should be in separate list(s) from vertical
-		// lines.
-		// Although horizontal and vertical line segments cannot be compared, segments with upNormal = true can be
-		// compared to segments with upNormal = false. 
 		@Override
 		public int compare(SolidLineSeg segA, SolidLineSeg segB) {
 			if((segA.isHorizontal && !segB.isHorizontal) ||

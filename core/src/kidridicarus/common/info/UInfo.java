@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Vector2;
  *   -sub-tile (fraction of tile along horizontal/vertical axis, i.e. 0 to 1 inclusive)
  */
 public class UInfo {
-	public static final float PPM = 100f;
+	private static final float PPM = 100f;
 	public static final int TILEPIX_X = 16;
 	public static final int TILEPIX_Y = 16;
 	// TODO verify / formulate explanation for reasonableness of these two epsilon values (e.g. should they
@@ -51,22 +51,6 @@ public class UInfo {
 	 */
 	public static int M2Ty(float y) {
 		return (int) ((y * PPM) / TILEPIX_Y);
-	}
-
-	/*
-	 * Input unit: Meters
-	 * Output unit: Tiles (including subtile offset)
-	 */
-	public static float FloatM2Tx(float x) {
-		return (x * PPM) / TILEPIX_X;
-	}
-
-	/*
-	 * Input unit: Meters
-	 * Output unit: Tiles (including subtile offset)
-	 */
-	public static float FloatM2Ty(float y) {
-		return (y * PPM) / TILEPIX_Y;
 	}
 
 	/*

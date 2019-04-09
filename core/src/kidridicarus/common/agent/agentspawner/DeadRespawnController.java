@@ -29,9 +29,7 @@ public class DeadRespawnController extends SpawnController {
 
 	private boolean isSpawnAllowed() {
 		// if the spawner has been reset and all spawns have been disposed then do respawn
-		if(isSpawnReset && numSpawns == numSpawnsDisposed)
-			return true;
-		return false;
+		return isSpawnReset && numSpawns == numSpawnsDisposed; 
 	}
 
 	private void doSpawn() {

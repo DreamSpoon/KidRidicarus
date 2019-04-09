@@ -31,7 +31,7 @@ public class PitArrowSprite extends Sprite {
 		doSetPosition(position, arrowDir);
 	}
 
-	public void doSetPosition(Vector2 position, Direction4 arrowDir) {
+	private void doSetPosition(Vector2 position, Direction4 arrowDir) {
 		switch(arrowDir) {
 			case RIGHT:
 				setPosition(position.x - getWidth()/2f + SPRITE_OFFSET_RIGHT, position.y - getHeight()/2f);

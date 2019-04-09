@@ -1,6 +1,7 @@
 package kidridicarus.agency.agencychange;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
@@ -10,13 +11,13 @@ import kidridicarus.agency.agent.AgentUpdateListener;
  * Extra info about an individual agent. This information is to be used exclusively by the Agency class. 
  */
 public class AgentWrapper {
-	public LinkedList<AgentUpdateListener> updateListeners;
-	public LinkedList<AgentDrawListener> drawListeners;
+	public List<AgentUpdateListener> updateListeners;
+	public List<AgentDrawListener> drawListeners;
 
 	// the listeners created by this Agent, to listen for removal of other Agents
-	public LinkedList<AgentRemoveListener> myAgentRemoveListeners;
+	public List<AgentRemoveListener> myAgentRemoveListeners;
 	// the listeners create by other Agents, which are listening for removal of this Agent
-	public LinkedList<AgentRemoveListener> otherAgentRemoveListeners;
+	public List<AgentRemoveListener> otherAgentRemoveListeners;
 
 	public AgentWrapper() {
 		updateListeners = new LinkedList<AgentUpdateListener>();

@@ -7,11 +7,12 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.optional.SolidAgent;
 
 /*
  * One-way floor: What goes up must not go down, unless it was already down.
  */
-public class SemiSolidFloor extends Agent implements DisposableAgent {
+public class SemiSolidFloor extends Agent implements SolidAgent, DisposableAgent {
 	private Rectangle bounds;
 	private SemiSolidFloorBody body;
 

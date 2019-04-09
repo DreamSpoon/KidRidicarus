@@ -194,7 +194,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 				}
 
 				// if swooping up then move up, away from swoop low point
-				if(isSwoopUp)
+				if(isSwoopUp || target == null)
 					body.getSpine().setSwoopVelocity(swoopLowPoint, swoopDir, true);
 				// otherwise move down, hopefully toward, player target
 				else

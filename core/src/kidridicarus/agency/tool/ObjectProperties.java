@@ -1,6 +1,7 @@
 package kidridicarus.agency.tool;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import kidridicarus.common.tool.Direction4;
 
@@ -91,8 +92,8 @@ public class ObjectProperties {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for(String key : properties.keySet())
-			sb.append("[Key][Val]=[" + key + "][" + properties.get(key) + "]\n");
+		for(Entry<String, Object> key : properties.entrySet())
+			sb.append("[Key][Val]=[" + key.getKey() + "][" + properties.get(key.getValue()) + "]\n");
 		return sb.toString();
 	}
 }

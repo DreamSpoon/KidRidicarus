@@ -114,7 +114,7 @@ public class RoomBox extends Agent implements DisposableAgent {
 				else if(scrollVelocity != null && moveY < -scrollVelocity)
 					moveY = -scrollVelocity;
 			}
-			// TODO nexCenter.y += viewHorizontalOffset;
+			// TODO nextCenter.x += viewHorizontalOffset;
 			nextCenter = new Vector2(body.getBounds().x + body.getBounds().width/2f, safePrevCenter.y+moveY);
 		}
 		else {

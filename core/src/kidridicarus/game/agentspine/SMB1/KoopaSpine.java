@@ -28,16 +28,27 @@ public class KoopaSpine extends SolidContactSpine {
 		return hbNerve.getHeadBounceBeginContacts();
 	}
 
+	/*
+	 * The use of AND, OR, NOT operations is dense here, so read carefully.
+	 * Example 1:
+	 *   Given isFacingRight = true, useAgents = true.
+	 *   Returns true if
+	 *     move right is blocked by solid or if move right is blocked by a Koopa Agent, and
+	 *     move left is not blocked by solid and move left is not blocked by a Koopa Agent.
+	 *   Otherwise returns false.
+	 * Example 2:
+	 *   Given isFacingRight = true, useAgents = false.
+	 *   Returns true if
+	 *     move right is blocked by solid, and
+	 *     move left is not blocked by solid.
+	 *   Otherwise returns false.
+	 * isFacingRight=false examples are trivial.
+	 */
 	public boolean isKoopaSideMoveBlocked(boolean isFacingRight, boolean useAgents) {
 		// If regular move is blocked...
 		// ... and reverse move is not also blocked then reverse.
-		if( (isSideMoveBlocked(isFacingRight) ||
-				(useAgents && isMoveBlockedByKoopa(isFacingRight))) &&
-			(!isSideMoveBlocked(!isFacingRight) &&
-				(!useAgents || !isMoveBlockedByKoopa(!isFacingRight))) ) {
-			return true;
-		}
-		return false;
+		return  (isSideMoveBlocked(isFacingRight) || (useAgents && isMoveBlockedByKoopa(isFacingRight))) &&
+				(!isSideMoveBlocked(!isFacingRight) && (!useAgents || !isMoveBlockedByKoopa(!isFacingRight)));
 	}
 
 	private boolean isMoveBlockedByKoopa(boolean moveRight) {

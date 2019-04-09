@@ -4,7 +4,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.tool.ObjectProperties;
 
 public class SingleSpawnController extends SpawnController {
-	boolean isSpawned;
+	private boolean isSpawned;
 
 	public SingleSpawnController(AgentSpawner spawner, ObjectProperties properties) {
 		super(spawner, properties);

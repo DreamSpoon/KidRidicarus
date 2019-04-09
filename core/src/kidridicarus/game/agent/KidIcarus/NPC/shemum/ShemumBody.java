@@ -13,7 +13,7 @@ import kidridicarus.common.tool.B2DFactory;
 public class ShemumBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(6f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
-	private static final float FOOT_WIDTH = UInfo.P2M(5f);
+	private static final float FOOT_WIDTH = BODY_WIDTH;
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
 	private static final CFBitSeq MAIN_CFCAT = CommonCF.SOLID_BODY_CFCAT;
@@ -49,11 +49,11 @@ public class ShemumBody extends MobileAgentBody {
 				getBodySize().x, getBodySize().y);
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+				getBodySize().x, getBodySize().y);
 		// ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, solidSensor,
 				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 	}
 
 	public ShemumSpine getSpine() {

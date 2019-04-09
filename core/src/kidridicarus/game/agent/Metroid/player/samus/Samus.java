@@ -284,8 +284,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn() || energySupply <= 0)
 			return MoveState.DEAD;
 		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
-		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && !moveState.isGround()))
+		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingInDir(Direction4.UP) &&
+				!moveState.isGround())) {
 			return getNextMoveStateGround(moveAdvice);
+		}
 		// do air move
 		else
 			return getNextMoveStateAir(moveAdvice);
@@ -351,7 +353,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 		else if(moveState == MoveState.JUMPSPINSHOOT) {
 			// if not moving up then lose spin and do jumpshoot
-			if(!body.getSpine().isMovingUp())
+			if(!body.getSpine().isMovingInDir(Direction4.UP))
 				return MoveState.JUMPSHOOT;
 			// If not advised to shoot, and advised move left or right but not both, and respin is allowed,
 			// then do jumpspin.
@@ -512,7 +514,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 
 		// facing up can change during jumpspin while player moves upward
-		if(nextMoveState.isJumpSpin() && body.getSpine().isMovingUp())
+		if(nextMoveState.isJumpSpin() && body.getSpine().isMovingInDir(Direction4.UP))
 			isFacingUp = moveAdvice.moveUp;
 		// facing up can change to true during jump, but cannot change back to false
 		else if(moveAdvice.moveUp)
@@ -527,9 +529,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			case PRE_JUMPSPIN:
 			case PRE_JUMP:
 			case PRE_JUMPSHOOT:
-				// TODO remove "&& isNextJumpAllowed" in the following if stmt, it's redundant
 				// if previously on ground and advised jump and allowed to jump then jump 
-				if(moveState.isGround() && moveAdvice.action1 && isNextJumpAllowed) {
+				if(moveState.isGround() && moveAdvice.action1) {
 					isNextJumpAllowed = false;
 					jumpForceTimer = PRE_JUMP_TIME+JUMPUP_FORCE_TIME;
 					body.getSpine().applyJumpVelocity();
@@ -561,7 +562,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 
 		// disallow jump force until next jump if [jump advice stops] or [body stops moving up]
-		if(!moveAdvice.action1 || !body.getSpine().isMovingUp())
+		if(!moveAdvice.action1 || !body.getSpine().isMovingInDir(Direction4.UP))
 			jumpForceTimer = 0f;
 
 		// if advised move right or move left but not both at same time then...

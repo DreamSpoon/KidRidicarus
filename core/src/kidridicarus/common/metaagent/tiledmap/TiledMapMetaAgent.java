@@ -1,6 +1,7 @@
 package kidridicarus.common.metaagent.tiledmap;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
@@ -115,7 +116,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	 */
 	private void createOtherAgents() {
 		// create the other agents (typically spawn boxes, rooms, player start, etc.)
-		LinkedList<Agent> createdAgents = agency.createAgents(makeAgentPropsFromLayers(tiledMap.getLayers()));
+		List<Agent> createdAgents = agency.createAgents(makeAgentPropsFromLayers(tiledMap.getLayers()));
 		for(Agent agent : createdAgents) {
 			if(agent instanceof Disposable)
 				manualDisposeAgents.add((Disposable) agent);
@@ -188,6 +189,8 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 			solidTileMapAgent.dispose();
 		if(tiledMap != null)
 			tiledMap.dispose();
+		// Draw layer agents do not need to be disposed (currently) because they do not release gfx memory,
+		// (the tilemap releases the memory) - and the draw layer agents do not have Box2D bodies (currently).
 	}
 
 	public static ObjectProperties makeAP(TiledMap tiledMap) {

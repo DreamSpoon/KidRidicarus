@@ -69,7 +69,7 @@ public class AgentContactListener implements ContactListener {
 		}
 	}
 
-	public static boolean isFixtureContact(AgentBodyFilter filterA, AgentBodyFilter filterB) {
+	private static boolean isFixtureContact(AgentBodyFilter filterA, AgentBodyFilter filterB) {
 		/*
 		 * If neither fixture has the SEMISOLID_BIT then do the test like normal.
 		 * If both fixtures have the SEMISOLID_BIT then ignore the bit completely - they cannot collide

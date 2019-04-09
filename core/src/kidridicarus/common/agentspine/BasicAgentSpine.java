@@ -13,6 +13,8 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.Direction4;
 
 /*
  * Complement of the AgentBody, the Agent spine allows for better organization/coordination of movement than
@@ -70,5 +72,30 @@ public class BasicAgentSpine {
 			((MobileAgentBody) body).resetPosition(
 					new Vector2(curRoom.getBounds().x, body.getPosition().y), true);
 		}
+	}
+
+	public boolean isMovingInDir(Direction4 dir) {
+		if(dir == null)
+			return false;
+		switch(dir) {
+			case RIGHT:
+				if(body.getVelocity().x > UInfo.VEL_EPSILON)
+					return true;
+				break;
+			case LEFT:
+				if(body.getVelocity().x < UInfo.VEL_EPSILON)
+					return true;
+				break;
+			case UP:
+				if(body.getVelocity().y > UInfo.VEL_EPSILON)
+					return true;
+				break;
+			case DOWN:
+				if(body.getVelocity().y < UInfo.VEL_EPSILON)
+					return true;
+				break;
+			default:
+		}
+		return false;
 	}
 }

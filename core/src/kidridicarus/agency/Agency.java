@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -159,7 +160,7 @@ public class Agency implements Disposable {
 	/*
 	 * Create many agents from a collection of agent properties, and return a list of the created Agents.
 	 */
-	public LinkedList<Agent> createAgents(Collection<ObjectProperties> agentProps) {
+	public List<Agent> createAgents(Collection<ObjectProperties> agentProps) {
 		LinkedList<Agent> aList = new LinkedList<Agent>();
 		Iterator<ObjectProperties> apIter = agentProps.iterator();
 		while(apIter.hasNext())

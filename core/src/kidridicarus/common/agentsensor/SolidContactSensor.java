@@ -33,7 +33,7 @@ public class SolidContactSensor extends AgentContactSensor {
 		}
 
 		Agent agent = AgentBodyFilter.getAgentFromFilter(abf);
-		if(agent != null && agent instanceof SolidAgent && !agentContacts.contains(agent))
+		if(agent instanceof SolidAgent && !agentContacts.contains(agent))
 			agentContacts.add((SolidAgent) agent);
 	}
 
@@ -47,7 +47,7 @@ public class SolidContactSensor extends AgentContactSensor {
 		}
 
 		Agent agent = AgentBodyFilter.getAgentFromFilter(abf);
-		if(agent != null && agent instanceof SolidAgent && agentContacts.contains(agent))
+		if(agent instanceof SolidAgent && agentContacts.contains(agent))
 			agentContacts.remove(agent);
 	}
 
@@ -86,9 +86,12 @@ public class SolidContactSensor extends AgentContactSensor {
 			boolean filterUpNormal, boolean upNormal) {
 		List<SolidLineSeg> list = new LinkedList<SolidLineSeg>();
 		for(SolidLineSeg ls : lineSegContacts) {
-			if(filterHorV && ls.isHorizontal != isHorizontal)
-				continue;
-			if(filterUpNormal && ls.upNormal != upNormal)
+			// If filtering on property isHorizontal then compare line isHorizontal to filter value and continue
+			// if line fails filter, or
+			// If filtering on property upNormal then compare line upNormal to filter value and continue
+			// if line fails filter.
+			if((filterHorV && ls.isHorizontal != isHorizontal) ||
+					(filterUpNormal && ls.upNormal != upNormal))
 				continue;
 			list.add(ls);
 		}

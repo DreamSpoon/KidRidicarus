@@ -196,9 +196,9 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			processPipeWarps(moveAdvice);
 
 			// make a note of the last direction in which mario was moving, for duck sliding
-			if(body.getSpine().isMovingRight())
+			if(body.getSpine().isMovingInDir(Direction4.RIGHT))
 				lastHorizontalMoveDir = Direction4.RIGHT;
-			else if(body.getSpine().isMovingLeft())
+			else if(body.getSpine().isMovingInDir(Direction4.LEFT))
 				lastHorizontalMoveDir = Direction4.LEFT;
 		}
 
@@ -401,7 +401,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			isNextJumpDelayed = true;
 
 		// if not moving up (i.e. resting on ground) then allow next jump...
-		if(!body.getSpine().isMovingUp()) {
+		if(!body.getSpine().isMovingInDir(Direction4.UP)) {
 			isNextJumpAllowed = true;
 			// ... and if jump advice is released then turn off jump delay
 			if(!moveAdvice.action1)
@@ -460,7 +460,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
-		if(!body.getSpine().isMovingUp())
+		if(!body.getSpine().isMovingInDir(Direction4.UP))
 			isJumpForceContinue = false;
 
 		boolean isMoveStateChange = (moveState != nextMoveState);
@@ -518,8 +518,10 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		else if(isDeadBounce)
 			return MoveState.DEAD_BOUNCE;
 		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
-		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && !moveState.isOnGround()))
+		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingInDir(Direction4.UP) &&
+				!moveState.isOnGround())) {
 			return getNextMoveStateGround(moveAdvice);
+		}
 		// do air move
 		else
 			return getNextMoveStateAir();

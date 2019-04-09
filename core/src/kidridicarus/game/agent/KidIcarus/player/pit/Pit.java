@@ -279,8 +279,10 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn() || health <= 0)
 			return MoveState.DEAD;
 		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
-		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingUp() && !moveState.isGround()))
+		else if(body.getSpine().isOnGround() && !(body.getSpine().isMovingInDir(Direction4.UP) &&
+				!moveState.isGround())) {
 			return getNextMoveStateGround(moveAdvice);
+		}
 		// do air move
 		else
 			return getNextMoveStateAir(moveAdvice);
@@ -434,7 +436,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		}
 
 		// disallow jump force until next jump if [jump advice stops] or [body stops moving up]
-		if(!moveAdvice.action1 || !body.getSpine().isMovingUp())
+		if(!moveAdvice.action1 || !body.getSpine().isMovingInDir(Direction4.UP))
 			jumpForceTimer = 0f;
 
 		// move right advice takes priority over move left advice
@@ -536,7 +538,8 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		}
 		else {
 			sprite.update(delta, body.getPosition(), moveState, isFacingRight, (noDamageCooldown > 0f),
-					(shootCooldownTimer > 0f), isOnGroundHeadInTile, body.getSpine().isMovingUp(), Direction4.NONE);
+					(shootCooldownTimer > 0f), isOnGroundHeadInTile, body.getSpine().isMovingInDir(Direction4.UP),
+					Direction4.NONE);
 		}
 	}
 

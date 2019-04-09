@@ -13,6 +13,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.KidIcarus.item.angelheart.AngelHeart;
 import kidridicarus.game.agent.KidIcarus.other.vanishpoof.VanishPoof;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
@@ -95,9 +96,12 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				body.getSpine().doWalkMove(isFacingRight);
 				break;
 			case FALL:
-				// if first frame of fall then zero X velocity, to fall straight down
-				if(moveStateChanged)
+				// if body is moving down then set X velocity equal zero, ensuring fall straight down
+				if(body.getSpine().isMovingInDir(Direction4.DOWN))
 					body.zeroVelocity(true, false);
+				// else continue walk move to prevent "sticking" to edges
+				else
+					body.getSpine().doWalkMove(isFacingRight);
 				break;
 			case STRIKE_GROUND:
 				break;

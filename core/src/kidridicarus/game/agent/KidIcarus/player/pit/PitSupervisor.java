@@ -15,7 +15,6 @@ import kidridicarus.game.agent.KidIcarus.player.pit.HUD.PitHUD;
 
 public class PitSupervisor extends PlayerAgentSupervisor {
 	private MoveAdvice moveAdvice;
-	private Pit playerAgent;
 	private TextureAtlas atlas;
 	private PitHUD playerHUD;
 	private String nextLevelName;
@@ -23,7 +22,6 @@ public class PitSupervisor extends PlayerAgentSupervisor {
 
 	public PitSupervisor(Agency agency, Pit pit, TextureAtlas atlas) {
 		super(agency, pit);
-		this.playerAgent = pit;
 		this.atlas = atlas;
 
 		moveAdvice = new MoveAdvice();
