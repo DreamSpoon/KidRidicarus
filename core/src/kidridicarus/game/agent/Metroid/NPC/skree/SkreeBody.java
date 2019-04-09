@@ -57,7 +57,7 @@ public class SkreeBody extends MobileAgentBody {
 		// player sensor fixture
 		createPlayerSensorFixture();
 		// on ground sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createSolidContactSensor(),
 				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
 	}

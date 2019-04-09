@@ -111,7 +111,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 				}
 
 				// if horizontal move is blocked by solid and not agent then reverse direction
-				if(body.getSpine().isHorizontalMoveBlocked(isFacingRight, false))
+				if(body.getSpine().isSideMoveBlocked(isFacingRight))
 					isFacingRight = !isFacingRight;
 
 				float xVal = isFacingRight ? MAX_BOUNCE_VEL.x : -MAX_BOUNCE_VEL.x;

@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentbody.MobileAgentBody;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -43,13 +44,14 @@ public class ShemumBody extends MobileAgentBody {
 
 	private void createFixtures() {
 		// main body fixture
-		B2DFactory.makeBoxFixture(b2body, spine.createHorizontalMoveSensor(), MAIN_CFCAT, MAIN_CFMASK,
+		SolidContactSensor solidSensor = spine.createSolidContactSensor();
+		B2DFactory.makeBoxFixture(b2body, solidSensor, MAIN_CFCAT, MAIN_CFMASK,
 				getBodySize().x, getBodySize().y);
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
 		// ground sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
+		B2DFactory.makeSensorBoxFixture(b2body, solidSensor,
 				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
 	}

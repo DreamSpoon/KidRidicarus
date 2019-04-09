@@ -2,22 +2,14 @@ package kidridicarus.game.agent.SMB1.player.mariofireball;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agentsensor.SolidContactSensor;
-import kidridicarus.common.agentspine.BasicAgentSpine;
+import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.info.UInfo;
 
-public class MarioFireballSpine extends BasicAgentSpine {
+public class MarioFireballSpine extends SolidContactSpine {
 	protected static final Vector2 MOVE_VEL = new Vector2(2.4f, 2.25f);
-
-	private SolidContactSensor hmSensor;
 
 	public MarioFireballSpine(MarioFireballBody body) {
 		super(body);
-	}
-
-	public SolidContactSensor createHMSensor() {
-		hmSensor = new SolidContactSensor(body);
-		return hmSensor;
 	}
 
 	public void doVelocityCheck() {
@@ -35,9 +27,8 @@ public class MarioFireballSpine extends BasicAgentSpine {
 	}
 
 	public boolean isHitBoundary(boolean facingRight) {
-		return hmSensor.isSolidOnThisSide(body.getBounds(), facingRight) ||
-				(body.getVelocity().x <= 0f && facingRight) ||
-				(body.getVelocity().x >= 0f && !facingRight);
+		return isSideMoveBlocked(facingRight) ||
+				(body.getVelocity().x <= 0f && facingRight) || (body.getVelocity().x >= 0f && !facingRight);
 	}
 
 	public void startExplode() {

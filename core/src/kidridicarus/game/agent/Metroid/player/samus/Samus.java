@@ -321,8 +321,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			// if advised move left and contacting left wall, or
 			// if no left/right move advice,
 			// then stand.
-			if((moveAdvice.moveRight && body.getSpine().isSolidOnThisSide(true)) ||
-					(moveAdvice.moveLeft && body.getSpine().isSolidOnThisSide(false)) ||
+			if((moveAdvice.moveRight && body.getSpine().isSideMoveBlocked(true)) ||
+					(moveAdvice.moveLeft && body.getSpine().isSideMoveBlocked(false)) ||
 					!(moveAdvice.moveRight^moveAdvice.moveLeft))
 				return MoveState.STAND;
 			else {

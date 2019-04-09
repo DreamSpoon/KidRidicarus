@@ -94,7 +94,7 @@ public class SolidLineSeg implements Disposable {
 	}
 
 	public String toString( ) {
-		return "LineSeg: { begin=" + begin + ", end=" + end + ", isHorizontal= " + isHorizontal + "}";
+		return "LineSeg: { begin="+begin+", end="+end+", isHorizontal="+isHorizontal+", upNormal="+upNormal+"}";
 	}
 
 	@Override

@@ -104,7 +104,7 @@ public class PitBody extends PlayerAgentBody {
 					AS_DISABLED_CFCAT, AS_DISABLED_CFMASK, getBodySize().x, getBodySize().y);
 		}
 		// create on ground sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createSolidContactSensor(),
 				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create tilebump sensor fixture

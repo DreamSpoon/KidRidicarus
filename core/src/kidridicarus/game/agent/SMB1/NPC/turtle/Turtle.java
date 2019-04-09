@@ -15,6 +15,7 @@ import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
+import kidridicarus.game.agent.SMB1.Koopa;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.SMB1_Audio;
 
@@ -23,7 +24,7 @@ import kidridicarus.game.info.SMB1_Audio;
  * -do sliding turtle shells break bricks when they strike them?
  *  I couldn't find any maps in SMB 1 that would clear up this matter.
  */
-public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float DIE_FALL_TIME = 6f;
 	private static final float HIDE_DELAY = 1.7f;
@@ -172,7 +173,7 @@ public class Turtle extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		}
 
 		boolean isSliding = moveState == MoveState.SLIDE;
-		if(body.getSpine().isHorizontalMoveBlocked(isFacingRight, !isSliding)) {
+		if(body.getSpine().isKoopaSideMoveBlocked(isFacingRight, !isSliding)) {
 			isFacingRight = !isFacingRight;
 			if(isSliding)
 				agency.getEar().playSound(SMB1_Audio.Sound.BUMP);

@@ -5,32 +5,24 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.SolidContactSensor;
-import kidridicarus.common.agentspine.BasicAgentSpine;
-import kidridicarus.common.agentspine.OnGroundNerve;
 import kidridicarus.common.agentspine.PlayerContactNerve;
+import kidridicarus.common.agentspine.SolidContactSpine;
 
-public class SkreeSpine extends BasicAgentSpine {
+public class SkreeSpine extends SolidContactSpine {
 	private static final float FALL_IMPULSE = 0.07f;
 	private static final float FALL_SPEED_MAX = 2f;
 	private static final float SIDE_IMPULSE_MAX = 0.07f;
 	private static final float SIDE_SPEED_MAX = 0.8f;
 
-	private OnGroundNerve ogNerve;
 	private PlayerContactNerve pcNerve;
 
 	public SkreeSpine(SkreeBody body) {
 		super(body);
-		ogNerve = new OnGroundNerve();
 		pcNerve = new PlayerContactNerve();
 	}
 
 	public AgentContactHoldSensor createPlayerSensor() {
 		return pcNerve.createPlayerSensor();
-	}
-
-	public SolidContactSensor createOnGroundSensor() {
-		return ogNerve.createOnGroundSensor();
 	}
 
 	public void doFall(Agent target) {
@@ -72,9 +64,5 @@ public class SkreeSpine extends BasicAgentSpine {
 
 	public PlayerAgent getPlayerContact() {
 		return pcNerve.getFirstPlayerContact();
-	}
-
-	public boolean isOnGround() {
-		return ogNerve.isOnGround();
 	}
 }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentbody.MobileAgentBody;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -50,21 +51,21 @@ public class RioBody extends MobileAgentBody {
 	}
 
 	private void createFixtures() {
+		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		// main fixture
-		B2DFactory.makeBoxFixture(b2body, spine.createHorizontalMoveSensor(),
-				CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+				BODY_WIDTH, BODY_HEIGHT);
+		// ceiling sensor fixture
+		B2DFactory.makeSensorBoxFixture(b2body, solidSensor,
+				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
+				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, BODY_HEIGHT/2f));
 		// agent contact sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				getBodySize().x, getBodySize().y);
 		// player sensor fixture (cone shaped sensor extending down below Rio to check for player target)
 		createPlayerSensorFixture();
-		// ceiling sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnCeilingSensor(),
-				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
-				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, BODY_HEIGHT/2f));
 	}
 
-	//  
 	private void createPlayerSensorFixture() {
 		FixtureDef fdef = new FixtureDef();
 		PolygonShape coneShape;

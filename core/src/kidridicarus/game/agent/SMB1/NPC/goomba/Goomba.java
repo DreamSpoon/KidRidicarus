@@ -15,10 +15,11 @@ import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
+import kidridicarus.game.agent.SMB1.Koopa;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
@@ -117,7 +118,7 @@ public class Goomba extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		}
 
 		// if move is blocked by solid or an agent then change facing dir
-		if(body.getSpine().isHorizontalMoveBlocked(isFacingRight, true))
+		if(body.getSpine().isKoopaSideMoveBlocked(isFacingRight, true))
 			isFacingRight = !isFacingRight;
 
 		MoveState nextMoveState = getNextMoveState();

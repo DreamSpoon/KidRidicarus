@@ -10,6 +10,7 @@ import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.CommonCF.Alias;
 import kidridicarus.common.info.UInfo;
@@ -95,12 +96,16 @@ public class SamusBody extends PlayerAgentBody {
 	}
 
 	private void createFixtures() {
+		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		// create main fixture
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = FRICTION;
-		B2DFactory.makeBoxFixture(b2body, fdef, spine.createSolidBodySensor(), MAINBODY_CFCAT, MAINBODY_CFMASK,
+		B2DFactory.makeBoxFixture(b2body, fdef, solidSensor, MAINBODY_CFCAT, MAINBODY_CFMASK,
 				getBodySize().x, getBodySize().y);
-
+		// create on ground sensor fixture
+		B2DFactory.makeSensorBoxFixture(b2body, solidSensor,
+				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create agent sensor fixture
 		if(isAgentSensorEnabled) {
 			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
@@ -110,10 +115,6 @@ public class SamusBody extends PlayerAgentBody {
 			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
 					AS_DISABLED_CFCAT, AS_DISABLED_CFMASK, getBodySize().x, getBodySize().y);
 		}
-		// create on ground sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
-				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create tilebump sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createTileBumpPushSensor(),
 				TILEBUMP_SENSOR_CFCAT, TILEBUMP_SENSOR_CFMASK,

@@ -174,7 +174,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 							swoopDir = Direction4.RIGHT;
 					}
 					// if sideways move is blocked by solid...
-					if(body.getSpine().isHorizontalMoveBlocked(swoopDir.isRight(), false)) {
+					if(body.getSpine().isSideMoveBlocked(swoopDir.isRight())) {
 						// if swoop dir has changed already then don't change again, just swoop up
 						if(hasSwoopDirChanged) {
 							isSwoopUp = true;

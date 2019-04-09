@@ -1,8 +1,8 @@
 package kidridicarus.game.agent.KidIcarus.NPC.shemum;
 
-import kidridicarus.common.agentspine.FloorWallContactSpine;
+import kidridicarus.common.agentspine.SolidContactSpine;
 
-public class ShemumSpine extends FloorWallContactSpine {
+public class ShemumSpine extends SolidContactSpine {
 	private static final float WALK_VEL = 0.3f;
 
 	public ShemumSpine(ShemumBody body) {

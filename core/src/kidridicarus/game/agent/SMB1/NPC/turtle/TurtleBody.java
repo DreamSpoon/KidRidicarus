@@ -8,6 +8,7 @@ import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
+import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -47,8 +48,9 @@ public class TurtleBody extends MobileAgentBody {
 	}
 
 	private void createFixtures() {
+		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		// create main fixture
-		B2DFactory.makeBoxFixture(b2body, spine.createHorizontalMoveSensor(),
+		B2DFactory.makeBoxFixture(b2body, solidSensor,
 				MAIN_CFCAT, MAIN_CFMASK, getBodySize().x, getBodySize().y);
 		// create agent sensor fixture
 		AgentContactHoldSensor sensor = spine.createAgentSensor();
@@ -56,7 +58,7 @@ public class TurtleBody extends MobileAgentBody {
 		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, sensor,
 				AS_CFCAT, AS_CFMASK, getBodySize().x, getBodySize().y);
 		// create ground sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createOnGroundSensor(),
+		B2DFactory.makeSensorBoxFixture(b2body, solidSensor,
 				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
 				FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f));
 	}

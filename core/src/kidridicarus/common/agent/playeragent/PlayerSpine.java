@@ -6,10 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agent.scrollkillbox.ScrollKillBox;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.SolidContactSensor;
-import kidridicarus.common.agentspine.BasicAgentSpine;
-import kidridicarus.common.agentspine.OnGroundNerve;
 import kidridicarus.common.agentspine.PipeWarpContactNerve;
+import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
@@ -17,20 +15,14 @@ import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
 import kidridicarus.game.agentspine.SMB1.TileBumpContactNerve;
 
-public class PlayerSpine extends BasicAgentSpine {
-	private OnGroundNerve ogNerve;
+public class PlayerSpine extends SolidContactSpine {
 	private TileBumpContactNerve tbcNerve;
 	private PipeWarpContactNerve pwcNerve;
 
 	public PlayerSpine(PlayerAgentBody body) {
 		super(body);
-		ogNerve = new OnGroundNerve();
 		tbcNerve = new TileBumpContactNerve();
 		pwcNerve = new PipeWarpContactNerve();
-	}
-
-	public SolidContactSensor createOnGroundSensor() {
-		return ogNerve.createOnGroundSensor();
 	}
 
 	public AgentContactHoldSensor createTileBumpPushSensor() {
@@ -90,10 +82,6 @@ public class PlayerSpine extends BasicAgentSpine {
 
 	public RoomBox getCurrentRoom() {
 		return agentSensor.getFirstContactByClass(RoomBox.class);
-	}
-
-	public boolean isOnGround() {
-		return ogNerve.isOnGround();
 	}
 
 	public boolean isGiveHeadBounceAllowed(Rectangle otherBounds) {

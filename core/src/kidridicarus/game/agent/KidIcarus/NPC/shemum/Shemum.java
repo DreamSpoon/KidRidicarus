@@ -85,7 +85,7 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		}
 
 		// if move is blocked by solid then change facing dir
-		if(body.getSpine().isHorizontalMoveBlocked(isFacingRight, false))
+		if(body.getSpine().isSideMoveBlocked(isFacingRight))
 			isFacingRight = !isFacingRight;
 
 		MoveState nextMoveState = getNextMoveState();

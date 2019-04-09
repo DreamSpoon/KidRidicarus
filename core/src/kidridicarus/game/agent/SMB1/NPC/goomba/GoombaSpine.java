@@ -2,9 +2,9 @@ package kidridicarus.game.agent.SMB1.NPC.goomba;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.game.agentspine.SMB1.SMB_NPC_Spine;
+import kidridicarus.game.agentspine.SMB1.KoopaSpine;
 
-public class GoombaSpine extends SMB_NPC_Spine {
+public class GoombaSpine extends KoopaSpine {
 	private static final float WALK_VEL = 0.4f;
 	private static final float BUMP_UP_VEL = 2f;
 	private static final float BUMP_SIDE_VEL = 0.4f;

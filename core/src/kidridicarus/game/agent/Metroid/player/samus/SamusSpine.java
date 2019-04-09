@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agent.playeragent.PlayerSpine;
-import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.UInfo;
 
 public class SamusSpine extends PlayerSpine {
@@ -22,16 +21,8 @@ public class SamusSpine extends PlayerSpine {
 	private static final float MAX_DOWN_VELOCITY = 2.5f;
 	private static final float HEADBOUNCE_VEL = 1.4f;	// up velocity
 
-	private SolidContactSensor sbSensor;
-
 	public SamusSpine(SamusBody body) {
 		super(body);
-		sbSensor = null;
-	}
-
-	public SolidContactSensor createSolidBodySensor() {
-		sbSensor = new SolidContactSensor(body);
-		return sbSensor;
 	}
 
 	// apply walk impulse and cap horizontal velocity.
@@ -73,10 +64,6 @@ public class SamusSpine extends PlayerSpine {
 		// apply kick up impulse if the player is above the other agent
 		if(body.getPosition().y > position.y)
 			body.applyImpulse(DAMAGE_KICK_UP_IMP);
-	}
-
-	public boolean isSolidOnThisSide(boolean isRightSide) {
-		return sbSensor.isSolidOnThisSide(body.getBounds(), isRightSide);
 	}
 
 	public void applyHeadBounce() {
