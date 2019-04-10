@@ -1,9 +1,10 @@
 package kidridicarus.common.metaagent.tiledmap.solidlayer;
 
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -38,30 +39,32 @@ import kidridicarus.common.tool.B2DFactory;
 public class SolidTiledMap implements Disposable {
 	private World world;
 	private BooleanTiledMap bTileMap;
-	private int widthInTiles;
-	private int heightInTiles;
+	private int tileWidthInPixels;
+	private int tileHeightInPixels;
+	private int mapWidthInTiles;
+	private int mapHeightInTiles;
 	private SolidLineSegList[] hLines;
 	private SolidLineSegList[] vLines;
 
-	public SolidTiledMap(World world, Collection<TiledMapTileLayer> solidLayers) {
+	public SolidTiledMap(World world, List<TiledMapTileLayer> solidLayers) {
 		this.world = world;
 
 		bTileMap = new BooleanTiledMap(solidLayers);
-
 		// use the first layer's reference to get some info about the number of tiles wide and high
-		TiledMapTileLayer a = solidLayers.iterator().next();
-		widthInTiles = (int) a.getTileWidth();
-		heightInTiles = (int) a.getTileHeight();
-
-		// allocate lists for horizontal bound lines
-		hLines = new SolidLineSegList[bTileMap.getHeight()+1];
-		for(int i=0; i<=bTileMap.getHeight(); i++)
-			hLines[i] = new SolidLineSegList();
+		TiledMapTileLayer tempLayer = solidLayers.iterator().next();
+		tileWidthInPixels = (int) tempLayer.getTileWidth();
+		tileHeightInPixels = (int) tempLayer.getTileHeight();
+		mapWidthInTiles = tempLayer.getWidth();
+		mapHeightInTiles = tempLayer.getHeight();
 
 		// allocate lists for vertical bound lines
-		vLines = new SolidLineSegList[bTileMap.getWidth()+1];
+		vLines = new SolidLineSegList[mapWidthInTiles+1];
 		for(int i=0; i<=bTileMap.getWidth(); i++)
 			vLines[i] = new SolidLineSegList();
+		// allocate lists for horizontal bound lines
+		hLines = new SolidLineSegList[mapHeightInTiles+1];
+		for(int i=0; i<=bTileMap.getHeight(); i++)
+			hLines[i] = new SolidLineSegList();
 
 		calculateLineSegs();
 		createBodies();
@@ -242,11 +245,11 @@ public class SolidTiledMap implements Disposable {
 		FixtureDef fdef;
 		EdgeShape edgeShape;
 		Body body =
-				B2DFactory.makeStaticBody(world, UInfo.VectorP2M(startX * widthInTiles, startY * heightInTiles));
+				B2DFactory.makeStaticBody(world, UInfo.VectorP2M(startX * tileWidthInPixels, startY * tileHeightInPixels));
 
 		edgeShape = new EdgeShape();
 		edgeShape.set(0f, 0f,
-				UInfo.P2M((endX - startX) * widthInTiles), UInfo.P2M((endY - startY) * heightInTiles));
+				UInfo.P2M((endX - startX) * tileWidthInPixels), UInfo.P2M((endY - startY) * tileHeightInPixels));
 		fdef = new FixtureDef();
 		fdef.shape = edgeShape;
 		body.createFixture(fdef).setUserData(new AgentBodyFilter(
@@ -393,9 +396,11 @@ public class SolidTiledMap implements Disposable {
 	private void removeHLineSegment(int x, int y) {
 		removeLineSegment(hLines, true, x, y);
 	}
+
 	private void removeVLineSegment(int x, int y) {
 		removeLineSegment(vLines, false, y, x);
 	}
+
 	private void removeLineSegment(SolidLineSegList[] horvLines, boolean isHorizontal, int x, int y) {
 		SolidLineSeg testSeg;
 		SolidLineSeg floorSeg;
@@ -441,6 +446,13 @@ public class SolidTiledMap implements Disposable {
 				newSeg.body = defineVLineBody(y, newSeg);
 			horvLines[y].add(newSeg);
 		}
+	}
+
+	public boolean isTileOutOfBounds(Vector2 tileCoords) {
+		if(tileCoords.x < 0 || tileCoords.y < 0 ||
+				tileCoords.x >= mapWidthInTiles || tileCoords.y >= mapHeightInTiles)
+			return true;
+		return false;
 	}
 
 	@Override

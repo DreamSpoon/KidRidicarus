@@ -30,7 +30,7 @@ import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
  * This agent does not load anything from file, rather it is given a TiledMap object that has been preloaded.
  */
 public class TiledMapMetaAgent extends Agent implements DisposableAgent {
-	private TiledMap tiledMap;
+	private TiledMap map;
 	private SolidTiledMapAgent solidTileMapAgent;
 	private LinkedList<DrawLayerAgent> drawLayerAgents;
 	private Rectangle bounds;
@@ -43,8 +43,8 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 		manualDisposeAgents = new LinkedList<Disposable>();
 
 		bounds = Agent.getStartBounds(properties);
-		tiledMap = properties.get(CommonKV.AgentMapParams.KEY_TILEDMAP, null, TiledMap.class);
-		if(tiledMap == null)
+		map = properties.get(CommonKV.AgentMapParams.KEY_TILEDMAP, null, TiledMap.class);
+		if(map == null)
 			throw new IllegalArgumentException("Tiled map property not set, unable to create agent.");
 		createInitialSubAgents();
 
@@ -61,7 +61,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 		// get lists of solid and draw layers (there may be overlap between the two, that's okay)
 		LinkedList<TiledMapTileLayer> solidLayers = new LinkedList<TiledMapTileLayer>(); 
 		LinkedList<TiledMapTileLayer> drawLayers = new LinkedList<TiledMapTileLayer>(); 
-		for(MapLayer layer : tiledMap.getLayers()) {
+		for(MapLayer layer : map.getLayers()) {
 			if(!(layer instanceof TiledMapTileLayer))
 				continue;
 
@@ -116,7 +116,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	 */
 	private void createOtherAgents() {
 		// create the other agents (typically spawn boxes, rooms, player start, etc.)
-		List<Agent> createdAgents = agency.createAgents(makeAgentPropsFromLayers(tiledMap.getLayers()));
+		List<Agent> createdAgents = agency.createAgents(makeAgentPropsFromLayers(map.getLayers()));
 		for(Agent agent : createdAgents) {
 			if(agent instanceof Disposable)
 				manualDisposeAgents.add((Disposable) agent);
@@ -187,8 +187,8 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 			agent.dispose();
 		if(solidTileMapAgent != null)
 			solidTileMapAgent.dispose();
-		if(tiledMap != null)
-			tiledMap.dispose();
+		if(map != null)
+			map.dispose();
 		// Draw layer agents do not need to be disposed (currently) because they do not release gfx memory,
 		// (the tilemap releases the memory) - and the draw layer agents do not have Box2D bodies (currently).
 	}
