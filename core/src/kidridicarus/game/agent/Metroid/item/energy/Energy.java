@@ -41,7 +41,7 @@ public class Energy extends Agent implements DisposableAgent {
 		sprite = new EnergySprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -67,12 +67,12 @@ public class Energy extends Agent implements DisposableAgent {
 		moveStateTimer += delta;
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		// do not draw powerup if it is used already
 		if(isPowerupUsed)
 			return;
 
-		batch.draw(sprite);
+		adBatch.draw(sprite);
 	}
 
 	@Override

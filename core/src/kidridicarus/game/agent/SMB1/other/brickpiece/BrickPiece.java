@@ -41,7 +41,7 @@ public class BrickPiece extends Agent implements DisposableAgent {
 			});
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -58,8 +58,8 @@ public class BrickPiece extends Agent implements DisposableAgent {
 		stateTimer += delta;
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(bpSprite);
+	private void doDraw(AgencyDrawBatch adBatch) {
+		adBatch.draw(bpSprite);
 	}
 
 	@Override

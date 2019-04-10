@@ -40,7 +40,7 @@ public class CastleFlag extends Agent implements TriggerTakeAgent {
 		flagSprite = new CastleFlagSprite(agency.getAtlas(), startPosition);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -88,9 +88,9 @@ public class CastleFlag extends Agent implements TriggerTakeAgent {
 		}
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		if(isTriggered)
-			batch.draw(flagSprite);
+			adBatch.draw(flagSprite);
 	}
 
 	@Override

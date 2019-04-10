@@ -45,7 +45,7 @@ public class SamusChunk extends Agent implements DisposableAgent {
 		sprite = new SamusChunkSprite(agency.getAtlas(), b2body.getPosition(), Agent.getStartDirection8(properties));
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -64,9 +64,9 @@ public class SamusChunk extends Agent implements DisposableAgent {
 		stateTimer += delta;
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		if(isDrawAllowed)
-			batch.draw(sprite);
+			adBatch.draw(sprite);
 	}
 
 	@Override

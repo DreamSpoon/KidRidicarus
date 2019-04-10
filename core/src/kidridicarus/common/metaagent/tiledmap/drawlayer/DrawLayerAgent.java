@@ -27,7 +27,7 @@ public class DrawLayerAgent extends Agent {
 		agency.addAgentDrawListener(this, getDrawOrderForLayer(drawLayer, CommonInfo.KIDRID_DRAWORDER_ALIAS),
 				new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -59,8 +59,8 @@ public class DrawLayerAgent extends Agent {
 		return new AllowOrder(true, drawOrderFloat);
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(drawLayer);
+	private void doDraw(AgencyDrawBatch adBatch) {
+		adBatch.draw(drawLayer);
 	}
 
 	@Override

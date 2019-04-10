@@ -71,7 +71,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 				initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
 		drawListener = new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			};
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, drawListener);
 	}
@@ -126,10 +126,6 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 				if(moveState == MoveState.SPROUT) {
 					// change from bottom to middle sprite draw order
 					agency.removeAgentDrawListener(this, drawListener);
-					drawListener = new AgentDrawListener() {
-							@Override
-							public void draw(AgencyDrawBatch batch) { doDraw(batch); }
-						};
 					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, drawListener);
 					body = new BaseMushroomBody(this, agency.getWorld(), initSpawnPosition, new Vector2(0f, 0f));
 				}
@@ -178,11 +174,11 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 			sprite.update(body.getPosition());
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		// do not draw sprite if powerup is used 
 		if(isPowerupUsed)
 			return;
-		batch.draw(sprite);
+		adBatch.draw(sprite);
 	}
 
 	@Override

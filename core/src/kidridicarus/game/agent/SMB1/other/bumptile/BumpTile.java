@@ -111,7 +111,7 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 			});
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -333,8 +333,8 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 				isEmptyItemBlock());
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(sprite);
+	private void doDraw(AgencyDrawBatch adBatch) {
+		adBatch.draw(sprite);
 	}
 
 	/*

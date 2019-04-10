@@ -121,7 +121,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		sprite = new PitSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 		});
 		playerHUD = new PitHUD(this, agency.getAtlas());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.PLAYER_HUD, new AgentDrawListener() {
@@ -550,12 +550,12 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		}
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		// exit if using scripted sprite state and script says don't draw
 		if(supervisor.isRunningScriptNoMoveAdvice() &&
 				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
 			return;
-		batch.draw(sprite);
+		adBatch.draw(sprite);
 	}
 
 	@Override

@@ -56,7 +56,7 @@ public class FireFlower extends Agent implements DisposableAgent {
 		sprite = new FireFlowerSprite(agency.getAtlas(), initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
 		myDrawListener = new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			};
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, myDrawListener);
 	}
@@ -95,7 +95,7 @@ public class FireFlower extends Agent implements DisposableAgent {
 					agency.removeAgentDrawListener(this, myDrawListener);
 					myDrawListener = new AgentDrawListener() {
 							@Override
-							public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+							public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 						};
 					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, myDrawListener);
 					body = new FireFlowerBody(this, agency.getWorld(), initSpawnPosition);
@@ -136,11 +136,11 @@ public class FireFlower extends Agent implements DisposableAgent {
 		sprite.update(delta, position);
 	}
 
-	private void doDraw(AgencyDrawBatch batch){
+	private void doDraw(AgencyDrawBatch adBatch){
 		// do not draw sprite if powerup is used 
 		if(isPowerupUsed)
 			return;
-		batch.draw(sprite);
+		adBatch.draw(sprite);
 	}
 
 	@Override

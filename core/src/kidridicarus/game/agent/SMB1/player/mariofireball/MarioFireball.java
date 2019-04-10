@@ -72,7 +72,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		sprite = new MarioFireballSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -157,11 +157,11 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		sprite.update(delta, body.getPosition(), moveState);
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		// don't draw sprite if explode animation is finished
 		if(moveState == MoveState.EXPLODE && sprite.isExplodeAnimFinished())
 			return;
-		batch.draw(sprite);
+		adBatch.draw(sprite);
 	}
 
 	@Override

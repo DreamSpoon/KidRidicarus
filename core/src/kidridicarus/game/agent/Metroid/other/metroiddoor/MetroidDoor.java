@@ -56,7 +56,7 @@ public class MetroidDoor extends Agent implements SolidAgent, TriggerTakeAgent, 
 		sprite = new MetroidDoorSprite(agency.getAtlas(), body.getPosition(), isFacingRight);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 		});
 	}
 
@@ -164,8 +164,8 @@ public class MetroidDoor extends Agent implements SolidAgent, TriggerTakeAgent, 
 		sprite.update(stateTimer, moveState);
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(sprite);
+	private void doDraw(AgencyDrawBatch adBatch) {
+		adBatch.draw(sprite);
 	}
 
 	@Override

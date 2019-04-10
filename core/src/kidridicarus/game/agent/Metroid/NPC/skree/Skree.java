@@ -77,7 +77,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		sprite = new SkreeSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 		});
 	}
 
@@ -204,10 +204,10 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		sprite.update(delta, body.getPosition(), moveState);
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		// draw if not despawning
 		if(!despawnMe)
-			batch.draw(sprite);
+			adBatch.draw(sprite);
 	}
 
 	@Override

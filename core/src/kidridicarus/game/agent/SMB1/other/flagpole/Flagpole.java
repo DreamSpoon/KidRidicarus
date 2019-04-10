@@ -51,7 +51,7 @@ public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent
 		sprite = new PoleFlagSprite(agency.getAtlas(), getFlagPosAtTop());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -122,8 +122,8 @@ public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent
 		return getFlagPosAtTop().cpy().lerp(getFlagPosAtBottom(), alpha);
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(sprite);
+	private void doDraw(AgencyDrawBatch adBatch) {
+		adBatch.draw(sprite);
 	}
 
 	@Override

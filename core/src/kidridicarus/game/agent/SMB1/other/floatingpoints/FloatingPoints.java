@@ -55,7 +55,7 @@ if(amount == 0)
 		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount, false);
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -67,8 +67,8 @@ if(amount == 0)
 			agency.removeAgent(this);
 	}
 
-	private void doDraw(AgencyDrawBatch batch){
-		batch.draw(pointsSprite);
+	private void doDraw(AgencyDrawBatch adBatch){
+		adBatch.draw(pointsSprite);
 	}
 
 	@Override

@@ -672,12 +672,12 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		}
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		// exit if using scripted sprite state and script says don't draw
 		if(supervisor.isRunningScriptNoMoveAdvice() &&
 				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
 			return;
-		batch.draw(sprite);
+		adBatch.draw(sprite);
 	}
 
 	private void doDrawHUD(AgencyDrawBatch adBatch) {

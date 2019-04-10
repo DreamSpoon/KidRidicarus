@@ -75,7 +75,7 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		sprite = new TurtleSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -271,10 +271,10 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		sprite.update(delta, body.getPosition(), moveState, isFacingRight);
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		// if not despawning then draw
 		if(!despawnMe)
-			batch.draw(sprite);
+			adBatch.draw(sprite);
 	}
 
 	// assume any amount of damage kills, for now...

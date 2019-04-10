@@ -53,7 +53,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 		sprite = new SamusShotSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 		});
 	}
 
@@ -113,9 +113,9 @@ public class SamusShot extends Agent implements DisposableAgent {
 		sprite.update(delta, body.getPosition(), moveState);
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
+	private void doDraw(AgencyDrawBatch adBatch) {
 		if(moveState != MoveState.DEAD)
-			batch.draw(sprite);
+			adBatch.draw(sprite);
 	}
 
 	@Override

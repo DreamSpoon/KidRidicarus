@@ -40,7 +40,7 @@ public class SpinCoin extends Agent implements DisposableAgent {
 			});
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -57,8 +57,8 @@ public class SpinCoin extends Agent implements DisposableAgent {
 			agency.removeAgent(this);
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(coinSprite);
+	private void doDraw(AgencyDrawBatch adBatch) {
+		adBatch.draw(coinSprite);
 	}
 
 	@Override

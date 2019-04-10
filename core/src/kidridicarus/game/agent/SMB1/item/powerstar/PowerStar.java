@@ -64,7 +64,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 		sprite = new PowerStarSprite(agency.getAtlas(), initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
 		drawListener = new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			};
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, drawListener);
 	}
@@ -98,10 +98,6 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 				if(moveState == MoveState.SPROUT) {
 					// change from bottom to middle sprite draw order
 					agency.removeAgentDrawListener(this, drawListener);
-					drawListener = new AgentDrawListener() {
-							@Override
-							public void draw(AgencyDrawBatch batch) { doDraw(batch); }
-						};
 					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, drawListener);
 					body = new PowerStarBody(this, agency.getWorld(), initSpawnPosition, new Vector2(0f, 0f));
 
@@ -161,12 +157,12 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 			sprite.update(delta, body.getPosition());
 	}
 
-	private void doDraw(AgencyDrawBatch batch){
+	private void doDraw(AgencyDrawBatch adBatch){
 		// do not draw sprite if powerup is used 
 		if(isPowerupUsed)
 			return;
 
-		batch.draw(sprite);
+		adBatch.draw(sprite);
 	}
 
 	@Override

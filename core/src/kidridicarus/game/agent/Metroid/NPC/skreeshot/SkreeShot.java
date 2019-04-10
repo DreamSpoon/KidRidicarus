@@ -38,7 +38,7 @@ public class SkreeShot extends Agent implements DisposableAgent {
 		sprite = new SkreeShotSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 		});
 	}
 
@@ -58,8 +58,8 @@ public class SkreeShot extends Agent implements DisposableAgent {
 		}
 	}
 
-	private void doDraw(AgencyDrawBatch batch) {
-		batch.draw(sprite);
+	private void doDraw(AgencyDrawBatch adBatch) {
+		adBatch.draw(sprite);
 	}
 
 	@Override

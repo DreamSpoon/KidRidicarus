@@ -56,7 +56,7 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		sprite = new ShemumSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch batch) { doDraw(batch); }
+				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -136,10 +136,10 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		sprite.update(delta, body.getPosition(), isFacingRight);
 	}
 
-	private void doDraw(AgencyDrawBatch batch){
+	private void doDraw(AgencyDrawBatch adBatch) {
 		// draw if not despawned and not dead
 		if(!despawnMe && !isDead)
-			batch.draw(sprite);
+			adBatch.draw(sprite);
 	}
 
 	// assume any amount of damage kills, for now...
