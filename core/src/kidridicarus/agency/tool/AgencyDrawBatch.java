@@ -6,20 +6,22 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.UInfo;
 
 /*
  * A wrapper class which enables agents to draw sprites, tiled map layers, etc.
  */
-public class AgencyDrawBatch {
+public class AgencyDrawBatch implements Disposable {
 	private Batch batch;
 	private OrthogonalTiledMapRenderer tileRenderer;
 
-	public AgencyDrawBatch(Batch batch, OrthogonalTiledMapRenderer tileRenderer) {
+	public AgencyDrawBatch(Batch batch) {
 		this.batch = batch;
-		this.tileRenderer = tileRenderer;
+		this.tileRenderer = new OrthogonalTiledMapRenderer(null, UInfo.P2M(1f), batch);
 	}
 
 	public void setView(OrthographicCamera camera) {
@@ -51,5 +53,10 @@ public class AgencyDrawBatch {
 
 	public boolean isDrawing() {
 		return batch.isDrawing();
+	}
+
+	@Override
+	public void dispose() {
+		tileRenderer.dispose();
 	}
 }

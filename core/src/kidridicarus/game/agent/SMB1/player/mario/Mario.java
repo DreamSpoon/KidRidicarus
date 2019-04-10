@@ -26,6 +26,7 @@ import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.powerup.PowerupList;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.common.tool.QQ;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
@@ -776,6 +777,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 
 	@Override
 	public void dispose() {
+		QQ.pr("mario agent disposed");
 		body.dispose();
 	}
 }

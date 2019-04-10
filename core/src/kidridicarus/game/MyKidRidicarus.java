@@ -7,8 +7,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
+import kidridicarus.agency.Agency;
 import kidridicarus.agency.AgentClassList;
-import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.info.CommonAgentClassList;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.screen.InstructionsScreen;
@@ -24,15 +24,13 @@ import kidridicarus.game.info.SMB1_Audio;
  */
 public class MyKidRidicarus extends Game {
 	public SpriteBatch batch;
-	public AssetManager manager;
-	public AgencyDirector director;
-
 	private TextureAtlas atlas;
+	public AssetManager manager;
+	public Agency agency;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-
 		atlas = new TextureAtlas(CommonInfo.TA_MAIN_FILENAME);
 
 		manager = new AssetManager();
@@ -72,11 +70,10 @@ public class MyKidRidicarus extends Game {
 		manager.load(SMB1_Audio.Sound.UP1, Sound.class);
 		manager.finishLoading();
 
-		director = new AgencyDirector(manager, batch, atlas,
-				new AgentClassList(CommonAgentClassList.CORE_AGENT_CLASS_LIST,
-						SMB1_AgentClassList.SMB_AGENT_CLASSLIST,
-						MetroidAgentClassList.METROID_AGENT_CLASSLIST,
-						KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST));
+		agency = new Agency(new AgentClassList(CommonAgentClassList.CORE_AGENT_CLASS_LIST,
+				SMB1_AgentClassList.SMB_AGENT_CLASSLIST,
+				MetroidAgentClassList.METROID_AGENT_CLASSLIST,
+				KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST), atlas);
 
 		// show intro/instructions screen
 		setScreen(new InstructionsScreen(this, CommonInfo.GAMEMAP_FILENAME1));
@@ -87,8 +84,9 @@ public class MyKidRidicarus extends Game {
 		super.dispose();
 		if(getScreen() != null)
 			getScreen().dispose();
-		director.dispose();
+		agency.dispose();
 		batch.dispose();
+		atlas.dispose();
 		manager.dispose();
 	}
 }

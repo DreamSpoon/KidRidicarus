@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -15,9 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.KeyboardMapping;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.game.MyKidRidicarus;
 
 public class InstructionsScreen implements Screen {
@@ -47,15 +50,17 @@ public class InstructionsScreen implements Screen {
 		oldInPr = Gdx.input.getInputProcessor();
 		Gdx.input.setInputProcessor(new MyLittleInPr());
 
-		game.director.getAgency().setEar(null);
+		game.agency.setEar(null);
 		// load the game map
-		game.director.createMapAgent(CommonInfo.INSTRO_FILENAME);
+		game.agency.createAgent(TiledMapMetaAgent.makeAP((new TmxMapLoader()).load(CommonInfo.INSTRO_FILENAME)));
 		// run one update to let the map create the solid tile map and draw layer agents
-		game.director.update(1f/60f);
-		game.director.postUpdate();
+		game.agency.update(1f/60f);
+//		game.agency.postUpdate();
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
-		game.director.update(1f/60f);
-		game.director.postUpdate();
+		game.agency.update(1f/60f);
+//		game.agency.postUpdate();
+
+		game.agency.setEye(new AgencyDrawBatch(game.batch));
 	}
 
 	private void setupStage() {
@@ -123,9 +128,9 @@ public class InstructionsScreen implements Screen {
 
 	private void update(float delta) {
 		// update the game world
-		game.director.update(delta);
+		game.agency.update(delta);
 		// post processing of changes during update
-		game.director.postUpdate();
+//		game.agency.postUpdate();
 	}
 
 	private void drawScreen() {
@@ -134,7 +139,7 @@ public class InstructionsScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		// draw screen
-		game.director.draw(gamecam);
+		game.agency.draw(gamecam);
 
 		// draw HUD last
 		stage.draw();
@@ -166,6 +171,6 @@ public class InstructionsScreen implements Screen {
 	public void dispose() {
 		Gdx.input.setInputProcessor(oldInPr);
 		stage.dispose();
-		game.director.disposeAndRemoveAllAgents();
+		game.agency.disposeAndRemoveAllAgents();
 	}
 }

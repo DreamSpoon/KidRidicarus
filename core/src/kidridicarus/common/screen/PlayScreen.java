@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -13,6 +14,7 @@ import kidridicarus.common.guide.Guide;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.KeyboardMapping;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.common.tool.QQ;
 import kidridicarus.game.MyKidRidicarus;
 
@@ -66,19 +68,22 @@ public class PlayScreen implements Screen {
 		b2dr = new Box2DDebugRenderer();
 
 		// create guide and set event listener for Agency
-		guide = new Guide(game.director, game.manager);
-		game.director.getAgency().setEar(guide.createEar());
+		guide = new Guide(game.manager, game.agency);
+		// create ear before map load so that registerMusic can be "heard"
+		game.agency.setEar(guide.createEar());
 
 		// load the game map
-		game.director.createMapAgent(levelFilename);
+		game.agency.createAgent(TiledMapMetaAgent.makeAP((new TmxMapLoader()).load(levelFilename)));
 		// run one update to let the map create the solid tile map and draw layer agents
-		game.director.update(1f/60f);
-		game.director.postUpdate();
+		game.agency.update(1f/60f);
+//		game.agency.postUpdate();
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
-		game.director.update(1f/60f);
-		game.director.postUpdate();
+		game.agency.update(1f/60f);
+//		game.agency.postUpdate();
 
 		guide.insertPlayerAgent(playerAgentProperties);
+		// create eye after map load to prevent seeing... um... bad pixels!! uh, yeah - that's why...
+		game.agency.setEye(guide.createEye(game.batch));
 	}
 
 	@Override
@@ -104,11 +109,11 @@ public class PlayScreen implements Screen {
 		// pre-update stuff like scripts, and user input
 		guide.preUpdateAgency(newDelta);
 		// update the game world
-		game.director.update(newDelta);
+		game.agency.update(newDelta);
 		// allow guide to modify player agent state, create agents, change visibility, etc.
-		guide.updateAgency();
+//		guide.updateAgency();
 		// post processing of changes during update
-		game.director.postUpdate();
+//		game.agency.postUpdate();
 		// update camera, etc.
 		guide.postUpdateAgency();
 	}
@@ -167,11 +172,11 @@ public class PlayScreen implements Screen {
 		guide.updateCamera(gamecam);
 
 		// draw screen
-		game.director.draw(gamecam);
+		game.agency.draw(gamecam);
 
 		// DEBUG: draw outlines of Box2D fixtures
 		if(QQ.isOn())
-			b2dr.render(game.director.getAgency().getWorld(), gamecam.combined);
+			b2dr.render(game.agency.getWorld(), gamecam.combined);
 
 		// change to next level?
 		if(guide.isGameWon()) {
@@ -211,6 +216,6 @@ public class PlayScreen implements Screen {
 	public void dispose() {
 		guide.dispose();
 		b2dr.dispose();
-		game.director.disposeAndRemoveAllAgents();
+		game.agency.disposeAndRemoveAllAgents();
 	}
 }

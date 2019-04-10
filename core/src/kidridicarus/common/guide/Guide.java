@@ -1,6 +1,7 @@
 package kidridicarus.common.guide;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -8,14 +9,16 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Music.OnCompletionListener;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
+import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.ObjectProperties;
-import kidridicarus.common.agencydirector.AgencyDirector;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -45,7 +48,6 @@ import kidridicarus.game.powerup.SMB1_Pow;
  *   -user input
  *   -camera
  *   -music changes
- *   -drawing HUDs
  *   -returning info about state of play.
  */
 public class Guide implements Disposable {
@@ -56,6 +58,7 @@ public class Guide implements Disposable {
 	private static final Vector2 SAFETY_RESPAWN_OFFSET = UInfo.VectorP2M(0f, 8f);
 
 	private AssetManager manager;
+	private Agency agency;
 	private MoveAdvice inputMoveAdvice;
 	private PlayerAgent playerAgent;
 	private AgentSpawnTrigger spawnTrigger;
@@ -68,10 +71,11 @@ public class Guide implements Disposable {
 	private Music currentSinglePlayMusic;
 	private Vector2 lastViewCenter;
 
-	private AgencyDirector director;
+	private AgencyDrawBatch eye;
+	private LinkedList<String> musicCatalog;
 
-	public Guide(AgencyDirector director, AssetManager manager) {
-		this.director = director;
+	public Guide(AssetManager manager, Agency agency) {
+		this.agency = agency;
 		this.manager = manager;
 
 		inputMoveAdvice = new MoveAdvice();
@@ -84,6 +88,17 @@ public class Guide implements Disposable {
 		isMainMusicPlaying = false;
 		currentSinglePlayMusic = null;
 		lastViewCenter = new Vector2(0f, 0f);
+
+		eye = null;
+		musicCatalog = new LinkedList<String>();
+	}
+
+	public void doRegisterMusic(String musicName) {
+		if(musicName.equals("") || musicCatalog.contains(musicName))
+			return;
+		musicCatalog.add(musicName);
+		manager.load(musicName, Music.class);
+		manager.finishLoading();
 	}
 
 	private void handleInput() {
@@ -118,15 +133,21 @@ public class Guide implements Disposable {
 		playerAgent.getSupervisor().preUpdateAgency(delta);
 	}
 
-	public void updateAgency() {
+	public void postUpdateAgency() {
+
+
+///DEBUGG
 		// check for "out-of-character" powerup received and change to appropriate character for powerup
 		Powerup nonCharPowerup = playerAgent.getSupervisor().getNonCharPowerups().getFirst();
 		playerAgent.getSupervisor().clearNonCharPowerups();
 		if(nonCharPowerup != null)
 			switchAgentType(nonCharPowerup.getPowerupCharacter());
-	}
-
-	public void postUpdateAgency() {
+///DEBUGG
+		
+		
+		
+		
+		
 		playerAgent.getSupervisor().postUpdateAgency();
 		checkCreateScrollBox();
 	}
@@ -144,28 +165,28 @@ public class Guide implements Disposable {
 		// if current room has scroll push box property = true then create/change to scroll push box
 		if(currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_PUSHBOX, false, Boolean.class)) {
 			if(scrollBox != null && !(scrollBox instanceof ScrollPushBox)) {
-				director.getAgency().removeAgent(scrollBox);
+				agency.removeAgent(scrollBox);
 				scrollBox.dispose();
 				scrollBox = null;
 			}
 			// if scroll box needs to be created and a valid scroll direction is given then create push box
 			if(scrollBox == null && scrollDir != Direction4.NONE)
-				scrollBox = (ScrollPushBox) director.getAgency().createAgent(ScrollPushBox.makeAP(getViewCenter(), scrollDir));
+				scrollBox = (ScrollPushBox) agency.createAgent(ScrollPushBox.makeAP(getViewCenter(), scrollDir));
 		}
 		// if current room has scroll kill box property = true then create/change to scroll kill box
 		else if(currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_KILLBOX, false, Boolean.class)) {
 			if(scrollBox != null && !(scrollBox instanceof ScrollKillBox)) {
-				director.getAgency().removeAgent(scrollBox);
+				agency.removeAgent(scrollBox);
 				scrollBox.dispose();
 				scrollBox = null;
 			}
 			// if scroll box needs to be created and a valid scroll direction is given then create kill box
 			if(scrollBox == null && scrollDir != Direction4.NONE)
-				scrollBox = (ScrollKillBox) director.getAgency().createAgent(ScrollKillBox.makeAP(getViewCenter(), scrollDir));
+				scrollBox = (ScrollKillBox) agency.createAgent(ScrollKillBox.makeAP(getViewCenter(), scrollDir));
 		}
 		// need to remove a scroll box?
 		else if(scrollBox != null) {
-			director.getAgency().removeAgent(scrollBox);
+			agency.removeAgent(scrollBox);
 			scrollBox.dispose();
 			scrollBox = null;
 		}
@@ -178,7 +199,7 @@ public class Guide implements Disposable {
 			currentPos = playerAgent.getPosition().add(SAFETY_RESPAWN_OFFSET);
 			facingRight = playerAgent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE,
 					Direction4.class) == Direction4.RIGHT;
-			director.getAgency().removeAgent(playerAgent);
+			agency.removeAgent(playerAgent);
 			playerAgent.dispose();
 			playerAgent = null;
 		}
@@ -203,7 +224,7 @@ public class Guide implements Disposable {
 		ObjectProperties props = Agent.createPointAP(classAlias, position);
 		if(facingRight)
 			props.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
-		playerAgent = (PlayerAgent) director.getAgency().createAgent(props);
+		playerAgent = (PlayerAgent) agency.createAgent(props);
 	}
 
 	public void updateCamera(OrthographicCamera gamecam) {
@@ -228,7 +249,9 @@ public class Guide implements Disposable {
 			@Override
 			public void registerMusic(String musicName) { doRegisterMusic(musicName); }
 			@Override
-			public void playSound(String soundName) { doPlaySound(soundName); }
+			public void playSound(String soundName) {
+				manager.get(soundName, Sound.class).play(AudioInfo.SOUND_VOLUME);
+			}
 			@Override
 			public void changeAndStartMainMusic(String musicName) { doChangeAndStartMainMusic(musicName); }
 			@Override
@@ -236,16 +259,6 @@ public class Guide implements Disposable {
 			@Override
 			public void stopAllMusic() { doStopAllMusic(); }
 		};
-	}
-
-	private void doPlaySound(String soundName) {
-		manager.get(soundName, Sound.class).play(AudioInfo.SOUND_VOLUME);
-	}
-
-	// TODO This is a hack - registerMusic should be done before loading map file - read map file init agents
-	// for rooms, then harvest music names.
-	private void doRegisterMusic(String musicName) {
-		director.registerMusic(musicName);
 	}
 
 	private void doChangeAndStartMainMusic(String musicName) {
@@ -316,6 +329,13 @@ public class Guide implements Disposable {
 		currentSinglePlayMusic = null;
 	}
 
+	public AgencyDrawBatch createEye(Batch batch) {
+		if(eye != null)
+			throw new IllegalStateException("Cannot create second eye.");
+		eye = new AgencyDrawBatch(batch);
+		return eye;
+	}
+
 	public String getNextLevelFilename() {
 		return playerAgent.getSupervisor().getNextLevelFilename();
 	}
@@ -336,10 +356,10 @@ public class Guide implements Disposable {
 		// spawn player with properties at spawn location
 		playerAgent = spawnPlayerAgentWithProperties(playerAgentProperties, spawner);
 		// create player's associated agents (generally, they follow player)
-		spawnTrigger = (AgentSpawnTrigger) director.getAgency().createAgent(
+		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(
 				AgentSpawnTrigger.makeAP(getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
 		spawnTrigger.setEnabled(true);
-		keepAliveBox = (KeepAliveBox) director.getAgency().createAgent(
+		keepAliveBox = (KeepAliveBox) agency.createAgent(
 				KeepAliveBox.makeAP(getViewCenter(), KEEP_ALIVE_WIDTH, KEEP_ALIVE_HEIGHT));
 
 		return true;
@@ -352,7 +372,7 @@ public class Guide implements Disposable {
 		// otherwise use agent properties and set start point to main spawn point
 		else {
 			playerAgentProperties.put(AgencyKV.Spawn.KEY_START_POS, spawner.getPosition());
-			return (PlayerAgent) director.getAgency().createAgent(playerAgentProperties);
+			return (PlayerAgent) agency.createAgent(playerAgentProperties);
 		}
 	}
 
@@ -363,12 +383,12 @@ public class Guide implements Disposable {
 		ObjectProperties playerAP = Agent.createPointAP(initPlayClass, spawner.getPosition());
 		if(spawner.getProperty(CommonKV.KEY_DIRECTION, "", String.class).equals(CommonKV.VAL_RIGHT))
 			playerAP.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
-		return (PlayerAgent) director.getAgency().createAgent(playerAP);
+		return (PlayerAgent) agency.createAgent(playerAP);
 	}
 
 	private Agent getMainPlayerSpawner() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
-		Collection<Agent> spawnList = director.getAgency().getAgentsByProperties(
+		Collection<Agent> spawnList = agency.getAgentsByProperties(
 				new String[] { AgencyKV.Spawn.KEY_AGENT_CLASS, CommonKV.Spawn.KEY_SPAWN_MAIN },
 				new String[] { CommonKV.AgentClassAlias.VAL_PLAYER_SPAWNER, CommonKV.VAL_TRUE });
 		if(!spawnList.isEmpty())
@@ -399,6 +419,8 @@ public class Guide implements Disposable {
 			spawnTrigger.dispose();
 		if(playerAgent != null)
 			playerAgent.dispose();
+		if(eye != null)
+			eye.dispose();
 		doStopMainMusic();
 	}
 }

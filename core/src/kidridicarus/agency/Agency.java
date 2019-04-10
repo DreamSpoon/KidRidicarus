@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -26,8 +27,10 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.AgencyDrawBatch;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
+import kidridicarus.common.tool.QQ;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.EarPlug;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -58,16 +61,20 @@ public class Agency implements Disposable {
 	private AgentClassList allAgentsClassList;
 	private AgencyChangeQueue agencyChangeQ;
 	private AgencyIndex agencyIndex;
-	private World world;
 	private TextureAtlas atlas;
-	private float globalTimer;
+	private World world;
 	// Agency needs an earplug because it looks cool... and lets Agents exchange audio info
 	private EarPlug earplug;
+	private AgencyDrawBatch myEye;
+	private float globalTimer;
 
-	public Agency(AgentClassList allAgentsClassList) {
-		atlas = null;
+	public Agency(AgentClassList allAgentsClassList, TextureAtlas atlas) {
+		this.allAgentsClassList = allAgentsClassList;
+		this.atlas = atlas;
+
 		globalTimer = 0f;
 		earplug = new EarPlug();
+		myEye = null;
 
 		world = new World(new Vector2(0, -10f), true);
 		world.setContactListener(new AgentContactListener());
@@ -75,19 +82,18 @@ public class Agency implements Disposable {
 
 		agencyChangeQ = new AgencyChangeQueue();
 		agencyIndex = new AgencyIndex();
-
-		this.allAgentsClassList = allAgentsClassList;
 	}
 
 	public void update(float delta) {
 		world.step(delta, 6, 2);
 		updateAgents(delta);
+		processChangeQ();
 		globalTimer += delta;
 	}
 
-	public void postUpdate() {
-		processChangeQ();
-	}
+//	public void postUpdate() {
+//		processChangeQ();
+//	}
 
 	private void updateAgents(final float delta) {
 		// loop through list of agents receiving updates, calling each agent's update method
@@ -230,18 +236,6 @@ public class Agency implements Disposable {
 		agencyChangeQ.removeAgentRemoveListener(new AgentPlaceholder(arListener.getListeningAgent()), arListener);
 	}
 
-	public void setAtlas(TextureAtlas atlas) {
-		this.atlas = atlas;
-	}
-
-	public TextureAtlas getAtlas() {
-		return atlas;
-	}
-
-	public World getWorld() {
-		return world;
-	}
-
 	/*
 	 * Find agents in list which contain map properties equal to the given keys/vals data.
 	 * Note: A value in the vals[] array can be set to null if the value of it's key is to be ignored (in this case,
@@ -285,8 +279,47 @@ public class Agency implements Disposable {
 		return ret;
 	}
 
-	public void iterateThroughDrawListeners(AllowOrderListIter doli) {
-		agencyIndex.iterateThroughDrawListeners(doli);
+	public Ear getEar() {
+		return earplug.getEar();
+	}
+
+	public void setEar(Ear ear) {
+		this.earplug.setRealEar(ear);
+	}
+
+	public void setEye(AgencyDrawBatch eye) {
+		this.myEye = eye;
+	}
+
+	public void draw(OrthographicCamera camera) {
+		if(myEye == null)
+			return;
+		myEye.setView(camera);
+		myEye.begin();
+		agencyIndex.iterateThroughDrawListeners(new AllowOrderListIter() {
+			@Override
+			public boolean iterate(Object obj) {
+				if(obj instanceof AgentDrawListener)
+					((AgentDrawListener) obj).draw(myEye);
+				else
+					QQ.pr("unknown object in draw list iteration object: " + obj);
+				// return false to continue iterating
+				return false;
+			}
+		});
+		myEye.end();
+	}
+
+	public boolean isValidAgentClassAlias(String agentClassAlias) {
+		return allAgentsClassList.get(agentClassAlias) != null;
+	}
+
+	public World getWorld() {
+		return world;
+	}
+
+	public TextureAtlas getAtlas() {
+		return atlas;
 	}
 
 	/*
@@ -303,14 +336,6 @@ public class Agency implements Disposable {
 		agencyIndex.disposeAndRemoveAllAgents();
 	}
 
-	public Ear getEar() {
-		return earplug.getEar();
-	}
-
-	public void setEar(Ear ear) {
-		this.earplug.setRealEar(ear);
-	}
-
 	/*
 	 * Dispose and remove all Agents and dispose Agency.
 	 */
@@ -318,9 +343,5 @@ public class Agency implements Disposable {
 	public void dispose() {
 		disposeAndRemoveAllAgents();
 		world.dispose();
-	}
-
-	public boolean isValidAgentClassAlias(String agentClassAlias) {
-		return allAgentsClassList.get(agentClassAlias) != null;
 	}
 }
