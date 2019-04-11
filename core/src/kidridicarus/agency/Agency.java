@@ -287,7 +287,7 @@ public class Agency implements Disposable {
 	}
 
 	public void setEar(Ear ear) {
-		this.earplug.setRealEar(ear);
+		this.earplug.setEar(ear);
 	}
 
 	public void setEye(Eye eye) {

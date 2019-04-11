@@ -67,11 +67,6 @@ public class PlayScreen implements Screen {
 
 		b2dr = new Box2DDebugRenderer();
 
-		// create guide and set event listener for Agency
-		guide = new Guide(game.manager, game.agency);
-		// create ear before map load so that registerMusic can be "heard"
-		game.agency.setEar(guide.createEar());
-
 		// load the game map
 		game.agency.createAgent(TiledMapMetaAgent.makeAP((new TmxMapLoader()).load(levelFilename)));
 		// run one update to let the map create the solid tile map and draw layer agents
@@ -79,9 +74,11 @@ public class PlayScreen implements Screen {
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
 		game.agency.update(1f/60f);
 
-		guide.createPlayerAgent(playerAgentProperties);
-		// create eye after map load to prevent seeing... um... bad pixels!! uh, yeah - that's why...
+		// create guide and set event listener for Agency
+		guide = new Guide(game.manager, game.agency);
+		game.agency.setEar(guide.createEar());
 		game.agency.setEye(guide.createEye(game.batch, gamecam));
+		guide.createPlayerAgent(playerAgentProperties);
 	}
 
 	@Override

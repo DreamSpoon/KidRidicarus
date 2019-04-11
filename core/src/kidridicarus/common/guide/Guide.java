@@ -1,7 +1,5 @@
 package kidridicarus.common.guide;
 
-import java.util.LinkedList;
-
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Music.OnCompletionListener;
@@ -33,7 +31,6 @@ public class Guide implements Disposable {
 	private boolean isMainMusicPlaying;
 	private Music currentSinglePlayMusic;
 	private Eye eye;
-	private LinkedList<String> musicCatalog;
 
 	public Guide(AssetManager manager, Agency agency) {
 		this.manager = manager;
@@ -45,22 +42,16 @@ public class Guide implements Disposable {
 		isMainMusicPlaying = false;
 		currentSinglePlayMusic = null;
 		eye = null;
-		musicCatalog = new LinkedList<String>();
-	}
-
-	public void doRegisterMusic(String musicName) {
-		if(musicName.equals("") || musicCatalog.contains(musicName))
-			return;
-		musicCatalog.add(musicName);
-		manager.load(musicName, Music.class);
-		manager.finishLoading();
 	}
 
 	// create an Ear to give to Agency, so that Guide can receive sound/music callbacks from Agency
 	public Ear createEar() {
 		return new Ear() {
 			@Override
-			public void registerMusic(String musicName) { doRegisterMusic(musicName); }
+			public void registerMusic(String musicName) {
+				manager.load(musicName, Music.class);
+				manager.finishLoading();
+			}
 			@Override
 			public void playSound(String soundName) {
 				manager.get(soundName, Sound.class).play(AudioInfo.SOUND_VOLUME);

@@ -32,6 +32,7 @@ public class InstructionsScreen implements Screen {
 
 	private String nextLevelFilename;
 	private boolean goRedTeamGo;
+	private Eye myEye;
 
 	public InstructionsScreen(MyKidRidicarus game, String nextLevelFilename) {
 		this.game = game;
@@ -50,7 +51,6 @@ public class InstructionsScreen implements Screen {
 		oldInPr = Gdx.input.getInputProcessor();
 		Gdx.input.setInputProcessor(new MyLittleInPr());
 
-		game.agency.setEar(null);
 		// load the game map
 		game.agency.createAgent(TiledMapMetaAgent.makeAP((new TmxMapLoader()).load(CommonInfo.INSTRO_FILENAME)));
 		// run one update to let the map create the solid tile map and draw layer agents
@@ -58,7 +58,8 @@ public class InstructionsScreen implements Screen {
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
 		game.agency.update(1f/60f);
 
-		game.agency.setEye(new Eye(game.batch, gamecam));
+		myEye = new Eye(game.batch, gamecam);
+		game.agency.setEye(myEye);
 	}
 
 	private void setupStage() {
@@ -121,6 +122,7 @@ public class InstructionsScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		update(delta);
+		myEye.setViewCenter(UInfo.VectorP2M(CommonInfo.V_WIDTH/2f, CommonInfo.V_HEIGHT/2f));
 		drawScreen();
 	}
 
