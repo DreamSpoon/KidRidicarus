@@ -34,7 +34,7 @@ public abstract class AgentSupervisor {
 
 	protected abstract AgentScriptHooks getAgentScriptHooks();
 
-	public AgentSupervisor(Agency agency, Agent agent) {
+	public AgentSupervisor(Agent agent) {
 		scriptRunner = new AgentScriptRunner(this);
 		if(!(agent instanceof PlayerAgent))
 			throw new IllegalArgumentException("agent is not instanceof PlayerAgent: " + agent);

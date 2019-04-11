@@ -129,7 +129,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			public void draw(Eye adBatch) { playerHUD.draw(adBatch); }
 		});
 
-		supervisor = new PitSupervisor(agency, this);
+		supervisor = new PitSupervisor(this);
 	}
 
 	/*

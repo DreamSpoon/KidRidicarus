@@ -122,7 +122,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			public void draw(Eye adBatch) { doDrawHUD(adBatch); }
 		});
 
-		supervisor = new MarioSupervisor(agency, this);
+		supervisor = new MarioSupervisor(this);
 	}
 
 	private void setStateFromProperties(ObjectProperties properties) {

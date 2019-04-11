@@ -1,6 +1,5 @@
 package kidridicarus.game.agent.SMB1.player.mario;
 
-import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -14,8 +13,8 @@ public class MarioSupervisor extends PlayerAgentSupervisor {
 	private String nextLevelFilename;
 	private boolean isGameOver;
 
-	public MarioSupervisor(Agency agency, Mario playerAgent) {
-		super(agency, playerAgent);
+	public MarioSupervisor(Mario playerAgent) {
+		super(playerAgent);
 		this.playerAgent = playerAgent;
 		userMoveAdvice = new MoveAdvice4x4();
 		nextLevelFilename = null;

@@ -27,8 +27,6 @@ public class MarioHUD extends PlayerHUD {
 
 	private Label scoreVarLabel;
 	private Label coinVarLabel;
-	private Label worldVarLabel;
-	private Label timeVarLabel;
 	private AnimationActor animatingCoin;
 
 	private float globalTimer;
@@ -52,8 +50,6 @@ public class MarioHUD extends PlayerHUD {
 		Label timeLabel = new Label("TIME", labelstyle);
 		scoreVarLabel = new Label(String.format("%06d", 0), labelstyle);
 		coinVarLabel = new Label(String.format("×%02d", 0), labelstyle);
-		worldVarLabel = new Label("1-1", labelstyle);
-		timeVarLabel = new Label(String.format("%03d", 0), labelstyle);
 
 		table.add(marioLabel).align(Align.left).colspan(3).expandX().padLeft(24).padTop(16);
 		table.add(worldLabel).align(Align.left).expandX().padTop(16);
@@ -66,8 +62,8 @@ public class MarioHUD extends PlayerHUD {
 		table.add(animatingCoin).align(Align.right);
 
 		table.add(coinVarLabel).align(Align.left).expandX();
-		table.add(worldVarLabel).align(Align.left).expandX();
-		table.add(timeVarLabel).align(Align.left).expandX();
+		table.add(new Label("1-1", labelstyle)).align(Align.left).expandX();
+		table.add(new Label(String.format("%03d", 0), labelstyle)).align(Align.left).expandX();
 
 		stage.addActor(table);
 	}

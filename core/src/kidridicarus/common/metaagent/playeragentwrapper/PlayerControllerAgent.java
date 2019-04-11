@@ -93,11 +93,11 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 		keepAliveBox.setTarget(getViewCenter());
 		if(scrollBox != null)
 			scrollBox.setTarget(getViewCenter());
-		handleInput(delta);
+		handleInput();
 		playerAgent.getSupervisor().preUpdateAgency(delta);
 	}
 
-	private void handleInput(float delta) {
+	private void handleInput() {
 		inputMoveAdvice.moveRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
 		inputMoveAdvice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
 		inputMoveAdvice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);

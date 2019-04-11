@@ -2,7 +2,6 @@ package kidridicarus.common.agent.playeragent;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -14,8 +13,8 @@ public abstract class PlayerAgentSupervisor extends AgentSupervisor {
 	private PowerupList nonCharPowerups;
 	private Vector2 lastKnownViewCenter;
 
-	public PlayerAgentSupervisor(Agency agency, Agent agent) {
-		super(agency, agent);
+	public PlayerAgentSupervisor(Agent agent) {
+		super(agent);
 		currentRoom = null;
 		nonCharPowerups = new PowerupList();
 		lastKnownViewCenter = null;

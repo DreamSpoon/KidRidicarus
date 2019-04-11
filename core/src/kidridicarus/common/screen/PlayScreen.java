@@ -44,13 +44,12 @@ public class PlayScreen implements Screen {
 	private MyKidRidicarus game;
 	private OrthographicCamera gamecam;
 	private Viewport gameport;
+	private Box2DDebugRenderer b2dr;
 	private Guide guide;
-
+	private String currentLevelFilename;
 	private boolean useForcedUpdateFramerate;
 	private float forcedUpdateFPS;
 	private float forcedUpdateFrameTimer;
-	private Box2DDebugRenderer b2dr;
-	private String currentLevelFilename;
 
 	public PlayScreen(MyKidRidicarus game, String levelFilename, ObjectProperties playerAgentProperties) {
 		this.game = game;

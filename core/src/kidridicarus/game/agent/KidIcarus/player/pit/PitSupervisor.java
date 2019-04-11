@@ -1,6 +1,5 @@
 package kidridicarus.game.agent.KidIcarus.player.pit;
 
-import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -14,8 +13,8 @@ public class PitSupervisor extends PlayerAgentSupervisor {
 	private String nextLevelName;
 	private boolean isGameOver;
 
-	public PitSupervisor(Agency agency, Pit pit) {
-		super(agency, pit);
+	public PitSupervisor(Pit pit) {
+		super(pit);
 
 		moveAdvice = new MoveAdvice4x4();
 		nextLevelName = null;

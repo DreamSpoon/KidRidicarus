@@ -1,6 +1,5 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
-import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -14,8 +13,8 @@ public class SamusSupervisor extends PlayerAgentSupervisor {
 	private String nextLevelName;
 	private boolean isGameOver;
 
-	public SamusSupervisor(Agency agency, Samus playerAgent) {
-		super(agency, playerAgent);
+	public SamusSupervisor(Samus playerAgent) {
+		super(playerAgent);
 
 		moveAdvice = new MoveAdvice4x4();
 		nextLevelName = null;

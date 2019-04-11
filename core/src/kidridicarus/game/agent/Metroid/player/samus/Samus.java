@@ -129,7 +129,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			public void draw(Eye adBatch) { playerHUD.draw(adBatch); }
 		});
 
-		supervisor = new SamusSupervisor(agency, this);
+		supervisor = new SamusSupervisor(this);
 	}
 
 	private void setStateFromProperties(ObjectProperties properties) {

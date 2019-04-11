@@ -60,7 +60,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 	private void doUpdate(float delta) {
 		processContacts();
 		processMove(delta);
-		processSprite(delta);
+		processSprite();
 	}
 
 	private void processContacts() {
@@ -94,7 +94,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 			lastKnownRoom = nextRoom; 
 	}
 
-	private void processSprite(float delta) {
+	private void processSprite() {
 		sprite.update(body.getPosition(), arrowDir);
 	}
 

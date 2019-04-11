@@ -122,13 +122,12 @@ public class InstructionsScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		update(delta);
-		myEye.setViewCenter(UInfo.VectorP2M(CommonInfo.V_WIDTH/2f, CommonInfo.V_HEIGHT/2f));
 		drawScreen();
 	}
 
 	private void update(float delta) {
-		// update the game world
 		game.agency.update(delta);
+		myEye.setViewCenter(UInfo.VectorP2M(CommonInfo.V_WIDTH/2f, CommonInfo.V_HEIGHT/2f));
 	}
 
 	private void drawScreen() {
