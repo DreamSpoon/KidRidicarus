@@ -20,6 +20,7 @@ public class CommonInfo {
 
 	public static class DrawOrder {
 		public static final AllowOrder NONE = AllowOrder.NOT_ALLOWED;
+		public static final AllowOrder UPDATE_CAMERA = new AllowOrder(true, -9000f);
 		public static final AllowOrder MAP_BACKGROUND = new AllowOrder(true, 0f);
 		public static final AllowOrder MAP_BOTTOM = new AllowOrder(true, 2f);
 		public static final AllowOrder MAP_MIDDLE = new AllowOrder(true, 4f);

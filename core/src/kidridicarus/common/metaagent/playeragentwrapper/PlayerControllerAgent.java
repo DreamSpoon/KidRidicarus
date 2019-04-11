@@ -8,9 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
@@ -68,6 +70,10 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 				@Override
 				public void update(float delta) { doPostAgencyUpdate(); }
 			});
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.UPDATE_CAMERA, new AgentDrawListener() {
+			@Override
+			public void draw(Eye adBatch) { updateCamera(); }
+		});
 	}
 
 	private void createPlayerAgent(ObjectProperties playerAgentProperties) {
@@ -127,7 +133,6 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 
 		playerAgent.getSupervisor().postUpdateAgency();
 		checkCreateScrollBox();
-		updateCamera();
 	}
 
 	/*

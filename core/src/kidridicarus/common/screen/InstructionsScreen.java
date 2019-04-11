@@ -65,16 +65,14 @@ public class InstructionsScreen implements Screen {
 	private void setupStage() {
 		BitmapFont realFont = new BitmapFont();
 		LabelStyle labelFont = new LabelStyle(realFont, Color.WHITE);
-
 		Table table = new Table();
 		table.center();
 		table.setFillParent(true);
-		Label instructionsLabel = new Label(getInstructionsString(), labelFont);
-		table.add(instructionsLabel).expandX().padTop(10f);
+		table.add(new Label("... ][ Kid Ridicarus ][ ...", labelFont)).expandX().padTop(10f);
 		table.row();
-		Label playAgainLabel = new Label("press SPACE to play", labelFont);
-		table.add(playAgainLabel).expandX().padTop(10f);
-
+		table.add(new Label(getInstructionsString(), labelFont)).expandX().padTop(10f);
+		table.row();
+		table.add(new Label("press SPACE to play", labelFont)).expandX().padTop(10f);
 		stage.addActor(table);
 	}
 

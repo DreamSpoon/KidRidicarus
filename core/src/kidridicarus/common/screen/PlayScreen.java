@@ -18,20 +18,20 @@ import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.common.tool.QQ;
 import kidridicarus.game.MyKidRidicarus;
 
+/*
+ * DEBUG: Forced update framerate
+ *   Example to explain forced update framerate:
+ * If the update function is called 30 times per second,
+ * and it is fed an update delta of 1/60 second then:
+ * 30 * 1/60 = 0.5 seconds
+ * So for each real-time 1 second, only 0.5 game world seconds have elapsed.
+ * The game world appears slow to a real-time observer.
+ *
+ * Notes:
+ *   -forcedUpdateFPS, which defaults to FF_FPS, is variable
+ *   -FF_DELTA is not variable
+ */
 public class PlayScreen implements Screen {
-	/*
-	 * DEBUG: Forced update framerate
-	 *   Example to explain forced update framerate:
-	 * If the update function is called 30 times per second,
-	 * and it is fed an update delta of 1/60 second then:
-	 * 30 * 1/60 = 0.5 seconds
-	 * So for each real-time 1 second, only 0.5 game world seconds have elapsed.
-	 * The game world appears slow to a real-time observer.
-	 * 
-	 * Notes:
-	 *   -forcedUpdateFPS, which defaults to FF_FPS, is variable
-	 *   -FF_DELTA is not variable
-	 */
 	private static final boolean FF_USE = false;
 	// how often the update function is called
 	private static final float FF_FPS = 30f;
@@ -42,8 +42,8 @@ public class PlayScreen implements Screen {
 	private static final float MAX_FPS = 70f;
 
 	private MyKidRidicarus game;
-	private OrthographicCamera gamecam;
-	private Viewport gameport;
+	private OrthographicCamera camera;
+	private Viewport viewport;
 	private Box2DDebugRenderer b2dr;
 	private Guide guide;
 	private String currentLevelFilename;
@@ -59,10 +59,10 @@ public class PlayScreen implements Screen {
 		forcedUpdateFPS = FF_FPS;
 		forcedUpdateFrameTimer = 0f;
 
-		gamecam = new OrthographicCamera();
-		gameport = new FitViewport(UInfo.P2M(CommonInfo.V_WIDTH), UInfo.P2M(CommonInfo.V_HEIGHT), gamecam);
+		camera = new OrthographicCamera();
+		viewport = new FitViewport(UInfo.P2M(CommonInfo.V_WIDTH), UInfo.P2M(CommonInfo.V_HEIGHT), camera);
 		// set position so bottom left of view screen is (0, 0) in Box2D world 
-		gamecam.position.set(gameport.getWorldWidth()/2f, gameport.getWorldHeight()/2f, 0);
+		camera.position.set(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f, 0);
 
 		b2dr = new Box2DDebugRenderer();
 
@@ -74,7 +74,7 @@ public class PlayScreen implements Screen {
 		game.agency.update(1f/60f);
 
 		// create guide and set event listener for Agency
-		guide = new Guide(game.manager, game.batch, gamecam, game.agency);
+		guide = new Guide(game.manager, game.batch, camera, game.agency);
 		guide.createPlayerAgent(playerAgentProperties);
 	}
 
@@ -158,7 +158,7 @@ public class PlayScreen implements Screen {
 
 		// DEBUG: draw outlines of Box2D fixtures
 		if(QQ.isOn())
-			b2dr.render(game.agency.getWorld(), gamecam.combined);
+			b2dr.render(game.agency.getWorld(), camera.combined);
 
 		// change to next level?
 		if(guide.isGameWon()) {
@@ -177,7 +177,7 @@ public class PlayScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		gameport.update(width, height);
+		viewport.update(width, height);
 	}
 
 	@Override
