@@ -20,7 +20,7 @@ public class LevelEndTrigger extends Agent implements TriggerTakeAgent, Disposab
 		super(agency, properties);
 
 		body = new LevelEndTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});

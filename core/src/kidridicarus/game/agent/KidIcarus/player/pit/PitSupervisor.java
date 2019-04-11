@@ -7,29 +7,29 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.common.tool.MoveAdvice4x4;
 
 public class PitSupervisor extends PlayerAgentSupervisor {
-	private MoveAdvice moveAdvice;
+	private MoveAdvice4x4 moveAdvice;
 	private String nextLevelName;
 	private boolean isGameOver;
 
 	public PitSupervisor(Agency agency, Pit pit) {
 		super(agency, pit);
 
-		moveAdvice = new MoveAdvice();
+		moveAdvice = new MoveAdvice4x4();
 		nextLevelName = null;
 		isGameOver = false;
 	}
 
 	@Override
-	public void setMoveAdvice(MoveAdvice moveAdvice) {
+	public void setMoveAdvice(MoveAdvice4x4 moveAdvice) {
 		this.moveAdvice.set(moveAdvice);
 	}
 
 	@Override
-	protected MoveAdvice internalPollMoveAdvice() {
-		MoveAdvice userAdvice = moveAdvice.cpy();
+	protected MoveAdvice4x4 internalPollMoveAdvice() {
+		MoveAdvice4x4 userAdvice = moveAdvice.cpy();
 		moveAdvice.clear();
 		return userAdvice;
 	}

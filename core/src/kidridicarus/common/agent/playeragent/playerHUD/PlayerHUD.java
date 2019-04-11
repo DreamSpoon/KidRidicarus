@@ -3,7 +3,7 @@ package kidridicarus.common.agent.playeragent.playerHUD;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 
 public abstract class PlayerHUD implements Disposable {
 	private Stage hudStage = null;
@@ -11,7 +11,7 @@ public abstract class PlayerHUD implements Disposable {
 	protected abstract void setupStage(Stage stage);
 	protected abstract void preDrawStage();
 
-	public void draw(AgencyDrawBatch adBatch) {
+	public void draw(Eye adBatch) {
 		if(hudStage == null) {
 			hudStage = adBatch.createStage();
 			setupStage(hudStage);

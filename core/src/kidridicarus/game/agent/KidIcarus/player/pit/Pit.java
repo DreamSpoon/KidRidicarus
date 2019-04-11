@@ -11,7 +11,7 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -24,7 +24,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.game.agent.KidIcarus.player.pit.HUD.PitHUD;
 import kidridicarus.game.agent.KidIcarus.player.pitarrow.PitArrow;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
@@ -106,27 +106,27 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		setStateFromProperties(properties);
 
 		body = new PitBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f), false);
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doPostUpdate(); }
 		});
 		sprite = new PitSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+			public void draw(Eye adBatch) { doDraw(adBatch); }
 		});
 		playerHUD = new PitHUD(this, agency.getAtlas());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.PLAYER_HUD, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch adBatch) { playerHUD.draw(adBatch); }
+			public void draw(Eye adBatch) { playerHUD.draw(adBatch); }
 		});
 
 		supervisor = new PitSupervisor(agency, this);
@@ -172,13 +172,13 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	}
 
 	private void doUpdate(float delta) {
-		MoveAdvice moveAdvice = supervisor.pollMoveAdvice();
+		MoveAdvice4x4 moveAdvice = supervisor.pollMoveAdvice();
 		processContacts(delta, moveAdvice);
 		processMove(delta, moveAdvice);
 		processSprite(delta);
 	}
 
-	private void processContacts(float delta, MoveAdvice moveAdvice) {
+	private void processContacts(float delta, MoveAdvice4x4 moveAdvice) {
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
 
@@ -188,7 +188,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		processPipeWarps(moveAdvice);
 	}
 
-	private void processMove(float delta, MoveAdvice moveAdvice) {
+	private void processMove(float delta, MoveAdvice4x4 moveAdvice) {
 		// if a script is running with no move advice then switch to scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
 			body.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
@@ -276,13 +276,13 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		}
 	}
 
-	private void processPipeWarps(MoveAdvice moveAdvice) {
+	private void processPipeWarps(MoveAdvice4x4 moveAdvice) {
 		PipeWarp pw = body.getSpine().getEnterPipeWarp(moveAdvice.getMoveDir4());
 		if(pw != null)
 			pw.use(this);
 	}
 
-	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
+	private MoveState getNextMoveState(MoveAdvice4x4 moveAdvice) {
 		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn() || health <= 0)
 			return MoveState.DEAD;
 		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
@@ -295,7 +295,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			return getNextMoveStateAir(moveAdvice);
 	}
 
-	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
+	private MoveState getNextMoveStateGround(MoveAdvice4x4 moveAdvice) {
 		// if advised jump, and allowed to jump, and not aiming up, and not currently ducking...
 		if(moveAdvice.action1 && isNextJumpAllowed && moveState != MoveState.AIMUP && moveState != MoveState.DUCK) {
 			// Pit can start to jump and do one other thing:
@@ -320,7 +320,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			return MoveState.STAND;
 	}
 
-	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {
+	private MoveState getNextMoveStateAir(MoveAdvice4x4 moveAdvice) {
 		if(moveState.isPreJump() && moveStateTimer <= PRE_JUMP_TIME) {
 			if(moveAdvice.moveDown)
 				return MoveState.PRE_JUMP_DUCK;
@@ -352,7 +352,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		// ... else do nothing.
 	}
 
-	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+	private void processGroundMove(MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
 		// next jump changes to allowed when on ground and not advising jump move 
 		if(!moveAdvice.action1)
 			isNextJumpAllowed = true;
@@ -410,7 +410,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			isHeadBumped = false;
 	}
 
-	private void processAirMove(float delta, MoveAdvice moveAdvice, MoveState nextMoveState) {
+	private void processAirMove(float delta, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
 		isOnGroundHeadInTile = false;
 		switch(nextMoveState) {
 			case PRE_JUMP:
@@ -461,7 +461,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		jumpForceTimer = jumpForceTimer > delta ? jumpForceTimer-delta : 0f;
 	}
 
-	private void processShoot(float delta, MoveAdvice moveAdvice) {
+	private void processShoot(float delta, MoveAdvice4x4 moveAdvice) {
 		if(moveAdvice.action0 && isNextShotAllowed && shootCooldownTimer <= 0f && !moveState.isDuck())
 			doShoot();
 		else if(!moveAdvice.action0)
@@ -550,7 +550,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		}
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		// exit if using scripted sprite state and script says don't draw
 		if(supervisor.isRunningScriptNoMoveAdvice() &&
 				!supervisor.getScriptAgentState().scriptedSpriteState.visible)

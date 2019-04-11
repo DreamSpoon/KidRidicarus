@@ -8,7 +8,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -27,18 +27,18 @@ public class SkreeShot extends Agent implements DisposableAgent {
 		moveStateTimer = 0f;
 		body = new SkreeShotBody(this, agency.getWorld(), Agent.getStartPoint(properties),
 				Agent.getStartVelocity(properties));
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
 		sprite = new SkreeShotSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+			public void draw(Eye adBatch) { doDraw(adBatch); }
 		});
 	}
 
@@ -58,7 +58,7 @@ public class SkreeShot extends Agent implements DisposableAgent {
 		}
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		adBatch.draw(sprite);
 	}
 

@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
@@ -27,7 +27,7 @@ public class DrawLayerAgent extends Agent {
 		agency.addAgentDrawListener(this, getDrawOrderForLayer(drawLayer, CommonInfo.KIDRID_DRAWORDER_ALIAS),
 				new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+				public void draw(Eye adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -49,17 +49,17 @@ public class DrawLayerAgent extends Agent {
 			}
 			catch(ClassCastException cce2) {
 				// return null because no float value and no string found to indicate draw order for layer
-				return CommonInfo.LayerDrawOrder.NONE;
+				return CommonInfo.DrawOrder.NONE;
 			}
 			// check draw order aliases to translate to draw order object
 			return DrawOrderAlias.getDrawOrderForAlias(drawOrderAliasList, drawOrderStr);
 		}
 		if(drawOrderFloat == null)
-			return CommonInfo.LayerDrawOrder.NONE;
+			return CommonInfo.DrawOrder.NONE;
 		return new AllowOrder(true, drawOrderFloat);
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		adBatch.draw(drawLayer);
 	}
 

@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.2.3" icons="false" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="kidridicarus.common.agencydirector.AgencyDirector" 
-    project="kid-ridicarus-game-core" 
-    file="/kid-ridicarus-game-core/src/kidridicarus/common/agencydirector/AgencyDirector.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1125" y="39"/>    
-    <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
-      sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <class id="2" language="java" name="kidridicarus.common.guide.Guide" project="kid-ridicarus-game-core" 
+  <class id="1" language="java" name="kidridicarus.common.guide.Guide" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/common/guide/Guide.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1437" y="110"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
@@ -21,7 +10,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="kidridicarus.common.agent.playeragent.PlayerAgent" 
+  <class id="2" language="java" name="kidridicarus.common.agent.playeragent.PlayerAgent" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/common/agent/playeragent/PlayerAgent.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -32,7 +21,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="kidridicarus.game.agent.SMB1.player.mario.Mario" project="kid-ridicarus-game-core" 
+  <class id="3" language="java" name="kidridicarus.game.agent.SMB1.player.mario.Mario" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mario/Mario.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="668" y="308"/>    
@@ -42,7 +31,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioBody" 
+  <class id="4" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioBody" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mario/MarioBody.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -53,7 +42,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioSpine" 
+  <class id="5" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioSpine" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mario/MarioSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -64,7 +53,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioSupervisor" 
+  <class id="6" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioSupervisor" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mario/MarioSupervisor.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -75,7 +64,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.Pit" 
+  <class id="7" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.Pit" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/player/pit/Pit.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -86,7 +75,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.PitBody" 
+  <class id="8" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.PitBody" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/player/pit/PitBody.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -97,7 +86,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.PitSpine" 
+  <class id="9" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.PitSpine" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/player/pit/PitSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -108,7 +97,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.PitSupervisor" 
+  <class id="10" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.PitSupervisor" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/player/pit/PitSupervisor.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -119,7 +108,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioSprite" 
+  <class id="11" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioSprite" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mario/MarioSprite.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -130,7 +119,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.PitSprite" 
+  <class id="12" language="java" name="kidridicarus.game.agent.KidIcarus.player.pit.PitSprite" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/player/pit/PitSprite.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -141,7 +130,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="kidridicarus.game.agent.Metroid.player.samus.Samus" 
+  <class id="13" language="java" name="kidridicarus.game.agent.Metroid.player.samus.Samus" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/player/samus/Samus.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -152,7 +141,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="15" language="java" name="kidridicarus.game.agent.Metroid.player.samus.SamusBody" 
+  <class id="14" language="java" name="kidridicarus.game.agent.Metroid.player.samus.SamusBody" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/player/samus/SamusBody.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -163,7 +152,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="kidridicarus.game.agent.Metroid.player.samus.SamusSpine" 
+  <class id="15" language="java" name="kidridicarus.game.agent.Metroid.player.samus.SamusSpine" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/player/samus/SamusSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -174,7 +163,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="17" language="java" name="kidridicarus.game.agent.Metroid.player.samus.SamusSupervisor" 
+  <class id="16" language="java" name="kidridicarus.game.agent.Metroid.player.samus.SamusSupervisor" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/player/samus/SamusSupervisor.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -185,7 +174,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="18" language="java" name="kidridicarus.game.agent.Metroid.player.samus.SamusSprite" 
+  <class id="17" language="java" name="kidridicarus.game.agent.Metroid.player.samus.SamusSprite" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/player/samus/SamusSprite.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -196,7 +185,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="19" language="java" name="kidridicarus.game.agent.SMB1.NPC.goomba.Goomba" project="kid-ridicarus-game-core" 
+  <class id="18" language="java" name="kidridicarus.game.agent.SMB1.NPC.goomba.Goomba" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/NPC/goomba/Goomba.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="226" y="298"/>    
@@ -206,7 +195,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="20" language="java" name="kidridicarus.agency.agent.Agent" project="kid-ridicarus-game-core" 
+  <class id="19" language="java" name="kidridicarus.agency.agent.Agent" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/agent/Agent.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="506" y="216"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
@@ -215,7 +204,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="21" language="java" name="kidridicarus.agency.Agency" project="kid-ridicarus-game-core" 
+  <class id="20" language="java" name="kidridicarus.agency.Agency" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/Agency.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="764" y="96"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
@@ -224,7 +213,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="22" language="java" name="kidridicarus.game.agent.SMB1.NPC.goomba.GoombaBody" 
+  <class id="21" language="java" name="kidridicarus.game.agent.SMB1.NPC.goomba.GoombaBody" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/NPC/goomba/GoombaBody.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -235,7 +224,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="23" language="java" name="kidridicarus.game.agent.SMB1.NPC.goomba.GoombaSpine" 
+  <class id="22" language="java" name="kidridicarus.game.agent.SMB1.NPC.goomba.GoombaSpine" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/NPC/goomba/GoombaSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -246,7 +235,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="24" language="java" name="kidridicarus.game.agent.SMB1.NPC.goomba.GoombaSprite" 
+  <class id="23" language="java" name="kidridicarus.game.agent.SMB1.NPC.goomba.GoombaSprite" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/NPC/goomba/GoombaSprite.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -257,7 +246,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="25" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireball" 
+  <class id="24" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireball" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mariofireball/MarioFireball.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -268,7 +257,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="26" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireballBody" 
+  <class id="25" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireballBody" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mariofireball/MarioFireballBody.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -279,7 +268,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="27" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireballSpine" 
+  <class id="26" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireballSpine" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mariofireball/MarioFireballSpine.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -290,7 +279,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="28" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireballSprite" 
+  <class id="27" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireballSprite" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mariofireball/MarioFireballSprite.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -301,144 +290,148 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <association id="29">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="30" name="sprite">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="31" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="18" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <generalization id="32">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <association id="33">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="34" name="director">        
-        <position height="0" width="0" x="204" y="-24"/>      
-      </attribute>      
-      <multiplicity id="35" minimum="0" maximum="1">        
-        <position height="0" width="0" x="204" y="-24"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="36">    
-    <end type="SOURCE" refId="15" navigable="false">      
-      <attribute id="37" name="spine">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="38" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <generalization id="39">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="20"/>  
-  </generalization>  
-  <association id="40">    
+  <association id="28">    
     <end type="SOURCE" refId="25" navigable="false">      
-      <attribute id="41" name="body">        
+      <attribute id="29" name="spine">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="42" minimum="0" maximum="1">        
+      <multiplicity id="30" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="26" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="43">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="44" name="agency">        
+  <association id="31">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="32" name="body">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="45" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="46">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="47" name="supervisor">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="48" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="49">    
-    <end type="SOURCE" refId="19" navigable="false">      
-      <attribute id="50" name="body">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="51" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="22" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="52">    
-    <end type="SOURCE" refId="25" navigable="false">      
-      <attribute id="53" name="parent">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="54" minimum="0" maximum="1">        
+      <multiplicity id="33" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="55">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="56" name="body">        
+  <association id="34">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="35" name="supervisor">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="57" minimum="0" maximum="1">        
+      <multiplicity id="36" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="37">    
+    <end type="SOURCE" refId="14" navigable="false">      
+      <attribute id="38" name="spine">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="39" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="15" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="58">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="59" name="supervisor">        
+  <association id="40">    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="41" name="agency">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="60" minimum="0" maximum="1">        
+      <multiplicity id="42" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="20" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <generalization id="61">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="20"/>  
+  <generalization id="43">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="19"/>  
   </generalization>  
-  <generalization id="62">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="20"/>  
-  </generalization>  
-  <association id="63">    
+  <association id="44">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="45" name="sprite">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="46" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="23" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="47">    
+    <end type="SOURCE" refId="24" navigable="false">      
+      <attribute id="48" name="parent">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="49" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="50">    
+    <end type="SOURCE" refId="24" navigable="false">      
+      <attribute id="51" name="sprite">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="52" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="27" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="53">    
     <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="54" name="spine">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="55" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="56">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="57" name="spine">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="58" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <generalization id="59">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <association id="60">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="61" name="body">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="62" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="63">    
+    <end type="SOURCE" refId="13" navigable="false">      
       <attribute id="64" name="body">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -446,12 +439,12 @@
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="14" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="66">    
-    <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="67" name="agency">        
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="67" name="body">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="68" minimum="0" maximum="1">        
@@ -461,144 +454,92 @@
     <end type="TARGET" refId="21" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="69">    
-    <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="70" name="spine">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="71" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="23" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <generalization id="72">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="3"/>  
+  <generalization id="69">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="19"/>  
   </generalization>  
-  <association id="73">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="74" name="sprite">        
+  <generalization id="70">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <association id="71">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="72" name="sprite">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="75" minimum="0" maximum="1">        
+      <multiplicity id="73" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="13" navigable="true"/>    
+    <end type="TARGET" refId="17" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="76">    
-    <end type="SOURCE" refId="19" navigable="false">      
-      <attribute id="77" name="sprite">        
+  <association id="74">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="75" name="supervisor">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="78" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="24" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="79">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="80" name="spine">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="81" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="82">    
-    <end type="SOURCE" refId="26" navigable="false">      
-      <attribute id="83" name="spine">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="84" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="27" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="85">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="86" name="spine">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="87" minimum="0" maximum="1">        
+      <multiplicity id="76" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="88">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="89" name="playerAgent">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="90" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="91">    
-    <end type="SOURCE" refId="25" navigable="false">      
-      <attribute id="92" name="sprite">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="93" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="28" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="94">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="95" name="body">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="96" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <generalization id="97">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="3"/>  
+  <generalization id="77">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="2"/>  
   </generalization>  
-  <association id="98">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="99" name="sprite">        
+  <association id="78">    
+    <end type="SOURCE" refId="21" navigable="false">      
+      <attribute id="79" name="spine">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="100" minimum="0" maximum="1">        
+      <multiplicity id="80" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="22" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <generalization id="81">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="19"/>  
+  </generalization>  
+  <association id="82">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="83" name="sprite">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="84" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="101">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="102" name="playerAgent">        
-        <position height="0" width="0" x="1150" y="-20"/>      
+  <association id="85">    
+    <end type="SOURCE" refId="24" navigable="false">      
+      <attribute id="86" name="body">        
+        <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="103" minimum="0" maximum="1">        
-        <position height="0" width="0" x="1150" y="-20"/>      
+      <multiplicity id="87" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
+    <end type="TARGET" refId="25" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="88">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="89" name="sprite">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="90" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <classifier-display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 

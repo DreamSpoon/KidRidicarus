@@ -18,7 +18,7 @@ public class CommonInfo {
 
 	public static final String TA_MAIN_FILENAME = "sprite/KidRidicarusSprites.pack";
 
-	public static class LayerDrawOrder {
+	public static class DrawOrder {
 		public static final AllowOrder NONE = AllowOrder.NOT_ALLOWED;
 		public static final AllowOrder MAP_BACKGROUND = new AllowOrder(true, 0f);
 		public static final AllowOrder MAP_BOTTOM = new AllowOrder(true, 2f);
@@ -33,24 +33,25 @@ public class CommonInfo {
 	}
 
 	public static final DrawOrderAlias[] KIDRID_DRAWORDER_ALIAS = new DrawOrderAlias[] {
-			new DrawOrderAlias("none", LayerDrawOrder.NONE),
-			new DrawOrderAlias("map_background", LayerDrawOrder.MAP_BACKGROUND),
-			new DrawOrderAlias("map_bottom", LayerDrawOrder.MAP_BOTTOM),
-			new DrawOrderAlias("map_middle", LayerDrawOrder.MAP_MIDDLE),
-			new DrawOrderAlias("map_top", LayerDrawOrder.MAP_TOP),
-			new DrawOrderAlias("sprite_bottom", LayerDrawOrder.SPRITE_BOTTOM),
-			new DrawOrderAlias("sprite_middle", LayerDrawOrder.SPRITE_MIDDLE),
-			new DrawOrderAlias("sprite_top", LayerDrawOrder.SPRITE_TOP)
+			new DrawOrderAlias("none", DrawOrder.NONE),
+			new DrawOrderAlias("map_background", DrawOrder.MAP_BACKGROUND),
+			new DrawOrderAlias("map_bottom", DrawOrder.MAP_BOTTOM),
+			new DrawOrderAlias("map_middle", DrawOrder.MAP_MIDDLE),
+			new DrawOrderAlias("map_top", DrawOrder.MAP_TOP),
+			new DrawOrderAlias("sprite_bottom", DrawOrder.SPRITE_BOTTOM),
+			new DrawOrderAlias("sprite_middle", DrawOrder.SPRITE_MIDDLE),
+			new DrawOrderAlias("sprite_top", DrawOrder.SPRITE_TOP)
 		};
 
-	public static class AgentUpdateOrder {
+	public static class UpdateOrder {
 		public static final AllowOrder NONE = AllowOrder.NOT_ALLOWED;
-		// contact update is earlier than update
-		public static final AllowOrder CONTACT_UPDATE = new AllowOrder(true, 0f);
-		// update is earlier than post update
-		public static final AllowOrder UPDATE = new AllowOrder(true, 1f);
-		// post update is last
-		public static final AllowOrder POST_UPDATE = new AllowOrder(true, 2f);
+		// update first
+		public static final AllowOrder PRE_AGENCY_UPDATE = new AllowOrder(true, -9000f);
+		public static final AllowOrder PRE_MOVE_UPDATE = new AllowOrder(true, 0f);
+		public static final AllowOrder MOVE_UPDATE = new AllowOrder(true, 1f);
+		public static final AllowOrder POST_MOVE_UPDATE = new AllowOrder(true, 2f);
+		public static final AllowOrder POST_AGENCY_UPDATE = new AllowOrder(true, 9000f);
+		// update last
 	}
 
 	/*

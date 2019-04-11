@@ -14,6 +14,10 @@ public class CommonKV {
 	public static final String VAL_DOWN = "down";
 	public static final String VAL_DOWN_RIGHT = "down_right";
 
+	public class Player {
+		public static final String KEY_AGENT_PROPERTIES = "agent_properties";
+	}
+
 	public class AgentClassAlias {
 		public static final String VAL_AGENTSPAWNER = "agent_spawner";
 		public static final String VAL_AGENTSPAWN_TRIGGER = "agent_spawn_trigger";
@@ -29,6 +33,7 @@ public class CommonKV {
 		public static final String VAL_SCROLL_KILLBOX = "scroll_kill_box";
 		public static final String VAL_SEMISOLID_FLOOR = "semi_solid_floor";
 		public static final String VAL_SOLID_TILEDMAP = "solid_tiled_map";
+		public static final String VAL_PLAYER_WRAPPER = "player_wrapper";
 	}
 
 	public class Spawn {

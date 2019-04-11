@@ -53,7 +53,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 				@Override
 				public void update(float delta) { doUpdate(); }
 			};
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, myUpdateListener);
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, myUpdateListener);
 	}
 
 	// create the Agents for the solid tile map and the drawable layers

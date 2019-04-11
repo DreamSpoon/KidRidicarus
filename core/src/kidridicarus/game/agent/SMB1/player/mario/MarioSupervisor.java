@@ -7,29 +7,29 @@ import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.common.tool.MoveAdvice4x4;
 
 public class MarioSupervisor extends PlayerAgentSupervisor {
-	private MoveAdvice userMoveAdvice;
+	private MoveAdvice4x4 userMoveAdvice;
 	private String nextLevelFilename;
 	private boolean isGameOver;
 
 	public MarioSupervisor(Agency agency, Mario playerAgent) {
 		super(agency, playerAgent);
 		this.playerAgent = playerAgent;
-		userMoveAdvice = new MoveAdvice();
+		userMoveAdvice = new MoveAdvice4x4();
 		nextLevelFilename = null;
 		isGameOver = false;
 	}
 
 	@Override
-	public void setMoveAdvice(MoveAdvice moveAdvice) {
+	public void setMoveAdvice(MoveAdvice4x4 moveAdvice) {
 		userMoveAdvice.set(moveAdvice);
 	}
 
 	@Override
-	public MoveAdvice internalPollMoveAdvice() {
-		MoveAdvice adv = userMoveAdvice.cpy();
+	public MoveAdvice4x4 internalPollMoveAdvice() {
+		MoveAdvice4x4 adv = userMoveAdvice.cpy();
 		userMoveAdvice.clear();
 		return adv;
 	}

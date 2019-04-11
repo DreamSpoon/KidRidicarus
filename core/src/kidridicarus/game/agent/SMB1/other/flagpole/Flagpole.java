@@ -8,7 +8,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -40,18 +40,18 @@ public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent
 		moveStateTimer = 0f;
 
 		body = new FlagpoleBody(this, agency.getWorld(), Agent.getStartBounds(properties));
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
 		sprite = new PoleFlagSprite(agency.getAtlas(), getFlagPosAtTop());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+				public void draw(Eye adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -122,7 +122,7 @@ public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent
 		return getFlagPosAtTop().cpy().lerp(getFlagPosAtBottom(), alpha);
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		adBatch.draw(sprite);
 	}
 

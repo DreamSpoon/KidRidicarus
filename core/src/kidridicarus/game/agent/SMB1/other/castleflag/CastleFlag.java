@@ -7,7 +7,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -38,9 +38,9 @@ public class CastleFlag extends Agent implements TriggerTakeAgent {
 		stateTimer = 0f;
 
 		flagSprite = new CastleFlagSprite(agency.getAtlas(), startPosition);
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+				public void draw(Eye adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -88,7 +88,7 @@ public class CastleFlag extends Agent implements TriggerTakeAgent {
 		}
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		if(isTriggered)
 			adBatch.draw(flagSprite);
 	}
@@ -100,7 +100,7 @@ public class CastleFlag extends Agent implements TriggerTakeAgent {
 		myUpdateListener = new AgentUpdateListener() {
 				public void update(float delta) { doUpdate(delta); }
 			};
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, myUpdateListener);
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, myUpdateListener);
 	}
 
 	@Override

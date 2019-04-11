@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -42,18 +42,18 @@ public class PitArrow extends Agent implements DisposableAgent {
 		arrowDir = properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
 		body = new PitArrowBody(this, agency.getWorld(), Agent.getStartPoint(properties),
 				Agent.getStartVelocity(properties), arrowDir);
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doPostUpdate(); }
 		});
 		sprite = new PitArrowSprite(agency.getAtlas(), body.getPosition(), arrowDir);
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+			public void draw(Eye adBatch) { doDraw(adBatch); }
 		});
 	}
 
@@ -98,7 +98,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 		sprite.update(body.getPosition(), arrowDir);
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		if(!isDead)
 			adBatch.draw(sprite);
 	}

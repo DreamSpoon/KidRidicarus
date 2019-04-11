@@ -11,7 +11,7 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -68,18 +68,18 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 
 		Vector2 startPoint = Agent.getStartPoint(properties);
 		body = new MonoeyeBody(this, agency.getWorld(), startPoint);
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
 		sprite = new MonoeyeSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+				public void draw(Eye adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -250,7 +250,7 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 		sprite.update(body.getPosition(), isFacingRight);
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch){
+	private void doDraw(Eye adBatch){
 		// draw if not despawned and not dead
 		if(!despawnMe && !isDead)
 			adBatch.draw(sprite);

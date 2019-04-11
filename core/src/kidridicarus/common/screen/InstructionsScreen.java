@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.KeyboardMapping;
 import kidridicarus.common.info.UInfo;
@@ -55,12 +55,10 @@ public class InstructionsScreen implements Screen {
 		game.agency.createAgent(TiledMapMetaAgent.makeAP((new TmxMapLoader()).load(CommonInfo.INSTRO_FILENAME)));
 		// run one update to let the map create the solid tile map and draw layer agents
 		game.agency.update(1f/60f);
-//		game.agency.postUpdate();
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
 		game.agency.update(1f/60f);
-//		game.agency.postUpdate();
 
-		game.agency.setEye(new AgencyDrawBatch(game.batch));
+		game.agency.setEye(new Eye(game.batch, gamecam));
 	}
 
 	private void setupStage() {
@@ -129,8 +127,6 @@ public class InstructionsScreen implements Screen {
 	private void update(float delta) {
 		// update the game world
 		game.agency.update(delta);
-		// post processing of changes during update
-//		game.agency.postUpdate();
 	}
 
 	private void drawScreen() {
@@ -139,7 +135,7 @@ public class InstructionsScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		// draw screen
-		game.agency.draw(gamecam);
+		game.agency.draw();
 
 		// draw HUD last
 		stage.draw();

@@ -76,14 +76,12 @@ public class PlayScreen implements Screen {
 		game.agency.createAgent(TiledMapMetaAgent.makeAP((new TmxMapLoader()).load(levelFilename)));
 		// run one update to let the map create the solid tile map and draw layer agents
 		game.agency.update(1f/60f);
-//		game.agency.postUpdate();
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
 		game.agency.update(1f/60f);
-//		game.agency.postUpdate();
 
-		guide.insertPlayerAgent(playerAgentProperties);
+		guide.createPlayerAgent(playerAgentProperties);
 		// create eye after map load to prevent seeing... um... bad pixels!! uh, yeah - that's why...
-		game.agency.setEye(guide.createEye(game.batch));
+		game.agency.setEye(guide.createEye(game.batch, gamecam));
 	}
 
 	@Override
@@ -106,16 +104,8 @@ public class PlayScreen implements Screen {
 		else
 			newDelta = clampFrameDelta(delta);
 
-		// pre-update stuff like scripts, and user input
-		guide.preUpdateAgency(newDelta);
 		// update the game world
 		game.agency.update(newDelta);
-		// allow guide to modify player agent state, create agents, change visibility, etc.
-//		guide.updateAgency();
-		// post processing of changes during update
-//		game.agency.postUpdate();
-		// update camera, etc.
-		guide.postUpdateAgency();
 	}
 
 	private float clampFrameDelta(float delta) {
@@ -169,10 +159,8 @@ public class PlayScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		guide.updateCamera(gamecam);
-
 		// draw screen
-		game.agency.draw(gamecam);
+		game.agency.draw();
 
 		// DEBUG: draw outlines of Box2D fixtures
 		if(QQ.isOn())
@@ -180,9 +168,11 @@ public class PlayScreen implements Screen {
 
 		// change to next level?
 		if(guide.isGameWon()) {
+			String nextLevelFilename = guide.getNextLevelFilename();
+			ObjectProperties props = guide.getCopyPlayerAgentProperties();
 			dispose();
-			game.setScreen(new LevelTransitScreen(game, guide.getNextLevelFilename(),
-					guide.getCopyPlayerAgentProperties()));
+			game.setScreen(new LevelTransitScreen(game, nextLevelFilename,
+					props));
 		}
 		// change to game over screen?
 		else if(guide.isGameOver()) {

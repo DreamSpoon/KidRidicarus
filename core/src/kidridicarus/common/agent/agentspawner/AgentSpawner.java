@@ -30,7 +30,7 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 		isEnabled = false;
 
 		body = new AgentSpawnerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) {
 					if(spawnController != null)

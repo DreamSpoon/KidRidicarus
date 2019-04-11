@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.CommonInfo;
@@ -34,13 +34,13 @@ public class SpinCoin extends Agent implements DisposableAgent {
 		defineBody(Agent.getStartPoint(properties), START_VELOCITY);
 		coinSprite = new SpinCoinSprite(agency.getAtlas(), b2body.getPosition());
 
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+				public void draw(Eye adBatch) { doDraw(adBatch); }
 			});
 	}
 
@@ -57,7 +57,7 @@ public class SpinCoin extends Agent implements DisposableAgent {
 			agency.removeAgent(this);
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		adBatch.draw(coinSprite);
 	}
 

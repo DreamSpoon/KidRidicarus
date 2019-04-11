@@ -11,7 +11,7 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -25,7 +25,7 @@ import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.Direction8;
-import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.game.agent.Metroid.player.samus.HUD.SamusHUD;
 import kidridicarus.game.agent.Metroid.player.samuschunk.SamusChunk;
 import kidridicarus.game.agent.Metroid.player.samusshot.SamusShot;
@@ -106,27 +106,27 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		setStateFromProperties(properties);
 
 		body = new SamusBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f), false);
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doPostUpdate(); }
 		});
 		sprite = new SamusSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+			public void draw(Eye adBatch) { doDraw(adBatch); }
 		});
 		playerHUD = new SamusHUD(this, agency.getAtlas());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.PLAYER_HUD, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch adBatch) { playerHUD.draw(adBatch); }
+			public void draw(Eye adBatch) { playerHUD.draw(adBatch); }
 		});
 
 		supervisor = new SamusSupervisor(agency, this);
@@ -175,13 +175,13 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	private void doUpdate(float delta) {
-		MoveAdvice moveAdvice = supervisor.pollMoveAdvice();
+		MoveAdvice4x4 moveAdvice = supervisor.pollMoveAdvice();
 		processContacts(delta, moveAdvice);
 		processMove(delta, moveAdvice);
 		processSprite(delta);
 	}
 
-	private void processContacts(float delta, MoveAdvice moveAdvice) {
+	private void processContacts(float delta, MoveAdvice4x4 moveAdvice) {
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
 
@@ -195,7 +195,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		processPipeWarps(moveAdvice);
 	}
 
-	private void processMove(float delta, MoveAdvice moveAdvice) {
+	private void processMove(float delta, MoveAdvice4x4 moveAdvice) {
 		// if a script is running with no move advice then switch to scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
 			body.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
@@ -281,13 +281,13 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 	}
 
-	private void processPipeWarps(MoveAdvice moveAdvice) {
+	private void processPipeWarps(MoveAdvice4x4 moveAdvice) {
 		PipeWarp pw = body.getSpine().getEnterPipeWarp(moveAdvice.getMoveDir4());
 		if(pw != null)
 			pw.use(this);
 	}
 
-	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
+	private MoveState getNextMoveState(MoveAdvice4x4 moveAdvice) {
 		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn() || energySupply <= 0)
 			return MoveState.DEAD;
 		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
@@ -300,7 +300,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			return getNextMoveStateAir(moveAdvice);
 	}
 
-	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
+	private MoveState getNextMoveStateGround(MoveAdvice4x4 moveAdvice) {
 		if(moveState.isBall()) {
 			// if advised move up and not move down, and map tile above player is not solid, then change to stand
 			if(moveAdvice.moveUp && !moveAdvice.moveDown &&
@@ -347,7 +347,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			return MoveState.RUN;
 	}
 
-	private MoveState getNextMoveStateAir(MoveAdvice moveAdvice) {
+	private MoveState getNextMoveStateAir(MoveAdvice4x4 moveAdvice) {
 		if(moveState.isBall()) {
 			// If advised to move up and not move down and tile above samus head is not solid then change to
 			// standing type state.
@@ -444,7 +444,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 				new Vector2(-TOP_VEL_X, TOP_VEL_Y), Direction8.UP_LEFT));
 	}
 
-	private void processGroundMove(float delta, MoveAdvice moveAdvice, MoveState nextMoveState) {
+	private void processGroundMove(float delta, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
 		// next jump changes to allowed when on ground and not advising jump move 
 		if(!moveAdvice.action1)
 			isNextJumpAllowed = true;
@@ -511,7 +511,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		runStateTimer = nextMoveState.isRun() ? runStateTimer+delta : 0f;
 	}
 
-	private void processAirMove(float delta, MoveAdvice moveAdvice, MoveState nextMoveState) {
+	private void processAirMove(float delta, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
 		// check for change of facing direction
 		if(moveAdvice.moveRight^moveAdvice.moveLeft) {
 			if(isFacingRight && moveAdvice.moveLeft)
@@ -596,7 +596,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		jumpForceTimer = jumpForceTimer > delta ? jumpForceTimer-delta : 0f;
 	}
 
-	private void processShoot(float delta, MoveAdvice moveAdvice) {
+	private void processShoot(float delta, MoveAdvice4x4 moveAdvice) {
 		if(moveAdvice.action0 && shootCooldownTimer <= 0f && !moveState.isBall())
 			doShoot();
 		// decrememnt shoot cooldown timer
@@ -665,7 +665,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		// exit if using scripted sprite state and script says don't draw
 		if(supervisor.isRunningScriptNoMoveAdvice() &&
 				!supervisor.getScriptAgentState().scriptedSpriteState.visible)

@@ -10,7 +10,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -58,11 +58,11 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 
 		// no body at spawn time, body will be created later
 		body = null;
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
@@ -71,9 +71,9 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 				initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
 		drawListener = new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+				public void draw(Eye adBatch) { doDraw(adBatch); }
 			};
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, drawListener);
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, drawListener);
 	}
 
 	// if any agents touching this powerup are able to take it, then push it to them
@@ -126,7 +126,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 				if(moveState == MoveState.SPROUT) {
 					// change from bottom to middle sprite draw order
 					agency.removeAgentDrawListener(this, drawListener);
-					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, drawListener);
+					agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, drawListener);
 					body = new BaseMushroomBody(this, agency.getWorld(), initSpawnPosition, new Vector2(0f, 0f));
 				}
 				if(isFacingRight)
@@ -174,7 +174,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 			sprite.update(body.getPosition());
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		// do not draw sprite if powerup is used 
 		if(isPowerupUsed)
 			return;

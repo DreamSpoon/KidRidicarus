@@ -1,7 +1,7 @@
 package kidridicarus.agency.agent;
 
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 
 public interface AgentDrawListener {
-	public void draw(AgencyDrawBatch adBatch);
+	public void draw(Eye adBatch);
 }

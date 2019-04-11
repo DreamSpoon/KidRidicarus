@@ -1,6 +1,10 @@
 package kidridicarus.common.tool;
 
-public class MoveAdvice {
+/*
+ * 4 movement directions
+ * 4 other
+ */
+public class MoveAdvice4x4 {
 	public boolean moveRight;
 	public boolean moveUp;
 	public boolean moveLeft;
@@ -8,11 +12,11 @@ public class MoveAdvice {
 	public boolean action0;
 	public boolean action1;
 
-	public MoveAdvice() {
+	public MoveAdvice4x4() {
 		clear();
 	}
 
-	public MoveAdvice(MoveAdvice moveAdvice) {
+	public MoveAdvice4x4(MoveAdvice4x4 moveAdvice) {
 		set(moveAdvice);
 	}
 
@@ -25,7 +29,7 @@ public class MoveAdvice {
 		action1 = false;
 	}
 
-	public void set(MoveAdvice other) {
+	public void set(MoveAdvice4x4 other) {
 		this.moveRight = other.moveRight;
 		this.moveUp = other.moveUp;
 		this.moveLeft = other.moveLeft;
@@ -34,8 +38,8 @@ public class MoveAdvice {
 		this.action1 = other.action1;
 	}
 
-	public MoveAdvice cpy() {
-		return new MoveAdvice(this);
+	public MoveAdvice4x4 cpy() {
+		return new MoveAdvice4x4(this);
 	}
 
 	/*

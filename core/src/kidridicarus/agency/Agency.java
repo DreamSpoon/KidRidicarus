@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -27,13 +26,13 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
-import kidridicarus.common.tool.QQ;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.EarPlug;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.tool.QQ;
 
 /*
  * Desc:
@@ -56,6 +55,19 @@ import kidridicarus.agency.tool.ObjectProperties;
  *   http://www.google.com/search?q=agency+definition
  *   "a business or organization established to provide a particular service, typically one that involves organizing
  *   transactions between two other parties."
+ *
+ * Notes regarding Box2D World and Agency:
+ *   In contrast with Box2D's World.step method, Agency has an Agency.update and Agency.draw method. These
+ *   two methods could be combined into a single "step" method, but this option would reduce flexibility.
+ *   Reasons for keeping update and draw methods separate:
+ *     1) Multiple updates can be run before a draw is called, and
+ *     2) Multiple draws can be called between updates.
+ *   Why do it this way?
+ *     1) Map loading may require running multiple updates to completely load map and sub-Agents - do not draw
+ *        during this period in order to avoid showing "error" visuals.
+ *     2) "Forced framerate" may require drawing of Agency multiple times between updates
+ *        (e.g. 1 update per 3 draw frames to simulate 20 fps - update method is called 20 times per second
+ *        while draw method is called 60 times per second).
  */
 public class Agency implements Disposable {
 	private AgentClassList allAgentsClassList;
@@ -65,7 +77,7 @@ public class Agency implements Disposable {
 	private World world;
 	// Agency needs an earplug because it looks cool... and lets Agents exchange audio info
 	private EarPlug earplug;
-	private AgencyDrawBatch myEye;
+	private Eye myEye;
 	private float globalTimer;
 
 	public Agency(AgentClassList allAgentsClassList, TextureAtlas atlas) {
@@ -84,18 +96,16 @@ public class Agency implements Disposable {
 		agencyIndex = new AgencyIndex();
 	}
 
-	public void update(float delta) {
+	/*
+	 * During the update, agents may have been added/removed from lists:
+	 * -list of all agents
+	 * -list of agents receiving updates
+	 * -agent draw order lists
+	 * Process these queues.
+	 */
+	public void update(final float delta) {
 		world.step(delta, 6, 2);
-		updateAgents(delta);
-		processChangeQ();
-		globalTimer += delta;
-	}
 
-//	public void postUpdate() {
-//		processChangeQ();
-//	}
-
-	private void updateAgents(final float delta) {
 		// loop through list of agents receiving updates, calling each agent's update method
 		agencyIndex.iterateThroughUpdateAgents(new AllowOrderListIter() {
 				@Override
@@ -106,33 +116,26 @@ public class Agency implements Disposable {
 					return false;
 				}
 			});
-	}
-
-	/*
-	 * During the update, agents may have been added/removed from lists:
-	 * -list of all agents
-	 * -list of agents receiving updates
-	 * -agent draw order lists
-	 * Process these queues.
-	 */
-	private void processChangeQ() {
+		// apply changes
 		agencyChangeQ.process(new AgencyChangeCallback() {
-				@Override
-				public void change(Object change) {
-					if(change instanceof AllAgentListChange)
-						doAgentListChange((AllAgentListChange) change);
-					else if(change instanceof AgentUpdateListenerChange)
-						doUpdateListenerChange((AgentUpdateListenerChange) change);
-					else if(change instanceof AgentDrawListenerChange)
-						doDrawListenerChange((AgentDrawListenerChange) change);
-					else if(change instanceof AgentRemoveListenerChange)
-						doAgentRemoveListenerChange((AgentRemoveListenerChange) change);
-					else {
-						throw new IllegalArgumentException(
-								"Cannot process agency change; unknown agent change class: " + change);
-					}
+			@Override
+			public void change(Object change) {
+				if(change instanceof AllAgentListChange)
+					doAgentListChange((AllAgentListChange) change);
+				else if(change instanceof AgentUpdateListenerChange)
+					doUpdateListenerChange((AgentUpdateListenerChange) change);
+				else if(change instanceof AgentDrawListenerChange)
+					doDrawListenerChange((AgentDrawListenerChange) change);
+				else if(change instanceof AgentRemoveListenerChange)
+					doAgentRemoveListenerChange((AgentRemoveListenerChange) change);
+				else {
+					throw new IllegalArgumentException(
+							"Cannot process agency change; unknown agent change class: " + change);
 				}
-			});
+			}
+		});
+		// update time
+		globalTimer += delta;
 	}
 
 	private void doAgentListChange(AllAgentListChange alc) {
@@ -287,14 +290,17 @@ public class Agency implements Disposable {
 		this.earplug.setRealEar(ear);
 	}
 
-	public void setEye(AgencyDrawBatch eye) {
+	public void setEye(Eye eye) {
 		this.myEye = eye;
 	}
 
-	public void draw(OrthographicCamera camera) {
+	public Eye getEye() {
+		return myEye;
+	}
+
+	public void draw() {
 		if(myEye == null)
 			return;
-		myEye.setView(camera);
 		myEye.begin();
 		agencyIndex.iterateThroughDrawListeners(new AllowOrderListIter() {
 			@Override

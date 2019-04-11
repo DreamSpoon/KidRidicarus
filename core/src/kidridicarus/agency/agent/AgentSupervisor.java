@@ -6,7 +6,7 @@ import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.AgentScriptRunner;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.common.tool.MoveAdvice4x4;
 
 /*
  * Supervisor is expected to handle stuff for PlayerAgents:
@@ -18,10 +18,10 @@ public abstract class AgentSupervisor {
 	protected Agent playerAgent;
 	private AgentScriptRunner scriptRunner;
 
-	public abstract void setMoveAdvice(MoveAdvice moveAdvice);
+	public abstract void setMoveAdvice(MoveAdvice4x4 moveAdvice);
 	// internalPollMoveAdvice method to be implemented by superclass, for use by this class only.
 	// Other classes that poll move advice from a superclass must call pollMoveAdvice method.
-	protected abstract MoveAdvice internalPollMoveAdvice();
+	protected abstract MoveAdvice4x4 internalPollMoveAdvice();
 	public abstract boolean isAtLevelEnd();
 	public abstract String getNextLevelFilename();
 	public abstract boolean isGameOver();
@@ -77,7 +77,7 @@ public abstract class AgentSupervisor {
 	 * Returns scripted move advice if scripted move advice script is running.
 	 * Otherwise returns regular user move advice.
 	 */
-	public MoveAdvice pollMoveAdvice() {
+	public MoveAdvice4x4 pollMoveAdvice() {
 		if(scriptRunner.isRunningMoveAdvice())
 			return scriptRunner.getScriptAgentState().scriptedMoveAdvice;
 		else

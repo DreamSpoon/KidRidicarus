@@ -11,7 +11,7 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -25,8 +25,7 @@ import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.powerup.PowerupList;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice;
-import kidridicarus.common.tool.QQ;
+import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
 import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
@@ -100,27 +99,27 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 
 		body = new MarioBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doPostUpdate(); }
 		});
 		sprite = new MarioSprite(agency.getAtlas(), body.getPosition(), powerState, isFacingRight);
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+			public void draw(Eye adBatch) { doDraw(adBatch); }
 		});
 		playerHUD = new MarioHUD(this, agency.getAtlas());
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.PLAYER_HUD, new AgentDrawListener() {
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
 			@Override
-			public void draw(AgencyDrawBatch adBatch) { doDrawHUD(adBatch); }
+			public void draw(Eye adBatch) { doDrawHUD(adBatch); }
 		});
 
 		supervisor = new MarioSupervisor(agency, this);
@@ -195,7 +194,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		processSprite(delta);
 	}
 
-	private void processMove(float delta, MoveAdvice moveAdvice) {
+	private void processMove(float delta, MoveAdvice4x4 moveAdvice) {
 		if(!moveState.isDead() && !supervisor.isRunningScriptNoMoveAdvice()) {
 			processPowerupsReceived();
 			processFireball(moveAdvice);
@@ -250,7 +249,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		}
 	}
 
-	private void processPipeWarps(MoveAdvice moveAdvice) {
+	private void processPipeWarps(MoveAdvice4x4 moveAdvice) {
 		PipeWarp pw = body.getSpine().getEnterPipeWarp(moveAdvice.getMoveDir4());
 		if(pw != null)
 			pw.use(this);
@@ -328,7 +327,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		powerState = newPowerState;
 	}
 
-	private void processFireball(MoveAdvice moveAdvice) {
+	private void processFireball(MoveAdvice4x4 moveAdvice) {
 		// check do shoot fireball
 		didShootFireballThisFrame = false;
 		if(!moveAdvice.action0) {
@@ -391,7 +390,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		}
 	}
 
-	private void processGroundMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+	private void processGroundMove(MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
 		// if was not ducking and is now ducking then define ducking body
 		if(!moveState.isDuck() && nextMoveState.isDuck()) {
 			body.setMarioBodyStuff(body.getPosition().cpy().sub(DUCK_OFFSET), body.getVelocity(),
@@ -467,7 +466,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 			isHeadBumped = false;
 	}
 
-	private void processAirMove(MoveAdvice moveAdvice, MoveState nextMoveState) {
+	private void processAirMove(MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
 		if(!body.getSpine().isMovingInDir(Direction4.UP))
 			isJumpForceContinue = false;
 
@@ -518,7 +517,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		body.getSpine().capFallVelocity();
 	}
 
-	private MoveState getNextMoveState(MoveAdvice moveAdvice) {
+	private MoveState getNextMoveState(MoveAdvice4x4 moveAdvice) {
 		if(moveState.isDead())
 			return moveState;
 		else if(body.getSpine().isContactDespawn() || body.getSpine().isContactScrollKillBox())
@@ -540,7 +539,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 				!moveState.isDuckNoSlide() && shootAdviceReset;
 	}
 
-	private MoveState getNextMoveStateGround(MoveAdvice moveAdvice) {
+	private MoveState getNextMoveStateGround(MoveAdvice4x4 moveAdvice) {
 		Direction4 moveDir = getMarioMoveDir(moveAdvice);
 
 		// if advised to jump and jumping is okay...
@@ -612,7 +611,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		}
 	}
 
-	private Direction4 getMarioMoveDir(MoveAdvice moveAdvice) {
+	private Direction4 getMarioMoveDir(MoveAdvice4x4 moveAdvice) {
 		// if no left/right move then return unmodified direction from move advice
 		if(moveAdvice.moveLeft^moveAdvice.moveRight == false) {
 			// down takes priority over up advice
@@ -673,7 +672,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		}
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch) {
+	private void doDraw(Eye adBatch) {
 		// exit if using scripted sprite state and script says don't draw
 		if(supervisor.isRunningScriptNoMoveAdvice() &&
 				!supervisor.getScriptAgentState().scriptedSpriteState.visible)
@@ -681,7 +680,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		adBatch.draw(sprite);
 	}
 
-	private void doDrawHUD(AgencyDrawBatch adBatch) {
+	private void doDrawHUD(Eye adBatch) {
 		playerHUD.update(agency.getGlobalTimer());
 		playerHUD.draw(adBatch);
 	}
@@ -777,7 +776,6 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 
 	@Override
 	public void dispose() {
-		QQ.pr("mario agent disposed");
 		body.dispose();
 	}
 }

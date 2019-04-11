@@ -39,7 +39,7 @@ public class SolidTiledMapAgent extends Agent implements Disposable {
 		// Agent has post update because:
 		//   -it may receive requests to modify the solid state of tiles inside itself during the regular Agency update
 		//   -it will process these requests in batch format during post-update
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.POST_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(); }
 			});

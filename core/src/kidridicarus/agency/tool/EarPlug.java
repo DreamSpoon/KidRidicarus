@@ -4,6 +4,7 @@ package kidridicarus.agency.tool;
  * A wrapper for the ear class, with getEar method that always returns non-null.
  * If no "real" ear is set for this earplug then incoming calls to onRegisterMusic, playSound, etc. will be ignored.
  * Advantage: Code that uses getEar() in this way doesn't need to check if ear == null.
+ * TODO create register music catalog inside EarPlug, so every ear that is added will receive already registered music - also, EarPlug can't track any new registered music, and pass it on to curent Ears)
  */
 public class EarPlug {
 	private Ear realEar;

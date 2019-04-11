@@ -8,7 +8,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.AgencyDrawBatch;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -52,11 +52,11 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 		powerupTaker = null;
 
 		body = null;
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
@@ -64,9 +64,9 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 		sprite = new PowerStarSprite(agency.getAtlas(), initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
 		drawListener = new AgentDrawListener() {
 				@Override
-				public void draw(AgencyDrawBatch adBatch) { doDraw(adBatch); }
+				public void draw(Eye adBatch) { doDraw(adBatch); }
 			};
-		agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_BOTTOM, drawListener);
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, drawListener);
 	}
 
 	// if any agents touching this powerup are able to take it, then push it to them
@@ -98,7 +98,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 				if(moveState == MoveState.SPROUT) {
 					// change from bottom to middle sprite draw order
 					agency.removeAgentDrawListener(this, drawListener);
-					agency.addAgentDrawListener(this, CommonInfo.LayerDrawOrder.SPRITE_MIDDLE, drawListener);
+					agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, drawListener);
 					body = new PowerStarBody(this, agency.getWorld(), initSpawnPosition, new Vector2(0f, 0f));
 
 					// start bounce to the right since this is first walk frame
@@ -157,7 +157,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 			sprite.update(delta, body.getPosition());
 	}
 
-	private void doDraw(AgencyDrawBatch adBatch){
+	private void doDraw(Eye adBatch){
 		// do not draw sprite if powerup is used 
 		if(isPowerupUsed)
 			return;

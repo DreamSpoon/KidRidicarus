@@ -8,7 +8,7 @@ import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice;
+import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.game.info.SMB1_Audio;
 
 /*
@@ -98,7 +98,7 @@ public class FlagpoleScript implements AgentScript {
 			case MOVERIGHT:
 				// if first frame of this state then start character moving right
 				if(scriptStateChanged) {
-					scriptedState.scriptedMoveAdvice = new MoveAdvice();
+					scriptedState.scriptedMoveAdvice = new MoveAdvice4x4();
 					scriptedState.scriptedMoveAdvice.moveRight = true;
 				}
 				break;

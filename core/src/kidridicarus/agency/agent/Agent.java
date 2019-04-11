@@ -53,6 +53,12 @@ public abstract class Agent {
 		return properties.containsAllKV(keys, vals);
 	}
 
+	public static ObjectProperties createAP(String agentClassAlias) {
+		ObjectProperties ret = new ObjectProperties();
+		ret.put(AgencyKV.Spawn.KEY_AGENT_CLASS, agentClassAlias);
+		return ret;
+	}
+
 	public static ObjectProperties createPointAP(String agentClassAlias, Vector2 position) {
 		ObjectProperties ret = new ObjectProperties();
 		ret.put(AgencyKV.Spawn.KEY_AGENT_CLASS, agentClassAlias);

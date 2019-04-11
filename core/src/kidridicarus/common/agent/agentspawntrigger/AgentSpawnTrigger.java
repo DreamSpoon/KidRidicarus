@@ -24,7 +24,7 @@ public class AgentSpawnTrigger extends FollowBox implements Disposable {
 		// begin in the disabled state (will not trigger spawners)
 		enabled = false;
 		body = new AgentSpawnTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(); }
 			});

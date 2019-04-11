@@ -20,7 +20,7 @@ public class MetroidDoorNexus extends Agent implements DisposableAgent {
 		super(agency, properties);
 
 		body = new MetroidDoorNexusBody(this, agency.getWorld(), Agent.getStartBounds(properties));
-		agency.addAgentUpdateListener(this, CommonInfo.AgentUpdateOrder.CONTACT_UPDATE, new AgentUpdateListener() {
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
 		});
