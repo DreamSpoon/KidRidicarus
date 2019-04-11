@@ -265,7 +265,7 @@ public class SolidTiledMap implements Disposable {
 	 * Returns false otherwise.
 	 */
 	public boolean isTileExist(int x, int y) {
-		if(x < 0 || x >= bTileMap.getWidth() || y < 0 || y > bTileMap.getHeight())
+		if(x < 0 || x >= bTileMap.getWidth() || y < 0 || y >= bTileMap.getHeight())
 			return false;
 		return bTileMap.getCell(x, y);
 	}

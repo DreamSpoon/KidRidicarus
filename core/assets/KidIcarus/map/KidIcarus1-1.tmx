@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="18" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="29" nextobjectid="64">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="18" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="30" nextobjectid="64">
  <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
   <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
  </tileset>
@@ -45,6 +45,14 @@
   </properties>
   <data encoding="base64" compression="zlib">
    eJztzgEJAAAMA6Alef+YjzEYmsAEAAAAAAAAAAAAAABg37UDwx5baAAf
+  </data>
+ </layer>
+ <layer id="29" name="chalice_health" width="18" height="180">
+  <properties>
+   <property name="agent_class" value="chalice_health"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjEBAAAIA6A1sX9LU0wfSEACAAAAAFyY7wAAAAAAAAAAlCz2OQAg
   </data>
  </layer>
  <objectgroup id="17" name="shemum">

@@ -7,7 +7,6 @@ import kidridicarus.common.info.UInfo;
 
 public class PitSpine extends PlayerSpine {
 	private static final float MIN_WALK_VEL = 0.1f;
-
 	private static final float GROUNDMOVE_XIMP = 0.2f;
 	private static final float MAX_GROUNDMOVE_VEL = 0.65f;
 	private static final float STOPMOVE_XIMP = 0.08f;
@@ -16,6 +15,7 @@ public class PitSpine extends PlayerSpine {
 	private static final float JUMPUP_FORCE = 15.7f;
 	private static final float JUMPUP_CONSTVEL = 1.6f;
 	private static final float HEADBOUNCE_VEL = 1.4f;	// up velocity
+	private static final Vector2 DEAD_VEL = UInfo.VectorP2M(0f, -120);
 
 	public PitSpine(PitBody body) {
 		super(body);
@@ -79,5 +79,10 @@ public class PitSpine extends PlayerSpine {
 
 	public boolean isWalkingLeft() {
 		return body.getVelocity().x < -MIN_WALK_VEL;
+	}
+
+	public void applyDead() {
+		((PitBody) body).applyDead();
+		body.setVelocity(DEAD_VEL);
 	}
 }

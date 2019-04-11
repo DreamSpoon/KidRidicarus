@@ -156,7 +156,6 @@ public class PitBody extends PlayerAgentBody {
 
 	public void applyDead() {
 		allowOnlyDeadContacts();
-		zeroVelocity(true, true);
 		b2body.setGravityScale(0f);
 	}
 

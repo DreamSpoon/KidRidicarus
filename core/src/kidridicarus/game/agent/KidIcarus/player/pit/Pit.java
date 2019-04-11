@@ -51,6 +51,20 @@ import kidridicarus.game.powerup.SMB1_Pow;
  *   -duck, unduck re-shoot - if pit shoots, then quickly ducks and unducks, he can shoot more often than normal
  */
 public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTakeAgent, HeadBounceGiveAgent {
+	private static final int MAX_HEARTS_COLLECTED = 999;
+	private static final int MAX_HEALTH = 7;
+	private static final int START_HEALTH = 7;
+	private static final float NO_DAMAGE_TIME = 2f;
+	private static final float PRE_JUMP_TIME = 0.1f;
+	private static final float JUMPUP_FORCE_TIME = 0.5f;
+	private static final float SHOOT_COOLDOWN = 0.3f;
+	private static final float SHOT_VEL = 2f;
+	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.VectorP2M(4, 1);
+	private static final Vector2 SHOT_OFFSET_UP = UInfo.VectorP2M(1, 5);
+	private static final float DEAD_DELAY_TIME = 3f;
+	private static final Vector2 SHOT_OFFSET_HEAD_IN_TILE = UInfo.VectorP2M(0, 4);
+	private static final Vector2 DUCK_POS_OFFSET = UInfo.VectorP2M(0, 4);
+
 	enum MoveState {
 		STAND, AIMUP, WALK, DUCK, PRE_JUMP, PRE_JUMP_DUCK, PRE_JUMP_AIMUP, JUMP, JUMP_DUCK, JUMP_AIMUP, CLIMB, DEAD;
 
@@ -64,19 +78,6 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				JUMP_AIMUP, JUMP_DUCK); }
 		public boolean isAimUp() { return this.equalsAny(AIMUP, PRE_JUMP_AIMUP, JUMP_AIMUP); }
 	}
-
-	private static final int MAX_HEARTS_COLLECTED = 999;
-	private static final int START_HEALTH = 7;
-	private static final float NO_DAMAGE_TIME = 1f;
-	private static final float PRE_JUMP_TIME = 0.1f;
-	private static final float JUMPUP_FORCE_TIME = 0.5f;
-	private static final float SHOOT_COOLDOWN = 0.3f;
-	private static final float SHOT_VEL = 2f;
-	private static final Vector2 SHOT_OFFSET_RIGHT = UInfo.VectorP2M(4, 1);
-	private static final Vector2 SHOT_OFFSET_UP = UInfo.VectorP2M(1, 5);
-	private static final float DEAD_DELAY_TIME = 3f;
-	private static final Vector2 SHOT_OFFSET_HEAD_IN_TILE = UInfo.VectorP2M(0, 4);
-	private static final Vector2 DUCK_POS_OFFSET = UInfo.VectorP2M(0, 4);
 
 	private PitSupervisor supervisor;
 	private PitBody body;
@@ -235,11 +236,18 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				if(heartsCollected > MAX_HEARTS_COLLECTED)
 					heartsCollected = MAX_HEARTS_COLLECTED;
 			}
+			else if(pu instanceof KidIcarusPow.ChaliceHealthPow)
+				addHealth(((KidIcarusPow.ChaliceHealthPow) pu).getHealAmount());
 			// TODO: implement ignore points pow for pit somewhere better
 			else if(pu.getPowerupCharacter() != PowChar.PIT && !(pu instanceof SMB1_Pow.PointsPow))
 				supervisor.receiveNonCharPowerup(pu);
 		}
 		powerupsReceived.clear();
+	}
+
+	private void addHealth(int healAmt) {
+		// add health and cap it to MAX_HEALTH
+		health = health+healAmt > MAX_HEALTH ? MAX_HEALTH : health+healAmt;
 	}
 
 	private void processDamageTaken(float delta) {
@@ -342,7 +350,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private void processDeadMove(boolean moveStateChanged) {
 		// if newly dead then disable contacts and start dead sound
 		if(moveStateChanged) {
-			body.applyDead();
+			body.getSpine().applyDead();
 			agency.getEar().stopAllMusic();
 			agency.getEar().startSinglePlayMusic(KidIcarusAudio.Music.PIT_DIE);
 		}

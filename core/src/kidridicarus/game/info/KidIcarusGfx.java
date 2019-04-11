@@ -14,6 +14,7 @@ public class KidIcarusGfx {
 		public static final String HEART1 =	DIR+"heart1";
 		public static final String HEART5 =	DIR+"heart5";
 		public static final String HEART10 =	DIR+"heart10";
+		public static final String CHALICE =	DIR+"chalice";
 	}
 
 	public static class NPC {
