@@ -25,14 +25,15 @@ public class Guide implements Disposable {
 	private AssetManager manager;
 	private Agency agency;
 	private PlayerControllerAgent playerWrapper;
+	private Eye eye;
+	private Ear ear;
 
 	private String currentMainMusicName;
 	private Music currentMainMusic;
 	private boolean isMainMusicPlaying;
 	private Music currentSinglePlayMusic;
-	private Eye eye;
 
-	public Guide(AssetManager manager, Agency agency) {
+	public Guide(AssetManager manager, Batch batch, OrthographicCamera camera, Agency agency) {
 		this.manager = manager;
 		this.agency = agency;
 
@@ -41,12 +42,13 @@ public class Guide implements Disposable {
 		currentMainMusic = null;
 		isMainMusicPlaying = false;
 		currentSinglePlayMusic = null;
-		eye = null;
+		agency.setEar(createEar());
+		agency.setEye(createEye(batch, camera));
 	}
 
 	// create an Ear to give to Agency, so that Guide can receive sound/music callbacks from Agency
 	public Ear createEar() {
-		return new Ear() {
+		ear = new Ear() {
 			@Override
 			public void registerMusic(String musicName) {
 				manager.load(musicName, Music.class);
@@ -63,6 +65,7 @@ public class Guide implements Disposable {
 			@Override
 			public void stopAllMusic() { doStopAllMusic(); }
 		};
+		return ear;
 	}
 
 	private void doChangeAndStartMainMusic(String musicName) {
@@ -133,7 +136,7 @@ public class Guide implements Disposable {
 		currentSinglePlayMusic = null;
 	}
 
-	public Eye createEye(Batch batch, OrthographicCamera camera) {
+	private Eye createEye(Batch batch, OrthographicCamera camera) {
 		if(eye != null)
 			throw new IllegalStateException("Cannot create second eye.");
 		eye = new Eye(batch, camera);
@@ -162,8 +165,14 @@ public class Guide implements Disposable {
 
 	@Override
 	public void dispose() {
-		if(eye != null)
+		if(ear != null) {
+			doStopMainMusic();
+			agency.setEar(null);
+			ear = null;
+		}
+		if(eye != null) {
 			eye.dispose();
-		doStopMainMusic();
+			agency.setEye(null);
+		}
 	}
 }

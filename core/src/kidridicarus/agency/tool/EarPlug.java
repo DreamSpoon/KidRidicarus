@@ -56,6 +56,9 @@ public class EarPlug {
 
 	public void setEar(Ear ear) {
 		realEar = ear;
+		if(ear == null)
+			return;
+
 		// copy all currently registered music to the new ear
 		for(String musicName : musicCatalog)
 			realEar.registerMusic(musicName);

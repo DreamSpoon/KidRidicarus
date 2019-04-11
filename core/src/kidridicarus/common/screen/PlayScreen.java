@@ -74,9 +74,7 @@ public class PlayScreen implements Screen {
 		game.agency.update(1f/60f);
 
 		// create guide and set event listener for Agency
-		guide = new Guide(game.manager, game.agency);
-		game.agency.setEar(guide.createEar());
-		game.agency.setEye(guide.createEye(game.batch, gamecam));
+		guide = new Guide(game.manager, game.batch, gamecam, game.agency);
 		guide.createPlayerAgent(playerAgentProperties);
 	}
 
