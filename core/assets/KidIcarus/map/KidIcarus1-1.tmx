@@ -44,7 +44,7 @@
    <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzjENAAAIA7Apwb9MzkkgJK2CJgAAAAAAAAAAAAAANdcBAN5Z7agAHw==
+   eJztzgEJAAAMA6Alef+YjzEYmsAEAAAAAAAAAAAAAABg37UDwx5baAAf
   </data>
  </layer>
  <objectgroup id="17" name="shemum">
@@ -61,15 +61,6 @@
   <object id="58" x="144" y="2352" width="16" height="112"/>
   <object id="61" x="144" y="2144" width="16" height="192"/>
  </objectgroup>
- <layer id="28" name="testwrap" width="18" height="180">
-  <properties>
-   <property name="agent_class" value="agent_spawner"/>
-   <property name="spawn_agent_class" value="turtle"/>
-  </properties>
-  <data encoding="base64" compression="zlib">
-   eJztzjEBAAAIA6DlsH9QU0wfSEACAAAAAAAAAAAAADTMdwAAjiznaAAb
-  </data>
- </layer>
  <objectgroup id="26" name="monoeye">
   <properties>
    <property name="agent_class" value="agent_spawner"/>

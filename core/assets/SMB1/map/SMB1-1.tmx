@@ -39,7 +39,7 @@
  </layer>
  <layer id="85" name="bumptilereg" width="230" height="46">
   <properties>
-   <property name="agent_class" value="bumptile"/>
+   <property name="agent_class" value="bump_tile"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJzt1zsKwCAMAFAvkvtf07VL1IqtIu9BMEPIZ7QUAAAAAAAAAAAAAAAAAAAAAACAs0Qnsto/teZGkgMAAOwWyXuTL29b1fNNnx1/3lHP3U7dEQAAAAAAAAAAAAAAAAAAAAAAAJhTAaAgAy0=
@@ -47,8 +47,8 @@
  </layer>
  <layer id="86" name="bumptilestar" width="230" height="46">
   <properties>
-   <property name="agent_class" value="bumptile"/>
-   <property name="spawnitem" value="powerstar"/>
+   <property name="agent_class" value="bump_tile"/>
+   <property name="spawnitem" value="power_star"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJztzjEBAAAIA6AVsX9NK+zSBxKQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI35DgAAAAAAAAAAAAAAAAAAAAAAAAAcWGzjAB4=
@@ -56,8 +56,8 @@
  </layer>
  <layer id="87" name="bumptilemushroom" width="230" height="46">
   <properties>
-   <property name="agent_class" value="bumptile"/>
-   <property name="qblock" value=""/>
+   <property name="agent_class" value="bump_tile"/>
+   <property name="qblock" value="true"/>
    <property name="spawnitem" value="magic_mushroom"/>
   </properties>
   <data encoding="base64" compression="zlib">
@@ -66,7 +66,7 @@
  </layer>
  <layer id="88" name="bumptilecoin10" width="230" height="46">
   <properties>
-   <property name="agent_class" value="bumptile"/>
+   <property name="agent_class" value="bump_tile"/>
    <property name="spawnitem" value="coin10"/>
   </properties>
   <data encoding="base64" compression="zlib">
@@ -75,8 +75,8 @@
  </layer>
  <layer id="89" name="bumptilecoin" width="230" height="46">
   <properties>
-   <property name="agent_class" value="bumptile"/>
-   <property name="qblock" value=""/>
+   <property name="agent_class" value="bump_tile"/>
+   <property name="qblock" value="true"/>
    <property name="spawnitem" value="coin"/>
   </properties>
   <data encoding="base64" compression="zlib">
