@@ -30,8 +30,12 @@ public class FireFlowerBody extends AgentBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
 		spine = new BasicAgentSpine(this);
+
+		// main fixture
+		B2DFactory.makeBoxFixture(b2body, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+				BODY_WIDTH, BODY_HEIGHT);
 		// agent sensor fixture
-		B2DFactory.makeBoxFixture(b2body, spine.createAgentSensor(),
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
 				CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 

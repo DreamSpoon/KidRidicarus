@@ -204,9 +204,9 @@
  </objectgroup>
  <objectgroup id="93" name="hidden1up" visible="0">
   <properties>
-   <property name="agent_class" value="bumptile"/>
+   <property name="agent_class" value="bump_tile"/>
    <property name="secretblock" value="true"/>
-   <property name="spawnitem" value="mushroom1up"/>
+   <property name="spawnitem" value="up1_mushroom"/>
   </properties>
   <object id="304" x="1040" y="368" width="16" height="16"/>
  </objectgroup>
