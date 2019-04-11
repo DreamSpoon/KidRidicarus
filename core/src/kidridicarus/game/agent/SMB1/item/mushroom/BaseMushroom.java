@@ -13,6 +13,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
@@ -40,6 +41,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 	// powerup can not be used until body is created, body is created after sprout time is finished
 	private boolean isPowerupUsed;
 	private Agent powerupTaker;
+	private RoomBox lastKnownRoom;
 
 	protected abstract TextureRegion getMushroomTextureRegion(TextureAtlas atlas);
 	protected abstract Powerup getMushroomPowerup();
@@ -55,6 +57,7 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 		isBumped = false;
 		bumpCenter = new Vector2();
 		powerupTaker = null;
+		lastKnownRoom = null;
 
 		// no body at spawn time, body will be created later
 		body = null;
@@ -66,6 +69,10 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
 		// sprout from bottom layer and switch to next layer on finish sprout
 		sprite = new BaseMushroomSprite(getMushroomTextureRegion(agency.getAtlas()),
 				initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
@@ -145,6 +152,10 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 				break;
 		}
 
+		// do space wrap last so that contacts are maintained, if the mushroom has a body
+		if(body != null)
+			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 		// increment state timer if state stayed the same, otherwise reset timer
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
@@ -161,6 +172,14 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 			return MoveState.WALK;
 		else
 			return MoveState.FALL;
+	}
+
+	private void doPostUpdate() {
+		if(body != null && moveState != MoveState.END) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom;
+		}
 	}
 
 	private void processSprite() {

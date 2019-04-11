@@ -2,20 +2,20 @@ package kidridicarus.game.info;
 
 public class SMB1_KV {
 	public class AgentClassAlias {
-		public static final String VAL_BRICKPIECE = "brickpiece";
-		public static final String VAL_BUMPTILE = "bumptile";
-		public static final String VAL_CASTLEFLAG = "castleflag";
+		public static final String VAL_BRICKPIECE = "brick_piece";
+		public static final String VAL_BUMPTILE = "bump_tile";
+		public static final String VAL_CASTLEFLAG = "castle_flag";
 		public static final String VAL_COIN = "coin";
-		public static final String VAL_FIREFLOWER = "fireflower";
+		public static final String VAL_FIREFLOWER = "fire_flower";
 		public static final String VAL_FLAGPOLE = "flagpole";
-		public static final String VAL_FLOATINGPOINTS = "floatingpoints";
+		public static final String VAL_FLOATINGPOINTS = "floating_points";
 		public static final String VAL_GOOMBA = "goomba";
 		public static final String VAL_MARIO = "mario";
-		public static final String VAL_MARIOFIREBALL = "mariofireball";
+		public static final String VAL_MARIOFIREBALL = "mario_fireball";
 		public static final String VAL_MAGIC_MUSHROOM = "magic_mushroom";
-		public static final String VAL_UP1_MUSHROOM = "mushroom1up";
-		public static final String VAL_POWERSTAR = "powerstar";
-		public static final String VAL_SPINCOIN = "spincoin";
+		public static final String VAL_UP1_MUSHROOM = "up1_mushroom";
+		public static final String VAL_POWERSTAR = "power_star";
+		public static final String VAL_SPINCOIN = "spin_coin";
 		public static final String VAL_TURTLE = "turtle";
 	}
 

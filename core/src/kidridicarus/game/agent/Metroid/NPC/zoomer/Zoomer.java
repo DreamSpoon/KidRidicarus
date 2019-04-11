@@ -12,6 +12,7 @@ import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.Metroid.item.energy.Energy;
@@ -47,6 +48,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	private float health;
 	private boolean isDead;
 	private boolean despawnMe;
+	private RoomBox lastKnownRoom;
 
 	public Zoomer(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -59,6 +61,7 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 		isDead = false;
 		despawnMe = false;
 		moveState = MoveState.WALK;
+		lastKnownRoom = null;
 
 		body = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
@@ -143,6 +146,10 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 				agency.getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
 				break;
 		}
+
+		// do space wrap last so that contacts are maintained
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
 	}
@@ -171,6 +178,12 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 	private void doPostUpdate() {
 		// let body update previous position/velocity
 		body.postUpdate();
+		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
+		if(moveState != MoveState.DEAD) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom;
+		}
 	}
 
 	private void processSprite(float delta) {

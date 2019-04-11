@@ -25,7 +25,7 @@ public class SkreeBody extends MobileAgentBody {
 
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
-			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.KEEP_ALIVE_BIT);
+			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.KEEP_ALIVE_BIT, CommonCF.Alias.ROOM_BIT);
 
 	private SkreeSpine spine;
 
@@ -58,7 +58,7 @@ public class SkreeBody extends MobileAgentBody {
 		createPlayerSensorFixture();
 		// on ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createSolidContactSensor(),
-				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
+				CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
 	}
 

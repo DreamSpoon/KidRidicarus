@@ -32,7 +32,7 @@ public class AngelHeartBody extends AgentBody {
 		b2body.setGravityScale(0f);
 		spine = new BasicAgentSpine(this);
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
-				CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+				CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	public BasicAgentSpine getSpine() {

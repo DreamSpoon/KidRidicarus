@@ -33,7 +33,7 @@ public class MaruMariBody extends AgentBody {
 		spine = new BasicAgentSpine(this);
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
-				CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+				CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
 	}
 
 	public BasicAgentSpine getSpine() {

@@ -23,9 +23,10 @@ public class TurtleBody extends MobileAgentBody {
 	private static final CFBitSeq MAIN_CFMASK = CommonCF.SOLID_BODY_CFMASK;
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
-			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.KEEP_ALIVE_BIT);
+			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.KEEP_ALIVE_BIT, CommonCF.Alias.ROOM_BIT);
 	private static final CFBitSeq AS_DISABLED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.DESPAWN_BIT);
+	private static final CFBitSeq AS_DISABLED_CFMASK = new CFBitSeq(CommonCF.Alias.DESPAWN_BIT,
+			CommonCF.Alias.ROOM_BIT);
 
 	private TurtleSpine spine;
 	private Fixture acSensorFixture;
@@ -58,8 +59,7 @@ public class TurtleBody extends MobileAgentBody {
 		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, sensor,
 				AS_CFCAT, AS_CFMASK, getBodySize().x, getBodySize().y);
 		// create ground sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, solidSensor,
-				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
 				FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f));
 	}
 

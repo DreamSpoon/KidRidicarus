@@ -13,6 +13,7 @@ import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.Metroid.item.energy.Energy;
@@ -46,6 +47,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private boolean isInjured;
 	private boolean isDead;
 	private boolean despawnMe;
+	private RoomBox lastKnownRoom;
 
 	public Rio(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -61,6 +63,10 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
 		sprite = new RioSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 			@Override
@@ -83,6 +89,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 		isInjured = false;
 		isDead = false;
 		despawnMe = false;
+		lastKnownRoom = null;
 	}
 
 	// apply damage to all contacting agents
@@ -209,6 +216,9 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 				break;
 		}
 
+		// do space wrap last so that contacts are maintained
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
 	}
@@ -228,7 +238,6 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 			return MoveState.SWOOP;
 		else
 			return MoveState.FLAP;
-		
 	}
 
 	private void doPowerupDrop() {
@@ -236,6 +245,15 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 		if(Math.random() > ITEM_DROP_RATE)
 			return;
 		agency.createAgent(Energy.makeAP(body.getPosition()));
+	}
+
+	private void doPostUpdate() {
+		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
+		if(moveState != MoveState.DEAD) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom;
+		}
 	}
 
 	private void processSprite(float delta) {

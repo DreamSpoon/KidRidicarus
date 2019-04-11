@@ -27,7 +27,7 @@ public class RioBody extends MobileAgentBody {
 
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
-			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.KEEP_ALIVE_BIT);
+			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.KEEP_ALIVE_BIT, CommonCF.Alias.ROOM_BIT);
 
 	private RioSpine spine;
 
@@ -56,8 +56,7 @@ public class RioBody extends MobileAgentBody {
 		B2DFactory.makeBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
 				BODY_WIDTH, BODY_HEIGHT);
 		// ceiling sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, solidSensor,
-				CommonCF.GROUND_SENSOR_CFCAT, CommonCF.GROUND_SENSOR_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
 				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, BODY_HEIGHT/2f));
 		// agent contact sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,

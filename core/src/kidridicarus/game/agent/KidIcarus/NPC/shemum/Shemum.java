@@ -12,6 +12,7 @@ import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.KidIcarus.item.angelheart.AngelHeart;
@@ -34,6 +35,7 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private boolean isFacingRight;
 	private boolean isDead;
 	private boolean despawnMe;
+	private RoomBox lastKnownRoom;
 
 	public Shemum(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -43,6 +45,7 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		isFacingRight = false;
 		isDead = false;
 		despawnMe = false;
+		lastKnownRoom = null;
 
 		body = new ShemumBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
@@ -53,6 +56,10 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
 		sprite = new ShemumSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
@@ -113,6 +120,9 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 				break;
 		}
 
+		// do space wrap last so that contacts are maintained
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
 	}
@@ -129,6 +139,15 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		}
 		else
 			return MoveState.FALL;
+	}
+
+	private void doPostUpdate() {
+		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
+		if(moveState != MoveState.DEAD) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom;
+		}
 	}
 
 	private void processSprite(float delta) {

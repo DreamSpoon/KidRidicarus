@@ -31,10 +31,6 @@ public class CommonCF {
 	public static final CFBitSeq SOLID_BODY_CFCAT = new CFBitSeq(Alias.AGENT_BIT);
 	public static final CFBitSeq SOLID_BODY_CFMASK = new CFBitSeq(Alias.SOLID_BOUND_BIT);
 
-	public static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(Alias.AGENT_BIT);
-	public static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(Alias.SOLID_BOUND_BIT);
-
-	public static final CFBitSeq SOLID_POWERUP_CFCAT = new CFBitSeq(CommonCF.Alias.POWERUP_BIT);
-	public static final CFBitSeq SOLID_POWERUP_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
-			CommonCF.Alias.AGENT_BIT);
+	public static final CFBitSeq POWERUP_CFCAT = new CFBitSeq(CommonCF.Alias.POWERUP_BIT);
+	public static final CFBitSeq POWERUP_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.ROOM_BIT);
 }

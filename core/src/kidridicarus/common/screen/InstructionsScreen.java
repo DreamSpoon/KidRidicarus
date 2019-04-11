@@ -68,11 +68,11 @@ public class InstructionsScreen implements Screen {
 		Table table = new Table();
 		table.center();
 		table.setFillParent(true);
-		table.add(new Label("... ][ Kid Ridicarus ][ ...", labelFont)).expandX().padTop(10f);
+		table.add(new Label("... ][ Kid Ridicarus ][ ...", labelFont)).expandX();
 		table.row();
-		table.add(new Label(getInstructionsString(), labelFont)).expandX().padTop(10f);
+		table.add(new Label(getInstructionsString(), labelFont)).expandX().padTop(20f);
 		table.row();
-		table.add(new Label("press SPACE to play", labelFont)).expandX().padTop(10f);
+		table.add(new Label("press SPACE to play", labelFont)).expandX().padTop(10f).padBottom(30f);
 		stage.addActor(table);
 	}
 
@@ -83,7 +83,7 @@ public class InstructionsScreen implements Screen {
 				Input.Keys.toString(KeyboardMapping.MOVE_UP).toUpperCase() + "  - move UP\n" +
 				Input.Keys.toString(KeyboardMapping.MOVE_DOWN).toUpperCase() + "  - move DOWN\n" +
 				Input.Keys.toString(KeyboardMapping.MOVE_RUNSHOOT).toUpperCase() + "  - run/shoot\n" +
-				Input.Keys.toString(KeyboardMapping.MOVE_JUMP).toUpperCase() + "  - jump\n";
+				Input.Keys.toString(KeyboardMapping.MOVE_JUMP).toUpperCase() + "  - jump";
 	}
 
 	private class MyLittleInPr implements InputProcessor {

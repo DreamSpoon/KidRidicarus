@@ -5,7 +5,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.common.agentbody.MobileAgentBody;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
@@ -32,14 +31,17 @@ public class PowerStarBody extends MobileAgentBody {
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
+
 		spine = new SolidContactSpine(this);
-		// agent and horiztonal move sensor fixture
+
+		// create main fixture
+		// create agent sensor fixture
 		FixtureDef fdef = new FixtureDef();
 		fdef.restitution = 1f;	// bouncy
-		AgentContactHoldSensor sensor = spine.createAgentSensor();
-		sensor.chainTo(spine.createSolidContactSensor());
-		B2DFactory.makeBoxFixture(b2body, fdef, sensor,
-				CommonCF.SOLID_POWERUP_CFCAT, CommonCF.SOLID_POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, fdef, spine.createSolidContactSensor(),
+				CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, getBodySize().x, getBodySize().y);
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
+				CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK, getBodySize().x, getBodySize().y);
 	}
 
 	public SolidContactSpine getSpine() {

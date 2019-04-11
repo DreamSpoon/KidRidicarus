@@ -11,6 +11,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
@@ -39,6 +40,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 	private boolean isFacingRight;
 	private boolean isPowerupUsed;
 	private Agent powerupTaker;
+	private RoomBox lastKnownRoom;
 
 	public PowerStar(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -50,6 +52,7 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 		isFacingRight = true;
 		isPowerupUsed = false;
 		powerupTaker = null;
+		lastKnownRoom = null;
 
 		body = null;
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
@@ -60,6 +63,10 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
 		// sprout from bottom layer and switch to next layer on finish sprout
 		sprite = new PowerStarSprite(agency.getAtlas(), initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
 		drawListener = new AgentDrawListener() {
@@ -130,6 +137,10 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 				break;
 		}
 
+		// do space wrap last so that contacts are maintained
+		if(body != null && moveState != MoveState.END)
+			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 		// increment state timer
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
@@ -144,6 +155,14 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 			return MoveState.SPROUT;
 		else
 			return MoveState.WALK;
+	}
+
+	private void doPostUpdate() {
+		if(body != null && moveState != MoveState.END) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom;
+		}
 	}
 
 	private void processSprite(float delta) {

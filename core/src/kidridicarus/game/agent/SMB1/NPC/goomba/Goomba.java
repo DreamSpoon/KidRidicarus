@@ -12,6 +12,7 @@ import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
@@ -43,6 +44,7 @@ public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 	private Agent perp;	// perpetrator of squish, bump, and damage
 	private DeadState nextDeadState;
 	private boolean despawnMe;
+	private RoomBox lastKnownRoom;
 
 	public Goomba(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -54,6 +56,7 @@ public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		perp = null;
 		despawnMe = false;
 		nextDeadState = DeadState.NONE;
+		lastKnownRoom = null;
 
 		body = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
@@ -64,6 +67,10 @@ public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
 		sprite = new GoombaSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
@@ -147,6 +154,9 @@ public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 				break;
 		}
 
+		// do space wrap last so that contacts are maintained
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
 	}
@@ -174,6 +184,14 @@ public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		if(perp != null)
 			agency.createAgent(FloatingPoints.makeAP(100, false, body.getPosition(), perp));
 		agency.getEar().playSound(SMB1_Audio.Sound.KICK);
+	}
+
+	private void doPostUpdate() {
+		if(!moveState.isDead()) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom;
+		}
 	}
 
 	private void processSprite(float delta) {

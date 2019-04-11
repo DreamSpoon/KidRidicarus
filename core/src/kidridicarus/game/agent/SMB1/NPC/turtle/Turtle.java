@@ -12,6 +12,7 @@ import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
@@ -50,6 +51,7 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 	private boolean deadBumpRight;
 	private Agent perp;
 	private boolean despawnMe;
+	private RoomBox lastKnownRoom;
 
 	public Turtle(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
@@ -62,6 +64,7 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		deadBumpRight = false;
 		perp = null;
 		despawnMe = false;
+		lastKnownRoom = null;
 
 		body = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
@@ -72,6 +75,10 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
+		});
 		sprite = new TurtleSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
@@ -223,6 +230,9 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		// reset this flag
 		currentHit = HitType.NONE;
 
+		// do space wrap last so that contacts are maintained
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 		// increment state timer if state stayed the same, otherwise reset timer
 		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
@@ -264,6 +274,14 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 	private void doStartDeath() {
 		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
 		agency.createAgent(FloatingPoints.makeAP(500, false, body.getPosition(), perp));
+	}
+
+	private void doPostUpdate() {
+		if(moveState != MoveState.DEAD) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom;
+		}
 	}
 
 	private void processSprite(float delta) {
