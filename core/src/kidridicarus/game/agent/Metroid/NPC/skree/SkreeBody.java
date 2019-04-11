@@ -50,7 +50,7 @@ public class SkreeBody extends MobileAgentBody {
 	private void createFixtures() {
 		// main fixture
 		B2DFactory.makeBoxFixture(b2body, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+				getBodySize().x, getBodySize().y);
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				getBodySize().x, getBodySize().y);
@@ -59,7 +59,7 @@ public class SkreeBody extends MobileAgentBody {
 		// on ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createSolidContactSensor(),
 				CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 	}
 
 	// cone shaped sensor extending down below skree to check for player target 

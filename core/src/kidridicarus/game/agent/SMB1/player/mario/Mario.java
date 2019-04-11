@@ -642,7 +642,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		if(!moveState.isDead()) {
 			RoomBox nextRoom = body.getSpine().getCurrentRoom();
 			if(nextRoom != null)
-				lastKnownRoom = nextRoom; 
+				lastKnownRoom = nextRoom;
 		}
 	}
 

@@ -39,9 +39,10 @@ public class PitArrowBody extends MobileAgentBody {
 		if(b2body != null)	
 			world.destroyBody(b2body);
 
-		if(arrowDir.isHorizontal()) {
+		// if horizontal then set body size like normal...
+		if(arrowDir.isHorizontal())
 			setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		}
+		// but if vertical then rotate body size by 90 degrees
 		else
 			setBodySize(BODY_HEIGHT, BODY_WIDTH);
 

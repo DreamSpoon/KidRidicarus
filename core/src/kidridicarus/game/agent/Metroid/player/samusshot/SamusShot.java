@@ -12,6 +12,7 @@ import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
+import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.agent.Metroid.player.samus.Samus;
@@ -30,12 +31,15 @@ public class SamusShot extends Agent implements DisposableAgent {
 	private MoveState moveState;
 	private float moveStateTimer;
 	private boolean isExploding;
+	private RoomBox lastKnownRoom;
+	private Vector2 startVelocity;
 
 	public SamusShot(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
 		moveStateTimer = 0f;
 		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENT_AGENT, null, Samus.class);
+		lastKnownRoom = null;
 
 		// check the definition properties, maybe the shot needs to expire immediately
 		isExploding = properties.containsKey(CommonKV.Spawn.KEY_EXPIRE);
@@ -44,11 +48,16 @@ public class SamusShot extends Agent implements DisposableAgent {
 		else
 			moveState = MoveState.LIVE;
 
+		startVelocity = Agent.getStartVelocity(properties);
 		body = new SamusShotBody(this, agency.getWorld(), Agent.getStartPoint(properties),
-				Agent.getStartVelocity(properties));
+				startVelocity);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doUpdate(delta); }
+		});
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doPostUpdate(); }
 		});
 		sprite = new SamusShotSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
@@ -65,7 +74,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 
 	private void processContacts() {
 		// check for agents needing damage, and damage the first one
-		for(ContactDmgTakeAgent agent : body.getContactAgentsByClass(ContactDmgTakeAgent.class)) {
+		for(ContactDmgTakeAgent agent : body.getSpine().getContactDmgTakeAgents()) {
 			// do not hit parent
 			if(agent == parent)
 				continue;
@@ -74,7 +83,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 			return;
 		}
 		// if hit a wall then explode
-		if(body.isHitBound())
+		if(body.getSpine().isMoveBlocked(startVelocity))
 			isExploding = true;
 	}
 
@@ -92,6 +101,9 @@ public class SamusShot extends Agent implements DisposableAgent {
 				break;
 		}
 
+		// do space wrap last so that contacts are maintained
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+
 		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
 	}
@@ -107,6 +119,15 @@ public class SamusShot extends Agent implements DisposableAgent {
 			return MoveState.EXPLODE;
 		else
 			return MoveState.LIVE;
+	}
+
+	private void doPostUpdate() {
+		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
+		if(moveState != MoveState.DEAD) {
+			RoomBox nextRoom = body.getSpine().getCurrentRoom();
+			if(nextRoom != null)
+				lastKnownRoom = nextRoom;
+		}
 	}
 
 	private void processSprite(float delta) {

@@ -91,7 +91,7 @@ public class PitArrow extends Agent implements DisposableAgent {
 	private void doPostUpdate() {
 		RoomBox nextRoom = body.getSpine().getCurrentRoom();
 		if(nextRoom != null)
-			lastKnownRoom = nextRoom; 
+			lastKnownRoom = nextRoom;
 	}
 
 	private void processSprite() {

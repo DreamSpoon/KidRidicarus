@@ -519,7 +519,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		if(moveState != MoveState.DEAD) {
 			RoomBox nextRoom = body.getSpine().getCurrentRoom();
 			if(nextRoom != null)
-				lastKnownRoom = nextRoom; 
+				lastKnownRoom = nextRoom;
 		}
 	}
 

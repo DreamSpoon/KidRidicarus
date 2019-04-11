@@ -46,7 +46,7 @@ public class ZoomerBody extends MobileAgentBody {
 	private void createFixtures() {
 		// main fixture
 		B2DFactory.makeBoxFixture(b2body, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+				getBodySize().x, getBodySize().y);
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				getBodySize().x, getBodySize().y);

@@ -60,7 +60,7 @@ public class TurtleBody extends MobileAgentBody {
 				AS_CFCAT, AS_CFMASK, getBodySize().x, getBodySize().y);
 		// create ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -BODY_HEIGHT/2f));
+				FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBodySize().y/2f));
 	}
 
 	public void allowOnlyDeadBumpContacts() {

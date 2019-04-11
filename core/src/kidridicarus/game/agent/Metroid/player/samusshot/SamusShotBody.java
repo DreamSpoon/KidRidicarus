@@ -1,14 +1,11 @@
 package kidridicarus.game.agent.Metroid.player.samusshot;
 
-import java.util.List;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.agentbody.MobileAgentBody;
-import kidridicarus.common.agentsensor.AgentContactHoldSensor;
-import kidridicarus.common.agentsensor.SolidContactSensor;
+import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
@@ -26,10 +23,9 @@ public class SamusShotBody extends MobileAgentBody {
 
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
-			CommonCF.Alias.DESPAWN_BIT);
+			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.ROOM_BIT);
 
-	private SolidContactSensor boundSensor;
-	private AgentContactHoldSensor acSensor;
+	private SolidContactSpine spine;
 
 	public SamusShotBody(SamusShot parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
@@ -46,21 +42,18 @@ public class SamusShotBody extends MobileAgentBody {
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		b2body.setBullet(true);
+
+		spine = new SolidContactSpine(this);
+
 		// create main fixture
-		boundSensor = new SolidContactSensor(this);
-		B2DFactory.makeBoxFixture(b2body, boundSensor, MAIN_CFCAT, MAIN_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+		B2DFactory.makeBoxFixture(b2body, spine.createSolidContactSensor(), MAIN_CFCAT, MAIN_CFMASK,
+				getBodySize().x, getBodySize().y);
 		// create agent contact sensor fixture
-		acSensor = new AgentContactHoldSensor(this);
-		B2DFactory.makeSensorBoxFixture(b2body, acSensor, AS_CFCAT, AS_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				SENSOR_WIDTH, SENSOR_HEIGHT);
 	}
 
-	public boolean isHitBound() {
-		return boundSensor.isContacting();
-	}
-
-	public <T> List<T> getContactAgentsByClass(Class<T> cls) {
-		return acSensor.getContactsByClass(cls);
+	public SolidContactSpine getSpine() {
+		return spine;
 	}
 }

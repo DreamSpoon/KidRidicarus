@@ -149,7 +149,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		if(moveState == MoveState.FLY) {
 			RoomBox nextRoom = body.getSpine().getCurrentRoom();
 			if(nextRoom != null)
-				lastKnownRoom = nextRoom; 
+				lastKnownRoom = nextRoom;
 		}
 	}
 

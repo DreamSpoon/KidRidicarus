@@ -54,10 +54,10 @@ public class RioBody extends MobileAgentBody {
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		// main fixture
 		B2DFactory.makeBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+				getBodySize().x, getBodySize().y);
 		// ceiling sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, BODY_HEIGHT/2f));
+				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, getBodySize().y/2f));
 		// agent contact sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				getBodySize().x, getBodySize().y);

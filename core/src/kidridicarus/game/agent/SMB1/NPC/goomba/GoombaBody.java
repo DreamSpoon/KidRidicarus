@@ -59,10 +59,10 @@ public class GoombaBody extends MobileAgentBody {
 		AgentContactHoldSensor sensor = spine.createAgentSensor();
 		sensor.chainTo(spine.createHeadBounceSensor());
 		agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, sensor, AS_CFCAT, AS_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+				getBodySize().x, getBodySize().y);
 		// ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 	}
 
 	public void allowOnlyDeadSquishContacts() {

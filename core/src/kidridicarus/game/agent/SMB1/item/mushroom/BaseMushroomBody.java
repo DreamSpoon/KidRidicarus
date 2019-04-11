@@ -40,14 +40,14 @@ public class BaseMushroomBody extends MobileAgentBody {
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		// create main fixture with agent sensor chained to horizontal move sensor
 		B2DFactory.makeBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+				getBodySize().x, getBodySize().y);
 		// create on ground sensor fixture and attach to spine
 		B2DFactory.makeSensorBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -BODY_HEIGHT/2f));
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create agent sensor
 		AgentContactHoldSensor agentSensor = spine.createAgentSensor();
 		B2DFactory.makeSensorBoxFixture(b2body, agentSensor, CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+				getBodySize().x, getBodySize().y);
 	}
 
 	public SolidContactSpine getSpine() {

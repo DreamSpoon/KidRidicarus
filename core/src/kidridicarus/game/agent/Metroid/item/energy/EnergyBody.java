@@ -41,7 +41,7 @@ public class EnergyBody extends AgentBody {
 
 	private void createFixtures() {
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
-				CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK, BODY_WIDTH, BODY_HEIGHT);
+				CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK, getBodySize().x, getBodySize().y);
 	}
 
 	public BasicAgentSpine getSpine() {

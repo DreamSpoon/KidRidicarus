@@ -637,7 +637,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		if(moveState != MoveState.DEAD) {
 			RoomBox nextRoom = body.getSpine().getCurrentRoom();
 			if(nextRoom != null)
-				lastKnownRoom = nextRoom; 
+				lastKnownRoom = nextRoom;
 		}
 	}
 

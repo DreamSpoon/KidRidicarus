@@ -22,10 +22,11 @@ import kidridicarus.game.info.KidIcarusAudio;
 
 public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 1f;
-	private static final float STRIKE_DELAY = 1/6f;
 	private static final int DROP_HEART_COUNT = 1;
+	private static final float STRIKE_DELAY = 1/6f;
+	private static final float FALL1_TIME = 0.05f;
 
-	private enum MoveState { WALK, FALL, DEAD, STRIKE_GROUND }
+	private enum MoveState { WALK, FALL1, FALL2, STRIKE_GROUND, DEAD }
 
 	private float moveStateTimer;
 	private MoveState moveState;
@@ -102,13 +103,12 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 			case WALK:
 				body.getSpine().doWalkMove(isFacingRight);
 				break;
-			case FALL:
-				// if body is moving down then set X velocity equal zero, ensuring fall straight down
-				if(body.getSpine().isMovingInDir(Direction4.DOWN))
+			case FALL1:
+				break;
+			case FALL2:
+				// ensure fall straight down
+				if(moveStateChanged)
 					body.zeroVelocity(true, false);
-				// else continue walk move to prevent "sticking" to edges
-				else
-					body.getSpine().doWalkMove(isFacingRight);
 				break;
 			case STRIKE_GROUND:
 				break;
@@ -130,15 +130,31 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 	private MoveState getNextMoveState() {
 		if(isDead || moveState == MoveState.DEAD)
 			return MoveState.DEAD;
-		else if(body.getSpine().isOnGround()) {
-			if(moveState == MoveState.FALL ||
-					(moveState == MoveState.STRIKE_GROUND && moveStateTimer <= STRIKE_DELAY))
-				return MoveState.STRIKE_GROUND;
+		else if(moveState == MoveState.WALK) {
+			// if not on ground and moving down then start fall...
+			if(!body.getSpine().isOnGround() && body.getSpine().isMovingInDir(Direction4.DOWN))
+				return MoveState.FALL1;
+			// otherwise continue walk to prevent "sticking" to vertexes of ledges
 			else
 				return MoveState.WALK;
 		}
-		else
-			return MoveState.FALL;
+		else if(moveState == MoveState.FALL1 || moveState == MoveState.FALL2) {
+			if(body.getSpine().isOnGround())
+				return MoveState.STRIKE_GROUND;
+			else {
+				if(moveState == MoveState.FALL2 || moveStateTimer > FALL1_TIME)
+					return MoveState.FALL2;
+				else
+					return MoveState.FALL1;
+			}
+		}
+		// STRIKE_GROUND
+		else {
+			if(moveStateTimer > STRIKE_DELAY)
+				return MoveState.WALK;
+			else
+				return MoveState.STRIKE_GROUND;
+		}
 	}
 
 	private void doPostUpdate() {

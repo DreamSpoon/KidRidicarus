@@ -36,7 +36,7 @@ public class SkreeShotBody extends MobileAgentBody {
 
 		spine = new BasicAgentSpine(this);
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
-				BODY_WIDTH, BODY_HEIGHT);
+				getBodySize().x, getBodySize().y);
 	}
 
 	public BasicAgentSpine getSpine() {
