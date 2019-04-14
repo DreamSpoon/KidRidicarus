@@ -30,7 +30,6 @@ public class PowerStarBody extends SproutingPowerupBody {
 		setBodySize(bounds.getWidth(), bounds.getHeight());
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
-
 		spine = new SolidContactSpine(this);
 
 		// create main fixture

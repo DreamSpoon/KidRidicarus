@@ -98,9 +98,8 @@ public class MonoeyeSpine extends BasicAgentSpine {
 		// if the facing directions are opposite, and the positions are opposite, then gawking occurred
 		Vector2 otherPos = otherAgent.getPosition(); 
 		Direction4 otherDir = otherAgent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
-		if(isFacingRight && otherDir == Direction4.LEFT && body.getPosition().x <= otherPos.x)
-			return true;
-		else if(!isFacingRight && otherDir == Direction4.RIGHT && body.getPosition().x >= otherPos.x)
+		if((isFacingRight && otherDir == Direction4.LEFT && body.getPosition().x <= otherPos.x) ||
+				(!isFacingRight && otherDir == Direction4.RIGHT && body.getPosition().x >= otherPos.x))
 			return true;
 
 		return false;
@@ -109,21 +108,19 @@ public class MonoeyeSpine extends BasicAgentSpine {
 	public boolean isContinueAcceleration(boolean isHorizontal, boolean isPlus) {
 		if(isHorizontal) {
 			int myTileX = UInfo.M2Tx(body.getPosition().x);
-			// if moving right and current position is within left acceleration zone then continue acceleration
-			if(isPlus && isTileInOneAccelZone(true, myTileX, false))
-				return true;
-			// if moving left and current position is within right acceleration zone then continue acceleration
-			else if(!isPlus && isTileInOneAccelZone(true, myTileX, true))
+			// If moving right and current position is within left acceleration zone then continue acceleration, or
+			// if moving left and current position is within right acceleration zone then continue acceleration.
+			if((isPlus && isTileInOneAccelZone(true, myTileX, false)) ||
+					(!isPlus && isTileInOneAccelZone(true, myTileX, true)))
 				return true;
 		}
 		// vertical
 		else {
 			int myTileY = UInfo.M2Tx(body.getPosition().y);
-			// if moving up and current position is within bottom acceleration zone then continue acceleration
-			if(isPlus && isTileInOneAccelZone(false, myTileY, false))
-				return true;
-			// if moving down and current position is within top acceleration zone then continue acceleration
-			else if(!isPlus && isTileInOneAccelZone(false, myTileY, true))
+			// If moving up and current position is within bottom acceleration zone then continue acceleration, or
+			// if moving down and current position is within top acceleration zone then continue acceleration.
+			if((isPlus && isTileInOneAccelZone(false, myTileY, false)) ||
+					(!isPlus && isTileInOneAccelZone(false, myTileY, true)))
 				return true;
 		}
 		// discontinue acceleration
@@ -133,21 +130,19 @@ public class MonoeyeSpine extends BasicAgentSpine {
 	public boolean isChangeDirection(boolean isHorizontal, boolean isPlus) {
 		if(isHorizontal) {
 			int myTileX = UInfo.M2Tx(body.getPosition().x);
-			// if moving right and current position is within right acceleration zone then change direction
-			if(isPlus && isTileInOneAccelZone(true, myTileX, true))
-				return true;
-			// if moving left and current position is within left acceleration zone then change direction
-			else if(!isPlus && isTileInOneAccelZone(true, myTileX, false))
+			// If moving right and current position is within right acceleration zone then change direction, or
+			// if moving left and current position is within left acceleration zone then change direction.
+			if((isPlus && isTileInOneAccelZone(true, myTileX, true)) ||
+					(!isPlus && isTileInOneAccelZone(true, myTileX, false)))
 				return true;
 		}
 		// vertical
 		else {
 			int myTileY = UInfo.M2Tx(body.getPosition().y);
-			// if moving up and current position is within top acceleration zone then change direction
-			if(isPlus && isTileInOneAccelZone(false, myTileY, true))
-				return true;
-			// if moving down and current position is within bottom acceleration zone then change direction
-			else if(!isPlus && isTileInOneAccelZone(false, myTileY, false))
+			// If moving up and current position is within top acceleration zone then change direction, or
+			// if moving down and current position is within bottom acceleration zone then change direction.
+			if((isPlus && isTileInOneAccelZone(false, myTileY, true)) ||
+					(!isPlus && isTileInOneAccelZone(false, myTileY, false)))
 				return true;
 		}
 		// don't change direction
@@ -157,10 +152,9 @@ public class MonoeyeSpine extends BasicAgentSpine {
 	private boolean isTileInOneAccelZone(boolean isHorizontal, int tileOffset, boolean isPlus) {
 		if(isHorizontal) {
 			// if checking left acceleration zone and offset is within zone then return true
-			if(!isPlus && tileOffset <= leftAccelZoneTile)
-				return true;
 			// if checking right acceleration zone and offset is within zone then return true
-			else if(isPlus && tileOffset >= rightAccelZoneTile)
+			if((!isPlus && tileOffset <= leftAccelZoneTile) ||
+					(isPlus && tileOffset >= rightAccelZoneTile))
 				return true;
 		}
 		// vertical
@@ -170,10 +164,9 @@ public class MonoeyeSpine extends BasicAgentSpine {
 				return false;
 
 			// if checking bottom acceleration zone and offset is within zone then return true
-			if(!isPlus && tileOffset <= getScrollTopY() + ACCEL_OFFSET_BOTTOM)
-				return true;
 			// if checking top acceleration zone and offset is within zone then return true
-			else if(isPlus && tileOffset >= getScrollTopY() + ACCEL_OFFSET_TOP)
+			if((!isPlus && tileOffset <= getScrollTopY() + ACCEL_OFFSET_BOTTOM) ||
+					(isPlus && tileOffset >= getScrollTopY() + ACCEL_OFFSET_TOP))
 				return true;
 		}
 		// return false because tile is not in either one of the acceleration zones

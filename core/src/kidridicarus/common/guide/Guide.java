@@ -47,7 +47,7 @@ public class Guide implements Disposable {
 	}
 
 	// create an Ear to give to Agency, so that Guide can receive sound/music callbacks from Agency
-	public Ear createEar() {
+	private Ear createEar() {
 		ear = new Ear() {
 			@Override
 			public void registerMusic(String musicName) {

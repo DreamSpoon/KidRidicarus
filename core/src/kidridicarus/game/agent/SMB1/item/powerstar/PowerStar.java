@@ -76,8 +76,7 @@ public class PowerStar extends SproutingPowerup implements BumpTakeAgent {
 			body.setVelocity(xVal, body.getVelocity().y);
 
 		// do space wrap last so that contacts are maintained
-		if(body != null)
-			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 	}
 
 	@Override

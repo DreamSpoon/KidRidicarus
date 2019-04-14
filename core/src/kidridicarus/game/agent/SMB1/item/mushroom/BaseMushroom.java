@@ -1,114 +1,73 @@
 package kidridicarus.game.agent.SMB1.item.mushroom;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.UInfo;
-import kidridicarus.common.powerup.Powerup;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.agent.SMB1.other.sproutingpowerup.SproutingPowerup;
 
-public abstract class BaseMushroom extends Agent implements BumpTakeAgent, DisposableAgent {
-	private static final float SPROUT_TIME = 1f;
-	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
+public abstract class BaseMushroom extends SproutingPowerup implements BumpTakeAgent {
 	private static final float WALK_VEL = 0.6f;
 	private static final float BUMP_UPVEL = 1.5f;
 
-	private enum MoveState { SPROUT, WALK, FALL, END }
-
-	private BaseMushroomBody body;
-	private BaseMushroomSprite sprite;
-	private AgentDrawListener drawListener;
-
-	private float moveStateTimer;
-	private MoveState moveState;
-	private Vector2 initSpawnPosition;
 	private boolean isFacingRight;
 	private boolean isBumped;
 	private Vector2 bumpCenter;
-	// powerup can not be used until body is created, body is created after sprout time is finished
-	private boolean isPowerupUsed;
-	private Agent powerupTaker;
 	private RoomBox lastKnownRoom;
 
-	protected abstract TextureRegion getMushroomTextureRegion(TextureAtlas atlas);
-	protected abstract Powerup getMushroomPowerup();
+	protected abstract Animation<TextureRegion> getMushroomAnim(TextureAtlas atlas);
 
 	public BaseMushroom(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		initSpawnPosition = Agent.getStartPoint(properties); 
-
-		moveStateTimer = 0f;
-		moveState = MoveState.SPROUT;
 		isFacingRight = true;
 		isBumped = false;
 		bumpCenter = new Vector2();
-		powerupTaker = null;
 		lastKnownRoom = null;
 
-		// no body at spawn time, body will be created later
-		body = null;
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { doContactUpdate(); }
-		});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
-				@Override
-				public void update(float delta) { doUpdate(delta); }
-			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doPostUpdate(); }
 		});
-		// sprout from bottom layer and switch to next layer on finish sprout
-		sprite = new BaseMushroomSprite(getMushroomTextureRegion(agency.getAtlas()),
-				initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
-		drawListener = new AgentDrawListener() {
-				@Override
-				public void draw(Eye adBatch) { doDraw(adBatch); }
-			};
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, drawListener);
+		sprite = new BaseMushroomSprite(getMushroomAnim(agency.getAtlas()), getSproutStartPos());
 	}
 
-	// if any agents touching this powerup are able to take it, then push it to them
-	private void doContactUpdate() {
-		// exit if not used or body not created yet
-		if(isPowerupUsed || body == null)
+	@Override
+	protected void finishSprout() {
+		body = new BaseMushroomBody(this, agency.getWorld(), getSproutEndPos(), new Vector2(0f, 0f));
+	}
+
+	@Override
+	protected void postSproutUpdate(PowerupTakeAgent powerupTaker) {
+		// if this powerup is taken then make floating points and exit
+		if(powerupTaker != null) {
+			agency.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(), (Agent) powerupTaker));
 			return;
-		// any takers?
-		PowerupTakeAgent taker = body.getSpine().getTouchingPowerupTaker();
-		if(taker == null)
-			return;
-		// if taker takes the powerup then this powerup is done
-		if(taker.onTakePowerup(getMushroomPowerup())) {
-			isPowerupUsed = true;
-			powerupTaker = (Agent) taker;
 		}
+
+		processBumps();
+		// if on ground then apply walk velocity
+		if(body.getSpine().isOnGround()) {
+			if(isFacingRight)
+				body.setVelocity(WALK_VEL, body.getVelocity().y);
+			else
+				body.setVelocity(-WALK_VEL, body.getVelocity().y);
+		}
+		// do space wrap last so that contacts are maintained
+		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 	}
 
-	private void doUpdate(float delta) {
-		processContacts();
-		processMove(delta);
-		processSprite();
-	}
-
-	private void processContacts() {
-		if(body == null)
-			return;
-
+	private void processBumps() {
 		// process bumpings
 		if(isBumped) {
 			isBumped = false;
@@ -125,99 +84,19 @@ public abstract class BaseMushroom extends Agent implements BumpTakeAgent, Dispo
 			isFacingRight = !isFacingRight;
 	}
 
-	private void processMove(float delta) {
-		MoveState nextMoveState = getNextMoveState();
-		switch(nextMoveState) {
-			case WALK:
-				// spawn the body when sprout finishes
-				if(moveState == MoveState.SPROUT) {
-					// change from bottom to middle sprite draw order
-					agency.removeAgentDrawListener(this, drawListener);
-					agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, drawListener);
-					body = new BaseMushroomBody(this, agency.getWorld(), initSpawnPosition, new Vector2(0f, 0f));
-				}
-				if(isFacingRight)
-					body.setVelocity(WALK_VEL, body.getVelocity().y);
-				else
-					body.setVelocity(-WALK_VEL, body.getVelocity().y);
-				break;
-			case SPROUT:
-				break;
-			case FALL:
-				break;
-			case END:
-				agency.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(), powerupTaker));
-				// powerup used, so dispose this agent
-				agency.removeAgent(this);
-				break;
-		}
-
-		// do space wrap last so that contacts are maintained, if the mushroom has a body
-		if(body != null)
-			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-
-		// increment state timer if state stayed the same, otherwise reset timer
-		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
-		moveState = nextMoveState;
-	}
-
-	private MoveState getNextMoveState() {
-		if(isPowerupUsed)
-			return MoveState.END;
-		else if(moveState == MoveState.SPROUT && moveStateTimer > SPROUT_TIME)
-			return MoveState.WALK;
-		else if(moveState == MoveState.SPROUT)
-			return MoveState.SPROUT;
-		else if(body.getSpine().isOnGround())
-			return MoveState.WALK;
-		else
-			return MoveState.FALL;
-	}
-
 	private void doPostUpdate() {
-		if(body != null && moveState != MoveState.END) {
-			RoomBox nextRoom = body.getSpine().getCurrentRoom();
-			if(nextRoom != null)
-				lastKnownRoom = nextRoom;
-		}
-	}
-
-	private void processSprite() {
-		// if sprouting then use sprout offset for sprite position
-		if(moveState == MoveState.SPROUT) {
-			float yOffset = SPROUT_OFFSET * (SPROUT_TIME - moveStateTimer) / SPROUT_TIME;
-			sprite.update(initSpawnPosition.cpy().add(0f, yOffset));
-		}
-		// otherwise use the regular body position
-		else
-			sprite.update(body.getPosition());
-	}
-
-	private void doDraw(Eye adBatch) {
-		// do not draw sprite if powerup is used 
-		if(isPowerupUsed)
+		if(body == null)
 			return;
-		adBatch.draw(sprite);
+		RoomBox nextRoom = body.getSpine().getCurrentRoom();
+		lastKnownRoom = nextRoom != null ? nextRoom : lastKnownRoom;
 	}
 
 	@Override
 	public void onTakeBump(Agent bumpingAgent) {
+		// one bump per frame please
+		if(isBumped)
+			return;
 		isBumped = true;
 		bumpCenter.set(bumpingAgent.getPosition()); 
-	}
-
-	@Override
-	public Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return body.getBounds();
-	}
-
-	@Override
-	public void disposeAgent() {
-		body.dispose();
 	}
 }

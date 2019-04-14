@@ -28,9 +28,8 @@ public class SolidContactSpine extends BasicAgentSpine {
 	}
 
 	public boolean isSideMoveBlocked(boolean isRight) {
-		if(isRight && scNerve.isDirSolid(Direction4.RIGHT, body.getBounds()))
-			return true;
-		else if(!isRight && scNerve.isDirSolid(Direction4.LEFT, body.getBounds()))
+		if((isRight && scNerve.isDirSolid(Direction4.RIGHT, body.getBounds())) ||
+				(!isRight && scNerve.isDirSolid(Direction4.LEFT, body.getBounds())))
 			return true;
 		return false;
 	}
