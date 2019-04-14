@@ -58,7 +58,8 @@ public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		nextDeadState = DeadState.NONE;
 		lastKnownRoom = null;
 
-		body = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
+		body = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+				Agent.getStartVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

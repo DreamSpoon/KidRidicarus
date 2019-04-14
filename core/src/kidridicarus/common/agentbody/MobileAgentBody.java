@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.info.UInfo;
 
 public abstract class MobileAgentBody extends AgentBody {
-	protected abstract void defineBody(Vector2 position, Vector2 velocity);
+	protected abstract void defineBody(Rectangle bounds, Vector2 velocity);
 
 	public MobileAgentBody(Agent parent, World world) {
 		super(parent, world);
@@ -17,16 +17,20 @@ public abstract class MobileAgentBody extends AgentBody {
 
 	@Override
 	protected void defineBody(Rectangle bounds) {
-		defineBody(bounds.getCenter(new Vector2()), new Vector2(0f, 0f));
+		defineBody(bounds, new Vector2(0f, 0f));
 	}
 
 	public void resetPosition(Vector2 position, boolean keepVelocity) {
 		// exit if the new position is the same as current position and velocity can be maintained
 		if(position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON) && !keepVelocity)
 			return;
-		if(keepVelocity)
-			defineBody(position, b2body.getLinearVelocity());
-		else
-			defineBody(position, new Vector2(0f, 0f));
+		if(keepVelocity) {
+			defineBody(new Rectangle(position.x-getBodySize().x/2f, position.y-getBodySize().y/2f,
+					getBodySize().x, getBodySize().y), b2body.getLinearVelocity());
+		}
+		else {
+			defineBody(new Rectangle(position.x-getBodySize().x/2f, position.y-getBodySize().y/2f,
+					getBodySize().x, getBodySize().y), new Vector2(0f, 0f));
+		}
 	}
 }

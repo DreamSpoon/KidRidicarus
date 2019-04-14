@@ -1,5 +1,6 @@
 package kidridicarus.game.agent.SMB1.item.mushroom;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -21,17 +22,18 @@ public class BaseMushroomBody extends MobileAgentBody {
 
 	public BaseMushroomBody(BaseMushroom parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
-		defineBody(position, velocity);
+		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
+				velocity);
 	}
 
 	@Override
-	protected void defineBody(Vector2 position, Vector2 velocity) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists	
 		if(b2body != null)	
 			world.destroyBody(b2body);
 
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
+		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		spine = new SolidContactSpine(this);
 		createFixtures();
 	}

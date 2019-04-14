@@ -1,5 +1,6 @@
 package kidridicarus.game.agent.Metroid.NPC.zoomer;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -26,18 +27,19 @@ public class ZoomerBody extends MobileAgentBody {
 
 	public ZoomerBody(Zoomer parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
-		defineBody(position, velocity);
+		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
+				velocity);
 	}
 
 	@Override
-	protected void defineBody(Vector2 position, Vector2 velocity) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists	
 		if(b2body != null)	
 			world.destroyBody(b2body);
 
-		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		prevPosition = position.cpy();
-		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
+		setBodySize(bounds.getWidth(), bounds.getHeight());
+		prevPosition = bounds.getCenter(new Vector2());
+		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		spine = new ZoomerSpine(this);
 		createFixtures();
@@ -82,10 +84,14 @@ public class ZoomerBody extends MobileAgentBody {
 		// exit if the new position is the same as current position and velocity can be maintained
 		if(position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON) && !keepVelocity)
 			return;
-		if(keepVelocity)
-			defineBody(position, b2body.getLinearVelocity());
-		else
-			defineBody(position, new Vector2(0f, 0f));
+		if(keepVelocity) {
+			defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
+					b2body.getLinearVelocity());
+		}
+		else {
+			defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
+					new Vector2(0f, 0f));
+		}
 	}
 
 	public Vector2 getPrevPosition() {

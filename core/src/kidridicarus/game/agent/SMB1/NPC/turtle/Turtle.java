@@ -66,7 +66,8 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		despawnMe = false;
 		lastKnownRoom = null;
 
-		body = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
+		body = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+				Agent.getStartVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

@@ -68,7 +68,7 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		lastKnownRoom = null;
 
 		body = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).cpy().add(SPECIAL_OFFSET),
-				new Vector2(0f, 0f));
+				Agent.getStartVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

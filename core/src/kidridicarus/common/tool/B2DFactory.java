@@ -28,7 +28,8 @@ public class B2DFactory {
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyType.DynamicBody;
 		bdef.position.set(position);
-		bdef.linearVelocity.set(velocity);
+		if(velocity != null)
+			bdef.linearVelocity.set(velocity);
 		return world.createBody(bdef);
 	}
 

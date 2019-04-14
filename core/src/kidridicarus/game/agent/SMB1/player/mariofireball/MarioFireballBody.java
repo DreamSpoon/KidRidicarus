@@ -1,5 +1,6 @@
 package kidridicarus.game.agent.SMB1.player.mariofireball;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -29,17 +30,18 @@ public class MarioFireballBody extends MobileAgentBody {
 
 	public MarioFireballBody(MarioFireball parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
-		defineBody(position, velocity);
+		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
+				velocity);
 	}
 
 	@Override
-	protected void defineBody(Vector2 position, Vector2 velocity) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
 
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		createBody(world, position, velocity);
+		createBody(world, bounds.getCenter(new Vector2()), velocity);
 		createFixtures();
 	}
 

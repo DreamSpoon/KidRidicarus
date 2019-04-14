@@ -6,12 +6,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agent.staticpowerup.StaticPowerupSprite;
+import kidridicarus.common.agentsprite.basic.AnimSprite;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.agent.KidIcarus.item.angelheart.AngelHeart.AngelHeartSize;
 import kidridicarus.game.info.KidIcarusGfx;
 
-public class AngelHeartSprite extends StaticPowerupSprite {
+public class AngelHeartSprite extends AnimSprite {
 	private static final float SML_SPRITE_WIDTH = UInfo.P2M(8);
 	private static final float SML_SPRITE_HEIGHT = UInfo.P2M(8);
 	private static final float MED_SPRITE_WIDTH = UInfo.P2M(8);

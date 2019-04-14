@@ -1,21 +1,18 @@
 package kidridicarus.game.agent.SMB1.item.powerstar;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.UInfo;
+import kidridicarus.common.powerup.Powerup;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.agent.SMB1.other.sproutingpowerup.SproutingPowerup;
 import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.powerup.SMB1_Pow;
 
@@ -24,164 +21,68 @@ import kidridicarus.game.powerup.SMB1_Pow;
  * -allow the star to spawn down-right out of bricks like on level 1-1
  * -test the star's onBump method - I could not bump it, needs precise timing - maybe loosen the timing? 
  */
-public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
-	private static final float SPROUT_TIME = 0.5f;
+public class PowerStar extends SproutingPowerup implements BumpTakeAgent {
 	private static final Vector2 MAX_BOUNCE_VEL = new Vector2(0.5f, 2f); 
-	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
-	private enum MoveState { SPROUT, WALK, END }
 
-	private PowerStarBody body;
-	private PowerStarSprite sprite;
-	private AgentDrawListener drawListener;
-
-	private float moveStateTimer;
-	private MoveState moveState;
-	private Vector2 initSpawnPosition;
 	private boolean isFacingRight;
-	private boolean isPowerupUsed;
-	private Agent powerupTaker;
 	private RoomBox lastKnownRoom;
 
 	public PowerStar(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
-		initSpawnPosition = Agent.getStartPoint(properties);
-
-		moveStateTimer = 0f;
-		moveState = MoveState.SPROUT;
 		isFacingRight = true;
-		isPowerupUsed = false;
-		powerupTaker = null;
 		lastKnownRoom = null;
-
 		body = null;
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { doContactUpdate(); }
-		});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
-				@Override
-				public void update(float delta) { doUpdate(delta); }
-			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doPostUpdate(); }
 		});
-		// sprout from bottom layer and switch to next layer on finish sprout
-		sprite = new PowerStarSprite(agency.getAtlas(), initSpawnPosition.cpy().add(0f, SPROUT_OFFSET));
-		drawListener = new AgentDrawListener() {
-				@Override
-				public void draw(Eye adBatch) { doDraw(adBatch); }
-			};
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, drawListener);
-	}
-
-	// if any agents touching this powerup are able to take it, then push it to them
-	private void doContactUpdate() {
-		// exit if not used or body not created yet
-		if(isPowerupUsed || body == null)
-			return;
-		// any takers?
-		PowerupTakeAgent taker = body.getSpine().getTouchingPowerupTaker();
-		if(taker == null)
-			return;
-		// if taker takes the powerup then this powerup is done
-		if(taker.onTakePowerup(new SMB1_Pow.PowerStarPow())) {
-			isPowerupUsed = true;
-			powerupTaker = (Agent) taker;
-		}
-	}
-
-	private void doUpdate(float delta) {
-		processMove(delta);
-		processSprite(delta);
-	}
-
-	private void processMove(float delta) {
-		MoveState nextMoveState = getNextMoveState();
-		switch(nextMoveState) {
-			case WALK:
-				// spawn the body when sprout finishes
-				if(moveState == MoveState.SPROUT) {
-					// change from bottom to middle sprite draw order
-					agency.removeAgentDrawListener(this, drawListener);
-					agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, drawListener);
-					body = new PowerStarBody(this, agency.getWorld(), initSpawnPosition, new Vector2(0f, 0f));
-
-					// start bounce to the right since this is first walk frame
-					body.applyImpulse(MAX_BOUNCE_VEL);
-					break;
-				}
-
-				// if horizontal move is blocked by solid and not agent then reverse direction
-				if(body.getSpine().isSideMoveBlocked(isFacingRight))
-					isFacingRight = !isFacingRight;
-
-				float xVal = isFacingRight ? MAX_BOUNCE_VEL.x : -MAX_BOUNCE_VEL.x;
-				// clamp +y velocity and maintain contstant x velocity
-				if(body.getVelocity().y > MAX_BOUNCE_VEL.y)
-					body.setVelocity(xVal, MAX_BOUNCE_VEL.y);
-				// clamp -y velocity and maintain constant x velocity
-				else if(body.getVelocity().y < -MAX_BOUNCE_VEL.y)
-					body.setVelocity(xVal, -MAX_BOUNCE_VEL.y);
-				// maintain constant x velocity
-				else
-					body.setVelocity(xVal, body.getVelocity().y);
-				break;
-			case SPROUT:
-				break;
-			case END:
-				agency.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(), powerupTaker));
-				// powerup used, so dispose this agent
-				agency.removeAgent(this);
-				break;
-		}
-
-		// do space wrap last so that contacts are maintained
-		if(body != null && moveState != MoveState.END)
-			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-
-		// increment state timer
-		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
-		moveState = nextMoveState;
-	}
-
-	private MoveState getNextMoveState() {
-		if(isPowerupUsed)
-			return MoveState.END;
-		else if(moveState == MoveState.SPROUT && moveStateTimer > SPROUT_TIME)
-			return MoveState.WALK;
-		else if(moveState == MoveState.SPROUT)
-			return MoveState.SPROUT;
-		else
-			return MoveState.WALK;
+		sprite = new PowerStarSprite(agency.getAtlas(), getSproutStartPos());
 	}
 
 	private void doPostUpdate() {
-		if(body != null && moveState != MoveState.END) {
-			RoomBox nextRoom = body.getSpine().getCurrentRoom();
-			if(nextRoom != null)
-				lastKnownRoom = nextRoom;
-		}
-	}
-
-	private void processSprite(float delta) {
-		// if sprouting then use sprout offset for sprite position
-		if(moveState == MoveState.SPROUT) {
-			float yOffset = SPROUT_OFFSET * (SPROUT_TIME - moveStateTimer) / SPROUT_TIME;
-			sprite.update(delta, initSpawnPosition.cpy().add(0f, yOffset));
-		}
-		// otherwise use the regular body position
-		else
-			sprite.update(delta, body.getPosition());
-	}
-
-	private void doDraw(Eye adBatch){
-		// do not draw sprite if powerup is used 
-		if(isPowerupUsed)
+		if(body == null)
 			return;
+		// if current room is not null then update reference to last known room
+		RoomBox nextRoom = body.getSpine().getCurrentRoom();
+		lastKnownRoom = nextRoom != null ? nextRoom : lastKnownRoom;
+	}
 
-		adBatch.draw(sprite);
+	@Override
+	protected void finishSprout() {
+		body = new PowerStarBody(this, agency.getWorld(), this.getSproutEndPos(), MAX_BOUNCE_VEL);
+	}
+
+	@Override
+	protected void postSproutUpdate(PowerupTakeAgent powerupTaker) {
+		// if this powerup is used then create floating points and exit
+		if(powerupTaker != null) {
+			agency.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(), (Agent) powerupTaker));
+			return;
+		}
+
+		// if horizontal move is blocked by solid and not agent then reverse direction
+		if(body.getSpine().isSideMoveBlocked(isFacingRight))
+			isFacingRight = !isFacingRight;
+
+		float xVal = isFacingRight ? MAX_BOUNCE_VEL.x : -MAX_BOUNCE_VEL.x;
+		// clamp +y velocity and maintain contstant x velocity
+		if(body.getVelocity().y > MAX_BOUNCE_VEL.y)
+			body.setVelocity(xVal, MAX_BOUNCE_VEL.y);
+		// clamp -y velocity and maintain constant x velocity
+		else if(body.getVelocity().y < -MAX_BOUNCE_VEL.y)
+			body.setVelocity(xVal, -MAX_BOUNCE_VEL.y);
+		// maintain constant x velocity
+		else
+			body.setVelocity(xVal, body.getVelocity().y);
+
+		// do space wrap last so that contacts are maintained
+		if(body != null)
+			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+	}
+
+	@Override
+	protected Powerup getPowerupPow() {
+		return new SMB1_Pow.PowerStarPow();
 	}
 
 	@Override
@@ -191,21 +92,6 @@ public class PowerStar extends Agent implements BumpTakeAgent, DisposableAgent {
 		if((bumpingAgent.getPosition().x < body.getPosition().x && body.getVelocity().x < 0f) ||
 			(bumpingAgent.getPosition().x > body.getPosition().x && body.getVelocity().x > 0f))
 			isFacingRight = !isFacingRight;
-	}
-
-	@Override
-	public Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return body.getBounds();
-	}
-
-	@Override
-	public void disposeAgent() {
-		body.dispose();
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {

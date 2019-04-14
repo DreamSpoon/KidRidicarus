@@ -11,12 +11,13 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.agentsprite.basic.AnimSprite;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.powerup.Powerup;
 
 public abstract class StaticPowerup extends Agent implements DisposableAgent {
 	protected StaticPowerupBody body;
-	protected StaticPowerupSprite sprite;
+	protected AnimSprite sprite;
 	private boolean isUsed;
 
 	// return false if wanting to exit StaticPowerup update method after method returns
@@ -26,6 +27,8 @@ public abstract class StaticPowerup extends Agent implements DisposableAgent {
 
 	public StaticPowerup(Agency agency, ObjectProperties agentProps) {
 		super(agency, agentProps);
+		body = null;
+		sprite = null;
 		isUsed = false;
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override

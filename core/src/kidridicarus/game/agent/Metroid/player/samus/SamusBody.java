@@ -1,5 +1,6 @@
 package kidridicarus.game.agent.Metroid.player.samus;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -60,16 +61,14 @@ public class SamusBody extends PlayerAgentBody {
 	private boolean isBallForm;
 
 	public SamusBody(Samus parent, World world, Vector2 position, Vector2 velocity, boolean isBallForm) {
-		super(parent, world, position, new Vector2(0f, 0f));
-
+		super(parent, world, position, velocity);
 		this.isBallForm = isBallForm;
 		isAgentSensorEnabled = true;
-
-		defineBody(position, velocity);
+		defineBody(new Rectangle(position.x, position.y, 0f, 0f), velocity);
 	}
 
 	@Override
-	protected void defineBody(Vector2 position, Vector2 velocity) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists	
 		if(b2body != null)	
 			world.destroyBody(b2body);
@@ -78,7 +77,7 @@ public class SamusBody extends PlayerAgentBody {
 			setBodySize(BALL_BODY_WIDTH, BALL_BODY_HEIGHT);
 		else
 			setBodySize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
-		createBody(position, velocity);
+		createBody(bounds.getCenter(new Vector2()), velocity);
 		createFixtures();
 	}
 
@@ -150,7 +149,7 @@ public class SamusBody extends PlayerAgentBody {
 
 		isBallForm = nextIsBallForm;
 		// velocity is zeroed when switching forms
-		defineBody(position, new Vector2(0f, 0f));
+		defineBody(new Rectangle(position.x, position.y, 0f, 0f), new Vector2(0f, 0f));
 	}
 
 	public void useScriptedBodyState(ScriptedBodyState sbState) {
@@ -167,7 +166,7 @@ public class SamusBody extends PlayerAgentBody {
 			isAgentSensorEnabled = false;
 		}
 		if(!sbState.position.epsilonEquals(getPosition(), UInfo.POS_EPSILON))
-			defineBody(sbState.position, new Vector2(0f, 0f));
+			defineBody(new Rectangle(sbState.position.x, sbState.position.y, 0f, 0f), new Vector2(0f, 0f));
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 		if(sbState.gravityFactor != 0f ) {
 			// Body may "fall asleep" while no activity, also while gravityScale was zero,

@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agent.staticpowerup.StaticPowerupSprite;
+import kidridicarus.common.agentsprite.basic.AnimSprite;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.MetroidGfx;
 
-public class EnergySprite extends StaticPowerupSprite {
+public class EnergySprite extends AnimSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(8);
 	private static final float ANIM_SPEED = 1/30f;

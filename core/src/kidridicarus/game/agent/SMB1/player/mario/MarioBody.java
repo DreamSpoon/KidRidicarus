@@ -1,5 +1,6 @@
 package kidridicarus.game.agent.SMB1.player.mario;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -62,21 +63,18 @@ public class MarioBody extends PlayerAgentBody {
 	public MarioBody(Mario parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
 			boolean isDucking) {
 		super(parent, world, position, velocity);
-
 		isAgentSensorEnabled = true;
-		this.isBigBody = isBigBody;
-		this.isDucking = isDucking;
-		defineBody(position, velocity);
+		setMarioBodyStuff(position, velocity, isBigBody, isDucking);
 	}
 
 	public void setMarioBodyStuff(Vector2 position, Vector2 velocity, boolean isBigBody, boolean isDucking) {
 		this.isBigBody = isBigBody;
 		this.isDucking = isDucking;
-		defineBody(position, velocity);
+		defineBody(new Rectangle(position.x, position.y, 0f, 0f), velocity);
 	}
 
 	@Override
-	protected void defineBody(Vector2 position, Vector2 velocity) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
@@ -86,7 +84,7 @@ public class MarioBody extends PlayerAgentBody {
 		else
 			setBodySize(SML_BODY_SIZE.x, SML_BODY_SIZE.y);
 
-		createBody(position, velocity);
+		createBody(bounds.getCenter(new Vector2()), velocity);
 		createFixtures();
 	}
 
@@ -176,7 +174,7 @@ public class MarioBody extends PlayerAgentBody {
 		if(!sbState.position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON)) {
 			this.isBigBody = bigBody;
 			this.isDucking = false;
-			defineBody(sbState.position, new Vector2(0f, 0f));
+			defineBody(new Rectangle(sbState.position.x, sbState.position.y, 0f, 0f), new Vector2(0f, 0f));
 		}
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 	}

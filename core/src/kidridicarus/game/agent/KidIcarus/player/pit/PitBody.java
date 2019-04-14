@@ -1,5 +1,6 @@
 package kidridicarus.game.agent.KidIcarus.player.pit;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -59,14 +60,14 @@ public class PitBody extends PlayerAgentBody {
 	private boolean isDuckingForm;
 
 	public PitBody(Pit parent, World world, Vector2 position, Vector2 velocity, boolean isDuckingForm) {
-		super(parent, world, position, new Vector2(0f, 0f));
+		super(parent, world, position, velocity);
 		isAgentSensorEnabled = true;
 		this.isDuckingForm = isDuckingForm;
-		defineBody(position, velocity);
+		defineBody(new Rectangle(position.x, position.y, 0f, 0f), velocity);
 	}
 
 	@Override
-	protected void defineBody(Vector2 position, Vector2 velocity) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists	
 		if(b2body != null)	
 			world.destroyBody(b2body);
@@ -75,7 +76,7 @@ public class PitBody extends PlayerAgentBody {
 			setBodySize(DUCKING_BODY_WIDTH, DUCKING_BODY_HEIGHT);
 		else
 			setBodySize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
-		createBody(position, velocity);
+		createBody(bounds.getCenter(new Vector2()), velocity);
 		createFixtures();
 	}
 
@@ -145,7 +146,7 @@ public class PitBody extends PlayerAgentBody {
 			isAgentSensorEnabled = false;
 		}
 		if(!sbState.position.epsilonEquals(getPosition(), UInfo.POS_EPSILON))
-			defineBody(sbState.position, new Vector2(0f, 0f));
+			defineBody(new Rectangle(sbState.position.x, sbState.position.y, 0f, 0f), new Vector2(0f, 0f));
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
 		if(sbState.gravityFactor != 0f ) {
 			// Body may "fall asleep" while no activity, also while gravityScale was zero,
@@ -169,24 +170,28 @@ public class PitBody extends PlayerAgentBody {
 		isAgentSensorEnabled = false;
 	}
 
-	public PitSpine getSpine() {
-		return spine;
-	}
-
 	public void setDuckingForm(boolean isDuckingForm) {
+		Vector2 newPos = null;
 		// if currently ducking and instructed to change to standing form...
 		if(this.isDuckingForm && !isDuckingForm) {
 			this.isDuckingForm = isDuckingForm;
-			defineBody(b2body.getPosition().cpy().add(DUCK_TO_STAND_OFFSET), b2body.getLinearVelocity());
+			newPos = b2body.getPosition().cpy().add(DUCK_TO_STAND_OFFSET);
 		}
 		// if currently standing and instructed to change to ducking form...
 		else if(!this.isDuckingForm && isDuckingForm) {
 			this.isDuckingForm = isDuckingForm;
-			defineBody(b2body.getPosition().cpy().sub(DUCK_TO_STAND_OFFSET), b2body.getLinearVelocity());
+			newPos = b2body.getPosition().cpy().sub(DUCK_TO_STAND_OFFSET);
 		}
+		// if new position needs to be set then redefine body at new position
+		if(newPos != null)
+			defineBody(new Rectangle(newPos.x, newPos.y, 0f, 0f), b2body.getLinearVelocity());
 	}
 
 	public boolean isDuckingForm() {
 		return isDuckingForm;
+	}
+
+	public PitSpine getSpine() {
+		return spine;
 	}
 }

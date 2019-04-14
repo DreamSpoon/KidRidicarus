@@ -1,5 +1,6 @@
 package kidridicarus.game.agent.KidIcarus.NPC.monoeye;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -26,19 +27,20 @@ public class MonoeyeBody extends MobileAgentBody {
 
 	public MonoeyeBody(Monoeye parent, World world, Vector2 position) {
 		super(parent, world);
-		defineBody(position, new Vector2(0f, 0f));
+		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
+				new Vector2(0f, 0f));
 	}
 
 	@Override
-	protected void defineBody(Vector2 position, Vector2 velocity) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists	
 		if(b2body != null)	
 			world.destroyBody(b2body);
 
-		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
+		setBodySize(bounds.width, bounds.height);
+		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
-		spine = new MonoeyeSpine(this, UInfo.M2Tx(position.x));
+		spine = new MonoeyeSpine(this, UInfo.M2Tx(bounds.x+bounds.width/2f));
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
 				getBodySize().x, getBodySize().y);

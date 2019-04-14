@@ -48,7 +48,8 @@ public class Shemum extends Agent implements ContactDmgTakeAgent, BumpTakeAgent,
 		despawnMe = false;
 		lastKnownRoom = null;
 
-		body = new ShemumBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f));
+		body = new ShemumBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+				Agent.getStartVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
