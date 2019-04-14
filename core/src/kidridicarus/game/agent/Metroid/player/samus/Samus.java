@@ -230,15 +230,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			// TODO: implement ignore points pow for samus somewhere better
 			else if(pu.getPowerupCharacter() != PowChar.SAMUS && !(pu instanceof SMB1_Pow.PointsPow))
 				supervisor.receiveNonCharPowerup(pu);
-
-			applyPowerup(pu);
 		}
 		powerupsReceived.clear();
-	}
-
-	private void applyPowerup(Powerup pu) {
-		if(pu instanceof MetroidPow.EnergyPow)
-			agency.getEar().playSound(MetroidAudio.Sound.ENERGY_PICKUP);
 	}
 
 	private void processDamageTaken(float delta) {
