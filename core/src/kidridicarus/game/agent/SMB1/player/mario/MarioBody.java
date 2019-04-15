@@ -177,5 +177,8 @@ public class MarioBody extends PlayerAgentBody {
 			defineBody(new Rectangle(sbState.position.x, sbState.position.y, 0f, 0f), new Vector2(0f, 0f));
 		}
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
+		// Body may "fall asleep" while no activity, also while gravityScale was zero,
+		// wake it up so that gravity functions again.
+		b2body.setAwake(true);
 	}
 }

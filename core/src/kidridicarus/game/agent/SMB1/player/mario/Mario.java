@@ -10,6 +10,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
+import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -211,7 +212,9 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 
 		// if a script is running with no move advice then switch to scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
-			body.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState, powerState.isBigBody());
+			ScriptedAgentState scriptedState = supervisor.getScriptAgentState();
+			body.useScriptedBodyState(scriptedState.scriptedBodyState, powerState.isBigBody());
+			isFacingRight = scriptedState.scriptedSpriteState.isFacingRight;
 			return;
 		}
 

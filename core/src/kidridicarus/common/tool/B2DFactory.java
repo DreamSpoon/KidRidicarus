@@ -56,10 +56,14 @@ public class B2DFactory {
 				new Vector2(0f, 0f));
 	}
 
+	public static Fixture makeBoxFixture(Body b2body, Object userData,
+			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height, Vector2 position) {
+		return makeBoxFixture(b2body, new FixtureDef(), userData, categoryBits, maskBits, width, height, position);
+	}
+
 	public static Fixture makeBoxFixture(Body b2body, FixtureDef fdef, Object userData,
 			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height) {
-		return makeBoxFixture(b2body, fdef, userData, categoryBits, maskBits, width, height,
-				new Vector2(0f, 0f));
+		return makeBoxFixture(b2body, fdef, userData, categoryBits, maskBits, width, height, new Vector2(0f, 0f));
 	}
 
 	public static Fixture makeSensorBoxFixture(Body b2body, Object userData,
@@ -73,7 +77,6 @@ public class B2DFactory {
 			CFBitSeq categoryBits, CFBitSeq maskBits, float width, float height, Vector2 position) {
 		FixtureDef fdef = new FixtureDef();
 		fdef.isSensor = true;
-		return makeBoxFixture(b2body, fdef, userData, categoryBits, maskBits, width, height,
-				position);
+		return makeBoxFixture(b2body, fdef, userData, categoryBits, maskBits, width, height, position);
 	}
 }

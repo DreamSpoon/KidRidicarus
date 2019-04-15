@@ -83,7 +83,7 @@
   </properties>
   <object id="6" x="2544" y="80" width="16" height="48">
    <properties>
-    <property name="next_level_filename" value="KidIcarus/map/KidIcarus1-1.tmx"/>
+    <property name="next_level_filename" value="SMB1/map/SMB1-1.tmx"/>
    </properties>
   </object>
  </objectgroup>

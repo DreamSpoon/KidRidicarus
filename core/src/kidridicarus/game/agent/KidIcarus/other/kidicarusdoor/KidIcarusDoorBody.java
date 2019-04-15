@@ -15,12 +15,18 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
 public class KidIcarusDoorBody extends AgentBody {
-	private static final float BODY_WIDTH = UInfo.P2M(16f);
-	private static final float BODY_HEIGHT = UInfo.P2M(32f);
+	private static final float BODY_WIDTH = UInfo.P2M(14f);
+	private static final float BODY_HEIGHT = UInfo.P2M(28f);
+	private static final Vector2 BODY_OFFSET = UInfo.VectorP2M(0f, -2f);
+	private static final float ROOF_WIDTH = UInfo.P2M(13f);
+	private static final float ROOF_HEIGHT = UInfo.P2M(4f);
+
 	private static final CFBitSeq CLOSED_CFCAT = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
 	private static final CFBitSeq CLOSED_CFMASK = new CFBitSeq(true);
 	private static final CFBitSeq OPENED_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq OPENED_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
+	private static final CFBitSeq ROOF_CFCAT = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT);
+	private static final CFBitSeq ROOF_CFMASK = new CFBitSeq(true);
 
 	private BasicAgentSpine spine;
 	private AgentContactHoldSensor agentSensor;
@@ -40,13 +46,15 @@ public class KidIcarusDoorBody extends AgentBody {
 			world.destroyBody(b2body);
 
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);
-		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
+		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()).add(BODY_OFFSET));
 		spine = new BasicAgentSpine(this);
 		// create the agent sensor, it will be used now and/or later
 		agentSensor = spine.createAgentSensor();
 		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, agentSensor,
 				isOpened ? OPENED_CFCAT : CLOSED_CFCAT, isOpened ? OPENED_CFMASK : CLOSED_CFMASK,
 				getBodySize().x, getBodySize().y);
+		// solid roof that player can stand on
+		B2DFactory.makeBoxFixture(b2body, this, ROOF_CFCAT, ROOF_CFMASK, ROOF_WIDTH, ROOF_HEIGHT, new Vector2(0f, (BODY_HEIGHT+ROOF_HEIGHT)/2f));
 	}
 
 	public void setOpened(boolean isOpened) {

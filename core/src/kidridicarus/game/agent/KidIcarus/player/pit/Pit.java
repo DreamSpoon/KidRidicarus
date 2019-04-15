@@ -9,6 +9,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
+import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.Eye;
@@ -192,7 +193,9 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private void processMove(float delta, MoveAdvice4x4 moveAdvice) {
 		// if a script is running with no move advice then switch to scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
-			body.useScriptedBodyState(supervisor.getScriptAgentState().scriptedBodyState);
+			ScriptedAgentState scriptedState = supervisor.getScriptAgentState();
+			body.useScriptedBodyState(scriptedState.scriptedBodyState);
+			isFacingRight = scriptedState.scriptedSpriteState.isFacingRight;
 			return;
 		}
 

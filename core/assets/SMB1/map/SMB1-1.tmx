@@ -191,7 +191,7 @@
   </properties>
   <object id="227" x="3280" y="416" width="16" height="32">
    <properties>
-    <property name="next_level_filename" value="Metroid/map/Metroid1-1.tmx"/>
+    <property name="next_level_filename" value="KidIcarus/map/KidIcarus1-1.tmx"/>
     <property name="target_name" value="castleflagSMB1-1"/>
    </properties>
   </object>

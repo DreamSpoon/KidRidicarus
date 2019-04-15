@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="18" height="232" tilewidth="16" tileheight="16" infinite="0" nextlayerid="47" nextobjectid="69">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="18" height="232" tilewidth="16" tileheight="16" infinite="0" nextlayerid="47" nextobjectid="79">
  <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
   <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
  </tileset>
@@ -16,7 +16,7 @@
    <property name="layer_draworder" value="map_bottom"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztyqENAAAIBLEfhf2nxCKxkDY5dwkAAHBdjbYvAAAAAAAAAAAAAAAAwCcNly8AoQ==
+   eJztyrEJAAAIBLEfxf2ntLUUtEzguksAAAB+1Wj7AgAAAAAAAAAAAAAAAFw0PS8AoQ==
   </data>
  </layer>
  <layer id="40" name="scenery" width="18" height="232">
@@ -32,7 +32,7 @@
    <property name="layer_draworder" value="map_middle"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt0zENACAQBMGvwAD4t4oEks+FgswI2G6rAAAAAO5GqDNDHQAAAICXVqizQx2gz88AAAAAAADwrwNKaABg
+   eJztzKEBAAAIAyCT/v+x1WZZhAOoAgAAAPh16JnQAwAAAAAAAAAAAAAAcC28MgAO
   </data>
  </layer>
  <layer id="42" name="collision" width="18" height="232">
@@ -41,7 +41,7 @@
    <property name="layer_solid" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztmcuOgzAMRZG6hiWbmdXM///jCKlIyBO/HUiqeyWLtuDDNXkQ6LJAEARBEAT1108yenAytYADTiS/oh9aON7xZM2j8UsCgkbRi/ntGpb99DctPDnS+TlPXK6mKg7H68HxXnvP9fO047L892atrYozQ3uNwPGMNyvH47uippNz3YLTl7MJx6zv2JTQdHKy8nCO+ry+aR+31DaiquaYlUTWR1U/yHiIKup9a3jgOFw/9frOXGerV8iu7FzdU3TN2Pr8iaqq7w7O6vhcxZE0GmcUZddJ0JzK9tGVbGfl0OOP73uSc+ZLHMu4s3As6yaOQ88Z5Uh5OxNeDse9g0O9axzaJh4/9PnlTk6rzmv+6O113S+1lYVT4cfL9HCkOp/wE+VY2+suP9zxLY8jXecZ59Xrd+4+sTfyJU5kHD/NkeZqjdPK/TQOBEEQBEHQnapagxyM6ner8BZntrx533+3vNH3aJHrsJItd64Ih+63Pp9oHIs3jWP19xRH4h+K9M2qvp0Zb973wPDQz0MFR3vu9uZGn8WrOduic7T/VaR5IHtvyfaXs8ZoLuV4/tetaKcnOJb2nqEuznfWj3ZvbjG+/GU1Od9FHO+azBLRfjNSQLL+ABubMDw=
+   eJztmc1uhDAMhCP1DMe9tD20ff93rJAWKXJjx2M7kGw9ksUurD/G5AfCllLKpzNORXKsGsXZwfyvZ8xe1+lTo7qmVeqitdF9O4kIP1HXZ+T4iuBEaba6ZuzPOf/k/IN4yflHr29njOB4aklOciz5Ef1Qw0HHkzaPxg+J1P/VG7OvDs1xuq8XSI50fs4Tl9tTFIfjjeCg1x65fkg7lvLXm7a2KM4K7TUDBxlvWg7iO6Kmk1NvkzOWI623t2fQtRuNnk6OVwjnqA/1Tfs4+i5iFkXNMRsJr4+ofuDxYJXV+97wwHG4for69lxnrdeUXt65eqToM2Pr8ysqqr4rOBvwOYojaTbOLPI+J6XWlLePbmS7Kof+/vj+cHLOfImjGXcajua5iePQc1o5Ut6DCZTDca/gUO89Dm0TxA9dv1zJadVZ58/eXvVxqa00nAg/KBPhSHXe4cfK0bbXVX6437c8znSdV5xX6+/cfeLRyJc4lnF8N0eaq3ucVu6rcVKpVCqVSqWuVNQzyMGIfrea3uzMljf0/XfLG32PZrkOG9ly57Jw6HHt+qTH0XjrcbT+7uJI/EOWvhnVtz3jDX0PnB7GeYjg9NbdaK51LR7N2Uuf0/tfRZoHvPcWb385a7TmUg7yv25EO93B0bT3CnVxvr1+evfmFuMdL6vJ+QjioM9kmrD2m5kiJesXn7FHyA==
   </data>
  </layer>
  <layer id="43" name="playerstart" width="18" height="232">
@@ -52,21 +52,44 @@
    <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzjEBAAAIA6AlsX9MQ+zwEBKQAAAAAAAAAAAAAAAAAABAZ64DALy3BbcAHw==
+   eJztzjENAAAIA7Apwb9MTCzhoFXQBAAAAAAAAAAAAAAAAAAAADrmOsBbC4vIAB8=
   </data>
  </layer>
  <objectgroup id="31" name="door_exit">
   <properties>
    <property name="agent_class" value="player_spawner"/>
   </properties>
-  <object id="65" x="217" y="608.667" width="16" height="16">
+  <object id="65" x="220.25" y="647.333" width="16" height="16">
    <properties>
+    <property name="direction" value="left"/>
     <property name="name" value="door1_exit"/>
    </properties>
   </object>
-  <object id="67" x="224" y="3328" width="16" height="16">
+  <object id="67" x="220.182" y="3334.91" width="16" height="16">
    <properties>
     <property name="name" value="door2_exit"/>
+   </properties>
+  </object>
+  <object id="70" x="47.3333" y="2122" width="16" height="16">
+   <properties>
+    <property name="name" value="door4_exit"/>
+   </properties>
+  </object>
+  <object id="72" x="222.5" y="395" width="16" height="16">
+   <properties>
+    <property name="direction" value="left"/>
+    <property name="name" value="door3_exit"/>
+   </properties>
+  </object>
+  <object id="74" x="222" y="136.667" width="16" height="16">
+   <properties>
+    <property name="direction" value="left"/>
+    <property name="name" value="door5_exit"/>
+   </properties>
+  </object>
+  <object id="76" x="174.25" y="1896.75" width="16" height="16">
+   <properties>
+    <property name="name" value="door6_exit"/>
    </properties>
   </object>
  </objectgroup>
@@ -79,9 +102,29 @@
     <property name="target_name" value="door1_exit"/>
    </properties>
   </object>
-  <object id="66" x="240" y="608" width="16" height="32">
+  <object id="66" x="240" y="640" width="16" height="32">
    <properties>
     <property name="target_name" value="door2_exit"/>
+   </properties>
+  </object>
+  <object id="69" x="64" y="2112" width="16" height="32">
+   <properties>
+    <property name="target_name" value="door3_exit"/>
+   </properties>
+  </object>
+  <object id="71" x="240" y="384" width="16" height="32">
+   <properties>
+    <property name="target_name" value="door4_exit"/>
+   </properties>
+  </object>
+  <object id="73" x="240" y="128" width="16" height="32">
+   <properties>
+    <property name="target_name" value="door6_exit"/>
+   </properties>
+  </object>
+  <object id="75" x="192" y="1888" width="16" height="32">
+   <properties>
+    <property name="target_name" value="door5_exit"/>
    </properties>
   </object>
  </objectgroup>
@@ -179,16 +222,11 @@
   </properties>
   <object id="10" x="240" y="912" width="16" height="32">
    <properties>
-    <property name="next_level_filename" value="KidIcarus/map/KidIcarus1-1.tmx"/>
-   </properties>
-  </object>
-  <object id="11" x="192" y="1904" width="16" height="16">
-   <properties>
     <property name="next_level_filename" value="Metroid/map/Metroid1-1.tmx"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="rooms">
+ <objectgroup id="5" name="rooms" visible="0">
   <properties>
    <property name="agent_class" value="room"/>
   </properties>
@@ -203,7 +241,17 @@
     <property name="room_type" value="scroll_y"/>
    </properties>
   </object>
-  <object id="68" x="16" y="480" width="256" height="224">
+  <object id="68" x="16" y="272" width="256" height="224">
+   <properties>
+    <property name="room_type" value="scroll_center"/>
+   </properties>
+  </object>
+  <object id="77" x="16" y="512" width="256" height="224">
+   <properties>
+    <property name="room_type" value="scroll_center"/>
+   </properties>
+  </object>
+  <object id="78" x="16" y="16" width="256" height="224">
    <properties>
     <property name="room_type" value="scroll_center"/>
    </properties>

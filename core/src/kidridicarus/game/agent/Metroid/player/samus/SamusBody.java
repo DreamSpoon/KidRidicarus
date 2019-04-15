@@ -168,11 +168,9 @@ public class SamusBody extends PlayerAgentBody {
 		if(!sbState.position.epsilonEquals(getPosition(), UInfo.POS_EPSILON))
 			defineBody(new Rectangle(sbState.position.x, sbState.position.y, 0f, 0f), new Vector2(0f, 0f));
 		b2body.setGravityScale(sbState.gravityFactor * GRAVITY_SCALE);
-		if(sbState.gravityFactor != 0f ) {
-			// Body may "fall asleep" while no activity, also while gravityScale was zero,
-			// wake it up so that gravity functions again.
-			b2body.setAwake(true);
-		}
+		// Body may "fall asleep" while no activity, also while gravityScale was zero,
+		// wake it up so that gravity functions again.
+		b2body.setAwake(true);
 	}
 
 	public SamusSpine getSpine() {
