@@ -3,6 +3,20 @@ KidRidicarusSprites.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+KidIcarus/general/door_brown_closed
+  rotate: false
+  xy: 1, 19
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
+KidIcarus/general/door_brown_opened
+  rotate: false
+  xy: 19, 19
+  size: 16, 32
+  orig: 16, 32
+  offset: 0, 0
+  index: -1
 KidIcarus/general/big_poof
   rotate: false
   xy: 1, 1
@@ -12,35 +26,35 @@ KidIcarus/general/big_poof
   index: 1
 KidIcarus/general/big_poof
   rotate: false
-  xy: 19, 1
+  xy: 37, 35
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
+KidIcarus/general/small_poof
+  rotate: false
+  xy: 55, 35
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: 1
 KidIcarus/general/big_poof
   rotate: false
-  xy: 37, 1
+  xy: 19, 1
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 3
 KidIcarus/general/small_poof
   rotate: false
-  xy: 55, 1
-  size: 8, 16
-  orig: 8, 16
-  offset: 0, 0
-  index: 1
-KidIcarus/general/small_poof
-  rotate: false
-  xy: 65, 1
+  xy: 37, 17
   size: 8, 16
   orig: 8, 16
   offset: 0, 0
   index: 2
 KidIcarus/general/small_poof
   rotate: false
-  xy: 75, 1
+  xy: 47, 17
   size: 8, 16
   orig: 8, 16
   offset: 0, 0
@@ -50,37 +64,65 @@ KidRidicarusSprites2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-KidIcarus/item/harp
+KidIcarus/item/barrel_of_life
   rotate: false
   xy: 1, 11
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-KidIcarus/item/heart10
+KidIcarus/item/harp
   rotate: false
   xy: 19, 11
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-KidIcarus/item/chalice
+KidIcarus/item/heart10
   rotate: false
   xy: 37, 11
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/item/bottle_of_life
+  rotate: false
+  xy: 55, 11
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/item/chalice
+  rotate: false
+  xy: 65, 11
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/item/credit_card
+  rotate: false
+  xy: 75, 11
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/item/feather
+  rotate: false
+  xy: 85, 11
   size: 8, 16
   orig: 8, 16
   offset: 0, 0
   index: -1
 KidIcarus/item/hammer
   rotate: false
-  xy: 47, 11
+  xy: 95, 11
   size: 8, 16
   orig: 8, 16
   offset: 0, 0
   index: -1
 KidIcarus/item/heart5
   rotate: false
-  xy: 57, 11
+  xy: 105, 11
   size: 8, 16
   orig: 8, 16
   offset: 0, 0
@@ -97,27 +139,125 @@ KidRidicarusSprites3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+KidIcarus/NPC/reaper
+  rotate: false
+  xy: 1, 99
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: -1
+KidIcarus/NPC/reaper_chase
+  rotate: false
+  xy: 1, 73
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+KidIcarus/NPC/reaper_chase
+  rotate: false
+  xy: 19, 99
+  size: 16, 24
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+KidIcarus/NPC/mcgoo
+  rotate: false
+  xy: 1, 55
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+KidIcarus/NPC/mcgoo
+  rotate: false
+  xy: 19, 81
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
 KidIcarus/NPC/monoeye
   rotate: false
-  xy: 1, 1
+  xy: 37, 107
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/NPC/poverty_god
+  rotate: false
+  xy: 55, 107
+  size: 8, 16
+  orig: 8, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/NPC/nettler
+  rotate: false
+  xy: 1, 37
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+KidIcarus/NPC/nettler
+  rotate: false
+  xy: 19, 63
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+KidIcarus/NPC/nettler_duck
+  rotate: false
+  xy: 37, 89
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/NPC/reapette
+  rotate: false
+  xy: 1, 19
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 KidIcarus/NPC/shemum
   rotate: false
-  xy: 19, 1
+  xy: 19, 45
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 KidIcarus/NPC/shemum
   rotate: false
-  xy: 37, 1
+  xy: 37, 71
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
+KidIcarus/NPC/specknose
+  rotate: false
+  xy: 1, 1
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+KidIcarus/NPC/specknose
+  rotate: false
+  xy: 19, 27
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+KidIcarus/NPC/treasure_pot
+  rotate: false
+  xy: 37, 53
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+KidIcarus/NPC/mcgoo_shot
+  rotate: false
+  xy: 55, 97
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
 
 KidRidicarusSprites4.png
 format: RGBA8888

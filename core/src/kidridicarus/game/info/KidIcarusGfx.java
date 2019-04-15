@@ -6,7 +6,9 @@ public class KidIcarusGfx {
 	public static class General {
 		private static final String DIR = BASEDIR+"general/";
 		public static final String SMALL_POOF =	DIR+"small_poof";
-		public static final String BIG_POOF = DIR+"big_poof";
+		public static final String BIG_POOF =	DIR+"big_poof";
+		public static final String DOOR_BROWN_CLOSED =	DIR+"door_brown_closed";
+		public static final String DOOR_BROWN_OPENED =	DIR+"door_brown_opened";
 	}
 
 	public static class Item {

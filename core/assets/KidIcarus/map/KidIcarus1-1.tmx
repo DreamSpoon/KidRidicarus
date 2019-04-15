@@ -1,42 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="18" height="180" tilewidth="16" tileheight="16" infinite="0" nextlayerid="30" nextobjectid="64">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="18" height="232" tilewidth="16" tileheight="16" infinite="0" nextlayerid="47" nextobjectid="69">
  <tileset firstgid="1" name="KidIcarusTileset1-1" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="35" columns="5">
   <image source="KidIcarusTileset1-1.png" width="90" height="126"/>
  </tileset>
- <layer id="18" name="background" width="18" height="180">
+ <layer id="39" name="background" width="18" height="232">
   <properties>
    <property name="layer_draworder" value="map_background"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztw0ENAAAMA6Grf9PzsDckrJqqqqqqqqqqqqqqqqo+H7swDKk=
+   eJztwwEJAAAMBKH7/qWXY6Dgqqmqqqqqqqqqqqqqqqqqqqo+frMMEFE=
   </data>
  </layer>
- <layer id="19" name="scenery" width="18" height="180">
+ <layer id="46" name="room_lava" width="18" height="232">
+  <properties>
+   <property name="layer_draworder" value="map_bottom"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztyqENAAAIBLEfhf2nxCKxkDY5dwkAAHBdjbYvAAAAAAAAAAAAAAAAwCcNly8AoQ==
+  </data>
+ </layer>
+ <layer id="40" name="scenery" width="18" height="232">
   <properties>
    <property name="layer_draworder" value="map_top"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztmssOgyAQRU3TLvpY9LHp/39pN21iSYXM9CKDnJO4MMELjuNlFKYJvOzeR2T2ouu8OofC+do6qvuCPKq4ep9zLR1lvnj94yjq/yTSUaPy1LNI5xJMB9anh7m+NSpfuop0biIdgJ7oZf60jnNJxzrOJR3mZ4iK5V3Jtb0bdHJtHwadXNsWOlCGehdao8o/i+flUHnMKF6Fh0CvzD3jnzyO5hmjeA/EhLkYAKzgGwBQE9X65VPUz6910Pm3SKmfD6V10FHWW6P9j9j6Ph4F0Z4ZfFM7h7da91E/xqFWDkf1roj7tCLEKo2LN05pXLxxSuup6PVVDV6r6AQV
+   eJzt2ssOgjAUhGFidOFl4WXj+z+pG02wkTanTmEK/5e4MKkDlnpaLMMAAAAAAIC33fvlbC/6XG3OofB+7hzV90Keql9rr3OrHOV4qa0fR9HxT6IcNVVNPYtyLmY5mF8Pc/3SVHXpKsq5iXKAnvQyf0bPcyonep5TOczPcBX5reTa3gM5ubaPQE6u7RI5KGO9i6Wpxl+k5uWoasxWahU1BL0a14x/xrFbzdhK7YEn5mIAUdQNAC2p9i+fouP82gcd34uUjvNR2gfdyn6r2/8Ra3+OR8HtmuFb6zG81nUf60cfrcawa+1yfE7Loa/Sfqntp7RfavspXU+5r68wvxdRUwQV
   </data>
  </layer>
- <layer id="20" name="door" width="18" height="180">
+ <layer id="41" name="door" width="18" height="232">
   <properties>
    <property name="layer_draworder" value="map_middle"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt2LENACAMA8FUsADsvyo7IAcJ6W6A79y4Cv42Qp0Z6gAAAAC8tEKdHeoA9+wZAAAAAKCfLxagzwGoBACJ
+   eJzt0zENACAQBMGvwAD4t4oEks+FgswI2G6rAAAAAO5GqDNDHQAAAICXVqizQx2gz88AAAAAAADwrwNKaABg
   </data>
  </layer>
- <layer id="21" name="collision" width="18" height="180">
+ <layer id="42" name="collision" width="18" height="232">
   <properties>
    <property name="layer_draworder" value="map_middle"/>
    <property name="layer_solid" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztmcuKhjAMhQuzrks3M+//nIMwQsnknljbnxwoXvN50tZatbXSDH0R+8aiOQ73ScUSw12f8kTFSsriULwnONa6t9SfpR1b++9Nm1sWZ4f2WoFjud+0HIvvjJxuzrgszrOcgzmn/5VDKJJuTlQWzpWf1Tfs45rcVlTWGNNBifrI6gcRD155vR+IB4pD9VOr70g9a72W9IqO1U8Kzhmx9U9UVn4zON2wnsXhtBpnFUXnSaU9Fe2jHSx35cDzr+0zyLnjOY7mvtNwNPMmigOv6eVwcSdRrByKO4MDvUsc2CYWP/D9ZSYHy3OMX729xuNcW2k4GX6sTAuHy/MNP16Otr1m+aHOxzyuVM87jqvjNvWcOJF4juO5j9/mcGO1xMFiP41TKpVKpVKpNFNZc5CLkf1ttbz5mZg36/dvzBv8juaphw6W1LU8HHhc+34icTTeJI7W31scjn/J0zez+nbkfrN+By4Pz3nI4Ejv3dZY77t4NudoMkf6r8KNA9FnS7S/3Dl6YyHH8l83o53e4Gjae4e8KN9RP9KzGWN829NCOT9JHOucTFO8/Wal8gs3SyUy
+   eJztmcuOgzAMRZG6hiWbmdXM///jCKlIyBO/HUiqeyWLtuDDNXkQ6LJAEARBEAT1108yenAytYADTiS/oh9aON7xZM2j8UsCgkbRi/ntGpb99DctPDnS+TlPXK6mKg7H68HxXnvP9fO047L892atrYozQ3uNwPGMNyvH47uippNz3YLTl7MJx6zv2JTQdHKy8nCO+ry+aR+31DaiquaYlUTWR1U/yHiIKup9a3jgOFw/9frOXGerV8iu7FzdU3TN2Pr8iaqq7w7O6vhcxZE0GmcUZddJ0JzK9tGVbGfl0OOP73uSc+ZLHMu4s3As6yaOQ88Z5Uh5OxNeDse9g0O9axzaJh4/9PnlTk6rzmv+6O113S+1lYVT4cfL9HCkOp/wE+VY2+suP9zxLY8jXecZ59Xrd+4+sTfyJU5kHD/NkeZqjdPK/TQOBEEQBEHQnapagxyM6ner8BZntrx533+3vNH3aJHrsJItd64Ih+63Pp9oHIs3jWP19xRH4h+K9M2qvp0Zb973wPDQz0MFR3vu9uZGn8WrOduic7T/VaR5IHtvyfaXs8ZoLuV4/tetaKcnOJb2nqEuznfWj3ZvbjG+/GU1Od9FHO+azBLRfjNSQLL+ABubMDw=
   </data>
  </layer>
- <layer id="22" name="playerstart" width="18" height="180">
+ <layer id="43" name="playerstart" width="18" height="232">
   <properties>
    <property name="agent_class" value="player_spawner"/>
    <property name="direction" value="right"/>
@@ -44,15 +52,45 @@
    <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzgEJAAAMA6Alef+YjzEYmsAEAAAAAAAAAAAAAABg37UDwx5baAAf
+   eJztzjEBAAAIA6AlsX9MQ+zwEBKQAAAAAAAAAAAAAAAAAABAZ64DALy3BbcAHw==
   </data>
  </layer>
- <layer id="29" name="chalice_health" width="18" height="180">
+ <objectgroup id="31" name="door_exit">
+  <properties>
+   <property name="agent_class" value="player_spawner"/>
+  </properties>
+  <object id="65" x="217" y="608.667" width="16" height="16">
+   <properties>
+    <property name="name" value="door1_exit"/>
+   </properties>
+  </object>
+  <object id="67" x="224" y="3328" width="16" height="16">
+   <properties>
+    <property name="name" value="door2_exit"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="30" name="door_entrance">
+  <properties>
+   <property name="agent_class" value="kid_icarus_door"/>
+  </properties>
+  <object id="64" x="240" y="3328" width="16" height="32">
+   <properties>
+    <property name="target_name" value="door1_exit"/>
+   </properties>
+  </object>
+  <object id="66" x="240" y="608" width="16" height="32">
+   <properties>
+    <property name="target_name" value="door2_exit"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer id="44" name="chalice_health" width="18" height="232">
   <properties>
    <property name="agent_class" value="chalice_health"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzjEBAAAIA6A1sX9LU0wfSEACAAAAAFyY7wAAAAAAAAAAlCz2OQAg
+   eJztzgEJAAAMA6A1ef+WjzEYmsAEAAAAAAAAAGDHtQMAAAAAAAAAQMUDJ8gAIA==
   </data>
  </layer>
  <objectgroup id="17" name="shemum">
@@ -65,9 +103,9 @@
    <property name="spawn_scroll_direction" value="up"/>
    <property name="spawner_type" value="spawner_type_multi"/>
   </properties>
-  <object id="57" x="144" y="2480" width="16" height="176"/>
-  <object id="58" x="144" y="2352" width="16" height="112"/>
-  <object id="61" x="144" y="2144" width="16" height="192"/>
+  <object id="57" x="144" y="3248" width="16" height="176"/>
+  <object id="58" x="144" y="3120" width="16" height="112"/>
+  <object id="61" x="144" y="2912" width="16" height="192"/>
  </objectgroup>
  <objectgroup id="26" name="monoeye">
   <properties>
@@ -79,87 +117,82 @@
    <property name="spawn_scroll_direction" value="up"/>
    <property name="spawner_type" value="spawner_type_multi"/>
   </properties>
-  <object id="62" x="96" y="1696" width="16" height="448"/>
-  <object id="63" x="96" y="1120" width="16" height="368"/>
+  <object id="62" x="96" y="2464" width="16" height="448"/>
+  <object id="63" x="96" y="1888" width="16" height="368"/>
  </objectgroup>
- <layer id="24" name="smilesolid_tiles" width="18" height="180">
+ <layer id="45" name="smilesolid_tiles" width="18" height="232">
   <properties>
    <property name="layer_draworder" value="map_middle"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt1sEKgCAQAFGP+/9fHB68SIZB4O40D7p02sE0W5Ok8+L0APpcNPa60vskqYvpkf6OtBdILZVlW4Ns8+x4mvnuPza/q9gsPvJ3SWwjNg3ENmLTQGwjNg2Z2yrdkXZnzdo0z5R1zjdo9+1VC6mxo/Wtegg8N/Lz3KjZRz43JEmSJOmEC4s+Atk=
+   eJzt1rEKgCAUhlFH3/+Jo8FFKgqCrn/nQEvT/TDN1gAAAAD4i/71ALyut+x1Te8D2PXpgb9L2gtJLSurtgbV5rnjauaj/9j8bsVm8iV/l4ltiU1DYlti05DYltg0VG5b6Y50d9aqTfNMVed8Iu2+fdaS1LhL6zvrSeDcqM+5sWZf8rkBAABAPRvNCwLZ
   </data>
  </layer>
  <objectgroup id="15" name="semisolid_floor">
   <properties>
    <property name="agent_class" value="semi_solid_floor"/>
   </properties>
-  <object id="15" x="96" y="2112" width="32" height="16"/>
-  <object id="16" x="160" y="2112" width="32" height="16"/>
-  <object id="17" x="128" y="2064" width="32" height="16"/>
-  <object id="18" x="192" y="2064" width="64" height="16"/>
-  <object id="19" x="64" y="2016" width="64" height="16"/>
-  <object id="20" x="160" y="2016" width="64" height="16"/>
-  <object id="22" x="96" y="1968" width="80" height="16"/>
-  <object id="23" x="112" y="1920" width="16" height="16"/>
-  <object id="24" x="176" y="1920" width="32" height="16"/>
-  <object id="25" x="96" y="1872" width="32" height="16"/>
-  <object id="26" x="160" y="1872" width="32" height="16"/>
-  <object id="27" x="128" y="1824" width="32" height="16"/>
-  <object id="28" x="192" y="1824" width="64" height="16"/>
-  <object id="29" x="64" y="1776" width="64" height="16"/>
-  <object id="30" x="160" y="1776" width="64" height="16"/>
-  <object id="31" x="96" y="1728" width="80" height="16"/>
-  <object id="32" x="112" y="1680" width="16" height="16"/>
-  <object id="33" x="80" y="1648" width="32" height="16"/>
-  <object id="34" x="96" y="1600" width="32" height="16"/>
-  <object id="35" x="208" y="1632" width="32" height="16"/>
-  <object id="36" x="176" y="1680" width="32" height="16"/>
-  <object id="37" x="48" y="1568" width="16" height="16"/>
-  <object id="38" x="32" y="1520" width="16" height="16"/>
-  <object id="39" x="48" y="1472" width="16" height="16"/>
-  <object id="40" x="32" y="1424" width="16" height="16"/>
-  <object id="41" x="48" y="1376" width="16" height="16"/>
-  <object id="42" x="32" y="1328" width="16" height="16"/>
-  <object id="43" x="48" y="1280" width="16" height="16"/>
-  <object id="44" x="32" y="1232" width="16" height="16"/>
-  <object id="45" x="0" y="1072" width="16" height="16"/>
-  <object id="46" x="112" y="1072" width="64" height="16"/>
-  <object id="47" x="192" y="1072" width="80" height="16"/>
-  <object id="48" x="144" y="1024" width="16" height="16"/>
-  <object id="49" x="144" y="992" width="16" height="16"/>
-  <object id="50" x="16" y="912" width="32" height="16"/>
-  <object id="51" x="64" y="864" width="32" height="16"/>
-  <object id="52" x="80" y="688" width="64" height="16"/>
-  <object id="53" x="224" y="400" width="32" height="16"/>
-  <object id="54" x="192" y="352" width="32" height="16"/>
-  <object id="56" x="48" y="256" width="16" height="16"/>
+  <object id="15" x="96" y="2880" width="32" height="16"/>
+  <object id="16" x="160" y="2880" width="32" height="16"/>
+  <object id="17" x="128" y="2832" width="32" height="16"/>
+  <object id="18" x="192" y="2832" width="64" height="16"/>
+  <object id="19" x="64" y="2784" width="64" height="16"/>
+  <object id="20" x="160" y="2784" width="64" height="16"/>
+  <object id="22" x="96" y="2736" width="80" height="16"/>
+  <object id="23" x="112" y="2688" width="16" height="16"/>
+  <object id="24" x="176" y="2688" width="32" height="16"/>
+  <object id="25" x="96" y="2640" width="32" height="16"/>
+  <object id="26" x="160" y="2640" width="32" height="16"/>
+  <object id="27" x="128" y="2592" width="32" height="16"/>
+  <object id="28" x="192" y="2592" width="64" height="16"/>
+  <object id="29" x="64" y="2544" width="64" height="16"/>
+  <object id="30" x="160" y="2544" width="64" height="16"/>
+  <object id="31" x="96" y="2496" width="80" height="16"/>
+  <object id="32" x="112" y="2448" width="16" height="16"/>
+  <object id="33" x="80" y="2416" width="32" height="16"/>
+  <object id="34" x="96" y="2368" width="32" height="16"/>
+  <object id="35" x="208" y="2400" width="32" height="16"/>
+  <object id="36" x="176" y="2448" width="32" height="16"/>
+  <object id="37" x="48" y="2336" width="16" height="16"/>
+  <object id="38" x="32" y="2288" width="16" height="16"/>
+  <object id="39" x="48" y="2240" width="16" height="16"/>
+  <object id="40" x="32" y="2192" width="16" height="16"/>
+  <object id="41" x="48" y="2144" width="16" height="16"/>
+  <object id="42" x="32" y="2096" width="16" height="16"/>
+  <object id="43" x="48" y="2048" width="16" height="16"/>
+  <object id="44" x="32" y="2000" width="16" height="16"/>
+  <object id="45" x="0" y="1840" width="16" height="16"/>
+  <object id="46" x="112" y="1840" width="64" height="16"/>
+  <object id="47" x="192" y="1840" width="80" height="16"/>
+  <object id="48" x="144" y="1792" width="16" height="16"/>
+  <object id="49" x="144" y="1760" width="16" height="16"/>
+  <object id="50" x="16" y="1680" width="32" height="16"/>
+  <object id="51" x="64" y="1632" width="32" height="16"/>
+  <object id="52" x="80" y="1456" width="64" height="16"/>
+  <object id="53" x="224" y="1168" width="32" height="16"/>
+  <object id="54" x="192" y="1120" width="32" height="16"/>
+  <object id="56" x="48" y="1024" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="6" name="levelend">
   <properties>
    <property name="agent_class" value="level_end_trigger"/>
   </properties>
-  <object id="9" x="240" y="2560" width="16" height="32">
-   <properties>
-    <property name="next_level_filename" value="SMB1/map/SMB1-1.tmx"/>
-   </properties>
-  </object>
-  <object id="10" x="240" y="144" width="16" height="32">
+  <object id="10" x="240" y="912" width="16" height="32">
    <properties>
     <property name="next_level_filename" value="KidIcarus/map/KidIcarus1-1.tmx"/>
    </properties>
   </object>
-  <object id="11" x="192" y="1136" width="16" height="16">
+  <object id="11" x="192" y="1904" width="16" height="16">
    <properties>
     <property name="next_level_filename" value="Metroid/map/Metroid1-1.tmx"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="rooms" visible="0">
+ <objectgroup id="5" name="rooms">
   <properties>
    <property name="agent_class" value="room"/>
   </properties>
-  <object id="6" x="16" y="0" width="256" height="2872">
+  <object id="6" x="16" y="768" width="256" height="2872">
    <properties>
     <property name="room_music" value="KidIcarus/music/02_-_Kid_Icarus_-_NES_-_Stage_1.ogg"/>
     <property name="room_scroll_bound_y" value="true"/>
@@ -168,6 +201,11 @@
     <property name="room_scroll_velocity" value="1.0667"/>
     <property name="room_space_wrap_x" value="true"/>
     <property name="room_type" value="scroll_y"/>
+   </properties>
+  </object>
+  <object id="68" x="16" y="480" width="256" height="224">
+   <properties>
+    <property name="room_type" value="scroll_center"/>
    </properties>
   </object>
  </objectgroup>

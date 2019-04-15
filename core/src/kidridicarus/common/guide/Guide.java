@@ -70,7 +70,7 @@ public class Guide implements Disposable {
 
 	private void doChangeAndStartMainMusic(String musicName) {
 		// exit if no name given or if already playing given music
-		if(musicName == null || currentMainMusicName.equals(musicName))
+		if(musicName == null || musicName.equals("") || currentMainMusicName.equals(musicName))
 			return;
 
 		// stop main music if it is playing

@@ -9,6 +9,7 @@ import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
@@ -48,6 +49,10 @@ public class BasicAgentSpine {
 
 	public List<ContactDmgTakeAgent> getContactDmgTakeAgents() {
 		return agentSensor.getContactsByClass(ContactDmgTakeAgent.class);
+	}
+
+	public List<PlayerAgent> getPlayerContacts() {
+		return agentSensor.getContactsByClass(PlayerAgent.class);
 	}
 
 	public RoomBox getCurrentRoom() {

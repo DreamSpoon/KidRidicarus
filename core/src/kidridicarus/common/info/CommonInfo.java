@@ -1,7 +1,5 @@
 package kidridicarus.common.info;
 
-import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.common.tool.DrawOrderAlias;
 
@@ -53,16 +51,6 @@ public class CommonInfo {
 		public static final AllowOrder POST_MOVE_UPDATE = new AllowOrder(true, 2f);
 		public static final AllowOrder POST_AGENCY_UPDATE = new AllowOrder(true, 9000f);
 		// update last
-	}
-
-	/*
-	 * Returns null if target is not found.
-	 */
-	public static Agent getTargetAgent(Agency agency, String targetName) {
-		if(targetName == null || targetName.equals(""))
-			return null;
-		return agency.getFirstAgentByProperties(
-				new String[] { CommonKV.Script.KEY_NAME }, new String[] { targetName });
 	}
 
 	/*

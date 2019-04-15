@@ -13,6 +13,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.game.agent.Metroid.other.metroiddoor.MetroidDoor;
 
+// TODO refactor this class and body class to use BasicAgentSpine instead of directly using sensor
 public class MetroidDoorNexus extends Agent implements DisposableAgent {
 	private MetroidDoorNexusBody body;
 

@@ -4,7 +4,7 @@
   <class id="1" language="java" name="kidridicarus.common.agentspine.BasicAgentSpine" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/common/agentspine/BasicAgentSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="615" y="48"/>    
+    <position height="-1" width="-1" x="805" y="48"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -15,7 +15,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/common/agentspine/SolidContactSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="460" y="141"/>    
+    <position height="-1" width="-1" x="650" y="141"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -36,7 +36,7 @@
   <class id="4" language="java" name="kidridicarus.game.agentspine.SMB1.KoopaSpine" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agentspine/SMB1/KoopaSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="547" y="294"/>    
+    <position height="-1" width="-1" x="691" y="290"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -47,7 +47,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/NPC/monoeye/MonoeyeSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1018" y="144"/>    
+    <position height="-1" width="-1" x="1208" y="144"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -58,7 +58,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/NPC/shemum/ShemumSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1341" y="291"/>    
+    <position height="-1" width="-1" x="1485" y="287"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -80,7 +80,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/NPC/rio/RioSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1142" y="293"/>    
+    <position height="-1" width="-1" x="1286" y="289"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -91,7 +91,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/NPC/skree/SkreeSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="953" y="294"/>    
+    <position height="-1" width="-1" x="1097" y="290"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -102,7 +102,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/NPC/zoomer/ZoomerSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="808" y="143"/>    
+    <position height="-1" width="-1" x="998" y="143"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -168,7 +168,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mariofireball/MarioFireballSpine.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="745" y="294"/>    
+    <position height="-1" width="-1" x="889" y="290"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -176,60 +176,60 @@
     </display>  
   </class>  
   <generalization id="17">    
-    <end type="SOURCE" refId="5"/>    
+    <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
   <generalization id="18">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="19">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="20">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="21">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="22">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="23">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="24">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="25">    
     <end type="SOURCE" refId="13"/>    
     <end type="TARGET" refId="4"/>  
   </generalization>  
-  <generalization id="26">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="27">    
+  <generalization id="19">    
     <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="4"/>  
   </generalization>  
-  <generalization id="28">    
-    <end type="SOURCE" refId="10"/>    
+  <generalization id="20">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="21">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="22">    
+    <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
-  <generalization id="29">    
+  <generalization id="23">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <generalization id="30">    
-    <end type="SOURCE" refId="2"/>    
+  <generalization id="24">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="25">    
+    <end type="SOURCE" refId="10"/>    
     <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="26">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="27">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="28">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="29">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="30">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="2"/>  
   </generalization>  
   <classifier-display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
     sort-features="false" accessors="true" visibility="false">    

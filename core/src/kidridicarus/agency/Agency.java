@@ -26,12 +26,13 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.EarPlug;
+import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.QQ;
 
 /*
@@ -350,4 +351,15 @@ public class Agency implements Disposable {
 		disposeAndRemoveAllAgents();
 		world.dispose();
 	}
+
+	/*
+	 * Returns null if target is not found.
+	 */
+	public static Agent getTargetAgent(Agency agency, String targetName) {
+		if(targetName == null || targetName.equals(""))
+			return null;
+		return agency.getFirstAgentByProperties(
+				new String[] { CommonKV.Script.KEY_NAME }, new String[] { targetName });
+	}
+
 }
