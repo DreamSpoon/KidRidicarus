@@ -13,7 +13,7 @@ import kidridicarus.game.info.KidIcarusGfx;
 public class SpecknoseSprite extends AnimSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
-	private static final float ANIM_SPEED = 1f;
+	private static final float ANIM_SPEED = 2/15f;
 
 	public SpecknoseSprite(TextureAtlas atlas, Vector2 position) {
 		super(new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.NPC.SPECKNOSE),

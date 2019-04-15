@@ -129,13 +129,13 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 					break;
 				// if changed to plus acceleration then set left accel zone tile and reset right accel zone tile
 				if(nextHorizGoState == AxisGoState.ACCEL_PLUS && horizGoState != AxisGoState.ACCEL_PLUS) {
-					body.getSpine().setLeftAccelZoneToCurrentPos();
-					body.getSpine().resetRightAccelZone();
+					body.getSpine().setLeftFlyBoundToCurrentX();
+					body.getSpine().resetRightFlyBound();
 				}
 				// if changed to minus acceleration then set right accel zone tile and reset left accel zone tile
 				else if(nextHorizGoState == AxisGoState.ACCEL_MINUS && horizGoState != AxisGoState.ACCEL_MINUS) {
-					body.getSpine().setRightAccelZoneToCurrentPos();
-					body.getSpine().resetLeftAccelZone();
+					body.getSpine().setRightFlyBoundToCurrentX();
+					body.getSpine().resetLeftFlyBound();
 				}
 				break;
 			case DEAD:

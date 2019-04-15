@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.Eye;
@@ -18,16 +19,12 @@ import kidridicarus.game.agent.KidIcarus.other.vanishpoof.VanishPoof;
 import kidridicarus.game.agentspine.KidIcarus.FlyBallSpine.AxisGoState;
 import kidridicarus.game.info.KidIcarusAudio;
 
-/*
- * Monoeye doesn't like it when gawkers stare at Monoeye, so Monoeye will target the gawker and attempt to
- * ogle them in a downward direction.
- * QQ
- */
 public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 10;
+	private static final float HORIZONTAL_ONLY_CHANCE = 1/6f;
 
-	private enum MoveState { FLY, DEAD }
+	private enum MoveState { APPEAR, FLY, DEAD }
 
 	private SpecknoseBody body;
 	private SpecknoseSprite sprite;
@@ -35,6 +32,8 @@ public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableA
 	private float moveStateTimer;
 	private AxisGoState horizGoState;
 	private AxisGoState vertGoState;
+	private boolean isHorizontalOnly;
+	private boolean isAppearing;
 
 	private boolean isDead;
 	private boolean despawnMe;
@@ -43,28 +42,32 @@ public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableA
 		super(agency, properties);
 
 		moveStateTimer = 0f;
-		moveState = MoveState.FLY;
+		moveState = MoveState.APPEAR;
 		// Start move right, and
-		horizGoState = AxisGoState.VEL_PLUS;
+		if(Math.random() <= 0.5f)
+			horizGoState = AxisGoState.VEL_PLUS;
+		else
+			horizGoState = AxisGoState.VEL_MINUS;
 		// move down.
 		vertGoState = AxisGoState.VEL_MINUS;
 		isDead = false;
 		despawnMe = false;
+		isHorizontalOnly = Math.random() <= HORIZONTAL_ONLY_CHANCE;
+		isAppearing = true;
 
-		body = new SpecknoseBody(this, agency.getWorld(), Agent.getStartPoint(properties));
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { doContactUpdate(); }
-		});
+		// when the poof finishes, this Specknose will finish spawn
+		Agent poofAgent = agency.createAgent(VanishPoof.makeAP(Agent.getStartPoint(properties), true));
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, poofAgent) {
+				@Override
+				public void removedAgent() { isAppearing = false; }
+			});
+
+		body = null;
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }
 			});
-		sprite = new SpecknoseSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
-				@Override
-				public void draw(Eye adBatch) { doDraw(adBatch); }
-			});
+		sprite = null;
 	}
 
 	private void doContactUpdate() {
@@ -80,6 +83,9 @@ public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableA
 	}
 
 	private void processContacts() {
+		// exit if not finished appearing
+		if(moveState == MoveState.APPEAR)
+			return;
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
 		if((!isDead && !body.getSpine().isTouchingKeepAlive()) || body.getSpine().isContactDespawn())
 			despawnMe = true;
@@ -92,13 +98,22 @@ public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableA
 			return;
 		}
 
-		AxisGoState nextHorizGoState = getNextAxisGoState(true, horizGoState);
-		AxisGoState nextVertGoState = getNextAxisGoState(false, vertGoState);
-
 		MoveState nextMoveState = getNextMoveState();
-		boolean moveStateChanged = nextMoveState != moveState;
+		boolean isMoveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
+			case APPEAR:
+				break;
 			case FLY:
+				if(isMoveStateChanged)
+					finishSpawn();
+
+				horizGoState = getNextAxisGoState(true, horizGoState);
+				vertGoState = getNextAxisGoState(false, vertGoState);
+				if(isHorizontalOnly)
+					body.getSpine().applyAxisMoves(horizGoState, null);
+				else
+					body.getSpine().applyAxisMoves(horizGoState, vertGoState);
+
 				break;
 			case DEAD:
 				agency.createAgent(VanishPoof.makeAP(body.getPosition(), true));
@@ -108,12 +123,21 @@ public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableA
 				break;
 		}
 
-		horizGoState = nextHorizGoState;
-		vertGoState = nextVertGoState;
-		body.getSpine().applyAxisMoves(horizGoState, vertGoState);
-
-		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChanged ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
+	}
+
+	private void finishSpawn() {
+		body = new SpecknoseBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+			@Override
+			public void update(float delta) { doContactUpdate(); }
+		});
+		sprite = new SpecknoseSprite(agency.getAtlas(), body.getPosition());
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
+				@Override
+				public void draw(Eye adBatch) { doDraw(adBatch); }
+			});
 	}
 
 	private AxisGoState getNextAxisGoState(boolean isHorizontal, AxisGoState currentGoState) {
@@ -147,12 +171,15 @@ public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableA
 	private MoveState getNextMoveState() {
 		if(isDead || moveState == MoveState.DEAD)
 			return MoveState.DEAD;
+		else if(isAppearing)
+			return MoveState.APPEAR;
 		else
 			return MoveState.FLY;
 	}
 
 	private void processSprite(float delta) {
-		sprite.update(delta, false, body.getPosition());
+		if(moveState != MoveState.APPEAR)
+			sprite.update(delta, false, body.getPosition());
 	}
 
 	private void doDraw(Eye adBatch){
