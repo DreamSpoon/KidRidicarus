@@ -41,8 +41,8 @@ public class KidIcarusDoorBody extends AgentBody {
 
 	@Override
 	protected void defineBody(Rectangle bounds) {
-		// dispose the old body if it exists	
-		if(b2body != null)	
+		// dispose the old body if it exists
+		if(b2body != null)
 			world.destroyBody(b2body);
 
 		setBodySize(BODY_WIDTH, BODY_HEIGHT);

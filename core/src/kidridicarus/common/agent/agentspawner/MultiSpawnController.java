@@ -26,8 +26,8 @@ public class MultiSpawnController extends SpawnController {
 	public MultiSpawnController(AgentSpawner spawner, AgentSpawnerBody body, ObjectProperties properties) {
 		super(spawner, properties);
 		this.body = body;
-		this.multiCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_COUNT, 0, Integer.class);
-		this.multiGrpCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_GRP_COUNT, 0, Integer.class);
+		this.multiCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_COUNT, 1, Integer.class);
+		this.multiGrpCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_GRP_COUNT, 1, Integer.class);
 		this.spawnRate = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_RATE, 0f, Float.class);
 		this.scrollDir = properties.get(CommonKV.Spawn.KEY_SPAWN_SCROLL_DIR, Direction4.NONE, Direction4.class);
 		numSpawns = 0;
@@ -44,22 +44,39 @@ public class MultiSpawnController extends SpawnController {
 		if(!isEnabled || numSpawns == multiCount * multiGrpCount)
 			return;
 
-		// if this spawner has a scroll direction property then get scroll spawn position, or exit if unavailable
-		Vector2 spawnPos = body.getPosition();
-		if(scrollDir != Direction4.NONE)
-			spawnPos = getScrollSpawnPos();
-
-		if(spawnPos != null && isSpawnAllowed())
-			doSpawn(spawnPos);
+		// if a spawn position exists and spawn is allowed then do spawn
+		if(isSpawnAllowed()) {
+			// if this spawner has a scroll direction property then get scroll spawn position
+			Vector2 scrollSpawnPos = null;
+			if(scrollDir != Direction4.NONE)
+				scrollSpawnPos = getScrollSpawnPos();
+			// if not scrolling, or if scrolling and spawn position is available, then do spawn
+			if(scrollDir == Direction4.NONE || scrollSpawnPos != null) {
+				numSpawns++;
+				spawnTimer = 0f;
+				Agent spawnedAgent;
+				if(scrollDir == Direction4.NONE)
+					spawnedAgent = doSpawn();
+				else
+					spawnedAgent = doSpawn(scrollSpawnPos);
+				// track agent removal for spawn of next group
+				spawner.getAgency().addAgentRemoveListener(new AgentRemoveListener(spawner, spawnedAgent) {
+						@Override
+						public void removedAgent() { numSpawnsDisposed++; }
+					});
+			}
+		}
 
 		spawnTimer += delta;
 	}
 
 	private Vector2 getScrollSpawnPos() {
+		// get spawn trigger for scroll spawn position calculation, and exit if spawn trigger not found
 		AgentSpawnTrigger spawnTrigger = body.getFirstContactByClass(AgentSpawnTrigger.class);
 		if(spawnTrigger == null)
 			return null;
 
+		// that's all folks!
 		if(scrollDir != Direction4.UP)
 			throw new IllegalStateException("do more code");
 
@@ -83,8 +100,10 @@ public class MultiSpawnController extends SpawnController {
 			}
 		}
 
+		// if a "top" tile to use for spawning was not available, then return null to indicate no spawn pos found
 		if(topNonSolidY == null)
 			return null;
+		// otherwise return spawn position
 		return UInfo.VectorT2M(tileX, topNonSolidY);
 	}
 
@@ -120,15 +139,5 @@ public class MultiSpawnController extends SpawnController {
 	private boolean isMapTileSolid(Vector2 tileCoords) {
 		SolidTiledMapAgent ctMap = body.getFirstContactByClass(SolidTiledMapAgent.class);
 		return ctMap == null ? false : ctMap.isMapTileSolid(tileCoords); 
-	}
-
-	private void doSpawn(Vector2 spawnPos) {
-		numSpawns++;
-		spawnTimer = 0f;
-		Agent spawnedAgent = spawner.getAgency().createAgent(Agent.createPointAP(spawnAgentClassAlias, spawnPos));
-		spawner.getAgency().addAgentRemoveListener(new AgentRemoveListener(spawner, spawnedAgent) {
-				@Override
-				public void removedAgent() { numSpawnsDisposed++; }
-			});
 	}
 }

@@ -23,22 +23,19 @@ public class DeadRespawnController extends SpawnController {
 			if(numSpawns == numSpawnsDisposed)
 				isSpawnReset = true;
 		}
-		else if(isSpawnAllowed())
-			doSpawn();
+		else if(isSpawnAllowed()) {
+			isSpawnReset = false;
+			numSpawns++;
+			Agent spawnedAgent = doSpawn();
+			spawner.getAgency().addAgentRemoveListener(new AgentRemoveListener(spawner, spawnedAgent) {
+				@Override
+				public void removedAgent() { numSpawnsDisposed++; }
+			});
+		}
 	}
 
 	private boolean isSpawnAllowed() {
 		// if the spawner has been reset and all spawns have been disposed then do respawn
 		return isSpawnReset && numSpawns == numSpawnsDisposed; 
-	}
-
-	private void doSpawn() {
-		isSpawnReset = false;
-		numSpawns++;
-		Agent spawnedAgent = spawner.getAgency().createAgent(Agent.createPointAP(spawnAgentClassAlias, spawner.getPosition()));
-		spawner.getAgency().addAgentRemoveListener(new AgentRemoveListener(spawner, spawnedAgent) {
-			@Override
-			public void removedAgent() { numSpawnsDisposed++; }
-		});
 	}
 }

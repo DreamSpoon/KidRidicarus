@@ -37,8 +37,8 @@ public class PitArrowBody extends MobileAgentBody {
 
 	@Override
 	protected void defineBody(Rectangle bounds, Vector2 velocity) {
-		// dispose the old body if it exists	
-		if(b2body != null)	
+		// dispose the old body if it exists
+		if(b2body != null)
 			world.destroyBody(b2body);
 
 		// if horizontal then set body size like normal...

@@ -33,8 +33,8 @@ public class ZoomerBody extends MobileAgentBody {
 
 	@Override
 	protected void defineBody(Rectangle bounds, Vector2 velocity) {
-		// dispose the old body if it exists	
-		if(b2body != null)	
+		// dispose the old body if it exists
+		if(b2body != null)
 			world.destroyBody(b2body);
 
 		setBodySize(bounds.getWidth(), bounds.getHeight());

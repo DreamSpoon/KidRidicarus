@@ -24,8 +24,8 @@ public class BumpTileBody extends AgentBody {
 
 	@Override
 	protected void defineBody(Rectangle bounds) {
-		// dispose the old body if it exists	
-		if(b2body != null)	
+		// dispose the old body if it exists
+		if(b2body != null)
 			world.destroyBody(b2body);
 
 		setBodySize(bounds.width, bounds.height);

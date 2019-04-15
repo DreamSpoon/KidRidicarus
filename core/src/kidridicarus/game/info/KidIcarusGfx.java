@@ -22,7 +22,8 @@ public class KidIcarusGfx {
 	public static class NPC {
 		private static final String DIR = BASEDIR+"NPC/";
 		public static final String SHEMUM =	DIR+"shemum";
-		public static final String MONOEYE = DIR+"monoeye";
+		public static final String MONOEYE =	DIR+"monoeye";
+		public static final String SPECKNOSE =	DIR+"specknose";
 	}
 
 	public static class Player {
@@ -30,16 +31,16 @@ public class KidIcarusGfx {
 		public static class Pit {
 			private static final String SUBDIR = DIR+"Pit/";
 			public static final String[] GRPDIR = { SUBDIR+"reg/", SUBDIR+"inv1/", SUBDIR+"inv2/", SUBDIR+"inv3/" };
-			public static final String AIMUP =		"pit_aimup";
-			public static final String AIMUP_SHOOT ="pit_aimup_shoot";
-			public static final String CLIMB =		"pit_climb";
-			public static final String DEAD =		"pit_dead";
-			public static final String DUCK =		"pit_duck";
-			public static final String JUMP =		"pit_jump";
+			public static final String AIMUP =	"pit_aimup";
+			public static final String AIMUP_SHOOT =	"pit_aimup_shoot";
+			public static final String CLIMB =	"pit_climb";
+			public static final String DEAD =	"pit_dead";
+			public static final String DUCK =	"pit_duck";
+			public static final String JUMP =	"pit_jump";
 			public static final String JUMP_SHOOT =	"pit_jump_shoot";
-			public static final String STAND =		"pit_stand";
-			public static final String STAND_SHOOT ="pit_stand_shoot";
-			public static final String WALK =		"pit_walk";
+			public static final String STAND =	"pit_stand";
+			public static final String STAND_SHOOT =	"pit_stand_shoot";
+			public static final String WALK =	"pit_walk";
 			public static final String WALK_SHOOT =	"pit_walk_shoot";
 		}
 		public static class PitArrow {

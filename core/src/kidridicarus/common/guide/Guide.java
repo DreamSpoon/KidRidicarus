@@ -77,7 +77,7 @@ public class Guide implements Disposable {
 		if(currentMainMusic != null)
 			currentMainMusic.stop();
 
-		// if music name is an empty string, then do not start music 
+		// if music name is an empty string, then do not start music
 		if(!musicName.equals("")) {
 			currentMainMusic = manager.get(musicName, Music.class);
 			startMainMusic();

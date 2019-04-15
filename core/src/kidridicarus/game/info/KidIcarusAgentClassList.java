@@ -3,6 +3,7 @@ package kidridicarus.game.info;
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.game.agent.KidIcarus.NPC.monoeye.Monoeye;
 import kidridicarus.game.agent.KidIcarus.NPC.shemum.Shemum;
+import kidridicarus.game.agent.KidIcarus.NPC.specknose.Specknose;
 import kidridicarus.game.agent.KidIcarus.item.angelheart.AngelHeart;
 import kidridicarus.game.agent.KidIcarus.item.chalicehealth.ChaliceHealth;
 import kidridicarus.game.agent.KidIcarus.other.kidicarusdoor.KidIcarusDoor;
@@ -19,5 +20,6 @@ public class KidIcarusAgentClassList {
 			KidIcarusKV.AgentClassAlias.VAL_PIT, Pit.class,
 			KidIcarusKV.AgentClassAlias.VAL_PIT_ARROW, PitArrow.class,
 			KidIcarusKV.AgentClassAlias.VAL_SHEMUM, Shemum.class,
+			KidIcarusKV.AgentClassAlias.VAL_SPECKNOSE, Specknose.class,
 			KidIcarusKV.AgentClassAlias.VAL_VANISH_POOF, VanishPoof.class);
 }

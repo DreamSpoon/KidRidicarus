@@ -1,6 +1,5 @@
 package kidridicarus.common.agent.agentspawner;
 
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.tool.ObjectProperties;
 
 public class SingleSpawnController extends SpawnController {
@@ -15,7 +14,7 @@ public class SingleSpawnController extends SpawnController {
 	public void update(float delta, boolean isEnabled) {
 		if(isEnabled && !isSpawned) {
 			isSpawned = true;
-			spawner.getAgency().createAgent(Agent.createPointAP(spawnAgentClassAlias, spawner.getPosition()));
+			doSpawn();
 		}
 	}
 }
