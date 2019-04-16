@@ -13,7 +13,7 @@ import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.AudioInfo;
-import kidridicarus.common.metaagent.playeragentwrapper.PlayerControllerAgent;
+import kidridicarus.common.metaagent.playercontrolleragent.PlayerControllerAgent;
 
 /*
  * Guide AKA Player (not actually tho - eventually this class will split into Player and others).

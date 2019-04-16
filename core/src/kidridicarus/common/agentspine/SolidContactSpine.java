@@ -35,9 +35,9 @@ public class SolidContactSpine extends BasicAgentSpine {
 	}
 
 	/*
-	 * Use current contacts and given velocity (which may be different from body velocity!) to determine
-	 * if movement in direction given by velocity is blocked.
-	 * Returns true if blocked. Otherwise returns false.
+	 * Use current contacts and given velocity, which may vary from AgentBody's velocity, to determine if movement
+	 * along the direction given by velocity is blocked by a solid.
+	 * Returns true if blocked by solid, otherwise returns false.
 	 */
 	public boolean isMoveBlocked(Vector2 velocity) {
 		Direction4 horizontalMove = Direction4.NONE;
@@ -50,12 +50,14 @@ public class SolidContactSpine extends BasicAgentSpine {
 			verticalMove = Direction4.UP;
 		else if(velocity.y < -UInfo.VEL_EPSILON)
 			verticalMove = Direction4.DOWN;
-		// if move is blocked in either direction then return true
-		if(horizontalMove != Direction4.NONE && scNerve.isDirSolid(horizontalMove, body.getBounds()))
-			return true;
-		if(verticalMove != Direction4.NONE && scNerve.isDirSolid(verticalMove, body.getBounds()))
-			return true;
-		// not blocked in either direction so return false
-		return false;
+		// if move is blocked in either direction then return true, otherwise return false
+		return isMoveBlocked(horizontalMove) || isMoveBlocked(verticalMove);
+	}
+
+	public boolean isMoveBlocked(Direction4 moveDir) {
+		// if no move direction then block is impossible, so return false
+		if(moveDir == Direction4.NONE)
+			return false;
+		return scNerve.isDirSolid(moveDir, body.getBounds());
 	}
 }

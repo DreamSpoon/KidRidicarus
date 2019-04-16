@@ -628,16 +628,16 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			SpriteState he = SpriteState.STAND;
 			return (T) he;
 		}
+		else if(key.equals(CommonKV.Script.KEY_SPRITE_SIZE) && Vector2.class.equals(cls)) {
+			Vector2 he = new Vector2(sprite.getWidth(), sprite.getHeight());
+			return (T) he;
+		}
 		else if(key.equals(CommonKV.KEY_DIRECTION) && Direction4.class.equals(cls)) {
 			Direction4 he;
 			if(isFacingRight)
 				he = Direction4.RIGHT;
 			else
 				he = Direction4.LEFT;
-			return (T) he;
-		}
-		else if(key.equals(CommonKV.Script.KEY_SPRITE_SIZE) && Vector2.class.equals(cls)) {
-			Vector2 he = new Vector2(sprite.getWidth(), sprite.getHeight());
 			return (T) he;
 		}
 		else if(key.equals(KidIcarusKV.KEY_HEALTH) && Integer.class.equals(cls)) {

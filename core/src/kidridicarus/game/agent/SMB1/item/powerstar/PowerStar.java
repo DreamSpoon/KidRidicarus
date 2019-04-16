@@ -9,6 +9,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
@@ -25,11 +26,13 @@ public class PowerStar extends SproutingPowerup implements BumpTakeAgent {
 	private static final Vector2 MAX_BOUNCE_VEL = new Vector2(0.5f, 2f); 
 
 	private boolean isFacingRight;
+	private boolean isZeroPrevVelY;
 	private RoomBox lastKnownRoom;
 
 	public PowerStar(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		isFacingRight = true;
+		isZeroPrevVelY = false;
 		lastKnownRoom = null;
 		body = null;
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
@@ -37,14 +40,6 @@ public class PowerStar extends SproutingPowerup implements BumpTakeAgent {
 			public void update(float delta) { doPostUpdate(); }
 		});
 		sprite = new PowerStarSprite(agency.getAtlas(), getSproutStartPos());
-	}
-
-	private void doPostUpdate() {
-		if(body == null)
-			return;
-		// if current room is not null then update reference to last known room
-		RoomBox nextRoom = body.getSpine().getCurrentRoom();
-		lastKnownRoom = nextRoom != null ? nextRoom : lastKnownRoom;
 	}
 
 	@Override
@@ -75,8 +70,22 @@ public class PowerStar extends SproutingPowerup implements BumpTakeAgent {
 		else
 			body.setVelocity(xVal, body.getVelocity().y);
 
+		boolean isZeroVelY = UInfo.epsCheck(body.getVelocity().y, 0f, UInfo.VEL_EPSILON);
+		// if two consecutive frames of zero Y velocity then apply bounce up velocity
+		if(isZeroVelY && isZeroPrevVelY)
+			body.setVelocity(body.getVelocity().y, MAX_BOUNCE_VEL.y);
+		isZeroPrevVelY = isZeroVelY;
+
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+	}
+
+	private void doPostUpdate() {
+		if(body == null)
+			return;
+		// if current room is not null then update reference to last known room
+		RoomBox nextRoom = body.getSpine().getCurrentRoom();
+		lastKnownRoom = nextRoom != null ? nextRoom : lastKnownRoom;
 	}
 
 	@Override

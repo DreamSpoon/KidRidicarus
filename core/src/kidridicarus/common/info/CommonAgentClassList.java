@@ -11,7 +11,7 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agent.scrollkillbox.ScrollKillBox;
 import kidridicarus.common.agent.scrollpushbox.ScrollPushBox;
 import kidridicarus.common.agent.semisolidfloor.SemiSolidFloor;
-import kidridicarus.common.metaagent.playeragentwrapper.PlayerControllerAgent;
+import kidridicarus.common.metaagent.playercontrolleragent.PlayerControllerAgent;
 import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.common.metaagent.tiledmap.drawlayer.DrawLayerAgent;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;

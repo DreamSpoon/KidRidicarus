@@ -52,7 +52,7 @@
    <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztziEBAAAIA7AnoX9MClzgMFuCJQAAAAAAAAAAAFzNdwAAAAAAAACoFoNVAB8=
+   eJztzjENAAAIA7Apwb9MTCzhoFXQBAAAAAAAAAAAAAAAAAAAADrmOsBbC4vIAB8=
   </data>
  </layer>
  <objectgroup id="31" name="door_exit">

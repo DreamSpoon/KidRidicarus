@@ -1,4 +1,4 @@
-package kidridicarus.common.metaagent.playeragentwrapper;
+package kidridicarus.common.metaagent.playercontrolleragent;
 
 import java.util.Collection;
 

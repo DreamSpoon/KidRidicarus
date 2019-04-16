@@ -73,8 +73,8 @@ public class PitArrow extends Agent implements DisposableAgent {
 			isDead = true;
 			return;
 		}
-		// if hit a wall then die
-		if(body.getSpine().isSideMoveBlocked(arrowDir.isRight()))
+		// if hit a solid then despawn
+		if(body.getSpine().isMoveBlocked(arrowDir))
 			isDead = true;
 	}
 

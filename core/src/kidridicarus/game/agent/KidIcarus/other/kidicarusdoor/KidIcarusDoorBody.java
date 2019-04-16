@@ -16,8 +16,8 @@ import kidridicarus.common.tool.B2DFactory;
 
 public class KidIcarusDoorBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
-	private static final float BODY_HEIGHT = UInfo.P2M(28f);
-	private static final Vector2 BODY_OFFSET = UInfo.VectorP2M(0f, -2f);
+	private static final float BODY_HEIGHT = UInfo.P2M(27f);
+	private static final Vector2 BODY_OFFSET = UInfo.VectorP2M(0f, -2.5f);
 	private static final float ROOF_WIDTH = UInfo.P2M(13f);
 	private static final float ROOF_HEIGHT = UInfo.P2M(4f);
 

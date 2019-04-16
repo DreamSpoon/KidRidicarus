@@ -14,6 +14,8 @@ public class CommonKV {
 	public static final String VAL_DOWN = "down";
 	public static final String VAL_DOWN_RIGHT = "down_right";
 
+	public static final String KEY_VELOCITY = "velocity";
+
 	public class Player {
 		public static final String KEY_AGENT_PROPERTIES = "agent_properties";
 	}

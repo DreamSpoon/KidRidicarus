@@ -76,7 +76,7 @@ public class MyKidRidicarus extends Game {
 				KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST), atlas);
 
 		// show intro/instructions screen
-		setScreen(new InstructionsScreen(this, CommonInfo.GAMEMAP_FILENAME3));
+		setScreen(new InstructionsScreen(this, CommonInfo.GAMEMAP_FILENAME1));
 	}
 
 	@Override
