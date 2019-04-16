@@ -47,13 +47,13 @@ public class ShemumBody extends MobileAgentBody {
 	private void createFixtures() {
 		// main body fixture
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
-		B2DFactory.makeBoxFixture(b2body, solidSensor, MAIN_CFCAT, MAIN_CFMASK,
+		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, solidSensor,
 				getBodySize().x, getBodySize().y);
 		// agent sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				getBodySize().x, getBodySize().y);
 		// ground sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 	}
 

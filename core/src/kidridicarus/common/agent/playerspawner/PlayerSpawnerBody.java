@@ -22,7 +22,7 @@ public class PlayerSpawnerBody extends AgentBody {
 
 		setBodySize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
-		B2DFactory.makeSensorBoxFixture(b2body, this, CommonCF.NO_CONTACT_CFCAT, CommonCF.NO_CONTACT_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.NO_CONTACT_CFCAT, CommonCF.NO_CONTACT_CFMASK, this,
 				bounds.width, bounds.height);
 	}
 }

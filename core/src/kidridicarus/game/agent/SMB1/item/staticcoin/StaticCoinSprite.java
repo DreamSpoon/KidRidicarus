@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agentsprite.basic.AnimSprite;
+import kidridicarus.common.agentsprite.BasicAgentSprite;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class StaticCoinSprite extends AnimSprite {
+public class StaticCoinSprite extends BasicAgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.133f;

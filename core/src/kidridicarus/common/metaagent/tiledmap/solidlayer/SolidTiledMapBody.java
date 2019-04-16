@@ -23,6 +23,6 @@ public class SolidTiledMapBody extends AgentBody {
 	protected void defineBody(Rectangle bounds) {
 		setBodySize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
-		B2DFactory.makeSensorBoxFixture(b2body, this, CFCAT_BITS, CFMASK_BITS, bounds.width, bounds.height);
+		B2DFactory.makeSensorBoxFixture(b2body, CFCAT_BITS, CFMASK_BITS, this, bounds.width, bounds.height);
 	}
 }

@@ -54,13 +54,13 @@ public class RioBody extends MobileAgentBody {
 	private void createFixtures() {
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		// main fixture
-		B2DFactory.makeBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+		B2DFactory.makeBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
 				getBodySize().x, getBodySize().y);
 		// ceiling sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, solidSensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
 				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, getBodySize().y/2f));
 		// agent contact sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				getBodySize().x, getBodySize().y);
 		// player sensor fixture (cone shaped sensor extending down below Rio to check for player target)
 		createPlayerSensorFixture();

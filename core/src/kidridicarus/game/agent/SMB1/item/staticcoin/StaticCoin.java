@@ -24,7 +24,7 @@ public class StaticCoin extends StaticPowerup implements DisposableAgent {
 			agency.removeAgent(this);
 			return false;
 		}
-		sprite.update(agency.getGlobalTimer(), true, body.getPosition());
+		sprite.update(agency.getGlobalTimer(), true, false, body.getPosition());
 		return false;
 	}
 

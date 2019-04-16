@@ -95,7 +95,7 @@ public class MarioBody extends PlayerAgentBody {
 
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = FRICTION;
-		B2DFactory.makeBoxFixture(b2body, fdef, this, MAIN_CFCAT, MAIN_CFMASK, getBodySize().x, getBodySize().y);
+		B2DFactory.makeBoxFixture(b2body, fdef, MAIN_CFCAT, MAIN_CFMASK, this, getBodySize().x, getBodySize().y);
 		spine = new MarioSpine(this);
 	}
 
@@ -104,38 +104,32 @@ public class MarioBody extends PlayerAgentBody {
 		AgentContactHoldSensor agentSensor = spine.createAgentSensor();
 		agentSensor.chainTo(spine.createDamagePushSensor());
 		if(isAgentSensorEnabled) {
-			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, agentSensor,
-					AS_ENABLED_CFCAT, AS_ENABLED_CFMASK, getBodySize().x, getBodySize().y);
+			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, AS_ENABLED_CFCAT, AS_ENABLED_CFMASK,
+					agentSensor, getBodySize().x, getBodySize().y);
 		}
 		else {
-			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, agentSensor,
-					AS_DISABLED_CFCAT, AS_DISABLED_CFMASK, getBodySize().x, getBodySize().y);
+			agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, AS_DISABLED_CFCAT, AS_DISABLED_CFMASK,
+					agentSensor, getBodySize().x, getBodySize().y);
 		}
 		// create fixture for ground sensor
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createSolidContactSensor(),
-				GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
+		B2DFactory.makeSensorBoxFixture(b2body, GROUND_SENSOR_CFCAT, GROUND_SENSOR_CFMASK,
+				spine.createSolidContactSensor(), FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create fixture for tilebump sensor
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createTileBumpPushSensor(),
-				TILEBUMP_SENSOR_CFCAT, TILEBUMP_SENSOR_CFMASK,
-				HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, getBodySize().y/2f));
+		B2DFactory.makeSensorBoxFixture(b2body, TILEBUMP_SENSOR_CFCAT, TILEBUMP_SENSOR_CFMASK,
+				spine.createTileBumpPushSensor(), HEAD_WIDTH, HEAD_HEIGHT, new Vector2(0f, getBodySize().y/2f));
 
 		AgentContactHoldSensor pwSensor = spine.createPipeWarpSensor();
 		// create fixture for bottom pipewarp sensor
-		B2DFactory.makeSensorBoxFixture(b2body, pwSensor,
-				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK, pwSensor,
 				TOPBOT_PW_SENSOR_WIDTH, TOPBOT_PW_SENSOR_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
 		// create fixture for top pipewarp sensor
-		B2DFactory.makeSensorBoxFixture(b2body, pwSensor,
-				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK, pwSensor,
 				TOPBOT_PW_SENSOR_WIDTH, TOPBOT_PW_SENSOR_HEIGHT, new Vector2(0f, getBodySize().y/2f));
 		// create fixture for left pipewarp sensor
-		B2DFactory.makeSensorBoxFixture(b2body, pwSensor,
-				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK, pwSensor,
 				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(-getBodySize().x/2f, 0f));
 		// create fixture for right pipewarp sensor
-		B2DFactory.makeSensorBoxFixture(b2body, pwSensor,
-				PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, PIPEWARP_SENSOR_CFCAT, PIPEWARP_SENSOR_CFMASK, pwSensor,
 				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(getBodySize().x/2f, 0f));
 	}
 

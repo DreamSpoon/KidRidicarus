@@ -28,8 +28,8 @@ public abstract class StaticPowerupBody extends AgentBody {
 		b2body.setGravityScale(0f);
 		spine = new BasicAgentSpine(this);
 		// agent sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(),
-				CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK, getBodySize().x, getBodySize().y);
+		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK,
+				spine.createAgentSensor(), getBodySize().x, getBodySize().y);
 	}
 
 	public BasicAgentSpine getSpine() {

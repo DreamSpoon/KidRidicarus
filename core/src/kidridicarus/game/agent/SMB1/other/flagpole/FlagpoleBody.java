@@ -30,9 +30,8 @@ public class FlagpoleBody extends AgentBody {
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
 		// agent sensor fixture
 		agentBeginContactSensor = new OneWayContactSensor(this, true);
-		B2DFactory.makeBoxFixture(b2body, agentBeginContactSensor,
-				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
-				getBodySize().x, getBodySize().y);
+		B2DFactory.makeBoxFixture(b2body, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
+				agentBeginContactSensor, getBodySize().x, getBodySize().y);
 	}
 
 	public List<PlayerAgent> getPlayerBeginContacts() {

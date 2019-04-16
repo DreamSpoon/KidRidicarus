@@ -45,7 +45,7 @@ public class SpecknoseBody extends MobileAgentBody {
 		spine = new FlyBallSpine(this, new Rectangle(ACCEL_X_LEFT, ACCEL_Y_BOTTOM,
 				ACCEL_X_RIGHT-ACCEL_X_LEFT, ACCEL_Y_TOP-ACCEL_Y_BOTTOM));
 		// agent sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				getBodySize().x, getBodySize().y);
 	}
 

@@ -244,16 +244,16 @@ public class SolidTiledMap implements Disposable {
 	private Body defineLineBody(int startX, int startY, int endX, int endY, SolidLineSeg seg) {
 		FixtureDef fdef;
 		EdgeShape edgeShape;
-		Body body =
-				B2DFactory.makeStaticBody(world, UInfo.VectorP2M(startX * tileWidthInPixels, startY * tileHeightInPixels));
+		Body body = B2DFactory.makeStaticBody(world, UInfo.VectorP2M(startX * tileWidthInPixels,
+				startY * tileHeightInPixels));
 
 		edgeShape = new EdgeShape();
-		edgeShape.set(0f, 0f,
-				UInfo.P2M((endX - startX) * tileWidthInPixels), UInfo.P2M((endY - startY) * tileHeightInPixels));
+		edgeShape.set(0f, 0f, UInfo.P2M((endX - startX) * tileWidthInPixels),
+				UInfo.P2M((endY - startY) * tileHeightInPixels));
 		fdef = new FixtureDef();
 		fdef.shape = edgeShape;
-		body.createFixture(fdef).setUserData(new AgentBodyFilter(
-				new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT), new CFBitSeq(true), seg));
+		body.createFixture(fdef).setUserData(
+				new AgentBodyFilter(new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT), new CFBitSeq(true), seg));
 
 		return body;
 	}

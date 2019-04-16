@@ -11,7 +11,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
-import kidridicarus.common.agentsprite.basic.AnimSprite;
+import kidridicarus.common.agentsprite.BasicAgentSprite;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
@@ -23,7 +23,7 @@ public abstract class SproutingPowerup extends Agent implements DisposableAgent 
 	private enum SproutingMoveState { SPROUT, WALK, END }
 
 	protected SproutingPowerupBody body;
-	protected AnimSprite sprite;
+	protected BasicAgentSprite sprite;
 	private AgentDrawListener myDrawListener;
 	private Vector2 initSpawnPosition;
 	private PowerupTakeAgent powerupTaker;
@@ -141,7 +141,7 @@ public abstract class SproutingPowerup extends Agent implements DisposableAgent 
 				position.set(body.getPosition());
 				break;
 		}
-		sprite.update(delta, false, position);
+		sprite.update(delta, false, false, position);
 	}
 
 	private void doDraw(Eye adBatch){

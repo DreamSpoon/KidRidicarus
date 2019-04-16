@@ -42,11 +42,11 @@ public class MonoeyeBody extends MobileAgentBody {
 		b2body.setGravityScale(GRAVITY_SCALE);
 		spine = new MonoeyeSpine(this, UInfo.M2Tx(bounds.x+bounds.width/2f));
 		// agent sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				getBodySize().x, getBodySize().y);
 		// create player sensor fixture that "hangs" down from the top of Monoeye and detects players to target
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createPlayerSensor(), CommonCF.AGENT_SENSOR_CFCAT,
-				CommonCF.AGENT_SENSOR_CFMASK, PLAYER_SENSOR_WIDTH, PLAYER_SENSOR_HEIGHT,
+		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
+				spine.createPlayerSensor(), PLAYER_SENSOR_WIDTH, PLAYER_SENSOR_HEIGHT,
 				new Vector2(0f, getBodySize().y/2f - PLAYER_SENSOR_HEIGHT/2f));
 	}
 

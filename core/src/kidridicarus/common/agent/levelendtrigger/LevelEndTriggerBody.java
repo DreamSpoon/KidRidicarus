@@ -37,8 +37,8 @@ public class LevelEndTriggerBody extends AgentBody {
 
 	private void createFixtures() {
 		playerSensor = new OneWayContactSensor(this, true);
-		B2DFactory.makeBoxFixture(b2body, playerSensor,
-				CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, getBodySize().x, getBodySize().y);
+		B2DFactory.makeBoxFixture(b2body, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, playerSensor,
+				getBodySize().x, getBodySize().y);
 	}
 
 	public List<PlayerAgent> getPlayerBeginContacts() {

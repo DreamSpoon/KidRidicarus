@@ -2,16 +2,20 @@ package kidridicarus.agency.agentcontact;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.agency.agentcontact.AgentContactListener.PreSolver;
 
 public class AgentBodyFilter {
 	public CFBitSeq categoryBits;
 	public CFBitSeq maskBits;
 	public Object userData;
+	public PreSolver preSolver;
 
 	public AgentBodyFilter(CFBitSeq categoryBits, CFBitSeq maskBits, Object userData) {
 		this.categoryBits = categoryBits;
 		this.maskBits = maskBits;
 		this.userData = userData;
+		// null indicates default preSolver, non-null for custom preSolver
+		this.preSolver = null;
 	}
 
 	public static boolean isContact(AgentBodyFilter filterA, AgentBodyFilter filterB) {

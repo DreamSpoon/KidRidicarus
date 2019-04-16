@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
@@ -28,6 +29,8 @@ public class SemiSolidFloorBody extends AgentBody {
 
 		setBodySize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
-		B2DFactory.makeBoxFixture(b2body, this, CFCAT_BITS, CFMASK_BITS, getBodySize().x, getBodySize().y);
+		AgentBodyFilter abf = new AgentBodyFilter(CFCAT_BITS, CFMASK_BITS, this);
+		abf.preSolver = new SemiSolidPreSolver(abf);
+		B2DFactory.makeBoxFixture(b2body, abf, getBodySize().x, getBodySize().y);
 	}
 }

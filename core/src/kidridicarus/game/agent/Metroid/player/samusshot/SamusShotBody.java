@@ -48,10 +48,10 @@ public class SamusShotBody extends MobileAgentBody {
 		spine = new SolidContactSpine(this);
 
 		// create main fixture
-		B2DFactory.makeBoxFixture(b2body, spine.createSolidContactSensor(), MAIN_CFCAT, MAIN_CFMASK,
+		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, spine.createSolidContactSensor(),
 				getBodySize().x, getBodySize().y);
 		// create agent contact sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				SENSOR_WIDTH, SENSOR_HEIGHT);
 	}
 

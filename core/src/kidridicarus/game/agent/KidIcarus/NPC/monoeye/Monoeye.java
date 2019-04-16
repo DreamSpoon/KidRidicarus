@@ -84,7 +84,7 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 	private void doUpdate(float delta) {
 		processContacts();
 		processMove(delta);
-		processSprite();
+		processSprite(delta);
 	}
 
 	private void processContacts() {
@@ -244,8 +244,8 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 			return MoveState.FLY;
 	}
 
-	private void processSprite() {
-		sprite.update(body.getPosition(), isFacingRight);
+	private void processSprite(float delta) {
+		sprite.update(delta, false, isFacingRight, body.getPosition());
 	}
 
 	private void doDraw(Eye adBatch){

@@ -55,10 +55,11 @@ public class PitArrowBody extends MobileAgentBody {
 		spine = new SolidContactSpine(this);
 
 		// create main fixture
-		B2DFactory.makeBoxFixture(b2body, spine.createSolidContactSensor(), MAIN_CFCAT, MAIN_CFMASK,
+		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, spine.createSolidContactSensor(),
 				getBodySize().x, getBodySize().y);
 		// create agent contact sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK, getBodySize().x, getBodySize().y);
+		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
+				getBodySize().x, getBodySize().y);
 	}
 
 	public SolidContactSpine getSpine() {

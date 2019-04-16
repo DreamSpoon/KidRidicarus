@@ -47,10 +47,10 @@ public class ZoomerBody extends MobileAgentBody {
 
 	private void createFixtures() {
 		// main fixture
-		B2DFactory.makeBoxFixture(b2body, this, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+		B2DFactory.makeBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, this,
 				getBodySize().x, getBodySize().y);
 		// agent sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createAgentSensor(), AS_CFCAT, AS_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				getBodySize().x, getBodySize().y);
 		// crawl sensor fixtures
 		createCrawlSensorFixtures();
@@ -70,8 +70,9 @@ public class ZoomerBody extends MobileAgentBody {
 				subBoxOffset.x, -subBoxOffset.y, subBoxSize.x, subBoxSize.y);
 	}
 
-	private void createCrawlSensorFixture(SolidContactSensor sensor, float posX, float posY, float sizeX, float sizeY) {
-		B2DFactory.makeSensorBoxFixture(b2body, sensor, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+	private void createCrawlSensorFixture(SolidContactSensor sensor, float posX, float posY, float sizeX,
+			float sizeY) {
+		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, sensor,
 				sizeX, sizeY, new Vector2(posX, posY));
 	}
 

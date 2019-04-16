@@ -46,7 +46,7 @@ public class SpinCoin extends Agent implements DisposableAgent {
 
 	private void defineBody(Vector2 position, Vector2 velocity) {
 		b2body = B2DFactory.makeDynamicBody(agency.getWorld(), position, velocity);
-		B2DFactory.makeSensorBoxFixture(b2body, this, CommonCF.NO_CONTACT_CFCAT, CommonCF.NO_CONTACT_CFMASK,
+		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.NO_CONTACT_CFCAT, CommonCF.NO_CONTACT_CFMASK, this,
 				BODY_WIDTH, BODY_HEIGHT);
 	}
 

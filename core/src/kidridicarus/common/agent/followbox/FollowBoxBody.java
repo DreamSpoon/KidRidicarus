@@ -50,13 +50,11 @@ public abstract class FollowBoxBody extends AgentBody {
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
 		b2body.setGravityScale(0f);
 		if(isSensor) {
-			B2DFactory.makeSensorBoxFixture(b2body, getSensorBoxUserData(), catBits, maskBits,
-				bounds.width, bounds.height);
-		}
-		else {
-			B2DFactory.makeBoxFixture(b2body, getSensorBoxUserData(), catBits, maskBits,
+			B2DFactory.makeSensorBoxFixture(b2body, catBits, maskBits, getSensorBoxUserData(),
 					bounds.width, bounds.height);
 		}
+		else
+			B2DFactory.makeBoxFixture(b2body, catBits, maskBits, getSensorBoxUserData(), bounds.width, bounds.height);
 	}
 
 	// mouse joint allows body to quickly change position without destroying/recreating the body/fixture constantly
@@ -66,7 +64,7 @@ public abstract class FollowBoxBody extends AgentBody {
 		tempB.setGravityScale(0f);
 
 		// the fake body does not contact anything
-		B2DFactory.makeSensorBoxFixture(tempB, this, CommonCF.NO_CONTACT_CFCAT, CommonCF.NO_CONTACT_CFMASK,
+		B2DFactory.makeSensorBoxFixture(tempB, CommonCF.NO_CONTACT_CFCAT, CommonCF.NO_CONTACT_CFMASK, this,
 				0.01f, 0.01f);
 
 		MouseJointDef mjdef = new MouseJointDef();

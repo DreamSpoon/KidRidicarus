@@ -34,8 +34,8 @@ public class BumpTileBody extends AgentBody {
 		b2body.setGravityScale(0f);
 		spine = new BumpTileSpine(this);
 		// sensor detects solid tile maps, and agents that can contact bump tiles
-		B2DFactory.makeSensorBoxFixture(b2body, spine.createMainSensor(),
-				MAINSENSOR_CFCAT, MAINSENSOR_CFMASK, bounds.width, bounds.height);
+		B2DFactory.makeSensorBoxFixture(b2body, MAINSENSOR_CFCAT, MAINSENSOR_CFMASK, spine.createMainSensor(),
+				bounds.width, bounds.height);
 	}
 
 	public BumpTileSpine getSpine() {

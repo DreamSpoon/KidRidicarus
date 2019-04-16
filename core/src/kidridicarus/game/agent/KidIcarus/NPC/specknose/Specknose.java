@@ -179,7 +179,7 @@ public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableA
 
 	private void processSprite(float delta) {
 		if(moveState != MoveState.APPEAR)
-			sprite.update(delta, false, body.getPosition());
+			sprite.update(delta, false, false, body.getPosition());
 	}
 
 	private void doDraw(Eye adBatch){
