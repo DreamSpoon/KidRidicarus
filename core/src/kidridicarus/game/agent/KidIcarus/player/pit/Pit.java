@@ -11,8 +11,8 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
-import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.GetPropertyListener;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -106,6 +106,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		super(agency, properties);
 
 		setStateFromProperties(properties);
+		createGetPropertyListeners();
 
 		body = new PitBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f), false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
@@ -134,24 +135,6 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		supervisor = new PitSupervisor(this);
 	}
 
-	/*
-	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
-	 * by way of regular update. Also apply star power damage if needed.
-	 */
-	private void doContactUpdate() {
-		if(supervisor.isRunningScriptNoMoveAdvice())
-			return;
-		// exit if head bump flag hasn't reset
-		if(isHeadBumped)
-			return;
-		// if ducking then hit soft
-		if(this.moveState.isDuck())
-			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
-		// otherwise hit hard
-		else
-			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
-	}
-
 	private void setStateFromProperties(ObjectProperties properties) {
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
@@ -171,6 +154,53 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		gaveHeadBounce = false;
 		isHeadBumped = false;
 		lastKnownRoom = null;
+	}
+
+	private void createGetPropertyListeners() {
+/*		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListener() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <T> T get(Class<T> cls) {
+				if(!Vector2.class.equals(cls))
+					throw new IllegalArgumentException("Wrong class given for get sprite size.");
+				return (T) new Vector2(sprite.getWidth(), sprite.getHeight());
+			}
+		});
+*/
+		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListener(Vector2.class) {
+			@Override
+			public Object innerGet() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
+		});
+		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListener(Direction4.class) {
+			@Override
+			public Object innerGet() { return isFacingRight ? Direction4.RIGHT : Direction4.LEFT; }
+		});
+		addGetPropertyListener(KidIcarusKV.KEY_HEALTH, new GetPropertyListener(Integer.class) {
+			@Override
+			public Object innerGet() { return new Integer(health); }
+		});
+		addGetPropertyListener(KidIcarusKV.KEY_HEART_COUNT, new GetPropertyListener(Integer.class) {
+			@Override
+			public Object innerGet() { return new Integer(heartsCollected); }
+		});
+	}
+
+	/*
+	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
+	 * by way of regular update. Also apply star power damage if needed.
+	 */
+	private void doContactUpdate() {
+		if(supervisor.isRunningScriptNoMoveAdvice())
+			return;
+		// exit if head bump flag hasn't reset
+		if(isHeadBumped)
+			return;
+		// if ducking then hit soft
+		if(moveState.isDuck())
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
+		// otherwise hit hard
+		else
+			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.HARD);
 	}
 
 	private void doUpdate(float delta) {
@@ -618,37 +648,6 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	@Override
 	public Rectangle getBounds() {
 		return body.getBounds();
-	}
-
-	// unchecked cast to T warnings ignored because T is checked with class.equals(cls) 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
-		if(key.equals(CommonKV.Script.KEY_SPRITE_STATE) && SpriteState.class.equals(cls)) {
-			SpriteState he = SpriteState.STAND;
-			return (T) he;
-		}
-		else if(key.equals(CommonKV.Script.KEY_SPRITE_SIZE) && Vector2.class.equals(cls)) {
-			Vector2 he = new Vector2(sprite.getWidth(), sprite.getHeight());
-			return (T) he;
-		}
-		else if(key.equals(CommonKV.KEY_DIRECTION) && Direction4.class.equals(cls)) {
-			Direction4 he;
-			if(isFacingRight)
-				he = Direction4.RIGHT;
-			else
-				he = Direction4.LEFT;
-			return (T) he;
-		}
-		else if(key.equals(KidIcarusKV.KEY_HEALTH) && Integer.class.equals(cls)) {
-			Integer he = health;
-			return (T) he;
-		}
-		else if(key.equals(KidIcarusKV.KEY_HEART_COUNT) && Integer.class.equals(cls)) {
-			Integer he = heartsCollected;
-			return (T) he;
-		}
-		return super.getProperty(key, defaultValue, cls);
 	}
 
 	@Override

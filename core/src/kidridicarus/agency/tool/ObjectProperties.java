@@ -32,39 +32,31 @@ public class ObjectProperties {
 
 	@SuppressWarnings("unchecked")
 	public <T> T get(String key, Object defaultValue, Class<T> cls) {
+		// if the property is not in the list then return the default value
+		if(!properties.containsKey(key))
+			return (T) defaultValue;
+		// otherwise get the property and convert if necessary
+		Object test = properties.get(key);
 		if(Integer.class.equals(cls)) {
-			Object test = properties.getOrDefault(key, defaultValue);
-			if(test == null)
-				return null;
-			else if(test instanceof Integer)
+			if(test instanceof Integer)
 				return (T) test;
 			else if(test instanceof String)
 				return (T) Integer.valueOf((String) test);
 		}
-		// if the requested return type is Float
 		else if(Float.class.equals(cls)) {
-			Object test = properties.getOrDefault(key, defaultValue);
-			if(test == null)
-				return null;
-			else if(test instanceof Float)
+			if(test instanceof Float)
 				return (T) test;
 			else if(test instanceof String)
 				return (T) Float.valueOf((String) test);
 		}
 		else if(Boolean.class.equals(cls)) {
-			Object test = properties.getOrDefault(key, defaultValue);
-			if(test == null)
-				return null;
-			else if(test instanceof Boolean)
+			if(test instanceof Boolean)
 				return (T) test;
 			else if(test instanceof String)
 				return (T) Boolean.valueOf((String) test);
 		}
 		else if(Direction4.class.equals(cls)) {
-			Object test = properties.getOrDefault(key, defaultValue);
-			if(test == null)
-				return null;
-			else if(test instanceof Direction4)
+			if(test instanceof Direction4)
 				return (T) test;
 			else if(test instanceof String)
 				return (T) Direction4.fromString((String) test);
