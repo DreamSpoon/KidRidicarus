@@ -4,15 +4,16 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 
-public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAgent {
+public class AgentSpawner extends PlacedBoundsAgent implements EnableTakeAgent, DisposableAgent {
 	private SpawnController spawnController;
 	private AgentSpawnerBody body;
 	private boolean isEnabled;
@@ -29,7 +30,7 @@ public class AgentSpawner extends Agent implements EnableTakeAgent, DisposableAg
 
 		isEnabled = false;
 
-		body = new AgentSpawnerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		body = new AgentSpawnerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) {

@@ -11,19 +11,19 @@ import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.AgentContactSensor;
 import kidridicarus.common.agent.optional.SolidAgent;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidLineSeg;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
 public class SolidContactSensor extends AgentContactSensor {
 	private LinkedList<SolidLineSeg> lineSegContacts;
-	private LinkedList<SolidAgent> agentContacts;
+	private LinkedList<Agent> agentContacts;
 
 	public SolidContactSensor(Object parent) {
 		super(parent);
 		lineSegContacts = new LinkedList<SolidLineSeg>();
-		agentContacts = new LinkedList<SolidAgent>();
+		agentContacts = new LinkedList<Agent>();
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void onBeginSense(AgentBodyFilter abf) {
 		if(abf.userData instanceof SolidLineSeg) {
@@ -34,10 +34,9 @@ public class SolidContactSensor extends AgentContactSensor {
 
 		Agent agent = AgentBodyFilter.getAgentFromFilter(abf);
 		if(agent instanceof SolidAgent && !agentContacts.contains(agent))
-			agentContacts.add((SolidAgent) agent);
+			agentContacts.add(agent);
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void onEndSense(AgentBodyFilter abf) {
 		if(abf.userData instanceof SolidLineSeg) {
@@ -160,8 +159,11 @@ public class SolidContactSensor extends AgentContactSensor {
 	private boolean isDirBlockedByAgent(Direction4 dir, Rectangle testBounds) {
 		if(dir == null || dir == Direction4.NONE)
 			throw new IllegalArgumentException("dir must be non null and not NONE, but dir="+dir);
-		for(SolidAgent agent : agentContacts) {
-			Rectangle otherBounds = ((Agent) agent).getBounds();
+		for(Agent agent : agentContacts) {
+			// get other Agent's bounds, skipping other Agent if bounds are null
+			Rectangle otherBounds = AP_Tool.getBounds(agent);
+			if(otherBounds == null)
+				continue;
 			// if other is too far above or below testBounds then no contact
 			if((dir.isHorizontal() && (otherBounds.y >= testBounds.y+testBounds.height ||
 					otherBounds.y+otherBounds.height <= testBounds.y)) ||

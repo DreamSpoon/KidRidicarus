@@ -10,10 +10,11 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
+import kidridicarus.agency.agentproperties.GetPropertyListener;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -25,6 +26,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.powerup.PowerupList;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
@@ -63,7 +65,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		public boolean isDead() { return this.equalsAny(DEAD, DEAD_BOUNCE); }
 	}
 
-	private MarioSupervisor supervisor;
+	private PlayerAgentSupervisor supervisor;
 	private MarioBody body;
 	private MarioSprite sprite;
 	private MarioHUD playerHUD;
@@ -97,33 +99,34 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		super(agency, properties);
 
 		setStateFromProperties(properties);
+		createGetPropertyListeners();
 
-		body = new MarioBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f),
+		body = new MarioBody(this, agency.getWorld(), AP_Tool.getCenter(properties), new Vector2(0f, 0f),
 				powerState.isBigBody(), false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { doContactUpdate(); }
-		});
+				@Override
+				public void update(float delta) { doContactUpdate(); }
+			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { doUpdate(delta); }
-		});
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { doPostUpdate(); }
-		});
+				@Override
+				public void update(float delta) { doPostUpdate(); }
+			});
 		sprite = new MarioSprite(agency.getAtlas(), body.getPosition(), powerState, isFacingRight);
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
-			@Override
-			public void draw(Eye adBatch) { doDraw(adBatch); }
-		});
+				@Override
+				public void draw(Eye adBatch) { doDraw(adBatch); }
+			});
 		playerHUD = new MarioHUD(this, agency.getAtlas());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
-			@Override
-			public void draw(Eye adBatch) { doDrawHUD(adBatch); }
-		});
+				@Override
+				public void draw(Eye adBatch) { doDrawHUD(adBatch); }
+			});
 
-		supervisor = new MarioSupervisor(this);
+		supervisor = new PlayerAgentSupervisor(this);
 	}
 
 	private void setStateFromProperties(ObjectProperties properties) {
@@ -162,6 +165,28 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		lastHorizontalMoveDir = Direction4.NONE;
 		isDuckSlideRight = false;
 		lastKnownRoom = null;
+	}
+
+	private void createGetPropertyListeners() {
+		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListener(Vector2.class) {
+				@Override
+				public Object innerGet() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
+			});
+		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListener(Direction4.class) {
+				@Override
+				public Object innerGet() { return isFacingRight ? Direction4.RIGHT : Direction4.LEFT; }
+			});
+		addGetPropertyListener(CommonKV.Powerup.KEY_POWERUP_LIST, new GetPropertyListener(PowerupList.class) {
+				@Override
+				public Object innerGet() {
+					PowerupList powList = new PowerupList();
+					if(powerState == PowerState.BIG)
+						powList.add(new SMB1_Pow.MushroomPow());
+					else if(powerState == PowerState.FIRE)
+						powList.add(new SMB1_Pow.FireFlowerPow());
+					return powList;
+				}
+			});
 	}
 
 	/*
@@ -710,8 +735,9 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		// no head bouncing while star powered or dead
 		if(starPowerCooldown > 0f || moveState == MoveState.DEAD)
 			return false;
-		// if head bounce is allowed then give head bounce to agent
-		if(body.getSpine().isGiveHeadBounceAllowed(agent.getBounds())) {
+		// if other agent has bounds and head bounce is allowed then give head bounce to agent
+		Rectangle otherBounds = AP_Tool.getBounds(agent);
+		if(otherBounds != null && body.getSpine().isGiveHeadBounceAllowed(otherBounds)) {
 			gaveHeadBounce = true;
 			return true;
 		}
@@ -736,45 +762,6 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	@Override
 	public Rectangle getBounds() {
 		return body.getBounds();
-	}
-
-	// unchecked cast to T warnings ignored because T is checked with class.equals(cls) 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
-		if(key.equals(CommonKV.KEY_DIRECTION) && Direction4.class.equals(cls)) {
-			Direction4 he;
-			if(isFacingRight)
-				he = Direction4.RIGHT;
-			else
-				he = Direction4.LEFT;
-			return (T) he;
-		}
-		else if(key.equals(CommonKV.Script.KEY_SPRITE_SIZE) && Vector2.class.equals(cls)) {
-			Vector2 he = new Vector2(sprite.getWidth(), sprite.getHeight());
-			return (T) he;
-		}
-		return super.getProperty(key, defaultValue, cls);
-	}
-
-	@Override
-	public ObjectProperties getCopyAllProperties() {
-		// create copy of agent's current properties
-		ObjectProperties myProperties = properties.cpy();
-		// put property: facing right
-		if(isFacingRight)
-			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
-		else
-			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.LEFT);
-		// put property: powerup list
-		PowerupList powList = new PowerupList();
-		if(powerState == PowerState.BIG)
-			powList.add(new SMB1_Pow.MushroomPow());
-		else if(powerState == PowerState.FIRE)
-			powList.add(new SMB1_Pow.FireFlowerPow());
-		myProperties.put(CommonKV.Powerup.KEY_POWERUP_LIST, powList);
-		// return copy of agent's current properties
-		return myProperties;
 	}
 
 	@Override

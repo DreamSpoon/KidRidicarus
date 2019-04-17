@@ -1,6 +1,6 @@
 package kidridicarus.common.agent.agentspawner;
 
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 
 public class SingleSpawnController extends SpawnController {
 	private boolean isSpawned;

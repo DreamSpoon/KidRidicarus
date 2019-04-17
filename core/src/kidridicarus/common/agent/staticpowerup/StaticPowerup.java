@@ -4,18 +4,18 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentsprite.BasicAgentSprite;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.powerup.Powerup;
 
-public abstract class StaticPowerup extends Agent implements DisposableAgent {
+public abstract class StaticPowerup extends PlacedBoundsAgent implements DisposableAgent {
 	protected StaticPowerupBody body;
 	protected BasicAgentSprite sprite;
 	private boolean isUsed;

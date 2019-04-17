@@ -3,11 +3,11 @@ package kidridicarus.game.agent.SMB1.item.fireflower;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.SMB1.other.sproutingpowerup.SproutingPowerup;
 import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_KV;
@@ -36,6 +36,6 @@ public class FireFlower extends SproutingPowerup implements DisposableAgent {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {
-		return Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_FIREFLOWER, position);
+		return AP_Tool.createPointAP(SMB1_KV.AgentClassAlias.VAL_FIREFLOWER, position);
 	}
 }

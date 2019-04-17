@@ -3,7 +3,6 @@ package kidridicarus.common.metaagent.playercontrolleragent;
 import java.util.Collection;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
@@ -11,9 +10,9 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -27,12 +26,10 @@ import kidridicarus.common.info.KeyboardMapping;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.common.tool.QQ;
-import kidridicarus.game.info.KidIcarusKV;
-import kidridicarus.game.info.MetroidKV;
-import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.powerup.KidIcarusPow;
 import kidridicarus.game.powerup.MetroidPow;
 import kidridicarus.game.powerup.SMB1_Pow;
@@ -42,6 +39,10 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_Y * 15);
 	private static final float KEEP_ALIVE_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 22);
 	private static final float KEEP_ALIVE_HEIGHT = UInfo.P2M(UInfo.TILEPIX_Y * 15);
+	/*
+	 * TODO Replace use of safety spawn dist (created because change from small Mario to Samus would sometimes
+	 * push Samus body out of bounds) with a check of nearby space for an empty spot to use as spawn position.
+	 */
 	private static final Vector2 SAFETY_RESPAWN_OFFSET = UInfo.VectorP2M(0f, 8f);
 
 	private PlayerAgent playerAgent;
@@ -176,37 +177,31 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 	}
 
 	private void switchAgentType(PowChar pc) {
-		Vector2 currentPos = new Vector2(0f, 0f);
-		boolean facingRight = false;
-		if(playerAgent != null) {
-			currentPos = playerAgent.getPosition().add(SAFETY_RESPAWN_OFFSET);
-			facingRight = playerAgent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE,
-					Direction4.class) == Direction4.RIGHT;
-			agency.removeAgent(playerAgent);
-			playerAgent.dispose();
-			playerAgent = null;
+		// if power character class alias is blank then throw exception
+		if(pc.getAgentClassAlias().equals(""))
+			throw new IllegalArgumentException("Cannot create player Agent from blank class alias.");
+		// if player Agent is null or doesn't have position then throw exception
+		if(playerAgent == null)
+			throw new IllegalStateException("Current player Agent cannot be null when switching power character.");
+		Vector2 oldPosition = AP_Tool.getCenter(playerAgent);
+		if(oldPosition == null) {
+			throw new IllegalStateException(
+					"Current player Agent must have a position when switching power character.");
 		}
 
-		switch(pc) {
-			default:
-			case MARIO:
-				doMakeCharacter(SMB1_KV.AgentClassAlias.VAL_MARIO, currentPos, facingRight);
-				break;
-			case PIT:
-				doMakeCharacter(KidIcarusKV.AgentClassAlias.VAL_PIT, currentPos, facingRight);
-				break;
-			case SAMUS:
-				doMakeCharacter(MetroidKV.AgentClassAlias.VAL_SAMUS, currentPos, facingRight);
-				break;
-			case NONE:
-				break;
-		}
-	}
-
-	private void doMakeCharacter(String classAlias, Vector2 position, boolean facingRight) {
-		ObjectProperties props = Agent.createPointAP(classAlias, position);
+		// save copy of facing right
+		boolean facingRight = AP_Tool.getFacingRight(playerAgent);
+		// remove old player character
+		agency.removeAgent(playerAgent);
+		playerAgent.dispose();
+		playerAgent = null;
+		// create new player character properties
+		ObjectProperties props = AP_Tool.createPointAP(pc.getAgentClassAlias(),
+				oldPosition.cpy().add(SAFETY_RESPAWN_OFFSET));
+		// add facing right property if needed
 		if(facingRight)
 			props.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
+		// create new player power character Agent
 		playerAgent = (PlayerAgent) agency.createAgent(props);
 	}
 
@@ -219,7 +214,7 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 	private Agent getMainPlayerSpawner() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
 		Collection<Agent> spawnList = agency.getAgentsByProperties(
-				new String[] { AgencyKV.Spawn.KEY_AGENT_CLASS, CommonKV.Spawn.KEY_SPAWN_MAIN },
+				new String[] { AgencyKV.KEY_AGENT_CLASS, CommonKV.Spawn.KEY_SPAWN_MAIN },
 				new String[] { CommonKV.AgentClassAlias.VAL_PLAYER_SPAWNER, CommonKV.VAL_TRUE });
 		if(!spawnList.isEmpty())
 			return spawnList.iterator().next();
@@ -227,22 +222,29 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 			return null;
 	}
 
+	// TODO Refactor the following two methods (spawnPlayerAgentWithProperties,
+	// spawnPlayerAgentWithSpawnerProperties) to simplify.
 	private PlayerAgent spawnPlayerAgentWithProperties(ObjectProperties playerAgentProperties, Agent spawner) {
+		// if no spawn position then return null
+		Vector2 spawnPos = AP_Tool.getCenter(spawner);
+		if(spawnPos == null)
+			return null;
 		// if no agent properties given then use spawner to determine player class and position
 		if(playerAgentProperties == null)
-			return spawnPlayerAgentWithSpawnerProperties(spawner);
+			return spawnPlayerAgentWithSpawnerProperties(spawner, spawnPos);
 		// otherwise use agent properties and set start point to main spawn point
 		else {
-			playerAgentProperties.put(AgencyKV.Spawn.KEY_START_POS, spawner.getPosition());
+			// otherwise insert spawn position into properties and create player Agent
+			playerAgentProperties.put(CommonKV.KEY_POSITION, spawnPos);
 			return (PlayerAgent) agency.createAgent(playerAgentProperties);
 		}
 	}
 
-	private PlayerAgent spawnPlayerAgentWithSpawnerProperties(Agent spawner) {
+	private PlayerAgent spawnPlayerAgentWithSpawnerProperties(Agent spawner, Vector2 spawnPos) {
 		String initPlayClass = spawner.getProperty(CommonKV.Spawn.KEY_PLAYER_AGENTCLASS, null, String.class);
 		if(initPlayClass == null)
 			return null;
-		ObjectProperties playerAP = Agent.createPointAP(initPlayClass, spawner.getPosition());
+		ObjectProperties playerAP = AP_Tool.createPointAP(initPlayClass, spawnPos);
 		if(spawner.getProperty(CommonKV.KEY_DIRECTION, "", String.class).equals(CommonKV.VAL_RIGHT))
 			playerAP.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
 		return (PlayerAgent) agency.createAgent(playerAP);
@@ -277,16 +279,6 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
-		return null;
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return null;
-	}
-
-	@Override
 	public void disposeAgent() {
 		if(scrollBox != null)
 			scrollBox.dispose();
@@ -299,7 +291,7 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 	}
 
 	public static ObjectProperties makeAP(ObjectProperties playerAgentProperties) {
-		ObjectProperties props = Agent.createAP(CommonKV.AgentClassAlias.VAL_PLAYER_WRAPPER);
+		ObjectProperties props = AP_Tool.createAP(CommonKV.AgentClassAlias.VAL_PLAYER_CONTROLLER);
 		props.put(CommonKV.Player.KEY_AGENT_PROPERTIES, playerAgentProperties);
 		return props;
 	}

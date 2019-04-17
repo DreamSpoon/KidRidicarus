@@ -8,17 +8,19 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.SolidAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.info.MetroidAudio;
 
-public class MetroidDoor extends Agent implements SolidAgent, TriggerTakeAgent, ContactDmgTakeAgent,
+public class MetroidDoor extends PlacedBoundsAgent implements SolidAgent, TriggerTakeAgent, ContactDmgTakeAgent,
 		DisposableAgent {
 	private static final float LONG_OPEN_DELAY = 77/30f;
 	private static final float SHORT_OPEN_DELAY = 0.75f;
@@ -48,7 +50,7 @@ public class MetroidDoor extends Agent implements SolidAgent, TriggerTakeAgent, 
 		isOpening = false;
 		isQuickOpenClose = false;
 
-		body = new MetroidDoorBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		body = new MetroidDoorBody(this, agency.getWorld(), AP_Tool.getCenter(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(delta); }

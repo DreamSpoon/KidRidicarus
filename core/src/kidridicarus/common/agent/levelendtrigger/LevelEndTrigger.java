@@ -7,19 +7,21 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 
-public class LevelEndTrigger extends Agent implements TriggerTakeAgent, DisposableAgent {
+public class LevelEndTrigger extends PlacedBoundsAgent implements TriggerTakeAgent, DisposableAgent {
 	private LevelEndTriggerBody body;
 
 	public LevelEndTrigger(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		body = new LevelEndTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		body = new LevelEndTriggerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

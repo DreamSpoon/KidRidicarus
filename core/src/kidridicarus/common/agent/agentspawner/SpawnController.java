@@ -4,8 +4,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 
 public abstract class SpawnController {
 	protected AgentSpawner spawner;
@@ -22,7 +23,7 @@ public abstract class SpawnController {
 	}
 
 	protected Agent doSpawn(Vector2 position) {
-		return spawner.getAgency().createAgent(Agent.createPointAP(spawnAgentClassAlias, position));
+		return spawner.getAgency().createAgent(AP_Tool.createPointAP(spawnAgentClassAlias, position));
 	}
 
 	protected Agent doSpawn() {

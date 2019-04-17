@@ -9,11 +9,13 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.KidIcarus.item.angelheart.AngelHeart;
 import kidridicarus.game.agent.KidIcarus.other.vanishpoof.VanishPoof;
 import kidridicarus.game.agentspine.KidIcarus.FlyBallSpine.AxisGoState;
@@ -24,7 +26,7 @@ import kidridicarus.game.info.KidIcarusAudio;
  * ogle them in a downward direction.
  * QQ
  */
-public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+public class Monoeye extends PlacedBoundsAgent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 5;
 
@@ -59,7 +61,7 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 		ogleTarget = null;
 		isTargetRemoved = false;
 
-		body = new MonoeyeBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		body = new MonoeyeBody(this, agency.getWorld(), AP_Tool.getCenter(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -164,7 +166,7 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 		// if moving right
 		else if(horizGoState == AxisGoState.VEL_PLUS) {
 			// if target is on left then change direction
-			return body.getSpine().isTargetOnLeft(ogleTarget.getPosition().x) ?
+			return body.getSpine().isTargetOnSide(ogleTarget, false) ?
 					AxisGoState.ACCEL_MINUS : AxisGoState.VEL_PLUS;
 		}
 		// if accelerating left
@@ -176,7 +178,7 @@ public class Monoeye extends Agent implements ContactDmgTakeAgent, DisposableAge
 		// else moving left
 		else {
 			// if target is on right then change direction
-			return body.getSpine().isTargetOnRight(ogleTarget.getPosition().x) ?
+			return body.getSpine().isTargetOnSide(ogleTarget, true) ?
 					AxisGoState.ACCEL_PLUS : AxisGoState.VEL_MINUS;
 		}
 	}

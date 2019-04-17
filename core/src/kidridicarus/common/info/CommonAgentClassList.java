@@ -25,7 +25,7 @@ public class CommonAgentClassList {
 			CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP, DrawLayerAgent.class,
 			CommonKV.AgentClassAlias.VAL_KEEPALIVE_BOX, KeepAliveBox.class,
 			CommonKV.AgentClassAlias.VAL_LEVELEND_TRIGGER, LevelEndTrigger.class,
-			CommonKV.AgentClassAlias.VAL_PLAYER_WRAPPER, PlayerControllerAgent.class,
+			CommonKV.AgentClassAlias.VAL_PLAYER_CONTROLLER, PlayerControllerAgent.class,
 			CommonKV.AgentClassAlias.VAL_SOLID_TILEDMAP, SolidTiledMapAgent.class,
 			CommonKV.AgentClassAlias.VAL_PIPEWARP, PipeWarp.class,
 			CommonKV.AgentClassAlias.VAL_PLAYER_SPAWNER, PlayerSpawner.class,

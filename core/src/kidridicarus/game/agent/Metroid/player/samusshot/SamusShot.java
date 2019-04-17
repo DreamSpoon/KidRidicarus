@@ -4,21 +4,21 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.Metroid.player.samus.Samus;
 import kidridicarus.game.info.MetroidKV;
 
-public class SamusShot extends Agent implements DisposableAgent {
+public class SamusShot extends PlacedBoundsAgent implements DisposableAgent {
 	private static final float LIVE_TIME = 0.217f;
 	private static final float EXPLODE_TIME = 3f/60f;
 	private static final float GIVE_DAMAGE = 1f;
@@ -38,7 +38,7 @@ public class SamusShot extends Agent implements DisposableAgent {
 		super(agency, properties);
 
 		moveStateTimer = 0f;
-		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENT_AGENT, null, Samus.class);
+		parent = properties.get(CommonKV.KEY_PARENT_AGENT, null, Samus.class);
 		lastKnownRoom = null;
 
 		// check the definition properties, maybe the shot needs to expire immediately
@@ -48,8 +48,8 @@ public class SamusShot extends Agent implements DisposableAgent {
 		else
 			moveState = MoveState.LIVE;
 
-		startVelocity = Agent.getStartVelocity(properties);
-		body = new SamusShotBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+		startVelocity = AP_Tool.getVelocity(properties);
+		body = new SamusShotBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
 				startVelocity);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
@@ -157,9 +157,9 @@ public class SamusShot extends Agent implements DisposableAgent {
 	// make the AgentProperties (AP) for this class of Agent
 	public static ObjectProperties makeAP(Samus parentAgent, Vector2 position, Vector2 velocity,
 			boolean isExpireImmediately) {
-		ObjectProperties props = Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SAMUS_SHOT,
+		ObjectProperties props = AP_Tool.createPointAP(MetroidKV.AgentClassAlias.VAL_SAMUS_SHOT,
 				position, velocity);
-		props.put(AgencyKV.Spawn.KEY_START_PARENT_AGENT, parentAgent);
+		props.put(CommonKV.KEY_PARENT_AGENT, parentAgent);
 		if(isExpireImmediately)
 			props.put(CommonKV.Spawn.KEY_EXPIRE, true);
 		return props;

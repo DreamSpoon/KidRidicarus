@@ -4,15 +4,16 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.info.KidIcarusKV;
 
-public class VanishPoof extends Agent {
+public class VanishPoof extends PlacedBoundsAgent {
 	private static final float POOF_TIME = 2/5f;
 
 	private Vector2 position;
@@ -22,7 +23,7 @@ public class VanishPoof extends Agent {
 	public VanishPoof(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		position = Agent.getStartPoint(properties);
+		position = AP_Tool.getCenter(properties);
 		stateTimer = 0f;
 
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
@@ -60,7 +61,7 @@ public class VanishPoof extends Agent {
 
 	public static ObjectProperties makeAP(Vector2 position, boolean isBig) {
 		ObjectProperties props =
-				Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_VANISH_POOF, position);
+				AP_Tool.createPointAP(KidIcarusKV.AgentClassAlias.VAL_VANISH_POOF, position);
 		props.put(KidIcarusKV.KEY_IS_BIG, isBig);
 		return props;
 	}

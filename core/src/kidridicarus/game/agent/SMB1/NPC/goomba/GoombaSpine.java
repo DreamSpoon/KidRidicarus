@@ -1,7 +1,5 @@
 package kidridicarus.game.agent.SMB1.NPC.goomba;
 
-import com.badlogic.gdx.math.Vector2;
-
 import kidridicarus.game.agentspine.SMB1.KoopaSpine;
 
 public class GoombaSpine extends KoopaSpine {
@@ -31,9 +29,5 @@ public class GoombaSpine extends KoopaSpine {
 			body.setVelocity(BUMP_SIDE_VEL, BUMP_UP_VEL);
 		else
 			body.setVelocity(-BUMP_SIDE_VEL, BUMP_UP_VEL);
-	}
-
-	public boolean isDeadBumpRight(Vector2 position) {
-		return position.x < body.getPosition().x;
 	}
 }

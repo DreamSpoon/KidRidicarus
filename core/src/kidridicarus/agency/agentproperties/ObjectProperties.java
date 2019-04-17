@@ -1,4 +1,4 @@
-package kidridicarus.agency.tool;
+package kidridicarus.agency.agentproperties;
 
 import java.util.HashMap;
 import java.util.Map.Entry;

@@ -4,13 +4,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
-public class PlayerSpawner extends Agent implements DisposableAgent {
+public class PlayerSpawner extends PlacedBoundsAgent implements DisposableAgent {
 	private enum SpawnType { IMMEDIATE, PIPEWARP }
 
 	private PlayerSpawnerBody psbody;
@@ -32,7 +33,7 @@ public class PlayerSpawner extends Agent implements DisposableAgent {
 			direction = Direction4.fromString(properties.get(CommonKV.KEY_DIRECTION, "", String.class));
 		}
 
-		psbody = new PlayerSpawnerBody(agency.getWorld(), this, Agent.getStartBounds(properties));
+		psbody = new PlayerSpawnerBody(agency.getWorld(), this, AP_Tool.getBounds(properties));
 	}
 
 	public boolean isMainSpawn() {

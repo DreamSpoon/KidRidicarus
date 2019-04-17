@@ -8,10 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.agent.SMB1.other.sproutingpowerup.SproutingPowerup;
@@ -96,7 +97,12 @@ public abstract class BaseMushroom extends SproutingPowerup implements BumpTakeA
 		// one bump per frame please
 		if(isBumped)
 			return;
+		// if bumping agent doesn't have position then exit
+		Vector2 bumpingAgentPos = AP_Tool.getCenter(bumpingAgent);
+		if(bumpingAgentPos == null)
+			return;
+
 		isBumped = true;
-		bumpCenter.set(bumpingAgent.getPosition()); 
+		bumpCenter.set(bumpingAgentPos); 
 	}
 }

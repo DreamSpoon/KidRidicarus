@@ -9,15 +9,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.QQ;
 
-public class SolidTiledMapAgent extends Agent implements Disposable {
+public class SolidTiledMapAgent extends PlacedBoundsAgent implements Disposable {
 	private SolidTiledMap solidMap;
 	private SolidTiledMapBody body;
 	private LinkedBlockingQueue<SolidTileChange> tileChangeQ;
@@ -35,7 +36,7 @@ public class SolidTiledMapAgent extends Agent implements Disposable {
 		// The OTC map will create bodies with the World...
 		solidMap = new SolidTiledMap(agency.getWorld(), solidLayers);
 		// ... and a meta-body will be created that encompasses all the solid bound line bodies.
-		body = new SolidTiledMapBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		body = new SolidTiledMapBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		// Agent has post update because:
 		//   -it may receive requests to modify the solid state of tiles inside itself during the regular Agency update
 		//   -it will process these requests in batch format during post-update
@@ -114,7 +115,7 @@ public class SolidTiledMapAgent extends Agent implements Disposable {
 	}
 
 	public static ObjectProperties makeAP(Rectangle bounds, List<TiledMapTileLayer> solidLayers) {
-		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_SOLID_TILEDMAP, bounds);
+		ObjectProperties cmProps = AP_Tool.createRectangleAP(CommonKV.AgentClassAlias.VAL_SOLID_TILEDMAP, bounds);
 		cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER_LIST, solidLayers);
 		return cmProps;
 	}

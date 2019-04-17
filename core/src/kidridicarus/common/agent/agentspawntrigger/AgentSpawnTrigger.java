@@ -5,14 +5,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBox;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 
 public class AgentSpawnTrigger extends FollowBox implements Disposable {
 	private AgentSpawnTriggerBody body;
@@ -23,7 +23,7 @@ public class AgentSpawnTrigger extends FollowBox implements Disposable {
 
 		// begin in the disabled state (will not trigger spawners)
 		enabled = false;
-		body = new AgentSpawnTriggerBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		body = new AgentSpawnTriggerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doUpdate(); }
@@ -53,7 +53,7 @@ public class AgentSpawnTrigger extends FollowBox implements Disposable {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, float width, float height) {
-		return Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_AGENTSPAWN_TRIGGER,
+		return AP_Tool.createRectangleAP(CommonKV.AgentClassAlias.VAL_AGENTSPAWN_TRIGGER,
 				new Rectangle(position.x - width/2f, position.y - height/2f, width, height));
 	}
 

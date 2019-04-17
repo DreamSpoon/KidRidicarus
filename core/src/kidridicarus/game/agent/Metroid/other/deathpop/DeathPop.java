@@ -1,18 +1,18 @@
 package kidridicarus.game.agent.Metroid.other.deathpop;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.info.MetroidKV;
 
-public class DeathPop extends Agent {
+public class DeathPop extends PlacedAgent {
 	private static final float POP_TIME = 3f/60f;
 
 	private DeathPopSprite sprite;
@@ -22,7 +22,7 @@ public class DeathPop extends Agent {
 	public DeathPop(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		stateTimer = 0f;
-		position = Agent.getStartPoint(properties);
+		position = AP_Tool.getCenter(properties);
 		sprite = new DeathPopSprite(agency.getAtlas(), position);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
@@ -50,12 +50,7 @@ public class DeathPop extends Agent {
 		return position;
 	}
 
-	@Override
-	public Rectangle getBounds() {
-		return new Rectangle(position.x, position.y, 0f, 0f);
-	}
-
 	public static ObjectProperties makeAP(Vector2 position) {
-		return Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, position);
+		return AP_Tool.createPointAP(MetroidKV.AgentClassAlias.VAL_DEATH_POP, position);
 	}
 }

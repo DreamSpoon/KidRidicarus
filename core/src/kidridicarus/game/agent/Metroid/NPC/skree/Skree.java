@@ -9,19 +9,21 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.Metroid.NPC.skreeshot.SkreeShot;
 import kidridicarus.game.agent.Metroid.item.energy.Energy;
 import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
 
-public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+public class Skree extends PlacedBoundsAgent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -67,8 +69,8 @@ public class Skree extends Agent implements ContactDmgTakeAgent, DisposableAgent
 		isTargetRemoved = false;
 		lastKnownRoom = null;
 
-		body = new SkreeBody(this, agency.getWorld(), Agent.getStartPoint(properties).cpy().add(SPECIAL_OFFSET),
-				Agent.getStartVelocity(properties));
+		body = new SkreeBody(this, agency.getWorld(), AP_Tool.getCenter(properties).cpy().add(SPECIAL_OFFSET),
+				AP_Tool.getVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

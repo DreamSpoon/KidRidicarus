@@ -8,19 +8,21 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB1.Koopa;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+public class Goomba extends PlacedBoundsAgent implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
@@ -58,8 +60,8 @@ public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		nextDeadState = DeadState.NONE;
 		lastKnownRoom = null;
 
-		body = new GoombaBody(this, agency.getWorld(), Agent.getStartPoint(properties),
-				Agent.getStartVelocity(properties));
+		body = new GoombaBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+				AP_Tool.getVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -221,12 +223,17 @@ public class Goomba extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 
 	@Override
 	public void onTakeBump(Agent agent) {
+		// no dead bumps
 		if(nextDeadState != DeadState.NONE)
 			return;
-
+		// save ref to perpetrator Agent, and check for bump right
 		this.perp = agent;
 		nextDeadState = DeadState.BUMP;
-		deadBumpRight = body.getSpine().isDeadBumpRight(perp.getPosition());
+		Vector2 perpPos = AP_Tool.getCenter(perp);
+		if(perpPos == null)
+			deadBumpRight = false;
+		else
+			deadBumpRight = body.getSpine().isDeadBumpRight(perpPos);
 	}
 
 	@Override

@@ -5,12 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.agent.SMB1.other.sproutingpowerup.SproutingPowerup;
@@ -95,14 +96,18 @@ public class PowerStar extends SproutingPowerup implements BumpTakeAgent {
 
 	@Override
 	public void onTakeBump(Agent bumpingAgent) {
+		// if bumping Agent doesn't have position then exit
+		Vector2 bumpingAgentPos = AP_Tool.getCenter(bumpingAgent);
+		if(bumpingAgentPos == null)
+			return;
 		// if bump came from left and star is moving left then reverse,
 		// if bump came from right and star is moving right then reverse
-		if((bumpingAgent.getPosition().x < body.getPosition().x && body.getVelocity().x < 0f) ||
-			(bumpingAgent.getPosition().x > body.getPosition().x && body.getVelocity().x > 0f))
+		if((bumpingAgentPos.x < body.getPosition().x && body.getVelocity().x < 0f) ||
+			(bumpingAgentPos.x > body.getPosition().x && body.getVelocity().x > 0f))
 			isFacingRight = !isFacingRight;
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {
-		return Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_POWERSTAR, position);
+		return AP_Tool.createPointAP(SMB1_KV.AgentClassAlias.VAL_POWERSTAR, position);
 	}
 }

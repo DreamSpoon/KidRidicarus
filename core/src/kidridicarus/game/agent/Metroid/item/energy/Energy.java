@@ -3,11 +3,11 @@ package kidridicarus.game.agent.Metroid.item.energy;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.briefstaticpowerup.BriefStaticPowerup;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidKV;
 import kidridicarus.game.powerup.MetroidPow;
@@ -17,8 +17,8 @@ public class Energy extends BriefStaticPowerup implements DisposableAgent {
 
 	public Energy(Agency agency, ObjectProperties agentProps) {
 		super(agency, agentProps, LIVE_TIME);
-		body = new EnergyBody(this, agency.getWorld(), Agent.getStartPoint(agentProps));
-		sprite = new EnergySprite(agency.getAtlas(), Agent.getStartPoint(agentProps));
+		body = new EnergyBody(this, agency.getWorld(), AP_Tool.getCenter(agentProps));
+		sprite = new EnergySprite(agency.getAtlas(), AP_Tool.getCenter(agentProps));
 	}
 
 	@Override
@@ -34,6 +34,6 @@ public class Energy extends BriefStaticPowerup implements DisposableAgent {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {
-		return Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_ENERGY, position);
+		return AP_Tool.createPointAP(MetroidKV.AgentClassAlias.VAL_ENERGY, position);
 	}
 }

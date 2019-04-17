@@ -4,16 +4,17 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 
-public class CastleFlag extends Agent implements TriggerTakeAgent {
+public class CastleFlag extends PlacedBoundsAgent implements TriggerTakeAgent {
 	private static final float RISE_DIST = UInfo.P2M(32);
 	private static final float RISE_TIME = 1f;
 	private static final float BODY_WIDTH = UInfo.P2M(16f);
@@ -32,7 +33,7 @@ public class CastleFlag extends Agent implements TriggerTakeAgent {
 		super(agency, properties);
 
 		myUpdateListener = null;
-		startPosition = Agent.getStartPoint(properties);
+		startPosition = AP_Tool.getCenter(properties);
 		isTriggered = false;
 		curMoveState = MoveState.DOWN;
 		stateTimer = 0f;

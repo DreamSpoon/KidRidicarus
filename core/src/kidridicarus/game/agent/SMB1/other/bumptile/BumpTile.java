@@ -14,13 +14,15 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.TileBumpTakeAgent;
 import kidridicarus.game.agent.SMB1.item.fireflower.FireFlower;
@@ -34,7 +36,7 @@ import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.powerup.SMB1_Pow;
 
-public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgent {
+public class BumpTile extends PlacedBoundsAgent implements TileBumpTakeAgent, DisposableAgent {
 	public enum TileBumpStrength { NONE, SOFT, HARD }
 
 	private static final float BOUNCE_TIME = 0.175f;
@@ -102,8 +104,8 @@ public class BumpTile extends Agent implements TileBumpTakeAgent, DisposableAgen
 
 		solidTileMap = null;
 
-		body = new BumpTileBody(agency.getWorld(), this, Agent.getStartBounds(properties));
-		sprite = new BumpTileSprite(agency.getAtlas(), Agent.getStartTexRegion(properties));
+		body = new BumpTileBody(agency.getWorld(), this, AP_Tool.getBounds(properties));
+		sprite = new BumpTileSprite(agency.getAtlas(), AP_Tool.getTexRegion(properties));
 
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override

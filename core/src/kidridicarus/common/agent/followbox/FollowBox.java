@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 
-public abstract class FollowBox extends Agent {
+public abstract class FollowBox extends PlacedBoundsAgent {
 	protected abstract FollowBoxBody getFollowBoxBody();
 
 	public FollowBox(Agency agency, ObjectProperties properties) {

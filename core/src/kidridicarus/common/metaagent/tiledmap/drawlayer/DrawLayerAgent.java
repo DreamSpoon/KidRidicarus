@@ -5,22 +5,23 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.AllowOrder;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.tool.Eye;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.DrawOrderAlias;
 
-public class DrawLayerAgent extends Agent {
+public class DrawLayerAgent extends PlacedBoundsAgent {
 	private Rectangle bounds;
 	private TiledMapTileLayer drawLayer;
 
 	public DrawLayerAgent(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		this.bounds = Agent.getStartBounds(properties);
+		this.bounds = AP_Tool.getBounds(properties);
 		drawLayer = properties.get(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER, null, TiledMapTileLayer.class);
 		if(drawLayer == null)
 			throw new IllegalArgumentException("Agents needs TiledMapTileLayer in its construction properties.");
@@ -74,7 +75,7 @@ public class DrawLayerAgent extends Agent {
 	}
 
 	public static ObjectProperties makeAP(Rectangle bounds, TiledMapTileLayer layer) {
-		ObjectProperties cmProps = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP, bounds);
+		ObjectProperties cmProps = AP_Tool.createRectangleAP(CommonKV.AgentClassAlias.VAL_DRAWABLE_TILEMAP, bounds);
 		cmProps.put(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER, layer);
 		return cmProps;
 	}

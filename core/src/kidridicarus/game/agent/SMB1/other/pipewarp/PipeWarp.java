@@ -6,14 +6,16 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playerspawner.PlayerSpawner;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
-public class PipeWarp extends Agent implements DisposableAgent {
+public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 	class PipeWarpHorizon {
 		Direction4 direction;
 		Rectangle bounds; 
@@ -42,7 +44,7 @@ public class PipeWarp extends Agent implements DisposableAgent {
 			else if(dir.equals("down"))
 				direction = Direction4.DOWN;
 		}
-		pwBody = new PipeWarpBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		pwBody = new PipeWarpBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 	}
 
 	public boolean canBodyEnterPipe(Rectangle otherBounds, Direction4 moveDir) {

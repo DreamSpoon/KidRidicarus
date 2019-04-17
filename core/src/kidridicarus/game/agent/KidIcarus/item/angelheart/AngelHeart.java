@@ -3,11 +3,11 @@ package kidridicarus.game.agent.KidIcarus.item.angelheart;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.briefstaticpowerup.BriefStaticPowerup;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusKV;
 import kidridicarus.game.powerup.KidIcarusPow;
@@ -47,8 +47,8 @@ public class AngelHeart extends BriefStaticPowerup implements DisposableAgent {
 				throw new IllegalStateException(
 						"Unable to spawn this Agent because of irregular heart count: "+heartCount);
 		}
-		body = new AngelHeartBody(this, agency.getWorld(), Agent.getStartPoint(agentProps));
-		sprite = new AngelHeartSprite(agency.getAtlas(), Agent.getStartPoint(agentProps), heartSize);
+		body = new AngelHeartBody(this, agency.getWorld(), AP_Tool.getCenter(agentProps));
+		sprite = new AngelHeartSprite(agency.getAtlas(), AP_Tool.getCenter(agentProps), heartSize);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class AngelHeart extends BriefStaticPowerup implements DisposableAgent {
 	public static ObjectProperties makeAP(Vector2 position, int heartCount) {
 		if(!AngelHeartSize.isValidHeartCount(heartCount))
 			throw new IllegalArgumentException("Unable to create Agent with heart count = " + heartCount);
-		ObjectProperties props = Agent.createPointAP(KidIcarusKV.AgentClassAlias.VAL_ANGEL_HEART, position);
+		ObjectProperties props = AP_Tool.createPointAP(KidIcarusKV.AgentClassAlias.VAL_ANGEL_HEART, position);
 		props.put(KidIcarusKV.KEY_HEART_COUNT, heartCount);
 		return props;
 	}

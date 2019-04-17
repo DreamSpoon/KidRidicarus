@@ -2,11 +2,13 @@ package kidridicarus.game.agent.Metroid.NPC.rio;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.PlayerContactNerve;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
 public class RioSpine extends SolidContactSpine {
@@ -33,28 +35,59 @@ public class RioSpine extends SolidContactSpine {
 		return pcNerve.getFirstPlayerContact();
 	}
 
-	public void setSwoopVelocity(Vector2 targetPos, Direction4 swoopDir, boolean swoopUp) {
-		float x = swoopDir.isRight() ? SIDE_SPEED_MAX : -SIDE_SPEED_MAX;
-		float y = (targetPos.y - body.getPosition().y) * SWOOP_VEL_FACTOR;
+	// TODO refactor this method
+	public void setSwoopVelocity(Agent target, Direction4 swoopDir, boolean swoopUp) {
+		// default to swoop up at max speed in given swoopDir
+		Vector2 swoopVel = new Vector2(swoopDir.isRight() ? SIDE_SPEED_MAX : -SIDE_SPEED_MAX, SWOOP_MAX_VEL);
+		// if target position exists then use the position to set the swoop velocity
+		Vector2 targetPos = AP_Tool.getCenter(target);
+		if(targetPos != null)
+			swoopVel.y = (targetPos.y - body.getPosition().y) * SWOOP_VEL_FACTOR;
 		if(swoopUp) {
 			// if swooping up then move away from target
-			y = -y;
-			if(y < SWOOP_UP_MIN_VEL)
-				y = SWOOP_UP_MIN_VEL;
-			else if(y > SWOOP_MAX_VEL)
-				y = SWOOP_MAX_VEL;
+			swoopVel.y = -swoopVel.y;
+			if(swoopVel.y < SWOOP_UP_MIN_VEL)
+				swoopVel.y = SWOOP_UP_MIN_VEL;
+			else if(swoopVel.y > SWOOP_MAX_VEL)
+				swoopVel.y = SWOOP_MAX_VEL;
 		}
 		else {
-			if(y > -SWOOP_DOWN_MIN_VEL)
-				y = -SWOOP_DOWN_MIN_VEL;
-			else if(y < -SWOOP_MAX_VEL)
-				y = -SWOOP_MAX_VEL;
+			if(swoopVel.y > -SWOOP_DOWN_MIN_VEL)
+				swoopVel.y = -SWOOP_DOWN_MIN_VEL;
+			else if(swoopVel.y < -SWOOP_MAX_VEL)
+				swoopVel.y = -SWOOP_MAX_VEL;
 		}
-
-		body.setVelocity(x, y);
+		body.setVelocity(swoopVel);
 	}
 
-	public boolean isTargetAboveMe(Vector2 targetPosition) {
+	// TODO refactor this method
+	public void setSwoopVelocity(Vector2 swoopLowPoint, Direction4 swoopDir, boolean swoopUp) {
+		// default to swoop up at max speed in given swoopDir
+		Vector2 swoopVel = new Vector2(swoopDir.isRight() ? SIDE_SPEED_MAX : -SIDE_SPEED_MAX,
+				(swoopLowPoint.y - body.getPosition().y) * SWOOP_VEL_FACTOR);
+		if(swoopUp) {
+			// if swooping up then move away from target
+			swoopVel.y = -swoopVel.y;
+			if(swoopVel.y < SWOOP_UP_MIN_VEL)
+				swoopVel.y = SWOOP_UP_MIN_VEL;
+			else if(swoopVel.y > SWOOP_MAX_VEL)
+				swoopVel.y = SWOOP_MAX_VEL;
+		}
+		else {
+			if(swoopVel.y > -SWOOP_DOWN_MIN_VEL)
+				swoopVel.y = -SWOOP_DOWN_MIN_VEL;
+			else if(swoopVel.y < -SWOOP_MAX_VEL)
+				swoopVel.y = -SWOOP_MAX_VEL;
+		}
+		body.setVelocity(swoopVel);
+	}
+
+	public boolean isTargetAboveMe(Agent target) {
+		Vector2 targetPosition = AP_Tool.getCenter(target);
+		// if target doesn't have position then return false
+		if(targetPosition == null)
+			return false;
+		// return true if target is above offset body position
 		return targetPosition.y > body.getPosition().y + SWOOP_EPS_DIST;
 	}
 }

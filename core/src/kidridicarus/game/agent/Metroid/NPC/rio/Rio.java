@@ -9,12 +9,14 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.Metroid.item.energy.Energy;
 import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
@@ -23,7 +25,7 @@ import kidridicarus.game.info.MetroidAudio;
 /*
  * TODO Check that Rio can re-target: as in, lose a target, then wait a bit, then gain a new target successfully.
  */
-public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+public class Rio extends PlacedBoundsAgent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float MAX_HEALTH = 4f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -54,8 +56,8 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 
 		setStateFromProperties();
 
-		body = new RioBody(this, agency.getWorld(), Agent.getStartPoint(properties),
-				Agent.getStartVelocity(properties));
+		body = new RioBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+				AP_Tool.getVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -176,7 +178,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 					// first frame of swoop?
 					if(isMoveStateChanged) {
 						// if target on left then swoop left
-						if(target.getPosition().x < body.getPosition().x)
+						if(body.getSpine().isTargetOnSide(target, false))
 							swoopDir = Direction4.LEFT;
 						else
 							swoopDir = Direction4.RIGHT;
@@ -195,7 +197,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 						}
 					}
 					// if target is above rio by a certain amount then do swoop up
-					if(body.getSpine().isTargetAboveMe(target.getPosition())) {
+					if(body.getSpine().isTargetAboveMe(target)) {
 						isSwoopUp = true;
 						swoopLowPoint = body.getPosition().cpy();
 					}
@@ -206,7 +208,7 @@ public class Rio extends Agent implements ContactDmgTakeAgent, DisposableAgent {
 					body.getSpine().setSwoopVelocity(swoopLowPoint, swoopDir, true);
 				// otherwise move down, hopefully toward, player target
 				else
-					body.getSpine().setSwoopVelocity(target.getPosition(), swoopDir, false);
+					body.getSpine().setSwoopVelocity(target, swoopDir, false);
 
 				break;
 			case DEAD:

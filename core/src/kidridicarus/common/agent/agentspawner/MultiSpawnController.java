@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;

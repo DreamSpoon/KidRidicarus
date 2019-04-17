@@ -1,7 +1,7 @@
 package kidridicarus.common.agent.briefstaticpowerup;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.staticpowerup.StaticPowerup;
 
 public abstract class BriefStaticPowerup extends StaticPowerup {

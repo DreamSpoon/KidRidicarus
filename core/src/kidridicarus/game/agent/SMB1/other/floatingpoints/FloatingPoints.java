@@ -7,14 +7,14 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
-import kidridicarus.common.tool.QQ;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.powerup.SMB1_Pow;
 
@@ -27,7 +27,7 @@ import kidridicarus.game.powerup.SMB1_Pow;
  * 
  * The sliding turtle shell awards only absolute points, and head bounces award only relative points.
  */
-public class FloatingPoints extends Agent {
+public class FloatingPoints extends PlacedBoundsAgent {
 	private static final float FLOAT_TIME = 1f;
 	private static final float FLOAT_HEIGHT = UInfo.P2M(48);
 
@@ -38,14 +38,12 @@ public class FloatingPoints extends Agent {
 	public FloatingPoints(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		originalPosition = Agent.getStartPoint(properties);
+		originalPosition = AP_Tool.getCenter(properties);
 
 		// default to zero points
 		int amount = properties.get(SMB1_KV.KEY_POINTAMOUNT, 0, Integer.class);
-		Powerup.tryPushPowerup(properties.get(AgencyKV.Spawn.KEY_START_PARENT_AGENT, null, Agent.class),
+		Powerup.tryPushPowerup(properties.get(CommonKV.KEY_PARENT_AGENT, null, Agent.class),
 				new SMB1_Pow.PointsPow(amount));
-if(amount == 0)
-	QQ.pr("Floating points with amount=0 created");
 
 		stateTimer = 0f;
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
@@ -84,12 +82,12 @@ if(amount == 0)
 	public static ObjectProperties makeAP(int amount, boolean relative, Vector2 position, Agent parentAgent) {
 		// Create agent 1 tile above given position; for convenience since points usually start 1 tile above
 		// thing that caused points.
-		ObjectProperties props = Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_FLOATINGPOINTS,
+		ObjectProperties props = AP_Tool.createPointAP(SMB1_KV.AgentClassAlias.VAL_FLOATINGPOINTS,
 				position.cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y)));
 		props.put(SMB1_KV.KEY_POINTAMOUNT, amount);
 		if(relative)
 			props.put(SMB1_KV.KEY_RELPOINTAMOUNT, CommonKV.VAL_TRUE);
-		props.put(AgencyKV.Spawn.KEY_START_PARENT_AGENT, parentAgent);
+		props.put(CommonKV.KEY_PARENT_AGENT, parentAgent);
 		return props;
 	}
 /*	// https://www.mariowiki.com/Point

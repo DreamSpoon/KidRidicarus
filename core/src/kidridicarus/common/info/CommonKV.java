@@ -14,7 +14,12 @@ public class CommonKV {
 	public static final String VAL_DOWN = "down";
 	public static final String VAL_DOWN_RIGHT = "down_right";
 
+	public static final String KEY_POSITION = "position";
+	public static final String KEY_BOUNDS = "bounds";
 	public static final String KEY_VELOCITY = "velocity";
+	// used by tile agent constructors (e.g. breakable brick tile blocks)
+	public static final String KEY_TEXREGION = "tex_region";
+	public static final String KEY_PARENT_AGENT = "parent_agent";
 
 	public class Player {
 		public static final String KEY_AGENT_PROPERTIES = "agent_properties";
@@ -35,7 +40,7 @@ public class CommonKV {
 		public static final String VAL_SCROLL_KILLBOX = "scroll_kill_box";
 		public static final String VAL_SEMISOLID_FLOOR = "semi_solid_floor";
 		public static final String VAL_SOLID_TILEDMAP = "solid_tiled_map";
-		public static final String VAL_PLAYER_WRAPPER = "player_wrapper";
+		public static final String VAL_PLAYER_CONTROLLER = "player_wrapper";
 	}
 
 	public class Spawn {

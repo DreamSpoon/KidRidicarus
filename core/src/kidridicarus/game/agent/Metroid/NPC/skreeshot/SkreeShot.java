@@ -4,18 +4,19 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.info.MetroidKV;
 
-public class SkreeShot extends Agent implements DisposableAgent {
+public class SkreeShot extends PlacedBoundsAgent implements DisposableAgent {
 	private static final float LIVE_TIME = 0.167f;
 	private static final float GIVE_DAMAGE = 5f;
 
@@ -28,8 +29,8 @@ public class SkreeShot extends Agent implements DisposableAgent {
 		super(agency, properties);
 		moveStateTimer = 0f;
 		lastKnownRoom = null;
-		body = new SkreeShotBody(this, agency.getWorld(), Agent.getStartPoint(properties),
-				Agent.getStartVelocity(properties));
+		body = new SkreeShotBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+				AP_Tool.getVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -97,6 +98,6 @@ public class SkreeShot extends Agent implements DisposableAgent {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, Vector2 velocity) {
-		return Agent.createPointAP(MetroidKV.AgentClassAlias.VAL_SKREE_SHOT, position, velocity);
+		return AP_Tool.createPointAP(MetroidKV.AgentClassAlias.VAL_SKREE_SHOT, position, velocity);
 	}
 }

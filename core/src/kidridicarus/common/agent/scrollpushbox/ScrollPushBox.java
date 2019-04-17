@@ -5,11 +5,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.agent.scrollbox.ScrollBox;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
 public class ScrollPushBox extends ScrollBox {
@@ -23,7 +23,7 @@ public class ScrollPushBox extends ScrollBox {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, Direction4 scrollDir) {
-		ObjectProperties ap = Agent.createPointAP(CommonKV.AgentClassAlias.VAL_SCROLL_PUSHBOX, position);
+		ObjectProperties ap = AP_Tool.createPointAP(CommonKV.AgentClassAlias.VAL_SCROLL_PUSHBOX, position);
 		ap.put(CommonKV.KEY_DIRECTION, scrollDir);
 		return ap;
 	}

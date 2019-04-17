@@ -5,17 +5,16 @@ import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.AgentScriptRunner;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
-import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.tool.MoveAdvice4x4;
 
 /*
- * Supervisor is expected to handle stuff for PlayerAgents:
+ * Supervisor is expected to handle stuff for Agents:
  *   -scripted actions
  *   -relaying advice to the agent
  *   -...
  */
 public abstract class AgentSupervisor {
-	protected Agent playerAgent;
+	protected Agent supervisedAgent;
 	private AgentScriptRunner scriptRunner;
 
 	public abstract void setMoveAdvice(MoveAdvice4x4 moveAdvice);
@@ -27,18 +26,16 @@ public abstract class AgentSupervisor {
 	public abstract boolean isGameOver();
 
 	/*
-	 * Convert the Player agent state information into a simpler script agent state format, and return it.
+	 * Convert the agent state information into a simpler script agent state format, and return it.
 	 * Script agent state is used to initialize/direct the agent state when a script is started/running.
 	 */
 	protected abstract ScriptedAgentState getCurrentScriptAgentState();
 
 	protected abstract AgentScriptHooks getAgentScriptHooks();
 
-	public AgentSupervisor(Agent agent) {
+	public AgentSupervisor(Agent supervisedAgent) {
 		scriptRunner = new AgentScriptRunner(this);
-		if(!(agent instanceof PlayerAgent))
-			throw new IllegalArgumentException("agent is not instanceof PlayerAgent: " + agent);
-		this.playerAgent = agent;
+		this.supervisedAgent = supervisedAgent;
 	}
 
 	public void preUpdateAgency(float delta) {
@@ -85,6 +82,6 @@ public abstract class AgentSupervisor {
 	}
 
 	public Agency getAgency() {
-		return playerAgent.getAgency();
+		return supervisedAgent.getAgency();
 	}
 }

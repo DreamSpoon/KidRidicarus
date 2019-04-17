@@ -2,10 +2,13 @@ package kidridicarus.game.agentspine.SMB1;
 
 import java.util.List;
 
+import com.badlogic.gdx.math.Vector2;
+
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.agentspine.SolidContactSpine;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.SMB1.Koopa;
 
 /*
@@ -52,16 +55,25 @@ public class KoopaSpine extends SolidContactSpine {
 	}
 
 	private boolean isMoveBlockedByKoopa(boolean moveRight) {
-		for(Agent agent : agentSensor.getContacts()) {
-			if(!(agent instanceof Koopa))
+		for(Agent otherAgent : agentSensor.getContacts()) {
+			// skip other Agent if not on team Kooopa or if other doesn't have position
+			if(!(otherAgent instanceof Koopa))
+				continue;
+			Vector2 otherPos = AP_Tool.getCenter(otherAgent);
+			if(otherPos == null)
 				continue;
 
 			// If wants to move right and other agent is on the right side then move is blocked, or
 			// if wants to move left and other agent is on the left side then move is blocked.
-			if((moveRight && body.getPosition().x < agent.getPosition().x) ||
-					(!moveRight && body.getPosition().x > agent.getPosition().x))
+			if((moveRight && body.getPosition().x < otherPos.x) ||
+					(!moveRight && body.getPosition().x > otherPos.x)) {
 				return true;
+			}
 		}
 		return false;
+	}
+
+	public boolean isDeadBumpRight(Vector2 position) {
+		return position.x > body.getPosition().x;
 	}
 }

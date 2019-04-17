@@ -4,19 +4,20 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 
-public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent {
+public class Flagpole extends PlacedBoundsAgent implements TriggerTakeAgent, DisposableAgent {
 	static final float FLAGDROP_TIME = 1.35f;
 	// offset relative to the center of the top bound
 	private static final Vector2 FLAG_OFFSET_FROM_TOP = new Vector2(UInfo.P2M(-8), UInfo.P2M(-16));
@@ -39,7 +40,7 @@ public class Flagpole extends Agent implements TriggerTakeAgent, DisposableAgent
 		moveState = MoveState.TOP;
 		moveStateTimer = 0f;
 
-		body = new FlagpoleBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		body = new FlagpoleBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

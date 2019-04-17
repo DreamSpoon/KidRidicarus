@@ -8,6 +8,7 @@ import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.PlayerContactNerve;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agentspine.KidIcarus.FlyBallSpine;
 
@@ -49,26 +50,19 @@ public class MonoeyeSpine extends FlyBallSpine {
 	}
 
 	private boolean isOtherGawking(boolean isFacingRight, PlayerAgent otherAgent) {
+		// if other Agent doesn't have a position then gawking is impossible so return false
+		Vector2 otherPos = AP_Tool.getCenter(otherAgent);
+		if(otherPos == null)
+			return false;
+
 		// if other Agent is outside of gawking zone then return false
-		int otherTileX = UInfo.M2Tx(otherAgent.getPosition().x);
+		int otherTileX = UInfo.M2Tx(otherPos.x);
 		if(isInsideFlyWindowX(otherTileX, true) ||isInsideFlyWindowX(otherTileX, false))
 			return false;
 
 		// if the facing directions are opposite, and the positions are opposite, then gawking occurred
-		Vector2 otherPos = otherAgent.getPosition(); 
 		Direction4 otherDir = otherAgent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
-		if((isFacingRight && otherDir == Direction4.LEFT && body.getPosition().x <= otherPos.x) ||
-				(!isFacingRight && otherDir == Direction4.RIGHT && body.getPosition().x >= otherPos.x))
-			return true;
-
-		return false;
-	}
-
-	public boolean isTargetOnRight(float posX) {
-		return UInfo.M2Tx(posX) > UInfo.M2Tx(body.getPosition().x);
-	}
-
-	public boolean isTargetOnLeft(float posX) {
-		return UInfo.M2Tx(posX) < UInfo.M2Tx(body.getPosition().x);
+		return (isFacingRight && otherDir == Direction4.LEFT && body.getPosition().x <= otherPos.x) ||
+				(!isFacingRight && otherDir == Direction4.RIGHT && body.getPosition().x >= otherPos.x);
 	}
 }

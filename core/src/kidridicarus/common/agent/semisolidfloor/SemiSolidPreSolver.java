@@ -1,10 +1,13 @@
 package kidridicarus.common.agent.semisolidfloor;
 
+import com.badlogic.gdx.math.Rectangle;
+
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener.PreSolver;
 import kidridicarus.agency.agentcontact.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
+import kidridicarus.common.tool.AP_Tool;
 
 public class SemiSolidPreSolver implements PreSolver {
 	private AgentBodyFilter myFilter;
@@ -43,12 +46,16 @@ public class SemiSolidPreSolver implements PreSolver {
 		// semi-solid contact bit entirely. 
 
 		// If the top of my semi-solid fixture is above the bottom of the other fixture then remove
-		// semi-solid bit and do contact test.
+		// semi-solid bit before performing contact test.
 		Agent myAgent = AgentBodyFilter.getAgentFromFilter(myFilter);
 		Agent otherAgent = AgentBodyFilter.getAgentFromFilter(otherFilter);
-		if(myAgent != null && otherAgent != null &&
-				myAgent.getBounds().y + myAgent.getBounds().height > otherAgent.getBounds().y) {
-			myCatBits = myCatBits.and(new CFBitSeq(true, CommonCF.Alias.SEMISOLID_FLOOR_BIT));
+		if(myAgent != null && otherAgent != null) {
+			Rectangle myAgentBounds = AP_Tool.getBounds(myAgent);
+			Rectangle otherAgentBounds = AP_Tool.getBounds(otherAgent);
+			if(myAgentBounds != null && otherAgentBounds != null) {
+				if(myAgentBounds.y + myAgentBounds.height > otherAgentBounds.y)
+					myCatBits = myCatBits.and(new CFBitSeq(true, CommonCF.Alias.SEMISOLID_FLOOR_BIT));
+			}
 		}
 		// return results of filter test with the (possibly modified) filter categories
 		return myCatBits.and(otherFilter.maskBits).isNonZero() && otherCatBits.and(myFilter.maskBits).isNonZero();

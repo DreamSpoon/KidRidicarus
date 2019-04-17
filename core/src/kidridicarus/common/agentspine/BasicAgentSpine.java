@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
@@ -15,6 +16,7 @@ import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
 /*
@@ -102,5 +104,22 @@ public class BasicAgentSpine {
 			default:
 		}
 		return false;
+	}
+
+	// if target Agent is on side given by isOnRight then return true, otherwise return false
+	public boolean isTargetOnSide(Agent target, boolean isOnRight) {
+		// return false if target is null or target doesn't have position
+		if(target == null)
+			return false;
+		Vector2 otherPos = AP_Tool.getCenter(target);
+		if(otherPos == null)
+			return false;
+		// do check based on side given by isOnRight
+		if(isOnRight)
+			// is other on right side of this?
+			return UInfo.M2Tx(otherPos.x) > UInfo.M2Tx(body.getPosition().x);
+		else
+			// is other on left side of this?
+			return UInfo.M2Tx(otherPos.x) < UInfo.M2Tx(body.getPosition().x);
 	}
 }

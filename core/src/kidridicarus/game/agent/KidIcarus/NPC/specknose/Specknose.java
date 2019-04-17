@@ -9,17 +9,19 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.KidIcarus.item.angelheart.AngelHeart;
 import kidridicarus.game.agent.KidIcarus.other.vanishpoof.VanishPoof;
 import kidridicarus.game.agentspine.KidIcarus.FlyBallSpine.AxisGoState;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+public class Specknose extends PlacedBoundsAgent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 10;
 	private static final float HORIZONTAL_ONLY_CHANCE = 1/6f;
@@ -56,7 +58,7 @@ public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableA
 		isAppearing = true;
 
 		// when the poof finishes, this Specknose will finish spawn
-		Agent poofAgent = agency.createAgent(VanishPoof.makeAP(Agent.getStartPoint(properties), true));
+		Agent poofAgent = agency.createAgent(VanishPoof.makeAP(AP_Tool.getCenter(properties), true));
 		agency.addAgentRemoveListener(new AgentRemoveListener(this, poofAgent) {
 				@Override
 				public void removedAgent() { isAppearing = false; }
@@ -128,7 +130,7 @@ public class Specknose extends Agent implements ContactDmgTakeAgent, DisposableA
 	}
 
 	private void finishSpawn() {
-		body = new SpecknoseBody(this, agency.getWorld(), Agent.getStartPoint(properties));
+		body = new SpecknoseBody(this, agency.getWorld(), AP_Tool.getCenter(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

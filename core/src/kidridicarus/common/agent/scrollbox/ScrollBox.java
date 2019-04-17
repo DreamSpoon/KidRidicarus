@@ -6,12 +6,12 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBox;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
 public abstract class ScrollBox extends FollowBox implements Disposable {
@@ -45,7 +45,7 @@ public abstract class ScrollBox extends FollowBox implements Disposable {
 			default:
 				throw new IllegalStateException("Cannot create scroll push box with scrollDir = " + scrollDir);
 		}
-		Vector2 pos = Agent.getStartPoint(properties);
+		Vector2 pos = AP_Tool.getCenter(properties);
 		Rectangle bounds = new Rectangle(pos.x, pos.y, width, height);
 		body = createScrollBoxBody(this, agency.getWorld(), bounds);
 	}

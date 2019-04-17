@@ -5,19 +5,20 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.info.SMB1_KV;
 
-public class SpinCoin extends Agent implements DisposableAgent {
+public class SpinCoin extends PlacedBoundsAgent implements DisposableAgent {
 	private static final float BODY_WIDTH = UInfo.P2M(7f);
 	private static final float BODY_HEIGHT = UInfo.P2M(7f);
 	private static final float COIN_SPIN_TIME = 0.54f;
@@ -31,7 +32,7 @@ public class SpinCoin extends Agent implements DisposableAgent {
 		super(agency, properties);
 
 		stateTimer = 0f;
-		defineBody(Agent.getStartPoint(properties), START_VELOCITY);
+		defineBody(AP_Tool.getCenter(properties), START_VELOCITY);
 		coinSprite = new SpinCoinSprite(agency.getAtlas(), b2body.getPosition());
 
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
@@ -78,6 +79,6 @@ public class SpinCoin extends Agent implements DisposableAgent {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {
-		return Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_SPINCOIN, position);
+		return AP_Tool.createPointAP(SMB1_KV.AgentClassAlias.VAL_SPINCOIN, position);
 	}
 }

@@ -8,12 +8,14 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.SMB1.BumpTakeAgent;
 import kidridicarus.game.agent.SMB1.HeadBounceGiveAgent;
 import kidridicarus.game.agent.SMB1.Koopa;
@@ -25,7 +27,7 @@ import kidridicarus.game.info.SMB1_Audio;
  * -do sliding turtle shells break bricks when they strike them?
  *  I couldn't find any maps in SMB 1 that would clear up this matter.
  */
-public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+public class Turtle extends PlacedBoundsAgent implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float DIE_FALL_TIME = 6f;
 	private static final float HIDE_DELAY = 1.7f;
@@ -66,8 +68,8 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		despawnMe = false;
 		lastKnownRoom = null;
 
-		body = new TurtleBody(this, agency.getWorld(), Agent.getStartPoint(properties),
-				Agent.getStartVelocity(properties));
+		body = new TurtleBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+				AP_Tool.getVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }
@@ -304,7 +306,7 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 
 		this.perp = agent;
 		isDead = true;
-		deadBumpRight = !body.getSpine().isDeadBumpOnRight(dmgOrigin);
+		deadBumpRight = !body.getSpine().isDeadBumpRight(dmgOrigin);
 		return true;
 	}
 
@@ -313,9 +315,14 @@ public class Turtle extends Agent implements Koopa, ContactDmgTakeAgent, BumpTak
 		if(isDead)
 			return;
 
+		// save ref to perpetrator Agent, and check for bump right
 		this.perp = agent;
 		isDead = true;
-		deadBumpRight = !body.getSpine().isDeadBumpOnRight(perp.getPosition());
+		Vector2 perpPos = AP_Tool.getCenter(perp);
+		if(perpPos == null)
+			deadBumpRight = false;
+		else
+			deadBumpRight = body.getSpine().isDeadBumpRight(perpPos);
 	}
 
 	@Override

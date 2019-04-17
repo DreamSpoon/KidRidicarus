@@ -8,12 +8,14 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.agent.Metroid.item.energy.Energy;
 import kidridicarus.game.agent.Metroid.other.deathpop.DeathPop;
@@ -25,7 +27,7 @@ import kidridicarus.game.info.MetroidAudio;
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then
  * check the sensors.
  */
-public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgent {
+public class Zoomer extends PlacedBoundsAgent implements ContactDmgTakeAgent, DisposableAgent {
 	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 3/7f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -63,8 +65,8 @@ public class Zoomer extends Agent implements ContactDmgTakeAgent, DisposableAgen
 		moveState = MoveState.WALK;
 		lastKnownRoom = null;
 
-		body = new ZoomerBody(this, agency.getWorld(), Agent.getStartPoint(properties),
-				Agent.getStartVelocity(properties));
+		body = new ZoomerBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+				AP_Tool.getVelocity(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) { doContactUpdate(); }

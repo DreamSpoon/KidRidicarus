@@ -9,21 +9,24 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.GetPropertyListener;
-import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agentproperties.GetPropertyListenerDirection4;
+import kidridicarus.common.agentproperties.GetPropertyListenerInteger;
+import kidridicarus.common.agentproperties.GetPropertyListenerVector2;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.game.agent.KidIcarus.player.pit.HUD.PitHUD;
@@ -80,7 +83,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		public boolean isAimUp() { return this.equalsAny(AIMUP, PRE_JUMP_AIMUP, JUMP_AIMUP); }
 	}
 
-	private PitSupervisor supervisor;
+	private PlayerAgentSupervisor supervisor;
 	private PitBody body;
 	private PitSprite sprite;
 	private PitHUD playerHUD;
@@ -108,31 +111,31 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		setStateFromProperties(properties);
 		createGetPropertyListeners();
 
-		body = new PitBody(this, agency.getWorld(), Agent.getStartPoint(properties), new Vector2(0f, 0f), false);
+		body = new PitBody(this, agency.getWorld(), AP_Tool.getCenter(properties), new Vector2(0f, 0f), false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { doContactUpdate(); }
-		});
+				@Override
+				public void update(float delta) { doContactUpdate(); }
+			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { doUpdate(delta); }
-		});
+				@Override
+				public void update(float delta) { doUpdate(delta); }
+			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { doPostUpdate(); }
-		});
+				@Override
+				public void update(float delta) { doPostUpdate(); }
+			});
 		sprite = new PitSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
-			@Override
-			public void draw(Eye adBatch) { doDraw(adBatch); }
-		});
+				@Override
+				public void draw(Eye adBatch) { doDraw(adBatch); }
+			});
 		playerHUD = new PitHUD(this, agency.getAtlas());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
-			@Override
-			public void draw(Eye adBatch) { playerHUD.draw(adBatch); }
-		});
+				@Override
+				public void draw(Eye adBatch) { playerHUD.draw(adBatch); }
+			});
 
-		supervisor = new PitSupervisor(this);
+		supervisor = new PlayerAgentSupervisor(this);
 	}
 
 	private void setStateFromProperties(ObjectProperties properties) {
@@ -157,32 +160,22 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	}
 
 	private void createGetPropertyListeners() {
-/*		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListener() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <T> T get(Class<T> cls) {
-				if(!Vector2.class.equals(cls))
-					throw new IllegalArgumentException("Wrong class given for get sprite size.");
-				return (T) new Vector2(sprite.getWidth(), sprite.getHeight());
-			}
-		});
-*/
-		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListener(Vector2.class) {
-			@Override
-			public Object innerGet() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
-		});
-		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListener(Direction4.class) {
-			@Override
-			public Object innerGet() { return isFacingRight ? Direction4.RIGHT : Direction4.LEFT; }
-		});
-		addGetPropertyListener(KidIcarusKV.KEY_HEALTH, new GetPropertyListener(Integer.class) {
-			@Override
-			public Object innerGet() { return new Integer(health); }
-		});
-		addGetPropertyListener(KidIcarusKV.KEY_HEART_COUNT, new GetPropertyListener(Integer.class) {
-			@Override
-			public Object innerGet() { return new Integer(heartsCollected); }
-		});
+		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListenerVector2() {
+				@Override
+				public Vector2 getVector2() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
+			});
+		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListenerDirection4() {
+				@Override
+				public Direction4 getDirection4() { return isFacingRight ? Direction4.RIGHT : Direction4.LEFT; }
+			});
+		addGetPropertyListener(KidIcarusKV.KEY_HEALTH, new GetPropertyListenerInteger() {
+				@Override
+				public Integer getInteger() { return new Integer(health); }
+			});
+		addGetPropertyListener(KidIcarusKV.KEY_HEART_COUNT, new GetPropertyListenerInteger() {
+				@Override
+				public Integer getInteger() { return new Integer(heartsCollected); }
+			});
 	}
 
 	/*
@@ -618,8 +611,9 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 
 	@Override
 	public boolean onGiveHeadBounce(Agent agent) {
-		// if head bounce is allowed then give head bounce to agent
-		if(body.getSpine().isGiveHeadBounceAllowed(agent.getBounds())) {
+		// if other agent has bounds and head bounce is allowed then give head bounce to agent
+		Rectangle otherBounds = AP_Tool.getBounds(agent);
+		if(otherBounds != null && body.getSpine().isGiveHeadBounceAllowed(otherBounds)) {
 			gaveHeadBounce = true;
 			return true;
 		}
@@ -648,18 +642,6 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	@Override
 	public Rectangle getBounds() {
 		return body.getBounds();
-	}
-
-	@Override
-	public ObjectProperties getCopyAllProperties() {
-		ObjectProperties myProperties = properties.cpy();
-		if(isFacingRight)
-			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
-		else
-			myProperties.put(CommonKV.KEY_DIRECTION, Direction4.LEFT);
-		myProperties.put(KidIcarusKV.KEY_HEALTH, health);
-		myProperties.put(KidIcarusKV.KEY_HEART_COUNT, heartsCollected);
-		return myProperties;
 	}
 
 	@Override

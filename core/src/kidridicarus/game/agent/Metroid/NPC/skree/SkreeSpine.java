@@ -7,6 +7,7 @@ import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.PlayerContactNerve;
 import kidridicarus.common.agentspine.SolidContactSpine;
+import kidridicarus.common.tool.AP_Tool;
 
 public class SkreeSpine extends SolidContactSpine {
 	private static final float FALL_IMPULSE = 0.07f;
@@ -38,8 +39,14 @@ public class SkreeSpine extends SolidContactSpine {
 	}
 
 	private void doHorizontalFollow(Agent target) {
+		// TODO refactor this method re: how to signal to parent Agent when target has no position,
+		// hence target should be ignored?
+		Vector2 targetPos = AP_Tool.getCenter(target);
+		if(targetPos == null)
+			return;
+
 		// track target on the x axis
-		float xdiff = target.getPosition().x - body.getPosition().x;
+		float xdiff = targetPos.x - body.getPosition().x;
 		if(xdiff > 0) {
 			if(body.getVelocity().x < SIDE_SPEED_MAX) {
 				if(xdiff < SIDE_IMPULSE_MAX)

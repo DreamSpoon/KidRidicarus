@@ -9,9 +9,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.AudioInfo;
 import kidridicarus.common.metaagent.playercontrolleragent.PlayerControllerAgent;
 

@@ -4,16 +4,17 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.tool.AP_Tool;
 
-public class DespawnBox extends Agent implements DisposableAgent {
+public class DespawnBox extends PlacedBoundsAgent implements DisposableAgent {
 	private DespawnBoxBody body;
 
 	public DespawnBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		body = new DespawnBoxBody(this, agency.getWorld(), Agent.getStartBounds(properties));
+		body = new DespawnBoxBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 	}
 
 	@Override

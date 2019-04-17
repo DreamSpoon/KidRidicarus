@@ -4,22 +4,22 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
-import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agent.SMB1.player.mario.Mario;
 import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_KV;
 
-public class MarioFireball extends Agent implements DisposableAgent {
+public class MarioFireball extends PlacedBoundsAgent implements DisposableAgent {
 	private static final float DAMAGE = 1f;
 
 	enum MoveState { FLY, EXPLODE, DESPAWN }
@@ -38,7 +38,7 @@ public class MarioFireball extends Agent implements DisposableAgent {
 	public MarioFireball(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		parent = properties.get(AgencyKV.Spawn.KEY_START_PARENT_AGENT, null, Mario.class);
+		parent = properties.get(CommonKV.KEY_PARENT_AGENT, null, Mario.class);
 
 		moveStateTimer = 0f;
 		moveState = MoveState.FLY;
@@ -48,13 +48,13 @@ public class MarioFireball extends Agent implements DisposableAgent {
 		// fireball on right?
 		if(properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT)) {
 			isFacingRight = true;
-			body = new MarioFireballBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+			body = new MarioFireballBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
 					MarioFireballSpine.MOVE_VEL.cpy().scl(1, -1));
 		}
 		// fireball on left
 		else {
 			isFacingRight = false;
-			body = new MarioFireballBody(this, agency.getWorld(), Agent.getStartPoint(properties),
+			body = new MarioFireballBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
 					MarioFireballSpine.MOVE_VEL.cpy().scl(-1, -1));
 		}
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
@@ -180,8 +180,8 @@ public class MarioFireball extends Agent implements DisposableAgent {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, boolean right, Mario parentAgent) {
-		ObjectProperties props = Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_MARIOFIREBALL, position);
-		props.put(AgencyKV.Spawn.KEY_START_PARENT_AGENT, parentAgent);
+		ObjectProperties props = AP_Tool.createPointAP(SMB1_KV.AgentClassAlias.VAL_MARIOFIREBALL, position);
+		props.put(CommonKV.KEY_PARENT_AGENT, parentAgent);
 		if(right)
 			props.put(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT);
 		else

@@ -10,20 +10,20 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.info.AgencyKV;
-import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.drawlayer.DrawLayerAgent;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
+import kidridicarus.common.tool.AP_Tool;
 
 /*
  * A "parent" or "meta" agent that has a solid tile map, drawable layers, and a batch of initial spawn agents.
@@ -33,7 +33,6 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	private TiledMap map;
 	private SolidTiledMapAgent solidTileMapAgent;
 	private LinkedList<DrawLayerAgent> drawLayerAgents;
-	private Rectangle bounds;
 	private LinkedList<Disposable> manualDisposeAgents;
 	private AgentUpdateListener myUpdateListener;
 
@@ -42,7 +41,6 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 
 		manualDisposeAgents = new LinkedList<Disposable>();
 
-		bounds = Agent.getStartBounds(properties);
 		map = properties.get(CommonKV.AgentMapParams.KEY_TILEDMAP, null, TiledMap.class);
 		if(map == null)
 			throw new IllegalArgumentException("Tiled map property not set, unable to create agent.");
@@ -83,7 +81,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 		if(solidLayers.isEmpty())
 			return;
 		solidTileMapAgent = (SolidTiledMapAgent) agency.createAgent(
-				SolidTiledMapAgent.makeAP(Agent.getStartBounds(properties), solidLayers));
+				SolidTiledMapAgent.makeAP(AP_Tool.getBounds(properties), solidLayers));
 	}
 
 	private void createDrawLayerAgents(LinkedList<TiledMapTileLayer> drawLayers) {
@@ -93,7 +91,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 		// loop through each draw layer in the list, adding each and passing a ref to its tiled map layer
 		for(TiledMapTileLayer layer : drawLayers) {
 			drawLayerAgents.add((DrawLayerAgent) agency.createAgent(
-					DrawLayerAgent.makeAP(Agent.getStartBounds(properties), layer)));
+					DrawLayerAgent.makeAP(AP_Tool.getBounds(properties), layer)));
 		}
 	}
 
@@ -139,7 +137,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 
 	private static LinkedList<ObjectProperties> makeAgentPropsFromTileLayer(TiledMapTileLayer layer) {
 		LinkedList<ObjectProperties> agentProps = new LinkedList<ObjectProperties>();
-		if(!layer.getProperties().containsKey(AgencyKV.Spawn.KEY_AGENT_CLASS))
+		if(!layer.getProperties().containsKey(AgencyKV.KEY_AGENT_CLASS))
 			return agentProps;	// if no agentclass then return empty list of agent properties
 
 		// create list of AgentProperties objects with some tile info and info from the layer's MapProperties
@@ -147,10 +145,10 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 			for(int x=0; x<layer.getWidth(); x++) {
 				// only spawn an agent if the cell exists and an agent class key/value is available
 				if(layer.getCell(x, y) == null || layer.getCell(x, y).getTile() == null ||
-						!layer.getProperties().containsKey(AgencyKV.Spawn.KEY_AGENT_CLASS))
+						!layer.getProperties().containsKey(AgencyKV.KEY_AGENT_CLASS))
 					continue;
 
-				agentProps.add(Agent.createTileAP(layer.getProperties(), UInfo.RectangleT2M(x, y),
+				agentProps.add(AP_Tool.createTileAP(layer.getProperties(), UInfo.RectangleT2M(x, y),
 						layer.getCell(x,  y).getTile().getTextureRegion()));
 			}
 		}
@@ -165,20 +163,10 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 			combined.putAll(layer.getProperties());
 			combined.putAll(rect.getProperties());
 			// only spawn an agent if an agent class key/value is available
-			if(combined.containsKey(AgencyKV.Spawn.KEY_AGENT_CLASS))
-				agentProps.add(Agent.createRectangleAP(combined, UInfo.RectangleP2M(rect.getRectangle())));
+			if(combined.containsKey(AgencyKV.KEY_AGENT_CLASS))
+				agentProps.add(AP_Tool.createRectangleAP(combined, UInfo.RectangleP2M(rect.getRectangle())));
 		}
 		return agentProps;
-	}
-
-	@Override
-	public Vector2 getPosition() {
-		return bounds.getCenter(new Vector2());
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return bounds;
 	}
 
 	@Override
@@ -201,7 +189,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 					"is not positive: width = " + width + ", height = " + height);
 		}
 
-		ObjectProperties props = Agent.createRectangleAP(CommonKV.AgentClassAlias.VAL_META_TILEDMAP,
+		ObjectProperties props = AP_Tool.createRectangleAP(CommonKV.AgentClassAlias.VAL_META_TILEDMAP,
 				new Rectangle(0f, 0f, UInfo.P2M(width * UInfo.TILEPIX_X), UInfo.P2M(height * UInfo.TILEPIX_Y)));
 		props.put(CommonKV.AgentMapParams.KEY_TILEDMAP, tiledMap);
 

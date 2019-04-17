@@ -1,4 +1,4 @@
-package kidridicarus.agency.tool;
+package kidridicarus.agency.agentproperties;
 
 /*
  * A listener that is called when a certain property is queried. Key is not given here, but was given when adding
@@ -15,22 +15,24 @@ public abstract class GetPropertyListener {
 	 *   = new GetPropertyLister<Integer>(String.class);
 	 * Charlie Brown says: "Arrrrggghh!!!! Use Object class."
 	 */
-	public abstract Object innerGet();
+	protected abstract Object innerGet();
 
 	// V is not "saved" at runtime, except through use of clsV
-	public <V> GetPropertyListener(Class<V> clsV) {
+	protected <V> GetPropertyListener(Class<V> clsV) {
 		this.clsV = clsV;
 	}
 
 	// ignoring unchecked cast warnings because cast to T is checked "differently"
 	@SuppressWarnings("unchecked")
 	public <T> T get(Class<T> clsT) {
+		// check the given class and, if it doesn't match this listener's cls, then throw exception
 		if(clsT == null)
 			throw new IllegalArgumentException("Class object needed but null was given.");
 		if(!clsV.equals(clsT)) {
 			throw new IllegalArgumentException("Wrong class for get property; was " + clsT.getName() +
 					"but should have been " + clsV.getName());
 		}
+		// get the property and check its class
 		Object temp = innerGet();
 		if(temp == null)
 			return null;

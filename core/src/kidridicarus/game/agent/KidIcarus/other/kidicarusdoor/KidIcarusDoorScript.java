@@ -7,6 +7,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.common.info.CommonKV;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
 /*
@@ -32,7 +33,11 @@ public class KidIcarusDoorScript implements AgentScript {
 		// save ref to door so door can be "closed" after player enters door
 		this.entranceDoor = entranceDoor;
 		// save exit position for player exit
-		exitPos = exitSpawner.getPosition();
+		exitPos = AP_Tool.getCenter(exitSpawner);
+		if(exitPos == null) {
+			throw new IllegalArgumentException("Cannot create Kid Icarus door script from exit spawner " +
+					"with no defined position, spawner=" + exitSpawner);
+		}
 		exitDir = exitSpawner.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
 	}
 

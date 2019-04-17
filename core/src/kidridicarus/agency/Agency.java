@@ -25,13 +25,13 @@ import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentcontact.AgentContactFilter;
 import kidridicarus.agency.agentcontact.AgentContactListener;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.EarPlug;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.QQ;
 
@@ -184,9 +184,9 @@ public class Agency implements Disposable {
 	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
 	 */
 	public Agent createAgent(ObjectProperties properties) {
-		String agentClassAlias = properties.get(AgencyKV.Spawn.KEY_AGENT_CLASS, null, String.class);
+		String agentClassAlias = properties.get(AgencyKV.KEY_AGENT_CLASS, null, String.class);
 		if(agentClassAlias == null)
-			throw new IllegalArgumentException(AgencyKV.Spawn.KEY_AGENT_CLASS + " key not found in agent definition.");
+			throw new IllegalArgumentException(AgencyKV.KEY_AGENT_CLASS + " key not found in agent definition.");
 
 		Class<?> agentClass = allAgentsClassList.get(agentClassAlias);
 		if(agentClass == null)

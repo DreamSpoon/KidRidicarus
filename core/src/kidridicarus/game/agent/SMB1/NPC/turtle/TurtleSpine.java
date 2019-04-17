@@ -3,6 +3,7 @@ package kidridicarus.game.agent.SMB1.NPC.turtle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.agentspine.SMB1.KoopaSpine;
 
 public class TurtleSpine extends KoopaSpine {
@@ -37,13 +38,14 @@ public class TurtleSpine extends KoopaSpine {
 			body.setVelocity(-SLIDE_VEL, body.getVelocity().y);
 	}
 
-	public boolean isDeadBumpOnRight(Vector2 position) {
-		return position.x > body.getPosition().x;
-	}
-
 	public boolean isOtherAgentOnRight(Agent other) {
 		if(other == null)
 			return false;
-		return other.getPosition().x > body.getPosition().x;
+		// if other Agent doesn't have position then return false
+		Vector2 otherPos = AP_Tool.getCenter(other);
+		if(otherPos == null)
+			return false;
+
+		return otherPos.x > body.getPosition().x;
 	}
 }

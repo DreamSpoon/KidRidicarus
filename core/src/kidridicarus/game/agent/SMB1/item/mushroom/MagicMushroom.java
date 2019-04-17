@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.tool.ObjectProperties;
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.info.SMB1_Gfx;
 import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.powerup.SMB1_Pow;
@@ -33,6 +33,6 @@ public class MagicMushroom extends BaseMushroom {
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {
-		return Agent.createPointAP(SMB1_KV.AgentClassAlias.VAL_MAGIC_MUSHROOM, position);
+		return AP_Tool.createPointAP(SMB1_KV.AgentClassAlias.VAL_MAGIC_MUSHROOM, position);
 	}
 }
