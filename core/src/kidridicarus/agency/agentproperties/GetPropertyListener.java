@@ -15,7 +15,7 @@ public abstract class GetPropertyListener {
 	 *   = new GetPropertyLister<Integer>(String.class);
 	 * Charlie Brown says: "Arrrrggghh!!!! Use Object class."
 	 */
-	protected abstract Object innerGet();
+	public abstract Object get();
 
 	// V is not "saved" at runtime, except through use of clsV
 	protected <V> GetPropertyListener(Class<V> clsV) {
@@ -24,7 +24,7 @@ public abstract class GetPropertyListener {
 
 	// ignoring unchecked cast warnings because cast to T is checked "differently"
 	@SuppressWarnings("unchecked")
-	public <T> T get(Class<T> clsT) {
+	public <T> T getByClass(Class<T> clsT) {
 		// check the given class and, if it doesn't match this listener's cls, then throw exception
 		if(clsT == null)
 			throw new IllegalArgumentException("Class object needed but null was given.");
@@ -33,7 +33,7 @@ public abstract class GetPropertyListener {
 					"but should have been " + clsV.getName());
 		}
 		// get the property and check its class
-		Object temp = innerGet();
+		Object temp = get();
 		if(temp == null)
 			return null;
 		// if the class of object returned by innerGet does not match the class given by clsT then throw a fit! 
@@ -45,36 +45,3 @@ public abstract class GetPropertyListener {
 			return (T) temp;
 	}
 }
-// prior attempts
-/*
-public interface GetPropertyListener {
-	public <T> T get(Class<T> cls);
-}
-public interface GetPropertyListener {
-	public <T> T get(Class<T> cls);
-
-	public abstract class GetPropertyListenerString implements GetPropertyListener {
-		public abstract String getString();
-		public <T> T get(Class<T> cls) {
-			if(!String.class.equals(cls))
-				throw new IllegalArgumentException("");
-			return (T) getString();
-		}
-	}
-}
-public interface GetPropertyListener {
-	private Class<V> clsV;
-
-	protected abstract V innerGet();
-
-	public GetPropertyListener(Class<V> clsV) {
-		this.clsV = clsV;
-	}
-
-	public <T> T get(Class<T> clsT) {
-		if(!clsT.equals(clsV))
-			throw new IllegalArgumentException("Wrong class for get property; was " + clsT.getName() + "but should have been " + clsV.getName());
-		return (T) innerGet();
-	}
-}
-*/

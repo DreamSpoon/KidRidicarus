@@ -11,7 +11,7 @@ public abstract class GetPropertyListenerDirection4 extends GetPropertyListener 
 	}
 
 	@Override
-	protected Object innerGet() {
+	public Direction4 get() {
 		return getDirection4();
 	}
 }

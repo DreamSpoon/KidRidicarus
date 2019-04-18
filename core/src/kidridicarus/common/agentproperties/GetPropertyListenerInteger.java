@@ -10,7 +10,7 @@ public abstract class GetPropertyListenerInteger extends GetPropertyListener {
 	}
 
 	@Override
-	protected Object innerGet() {
+	public Integer get() {
 		return getInteger();
 	}
 }

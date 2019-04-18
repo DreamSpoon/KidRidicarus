@@ -85,7 +85,7 @@ public class ObjectProperties {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for(Entry<String, Object> key : properties.entrySet())
-			sb.append("[Key][Val]=[" + key.getKey() + "][" + properties.get(key.getValue()) + "]\n");
+			sb.append("[Key][Val]=[" + key.getKey() + "][" + key.getValue() + "]\n");
 		return sb.toString();
 	}
 }

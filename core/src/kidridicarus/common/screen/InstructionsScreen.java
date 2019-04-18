@@ -104,17 +104,16 @@ public class InstructionsScreen implements Screen {
 		public boolean mouseMoved(int screenX, int screenY) { return true; }
 		@Override
 		public boolean scrolled(int amount) { return true; }
+
+		private boolean doKeyUp(int keycode) {
+			if(keycode == Input.Keys.SPACE)
+				goRedTeamGo = true;
+			return true;
+		}
 	}
 
 	@Override
 	public void show() {
-	}
-
-	private boolean doKeyUp(int keycode) {
-		if(keycode == Input.Keys.SPACE)
-			goRedTeamGo = true;
-			
-		return true;
 	}
 
 	@Override

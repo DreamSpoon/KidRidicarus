@@ -170,11 +170,11 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			});
 		addGetPropertyListener(KidIcarusKV.KEY_HEALTH, new GetPropertyListenerInteger() {
 				@Override
-				public Integer getInteger() { return new Integer(health); }
+				public Integer getInteger() { return health; }
 			});
 		addGetPropertyListener(KidIcarusKV.KEY_HEART_COUNT, new GetPropertyListenerInteger() {
 				@Override
-				public Integer getInteger() { return new Integer(heartsCollected); }
+				public Integer getInteger() { return heartsCollected; }
 			});
 	}
 

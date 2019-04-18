@@ -365,25 +365,19 @@ public class SolidTiledMap implements Disposable {
 		// (no possibility of overlap)
 		higherSeg = horvLines[y].lineSegs.higher(newSeg);
 
-		// adjacency on right? 
-		if(higherSeg != null && higherSeg.begin == x+1) {
-			// if the upNormal of the right seg matches the new seg then join with right seg
-			if(higherSeg.upNormal == upNormal) {
-				newSeg.end = higherSeg.end;
-				// destroy old right segment
-				world.destroyBody(higherSeg.body);
-				horvLines[y].remove(higherSeg);
-			}
+		// if adjacency on right, and the upNormal of the right seg matches the new seg, then join with right seg
+		if(higherSeg != null && higherSeg.begin == x+1 && higherSeg.upNormal == upNormal) {
+			newSeg.end = higherSeg.end;
+			// destroy old right segment
+			world.destroyBody(higherSeg.body);
+			horvLines[y].remove(higherSeg);
 		}
-		// adjacency on left?
-		if(floorSeg != null && floorSeg.end == x-1) {
-			// if the upNormal of the left seg matches the new seg then join with left seg
-			if(floorSeg.upNormal == upNormal) {
-				newSeg.begin = floorSeg.begin;
-				// destroy old left segment
-				world.destroyBody(floorSeg.body);
-				horvLines[y].remove(floorSeg);
-			}
+		// if adjacency on left, and the upNormal of the left seg matches the new seg, then join with left seg
+		if(floorSeg != null && floorSeg.end == x-1 && floorSeg.upNormal == upNormal) {
+			newSeg.begin = floorSeg.begin;
+			// destroy old left segment
+			world.destroyBody(floorSeg.body);
+			horvLines[y].remove(floorSeg);
 		}
 
 		if(isHorizontal)
@@ -449,10 +443,8 @@ public class SolidTiledMap implements Disposable {
 	}
 
 	public boolean isTileOutOfBounds(Vector2 tileCoords) {
-		if(tileCoords.x < 0 || tileCoords.y < 0 ||
-				tileCoords.x >= mapWidthInTiles || tileCoords.y >= mapHeightInTiles)
-			return true;
-		return false;
+		return tileCoords.x < 0 || tileCoords.x >= mapWidthInTiles ||
+				tileCoords.y < 0 || tileCoords.y >= mapHeightInTiles;
 	}
 
 	@Override

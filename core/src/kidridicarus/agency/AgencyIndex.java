@@ -21,7 +21,7 @@ import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
  *   -agents to be drawn, by draw order
  *   -agents which, when removed, will also be disposed
  */
-public class AgencyIndex {
+class AgencyIndex {
 	private HashMap<Agent, AgentWrapper> allAgents;
 	private AllowOrderList orderedUpdateListeners;
 	private HashMap<AgentUpdateListener, AllowOrder> allUpdateListeners;
@@ -29,7 +29,7 @@ public class AgencyIndex {
 	private HashMap<AgentDrawListener, AllowOrder> allDrawListeners;
 	private HashSet<DisposableAgent> disposeAgents;
 
-	public AgencyIndex() {
+	AgencyIndex() {
 		allAgents = new HashMap<Agent, AgentWrapper>();
 		orderedUpdateListeners = new AllowOrderList();
 		allUpdateListeners = new HashMap<AgentUpdateListener, AllowOrder>();

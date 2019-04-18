@@ -108,23 +108,17 @@ public class FlyBallSpine extends BasicAgentSpine {
 	protected boolean isInsideFlyWindowX(int tileX, boolean isPlus) {
 		// If checking left acceleration zone and X is within zone then return true, or
 		// if checking right acceleration zone and X is within zone then return true.
-		if((!isPlus && tileX <= flyWindow.x) || (isPlus && tileX >= flyWindow.x+flyWindow.width))
-			return true;
-		// return false because tile is not in left accel zone and not in right accel zone
-		return false;
+		return (!isPlus && tileX <= flyWindow.x) || (isPlus && tileX >= flyWindow.x+flyWindow.width);
 	}
 
-	protected boolean isInsideFlyWindowY(int tileY, boolean isPlus) {
+	private boolean isInsideFlyWindowY(int tileY, boolean isPlus) {
 		Integer scrollTopY = getScrollTopY();
 		if(scrollTopY == null)
 			return false;
 		// If checking bottom acceleration zone and Y is within zone then return true, or
 		// if checking top acceleration zone and Y is within zone then return true.
-		if((!isPlus && tileY <= getScrollTopY() + flyWindow.y) ||
-				(isPlus && tileY >= getScrollTopY() + flyWindow.y+flyWindow.height))
-			return true;
-		// return false because tile is not in bottom accel zone and not in top accel zone
-		return false;
+		return (!isPlus && tileY <= getScrollTopY() + flyWindow.y) ||
+				(isPlus && tileY >= getScrollTopY() + flyWindow.y+flyWindow.height);
 	}
 
 	private Integer getScrollTopY() {

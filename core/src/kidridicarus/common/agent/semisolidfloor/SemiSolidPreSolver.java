@@ -50,11 +50,13 @@ public class SemiSolidPreSolver implements PreSolver {
 		Agent myAgent = AgentBodyFilter.getAgentFromFilter(myFilter);
 		Agent otherAgent = AgentBodyFilter.getAgentFromFilter(otherFilter);
 		if(myAgent != null && otherAgent != null) {
+			// If both Agents have bounds, and Agent's top bound is below other Agent's bottom bound,
+			// then remove semi-solid bit.
 			Rectangle myAgentBounds = AP_Tool.getBounds(myAgent);
 			Rectangle otherAgentBounds = AP_Tool.getBounds(otherAgent);
-			if(myAgentBounds != null && otherAgentBounds != null) {
-				if(myAgentBounds.y + myAgentBounds.height > otherAgentBounds.y)
-					myCatBits = myCatBits.and(new CFBitSeq(true, CommonCF.Alias.SEMISOLID_FLOOR_BIT));
+			if(myAgentBounds != null && otherAgentBounds != null &&
+					myAgentBounds.y + myAgentBounds.height > otherAgentBounds.y) {
+				myCatBits = myCatBits.and(new CFBitSeq(true, CommonCF.Alias.SEMISOLID_FLOOR_BIT));
 			}
 		}
 		// return results of filter test with the (possibly modified) filter categories

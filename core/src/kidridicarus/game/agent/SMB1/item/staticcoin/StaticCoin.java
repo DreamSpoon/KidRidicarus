@@ -22,9 +22,9 @@ public class StaticCoin extends StaticPowerup implements DisposableAgent {
 		if(isPowUsed) {
 			agency.getEar().playSound(SMB1_Audio.Sound.COIN);
 			agency.removeAgent(this);
-			return false;
 		}
-		sprite.update(agency.getGlobalTimer(), true, false, body.getPosition());
+		else
+			sprite.update(agency.getGlobalTimer(), true, false, body.getPosition());
 		return false;
 	}
 

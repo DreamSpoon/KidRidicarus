@@ -37,7 +37,7 @@ public class KidIcarusDoor extends PlacedBoundsAgent implements SolidAgent, Disp
 		});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(delta); }
+				public void update(float delta) { doUpdate(); }
 			});
 		sprite = new KidIcarusDoorSprite(agency.getAtlas(), body.getPosition(), isOpened);
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
@@ -60,7 +60,7 @@ public class KidIcarusDoor extends PlacedBoundsAgent implements SolidAgent, Disp
 			agent.getSupervisor().startScript(new KidIcarusDoorScript(this, exitSpawner));
 	}
 
-	private void doUpdate(float delta) {
+	private void doUpdate() {
 		sprite.update(body.getPosition(), isOpened);
 	}
 

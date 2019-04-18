@@ -10,7 +10,7 @@ import kidridicarus.common.tool.AP_Tool;
 
 public abstract class SpawnController {
 	protected AgentSpawner spawner;
-	protected String spawnAgentClassAlias;
+	private String spawnAgentClassAlias;
 	private Boolean isRandomPos;
 
 	public abstract void update(float delta, boolean isEnabled);

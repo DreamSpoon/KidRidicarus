@@ -160,12 +160,10 @@ public class SolidContactSensor extends AgentContactSensor {
 		if(dir == null || dir == Direction4.NONE)
 			throw new IllegalArgumentException("dir must be non null and not NONE, but dir="+dir);
 		for(Agent agent : agentContacts) {
-			// get other Agent's bounds, skipping other Agent if bounds are null
+			// Get other Agent's bounds, skipping other Agent if bounds are null. If other is too far above or
+			// below testBounds then skip Agent because contact is impossible.
 			Rectangle otherBounds = AP_Tool.getBounds(agent);
-			if(otherBounds == null)
-				continue;
-			// if other is too far above or below testBounds then no contact
-			if((dir.isHorizontal() && (otherBounds.y >= testBounds.y+testBounds.height ||
+			if(otherBounds == null || (dir.isHorizontal() && (otherBounds.y >= testBounds.y+testBounds.height ||
 					otherBounds.y+otherBounds.height <= testBounds.y)) ||
 				(dir.isVertical() && (otherBounds.x >= testBounds.x+testBounds.width ||
 					otherBounds.x+otherBounds.width <= testBounds.x)))

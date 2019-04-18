@@ -20,6 +20,8 @@ import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agentproperties.GetPropertyListenerDirection4;
+import kidridicarus.common.agentproperties.GetPropertyListenerVector2;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -136,8 +138,8 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		isFacingRight = false;
 		if(properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT)
 			isFacingRight = true;
-
-		PowerupList powList = properties.get(CommonKV.Powerup.KEY_POWERUP_LIST, null, PowerupList.class);
+		Object temp = properties.get(CommonKV.Powerup.KEY_POWERUP_LIST, null, PowerupList.class);
+		PowerupList powList = (PowerupList) temp;
 		if(powList == null)
 			powerState = PowerState.SMALL;
 		else if(powList.containsPowClass(SMB1_Pow.MushroomPow.class))
@@ -168,17 +170,17 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	private void createGetPropertyListeners() {
-		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListener(Vector2.class) {
+		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListenerVector2() {
 				@Override
-				public Object innerGet() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
+				public Vector2 getVector2() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
 			});
-		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListener(Direction4.class) {
+		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListenerDirection4() {
 				@Override
-				public Object innerGet() { return isFacingRight ? Direction4.RIGHT : Direction4.LEFT; }
+				public Direction4 getDirection4() { return isFacingRight ? Direction4.RIGHT : Direction4.LEFT; }
 			});
 		addGetPropertyListener(CommonKV.Powerup.KEY_POWERUP_LIST, new GetPropertyListener(PowerupList.class) {
 				@Override
-				public Object innerGet() {
+				public Object get() {
 					PowerupList powList = new PowerupList();
 					if(powerState == PowerState.BIG)
 						powList.add(new SMB1_Pow.MushroomPow());

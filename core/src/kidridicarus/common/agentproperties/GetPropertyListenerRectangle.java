@@ -12,7 +12,7 @@ public abstract class GetPropertyListenerRectangle extends GetPropertyListener {
 	}
 
 	@Override
-	protected Object innerGet() {
+	public Rectangle get() {
 		return getRectangle();
 	}
 }

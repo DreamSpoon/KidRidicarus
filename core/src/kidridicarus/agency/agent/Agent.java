@@ -1,6 +1,7 @@
 package kidridicarus.agency.agent;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentproperties.GetPropertyListener;
@@ -43,7 +44,7 @@ public abstract class Agent {
 	public <T> T getProperty(String key, Object defaultValue, Class<T> cls) {
 		GetPropertyListener gpListener = getPropertyListeners.get(key);
 		if(gpListener != null)
-			return gpListener.get(cls);
+			return gpListener.getByClass(cls);
 		return properties.get(key, defaultValue, cls);
 	}
 
@@ -51,8 +52,8 @@ public abstract class Agent {
 		// start with a copy of this Agent's properties list
 		ObjectProperties myProperties = properties.cpy();
 		// replace the properties that have GetPropertyListeners associated with them
-		for(String listenerKey : getPropertyListeners.keySet())
-			myProperties.put(listenerKey, getPropertyListeners.get(listenerKey));
+		for(Entry<String, GetPropertyListener> iter : getPropertyListeners.entrySet())
+			myProperties.put(iter.getKey(), iter.getValue().get());
 		// return the result
 		return myProperties;
 	}
@@ -70,8 +71,8 @@ public abstract class Agent {
 				// due to mismatch, or
 				// if the value returned by the custom get listener does not match given value, then return false
 				// due to mismatch.
-				if((vals[i] == null && gpListener.get(Object.class) != null) ||
-						(!gpListener.get(vals[i].getClass()).equals(vals[i]))) {
+				if((vals[i] == null && gpListener.get() != null) ||
+						!gpListener.getByClass(vals[i].getClass()).equals(vals[i])) {
 					return false;
 				}
 			}

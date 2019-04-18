@@ -46,15 +46,17 @@ public class TileBumpContactNerve {
 				public int compare(TileBumpTakeAgent o1, TileBumpTakeAgent o2) {
 					Vector2 o1Pos = AP_Tool.getCenter((Agent) o1);
 					Vector2 o2Pos = AP_Tool.getCenter((Agent) o2);
-					// if both o1 and o2 do not have position then return equal
-					if(o1Pos == null && o2Pos == null)
-						return 0;
+					if(o1Pos == null) {
+						// if both o1 and o2 do not have position then return equal
+						if(o2Pos == null)
+							return 0;
+						// if o1 does not have position but o2 does have position then return greater than (farther)
+						else
+							return 1;
+					}
 					// if o1 has position but o2 does not have position then return less than (closer)
-					else if(o1Pos != null && o2Pos == null)
+					else if(o2Pos == null)
 						return -1;
-					// if o1 does not have position but o2 does have position then return greater than (farther)
-					else if(o1Pos == null && o2Pos != null)
-						return 1;
 					// otherwise do regular horizontal distance check
 					float dist1 = Math.abs(o1Pos.x - body.getPosition().x);
 					float dist2 = Math.abs(o2Pos.x - body.getPosition().x);

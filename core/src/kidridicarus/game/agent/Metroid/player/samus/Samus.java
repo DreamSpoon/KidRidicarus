@@ -9,7 +9,6 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.GetPropertyListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
@@ -19,6 +18,9 @@ import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agentproperties.GetPropertyListenerDirection4;
+import kidridicarus.common.agentproperties.GetPropertyListenerInteger;
+import kidridicarus.common.agentproperties.GetPropertyListenerVector2;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -160,17 +162,17 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	private void createGetPropertyListeners() {
-		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListener(Vector2.class) {
+		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListenerVector2() {
 				@Override
-				public Object innerGet() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
+				public Vector2 getVector2() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
 			});
-		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListener(Direction4.class) {
+		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListenerDirection4() {
 				@Override
-				public Object innerGet() { return isFacingRight ? Direction4.RIGHT : Direction4.LEFT; }
+				public Direction4 getDirection4() { return isFacingRight ? Direction4.RIGHT : Direction4.LEFT; }
 			});
-		addGetPropertyListener(MetroidKV.KEY_ENERGY_SUPPLY, new GetPropertyListener(Integer.class) {
+		addGetPropertyListener(MetroidKV.KEY_ENERGY_SUPPLY, new GetPropertyListenerInteger() {
 				@Override
-				public Object innerGet() { return new Integer(energySupply); }
+				public Integer getInteger() { return energySupply; }
 			});
 	}
 

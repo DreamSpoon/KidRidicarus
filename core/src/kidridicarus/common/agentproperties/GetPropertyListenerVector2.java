@@ -12,7 +12,7 @@ public abstract class GetPropertyListenerVector2 extends GetPropertyListener {
 	}
 
 	@Override
-	protected Object innerGet() {
+	public Vector2 get() {
 		return getVector2();
 	}
 }

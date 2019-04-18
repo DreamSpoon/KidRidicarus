@@ -53,7 +53,7 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 			return false;
 
 		// check position for up/down warp
-		if(direction == Direction4.UP || direction == Direction4.DOWN) {
+		if(direction.isVertical()) {
 			// check player body to see if it is close enough to center, based on the width of the pipe entrance
 			float pipeWidth = pwBody.getBounds().getWidth();
 			float entryWidth = pipeWidth * 0.3f;
@@ -62,13 +62,9 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 			if(pipeMid - entryWidth/2f <= otherPos.x && otherPos.x < pipeMid + entryWidth/2f)
 				return true;
 		}
-		// check position for left/right warp
-		else if(direction == Direction4.LEFT || direction == Direction4.RIGHT) {
-			// check that bottom of player body is +- 2 pixels from the bottom y bound of the pipe.
-			if(pwBody.getBounds().y - UInfo.P2M(2f) <= otherBounds.y &&
-					otherBounds.y <= pwBody.getBounds().y + UInfo.P2M(2f))
-				return true;
-		}
+		// if bottom of other bounds are within +/- 2 pixels of bottom of this pipe's bounds then allow entry
+		else if(direction.isHorizontal() && UInfo.epsCheck(pwBody.getBounds().y, otherBounds.y, UInfo.P2M(2f)))
+			return true;
 		return false;
 	}
 
