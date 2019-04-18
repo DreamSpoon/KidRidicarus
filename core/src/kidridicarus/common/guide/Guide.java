@@ -24,7 +24,7 @@ import kidridicarus.common.metaagent.playercontrolleragent.PlayerControllerAgent
 public class Guide implements Disposable {
 	private AssetManager manager;
 	private Agency agency;
-	private PlayerControllerAgent playerWrapper;
+	private PlayerControllerAgent playerController;
 	private Eye eye;
 	private Ear ear;
 
@@ -37,7 +37,7 @@ public class Guide implements Disposable {
 		this.manager = manager;
 		this.agency = agency;
 
-		playerWrapper = null;
+		playerController = null;
 		currentMainMusicName = "";
 		currentMainMusic = null;
 		isMainMusicPlaying = false;
@@ -147,23 +147,23 @@ public class Guide implements Disposable {
 	}
 
 	public void createPlayerAgent(ObjectProperties playerAgentProperties) {
-		playerWrapper = (PlayerControllerAgent) agency.createAgent(PlayerControllerAgent.makeAP(playerAgentProperties));
+		playerController = (PlayerControllerAgent) agency.createAgent(PlayerControllerAgent.makeAP(playerAgentProperties));
 	}
 
 	public boolean isGameWon() {
-		return playerWrapper.isGameWon();
+		return playerController.isGameWon();
 	}
 
 	public boolean isGameOver() {
-		return playerWrapper.isGameOver();
+		return playerController.isGameOver();
 	}
 
 	public String getNextLevelFilename() {
-		return playerWrapper.getNextLevelFilename();
+		return playerController.getNextLevelFilename();
 	}
 
 	public ObjectProperties getCopyPlayerAgentProperties() {
-		return playerWrapper.getCopyPlayerAgentProperties();
+		return playerController.getCopyPlayerAgentProperties();
 	}
 
 	@Override

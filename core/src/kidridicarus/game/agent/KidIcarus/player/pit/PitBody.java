@@ -84,7 +84,6 @@ public class PitBody extends PlayerAgentBody {
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		resetPrevValues(position, velocity);
-
 		spine = new PitSpine(this);
 	}
 

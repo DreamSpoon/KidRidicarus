@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.game.MyKidRidicarus;
 
@@ -25,10 +26,12 @@ public class GameOverScreen implements Screen {
 	private InputProcessor oldInPr;
 	private boolean didAnythingHappen;
 	private String nextLevelFilename;
+	private ObjectProperties initPlayerAP;
 
-	public GameOverScreen(Game game, boolean win, String nextLevelFilename) {
+	public GameOverScreen(Game game, boolean win, String nextLevelFilename, ObjectProperties initPlayerAP) {
 		this.game = game;
 		this.nextLevelFilename = nextLevelFilename;
+		this.initPlayerAP = initPlayerAP;
 
 		viewport = new FitViewport(CommonInfo.V_WIDTH, CommonInfo.V_HEIGHT, new OrthographicCamera());
 		stage = new Stage(viewport, ((MyKidRidicarus) game).batch);
@@ -79,7 +82,7 @@ public class GameOverScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		if(didAnythingHappen) {
-			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename, null));
+			game.setScreen(new PlayScreen((MyKidRidicarus) game, nextLevelFilename, initPlayerAP));
 			dispose();
 		}
 

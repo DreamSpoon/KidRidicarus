@@ -103,7 +103,8 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		setStateFromProperties(properties);
 		createGetPropertyListeners();
 
-		body = new MarioBody(this, agency.getWorld(), AP_Tool.getCenter(properties), new Vector2(0f, 0f),
+		body = new MarioBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+				properties.get(CommonKV.KEY_VELOCITY, new Vector2(0f, 0f), Vector2.class),
 				powerState.isBigBody(), false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
@@ -757,13 +758,18 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return body.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return body.getBounds();
+	}
+
+	@Override
+	protected Vector2 getVelocity() {
+		return body.getVelocity();
 	}
 
 	@Override

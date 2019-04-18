@@ -110,8 +110,8 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 
 		setStateFromProperties(properties);
 		createGetPropertyListeners();
-
-		body = new PitBody(this, agency.getWorld(), AP_Tool.getCenter(properties), new Vector2(0f, 0f), false);
+		body = new PitBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+				properties.get(CommonKV.KEY_VELOCITY, new Vector2(0f, 0f), Vector2.class), false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doContactUpdate(); }
@@ -150,10 +150,10 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		shootCooldownTimer = 0f;
 		isOnGroundHeadInTile = false;
 		powerupsReceived = new LinkedList<Powerup>();
-		health = START_HEALTH;
+		health = properties.get(KidIcarusKV.KEY_HEALTH, START_HEALTH, Integer.class);
+		heartsCollected = properties.get(KidIcarusKV.KEY_HEART_COUNT, 0, Integer.class);
 		noDamageCooldown = 0f;
 		takeDamageThisFrame = false;
-		heartsCollected = 0;
 		gaveHeadBounce = false;
 		isHeadBumped = false;
 		lastKnownRoom = null;
@@ -631,7 +631,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		// use the "real" position of Pit, which is independent of body size, to improve smooth screen scroll
 		Vector2 offset = new Vector2(0f, 0f);
 		if(isOnGroundHeadInTile || moveState.isDuck())
@@ -640,8 +640,13 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return body.getBounds();
+	}
+
+	@Override
+	protected Vector2 getVelocity() {
+		return body.getVelocity();
 	}
 
 	@Override

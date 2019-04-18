@@ -50,10 +50,14 @@ public class PlayScreen implements Screen {
 	private boolean useForcedUpdateFramerate;
 	private float forcedUpdateFPS;
 	private float forcedUpdateFrameTimer;
+	private ObjectProperties initPlayerAP;
 
 	public PlayScreen(MyKidRidicarus game, String levelFilename, ObjectProperties playerAgentProperties) {
 		this.game = game;
 		this.currentLevelFilename = levelFilename;
+		this.initPlayerAP = null;
+		if(playerAgentProperties != null)
+			this.initPlayerAP = playerAgentProperties.cpy();
 
 		useForcedUpdateFramerate = FF_USE;
 		forcedUpdateFPS = FF_FPS;
@@ -171,7 +175,7 @@ public class PlayScreen implements Screen {
 		// change to game over screen?
 		else if(guide.isGameOver()) {
 			dispose();
-			game.setScreen(new GameOverScreen(game, false, currentLevelFilename));
+			game.setScreen(new GameOverScreen(game, false, currentLevelFilename, initPlayerAP));
 		}
 	}
 

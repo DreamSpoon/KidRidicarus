@@ -183,14 +183,17 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 		// if player Agent is null or doesn't have position then throw exception
 		if(playerAgent == null)
 			throw new IllegalStateException("Current player Agent cannot be null when switching power character.");
+
+		// save copy of position
 		Vector2 oldPosition = AP_Tool.getCenter(playerAgent);
 		if(oldPosition == null) {
 			throw new IllegalStateException(
 					"Current player Agent must have a position when switching power character.");
 		}
-
 		// save copy of facing right
 		boolean facingRight = AP_Tool.getFacingRight(playerAgent);
+		// save copy of velocity
+		Vector2 oldVelocity = AP_Tool.getVelocity(playerAgent);
 		// remove old player character
 		agency.removeAgent(playerAgent);
 		playerAgent.dispose();
@@ -198,9 +201,12 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 		// create new player character properties
 		ObjectProperties props = AP_Tool.createPointAP(pc.getAgentClassAlias(),
 				oldPosition.cpy().add(SAFETY_RESPAWN_OFFSET));
-		// add facing right property if needed
+		// put facing right property if needed
 		if(facingRight)
 			props.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
+		// put velocity if available
+		if(oldVelocity != null)
+			props.put(CommonKV.KEY_VELOCITY, oldVelocity);
 		// create new player power character Agent
 		playerAgent = (PlayerAgent) agency.createAgent(props);
 	}

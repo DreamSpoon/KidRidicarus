@@ -110,7 +110,8 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		setStateFromProperties(properties);
 		createGetPropertyListeners();
 
-		body = new SamusBody(this, agency.getWorld(), AP_Tool.getCenter(properties), new Vector2(0f, 0f), false);
+		body = new SamusBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+				properties.get(CommonKV.KEY_VELOCITY, new Vector2(0f, 0f), Vector2.class), false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doContactUpdate(); }
@@ -729,13 +730,18 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return body.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return body.getBounds();
+	}
+
+	@Override
+	protected Vector2 getVelocity() {
+		return body.getVelocity();
 	}
 
 	@Override
