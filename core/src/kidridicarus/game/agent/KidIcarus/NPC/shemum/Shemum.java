@@ -101,7 +101,7 @@ public class Shemum extends PlacedBoundsAgent implements ContactDmgTakeAgent, Bu
 			isFacingRight = !isFacingRight;
 
 		MoveState nextMoveState = getNextMoveState();
-		boolean moveStateChanged = nextMoveState != moveState;
+		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case WALK:
 				body.getSpine().doWalkMove(isFacingRight);
@@ -110,10 +110,17 @@ public class Shemum extends PlacedBoundsAgent implements ContactDmgTakeAgent, Bu
 				break;
 			case FALL2:
 				// ensure fall straight down
-				if(moveStateChanged)
+				if(isMoveStateChange)
 					body.zeroVelocity(true, false);
 				break;
 			case STRIKE_GROUND:
+				// turn to face player on first frame of ground strike
+				if(isMoveStateChange) {
+					if(body.getSpine().getPlayerDir().isRight())
+						isFacingRight = true;
+					else
+						isFacingRight = false;
+				}
 				break;
 			case DEAD:
 				agency.createAgent(VanishPoof.makeAP(body.getPosition(), false));
@@ -126,7 +133,7 @@ public class Shemum extends PlacedBoundsAgent implements ContactDmgTakeAgent, Bu
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
-		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
 	}
 

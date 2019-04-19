@@ -281,7 +281,7 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 	}
 
 	public ObjectProperties getCopyPlayerAgentProperties() {
-		return playerAgent.getCopyAllProperties();
+		return playerAgent.getAllProperties();
 	}
 
 	@Override

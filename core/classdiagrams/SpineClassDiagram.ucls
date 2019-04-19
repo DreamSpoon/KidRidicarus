@@ -4,7 +4,7 @@
   <class id="1" language="java" name="kidridicarus.common.agentspine.BasicAgentSpine" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/common/agentspine/BasicAgentSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="805" y="48"/>    
+    <position height="-1" width="-1" x="870" y="61"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -26,7 +26,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/common/agent/playeragent/PlayerSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="310" y="298"/>    
+    <position height="-1" width="-1" x="273" y="245"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -36,7 +36,7 @@
   <class id="4" language="java" name="kidridicarus.game.agentspine.SMB1.KoopaSpine" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agentspine/SMB1/KoopaSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="691" y="290"/>    
+    <position height="-1" width="-1" x="720" y="246"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -47,7 +47,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/NPC/monoeye/MonoeyeSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1208" y="144"/>    
+    <position height="-1" width="-1" x="1441" y="200"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -58,7 +58,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/NPC/shemum/ShemumSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1485" y="287"/>    
+    <position height="-1" width="-1" x="1323" y="242"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -69,7 +69,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/KidIcarus/player/pit/PitSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="491" y="418"/>    
+    <position height="-1" width="-1" x="392" y="306"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -80,7 +80,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/NPC/rio/RioSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1286" y="289"/>    
+    <position height="-1" width="-1" x="1124" y="244"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -91,7 +91,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/NPC/skree/SkreeSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1097" y="290"/>    
+    <position height="-1" width="-1" x="935" y="245"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -102,7 +102,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/NPC/zoomer/ZoomerSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="998" y="143"/>    
+    <position height="-1" width="-1" x="1039" y="143"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -113,7 +113,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/Metroid/player/samus/SamusSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="292" y="418"/>    
+    <position height="-1" width="-1" x="259" y="350"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -124,7 +124,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/NPC/goomba/GoombaSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="722" y="416"/>    
+    <position height="-1" width="-1" x="655" y="337"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -135,40 +135,40 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/NPC/turtle/TurtleSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="915" y="415"/>    
+    <position height="-1" width="-1" x="848" y="336"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="kidridicarus.game.agent.SMB1.other.bumptile.BumpTileSpine" 
-    project="kid-ridicarus-game-core" 
-    file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/other/bumptile/BumpTileSpine.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="181" y="51"/>    
-    <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
-      sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <class id="15" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioSpine" 
+  <class id="14" language="java" name="kidridicarus.game.agent.SMB1.player.mario.MarioSpine" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mario/MarioSpine.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="91" y="418"/>    
+    <position height="-1" width="-1" x="140" y="308"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireballSpine" 
+  <class id="15" language="java" name="kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireballSpine" 
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/game/agent/SMB1/player/mariofireball/MarioFireballSpine.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="889" y="290"/>    
+    <position height="-1" width="-1" x="494" y="245"/>    
+    <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
+      sort-features="false" accessors="true" visibility="false">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="16" language="java" name="kidridicarus.game.agentspine.KidIcarus.FlyBallSpine" 
+    project="kid-ridicarus-game-core" 
+    file="/kid-ridicarus-game-core/src/kidridicarus/game/agentspine/KidIcarus/FlyBallSpine.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1245" y="143"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -176,56 +176,64 @@
     </display>  
   </class>  
   <generalization id="17">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="4"/>  
-  </generalization>  
-  <generalization id="18">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="4"/>  
-  </generalization>  
-  <generalization id="19">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="20">    
     <end type="SOURCE" refId="7"/>    
     <end type="TARGET" refId="3"/>  
   </generalization>  
-  <generalization id="21">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="3"/>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="16"/>  
   </generalization>  
-  <generalization id="22">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <generalization id="23">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <generalization id="24">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="25">    
+  <generalization id="19">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <generalization id="26">    
+  <generalization id="20">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="21">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="22">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="23">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="24">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="25">    
     <end type="SOURCE" refId="9"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
+  <generalization id="26">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
   <generalization id="27">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="2"/>  
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="3"/>  
   </generalization>  
   <generalization id="28">    
     <end type="SOURCE" refId="8"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
   <generalization id="29">    
-    <end type="SOURCE" refId="2"/>    
+    <end type="SOURCE" refId="10"/>    
     <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="30">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="4"/>  
+  </generalization>  
+  <generalization id="31">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="4"/>  
   </generalization>  
   <classifier-display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
     sort-features="false" accessors="true" visibility="false">    

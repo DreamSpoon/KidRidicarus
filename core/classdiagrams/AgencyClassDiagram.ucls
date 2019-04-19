@@ -3,7 +3,7 @@
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="kidridicarus.agency.Agency" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/Agency.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="503" y="31"/>    
+    <position height="-1" width="-1" x="409" y="31"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -12,7 +12,7 @@
   </class>  
   <class id="2" language="java" name="kidridicarus.agency.AgencyIndex" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/AgencyIndex.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="978" y="173"/>    
+    <position height="-1" width="-1" x="897" y="127"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -21,7 +21,7 @@
   </class>  
   <class id="3" language="java" name="kidridicarus.agency.AgentClassList" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/AgentClassList.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="707" y="175"/>    
+    <position height="-1" width="-1" x="626" y="129"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -32,7 +32,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/agencychange/AgencyChangeQueue.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="843" y="176"/>    
+    <position height="-1" width="-1" x="762" y="130"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -41,7 +41,7 @@
   </class>  
   <class id="5" language="java" name="kidridicarus.agency.agent.Agent" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/agent/Agent.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="216" y="157"/>    
+    <position height="-1" width="-1" x="196" y="134"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -50,7 +50,7 @@
   </class>  
   <class id="6" language="java" name="kidridicarus.agency.agent.AgentBody" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/agent/AgentBody.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="153" y="248"/>    
+    <position height="-1" width="-1" x="88" y="196"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -60,7 +60,7 @@
   <class id="7" language="java" name="kidridicarus.agency.agent.AgentSupervisor" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/agent/AgentSupervisor.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="291" y="251"/>    
+    <position height="-1" width="-1" x="218" y="198"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -71,7 +71,7 @@
     project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/agentscript/AgentScriptRunner.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="290" y="312"/>    
+    <position height="-1" width="-1" x="217" y="279"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -81,7 +81,7 @@
   <interface id="9" language="java" name="kidridicarus.agency.agentscript.AgentScript" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/agentscript/AgentScript.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="296" y="386"/>    
+    <position height="-1" width="-1" x="217" y="346"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -90,7 +90,7 @@
   </interface>  
   <class id="10" language="java" name="kidridicarus.agency.tool.EarPlug" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/tool/EarPlug.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="454" y="184"/>    
+    <position height="-1" width="-1" x="373" y="132"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -99,7 +99,7 @@
   </class>  
   <interface id="11" language="java" name="kidridicarus.agency.tool.Ear" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/tool/Ear.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="456" y="241"/>    
+    <position height="-1" width="-1" x="371" y="196"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -108,7 +108,7 @@
   </interface>  
   <class id="12" language="java" name="kidridicarus.agency.tool.Eye" project="kid-ridicarus-game-core" 
     file="/kid-ridicarus-game-core/src/kidridicarus/agency/tool/Eye.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="585" y="176"/>    
+    <position height="-1" width="-1" x="504" y="130"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -116,24 +116,24 @@
     </display>  
   </class>  
   <association id="13">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="14" name="scriptRunner">        
-        <position height="0" width="0" x="-279" y="-279"/>      
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="14" name="myEye">        
+        <position height="0" width="0" x="-81" y="-46"/>      
       </attribute>      
       <multiplicity id="15" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-279" y="-279"/>      
+        <position height="0" width="0" x="-81" y="-46"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
+    <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="16">    
     <end type="SOURCE" refId="1" navigable="false">      
       <attribute id="17" name="earplug">        
-        <position height="0" width="0" x="-319" y="-227"/>      
+        <position height="0" width="0" x="-400" y="-279"/>      
       </attribute>      
       <multiplicity id="18" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-319" y="-227"/>      
+        <position height="0" width="0" x="-400" y="-279"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="10" navigable="true"/>    
@@ -141,23 +141,23 @@
   </association>  
   <association id="19">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="20" name="agencyChangeQ">        
-        <position height="0" width="0" x="-244" y="-247"/>      
+      <attribute id="20" name="agencyIndex">        
+        <position height="0" width="0" x="-265" y="-230"/>      
       </attribute>      
       <multiplicity id="21" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-244" y="-247"/>      
+        <position height="0" width="0" x="-265" y="-230"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
+    <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="22">    
     <end type="SOURCE" refId="10" navigable="false">      
       <attribute id="23" name="fakeEar">        
-        <position height="0" width="0" x="0" y="0"/>      
+        <position height="0" width="0" x="-85" y="-45"/>      
       </attribute>      
       <multiplicity id="24" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+        <position height="0" width="0" x="-85" y="-45"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="11" navigable="true"/>    
@@ -165,74 +165,74 @@
   </association>  
   <association id="25">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="26" name="myEye">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <attribute id="26" name="agencyChangeQ">        
+        <position height="0" width="0" x="-325" y="-293"/>      
       </attribute>      
       <multiplicity id="27" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+        <position height="0" width="0" x="-325" y="-293"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="28">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="29" name="parent">        
-        <position height="0" width="0" x="-251" y="-208"/>      
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="29" name="currentScript">        
+        <position height="0" width="0" x="-345" y="-344"/>      
       </attribute>      
       <multiplicity id="30" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-251" y="-208"/>      
+        <position height="0" width="0" x="-345" y="-344"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="9" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="31">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="32" name="agencyIndex">        
-        <position height="0" width="0" x="-184" y="-184"/>      
+      <attribute id="32" name="allAgentsClassList">        
+        <position height="0" width="0" x="-312" y="-348"/>      
       </attribute>      
       <multiplicity id="33" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-184" y="-184"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="34">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="35" name="allAgentsClassList">        
-        <position height="0" width="0" x="-231" y="-302"/>      
-      </attribute>      
-      <multiplicity id="36" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-231" y="-302"/>      
+        <position height="0" width="0" x="-312" y="-348"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
+  <association id="34">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="35" name="scriptRunner">        
+        <position height="0" width="0" x="-352" y="-312"/>      
+      </attribute>      
+      <multiplicity id="36" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-352" y="-312"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
   <association id="37">    
     <end type="SOURCE" refId="5" navigable="false">      
       <attribute id="38" name="agency">        
-        <position height="0" width="0" x="-381" y="-230"/>      
+        <position height="0" width="0" x="-475" y="-230"/>      
       </attribute>      
       <multiplicity id="39" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-381" y="-230"/>      
+        <position height="0" width="0" x="-475" y="-230"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="40">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="41" name="currentScript">        
-        <position height="0" width="0" x="-266" y="-304"/>      
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="41" name="parent">        
+        <position height="0" width="0" x="-271" y="-231"/>      
       </attribute>      
       <multiplicity id="42" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-266" y="-304"/>      
+        <position height="0" width="0" x="-271" y="-231"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <classifier-display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 

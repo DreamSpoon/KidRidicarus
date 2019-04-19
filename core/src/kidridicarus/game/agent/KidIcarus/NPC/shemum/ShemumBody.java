@@ -16,6 +16,8 @@ public class ShemumBody extends MobileAgentBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = BODY_WIDTH;
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
+	private static final float PLAYER_SENSOR_WIDTH = UInfo.P2M(256);
+	private static final float PLAYER_SENSOR_HEIGHT = UInfo.P2M(240);
 
 	private static final CFBitSeq MAIN_CFCAT = CommonCF.SOLID_BODY_CFCAT;
 	private static final CFBitSeq MAIN_CFMASK = CommonCF.SOLID_BODY_CFMASK;
@@ -55,6 +57,10 @@ public class ShemumBody extends MobileAgentBody {
 		// ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
+		// create player sensor fixture that "hangs" down from the top of Monoeye and detects players to target
+		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
+				spine.createPlayerSensor(), PLAYER_SENSOR_WIDTH, PLAYER_SENSOR_HEIGHT,
+				new Vector2(0f, getBodySize().y/2f - PLAYER_SENSOR_HEIGHT/2f));
 	}
 
 	public ShemumSpine getSpine() {

@@ -48,7 +48,24 @@ public abstract class Agent {
 		return properties.get(key, defaultValue, cls);
 	}
 
-	public ObjectProperties getCopyAllProperties() {
+	/*
+	 * Returns a newly created ObjectProperties object, with keys and values copied from the Agent's properties.
+	 * Note and warning:
+	 *   The value of each key/value pair of properties is a copy of the *reference* to the value. If the values
+	 * in the properties set are non-primitives (e.g. if a property value is a reference to a LinkedList), then
+	 * the code that calls this method can modify internal Agent property information without going through
+	 * "the proper channels" (i.e. without calling the Agent's accessor methods).
+	 *
+	 * TODO:
+	 * 1) Create method getCopyAllProperties to create and return a "safe" ObjectProperties object, which can
+	 * be manipulated in any way, without affecting the Agent's internal properties information.
+	 * Or:
+	 * 2) Each Agent must ensure that its ObjectProperties object, and its GetPropertyListeners, return only "safe"
+	 * data (i.e. copies of the internal state information instead of direct references).
+	 *
+	 * Use option 2 in the short term, apply option 1 later.
+	 */
+	public ObjectProperties getAllProperties() {
 		// start with a copy of this Agent's properties list
 		ObjectProperties myProperties = properties.cpy();
 		// replace the properties that have GetPropertyListeners associated with them

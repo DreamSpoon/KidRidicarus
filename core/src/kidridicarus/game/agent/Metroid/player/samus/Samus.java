@@ -42,14 +42,13 @@ import kidridicarus.game.powerup.MetroidPow;
 import kidridicarus.game.powerup.SMB1_Pow;
 
 /*
- * If Samus has zero energy tanks, then max energy is 99
+ * TODO
+ * -If Samus has zero energy tanks, then max energy is 99
  * With 1 energy tank, Samus has 199 energy.
  * The extra tank shows as an empty/filled blue square above and on the right side of energy number.
  * When 100 <= energy <= 199, then tank still shows as filled blue square, but when energy drops by 1 to be =99,
  * then energy tank is empty black square.
- */
-/*
- * TODO:
+ * TODO
  * -samus loses JUMPSPIN when her y position goes below her jump start position
  */
 public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTakeAgent, HeadBounceGiveAgent {
@@ -179,7 +178,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	/*
 	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
-	 * by way of regular update. Also apply star power damage if needed.
+	 * by way of regular update.
 	 */
 	private void doContactUpdate() {
 		if(supervisor.isRunningScriptNoMoveAdvice())

@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.common.agentspine.BasicAgentSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
@@ -15,7 +16,7 @@ public class BumpTileBody extends AgentBody {
 	private static final CFBitSeq MAINSENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_MAP_BIT,
 			CommonCF.Alias.AGENT_BIT);
 
-	private BumpTileSpine spine;
+	private BasicAgentSpine spine;
 
 	public BumpTileBody(World world, BumpTile parent, Rectangle bounds) {
 		super(parent, world);
@@ -32,13 +33,13 @@ public class BumpTileBody extends AgentBody {
 		// should be a static body, but it needs to be dynamic so solid tile map contact sensor will function
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
 		b2body.setGravityScale(0f);
-		spine = new BumpTileSpine(this);
+		spine = new BasicAgentSpine(this);
 		// sensor detects solid tile maps, and agents that can contact bump tiles
-		B2DFactory.makeSensorBoxFixture(b2body, MAINSENSOR_CFCAT, MAINSENSOR_CFMASK, spine.createMainSensor(),
+		B2DFactory.makeSensorBoxFixture(b2body, MAINSENSOR_CFCAT, MAINSENSOR_CFMASK, spine.createAgentSensor(),
 				bounds.width, bounds.height);
 	}
 
-	public BumpTileSpine getSpine() {
+	public BasicAgentSpine getSpine() {
 		return spine;
 	}
 }

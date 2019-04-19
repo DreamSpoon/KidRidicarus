@@ -16,6 +16,7 @@ import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
@@ -59,6 +60,12 @@ public class BasicAgentSpine {
 
 	public RoomBox getCurrentRoom() {
 		return agentSensor.getFirstContactByClass(RoomBox.class);
+	}
+
+	public SolidTiledMapAgent getSolidTileMap() {
+		if(agentSensor == null)
+			return null;
+		return agentSensor.getFirstContactByClass(SolidTiledMapAgent.class);
 	}
 
 	public void checkDoSpaceWrap(RoomBox curRoom) {
