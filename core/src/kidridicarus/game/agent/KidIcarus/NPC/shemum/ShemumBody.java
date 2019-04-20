@@ -40,7 +40,7 @@ public class ShemumBody extends MobileAgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(BODY_WIDTH, BODY_HEIGHT);
+		setBoundsSize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		spine = new ShemumSpine(this);
 		createFixtures();
@@ -50,17 +50,17 @@ public class ShemumBody extends MobileAgentBody {
 		// main body fixture
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, solidSensor,
-				getBodySize().x, getBodySize().y);
+				getBounds().width, getBounds().height);
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
-				getBodySize().x, getBodySize().y);
+				getBounds().width, getBounds().height);
 		// ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBounds().height/2f));
 		// create player sensor fixture that "hangs" down from the top of Monoeye and detects players to target
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
 				spine.createPlayerSensor(), PLAYER_SENSOR_WIDTH, PLAYER_SENSOR_HEIGHT,
-				new Vector2(0f, getBodySize().y/2f - PLAYER_SENSOR_HEIGHT/2f));
+				new Vector2(0f, getBounds().height/2f - PLAYER_SENSOR_HEIGHT/2f));
 	}
 
 	public ShemumSpine getSpine() {

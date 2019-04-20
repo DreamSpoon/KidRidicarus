@@ -44,7 +44,7 @@ public class TurtleBody extends MobileAgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(bounds.getWidth(), bounds.getHeight());
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		spine = new TurtleSpine(this);
 		createFixtures();
@@ -53,15 +53,15 @@ public class TurtleBody extends MobileAgentBody {
 	private void createFixtures() {
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		// create main fixture
-		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, solidSensor, getBodySize().x, getBodySize().y);
+		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, solidSensor, getBounds().width, getBounds().height);
 		// create agent sensor fixture
 		AgentContactHoldSensor sensor = spine.createAgentSensor();
 		sensor.chainTo(spine.createHeadBounceSensor());
 		acSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, sensor,
-				getBodySize().x, getBodySize().y);
+				getBounds().width, getBounds().height);
 		// create ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
-				FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBodySize().y/2f));
+				FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBounds().height/2f));
 	}
 
 	public void allowOnlyDeadBumpContacts() {

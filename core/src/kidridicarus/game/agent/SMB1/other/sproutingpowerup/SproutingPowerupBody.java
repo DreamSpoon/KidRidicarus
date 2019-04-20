@@ -23,15 +23,15 @@ public abstract class SproutingPowerupBody extends MobileAgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 		// create new body
-		setBodySize(bounds.getWidth(), bounds.getHeight());
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		spine = new SolidContactSpine(this);
 		// solid main fixture
 		B2DFactory.makeBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
-				spine.createSolidContactSensor(), getBodySize().x, getBodySize().y);
+				spine.createSolidContactSensor(), bounds.width, bounds.height);
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK,
-				spine.createAgentSensor(), getBodySize().x, getBodySize().y);
+				spine.createAgentSensor(), bounds.width, bounds.height);
 	}
 
 	public SolidContactSpine getSpine() {

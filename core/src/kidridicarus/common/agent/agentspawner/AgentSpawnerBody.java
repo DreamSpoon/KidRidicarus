@@ -29,7 +29,7 @@ public class AgentSpawnerBody extends AgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(bounds.width, bounds.height);
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
 		b2body.setGravityScale(GRAVITY_SCALE);
 		agentSensor = new AgentContactHoldSensor(this);

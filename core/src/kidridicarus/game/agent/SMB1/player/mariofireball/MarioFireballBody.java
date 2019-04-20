@@ -40,7 +40,7 @@ public class MarioFireballBody extends MobileAgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(BODY_WIDTH, BODY_HEIGHT);
+		setBoundsSize(BODY_WIDTH, BODY_HEIGHT);
 		createBody(world, bounds.getCenter(new Vector2()), velocity);
 		createFixtures();
 	}
@@ -62,7 +62,7 @@ public class MarioFireballBody extends MobileAgentBody {
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0f;		// slippery
 		B2DFactory.makeBoxFixture(b2body, fdef, MAIN_CFCAT, MAIN_CFMASK, spine.createSolidContactSensor(),
-				getBodySize().x, getBodySize().y);
+				getBounds().width, getBounds().height);
 	}
 
 	private void createAgentSensorFixture() {

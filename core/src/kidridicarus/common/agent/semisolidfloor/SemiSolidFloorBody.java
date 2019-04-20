@@ -27,10 +27,10 @@ public class SemiSolidFloorBody extends AgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(bounds.width, bounds.height);
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
 		AgentBodyFilter abf = new AgentBodyFilter(CFCAT_BITS, CFMASK_BITS, this);
 		abf.preSolver = new SemiSolidPreSolver(abf);
-		B2DFactory.makeBoxFixture(b2body, abf, getBodySize().x, getBodySize().y);
+		B2DFactory.makeBoxFixture(b2body, abf, getBounds().width, getBounds().height);
 	}
 }

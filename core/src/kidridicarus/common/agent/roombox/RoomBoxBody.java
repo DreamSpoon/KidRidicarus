@@ -24,7 +24,7 @@ public class RoomBoxBody extends AgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(bounds.width, bounds.height);
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
 		// TODO change to makeSensorBoxFixture?
 		B2DFactory.makeSensorBoxFixture(b2body, CFCAT_BITS, CFMASK_BITS, this, bounds.width, bounds.height);

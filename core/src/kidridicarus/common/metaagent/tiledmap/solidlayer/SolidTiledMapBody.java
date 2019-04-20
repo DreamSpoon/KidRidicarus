@@ -21,7 +21,7 @@ public class SolidTiledMapBody extends AgentBody {
 	// TODO what if body is redefined? how to delete all the old stuff and move it? 
 	@Override
 	protected void defineBody(Rectangle bounds) {
-		setBodySize(bounds.width, bounds.height);
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
 		B2DFactory.makeSensorBoxFixture(b2body, CFCAT_BITS, CFMASK_BITS, this, bounds.width, bounds.height);
 	}

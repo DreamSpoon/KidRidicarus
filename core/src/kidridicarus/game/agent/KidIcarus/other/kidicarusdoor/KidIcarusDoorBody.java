@@ -45,13 +45,13 @@ public class KidIcarusDoorBody extends AgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(BODY_WIDTH, BODY_HEIGHT);
+		setBoundsSize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()).add(BODY_OFFSET));
 		spine = new BasicAgentSpine(this);
 		// create the agent sensor, it will be used now and/or later
 		agentSensor = spine.createAgentSensor();
 		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, isOpened ? OPENED_CFCAT : CLOSED_CFCAT,
-				isOpened ? OPENED_CFMASK : CLOSED_CFMASK, agentSensor, getBodySize().x, getBodySize().y);
+				isOpened ? OPENED_CFMASK : CLOSED_CFMASK, agentSensor, getBounds().width, getBounds().height);
 		// solid roof that player can stand on
 		B2DFactory.makeBoxFixture(b2body, ROOF_CFCAT, ROOF_CFMASK, this, ROOF_WIDTH, ROOF_HEIGHT,
 				new Vector2(0f, (BODY_HEIGHT+ROOF_HEIGHT)/2f));

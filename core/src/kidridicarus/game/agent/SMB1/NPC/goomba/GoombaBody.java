@@ -46,7 +46,7 @@ public class GoombaBody extends MobileAgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(bounds.getWidth(), bounds.getHeight());
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		spine = new GoombaSpine(this);
 		createFixtures();
@@ -55,15 +55,15 @@ public class GoombaBody extends MobileAgentBody {
 	private void createFixtures() {
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		// main body fixture
-		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, solidSensor, getBodySize().x, getBodySize().y);
+		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, solidSensor, getBounds().width, getBounds().height);
 		// agent sensor fixture
 		AgentContactHoldSensor sensor = spine.createAgentSensor();
 		sensor.chainTo(spine.createHeadBounceSensor());
 		agentSensorFixture = B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, sensor,
-				getBodySize().x, getBodySize().y);
+				getBounds().width, getBounds().height);
 		// ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBounds().height/2f));
 	}
 
 	public void allowOnlyDeadSquishContacts() {

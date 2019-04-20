@@ -21,8 +21,8 @@ public abstract class AgentBody implements Disposable {
 	private Agent parent;
 	protected World world;
 	protected Body b2body;
-	// bodySize is for information purposes only, it is not the current dimensions of b2body
-	private Vector2 bodySize;
+	// bounds size is for information purposes only, it is not necessarily the current dimensions of b2body
+	private Vector2 boundsSize;
 
 	protected abstract void defineBody(Rectangle bounds);
 
@@ -30,7 +30,7 @@ public abstract class AgentBody implements Disposable {
 		this.parent = parent;
 		this.world = world;
 		b2body = null;
-		bodySize = new Vector2(0f, 0f);
+		boundsSize = new Vector2(0f, 0f);
 	}
 
 	public Agent getParent() {
@@ -41,17 +41,13 @@ public abstract class AgentBody implements Disposable {
 		return b2body.getPosition();
 	}
 
-	public void setBodySize(float width, float height) {
-		bodySize.set(width, height);
-	}
-
-	public Vector2 getBodySize() {
-		return bodySize.cpy();
+	public void setBoundsSize(float width, float height) {
+		boundsSize.set(width, height);
 	}
 
 	public Rectangle getBounds() {
-		return new Rectangle(b2body.getPosition().x - bodySize.x/2f, b2body.getPosition().y - bodySize.y/2f,
-				bodySize.x, bodySize.y);
+		return new Rectangle(b2body.getPosition().x - boundsSize.x/2f, b2body.getPosition().y - boundsSize.y/2f,
+				boundsSize.x, boundsSize.y);
 	}
 
 	public Vector2 getVelocity() {

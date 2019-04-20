@@ -41,7 +41,7 @@ public abstract class FollowBoxBody extends AgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(bounds.width, bounds.height);
+		setBoundsSize(bounds.width, bounds.height);
 		createRegBody(world, bounds, getCatBits(), getMaskBits());
 		createMouseJoint(world, bounds.getCenter(new Vector2()));
 	}

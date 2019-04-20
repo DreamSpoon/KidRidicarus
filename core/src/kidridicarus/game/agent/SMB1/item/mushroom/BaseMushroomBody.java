@@ -29,20 +29,20 @@ public class BaseMushroomBody extends SproutingPowerupBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(bounds.getWidth(), bounds.getHeight());
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		spine = new SolidContactSpine(this);
 
 		// create main fixture
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		B2DFactory.makeBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
-				getBodySize().x, getBodySize().y);
+				bounds.width, bounds.height);
 		// create on ground sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBodySize().y/2f));
+				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -bounds.height/2f));
 		// create agent sensor
 		AgentContactHoldSensor agentSensor = spine.createAgentSensor();
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK, agentSensor,
-				getBodySize().x, getBodySize().y);
+				bounds.width, bounds.height);
 	}
 }

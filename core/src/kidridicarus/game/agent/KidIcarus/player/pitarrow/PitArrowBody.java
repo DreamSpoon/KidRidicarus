@@ -43,10 +43,10 @@ public class PitArrowBody extends MobileAgentBody {
 
 		// if horizontal then set body size like normal...
 		if(arrowDir.isHorizontal())
-			setBodySize(BODY_WIDTH, BODY_HEIGHT);
+			setBoundsSize(BODY_WIDTH, BODY_HEIGHT);
 		// but if vertical then rotate body size by 90 degrees
 		else
-			setBodySize(BODY_HEIGHT, BODY_WIDTH);
+			setBoundsSize(BODY_HEIGHT, BODY_WIDTH);
 
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
@@ -56,10 +56,10 @@ public class PitArrowBody extends MobileAgentBody {
 
 		// create main fixture
 		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, spine.createSolidContactSensor(),
-				getBodySize().x, getBodySize().y);
+				getBounds().width, getBounds().height);
 		// create agent contact sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
-				getBodySize().x, getBodySize().y);
+				getBounds().width, getBounds().height);
 	}
 
 	public SolidContactSpine getSpine() {

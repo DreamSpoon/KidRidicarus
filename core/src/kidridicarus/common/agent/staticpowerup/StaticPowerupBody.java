@@ -23,13 +23,13 @@ public abstract class StaticPowerupBody extends AgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 		// define new body
-		setBodySize(bounds.width, bounds.height);
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
 		b2body.setGravityScale(0f);
 		spine = new BasicAgentSpine(this);
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK,
-				spine.createAgentSensor(), getBodySize().x, getBodySize().y);
+				spine.createAgentSensor(), getBounds().width, getBounds().height);
 	}
 
 	public BasicAgentSpine getSpine() {

@@ -35,10 +35,10 @@ public class MetroidDoorBody extends AgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(BODY_WIDTH, BODY_HEIGHT);
+		setBoundsSize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
 		mainBodyFixture = B2DFactory.makeBoxFixture(b2body, MAIN_ENABLED_CFCAT, MAIN_ENABLED_CFMASK, this,
-				getBodySize().x, getBodySize().y);
+				getBounds().width, getBounds().height);
 	}
 
 	public void setMainSolid(boolean enabled) {

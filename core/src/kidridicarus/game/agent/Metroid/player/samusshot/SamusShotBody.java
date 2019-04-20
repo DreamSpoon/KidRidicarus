@@ -40,7 +40,7 @@ public class SamusShotBody extends MobileAgentBody {
 		if(b2body != null)
 			world.destroyBody(b2body);
 
-		setBodySize(bounds.getWidth(), bounds.getHeight());
+		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		b2body.setBullet(true);
@@ -49,7 +49,7 @@ public class SamusShotBody extends MobileAgentBody {
 
 		// create main fixture
 		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, spine.createSolidContactSensor(),
-				getBodySize().x, getBodySize().y);
+				bounds.width, bounds.height);
 		// create agent contact sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				SENSOR_WIDTH, SENSOR_HEIGHT);

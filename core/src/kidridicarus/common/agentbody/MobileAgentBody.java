@@ -25,12 +25,12 @@ public abstract class MobileAgentBody extends AgentBody {
 		if(position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON) && !keepVelocity)
 			return;
 		if(keepVelocity) {
-			defineBody(new Rectangle(position.x-getBodySize().x/2f, position.y-getBodySize().y/2f,
-					getBodySize().x, getBodySize().y), b2body.getLinearVelocity());
+			defineBody(new Rectangle(position.x-getBounds().width/2f, position.y-getBounds().height/2f,
+					getBounds().width, getBounds().height), b2body.getLinearVelocity());
 		}
 		else {
-			defineBody(new Rectangle(position.x-getBodySize().x/2f, position.y-getBodySize().y/2f,
-					getBodySize().x, getBodySize().y), new Vector2(0f, 0f));
+			defineBody(new Rectangle(position.x-getBounds().width/2f, position.y-getBounds().height/2f,
+					getBounds().width, getBounds().height), new Vector2(0f, 0f));
 		}
 	}
 }
