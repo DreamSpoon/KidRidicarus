@@ -30,9 +30,9 @@ import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.common.tool.QQ;
-import kidridicarus.game.powerup.KidIcarusPow;
-import kidridicarus.game.powerup.MetroidPow;
-import kidridicarus.game.powerup.SMB1_Pow;
+import kidridicarus.game.info.KidIcarusPow;
+import kidridicarus.game.info.MetroidPow;
+import kidridicarus.game.info.SMB1_Pow;
 
 public class PlayerControllerAgent extends Agent implements DisposableAgent {
 	private static final float SPAWN_TRIGGER_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 20);

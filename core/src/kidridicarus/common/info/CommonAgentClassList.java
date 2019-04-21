@@ -15,7 +15,7 @@ import kidridicarus.common.metaagent.playercontrolleragent.PlayerControllerAgent
 import kidridicarus.common.metaagent.tiledmap.TiledMapMetaAgent;
 import kidridicarus.common.metaagent.tiledmap.drawlayer.DrawLayerAgent;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
-import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
+import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
 
 public class CommonAgentClassList {
 	public static final AgentClassList CORE_AGENT_CLASS_LIST = new AgentClassList( 

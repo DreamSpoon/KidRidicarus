@@ -8,10 +8,10 @@ import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile.TileBumpStrength;
-import kidridicarus.game.agent.SMB1.other.pipewarp.PipeWarp;
-import kidridicarus.game.agentspine.SMB1.PipeWarpContactNerve;
-import kidridicarus.game.agentspine.SMB1.TileBumpContactNerve;
+import kidridicarus.game.SMB1.agent.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
+import kidridicarus.game.SMB1.agentspine.PipeWarpContactNerve;
+import kidridicarus.game.SMB1.agentspine.TileBumpContactNerve;
 
 public class PlayerSpine extends SolidContactSpine {
 	private TileBumpContactNerve tbcNerve;

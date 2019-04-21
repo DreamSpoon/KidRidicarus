@@ -1,21 +1,21 @@
 package kidridicarus.game.info;
 
 import kidridicarus.agency.AgentClassList;
-import kidridicarus.game.agent.SMB1.NPC.goomba.Goomba;
-import kidridicarus.game.agent.SMB1.NPC.turtle.Turtle;
-import kidridicarus.game.agent.SMB1.item.fireflower.FireFlower;
-import kidridicarus.game.agent.SMB1.item.mushroom.Up1Mushroom;
-import kidridicarus.game.agent.SMB1.item.mushroom.MagicMushroom;
-import kidridicarus.game.agent.SMB1.item.powerstar.PowerStar;
-import kidridicarus.game.agent.SMB1.item.staticcoin.StaticCoin;
-import kidridicarus.game.agent.SMB1.other.brickpiece.BrickPiece;
-import kidridicarus.game.agent.SMB1.other.bumptile.BumpTile;
-import kidridicarus.game.agent.SMB1.other.castleflag.CastleFlag;
-import kidridicarus.game.agent.SMB1.other.flagpole.Flagpole;
-import kidridicarus.game.agent.SMB1.other.floatingpoints.FloatingPoints;
-import kidridicarus.game.agent.SMB1.other.spincoin.SpinCoin;
-import kidridicarus.game.agent.SMB1.player.mario.Mario;
-import kidridicarus.game.agent.SMB1.player.mariofireball.MarioFireball;
+import kidridicarus.game.SMB1.agent.NPC.goomba.Goomba;
+import kidridicarus.game.SMB1.agent.NPC.turtle.Turtle;
+import kidridicarus.game.SMB1.agent.item.fireflower.FireFlower;
+import kidridicarus.game.SMB1.agent.item.mushroom.MagicMushroom;
+import kidridicarus.game.SMB1.agent.item.mushroom.Up1Mushroom;
+import kidridicarus.game.SMB1.agent.item.powerstar.PowerStar;
+import kidridicarus.game.SMB1.agent.item.staticcoin.StaticCoin;
+import kidridicarus.game.SMB1.agent.other.brickpiece.BrickPiece;
+import kidridicarus.game.SMB1.agent.other.bumptile.BumpTile;
+import kidridicarus.game.SMB1.agent.other.castleflag.CastleFlag;
+import kidridicarus.game.SMB1.agent.other.flagpole.Flagpole;
+import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.SMB1.agent.other.spincoin.SpinCoin;
+import kidridicarus.game.SMB1.agent.player.mario.Mario;
+import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireball;
 
 /*
  * Title: Super Mario Bros. Info

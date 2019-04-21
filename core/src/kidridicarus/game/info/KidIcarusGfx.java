@@ -24,6 +24,8 @@ public class KidIcarusGfx {
 		public static final String SHEMUM =	DIR+"shemum";
 		public static final String MONOEYE =	DIR+"monoeye";
 		public static final String SPECKNOSE =	DIR+"specknose";
+		public static final String NETTLER =	DIR+"nettler";
+		public static final String NETTLER_DUCK =	DIR+"nettler_duck";
 	}
 
 	public static class Player {
