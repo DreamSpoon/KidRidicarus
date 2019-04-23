@@ -2,7 +2,6 @@ package kidridicarus.game.info;
 
 import kidridicarus.agency.AgentClassList;
 import kidridicarus.game.KidIcarus.agent.NPC.monoeye.Monoeye;
-import kidridicarus.game.KidIcarus.agent.NPC.nettler.Nettler;
 import kidridicarus.game.KidIcarus.agent.NPC.shemum.Shemum;
 import kidridicarus.game.KidIcarus.agent.NPC.specknose.Specknose;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
@@ -18,7 +17,6 @@ public class KidIcarusAgentClassList {
 			KidIcarusKV.AgentClassAlias.VAL_CHALICE_HEALTH, ChaliceHealth.class,
 			KidIcarusKV.AgentClassAlias.VAL_DOOR, KidIcarusDoor.class,
 			KidIcarusKV.AgentClassAlias.VAL_MONOEYE, Monoeye.class,
-			KidIcarusKV.AgentClassAlias.VAL_NETTLER, Nettler.class,
 			KidIcarusKV.AgentClassAlias.VAL_PIT, Pit.class,
 			KidIcarusKV.AgentClassAlias.VAL_PIT_ARROW, PitArrow.class,
 			KidIcarusKV.AgentClassAlias.VAL_SHEMUM, Shemum.class,

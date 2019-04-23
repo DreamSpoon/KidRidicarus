@@ -44,15 +44,6 @@
    eJztmQuOgzAMRCPo/s6we/9zrpCKFHljx2M7kHQ9kkUL9WNMPhBaSimfzjgVybFqFGcH87+eMXtdp0+N6ppWqYvWRvftJCL8RF2fkeMrghOl2eqasT/n/JPzD+Il5x+93p0xguOpJTnJseRH9EMNBx1P2jwaHyRS/1dvzL46NMfpvl4gOdL5OU9cbk9RHI43goNee+T6Ie1Yyl9v2tqiOCu01wwcZLxpOYjviJpOTr1NzliOtN7enkHXbjR6OjleIZyjPtQ37ePou4hZFDXHbCS8PqL6gceDVVbve8MDx+H6Kerbc521XlN6eefqkaLPjK3Pr6io+q7gbMDnKI6k2TizyPuclFpT3j66ke2qHPr74/vDyTnzJY5m3Gk4mucmjkPPaeVIeQ8mUA7HvYJDvfc4tE0QP3T9ciWnVWedP3t71celttJwIvygTIQj1XmHHytH215X+eF+3/I403VecV6tv3P3iUcjX+JYxvHdHGmu7nFaua/GSaVSqVQqlbpSUc8gByP63Wp6szNb3tD33y1v9D2a5TpsZMudy8Khx7Xrkx5H463H0fq7iyPxD1n6ZlTf9ow39D1wehjnIYLTW3ejuda1eDRnL31O738VaR7w3lu8/eWs0ZpLOcj/uhHtdAdH094r1MX59vrp3ZtbjB+8rCbnO4iDPpNpwtpvZoqUrF9TcxIc
   </data>
  </layer>
- <layer id="48" name="nettler" width="18" height="232">
-  <properties>
-   <property name="agent_class" value="agent_spawner"/>
-   <property name="spawn_agent_class" value="nettler"/>
-  </properties>
-  <data encoding="base64" compression="zlib">
-   eJztzgEJAAAIA7BnsX9IUxxBtgRLAAAAAAAAAAAAAAAAAAAAoGuuA7y3kogAIw==
-  </data>
- </layer>
  <layer id="43" name="playerstart" width="18" height="232">
   <properties>
    <property name="agent_class" value="player_spawner"/>
@@ -61,7 +52,7 @@
    <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzjENAAAIA7BJwr86TCzhoFXQBAAAAAAAAAAAAAAAAAAAADrmOsBbC7iAADE=
+   eJztziEBAAAIA7BHon86ClzgMFuCJQAAAAAAAAAAAFzNdwAAAAAAAACoFnfLADE=
   </data>
  </layer>
  <objectgroup id="31" name="door_exit">

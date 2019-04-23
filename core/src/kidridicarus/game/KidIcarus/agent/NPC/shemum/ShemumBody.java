@@ -5,13 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
-import kidridicarus.common.agentbody.MotileAgentBody;
+import kidridicarus.common.agent.proactoragent.ActorAgentBody;
+import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
+import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class ShemumBody extends MotileAgentBody {
+public class ShemumBody extends ActorAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(6f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = BODY_WIDTH;
@@ -50,17 +52,28 @@ public class ShemumBody extends MotileAgentBody {
 	private void createFixtures() {
 		// main body fixture
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
-		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, solidSensor,
-				getBounds().width, getBounds().height);
+		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, solidSensor, getBounds().width,
+				getBounds().height);
 		// agent sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				getBounds().width, getBounds().height);
 		// ground sensor fixture
-		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, solidSensor,
-				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBounds().height/2f));
+		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK,
+				solidSensor, FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBounds().height/2f));
 		// create player sensor fixture that covers most of the screen and detects players to target
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
 				spine.createPlayerSensor(), PLAYER_SENSOR_WIDTH, PLAYER_SENSOR_HEIGHT, PLAYER_SENSOR_OFFSET);
+	}
+
+	@Override
+	public ContactDmgBrainContactFrameInput processContactFrame() {
+		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
+	}
+
+	@Override
+	public RoomingBrainFrameInput processFrame(float delta) {
+		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+				spine.isContactDespawn());
 	}
 
 	public ShemumSpine getSpine() {

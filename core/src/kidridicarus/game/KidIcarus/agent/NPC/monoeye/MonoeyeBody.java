@@ -5,12 +5,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
-import kidridicarus.common.agentbody.MotileAgentBody;
+import kidridicarus.common.agent.proactoragent.ActorAgentBody;
+import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
+import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class MonoeyeBody extends MotileAgentBody {
+public class MonoeyeBody extends ActorAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float PLAYER_SENSOR_WIDTH = UInfo.P2M(128);
@@ -25,10 +27,10 @@ public class MonoeyeBody extends MotileAgentBody {
 
 	private MonoeyeSpine spine;
 
-	public MonoeyeBody(Monoeye parent, World world, Vector2 position) {
+	public MonoeyeBody(Monoeye parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
-				new Vector2(0f, 0f));
+				velocity);
 	}
 
 	@Override
@@ -48,6 +50,17 @@ public class MonoeyeBody extends MotileAgentBody {
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK,
 				spine.createPlayerSensor(), PLAYER_SENSOR_WIDTH, PLAYER_SENSOR_HEIGHT,
 				new Vector2(0f, bounds.height/2f - PLAYER_SENSOR_HEIGHT/2f));
+	}
+
+	@Override
+	public ContactDmgBrainContactFrameInput processContactFrame() {
+		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
+	}
+
+	@Override
+	public RoomingBrainFrameInput processFrame(float delta) {
+		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+				spine.isContactDespawn());
 	}
 
 	public MonoeyeSpine getSpine() {

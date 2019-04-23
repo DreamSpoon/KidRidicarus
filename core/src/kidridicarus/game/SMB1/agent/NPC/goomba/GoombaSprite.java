@@ -1,17 +1,18 @@
 package kidridicarus.game.SMB1.agent.NPC.goomba;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.common.agent.proactoragent.ActorAgentSprite;
+import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.SMB1.agent.NPC.goomba.Goomba.MoveState;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class GoombaSprite extends Sprite {
+public class GoombaSprite extends ActorAgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.4f;
@@ -19,6 +20,7 @@ public class GoombaSprite extends Sprite {
 	private Animation<TextureRegion> walkAnim;
 	private TextureRegion squish;
 	private float stateTimer;
+	private boolean isVisible;
 
 	public GoombaSprite(TextureAtlas atlas, Vector2 position) {
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
@@ -32,8 +34,10 @@ public class GoombaSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, MoveState moveState) {
-		switch(moveState) {
+	@Override
+	public void processFrame(SpriteFrameInput frameInput) {
+		isVisible = frameInput.visible;
+		switch(((GoombaSpriteFrameInput) frameInput).moveState) {
 			case DEAD_SQUISH:
 				setRegion(squish);
 				break;
@@ -48,9 +52,13 @@ public class GoombaSprite extends Sprite {
 				setRegion(walkAnim.getKeyFrame(stateTimer));
 				break;
 		}
+		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
+		stateTimer += ((GoombaSpriteFrameInput) frameInput).timeDelta;
+	}
 
-		stateTimer += delta;
-
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+	@Override
+	public void draw(Batch batch) {
+		if(isVisible)
+			super.draw(batch);
 	}
 }

@@ -1,19 +1,21 @@
-package kidridicarus.game.KidIcarus.agent.NPC.nettler;
-
-import com.badlogic.gdx.math.Vector2;
+package kidridicarus.game.KidIcarus.agent.NPC.shemum;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
+import kidridicarus.common.agent.proactoragent.ActorAgentBrain;
 import kidridicarus.common.agent.roombox.RoomBox;
+import kidridicarus.common.agentbrain.BrainContactFrameInput;
+import kidridicarus.common.agentbrain.BrainFrameInput;
+import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
+import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
+import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.KidIcarus.agent.NPC.nettler.NettlerBody.NettlerBodyContactFrameOutput;
-import kidridicarus.game.KidIcarus.agent.NPC.nettler.NettlerBody.NettlerBodyFrameOutput;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class NettlerCharacter {
+public class ShemumBrain extends ActorAgentBrain {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 1;
 	private static final float STRIKE_DELAY = 1/6f;
@@ -21,8 +23,8 @@ public class NettlerCharacter {
 
 	private enum MoveState { WALK, FALL1, FALL2, STRIKE_GROUND, DEAD }
 
-	private Nettler parent;
-	private NettlerBody body;
+	private Shemum parent;
+	private ShemumBody body;
 	private float moveStateTimer;
 	private MoveState moveState;
 	private boolean isFacingRight;
@@ -30,21 +32,7 @@ public class NettlerCharacter {
 	private boolean despawnMe;
 	private RoomBox lastKnownRoom;
 
-	public class NettlerCharacterFrameOutput {
-		public float timeDelta;
-		public Vector2 position;
-		public boolean visible;
-		public boolean isFacingRight;
-		public NettlerCharacterFrameOutput(float timeDelta, Vector2 position, boolean visible,
-				boolean isFacingRight) {
-			this.timeDelta = timeDelta;
-			this.position = position;
-			this.visible = visible;
-			this.isFacingRight = isFacingRight;
-		}
-	}
-
-	public NettlerCharacter(Nettler parent, NettlerBody body) {
+	public ShemumBrain(Shemum parent, ShemumBody body) {
 		this.parent = parent;
 		this.body = body;
 		moveStateTimer = 0f;
@@ -55,27 +43,29 @@ public class NettlerCharacter {
 		lastKnownRoom = null;
 	}
 
-	public void processContactFrame(NettlerBodyContactFrameOutput bodyContactFrame) {
+	@Override
+	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
-		for(ContactDmgTakeAgent agent : bodyContactFrame.contactDmgTakeAgents)
+		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
 	}
 
-	public NettlerCharacterFrameOutput processFrame(NettlerBodyFrameOutput bodyFrame) {
-		processContacts(bodyFrame);
-		processMove(bodyFrame.timeDelta);
+	@Override
+	public AnimSpriteFrameInput processFrame(BrainFrameInput frameInput) {
+		processContacts((RoomingBrainFrameInput) frameInput);
+		processMove(frameInput.timeDelta);
 		// draw if not despawned and not dead
-		return new NettlerCharacterFrameOutput(bodyFrame.timeDelta, body.getPosition(), !despawnMe && !isDead,
-				isFacingRight);
+		return new AnimSpriteFrameInput(!despawnMe && !isDead, body.getPosition(), !isFacingRight,
+				frameInput.timeDelta);
 	}
 
-	private void processContacts(NettlerBodyFrameOutput bodyFrame) {
+	private void processContacts(RoomingBrainFrameInput frameInput) {
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if((!isDead && !bodyFrame.isContactKeepAlive) || bodyFrame.isContactDespawn)
+		if((!isDead && !frameInput.isContactKeepAlive) || frameInput.isContactDespawn)
 			despawnMe = true;
 		// update last known room if not dead
-		if(moveState != MoveState.DEAD && bodyFrame.roomBox != null)
-			lastKnownRoom = bodyFrame.roomBox;
+		if(moveState != MoveState.DEAD && frameInput.roomBox != null)
+			lastKnownRoom = frameInput.roomBox;
 	}
 
 	private void processMove(float delta) {
@@ -157,7 +147,7 @@ public class NettlerCharacter {
 	}
 
 	// assume any amount of damage kills, for now...
-	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
+	public boolean onTakeDamage(Agent agent) {
 		// if dead already or the damage is from the same team then return no damage taken
 		if(isDead || !(agent instanceof PlayerAgent))
 			return false;
