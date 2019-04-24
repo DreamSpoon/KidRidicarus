@@ -4,7 +4,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.agent.proactoragent.ActorAgentBrain;
+import kidridicarus.common.agent.proactoragent.ProactorAgentBrain;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
@@ -15,7 +15,7 @@ import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine.AxisGoState;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class MonoeyeBrain extends ActorAgentBrain {
+public class MonoeyeBrain extends ProactorAgentBrain {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 5;
 

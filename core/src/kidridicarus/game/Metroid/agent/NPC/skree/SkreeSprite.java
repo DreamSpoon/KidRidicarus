@@ -1,17 +1,18 @@
 package kidridicarus.game.Metroid.agent.NPC.skree;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.common.agent.proactoragent.ProactorAgentSprite;
+import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
+import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.Metroid.agent.NPC.skree.Skree.MoveState;
 import kidridicarus.game.info.MetroidGfx;
 
-public class SkreeSprite extends Sprite {
+public class SkreeSprite extends ProactorAgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(24);
 	private static final float ANIM_SPEED_REG = 0.17f;
@@ -41,8 +42,10 @@ public class SkreeSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f + SPECIAL_OFFSET.x, position.y - getHeight()/2f + SPECIAL_OFFSET.y);
 	}
 
-	public void update(float delta, Vector2 position, MoveState parentState) {
-		switch(parentState) {
+	@Override
+	public void processFrame(SpriteFrameInput frameInput) {
+		isVisible = frameInput.visible;
+		switch(((SkreeSpriteFrameInput) frameInput).moveState) {
 			case SLEEP:
 			default:
 				setRegion(spinAnim.getKeyFrame(stateTimer));
@@ -57,8 +60,10 @@ public class SkreeSprite extends Sprite {
 			case DEAD:
 				break;
 		}
-
-		stateTimer += delta;
-		setPosition(position.x - getWidth()/2f + SPECIAL_OFFSET.x, position.y - getHeight()/2f + SPECIAL_OFFSET.y);
+		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
+			flip(true,  false);
+		setPosition(frameInput.position.x - getWidth()/2f + SPECIAL_OFFSET.x,
+				frameInput.position.y - getHeight()/2f + SPECIAL_OFFSET.y);
+		stateTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 	}
 }

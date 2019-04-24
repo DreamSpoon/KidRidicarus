@@ -1,18 +1,18 @@
 package kidridicarus.game.Metroid.agent.NPC.zoomer;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.game.Metroid.agent.NPC.zoomer.Zoomer.MoveState;
-import kidridicarus.game.info.MetroidGfx;
+import kidridicarus.common.agent.proactoragent.ProactorAgentSprite;
+import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
+import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.info.MetroidGfx;
 
-public class ZoomerSprite extends Sprite {
+public class ZoomerSprite extends ProactorAgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.05f;
@@ -35,8 +35,11 @@ public class ZoomerSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, MoveState parentState, Direction4 upDir) {
-		switch(parentState) {
+	@Override
+	public void processFrame(SpriteFrameInput frameInput) {
+		isVisible = frameInput.visible;
+		// set region according to move state
+		switch(((ZoomerSpriteFrameInput) frameInput).moveState) {
 			case WALK:
 				setRegion(walkAnim.getKeyFrame(stateTimer));
 				break;
@@ -46,9 +49,8 @@ public class ZoomerSprite extends Sprite {
 			case DEAD:
 				break;
 		}
-
-		stateTimer += delta;
-		switch(upDir) {
+		// rotate sprite according to up direction
+		switch(((ZoomerSpriteFrameInput) frameInput).upDir) {
 			case RIGHT:
 				setRotation(270);
 				break;
@@ -63,6 +65,9 @@ public class ZoomerSprite extends Sprite {
 				setRotation(180);
 				break;
 		}
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
+			flip(true,  false);
+		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
+		stateTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 	}
 }

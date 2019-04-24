@@ -7,11 +7,11 @@ import kidridicarus.common.agentbody.MotileAgentBody;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
 
-public abstract class ActorAgentBody extends MotileAgentBody {
+public abstract class ProactorAgentBody extends MotileAgentBody {
 	public abstract BrainContactFrameInput processContactFrame();
 	public abstract BrainFrameInput processFrame(float delta);
 
-	public ActorAgentBody(Agent parent, World world) {
+	public ProactorAgentBody(Agent parent, World world) {
 		super(parent, world);
 	}
 }

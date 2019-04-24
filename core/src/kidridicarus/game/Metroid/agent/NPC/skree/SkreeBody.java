@@ -8,12 +8,14 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
-import kidridicarus.common.agentbody.MotileAgentBody;
+import kidridicarus.common.agent.proactoragent.ProactorAgentBody;
+import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
+import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SkreeBody extends MotileAgentBody {
+public class SkreeBody extends ProactorAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(16);
 	private static final float BODY_HEIGHT = UInfo.P2M(18);
 	private static final float FOOT_WIDTH = UInfo.P2M(18);
@@ -73,6 +75,17 @@ public class SkreeBody extends MotileAgentBody {
 		fdef.isSensor = true;
 		b2body.createFixture(fdef).setUserData(new AgentBodyFilter(CommonCF.AGENT_SENSOR_CFCAT,
 				CommonCF.AGENT_SENSOR_CFMASK, spine.createPlayerSensor()));
+	}
+
+	@Override
+	public ContactDmgBrainContactFrameInput processContactFrame() {
+		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
+	}
+
+	@Override
+	public RoomingBrainFrameInput processFrame(float delta) {
+		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+				spine.isContactDespawn());
 	}
 
 	public SkreeSpine getSpine() {

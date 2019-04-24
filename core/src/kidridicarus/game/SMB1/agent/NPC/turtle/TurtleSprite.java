@@ -1,17 +1,18 @@
 package kidridicarus.game.SMB1.agent.NPC.turtle;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.common.agent.proactoragent.ProactorAgentSprite;
+import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
+import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.SMB1.agent.NPC.turtle.Turtle.MoveState;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class TurtleSprite extends Sprite {
+public class TurtleSprite extends ProactorAgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(24);
 	private static final float ANIM_SPEED = 0.25f;
@@ -27,16 +28,16 @@ public class TurtleSprite extends Sprite {
 		wakeUpAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMB1_Gfx.NPC.TURTLE_WAKEUP), PlayMode.LOOP);
 		insideShell = atlas.findRegion(SMB1_Gfx.NPC.TURTLE_HIDE);
-
 		stateTimer = 0;
-
 		setRegion(walkAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, MoveState parentState, boolean facingRight) {
-		switch(parentState) {
+	@Override
+	public void processFrame(SpriteFrameInput frameInput) {
+		isVisible = frameInput.visible;
+		switch(((TurtleSpriteFrameInput) frameInput).moveState) {
 			case WALK:
 			case FALL:
 				setRegion(walkAnim.getKeyFrame(stateTimer));
@@ -55,14 +56,9 @@ public class TurtleSprite extends Sprite {
 					flip(false,  true);
 				break;
 		}
-
-		// Ensure the sprite is facing the correct direction
-		// (the turtle sprite faces left in the spritesheet, so left/right is reversed)
-		if((facingRight && !isFlipX()) || (!facingRight && isFlipX()))
-			flip(true, false);
-
-		setPosition(position.x - getWidth() / 2f, position.y - getHeight() * 0.375f);
-
-		stateTimer += delta;
+		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
+			flip(true,  false);
+		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
+		stateTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 	}
 }

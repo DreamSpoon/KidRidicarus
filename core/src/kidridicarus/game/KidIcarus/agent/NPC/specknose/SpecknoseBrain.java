@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.agent.proactoragent.ActorAgentBrain;
+import kidridicarus.common.agent.proactoragent.ProactorAgentBrain;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
@@ -17,7 +17,7 @@ import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine.AxisGoState;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class SpecknoseBrain extends ActorAgentBrain {
+public class SpecknoseBrain extends ProactorAgentBrain {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 10;
 	private static final float HORIZONTAL_ONLY_CHANCE = 1/6f;

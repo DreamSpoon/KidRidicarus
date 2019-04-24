@@ -74,7 +74,7 @@
    <property name="spawn_main" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzgENAAAIA6AXsX9NY3xTSEACAAAAAAD/TDsAAADACQvGbwAe
+   eJztzgENAAAIA6CXsX9FY3xTSEACAAAAAAAAfDHtAADAMQuAbwAm
   </data>
  </layer>
  <objectgroup id="13" name="levelend">

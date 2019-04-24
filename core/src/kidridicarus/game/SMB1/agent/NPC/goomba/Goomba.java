@@ -11,13 +11,13 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.proactoragent.ActorAgent;
+import kidridicarus.common.agent.proactoragent.ProactorAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.BumpTakeAgent;
 import kidridicarus.game.SMB1.agent.Koopa;
 
-public class Goomba extends ActorAgent implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+public class Goomba extends ProactorAgent implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	public Goomba(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new GoombaBody(this, agency.getWorld(), AP_Tool.getCenter(properties), AP_Tool.getVelocity(properties));

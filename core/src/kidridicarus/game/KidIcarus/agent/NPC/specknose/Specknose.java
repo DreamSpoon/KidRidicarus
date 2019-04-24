@@ -11,11 +11,11 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.proactoragent.ActorAgent;
+import kidridicarus.common.agent.proactoragent.ProactorAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 
-public class Specknose extends ActorAgent implements ContactDmgTakeAgent, DisposableAgent {
+public class Specknose extends ProactorAgent implements ContactDmgTakeAgent, DisposableAgent {
 	public Specknose(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new SpecknoseBody(
