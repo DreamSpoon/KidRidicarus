@@ -3,9 +3,9 @@ package kidridicarus.game.SMB1.agent.NPC.goomba;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.agent.proactoragent.ProactorAgentBrain;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
@@ -16,7 +16,7 @@ import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class GoombaBrain extends ProactorAgentBrain {
+public class GoombaBrain extends FullActorBrain {
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;

@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
-import kidridicarus.common.agent.proactoragent.ProactorAgentBody;
+import kidridicarus.common.agent.fullactor.FullActorBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsensor.SolidContactSensor;
@@ -14,7 +14,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.DiagonalDir4;
 
-public class ZoomerBody extends ProactorAgentBody {
+public class ZoomerBody extends FullActorBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float SENSOR_SIZEFACTOR = 1.2f;
@@ -78,10 +78,6 @@ public class ZoomerBody extends ProactorAgentBody {
 				sizeX, sizeY, new Vector2(posX, posY));
 	}
 
-	public void postUpdate() {
-		prevPosition.set(b2body.getPosition());
-	}
-
 	@Override
 	public void resetPosition(Vector2 position, boolean keepVelocity) {
 		// exit if the new position is the same as current position and velocity can be maintained
@@ -110,6 +106,10 @@ public class ZoomerBody extends ProactorAgentBody {
 	public RoomingBrainFrameInput processFrame(float delta) {
 		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
 				spine.isContactDespawn());
+	}
+
+	public void postUpdate() {
+		prevPosition.set(b2body.getPosition());
 	}
 
 	public ZoomerSpine getSpine() {

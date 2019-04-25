@@ -6,13 +6,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agent.proactoragent.ProactorAgentSprite;
+import kidridicarus.agency.agent.AgentSprite;
 import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.MetroidGfx;
 
-public class SkreeSprite extends ProactorAgentSprite {
+public class SkreeSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(24);
 	private static final float ANIM_SPEED_REG = 0.17f;
@@ -28,6 +28,7 @@ public class SkreeSprite extends ProactorAgentSprite {
 	private float stateTimer;
 
 	public SkreeSprite(TextureAtlas atlas, Vector2 position) {
+		super(true);
 		spinAnim = new Animation<TextureRegion>(ANIM_SPEED_REG,
 				atlas.findRegions(MetroidGfx.NPC.SKREE), PlayMode.LOOP);
 		spinFastAnim = new Animation<TextureRegion>(ANIM_SPEED_FAST,

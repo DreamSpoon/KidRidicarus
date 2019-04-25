@@ -6,12 +6,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agent.proactoragent.ProactorAgentSprite;
+import kidridicarus.agency.agent.AgentSprite;
 import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class GoombaSprite extends ProactorAgentSprite {
+public class GoombaSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.4f;
@@ -21,6 +21,7 @@ public class GoombaSprite extends ProactorAgentSprite {
 	private float stateTimer;
 
 	public GoombaSprite(TextureAtlas atlas, Vector2 position) {
+		super(true);
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMB1_Gfx.NPC.GOOMBA_WALK), PlayMode.LOOP);
 		squish = atlas.findRegion(SMB1_Gfx.NPC.GOOMBA_SQUISH);

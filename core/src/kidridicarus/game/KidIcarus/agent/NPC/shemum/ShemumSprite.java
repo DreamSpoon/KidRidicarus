@@ -6,13 +6,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agent.proactoragent.ProactorAgentSprite;
+import kidridicarus.agency.agent.AgentSprite;
 import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.KidIcarusGfx;
 
-public class ShemumSprite extends ProactorAgentSprite {
+public class ShemumSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 2/15f;
@@ -21,6 +21,7 @@ public class ShemumSprite extends ProactorAgentSprite {
 	private float stateTimer;
 
 	public ShemumSprite(TextureAtlas atlas, Vector2 position) {
+		super(true);
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(KidIcarusGfx.NPC.SHEMUM), PlayMode.LOOP);
 		stateTimer = 0;

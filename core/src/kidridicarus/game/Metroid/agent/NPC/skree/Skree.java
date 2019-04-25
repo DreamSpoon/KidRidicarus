@@ -10,13 +10,13 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.common.agent.fullactor.FullActor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.proactoragent.ProactorAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 
-public class Skree extends ProactorAgent implements ContactDmgTakeAgent, DisposableAgent {
+public class Skree extends FullActor implements ContactDmgTakeAgent, DisposableAgent {
 	private static final Vector2 SPECIAL_OFFSET = UInfo.VectorP2M(0f, -4f);
 
 	public Skree(Agency agency, ObjectProperties properties) {

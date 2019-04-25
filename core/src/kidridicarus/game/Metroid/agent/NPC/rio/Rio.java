@@ -10,15 +10,15 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.common.agent.fullactor.FullActor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.proactoragent.ProactorAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 
 /*
  * TODO Check that Rio can re-target: as in, lose a target, then wait a bit, then gain a new target successfully.
  */
-public class Rio extends ProactorAgent implements ContactDmgTakeAgent, DisposableAgent {
+public class Rio extends FullActor implements ContactDmgTakeAgent, DisposableAgent {
 	public Rio(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new RioBody(this, agency.getWorld(), AP_Tool.getCenter(properties),

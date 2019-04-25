@@ -1,9 +1,9 @@
 package kidridicarus.game.KidIcarus.agent.NPC.shemum;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.agent.proactoragent.ProactorAgentBrain;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
@@ -15,7 +15,7 @@ import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class ShemumBrain extends ProactorAgentBrain {
+public class ShemumBrain extends FullActorBrain {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 1;
 	private static final float STRIKE_DELAY = 1/6f;

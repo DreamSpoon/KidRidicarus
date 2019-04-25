@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.agent.proactoragent.ProactorAgentBrain;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
@@ -18,7 +18,7 @@ import kidridicarus.game.Metroid.agent.item.energy.Energy;
 import kidridicarus.game.Metroid.agent.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
 
-public class SkreeBrain extends ProactorAgentBrain {
+public class SkreeBrain extends FullActorBrain {
 	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -167,7 +167,7 @@ public class SkreeBrain extends ProactorAgentBrain {
 			return MoveState.INJURY;
 		else if(body.getSpine().isOnGround())
 			return MoveState.ONGROUND;
-		// if something was targeted, even if it was removed, then do FALL state 
+		// if something was targeted, even if it was removed, then do FALL state
 		else if(target != null || isTargetRemoved)
 			return MoveState.FALL;
 		return MoveState.SLEEP;

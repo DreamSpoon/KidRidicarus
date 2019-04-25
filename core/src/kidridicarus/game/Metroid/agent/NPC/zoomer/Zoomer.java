@@ -10,8 +10,8 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.common.agent.fullactor.FullActor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.proactoragent.ProactorAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 
@@ -21,7 +21,7 @@ import kidridicarus.common.tool.AP_Tool;
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then
  * check the sensors.
  */
-public class Zoomer extends ProactorAgent implements ContactDmgTakeAgent, DisposableAgent {
+public class Zoomer extends FullActor implements ContactDmgTakeAgent, DisposableAgent {
 	public Zoomer(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new ZoomerBody(this, agency.getWorld(), AP_Tool.getCenter(properties),

@@ -1,35 +1,50 @@
 package kidridicarus.game.SMB1.agent.item.staticcoin;
 
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.staticpowerup.StaticPowerup;
-import kidridicarus.common.powerup.Powerup;
+import kidridicarus.agency.tool.Eye;
+import kidridicarus.common.agent.halfactor.HalfActor;
+import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
-import kidridicarus.game.info.SMB1_Audio;
-import kidridicarus.game.info.SMB1_Pow;
 
-public class StaticCoin extends StaticPowerup implements DisposableAgent {
-	public StaticCoin(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
-		body = new StaticCoinBody(this, agency.getWorld(), AP_Tool.getCenter(properties));
-		sprite = new StaticCoinSprite(agency.getAtlas(), AP_Tool.getCenter(properties));
+public class StaticCoin extends HalfActor implements DisposableAgent {
+	public StaticCoin(Agency agency, ObjectProperties agentProps) {
+		super(agency, agentProps);
+		body = new StaticCoinBody(this, agency.getWorld(), AP_Tool.getCenter(agentProps));
+		brain = new StaticCoinBrain(this, (StaticCoinBody) body);
+		sprite = new StaticCoinSprite(agency.getAtlas(), AP_Tool.getCenter(agentProps));
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
+			});
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+			});
+		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+				@Override
+				public void draw(Eye eye) { eye.draw(sprite); }
+			});
 	}
 
-	// always returns false, since this method completely overrides the original, due to global timer sprite update
 	@Override
-	protected boolean doPowerupUpdate(float delta, boolean isPowUsed) {
-		if(isPowUsed) {
-			agency.getEar().playSound(SMB1_Audio.Sound.COIN);
-			agency.removeAgent(this);
-		}
-		else
-			sprite.update(agency.getGlobalTimer(), true, false, body.getPosition());
-		return false;
+	public Vector2 getPosition() {
+		return body.getPosition();
 	}
 
 	@Override
-	protected Powerup getStaticPowerupPow() {
-		return new SMB1_Pow.CoinPow();
+	public Rectangle getBounds() {
+		return body.getBounds();
+	}
+
+	@Override
+	public void disposeAgent() {
+		body.dispose();
 	}
 }

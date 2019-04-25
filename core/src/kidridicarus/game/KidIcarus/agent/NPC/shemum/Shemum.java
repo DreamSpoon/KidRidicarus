@@ -10,13 +10,13 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.common.agent.fullactor.FullActor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.proactoragent.ProactorAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.BumpTakeAgent;
 
-public class Shemum extends ProactorAgent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+public class Shemum extends FullActor implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	public Shemum(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new ShemumBody(this, agency.getWorld(), AP_Tool.getCenter(properties), AP_Tool.getVelocity(properties));

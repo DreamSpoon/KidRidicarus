@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
-import kidridicarus.common.agent.proactoragent.ProactorAgentBody;
+import kidridicarus.common.agent.fullactor.FullActorBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsensor.SolidContactSensor;
@@ -13,7 +13,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class ShemumBody extends ProactorAgentBody {
+public class ShemumBody extends FullActorBody {
 	private static final float BODY_WIDTH = UInfo.P2M(6f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = BODY_WIDTH;

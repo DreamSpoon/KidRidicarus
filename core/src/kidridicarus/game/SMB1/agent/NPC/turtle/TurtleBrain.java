@@ -3,9 +3,9 @@ package kidridicarus.game.SMB1.agent.NPC.turtle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.agent.proactoragent.ProactorAgentBrain;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
@@ -16,7 +16,7 @@ import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class TurtleBrain extends ProactorAgentBrain {
+public class TurtleBrain extends FullActorBrain {
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float DIE_FALL_TIME = 6f;
 	private static final float HIDE_DELAY = 1.7f;

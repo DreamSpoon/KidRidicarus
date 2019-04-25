@@ -10,8 +10,8 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.common.agent.fullactor.FullActor;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
-import kidridicarus.common.agent.proactoragent.ProactorAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.BumpTakeAgent;
@@ -22,7 +22,7 @@ import kidridicarus.game.SMB1.agent.Koopa;
  * -do sliding turtle shells break bricks when they strike them?
  *  I couldn't find any maps in SMB 1 that would clear up this matter.
  */
-public class Turtle extends ProactorAgent implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+public class Turtle extends FullActor implements Koopa, ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
 	public Turtle(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new TurtleBody(this, agency.getWorld(), AP_Tool.getCenter(properties),

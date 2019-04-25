@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
-import kidridicarus.common.agent.proactoragent.ProactorAgentBody;
+import kidridicarus.common.agent.fullactor.FullActorBody;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
@@ -17,7 +17,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
 
-public class TurtleBody extends ProactorAgentBody {
+public class TurtleBody extends FullActorBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
