@@ -1,7 +1,5 @@
 package kidridicarus.game.SMB1.agent.item.mushroom;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -15,16 +13,13 @@ import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.info.SMB1_Pow;
 
 public class MagicMushroom extends BaseMushroom {
-	private static final float ANIM_SPEED = 1f;
-
 	public MagicMushroom(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 	}
 
 	@Override
-	protected Animation<TextureRegion> getMushroomAnim(TextureAtlas atlas) {
-		return new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMB1_Gfx.Item.MAGIC_MUSHROOM),
-				PlayMode.LOOP);
+	protected TextureRegion getMushroomTexture(TextureAtlas atlas) {
+		return atlas.findRegion(SMB1_Gfx.Item.MAGIC_MUSHROOM);
 	}
 
 	@Override

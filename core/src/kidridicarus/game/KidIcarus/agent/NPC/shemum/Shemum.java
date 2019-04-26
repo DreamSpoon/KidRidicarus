@@ -23,9 +23,9 @@ public class Shemum extends FullActor implements ContactDmgTakeAgent, BumpTakeAg
 		brain = new ShemumBrain(this, (ShemumBody) body);
 		sprite = new ShemumSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
-		});
+				@Override
+				public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
+			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) {
@@ -49,12 +49,12 @@ public class Shemum extends FullActor implements ContactDmgTakeAgent, BumpTakeAg
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return body.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return body.getBounds();
 	}
 

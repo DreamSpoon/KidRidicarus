@@ -5,14 +5,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
-import kidridicarus.common.agentbody.MotileAgentBody;
+import kidridicarus.common.agent.fullactor.FullActorBody;
+import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
+import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.Direction4;
 
-public class PitArrowBody extends MotileAgentBody {
+public class PitArrowBody extends FullActorBody {
 	private static final float BODY_WIDTH = UInfo.P2M(3);
 	private static final float BODY_HEIGHT = UInfo.P2M(3);
 
@@ -20,10 +22,9 @@ public class PitArrowBody extends MotileAgentBody {
 
 	private static final CFBitSeq MAIN_CFCAT = CommonCF.SOLID_BODY_CFCAT;
 	private static final CFBitSeq MAIN_CFMASK = CommonCF.SOLID_BODY_CFMASK;
-
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT,
-			CommonCF.Alias.ROOM_BIT);
+	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.KEEP_ALIVE_BIT,
+			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.ROOM_BIT);
 
 	private Direction4 arrowDir;
 	private SolidContactSpine spine;
@@ -60,6 +61,17 @@ public class PitArrowBody extends MotileAgentBody {
 		// create agent contact sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				getBounds().width, getBounds().height);
+	}
+
+	@Override
+	public ContactDmgBrainContactFrameInput processContactFrame() {
+		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
+	}
+
+	@Override
+	public RoomingBrainFrameInput processFrame(float delta) {
+		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+				spine.isContactDespawn());
 	}
 
 	public SolidContactSpine getSpine() {

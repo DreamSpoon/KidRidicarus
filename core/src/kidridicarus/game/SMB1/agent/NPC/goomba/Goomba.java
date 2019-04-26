@@ -50,12 +50,12 @@ public class Goomba extends FullActor implements Koopa, ContactDmgTakeAgent, Bum
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return body.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return body.getBounds();
 	}
 

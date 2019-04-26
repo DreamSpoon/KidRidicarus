@@ -3,7 +3,7 @@ package kidridicarus.game.info;
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 
-public class SMB1_Pow extends Powerup{
+public class SMB1_Pow extends Powerup {
 	@Override
 	public PowChar getPowerupCharacter() {
 		return PowChar.MARIO;

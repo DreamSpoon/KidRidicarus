@@ -4,23 +4,28 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
+import kidridicarus.common.agent.fullactor.FullActorBody;
+import kidridicarus.common.agentbrain.BrainFrameInput;
+import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
+import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
-import kidridicarus.game.SMB1.agent.other.sproutingpowerup.SproutingPowerupBody;
 
-public class BaseMushroomBody extends SproutingPowerupBody {
+public class BaseMushroomBody extends FullActorBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
-	public BaseMushroomBody(BaseMushroom parent, World world, Vector2 position, Vector2 velocity) {
-		super(parent, world, new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f,
-				BODY_WIDTH, BODY_HEIGHT), velocity);
+	protected SolidContactSpine spine;
+
+	public BaseMushroomBody(BaseMushroom parent, World world) {
+		super(parent, world);
+		spine = null;
 	}
 
 	@Override
@@ -44,5 +49,28 @@ public class BaseMushroomBody extends SproutingPowerupBody {
 		AgentContactHoldSensor agentSensor = spine.createAgentSensor();
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.POWERUP_CFCAT, CommonCF.POWERUP_CFMASK, agentSensor,
 				bounds.width, bounds.height);
+	}
+
+	public void finishSprout(Vector2 position) {
+		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT));
+	}
+
+	@Override
+	public PowerupBrainContactFrameInput processContactFrame() {
+		if(spine == null)
+			return null;
+		return new PowerupBrainContactFrameInput(spine.getTouchingPowerupTaker());
+	}
+
+	@Override
+	public BrainFrameInput processFrame(float delta) {
+		if(spine == null)
+			return new BrainFrameInput(delta);
+		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+				spine.isContactDespawn());
+	}
+
+	public SolidContactSpine getSpine() {
+		return spine;
 	}
 }

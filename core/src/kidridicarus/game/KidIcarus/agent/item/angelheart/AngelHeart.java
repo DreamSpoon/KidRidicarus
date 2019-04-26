@@ -38,12 +38,12 @@ public class AngelHeart extends HalfActor implements DisposableAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return body.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return body.getBounds();
 	}
 
