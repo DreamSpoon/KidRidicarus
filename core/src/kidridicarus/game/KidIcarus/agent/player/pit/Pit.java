@@ -32,7 +32,7 @@ import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.game.KidIcarus.agent.player.pit.HUD.PitHUD;
 import kidridicarus.game.KidIcarus.agent.player.pitarrow.PitArrow;
 import kidridicarus.game.SMB1.agent.HeadBounceGiveAgent;
-import kidridicarus.game.SMB1.agent.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusKV;

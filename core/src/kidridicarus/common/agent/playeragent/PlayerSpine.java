@@ -8,7 +8,7 @@ import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.SMB1.agent.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
 import kidridicarus.game.SMB1.agentspine.PipeWarpContactNerve;
 import kidridicarus.game.SMB1.agentspine.TileBumpContactNerve;

@@ -32,7 +32,7 @@ import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice4x4;
 import kidridicarus.game.SMB1.agent.HeadBounceGiveAgent;
-import kidridicarus.game.SMB1.agent.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
 import kidridicarus.game.SMB1.agent.player.mario.HUD.MarioHUD;
 import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireball;

@@ -1,11 +1,13 @@
 package kidridicarus.game.Metroid.agent.other.metroiddoornexus;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.Metroid.agent.other.metroiddoor.MetroidDoor;
 
 public class MetroidDoorNexusScript implements AgentScript {
@@ -28,18 +30,23 @@ public class MetroidDoorNexusScript implements AgentScript {
 		else
 			triggerDoor = leftDoor;
 		// get right door exit position if transiting right
+		Rectangle doorBounds = null;
 		if(isTransitRight) {
-			if(rightDoor == null)
-				exitPositionX = parent.getPosition().x + parent.getBounds().width/2f + incomingAgentSize.x/4f;
+			if(rightDoor != null)
+				doorBounds = AP_Tool.getBounds(rightDoor);
+			if(doorBounds != null)
+				exitPositionX = doorBounds.x + doorBounds.width + incomingAgentSize.x/4f;
 			else
-				exitPositionX = rightDoor.getPosition().x + rightDoor.getBounds().width/2f + incomingAgentSize.x/4f;
+				exitPositionX = parent.getBounds().x + parent.getBounds().width + incomingAgentSize.x/4f;
 		}
 		// otherwise get left door exit position
 		else {
-			if(leftDoor == null)
-				exitPositionX = parent.getPosition().x - parent.getBounds().width/2f - incomingAgentSize.x/4f;
+			if(leftDoor != null)
+				doorBounds = AP_Tool.getBounds(leftDoor);
+			if(doorBounds != null)
+				exitPositionX = doorBounds.x - incomingAgentSize.x/4f;
 			else
-				exitPositionX = leftDoor.getPosition().x - leftDoor.getBounds().width/2f - incomingAgentSize.x/4f;
+				exitPositionX = parent.getBounds().x - incomingAgentSize.x/4f;
 		}
 		// exit position Y is dependent upon player position Y, so it is set in startScript method
 		exitPositionY = 0f;

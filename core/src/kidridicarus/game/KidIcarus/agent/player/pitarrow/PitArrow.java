@@ -28,19 +28,17 @@ public class PitArrow extends FullActor implements DisposableAgent {
 				properties.containsKey(CommonKV.Spawn.KEY_EXPIRE), arrowDir);
 		sprite = new PitArrowSprite(agency.getAtlas(), body.getPosition(), arrowDir);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
-		});
+				@Override
+				public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
+			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) {
-				sprite.processFrame(brain.processFrame(body.processFrame(delta)));
-			}
-		});
+				@Override
+				public void update(float delta) { sprite.processFrame(brain.processFrame(body.processFrame(delta))); }
+			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
-			@Override
-			public void draw(Eye eye) { eye.draw(sprite); }
-		});
+				@Override
+				public void draw(Eye eye) { eye.draw(sprite); }
+			});
 	}
 
 	@Override

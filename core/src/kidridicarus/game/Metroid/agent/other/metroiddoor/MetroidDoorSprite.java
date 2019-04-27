@@ -1,17 +1,17 @@
 package kidridicarus.game.Metroid.agent.other.metroiddoor;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.agent.AgentSprite;
+import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.Metroid.agent.other.metroiddoor.MetroidDoor.MoveState;
 import kidridicarus.game.info.MetroidGfx;
 
-public class MetroidDoorSprite extends Sprite {
+public class MetroidDoorSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(48);
 	private static final float ANIM_SPEED = 0.1f;
@@ -24,6 +24,7 @@ public class MetroidDoorSprite extends Sprite {
 	private boolean isFacingRight;
 
 	public MetroidDoorSprite(TextureAtlas atlas, Vector2 position, boolean isFacingRight) {
+		super(true);
 		closedAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidGfx.NPC.DOOR_CLOSED), PlayMode.LOOP);
 		closingAnim = new Animation<TextureRegion>(ANIM_SPEED_CLOSE,
@@ -38,24 +39,27 @@ public class MetroidDoorSprite extends Sprite {
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 		// if facing left then flip the texture region horizontally
-		if(!isFacingRight)
+		if(!isFacingRight && !isFlipX())
 			flip(true, false);
 	}
 
-	public void update(float stateTimer, MoveState moveState) {
-		switch(moveState) {
+	@Override
+	public void processFrame(SpriteFrameInput frameInput) {
+		MetroidDoorSpriteFrameInput myFrameInput = (MetroidDoorSpriteFrameInput) frameInput;
+		isVisible = frameInput.visible;
+		switch((myFrameInput).moveState) {
 			case CLOSED:	// this must be funny to someone
 			case OPENING_WAIT1:
-				setRegion(closedAnim.getKeyFrame(stateTimer));
+				setRegion(closedAnim.getKeyFrame(myFrameInput.timeDelta));
 				break;
 			case OPENING_WAIT2:
-				setRegion(openingAnim.getKeyFrame(stateTimer));
+				setRegion(openingAnim.getKeyFrame(myFrameInput.timeDelta));
 				break;
 			case OPEN:
-				setRegion(openedAnim.getKeyFrame(stateTimer));
+				setRegion(openedAnim.getKeyFrame(myFrameInput.timeDelta));
 				break;
 			case CLOSING:
-				setRegion(closingAnim.getKeyFrame(stateTimer));
+				setRegion(closingAnim.getKeyFrame(myFrameInput.timeDelta));
 				break;
 		}
 

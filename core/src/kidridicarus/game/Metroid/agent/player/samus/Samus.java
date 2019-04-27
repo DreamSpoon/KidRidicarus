@@ -34,7 +34,7 @@ import kidridicarus.game.Metroid.agent.player.samus.HUD.SamusHUD;
 import kidridicarus.game.Metroid.agent.player.samuschunk.SamusChunk;
 import kidridicarus.game.Metroid.agent.player.samusshot.SamusShot;
 import kidridicarus.game.SMB1.agent.HeadBounceGiveAgent;
-import kidridicarus.game.SMB1.agent.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidKV;

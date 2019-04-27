@@ -35,7 +35,7 @@ public class MetroidDoorNexusBody extends AgentBody {
 				bounds.width, bounds.height);
 	}
 
-	public List<PlayerAgent> getPlayerBeginContacts() {
+	public List<PlayerAgent> processContactFrame() {
 		return playerSensor.getOnlyAndResetContacts(PlayerAgent.class);
 	}
 }

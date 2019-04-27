@@ -11,7 +11,6 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
 public class BumpTileBody extends AgentBody {
-	// all-in-one sensor
 	private static final CFBitSeq MAINSENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 	private static final CFBitSeq MAINSENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_MAP_BIT,
 			CommonCF.Alias.AGENT_BIT);

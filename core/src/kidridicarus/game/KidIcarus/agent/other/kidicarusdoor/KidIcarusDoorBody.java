@@ -5,16 +5,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.agency.agentcontact.AgentBodyFilter;
 import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.common.agent.halfactor.HalfActorBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.BasicAgentSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class KidIcarusDoorBody extends AgentBody {
+public class KidIcarusDoorBody extends HalfActorBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(27f);
 	private static final Vector2 BODY_OFFSET = UInfo.VectorP2M(0f, -2.5f);
@@ -64,6 +64,11 @@ public class KidIcarusDoorBody extends AgentBody {
 					isOpened ? OPENED_CFMASK : CLOSED_CFMASK, agentSensor));
 			mainBodyFixture.refilter();
 		}
+	}
+
+	@Override
+	public KidIcarusDoorBrainContactFrameInput processContactFrame() {
+		return new KidIcarusDoorBrainContactFrameInput(spine.getPlayerContacts());
 	}
 
 	public BasicAgentSpine getSpine() {

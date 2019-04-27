@@ -62,7 +62,7 @@ public class KidIcarusDoorScript implements AgentScript {
 			case EXIT:
 				if(isMoveStateChange) {
 					// close the door
-					entranceDoor.setOpened(false);
+					entranceDoor.onTakeTrigger();
 					// set body and sprite position to to exit position
 					currentScriptAgentState.scriptedBodyState.position.set(exitPos);
 					currentScriptAgentState.scriptedSpriteState.position.set(exitPos);

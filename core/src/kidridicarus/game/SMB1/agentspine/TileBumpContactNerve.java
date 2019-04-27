@@ -12,7 +12,7 @@ import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent;
-import kidridicarus.game.SMB1.agent.other.bumptile.BumpTile.TileBumpStrength;
+import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 
 public class TileBumpContactNerve {
 	private static final float MIN_HEADBANG_VEL = 0.01f;
