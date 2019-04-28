@@ -45,14 +45,11 @@ public class PowerStarSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
 		setRegion(anim.getKeyFrame(animTimer));
-		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
-			flip(true,  false);
-		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		if(((SproutSpriteFrameInput) frameInput).finishSprout)
 			finishSprout();
+		applyFrameInput(frameInput);
 	}
 
 	private void finishSprout() {

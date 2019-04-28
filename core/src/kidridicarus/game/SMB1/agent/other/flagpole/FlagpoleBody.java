@@ -34,7 +34,7 @@ public class FlagpoleBody extends AgentBody {
 				agentBeginContactSensor, bounds.width, bounds.height);
 	}
 
-	public List<PlayerAgent> getPlayerBeginContacts() {
+	public List<PlayerAgent> processContactFrame() {
 		return agentBeginContactSensor.getOnlyAndResetContacts(PlayerAgent.class);
 	}
 }

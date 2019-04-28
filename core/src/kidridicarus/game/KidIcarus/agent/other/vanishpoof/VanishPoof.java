@@ -50,12 +50,12 @@ public class VanishPoof extends PlacedBoundsAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return position;
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return new Rectangle(position.x, position.y, 0f, 0f);
 	}
 

@@ -22,12 +22,12 @@ public abstract class FollowBox extends PlacedBoundsAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return getFollowBoxBody().getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return getFollowBoxBody().getBounds();
 	}
 }

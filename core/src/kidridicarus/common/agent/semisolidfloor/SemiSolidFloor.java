@@ -27,12 +27,12 @@ public class SemiSolidFloor extends PlacedBoundsAgent implements SolidAgent, Dis
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return bounds.getCenter(new Vector2());
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return bounds;
 	}
 

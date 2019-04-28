@@ -9,6 +9,7 @@ import kidridicarus.agency.agent.AgentBody;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agentspine.BasicAgentSpine;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
 
 public class FlyBallSpine extends BasicAgentSpine {
 	private static final float ACCEL_X = UInfo.P2M(180);
@@ -121,12 +122,17 @@ public class FlyBallSpine extends BasicAgentSpine {
 				(isPlus && tileY >= getScrollTopY() + flyWindow.y+flyWindow.height);
 	}
 
+	// get the top Y tile coordinate of the scroll box's bounds
 	private Integer getScrollTopY() {
-		Integer scrollTopY = null;
+		// if can't get spawn trigger, or trigger's bounds don't exist, then return null
 		AgentSpawnTrigger trigger = agentSensor.getFirstContactByClass(AgentSpawnTrigger.class);
-		if(trigger != null)
-			scrollTopY = UInfo.M2Ty(trigger.getBounds().y + trigger.getBounds().height);
-		return scrollTopY;
+		if(trigger == null)
+			return null;
+		Rectangle triggerBounds = AP_Tool.getBounds(trigger);
+		if(triggerBounds == null)
+			return null;
+		// otherwise return the top of the trigger's bounds in tile coordinates
+		return UInfo.M2Ty(triggerBounds.y + triggerBounds.height);
 	}
 
 	public void setRightFlyBoundToCurrentX() {

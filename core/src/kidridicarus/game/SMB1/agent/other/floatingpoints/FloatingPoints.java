@@ -70,12 +70,12 @@ public class FloatingPoints extends PlacedBoundsAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return originalPosition;
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return new Rectangle(originalPosition.x, originalPosition.y, 0f, 0f);
 	}
 

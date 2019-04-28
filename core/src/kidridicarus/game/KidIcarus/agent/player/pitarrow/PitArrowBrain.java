@@ -53,7 +53,8 @@ public class PitArrowBrain extends FullActorBrain {
 	public SpriteFrameInput processFrame(BrainFrameInput frameInput) {
 		processContacts((RoomingBrainFrameInput) frameInput);
 		processMove(frameInput.timeDelta);
-		return new SpriteFrameInput(true, body.getPosition(), false);
+		// flip X if arrow is moving left
+		return new SpriteFrameInput(true, body.getPosition(), arrowDir == Direction4.LEFT);
 	}
 
 	private void processContacts(RoomingBrainFrameInput frameInput) {

@@ -6,12 +6,14 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentcontact.CFBitSeq;
-import kidridicarus.common.agentbody.MotileAgentBody;
+import kidridicarus.common.agent.fullactor.FullActorBody;
+import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
+import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class MarioFireballBody extends MotileAgentBody {
+public class MarioFireballBody extends FullActorBody {
 	private static final float BODY_WIDTH = UInfo.P2M(5f);
 	private static final float BODY_HEIGHT = UInfo.P2M(5f);
 	private static final float AGENT_SENSOR_WIDTH = UInfo.P2M(8f);
@@ -84,5 +86,16 @@ public class MarioFireballBody extends MotileAgentBody {
 
 	public Vector2 getPrevVelocity() {
 		return prevVelocity;
+	}
+
+	@Override
+	public ContactDmgBrainContactFrameInput processContactFrame() {
+		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
+	}
+
+	@Override
+	public RoomingBrainFrameInput processFrame(float delta) {
+		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+				spine.isContactDespawn());
 	}
 }

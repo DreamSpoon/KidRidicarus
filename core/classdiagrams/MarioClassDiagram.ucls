@@ -100,7 +100,7 @@
     </display>  
   </class>  
   <association id="10">    
-    <end type="SOURCE" refId="6" navigable="false">      
+    <end type="SOURCE" refId="1" navigable="false">      
       <attribute id="11" name="body">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
@@ -108,19 +108,19 @@
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="13">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="14" name="playerHUD">        
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="14" name="spine">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="15" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="16">    
@@ -149,50 +149,14 @@
   </association>  
   <association id="22">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="23" name="body">        
+      <attribute id="23" name="playerHUD">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
       <multiplicity id="24" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="25">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="26" name="parent">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="27" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="28">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="29" name="spine">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="30" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="31">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="32" name="sprite">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="33" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <classifier-display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 

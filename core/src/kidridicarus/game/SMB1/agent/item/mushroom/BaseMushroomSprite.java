@@ -36,12 +36,9 @@ public class BaseMushroomSprite extends AgentSprite {
 	public void processFrame(SpriteFrameInput frameInput) {
 		if(frameInput == null)
 			return;
-		isVisible = frameInput.visible;
-		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
-			flip(true,  false);
-		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
 		if(((SproutSpriteFrameInput) frameInput).finishSprout)
 			finishSprout();
+		applyFrameInput(frameInput);
 	}
 
 	private void finishSprout() {

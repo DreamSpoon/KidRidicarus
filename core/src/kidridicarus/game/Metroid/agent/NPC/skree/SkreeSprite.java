@@ -45,7 +45,6 @@ public class SkreeSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
 		switch(((SkreeSpriteFrameInput) frameInput).moveState) {
 			case SLEEP:
 			default:
@@ -61,10 +60,9 @@ public class SkreeSprite extends AgentSprite {
 			case DEAD:
 				break;
 		}
-		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
-			flip(true,  false);
-		setPosition(frameInput.position.x - getWidth()/2f + SPECIAL_OFFSET.x,
-				frameInput.position.y - getHeight()/2f + SPECIAL_OFFSET.y);
 		stateTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
+		applyFrameInput(new SpriteFrameInput(frameInput.visible,
+				new Vector2(frameInput.position.x - getWidth()/2f + SPECIAL_OFFSET.x,
+				frameInput.position.y - getHeight()/2f + SPECIAL_OFFSET.y), frameInput.flipX));
 	}
 }

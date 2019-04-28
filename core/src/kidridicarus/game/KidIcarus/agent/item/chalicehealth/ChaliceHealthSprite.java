@@ -21,9 +21,6 @@ public class ChaliceHealthSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
-		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
-			flip(true,  false);
-		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
+		applyFrameInput(frameInput);
 	}
 }

@@ -105,12 +105,12 @@ public class CastleFlag extends PlacedBoundsAgent implements TriggerTakeAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return startPosition;
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		// TODO: return actual position of flag, not just start position
 		return new Rectangle(startPosition.x - BODY_WIDTH/2f, startPosition.y - BODY_HEIGHT/2f,
 				BODY_WIDTH, BODY_HEIGHT);

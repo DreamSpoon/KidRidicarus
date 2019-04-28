@@ -33,7 +33,6 @@ public class GoombaSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
 		switch(((GoombaSpriteFrameInput) frameInput).moveState) {
 			case DEAD_SQUISH:
 				setRegion(squish);
@@ -50,7 +49,7 @@ public class GoombaSprite extends AgentSprite {
 				setRegion(walkAnim.getKeyFrame(stateTimer));
 				break;
 		}
-		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
 		stateTimer += ((GoombaSpriteFrameInput) frameInput).timeDelta;
+		applyFrameInput(frameInput);
 	}
 }

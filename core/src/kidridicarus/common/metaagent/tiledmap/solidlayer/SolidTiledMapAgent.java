@@ -99,12 +99,12 @@ public class SolidTiledMapAgent extends PlacedBoundsAgent implements Disposable 
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return body.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return body.getBounds();
 	}
 

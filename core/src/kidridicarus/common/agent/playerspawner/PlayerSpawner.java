@@ -49,12 +49,12 @@ public class PlayerSpawner extends PlacedBoundsAgent implements DisposableAgent 
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return psbody.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return psbody.getBounds();
 	}
 

@@ -71,7 +71,7 @@ public class SamusChunk extends PlacedBoundsAgent implements DisposableAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return b2body.getPosition();
 	}
 

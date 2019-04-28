@@ -27,9 +27,7 @@ public class ZoomerSprite extends AgentSprite {
 				atlas.findRegions(MetroidGfx.NPC.ZOOMER), PlayMode.LOOP);
 		injuryAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidGfx.NPC.ZOOMER_HIT), PlayMode.LOOP);
-
 		stateTimer = 0;
-
 		setRegion(walkAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setOrigin(SPRITE_WIDTH/2f, SPRITE_HEIGHT/2f);
@@ -38,7 +36,6 @@ public class ZoomerSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
 		// set region according to move state
 		switch(((ZoomerSpriteFrameInput) frameInput).moveState) {
 			case WALK:
@@ -66,9 +63,7 @@ public class ZoomerSprite extends AgentSprite {
 				setRotation(180);
 				break;
 		}
-		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
-			flip(true,  false);
-		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
 		stateTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
+		applyFrameInput(frameInput);
 	}
 }

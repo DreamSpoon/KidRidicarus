@@ -39,7 +39,6 @@ public class SamusShotSprite extends AgentSprite {
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
 		SamusShotSpriteFrameInput myFrameInput = (SamusShotSpriteFrameInput) frameInput;
-		isVisible = frameInput.visible;
 		stateTimer = myFrameInput.moveState == lastMoveState ? stateTimer : 0f;
 		lastMoveState = myFrameInput.moveState;
 		switch(myFrameInput.moveState) {
@@ -52,6 +51,6 @@ public class SamusShotSprite extends AgentSprite {
 				break;
 		}
 		stateTimer += myFrameInput.timeDelta;
-		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
+		applyFrameInput(frameInput);
 	}
 }

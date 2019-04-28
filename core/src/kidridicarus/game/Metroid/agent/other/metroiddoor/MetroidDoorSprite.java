@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.AgentSprite;
 import kidridicarus.common.agentsprite.SpriteFrameInput;
@@ -21,9 +20,8 @@ public class MetroidDoorSprite extends AgentSprite {
 	private Animation<TextureRegion> closingAnim;
 	private Animation<TextureRegion> openedAnim;
 	private Animation<TextureRegion> openingAnim;
-	private boolean isFacingRight;
 
-	public MetroidDoorSprite(TextureAtlas atlas, Vector2 position, boolean isFacingRight) {
+	public MetroidDoorSprite(TextureAtlas atlas, SpriteFrameInput frameInput) {
 		super(true);
 		closedAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidGfx.NPC.DOOR_CLOSED), PlayMode.LOOP);
@@ -33,20 +31,14 @@ public class MetroidDoorSprite extends AgentSprite {
 				atlas.findRegions(MetroidGfx.NPC.DOOR_OPENED), PlayMode.LOOP);
 		openingAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidGfx.NPC.DOOR_OPENING), PlayMode.NORMAL);
-
-		this.isFacingRight = isFacingRight;
 		setRegion(closedAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
-		// if facing left then flip the texture region horizontally
-		if(!isFacingRight && !isFlipX())
-			flip(true, false);
+		applyFrameInput(frameInput);
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
 		MetroidDoorSpriteFrameInput myFrameInput = (MetroidDoorSpriteFrameInput) frameInput;
-		isVisible = frameInput.visible;
 		switch((myFrameInput).moveState) {
 			case CLOSED:	// this must be funny to someone
 			case OPENING_WAIT1:
@@ -62,9 +54,6 @@ public class MetroidDoorSprite extends AgentSprite {
 				setRegion(closingAnim.getKeyFrame(myFrameInput.timeDelta));
 				break;
 		}
-
-		// if facing left then flip the texture region horizontally (if needed)
-		if(!isFacingRight && !isFlipX())
-			flip(true, false);
+		applyFrameInput(frameInput);
 	}
 }

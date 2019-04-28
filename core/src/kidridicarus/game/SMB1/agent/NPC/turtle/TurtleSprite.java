@@ -37,7 +37,6 @@ public class TurtleSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
 		switch(((TurtleSpriteFrameInput) frameInput).moveState) {
 			case WALK:
 			case FALL:
@@ -57,9 +56,7 @@ public class TurtleSprite extends AgentSprite {
 					flip(false,  true);
 				break;
 		}
-		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
-			flip(true,  false);
-		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
 		stateTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
+		applyFrameInput(frameInput);
 	}
 }

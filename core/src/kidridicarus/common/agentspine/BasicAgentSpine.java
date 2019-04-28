@@ -2,6 +2,7 @@ package kidridicarus.common.agentspine;
 
 import java.util.List;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
@@ -69,23 +70,22 @@ public class BasicAgentSpine {
 	}
 
 	public void checkDoSpaceWrap(RoomBox curRoom) {
+		// if no room, or no bounds, or no space wrap flag, then exit
 		if(curRoom == null)
+			return;
+		Rectangle roomBounds = AP_Tool.getBounds(curRoom);
+		if(roomBounds == null)
 			return;
 		if(!curRoom.getProperty(CommonKV.Room.KEY_SPACEWRAP_X, false, Boolean.class))
 			return;
-
 		// if body position is outside room on left...
-		if(body.getPosition().x < curRoom.getBounds().x) {
-			// true because I want keep velocity=true
-			((MotileAgentBody) body).resetPosition(
-					new Vector2(curRoom.getBounds().x+curRoom.getBounds().width, body.getPosition().y), true);
+		if(body.getPosition().x < roomBounds.x) {
+			((MotileAgentBody) body).resetPosition(new Vector2(roomBounds.x+roomBounds.width, body.getPosition().y),
+					true);
 		}
 		// if body position is outside room on right...
-		else if(body.getPosition().x > curRoom.getBounds().x+curRoom.getBounds().width) {
-			// true because I want keep velocity=true
-			((MotileAgentBody) body).resetPosition(
-					new Vector2(curRoom.getBounds().x, body.getPosition().y), true);
-		}
+		else if(body.getPosition().x > roomBounds.x+roomBounds.width)
+			((MotileAgentBody) body).resetPosition(new Vector2(roomBounds.x, body.getPosition().y), true);
 	}
 
 	public boolean isMovingInDir(Direction4 dir) {

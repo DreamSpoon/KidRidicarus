@@ -46,7 +46,7 @@ public class DeathPop extends PlacedAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return position;
 	}
 

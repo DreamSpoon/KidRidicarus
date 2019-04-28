@@ -39,17 +39,15 @@ public class BumpTileSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
-		BumpTileSpriteFrameInput myFrameInput = (BumpTileSpriteFrameInput) frameInput;
 		// empty block?
-		if(myFrameInput.isEmpty)
+		if(((BumpTileSpriteFrameInput) frameInput).isEmpty)
 			setRegion(emptyblockTex);
 		// q block?
 		else if(isQblock)
-			setRegion(qBlockAnim.getKeyFrame(myFrameInput.timeDelta));
+			setRegion(qBlockAnim.getKeyFrame(((BumpTileSpriteFrameInput) frameInput).timeDelta));
 		// block has texture?
 		else if(prebumpTex != null)
 			setRegion(prebumpTex);
-		setPosition(frameInput.position.x-getWidth()/2f, frameInput.position.y-getHeight()/2f);
+		applyFrameInput(frameInput);
 	}
 }

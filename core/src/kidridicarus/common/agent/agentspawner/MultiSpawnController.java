@@ -10,6 +10,7 @@ import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
+import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
 public class MultiSpawnController extends SpawnController {
@@ -75,6 +76,9 @@ public class MultiSpawnController extends SpawnController {
 		AgentSpawnTrigger spawnTrigger = body.getFirstContactByClass(AgentSpawnTrigger.class);
 		if(spawnTrigger == null)
 			return null;
+		Rectangle spawnTriggerBounds = AP_Tool.getBounds(spawnTrigger);
+		if(spawnTriggerBounds == null)
+			return null;
 
 		// that's all folks!
 		if(scrollDir != Direction4.UP)
@@ -83,7 +87,7 @@ public class MultiSpawnController extends SpawnController {
 		// AgentSpawnTrigger is contacting, so X value is okay...
 		// Check only Y bounds for overlap and where empty tiles available...
 		Rectangle spawnerTiles = UInfo.RectangleM2T(body.getBounds());
-		Rectangle triggerTiles = UInfo.RectangleM2T(spawnTrigger.getBounds());
+		Rectangle triggerTiles = UInfo.RectangleM2T(spawnTriggerBounds);
 		// if top of AgentSpawnTrigger is at least as high as top of AgentSpawner then disallow spawn
 		if(triggerTiles.y+triggerTiles.height >= spawnerTiles.y+spawnerTiles.height)
 			return null;

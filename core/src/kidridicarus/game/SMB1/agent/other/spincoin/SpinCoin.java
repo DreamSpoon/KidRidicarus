@@ -11,6 +11,7 @@ import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
@@ -30,18 +31,16 @@ public class SpinCoin extends PlacedBoundsAgent implements DisposableAgent {
 
 	public SpinCoin(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
 		stateTimer = 0f;
 		defineBody(AP_Tool.getCenter(properties), START_VELOCITY);
 		coinSprite = new SpinCoinSprite(agency.getAtlas(), b2body.getPosition());
-
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(delta); }
+				public void update(float delta) { coinSprite.processFrame(processFrame(delta)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
-				public void draw(Eye adBatch) { doDraw(adBatch); }
+				public void draw(Eye eye) { eye.draw(coinSprite); }
 			});
 	}
 
@@ -51,24 +50,20 @@ public class SpinCoin extends PlacedBoundsAgent implements DisposableAgent {
 				BODY_WIDTH, BODY_HEIGHT);
 	}
 
-	private void doUpdate(float delta) {
-		coinSprite.update(delta, b2body.getPosition());
+	private AnimSpriteFrameInput processFrame(float delta) {
 		stateTimer += delta;
 		if(stateTimer > COIN_SPIN_TIME)
 			agency.removeAgent(this);
-	}
-
-	private void doDraw(Eye adBatch) {
-		adBatch.draw(coinSprite);
+		return new AnimSpriteFrameInput(true, b2body.getPosition(), false, delta);
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return b2body.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return new Rectangle(b2body.getPosition().x - BODY_WIDTH/2f, b2body.getPosition().y - BODY_HEIGHT/2f,
 				BODY_WIDTH, BODY_HEIGHT);
 	}

@@ -120,7 +120,7 @@ public class FlagpoleScript implements AgentScript {
 					return ScriptState.SLIDE_STOP;
 				return ScriptState.SLIDE;
 			case SLIDE_STOP:
-				if(stateTimer > Flagpole.FLAGDROP_TIME - slideDuration)
+				if(stateTimer > FlagpoleBrain.FLAGDROP_TIME - slideDuration)
 					return ScriptState.SLIDE_FLIPRIGHT;
 				return ScriptState.SLIDE_STOP;
 			case SLIDE_FLIPRIGHT:

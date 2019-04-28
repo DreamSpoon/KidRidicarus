@@ -24,31 +24,29 @@ public class PitArrowSprite extends AgentSprite {
 		if((arrowDir == Direction4.RIGHT && isFlipX()) || (arrowDir == Direction4.LEFT && !isFlipX()))
 			flip(true,  false);
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		doSetPosition(position);
+		Vector2 pos = getArrowPosition(position);
+		setPosition(pos.x-getWidth()/2f, pos.y-getHeight()/2f);
 		if(arrowDir == Direction4.UP) {
 			setOrigin(0f, ORIGIN_OFFSET_UP);
 			setRotation(90f);
 		}
 	}
 
-	private void doSetPosition(Vector2 position) {
+	@Override
+	public void processFrame(SpriteFrameInput frameInput) {
+		applyFrameInput(new SpriteFrameInput(frameInput.visible, getArrowPosition(frameInput.position),
+				frameInput.flipX));
+	}
+
+	private Vector2 getArrowPosition(Vector2 position) {
 		switch(arrowDir) {
 			case RIGHT:
 			default:
-				setPosition(position.x - getWidth()/2f + SPRITE_OFFSET_RIGHT, position.y - getHeight()/2f);
-				break;
+				return new Vector2(position.x + SPRITE_OFFSET_RIGHT, position.y);
 			case LEFT:
-				setPosition(position.x - getWidth()/2f - SPRITE_OFFSET_RIGHT, position.y - getHeight()/2f);
-				break;
+				return new Vector2(position.x - SPRITE_OFFSET_RIGHT, position.y);
 			case UP:
-				setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f + SPRITE_OFFSET_UP);
-				break;
+				return new Vector2(position.x, position.y + SPRITE_OFFSET_UP);
 		}
-	}
-
-	@Override
-	public void processFrame(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
-		doSetPosition(frameInput.position);
 	}
 }

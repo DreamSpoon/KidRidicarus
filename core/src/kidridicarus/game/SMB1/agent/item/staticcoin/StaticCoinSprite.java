@@ -29,12 +29,9 @@ public class StaticCoinSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
 		// use the "delta time" as an "absolute time" because this is a special sprite
 		setRegion(anim.getKeyFrame(((AnimSpriteFrameInput) frameInput).timeDelta));
-		if((frameInput.flipX && !isFlipX()) || (!frameInput.flipX && isFlipX()))
-			flip(true,  false);
-		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
+		applyFrameInput(frameInput);
 	}
 }
 

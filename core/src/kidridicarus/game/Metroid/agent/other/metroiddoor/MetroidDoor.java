@@ -14,6 +14,7 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.SolidAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.agent.quarteractor.QuarterActor;
+import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
@@ -23,9 +24,10 @@ public class MetroidDoor extends QuarterActor implements SolidAgent, TriggerTake
 	public MetroidDoor(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new MetroidDoorBody(this, agency.getWorld(), AP_Tool.getCenter(properties));
-		brain = new MetroidDoorBrain(this, (MetroidDoorBody) body);
-		sprite = new MetroidDoorSprite(agency.getAtlas(), body.getPosition(),
-				properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT));
+		boolean isFacingRight = properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT);
+		brain = new MetroidDoorBrain(this, (MetroidDoorBody) body, isFacingRight);
+		sprite = new MetroidDoorSprite(agency.getAtlas(),
+				new SpriteFrameInput(true, body.getPosition(), !isFacingRight));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }

@@ -20,7 +20,7 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 		Direction4 direction;
 		Rectangle bounds; 
 
-		public PipeWarpHorizon(Direction4 direction, Rectangle bounds) {
+		PipeWarpHorizon(Direction4 direction, Rectangle bounds) {
 			this.direction = direction;
 			this.bounds = bounds;
 		}
@@ -82,15 +82,12 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 	public boolean use(Agent agent) {
 		if(!(agent instanceof PlayerAgent))
 			return false;
-
 		PlayerSpawner playerSpawner = getExitAgentSpawner();
-		Vector2 exitPos;
-		// if no exit position then default to (0, 0) - TODO throw exception?
 		if(playerSpawner == null)
-			exitPos = new Vector2(0f, 0f);
-		else
-			exitPos = playerSpawner.getPosition();
-
+			throw new IllegalStateException("Exit agent spawner not found for player.");
+		Vector2 exitPos = AP_Tool.getCenter(playerSpawner);
+		if(exitPos == null)
+			throw new IllegalStateException("Exit agent spawner does not have position.");
 		return ((PlayerAgent) agent).getSupervisor().startScript(
 				new PipeWarpScript(exitPos, getEntryHorizon(), getExitHorizon(),
 				agent.getProperty(CommonKV.Script.KEY_SPRITE_SIZE, null, Vector2.class)));
@@ -125,45 +122,40 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 
 	private PipeWarpHorizon getExitHorizon() {
 		// if this agent doesn't have an exit name key then quit method
-		PlayerSpawner gs = getExitAgentSpawner();
-		if(gs == null)
+		PlayerSpawner exitSpawner = getExitAgentSpawner();
+		if(exitSpawner == null)
+			return null;
+		// if agent bounds don't exist then exit
+		Rectangle exitBounds = AP_Tool.getBounds(exitSpawner);
+		if(exitBounds == null)
 			return null;
 		// if the exit spawner doesn't have a pipe warp spawn property then quit method
-		if(!gs.getProperty(CommonKV.Spawn.KEY_SPAWN_SCRIPT, "", String.class).
+		if(!exitSpawner.getProperty(CommonKV.Spawn.KEY_SPAWN_SCRIPT, "", String.class).
 				equals(CommonKV.Spawn.VAL_SPAWN_SCRIPT_PIPEWARP))
 			return null;
-
 		// if the exit spawner doesn't have a direction property then quit the method
-		Direction4 exitDir = Direction4.fromString(gs.getProperty(CommonKV.KEY_DIRECTION, "", String.class));
+		Direction4 exitDir = Direction4.fromString(exitSpawner.getProperty(CommonKV.KEY_DIRECTION, "", String.class));
 		if(exitDir == null)
 			return null;
-
-		// get the exit horizon offset based on the exit direction
-		Rectangle exitBounds;
+		// get the exit horizon offset from the exit direction
 		switch(exitDir) {
 			// sprite moves right to exit pipe
 			case RIGHT:
-				exitBounds = new Rectangle(gs.getBounds().x + gs.getBounds().width, gs.getBounds().y,
-						0f, gs.getBounds().height);
-				break;
+				return new PipeWarpHorizon(exitDir,
+						new Rectangle(exitBounds.x + exitBounds.width, exitBounds.y, 0f, exitBounds.height));
 			// sprite moves left to exit pipe
 			case LEFT:
-				exitBounds = new Rectangle(gs.getBounds().x, gs.getBounds().y,
-						0f, gs.getBounds().height);
-				break;
+				return new PipeWarpHorizon(exitDir,
+						new Rectangle(exitBounds.x, exitBounds.y, 0f, exitBounds.height));
 			// sprite moves up to exit pipe
 			case UP:
-				exitBounds = new Rectangle(gs.getBounds().x, gs.getBounds().y + gs.getBounds().height,
-						gs.getBounds().width, 0f);
-				break;
+				return new PipeWarpHorizon(exitDir,
+						new Rectangle(exitBounds.x, exitBounds.y + exitBounds.height, exitBounds.width, 0f));
 			// sprite moves down to exit pipe
 			default:
-				exitBounds = new Rectangle(gs.getBounds().x, gs.getBounds().y,
-						gs.getBounds().width, 0f);
-				break;
+				return new PipeWarpHorizon(exitDir,
+						new Rectangle(exitBounds.x, exitBounds.y, exitBounds.width, 0f));
 		}
-
-		return new PipeWarpHorizon(exitDir, exitBounds); 
 	}
 
 	public Direction4 getDirection() {
@@ -171,12 +163,12 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return pwBody.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return pwBody.getBounds();
 	}
 

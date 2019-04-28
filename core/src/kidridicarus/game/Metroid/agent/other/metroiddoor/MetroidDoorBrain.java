@@ -19,12 +19,14 @@ public class MetroidDoorBrain extends QuarterActorBrain {
 	private float moveStateTimer;
 	// opening - when player shoots door
 	private boolean isOpening;
-	// quick opening and closing when player transits through door nexus and exits this door
+	// quick opening and closing when player transits through door nexus and exits through this door
 	private boolean isQuickOpenClose;
+	private boolean isFacingRight;
 
-	public MetroidDoorBrain(MetroidDoor parent, MetroidDoorBody body) {
+	public MetroidDoorBrain(MetroidDoor parent, MetroidDoorBody body, boolean isFacingRight) {
 		this.parent = parent;
 		this.body = body;
+		this.isFacingRight = isFacingRight;
 		moveState = MoveState.CLOSED;
 		moveStateTimer = 0f;
 		isOpening = false;
@@ -34,11 +36,11 @@ public class MetroidDoorBrain extends QuarterActorBrain {
 	@Override
 	public MetroidDoorSpriteFrameInput processFrame(float delta) {
 		MoveState nextMoveState = getNextMoveState();
-		boolean moveStateChanged = nextMoveState != moveState;
+		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case CLOSING:
 				// if first frame of closing then cancel isOpening flag, make door solid again, and play sound
-				if(moveStateChanged) {
+				if(isMoveStateChange) {
 					isOpening = false;
 					isQuickOpenClose = false;
 					body.setMainSolid(true);
@@ -52,20 +54,19 @@ public class MetroidDoorBrain extends QuarterActorBrain {
 				break;
 			case OPEN:
 				// if first frame of open then make the door non-solid
-				if(moveStateChanged) {
+				if(isMoveStateChange) {
 					body.setMainSolid(false);
 					parent.getAgency().getEar().playSound(MetroidAudio.Sound.DOOR);
 				}
 				break;
 		}
-		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
-
-		return new MetroidDoorSpriteFrameInput(true, body.getPosition(), false, moveStateTimer, moveState);
+		return new MetroidDoorSpriteFrameInput(true, body.getPosition(), !isFacingRight, moveStateTimer, moveState);
 	}
 
 	/*
-	 * The *real* Metroid door is a little bit funky. Order of operations:
+	 * The real Metroid door is a little bit funky. Order of operations:
 	 *   0) Show door closed sprite frame because door is closed.
 	 *      Door is solid.
 	 *   1) Blink invisible for 1/60 second on first damage impact

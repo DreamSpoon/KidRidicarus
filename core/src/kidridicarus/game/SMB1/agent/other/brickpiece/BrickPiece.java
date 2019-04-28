@@ -64,12 +64,12 @@ public class BrickPiece extends PlacedBoundsAgent implements DisposableAgent {
 	}
 
 	@Override
-	public Vector2 getPosition() {
+	protected Vector2 getPosition() {
 		return b2body.getPosition();
 	}
 
 	@Override
-	public Rectangle getBounds() {
+	protected Rectangle getBounds() {
 		return new Rectangle(b2body.getPosition().x - BODY_WIDTH/2f, b2body.getPosition().y - BODY_HEIGHT/2f,
 				BODY_WIDTH, BODY_HEIGHT);
 	}
