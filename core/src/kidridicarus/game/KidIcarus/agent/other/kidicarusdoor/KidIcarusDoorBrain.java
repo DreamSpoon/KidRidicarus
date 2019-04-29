@@ -40,7 +40,7 @@ public class KidIcarusDoorBrain extends HalfActorBrain {
 	@Override
 	public KidIcarusDoorSpriteFrameInput processFrame(float delta) {
 		body.setOpened(isOpened);
-		return new KidIcarusDoorSpriteFrameInput(true, body.getPosition(), false, isOpened);
+		return new KidIcarusDoorSpriteFrameInput(body.getPosition(), isOpened);
 	}
 
 	public void setOpened(boolean isOpened) {

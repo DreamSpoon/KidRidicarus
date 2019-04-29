@@ -11,7 +11,7 @@ public class SMB1_Gfx {
 		public static final String COIN_SPIN =	DIR+"spin_coin";
 		public static final String BRICKPIECE =	DIR+"brick_piece";
 		public static final String QBLOCK =		DIR+"qblock";
-		public static final String QBLOCKEMPTY =	DIR+"qblock_empty";
+		public static final String QBLOCK_EMPTY =	DIR+"qblock_empty";
 		public static final String CASTLEFLAG =	DIR+"castle_flag";
 		public static final String DIGITS_1UP =	DIR+"digits_1up";
 		public static final String POINTDIGIT0 =	DIR+"digit0";

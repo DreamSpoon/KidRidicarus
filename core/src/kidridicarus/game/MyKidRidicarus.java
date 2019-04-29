@@ -32,7 +32,6 @@ public class MyKidRidicarus extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		atlas = new TextureAtlas(CommonInfo.TA_MAIN_FILENAME);
-
 		manager = new AssetManager();
 		// other music files may be loaded later when a space is loaded
 		manager.load(KidIcarusAudio.Music.PIT_DIE, Music.class);
@@ -40,7 +39,6 @@ public class MyKidRidicarus extends Game {
 		manager.load(MetroidAudio.Music.SAMUS_DIE, Music.class);
 		manager.load(SMB1_Audio.Music.LEVELEND, Music.class);
 		manager.load(SMB1_Audio.Music.STARPOWER, Music.class);
-
 		manager.load(KidIcarusAudio.Sound.Pit.HURT, Sound.class);
 		manager.load(KidIcarusAudio.Sound.Pit.JUMP, Sound.class);
 		manager.load(KidIcarusAudio.Sound.Pit.SHOOT, Sound.class);
@@ -69,12 +67,10 @@ public class MyKidRidicarus extends Game {
 		manager.load(SMB1_Audio.Sound.STOMP, Sound.class);
 		manager.load(SMB1_Audio.Sound.UP1, Sound.class);
 		manager.finishLoading();
-
 		agency = new Agency(new AgentClassList(CommonAgentClassList.CORE_AGENT_CLASS_LIST,
 				SMB1_AgentClassList.SMB_AGENT_CLASSLIST,
 				MetroidAgentClassList.METROID_AGENT_CLASSLIST,
 				KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST), atlas);
-
 		// show intro/instructions screen
 		setScreen(new InstructionsScreen(this, CommonInfo.GAMEMAP_FILENAME1));
 	}

@@ -1,7 +1,7 @@
 package kidridicarus.common.agent.halfactor;
 
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
 
 public abstract class HalfActorBrain {
 	public abstract void processContactFrame(BrainContactFrameInput cFrameInput);

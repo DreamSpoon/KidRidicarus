@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentcontact.AgentBodyFilter;
-import kidridicarus.agency.agentcontact.AgentContactSensor;
+import kidridicarus.agency.agentbody.AgentBodyFilter;
+import kidridicarus.agency.agentbody.AgentContactSensor;
 
 /*
  * Keep a list of either begin contacts, or end contacts, but not both.

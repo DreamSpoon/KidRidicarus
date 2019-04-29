@@ -1,8 +1,7 @@
-package kidridicarus.agency.agentcontact;
+package kidridicarus.agency.agentbody;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentBody;
-import kidridicarus.agency.agentcontact.AgentContactListener.PreSolver;
+import kidridicarus.agency.agentbody.AgentContactListener.PreSolver;
 
 public class AgentBodyFilter {
 	public CFBitSeq categoryBits;
@@ -24,7 +23,7 @@ public class AgentBodyFilter {
 	}
 
 	/*
-	 * Check the various levels of the chain to find a reference to an agent, and return if found. 
+	 * Check the various levels of the chain to find a reference to an agent, and return if found.
 	 */
 	public static Agent getAgentFromFilter(AgentBodyFilter obj) {
 		if(obj.userData instanceof Agent)

@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.common.agent.quarteractor.QuarterActorBrain;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
@@ -89,8 +89,7 @@ public class BumpTileBrain extends QuarterActorBrain {
 	@Override
 	public BumpTileSpriteFrameInput processFrame(float delta) {
 		processMove(delta);
-		boolean visible = !isSecret || isEmpty;
-		return new BumpTileSpriteFrameInput(visible, body.getPosition().add(0f, getCurrentBounceHeight()), false,
+		return new BumpTileSpriteFrameInput(!isSecret | isEmpty, body.getPosition().add(0f, getCurrentBounceHeight()),
 				parent.getAgency().getGlobalTimer(), isEmpty);
 	}
 

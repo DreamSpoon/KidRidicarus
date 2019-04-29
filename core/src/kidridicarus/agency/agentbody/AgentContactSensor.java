@@ -1,4 +1,4 @@
-package kidridicarus.agency.agentcontact;
+package kidridicarus.agency.agentbody;
 
 /*
  * Chainable contact sensor.
@@ -6,7 +6,7 @@ package kidridicarus.agency.agentcontact;
 public abstract class AgentContactSensor {
 	private Object parent;
 	private AgentContactSensor nextInChain;
-	
+
 	public AgentContactSensor(Object parent) {
 		this.parent = parent;
 		nextInChain = null;
@@ -32,7 +32,6 @@ public abstract class AgentContactSensor {
 		onBeginSense(abf);
 		if(nextInChain != null)
 			nextInChain.onBeginContact(abf);
-		
 	}
 
 	public void onEndContact(AgentBodyFilter abf) {

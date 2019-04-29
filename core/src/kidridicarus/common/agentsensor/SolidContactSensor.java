@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentcontact.AgentBodyFilter;
-import kidridicarus.agency.agentcontact.AgentContactSensor;
+import kidridicarus.agency.agentbody.AgentBodyFilter;
+import kidridicarus.agency.agentbody.AgentContactSensor;
 import kidridicarus.common.agent.optional.SolidAgent;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidLineSeg;
 import kidridicarus.common.tool.AP_Tool;

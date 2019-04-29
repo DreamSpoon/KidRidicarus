@@ -3,9 +3,9 @@ package kidridicarus.common.agent.semisolidfloor;
 import com.badlogic.gdx.math.Rectangle;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentcontact.AgentBodyFilter;
-import kidridicarus.agency.agentcontact.AgentContactListener.PreSolver;
-import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.agency.agentbody.AgentBodyFilter;
+import kidridicarus.agency.agentbody.CFBitSeq;
+import kidridicarus.agency.agentbody.AgentContactListener.PreSolver;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.AP_Tool;
 

@@ -1,10 +1,10 @@
 package kidridicarus.game.KidIcarus.agent.item.chalicehealth;
 
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.halfactor.HalfActorBrain;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusPow;
 
@@ -38,6 +38,6 @@ public class ChaliceHealthBrain extends HalfActorBrain {
 			parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.General.HEART_PICKUP);
 			parent.getAgency().removeAgent(parent);
 		}
-		return new SpriteFrameInput(true, body.getPosition(), false);
+		return new SpriteFrameInput(body.getPosition());
 	}
 }

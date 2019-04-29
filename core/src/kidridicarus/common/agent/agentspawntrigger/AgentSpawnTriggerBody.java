@@ -5,7 +5,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.agentsensor.OneWayContactSensor;

@@ -3,7 +3,7 @@ package kidridicarus.common.agent.halfactor;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 
 public abstract class HalfActorBody extends AgentBody {

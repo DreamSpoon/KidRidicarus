@@ -1,8 +1,8 @@
 package kidridicarus.common.agent.fullactor;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.AgentSprite;
 import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.common.agent.general.MotileBoundsAgent;
 
 public abstract class FullActor extends MotileBoundsAgent {

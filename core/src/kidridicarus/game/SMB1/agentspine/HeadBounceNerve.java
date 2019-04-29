@@ -3,7 +3,7 @@ package kidridicarus.game.SMB1.agentspine;
 import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.agentsensor.OneWayContactSensor;
 
 public class HeadBounceNerve {

@@ -1,4 +1,4 @@
-package kidridicarus.agency.agent;
+package kidridicarus.agency.agentbody;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -7,11 +7,11 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.agentcontact.AgentBodyFilter;
+import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.info.CommonCF;
 
 /*
- * Assume that an AgentBody can contain exactly one Box2D body. If more bodies are needed then a body lsit
+ * Assume that an AgentBody can contain exactly one Box2D body. If more bodies are needed then a body list
  * scenario may be fruitful.
  * Body is brute and dumb - any movements, forces, etc. can be accomplished simply by calling the body's methods,
  * but the methods tend to the simple: setPosition, applyForce, applyImpulse, etc.

@@ -2,6 +2,7 @@ package kidridicarus.game.KidIcarus.agent.NPC.monoeye;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -9,7 +10,6 @@ import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine.AxisGoState;
@@ -61,7 +61,7 @@ public class MonoeyeBrain extends FullActorBrain {
 		processContacts((RoomingBrainFrameInput) bodyFrame);
 		processMove(bodyFrame.timeDelta);
 		// visible if not despawned and not dead
-		return new SpriteFrameInput(!despawnMe && !isDead, body.getPosition(), !isFacingRight);
+		return new SpriteFrameInput(!despawnMe & !isDead, body.getPosition(), false, !isFacingRight, false);
 	}
 
 	private void processContacts(RoomingBrainFrameInput bodyFrame) {

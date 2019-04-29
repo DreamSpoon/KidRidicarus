@@ -3,7 +3,7 @@ package kidridicarus.common.agent.scrollpushbox;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.common.agent.followbox.FollowBox;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.info.CommonCF;

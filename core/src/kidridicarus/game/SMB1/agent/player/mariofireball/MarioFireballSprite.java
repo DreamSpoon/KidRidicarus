@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.AgentSprite;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.agentsprite.AgentSprite;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireballBrain.MoveState;
 import kidridicarus.game.info.SMB1_Gfx;
@@ -26,7 +26,6 @@ public class MarioFireballSprite extends AgentSprite {
 	private MoveState prevParentMoveState;
 
 	public MarioFireballSprite(TextureAtlas atlas, Vector2 position) {
-		super(true);
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED_FLY,
 				atlas.findRegions(SMB1_Gfx.Player.MarioFireball.FIREBALL), PlayMode.LOOP);
 		explodeAnim = new Animation<TextureRegion>(ANIM_SPEED_EXP,
@@ -35,30 +34,27 @@ public class MarioFireballSprite extends AgentSprite {
 		prevParentMoveState = null;
 		setRegion(ballAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), BALL_WIDTH, BALL_HEIGHT);
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+		applyFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
 		MarioFireballSpriteFrame myFrameInput = (MarioFireballSpriteFrame) frameInput;
 		boolean isMoveStateChange = myFrameInput.moveState != prevParentMoveState;
+		animTimer = isMoveStateChange ? 0f : animTimer+myFrameInput.timeDelta;
 		switch(myFrameInput.moveState) {
 			case FLY:
 				setRegion(ballAnim.getKeyFrame(animTimer));
 				break;
 			case EXPLODE:
-				if(isMoveStateChange) {
-					// change the size of the sprite when it changes to an explosion
+				// change the size of the sprite when it changes to an explosion
+				if(isMoveStateChange)
 					setBounds(getX(), getY(), EXPLODE_WIDTH, EXPLODE_HEIGHT);
-					setRegion(explodeAnim.getKeyFrame(0f));
-				}
-				else
-					setRegion(explodeAnim.getKeyFrame(animTimer));
+				setRegion(explodeAnim.getKeyFrame(animTimer));
 				break;
 			case END:
 				break;
 		}
-		animTimer = isMoveStateChange ? 0f : animTimer+myFrameInput.timeDelta;
 		prevParentMoveState = myFrameInput.moveState;
 		applyFrameInput(frameInput);
 	}

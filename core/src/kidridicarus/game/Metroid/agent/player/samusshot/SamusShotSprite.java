@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.AgentSprite;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.agentsprite.AgentSprite;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.Metroid.agent.player.samusshot.SamusShotBrain.MoveState;
 import kidridicarus.game.info.MetroidGfx;
@@ -19,38 +19,35 @@ public class SamusShotSprite extends AgentSprite {
 
 	private Animation<TextureRegion> liveAnim;
 	private Animation<TextureRegion> explodeAnim;
-
-	private float stateTimer;
-	private MoveState lastMoveState;
+	private float animTimer;
+	private MoveState parentPrevMoveState;
 
 	public SamusShotSprite(TextureAtlas atlas, Vector2 position) {
-		super(true);
 		liveAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidGfx.Player.SamusShot.SHOT), PlayMode.LOOP);
 		explodeAnim = new Animation<TextureRegion>(ANIM_SPEED,
 						atlas.findRegions(MetroidGfx.Player.SamusShot.SHOT_EXP), PlayMode.LOOP);
-		stateTimer = 0f;
-		lastMoveState = null;
+		animTimer = 0f;
+		parentPrevMoveState = null;
 		setRegion(liveAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+		applyFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
 		SamusShotSpriteFrameInput myFrameInput = (SamusShotSpriteFrameInput) frameInput;
-		stateTimer = myFrameInput.moveState == lastMoveState ? stateTimer : 0f;
-		lastMoveState = myFrameInput.moveState;
+		animTimer = myFrameInput.moveState == parentPrevMoveState ? animTimer+myFrameInput.timeDelta : 0f;
+		parentPrevMoveState = myFrameInput.moveState;
 		switch(myFrameInput.moveState) {
 			case LIVE:
 			case DEAD:
-				setRegion(liveAnim.getKeyFrame(stateTimer));
+				setRegion(liveAnim.getKeyFrame(animTimer));
 				break;
 			case EXPLODE:
-				setRegion(explodeAnim.getKeyFrame(stateTimer));
+				setRegion(explodeAnim.getKeyFrame(animTimer));
 				break;
 		}
-		stateTimer += myFrameInput.timeDelta;
 		applyFrameInput(frameInput);
 	}
 }

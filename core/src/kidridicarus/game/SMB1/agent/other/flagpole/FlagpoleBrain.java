@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 
@@ -34,36 +34,36 @@ public class FlagpoleBrain {
 
 	public void processContactFrame(List<PlayerAgent> cFrameInput) {
 		for(PlayerAgent agent : cFrameInput) {
-			// give the flagpole script to the player and the script, if used, will trigger flag drop
+			// give flagpole script to the player and the script, if used, will trigger flag drop
 			agent.getSupervisor().startScript(new FlagpoleScript(parent,
 					agent.getProperty(CommonKV.Script.KEY_SPRITE_SIZE, null, Vector2.class)));
 		}
 	}
 
 	public SpriteFrameInput processFrame(float delta) {
-		SpriteFrameInput frameOut = new SpriteFrameInput(true, null, false);
+		Vector2 pos;
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case TOP:
 			default:
-				frameOut.position = getFlagPosAtTop();
+				pos = getFlagPosAtTop();
 				break;
 			case DROP:
 				isFlagTriggered = false;
 				// return flag at top if first frame of drop
 				if(isMoveStateChange)
-					frameOut.position = getFlagPosAtTop();
+					pos = getFlagPosAtTop();
 				else
-					frameOut.position = getFlagPosAtTime(moveStateTimer);
+					pos = getFlagPosAtTime(moveStateTimer);
 				break;
 			case BOTTOM:
-				frameOut.position = getFlagPosAtBottom();
+				pos = getFlagPosAtBottom();
 				break;
 		}
 		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
-		return frameOut;
+		return new SpriteFrameInput(pos);
 	}
 
 	private MoveState getNextMoveState() {
@@ -91,12 +91,13 @@ public class FlagpoleBrain {
 				body.getBounds().y);
 	}
 
-	private Vector2 getFlagPosAtTime(float moveStateTimer) {
-		if(moveStateTimer <= 0f)
+	private Vector2 getFlagPosAtTime(float time) {
+		if(time <= 0f)
 			return getFlagPosAtTop();
-
-		float alpha = moveStateTimer >= FLAGDROP_TIME ? 1f : moveStateTimer/ FLAGDROP_TIME;
-		return getFlagPosAtTop().cpy().lerp(getFlagPosAtBottom(), alpha);
+		else if(time >= FLAGDROP_TIME)
+			return getFlagPosAtBottom();
+		else
+			return getFlagPosAtTop().cpy().lerp(getFlagPosAtBottom(), time / FLAGDROP_TIME);
 	}
 
 	public void onTakeTrigger() {

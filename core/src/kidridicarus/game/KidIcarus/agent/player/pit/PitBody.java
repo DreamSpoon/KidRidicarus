@@ -6,8 +6,8 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agentcontact.AgentBodyFilter;
-import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.agency.agentbody.AgentBodyFilter;
+import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;

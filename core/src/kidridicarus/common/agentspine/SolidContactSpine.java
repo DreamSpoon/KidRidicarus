@@ -2,7 +2,7 @@ package kidridicarus.common.agentspine;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;

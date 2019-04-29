@@ -62,7 +62,7 @@ public class MetroidDoorBrain extends QuarterActorBrain {
 		}
 		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
-		return new MetroidDoorSpriteFrameInput(true, body.getPosition(), !isFacingRight, moveStateTimer, moveState);
+		return new MetroidDoorSpriteFrameInput(true, body.getPosition(), isFacingRight, moveStateTimer, moveState);
 	}
 
 	/*

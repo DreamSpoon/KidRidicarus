@@ -55,7 +55,7 @@ public class ShemumBrain extends FullActorBrain {
 		processContacts((RoomingBrainFrameInput) frameInput);
 		processMove(frameInput.timeDelta);
 		// draw if not despawned and not dead
-		return new AnimSpriteFrameInput(!despawnMe && !isDead, body.getPosition(), !isFacingRight,
+		return new AnimSpriteFrameInput(!despawnMe & !isDead, body.getPosition(), isFacingRight,
 				frameInput.timeDelta);
 	}
 

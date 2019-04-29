@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentSprite;
+import kidridicarus.agency.agentsprite.AgentSprite;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB1.agent.item.fireflower.SproutSpriteFrameInput;
@@ -27,13 +27,12 @@ public class PowerStarSprite extends AgentSprite {
 	private float animTimer;
 
 	public PowerStarSprite(PowerStar parent, TextureAtlas atlas, Vector2 position) {
-		super(true);
 		this.parent = parent;
 		anim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMB1_Gfx.Item.POWER_STAR), PlayMode.LOOP);
 		animTimer = 0f;
 		setRegion(anim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+		applyFrameInput(new SpriteFrameInput(position));
 
 		final PowerStarSprite self = this;
 		myDrawListener = new AgentDrawListener() {
@@ -45,8 +44,8 @@ public class PowerStarSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		setRegion(anim.getKeyFrame(animTimer));
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
+		setRegion(anim.getKeyFrame(animTimer));
 		if(((SproutSpriteFrameInput) frameInput).finishSprout)
 			finishSprout();
 		applyFrameInput(frameInput);

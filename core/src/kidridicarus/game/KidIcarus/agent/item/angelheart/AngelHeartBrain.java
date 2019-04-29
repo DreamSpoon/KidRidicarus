@@ -72,7 +72,7 @@ public class AngelHeartBrain extends HalfActorBrain {
 		else if(moveStateTimer > LIVE_TIME)
 			parent.getAgency().removeAgent(parent);
 		moveStateTimer += delta;
-		return new AnimSpriteFrameInput(true, body.getPosition(), false, delta);
+		return new AnimSpriteFrameInput(body.getPosition(), false, delta);
 	}
 
 	public AngelHeartSize getHeartSize() {

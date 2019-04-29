@@ -48,8 +48,9 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="kidridicarus.agency.agent.AgentBody" project="kid-ridicarus-game-core" 
-    file="/kid-ridicarus-game-core/src/kidridicarus/agency/agent/AgentBody.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="6" language="java" name="kidridicarus.agency.agentbody.AgentBody" project="kid-ridicarus-game-core" 
+    file="/kid-ridicarus-game-core/src/kidridicarus/agency/agentbody/AgentBody.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="88" y="196"/>    
     <display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="false">      
@@ -129,38 +130,38 @@
   </association>  
   <association id="16">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="17" name="earplug">        
-        <position height="0" width="0" x="-400" y="-279"/>      
-      </attribute>      
-      <multiplicity id="18" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-400" y="-279"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="19">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="20" name="myEye">        
+      <attribute id="17" name="myEye">        
         <position height="0" width="0" x="-81" y="-46"/>      
       </attribute>      
-      <multiplicity id="21" minimum="0" maximum="1">        
+      <multiplicity id="18" minimum="0" maximum="1">        
         <position height="0" width="0" x="-81" y="-46"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="12" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="22">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="23" name="currentScript">        
-        <position height="0" width="0" x="-345" y="-344"/>      
+  <association id="19">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="20" name="scriptRunner">        
+        <position height="0" width="0" x="-352" y="-312"/>      
       </attribute>      
-      <multiplicity id="24" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-345" y="-344"/>      
+      <multiplicity id="21" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-352" y="-312"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="22">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="23" name="agencyIndex">        
+        <position height="0" width="0" x="-265" y="-230"/>      
+      </attribute>      
+      <multiplicity id="24" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-265" y="-230"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="25">    
@@ -176,51 +177,51 @@
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="28">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="29" name="agencyIndex">        
-        <position height="0" width="0" x="-265" y="-230"/>      
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="29" name="currentScript">        
+        <position height="0" width="0" x="-345" y="-344"/>      
       </attribute>      
       <multiplicity id="30" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-265" y="-230"/>      
+        <position height="0" width="0" x="-345" y="-344"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
+    <end type="TARGET" refId="9" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="31">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="32" name="agencyChangeQ">        
-        <position height="0" width="0" x="-325" y="-293"/>      
+      <attribute id="32" name="earplug">        
+        <position height="0" width="0" x="-400" y="-279"/>      
       </attribute>      
       <multiplicity id="33" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-400" y="-279"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="34">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="35" name="agencyChangeQ">        
+        <position height="0" width="0" x="-325" y="-293"/>      
+      </attribute>      
+      <multiplicity id="36" minimum="0" maximum="1">        
         <position height="0" width="0" x="-325" y="-293"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="34">    
+  <association id="37">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="35" name="allAgentsClassList">        
+      <attribute id="38" name="allAgentsClassList">        
         <position height="0" width="0" x="-312" y="-348"/>      
       </attribute>      
-      <multiplicity id="36" minimum="0" maximum="1">        
+      <multiplicity id="39" minimum="0" maximum="1">        
         <position height="0" width="0" x="-312" y="-348"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="37">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="38" name="scriptRunner">        
-        <position height="0" width="0" x="-352" y="-312"/>      
-      </attribute>      
-      <multiplicity id="39" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-352" y="-312"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="40">    

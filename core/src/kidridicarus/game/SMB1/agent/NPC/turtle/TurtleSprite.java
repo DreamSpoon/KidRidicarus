@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.AgentSprite;
+import kidridicarus.agency.agentsprite.AgentSprite;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.SMB1_Gfx;
 
@@ -20,43 +20,42 @@ public class TurtleSprite extends AgentSprite {
 	private Animation<TextureRegion> walkAnim;
 	private TextureRegion insideShell;
 	private Animation<TextureRegion> wakeUpAnim;
-	private float stateTimer;
+	private float animTimer;
 
 	public TurtleSprite(TextureAtlas atlas, Vector2 position) {
-		super(true);
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMB1_Gfx.NPC.TURTLE_WALK), PlayMode.LOOP);
 		wakeUpAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMB1_Gfx.NPC.TURTLE_WAKEUP), PlayMode.LOOP);
 		insideShell = atlas.findRegion(SMB1_Gfx.NPC.TURTLE_HIDE);
-		stateTimer = 0;
+		animTimer = 0f;
 		setRegion(walkAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+		applyFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		SpriteFrameInput frameOut = new SpriteFrameInput(frameInput);
+		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		switch(((TurtleSpriteFrameInput) frameInput).moveState) {
 			case WALK:
 			case FALL:
-				setRegion(walkAnim.getKeyFrame(stateTimer));
+				setRegion(walkAnim.getKeyFrame(animTimer));
 				break;
 			case HIDE:
 			case SLIDE:
 				setRegion(insideShell);
 				break;
 			case WAKE:
-				setRegion(wakeUpAnim.getKeyFrame(stateTimer));
+				setRegion(wakeUpAnim.getKeyFrame(animTimer));
 				break;
 			case DEAD:
 				setRegion(insideShell);
 				// upside down when dead
-				if(!isFlipY())
-					flip(false,  true);
+				frameOut.flipY = true;
 				break;
 		}
-		stateTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
-		applyFrameInput(frameInput);
+		applyFrameInput(frameOut);
 	}
 }

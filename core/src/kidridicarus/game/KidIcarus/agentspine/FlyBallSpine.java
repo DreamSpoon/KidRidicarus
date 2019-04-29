@@ -5,7 +5,7 @@ import java.util.Arrays;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agentspine.BasicAgentSpine;
 import kidridicarus.common.info.UInfo;

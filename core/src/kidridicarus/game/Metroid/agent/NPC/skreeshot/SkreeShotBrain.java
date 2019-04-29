@@ -1,5 +1,6 @@
 package kidridicarus.game.Metroid.agent.NPC.skreeshot;
 
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -7,7 +8,6 @@ import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
 
 public class SkreeShotBrain extends FullActorBrain {
 	private static final float LIVE_TIME = 0.167f;
@@ -38,7 +38,7 @@ public class SkreeShotBrain extends FullActorBrain {
 	public SpriteFrameInput processFrame(BrainFrameInput frameInput) {
 		processContacts((RoomingBrainFrameInput) frameInput);
 		processMove(frameInput.timeDelta);
-		return new SpriteFrameInput(true, body.getPosition(), false);
+		return new SpriteFrameInput(!despawnMe, body.getPosition(), false, false, false);
 	}
 
 	private void processContacts(RoomingBrainFrameInput frameInput) {

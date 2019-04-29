@@ -1,4 +1,4 @@
-package kidridicarus.agency.agentcontact;
+package kidridicarus.agency.agentbody;
 
 import java.util.HashMap;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package kidridicarus.agency.agentcontact;
+package kidridicarus.agency.agentbody;
 
 import com.badlogic.gdx.physics.box2d.ContactFilter;
 import com.badlogic.gdx.physics.box2d.Fixture;

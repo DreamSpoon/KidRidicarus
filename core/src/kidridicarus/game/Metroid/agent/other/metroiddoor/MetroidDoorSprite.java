@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import kidridicarus.agency.agent.AgentSprite;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.agentsprite.AgentSprite;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.MetroidGfx;
 
@@ -22,7 +22,6 @@ public class MetroidDoorSprite extends AgentSprite {
 	private Animation<TextureRegion> openingAnim;
 
 	public MetroidDoorSprite(TextureAtlas atlas, SpriteFrameInput frameInput) {
-		super(true);
 		closedAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidGfx.NPC.DOOR_CLOSED), PlayMode.LOOP);
 		closingAnim = new Animation<TextureRegion>(ANIM_SPEED_CLOSE,

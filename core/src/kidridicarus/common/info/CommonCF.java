@@ -1,6 +1,6 @@
 package kidridicarus.common.info;
 
-import kidridicarus.agency.agentcontact.CFBitSeq;
+import kidridicarus.agency.agentbody.CFBitSeq;
 
 public class CommonCF {
 	// Contact Filter Bit list (for contact detection)

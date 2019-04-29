@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.AgentSprite;
+import kidridicarus.agency.agentsprite.AgentSprite;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.MetroidGfx;
 
@@ -22,32 +22,31 @@ public class RioSprite extends AgentSprite {
 	private Animation<TextureRegion> flapAnim;
 	private Animation<TextureRegion> swoopAnim;
 	private Animation<TextureRegion> injuryAnim;
-
-	private float stateTimer;
+	private float animTimer;
 
 	public RioSprite(TextureAtlas atlas, Vector2 position) {
-		super(true);
 		flapAnim = new Animation<TextureRegion>(ANIM_SPEED_FLAP,
 				atlas.findRegions(MetroidGfx.NPC.RIO), PlayMode.LOOP);
 		swoopAnim = new Animation<TextureRegion>(ANIM_SPEED_SWOOP,
 				atlas.findRegions(MetroidGfx.NPC.RIO),PlayMode.LOOP);
 		injuryAnim = new Animation<TextureRegion>(ANIM_SPEED_FLAP,
 				atlas.findRegions(MetroidGfx.NPC.RIO_HIT), PlayMode.LOOP);
-		stateTimer = 0;
+		animTimer = 0f;
 		setRegion(flapAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
+		applyFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		switch(((RioSpriteFrameInput) frameInput).moveState) {
 			case FLAP:
 			default:
-				setRegion(flapAnim.getKeyFrame(stateTimer));
+				setRegion(flapAnim.getKeyFrame(animTimer));
 				break;
 			case SWOOP:
-				setRegion(swoopAnim.getKeyFrame(stateTimer));
+				setRegion(swoopAnim.getKeyFrame(animTimer));
 				break;
 			case INJURY:
 				// do not animate injury, use one frame only - TODO check this
@@ -56,7 +55,6 @@ public class RioSprite extends AgentSprite {
 			case DEAD:
 				break;
 		}
-		stateTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		applyFrameInput(frameInput);
 	}
 }

@@ -1,5 +1,6 @@
 package kidridicarus.game.KidIcarus.agent.player.pitarrow;
 
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -7,7 +8,6 @@ import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
-import kidridicarus.common.agentsprite.SpriteFrameInput;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.KidIcarus.agent.player.pit.Pit;
 
@@ -54,7 +54,7 @@ public class PitArrowBrain extends FullActorBrain {
 		processContacts((RoomingBrainFrameInput) frameInput);
 		processMove(frameInput.timeDelta);
 		// flip X if arrow is moving left
-		return new SpriteFrameInput(true, body.getPosition(), arrowDir == Direction4.LEFT);
+		return new SpriteFrameInput(!despawnMe, body.getPosition(), false, arrowDir == Direction4.LEFT, false);
 	}
 
 	private void processContacts(RoomingBrainFrameInput frameInput) {

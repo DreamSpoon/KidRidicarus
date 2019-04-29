@@ -1,6 +1,6 @@
 package kidridicarus.game.SMB1.agentspine;
 
-import kidridicarus.agency.agent.AgentBody;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;

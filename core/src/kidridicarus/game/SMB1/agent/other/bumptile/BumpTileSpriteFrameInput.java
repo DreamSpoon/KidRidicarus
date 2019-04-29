@@ -7,9 +7,8 @@ import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 public class BumpTileSpriteFrameInput extends AnimSpriteFrameInput {
 	public boolean isEmpty;
 
-	public BumpTileSpriteFrameInput(boolean visible, Vector2 position, boolean flipX, float timeDelta,
-			boolean isEmpty) {
-		super(visible, position, flipX, timeDelta);
+	public BumpTileSpriteFrameInput(boolean visible, Vector2 position, float timeDelta, boolean isEmpty) {
+		super(visible, position, true, timeDelta);
 		this.isEmpty = isEmpty;
 	}
 }

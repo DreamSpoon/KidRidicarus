@@ -1,4 +1,4 @@
-package kidridicarus.agency.agentcontact;
+package kidridicarus.agency.agentbody;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,29 +12,29 @@ import java.util.Set;
  *   AND
  *   Set all bits to 0 (full off)
  *   Set all bits to 1 (full on)
- * 
+ *
  * Implemented with a boolean to indicate full on or full off, and a hashset of Strings where each String is
  * an alias to a bit. Thus, contact filter bits can be added and removed "on the fly" by simply using a
  * new unique String.
- * 
+ *
  * If isOneMinus = false then bits are "additive".
  * If isOneMinus = true then bits are "subtractive".
  * In other words:
  *   If isOneMinus = false, bits are interpreted as adding from zero.
  *   If isOneMinus = false, bits are interpreted as subtracting from one.
- *   
+ *
  * But what if a bit sequence is initially set to one and then "all" the "bits" are subtracted/removed?
  * The bit sequence is still one, and the bits subtracted are stored in the bits set. If, subsequently,
  * the AND bit-wise operation is applied to the bit sequence then it will "allow" bits that were not
  * subtracted/removed - and it will "block" bits that were subtracted/removed.
- *   
- * To properly remove "all" "bits", set the bit sequence to zero.  
- * 
+ *
+ * To properly remove "all" "bits", set the bit sequence to zero.
+ *
  * This makes me think of this as a 0 to 1 infinity thing:
  *   "Bits" can be "added" to zero to increase, but an infinite number of "bits" "added" to zero does not
  *   add up to one. And visa versa; bits can be "subtracted" from one, but no matter how many "bits" are
  *   "subtracted" from one, the result never reaches zero.
- * 
+ *
  * What to call these two states?
  * 0+
  * 1-
@@ -84,7 +84,7 @@ public class CFBitSeq {
 		}
 		// if this and the other sequence are both 0+ then do a traditional AND operation
 		else if(!this.isOneMinus && !otherSeq.isOneMinus) {
-			// check each of our bits against the bitsInput for matching bits, keep track of matching bits 
+			// check each of our bits against the bitsInput for matching bits, keep track of matching bits
 			for(String otherBit : otherSeq.bits) {
 				if(this.bits.contains(otherBit))
 					andBits.add(otherBit);
@@ -149,7 +149,7 @@ public class CFBitSeq {
 	 *   isNonZero = isNonOne
 	 */
 	public boolean isNonZero() {
-		return isOneMinus || !bits.isEmpty(); 
+		return isOneMinus || !bits.isEmpty();
 	}
 
 	/*
