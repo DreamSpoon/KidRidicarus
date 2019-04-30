@@ -61,7 +61,7 @@ public class MultiSpawnController extends SpawnController {
 				else
 					spawnedAgent = doSpawn(scrollSpawnPos);
 				// track agent removal for spawn of next group
-				spawner.getAgency().addAgentRemoveListener(new AgentRemoveListener(spawner, spawnedAgent) {
+				parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, spawnedAgent) {
 						@Override
 						public void removedAgent() { numSpawnsDisposed++; }
 					});

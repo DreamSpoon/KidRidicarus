@@ -8,57 +8,35 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBox;
-import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
 public class AgentSpawnTrigger extends FollowBox implements Disposable {
-	private AgentSpawnTriggerBody body;
-	private boolean enabled;
-
 	public AgentSpawnTrigger(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
-		// begin in the disabled state (will not trigger spawners)
-		enabled = false;
 		body = new AgentSpawnTriggerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(); }
+				public void update(float delta) { processFrame(((AgentSpawnTriggerBody) body).processFrame()); }
 			});
 	}
 
-	private void doUpdate() {
-		if(!enabled)
-			return;
-		for(EnableTakeAgent agent : body.getAndResetBeginContacts())
+	private void processFrame(SpawnTriggerFrameInput frameInput) {
+		for(EnableTakeAgent agent : frameInput.beginContacts)
 			agent.onTakeEnable(true);
-		for(EnableTakeAgent agent : body.getAndResetEndContacts())
+		for(EnableTakeAgent agent : frameInput.endContacts)
 			agent.onTakeEnable(false);
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public boolean getEnabled() {
-		return enabled;
-	}
-
-	@Override
-	protected FollowBoxBody getFollowBoxBody() {
-		return body;
-	}
-
-	public static ObjectProperties makeAP(Vector2 position, float width, float height) {
-		return AP_Tool.createRectangleAP(CommonKV.AgentClassAlias.VAL_AGENTSPAWN_TRIGGER,
-				new Rectangle(position.x - width/2f, position.y - height/2f, width, height));
 	}
 
 	@Override
 	public void dispose() {
 		body.dispose();
+	}
+
+	public static ObjectProperties makeAP(Vector2 position, float width, float height) {
+		return AP_Tool.createRectangleAP(CommonKV.AgentClassAlias.VAL_AGENTSPAWN_TRIGGER,
+				new Rectangle(position.x - width/2f, position.y - height/2f, width, height));
 	}
 }

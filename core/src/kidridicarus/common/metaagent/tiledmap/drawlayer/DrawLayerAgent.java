@@ -9,13 +9,13 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agent.corpusagent.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.DrawOrderAlias;
 
-public class DrawLayerAgent extends PlacedBoundsAgent {
+public class DrawLayerAgent extends CorpusAgent {
 	private Rectangle bounds;
 	private TiledMapTileLayer drawLayer;
 
@@ -28,7 +28,7 @@ public class DrawLayerAgent extends PlacedBoundsAgent {
 		agency.addAgentDrawListener(this, getDrawOrderForLayer(drawLayer, CommonInfo.KIDRID_DRAWORDER_ALIAS),
 				new AgentDrawListener() {
 				@Override
-				public void draw(Eye adBatch) { doDraw(adBatch); }
+				public void draw(Eye adBatch) { adBatch.draw(drawLayer); }
 			});
 	}
 
@@ -58,10 +58,6 @@ public class DrawLayerAgent extends PlacedBoundsAgent {
 		if(drawOrderFloat == null)
 			return CommonInfo.DrawOrder.NONE;
 		return new AllowOrder(true, drawOrderFloat);
-	}
-
-	private void doDraw(Eye adBatch) {
-		adBatch.draw(drawLayer);
 	}
 
 	@Override

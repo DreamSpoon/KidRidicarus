@@ -10,7 +10,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.fullactor.FullActor;
+import kidridicarus.common.agent.general.MobileBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
@@ -18,11 +18,14 @@ import kidridicarus.common.tool.AP_Tool;
 /*
  * TODO Check that Rio can re-target: as in, lose a target, then wait a bit, then gain a new target successfully.
  */
-public class Rio extends FullActor implements ContactDmgTakeAgent, DisposableAgent {
+public class Rio extends MobileBoundsAgent implements ContactDmgTakeAgent, DisposableAgent {
+	private RioBody body;
+	private RioBrain brain;
+	private RioSprite sprite;
+
 	public Rio(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		body = new RioBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
-				AP_Tool.getVelocity(properties));
+		body = new RioBody(this, agency.getWorld(), AP_Tool.getCenter(properties), AP_Tool.getVelocity(properties));
 		brain = new RioBrain(this, (RioBody) body);
 		sprite = new RioSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
@@ -31,9 +34,7 @@ public class Rio extends FullActor implements ContactDmgTakeAgent, DisposableAge
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
-					sprite.processFrame(brain.processFrame(body.processFrame(delta)));
-				}
+				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 				@Override

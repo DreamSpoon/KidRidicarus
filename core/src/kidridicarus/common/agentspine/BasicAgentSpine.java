@@ -13,7 +13,6 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentbody.MotileAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -80,12 +79,12 @@ public class BasicAgentSpine {
 			return;
 		// if body position is outside room on left...
 		if(body.getPosition().x < roomBounds.x) {
-			((MotileAgentBody) body).resetPosition(new Vector2(roomBounds.x+roomBounds.width, body.getPosition().y),
+			((AgentBody) body).checkDoDefineBody(new Vector2(roomBounds.x+roomBounds.width, body.getPosition().y),
 					true);
 		}
 		// if body position is outside room on right...
 		else if(body.getPosition().x > roomBounds.x+roomBounds.width)
-			((MotileAgentBody) body).resetPosition(new Vector2(roomBounds.x, body.getPosition().y), true);
+			((AgentBody) body).checkDoDefineBody(new Vector2(roomBounds.x, body.getPosition().y), true);
 	}
 
 	public boolean isMovingInDir(Direction4 dir) {

@@ -1,12 +1,11 @@
 package kidridicarus.common.agent.roombox;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agent.corpusagent.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -19,8 +18,7 @@ import kidridicarus.common.tool.Direction4;
  * current room music. Also applicable to viewpoint, since the room can specify which way the screen scrolls
  * and if the view should be offset.
  */
-public class RoomBox extends PlacedBoundsAgent implements DisposableAgent {
-	private RoomBoxBody body;
+public class RoomBox extends CorpusAgent implements DisposableAgent {
 	private enum RoomType { CENTER, HSCROLL, VSCROLL }
 	private RoomType roomType;
 	private String roomMusicStr;
@@ -158,16 +156,6 @@ public class RoomBox extends PlacedBoundsAgent implements DisposableAgent {
 
 	public String getRoommusic() {
 		return roomMusicStr;
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return body.getBounds();
 	}
 
 	@Override

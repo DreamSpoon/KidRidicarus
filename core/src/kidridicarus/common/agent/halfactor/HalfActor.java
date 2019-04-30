@@ -1,5 +1,5 @@
 package kidridicarus.common.agent.halfactor;
-
+/*
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentsprite.AgentSprite;
@@ -17,3 +17,4 @@ public abstract class HalfActor extends PlacedBoundsAgent {
 		sprite = null;
 	}
 }
+*/

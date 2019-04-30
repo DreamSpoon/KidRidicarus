@@ -4,20 +4,17 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine.AxisGoState;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class SpecknoseBrain extends FullActorBrain {
+public class SpecknoseBrain {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 10;
 	private static final float HORIZONTAL_ONLY_CHANCE = 1/6f;
@@ -51,36 +48,21 @@ public class SpecknoseBrain extends FullActorBrain {
 		isHorizontalOnly = Math.random() <= HORIZONTAL_ONLY_CHANCE;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
-	}
-
-	@Override
-	public SpriteFrameInput processFrame(BrainFrameInput bodyFrame) {
-		processContacts((RoomingBrainFrameInput) bodyFrame);
-		processMove(bodyFrame.timeDelta);
-		// visible if not despawned and not dead
-		return new AnimSpriteFrameInput(!despawnMe && !isDead, body.getPosition(), false, bodyFrame.timeDelta);
-	}
-
-	private void processContacts(RoomingBrainFrameInput bodyFrame) {
-		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if((!isDead && !bodyFrame.isContactKeepAlive) || bodyFrame.isContactDespawn)
+		if(!isDead && (!cFrameInput.isKeepAlive || cFrameInput.isDespawn))
 			despawnMe = true;
 	}
 
-	private void processMove(float delta) {
+	public SpriteFrameInput processFrame(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return;
+			return new SpriteFrameInput();
 		}
-
 		MoveState nextMoveState = getNextMoveState();
-		boolean isMoveStateChanged = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case FLY:
 				horizGoState = getNextAxisGoState(true, horizGoState);
@@ -97,9 +79,9 @@ public class SpecknoseBrain extends FullActorBrain {
 				parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
 				break;
 		}
-
-		moveStateTimer = isMoveStateChanged ? 0f : moveStateTimer+delta;
+		moveStateTimer = nextMoveState != moveState ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
+		return new AnimSpriteFrameInput(!isDead, body.getPosition(), false, delta);
 	}
 
 	private AxisGoState getNextAxisGoState(boolean isHorizontal, AxisGoState currentGoState) {

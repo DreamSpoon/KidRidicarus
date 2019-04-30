@@ -1,21 +1,18 @@
 package kidridicarus.game.KidIcarus.agent.NPC.shemum;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class ShemumBrain extends FullActorBrain {
+public class ShemumBrain {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 1;
 	private static final float STRIKE_DELAY = 1/6f;
@@ -43,36 +40,23 @@ public class ShemumBrain extends FullActorBrain {
 		lastKnownRoom = null;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
-	}
-
-	@Override
-	public AnimSpriteFrameInput processFrame(BrainFrameInput frameInput) {
-		processContacts((RoomingBrainFrameInput) frameInput);
-		processMove(frameInput.timeDelta);
-		// draw if not despawned and not dead
-		return new AnimSpriteFrameInput(!despawnMe & !isDead, body.getPosition(), isFacingRight,
-				frameInput.timeDelta);
-	}
-
-	private void processContacts(RoomingBrainFrameInput frameInput) {
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if((!isDead && !frameInput.isContactKeepAlive) || frameInput.isContactDespawn)
+		if(!isDead && (!cFrameInput.isKeepAlive || cFrameInput.isDespawn))
 			despawnMe = true;
-		// update last known room if not dead
-		if(moveState != MoveState.DEAD && frameInput.roomBox != null)
-			lastKnownRoom = frameInput.roomBox;
+		// if not dead or despawning, and if room is known, then update last known room
+		if(moveState != MoveState.DEAD && !despawnMe && cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 	}
 
-	private void processMove(float delta) {
+	public AnimSpriteFrameInput processFrame(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return;
+			return new AnimSpriteFrameInput();
 		}
 
 		// if move is blocked by solid then change facing dir
@@ -114,6 +98,8 @@ public class ShemumBrain extends FullActorBrain {
 
 		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
+
+		return new AnimSpriteFrameInput(body.getPosition(), !isFacingRight, delta);
 	}
 
 	private MoveState getNextMoveState() {

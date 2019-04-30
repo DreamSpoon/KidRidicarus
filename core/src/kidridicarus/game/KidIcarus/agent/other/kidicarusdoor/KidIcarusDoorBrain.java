@@ -2,12 +2,10 @@ package kidridicarus.game.KidIcarus.agent.other.kidicarusdoor;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agent.halfactor.HalfActorBrain;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playerspawner.PlayerSpawner;
-import kidridicarus.common.agentbrain.BrainContactFrameInput;
 
-public class KidIcarusDoorBrain extends HalfActorBrain {
+public class KidIcarusDoorBrain {
 	private KidIcarusDoor parent;
 	private KidIcarusDoorBody body;
 	private boolean isOpened;
@@ -21,8 +19,7 @@ public class KidIcarusDoorBrain extends HalfActorBrain {
 		this.exitSpawnerName = exitSpawnerName;
 	}
 
-	@Override
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	public void processContactFrame(KidIcarusDoorBrainContactFrameInput cFrameInput) {
 		// if not opened then door cannot be used, so exit
 		if(!isOpened)
 			return;
@@ -33,11 +30,10 @@ public class KidIcarusDoorBrain extends HalfActorBrain {
 					", exitSpawner="+exitSpawnerName);
 		}
 		// check for players touching door and pass them door script
-		for(PlayerAgent agent : ((KidIcarusDoorBrainContactFrameInput) cFrameInput).playerContacts)
+		for(PlayerAgent agent : cFrameInput.playerContacts)
 			agent.getSupervisor().startScript(new KidIcarusDoorScript(parent, exitSpawner));
 	}
 
-	@Override
 	public KidIcarusDoorSpriteFrameInput processFrame(float delta) {
 		body.setOpened(isOpened);
 		return new KidIcarusDoorSpriteFrameInput(body.getPosition(), isOpened);

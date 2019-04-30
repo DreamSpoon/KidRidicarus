@@ -34,11 +34,13 @@ public class RioSprite extends AgentSprite {
 		animTimer = 0f;
 		setRegion(flapAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		switch(((RioSpriteFrameInput) frameInput).moveState) {
 			case FLAP:
@@ -55,6 +57,6 @@ public class RioSprite extends AgentSprite {
 			case DEAD:
 				break;
 		}
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 }

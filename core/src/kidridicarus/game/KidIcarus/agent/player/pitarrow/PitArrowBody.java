@@ -5,16 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentbody.CFBitSeq;
-import kidridicarus.common.agent.fullactor.FullActorBody;
+import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.Direction4;
 
-public class PitArrowBody extends FullActorBody {
+public class PitArrowBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(3);
 	private static final float BODY_HEIGHT = UInfo.P2M(3);
 
@@ -63,15 +62,9 @@ public class PitArrowBody extends FullActorBody {
 				getBounds().width, getBounds().height);
 	}
 
-	@Override
 	public ContactDmgBrainContactFrameInput processContactFrame() {
-		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
-	}
-
-	@Override
-	public RoomingBrainFrameInput processFrame(float delta) {
-		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
-				spine.isContactDespawn());
+		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
 	public SolidContactSpine getSpine() {

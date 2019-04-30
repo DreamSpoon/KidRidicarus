@@ -1,5 +1,5 @@
 package kidridicarus.common.agentbody;
-
+/*
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -8,10 +8,10 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.info.UInfo;
 
-public abstract class MotileAgentBody extends AgentBody {
+public abstract class MobileAgentBody extends AgentBody {
 	protected abstract void defineBody(Rectangle bounds, Vector2 velocity);
 
-	public MotileAgentBody(Agent parent, World world) {
+	public MobileAgentBody(Agent parent, World world) {
 		super(parent, world);
 	}
 
@@ -34,3 +34,4 @@ public abstract class MotileAgentBody extends AgentBody {
 		}
 	}
 }
+*/

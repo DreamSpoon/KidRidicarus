@@ -1,21 +1,17 @@
 package kidridicarus.common.agent.agentspawner;
 
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agent.corpusagent.CorpusAgent;
 import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
-public class AgentSpawner extends PlacedBoundsAgent implements EnableTakeAgent, DisposableAgent {
+public class AgentSpawner extends CorpusAgent implements EnableTakeAgent, DisposableAgent {
 	private SpawnController spawnController;
-	private AgentSpawnerBody body;
 	private boolean isEnabled;
 
 	public AgentSpawner(Agency agency, ObjectProperties properties) {
@@ -41,7 +37,7 @@ public class AgentSpawner extends PlacedBoundsAgent implements EnableTakeAgent, 
 
 		String spawnerType = properties.get(CommonKV.Spawn.KEY_SPAWNER_TYPE, "", String.class);
 		if(spawnerType.equals(CommonKV.Spawn.VAL_SPAWNER_TYPE_MULTI))
-			spawnController = new MultiSpawnController(this, body, properties);
+			spawnController = new MultiSpawnController(this, (AgentSpawnerBody) body, properties);
 		else if(spawnerType.equals(CommonKV.Spawn.VAL_SPAWNER_TYPE_RESPAWN))
 			spawnController = new DeadRespawnController(this, properties);
 		else
@@ -51,16 +47,6 @@ public class AgentSpawner extends PlacedBoundsAgent implements EnableTakeAgent, 
 	@Override
 	public void onTakeEnable(boolean enabled) {
 		this.isEnabled = enabled;
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return body.getBounds();
 	}
 
 	@Override

@@ -15,6 +15,6 @@ public class PoleFlagSprite extends AgentSprite {
 	public PoleFlagSprite(TextureAtlas atlas, Vector2 position) {
 		setRegion(atlas.findRegion(SMB1_Gfx.General.POLEFLAG));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 }

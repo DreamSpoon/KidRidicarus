@@ -50,11 +50,6 @@ public abstract class ScrollBox extends FollowBox implements Disposable {
 		body = createScrollBoxBody(this, agency.getWorld(), bounds);
 	}
 
-	@Override
-	protected FollowBoxBody getFollowBoxBody() {
-		return body;
-	}
-
 	/*
 	 * Get view center, add offset based on scroll direction, set target from offset position.
 	 */

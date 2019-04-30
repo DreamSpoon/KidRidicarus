@@ -8,15 +8,14 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.agentbody.CFBitSeq;
-import kidridicarus.common.agent.fullactor.FullActorBody;
+import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class RioBody extends FullActorBody {
+public class RioBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(20);
 	private static final float BODY_HEIGHT = UInfo.P2M(16);
 	private static final float HEAD_WIDTH = UInfo.P2M(18);
@@ -27,7 +26,6 @@ public class RioBody extends FullActorBody {
 			UInfo.P2M(-24), UInfo.P2M(16),
 			UInfo.P2M(-80), UInfo.P2M(-176),
 			UInfo.P2M(80), UInfo.P2M(-176) };
-
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT,
 			CommonCF.Alias.DESPAWN_BIT, CommonCF.Alias.KEEP_ALIVE_BIT, CommonCF.Alias.ROOM_BIT);
@@ -79,15 +77,9 @@ public class RioBody extends FullActorBody {
 				CommonCF.AGENT_SENSOR_CFMASK, spine.createPlayerSensor()));
 	}
 
-	@Override
 	public ContactDmgBrainContactFrameInput processContactFrame() {
-		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
-	}
-
-	@Override
-	public RoomingBrainFrameInput processFrame(float delta) {
-		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
-				spine.isContactDespawn());
+		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
 	public RioSpine getSpine() {

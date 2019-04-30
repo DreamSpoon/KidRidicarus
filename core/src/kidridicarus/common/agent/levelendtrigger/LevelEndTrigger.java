@@ -1,21 +1,18 @@
 package kidridicarus.common.agent.levelendtrigger;
 
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agent.corpusagent.CorpusAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
-public class LevelEndTrigger extends PlacedBoundsAgent implements TriggerTakeAgent, DisposableAgent {
+public class LevelEndTrigger extends CorpusAgent implements TriggerTakeAgent, DisposableAgent {
 	private LevelEndTriggerBody body;
 
 	public LevelEndTrigger(Agency agency, ObjectProperties properties) {
@@ -44,16 +41,6 @@ public class LevelEndTrigger extends PlacedBoundsAgent implements TriggerTakeAge
 				new String[] { CommonKV.Script.KEY_NAME }, new String[] { targetNameStr });
 		if(agent instanceof TriggerTakeAgent)
 			((TriggerTakeAgent) agent).onTakeTrigger();
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return body.getBounds();
 	}
 
 	@Override

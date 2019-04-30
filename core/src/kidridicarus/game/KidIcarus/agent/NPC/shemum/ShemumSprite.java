@@ -25,13 +25,15 @@ public class ShemumSprite extends AgentSprite {
 		animTimer = 0;
 		setRegion(anim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput))
+			return;
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		setRegion(anim.getKeyFrame(animTimer));
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 }

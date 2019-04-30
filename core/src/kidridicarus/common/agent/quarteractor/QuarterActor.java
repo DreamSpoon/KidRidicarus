@@ -1,5 +1,5 @@
 package kidridicarus.common.agent.quarteractor;
-
+/*
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentproperties.ObjectProperties;
@@ -18,3 +18,4 @@ public abstract class QuarterActor extends PlacedBoundsAgent {
 		sprite = null;
 	}
 }
+*/

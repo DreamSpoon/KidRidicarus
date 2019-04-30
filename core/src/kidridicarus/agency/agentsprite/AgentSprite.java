@@ -4,23 +4,36 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public abstract class AgentSprite extends Sprite {
-	private boolean isVisible = true;
+	private boolean isVisible = false;
 
-	/*
-	 * Default method, override as needed. Subclasses do not need to call this method, but should call
-	 * applyFrameInput or implement functionality otherwise.
-	 */
 	public void processFrame(SpriteFrameInput frameInput) {
-		applyFrameInput(frameInput);
+		if(preFrameInput(frameInput))
+			postFrameInput(frameInput);
 	}
 
-	protected void applyFrameInput(SpriteFrameInput frameInput) {
-		isVisible = frameInput.visible;
+	/*
+	 * Set visibility flag, and return flag for convenience.
+	 * Returns frame visibility flag if available, otherwise returns false.
+	 * This function is for convenience and is optional.
+	 */
+	protected boolean preFrameInput(SpriteFrameInput frameInput) {
+		this.isVisible = frameInput != null;
+		return this.isVisible;
+	}
+
+	/*
+	 * Apply frame input, including set visibility flag.
+	 * This function is "more or less" required.
+	 */
+	protected void postFrameInput(SpriteFrameInput frameInput) {
+		isVisible = frameInput != null;
+		if(!isVisible)
+			return;
 		flip(frameInput.flipX ^ isFlipX(), frameInput.flipY ^ isFlipY());
-		if(frameInput.absPosition)
-			setPosition(frameInput.position.x, frameInput.position.y);
-		else
-			setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
+		setPosition(frameInput.position.x - getWidth()/2f, frameInput.position.y - getHeight()/2f);
+		// rotate about the center of the sprite
+		setOrigin(getWidth()/2f, getHeight()/2f);
+		setRotation(frameInput.rotation);
 	}
 
 	@Override

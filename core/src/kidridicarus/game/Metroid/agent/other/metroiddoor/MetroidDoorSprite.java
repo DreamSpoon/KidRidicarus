@@ -32,11 +32,13 @@ public class MetroidDoorSprite extends AgentSprite {
 				atlas.findRegions(MetroidGfx.NPC.DOOR_OPENING), PlayMode.NORMAL);
 		setRegion(closedAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		MetroidDoorSpriteFrameInput myFrameInput = (MetroidDoorSpriteFrameInput) frameInput;
 		switch((myFrameInput).moveState) {
 			case CLOSED:	// this must be funny to someone
@@ -53,6 +55,6 @@ public class MetroidDoorSprite extends AgentSprite {
 				setRegion(closingAnim.getKeyFrame(myFrameInput.timeDelta));
 				break;
 		}
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 }

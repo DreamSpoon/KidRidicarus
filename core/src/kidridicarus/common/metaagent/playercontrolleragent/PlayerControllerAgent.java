@@ -88,7 +88,6 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 		// create player's associated agents (generally, they follow player)
 		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(
 				AgentSpawnTrigger.makeAP(getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
-		spawnTrigger.setEnabled(true);
 		keepAliveBox = (KeepAliveBox) agency.createAgent(
 				KeepAliveBox.makeAP(getViewCenter(), KEEP_ALIVE_WIDTH, KEEP_ALIVE_HEIGHT));
 	}

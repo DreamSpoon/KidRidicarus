@@ -31,11 +31,13 @@ public class TurtleSprite extends AgentSprite {
 		animTimer = 0f;
 		setRegion(walkAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		SpriteFrameInput frameOut = new SpriteFrameInput(frameInput);
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		switch(((TurtleSpriteFrameInput) frameInput).moveState) {
@@ -56,6 +58,6 @@ public class TurtleSprite extends AgentSprite {
 				frameOut.flipY = true;
 				break;
 		}
-		applyFrameInput(frameOut);
+		postFrameInput(frameOut);
 	}
 }

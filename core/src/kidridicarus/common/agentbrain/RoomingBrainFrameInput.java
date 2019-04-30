@@ -1,5 +1,5 @@
 package kidridicarus.common.agentbrain;
-
+/*
 import kidridicarus.common.agent.roombox.RoomBox;
 
 public class RoomingBrainFrameInput extends BrainFrameInput {
@@ -14,3 +14,4 @@ public class RoomingBrainFrameInput extends BrainFrameInput {
 		this.isContactDespawn = isContactDespawn;
 	}
 }
+*/

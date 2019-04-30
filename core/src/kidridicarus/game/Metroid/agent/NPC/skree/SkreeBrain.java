@@ -11,7 +11,6 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.Metroid.agent.NPC.skreeshot.SkreeShot;
 import kidridicarus.game.Metroid.agent.item.energy.Energy;
@@ -68,24 +67,12 @@ public class SkreeBrain extends FullActorBrain {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
-	}
-
-	@Override
-	public SkreeSpriteFrameInput processFrame(BrainFrameInput frameInput) {
-		processContacts((RoomingBrainFrameInput) frameInput);
-		processMove(frameInput.timeDelta);
-		return new SkreeSpriteFrameInput(!despawnMe && !isDead, body.getPosition(), false, frameInput.timeDelta,
-				moveState);
-	}
-
-	private void processContacts(RoomingBrainFrameInput frameInput) {
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if((!isDead && !frameInput.isContactKeepAlive) || frameInput.isContactDespawn)
+		if(!isDead && (!cFrameInput.isKeepAlive || cFrameInput.isDespawn))
 			despawnMe = true;
-		// update last known room if not dead
-		if(moveState != MoveState.DEAD && frameInput.roomBox != null)
-			lastKnownRoom = frameInput.roomBox;
-
+		// if not dead or despawning, and if room is known, then update last known room
+		if(moveState != MoveState.DEAD && !despawnMe && cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 		// if no target yet then check for new target
 		if(target == null) {
 			target = body.getSpine().getPlayerContact();
@@ -99,15 +86,16 @@ public class SkreeBrain extends FullActorBrain {
 		}
 	}
 
-	private void processMove(float delta) {
+	@Override
+	public SkreeSpriteFrameInput processFrame(BrainFrameInput frameInput) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return;
+			return null;
 		}
 
 		MoveState nextMoveState = getNextMoveState();
-		boolean isMoveStateChanged = nextMoveState != moveState;
+		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case SLEEP:
 				break;
@@ -122,7 +110,7 @@ public class SkreeBrain extends FullActorBrain {
 				break;
 			case INJURY:
 				// first frame of injury?
-				if(isMoveStateChanged) {
+				if(isMoveStateChange) {
 					moveStateBeforeInjury = moveState;
 					velocityBeforeInjury = body.getVelocity().cpy();
 					body.zeroVelocity(true, true);
@@ -152,8 +140,10 @@ public class SkreeBrain extends FullActorBrain {
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
-		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameInput.timeDelta;
 		moveState = nextMoveState;
+
+		return new SkreeSpriteFrameInput(!isDead, body.getPosition(), false, frameInput.timeDelta, moveState);
 	}
 
 	private MoveState getNextMoveState() {

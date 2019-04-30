@@ -573,14 +573,18 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 					scriptedMoveState = MoveState.STAND;
 					break;
 			}
-
-			sprite.update(delta, sss.position, scriptedMoveState, sss.isFacingRight, false, false, false, false,
-					sss.moveDir);
+//			sprite.update(delta, sss.position, scriptedMoveState, sss.isFacingRight, false, false, false, false,
+//			sss.moveDir);
+			sprite.processFrame(new PitSpriteFrameInput(true, sss.position, sss.isFacingRight, delta,
+					scriptedMoveState, false, false, false, false, sss.moveDir));
 		}
 		else {
-			sprite.update(delta, body.getPosition(), moveState, isFacingRight, (noDamageCooldown > 0f),
-					(shootCooldownTimer > 0f), isOnGroundHeadInTile, body.getSpine().isMovingInDir(Direction4.UP),
-					Direction4.NONE);
+//			sprite.update(delta, body.getPosition(), moveState, isFacingRight, (noDamageCooldown > 0f),
+//					(shootCooldownTimer > 0f), isOnGroundHeadInTile, body.getSpine().isMovingInDir(Direction4.UP),
+//					Direction4.NONE);
+			sprite.processFrame(new PitSpriteFrameInput(true, body.getPosition(), isFacingRight, delta,
+					moveState, (noDamageCooldown > 0f), (shootCooldownTimer > 0f), isOnGroundHeadInTile,
+					body.getSpine().isMovingInDir(Direction4.UP), Direction4.NONE));
 		}
 	}
 

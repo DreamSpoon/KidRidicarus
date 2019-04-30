@@ -63,8 +63,8 @@ public class MarioSprite extends Sprite {
 	private Animation<TextureRegion>[][] smlAnim;
 	private Animation<TextureRegion>[][] bigAnim;
 
-	private MoveState prevParentMoveState;
-	private PowerState prevParentPowerState;
+	private MoveState parentPrevMoveState;
+	private PowerState parentPrevPowerState;
 	private float parentMoveStateTimer;
 	private float throwPoseCooldown;
 	private boolean isDrawAllowed;
@@ -78,8 +78,8 @@ public class MarioSprite extends Sprite {
 	public MarioSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean facingRight) {
 		createAnimations(atlas);
 
-		prevParentMoveState = MoveState.STAND;
-		prevParentPowerState = parentPowerState;
+		parentPrevMoveState = MoveState.STAND;
+		parentPrevPowerState = parentPowerState;
 		parentMoveStateTimer = 0f;
 		throwPoseCooldown = 0f;
 		isDrawAllowed = true;
@@ -225,10 +225,10 @@ public class MarioSprite extends Sprite {
 		else
 			isDrawAllowed = true;
 
-		prevParentPowerState = parentPowerState;
+		parentPrevPowerState = parentPowerState;
 
-		parentMoveStateTimer = parentMoveState == prevParentMoveState ? parentMoveStateTimer+delta : 0f;
-		prevParentMoveState = parentMoveState;
+		parentMoveStateTimer = parentMoveState == parentPrevMoveState ? parentMoveStateTimer+delta : 0f;
+		parentPrevMoveState = parentMoveState;
 
 		spriteStateTimer = nextSpriteState == spriteState ? spriteStateTimer+delta : 0f;
 		spriteState = nextSpriteState;
@@ -236,10 +236,10 @@ public class MarioSprite extends Sprite {
 
 	private SpriteState getNextSpriteState(PowerState parentPowerState) {
 		// did parent grow? if so then do grow anim
-		if(parentPowerState.isBigBody() && !prevParentPowerState.isBigBody())
+		if(parentPowerState.isBigBody() && !parentPrevPowerState.isBigBody())
 			return SpriteState.GROW;
 		// did parent shrink? if so then do shrink anim
-		else if(!parentPowerState.isBigBody() && prevParentPowerState.isBigBody())
+		else if(!parentPowerState.isBigBody() && parentPrevPowerState.isBigBody())
 			return SpriteState.SHRINK;
 		else if(spriteState == SpriteState.GROW) {
 			if(bigAnim[GROW_POSE][BIG_REG_GRP].isAnimationFinished(spriteStateTimer))
@@ -333,7 +333,7 @@ public class MarioSprite extends Sprite {
 				case CLIMB:
 					pose = CLIMB_POSE;
 					// if this is first frame of climb animation then reset clim anim timer
-					if(prevParentMoveState != MoveState.CLIMB)
+					if(parentPrevMoveState != MoveState.CLIMB)
 						climbAnimTimer = 0f;
 					// if climbing up then forward the animation
 					if(moveDir == Direction4.UP)

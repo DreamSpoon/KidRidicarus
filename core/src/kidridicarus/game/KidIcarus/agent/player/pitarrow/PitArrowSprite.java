@@ -25,13 +25,15 @@ public class PitArrowSprite extends AgentSprite {
 			setOrigin(0f, ORIGIN_OFFSET_UP);
 			setRotation(90f);
 		}
-		applyFrameInput(new SpriteFrameInput(getArrowPosition(position), arrowDir.isRight()));
+		postFrameInput(new SpriteFrameInput(getArrowPosition(position), arrowDir.isRight()));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		applyFrameInput(new SpriteFrameInput(frameInput.visible, getArrowPosition(frameInput.position), false,
+		if(preFrameInput(frameInput.visible)) {
+			postFrameInput(new SpriteFrameInput(frameInput.visible, getArrowPosition(frameInput.position), false,
 				frameInput.flipX, false));
+		}
 	}
 
 	private Vector2 getArrowPosition(Vector2 position) {

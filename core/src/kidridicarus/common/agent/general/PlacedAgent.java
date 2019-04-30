@@ -1,5 +1,5 @@
 package kidridicarus.common.agent.general;
-
+/*
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
@@ -20,3 +20,4 @@ public abstract class PlacedAgent extends Agent {
 		});
 	}
 }
+*/

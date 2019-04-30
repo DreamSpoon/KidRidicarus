@@ -1,5 +1,5 @@
 package kidridicarus.common.agent.general;
-
+/*
 import com.badlogic.gdx.math.Rectangle;
 
 import kidridicarus.agency.Agency;
@@ -19,3 +19,4 @@ public abstract class PlacedBoundsAgent extends PlacedAgent {
 		});
 	}
 }
+*/

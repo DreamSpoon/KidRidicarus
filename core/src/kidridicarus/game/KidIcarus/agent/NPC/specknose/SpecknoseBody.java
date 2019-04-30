@@ -5,24 +5,21 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agentbody.CFBitSeq;
-import kidridicarus.common.agent.fullactor.FullActorBody;
+import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine;
 
-public class SpecknoseBody extends FullActorBody {
+public class SpecknoseBody extends MobileAgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float GRAVITY_SCALE = 0f;
-
 	private static final int ACCEL_X_LEFT = 4;
 	private static final int ACCEL_X_RIGHT = 13;
 	private static final int ACCEL_Y_BOTTOM = -12;
 	private static final int ACCEL_Y_TOP = -2;
-
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT,
 			CommonCF.Alias.KEEP_ALIVE_BIT, CommonCF.Alias.SPAWNTRIGGER_BIT);
@@ -51,15 +48,9 @@ public class SpecknoseBody extends FullActorBody {
 				getBounds().width, getBounds().height);
 	}
 
-	@Override
 	public ContactDmgBrainContactFrameInput processContactFrame() {
-		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
-	}
-
-	@Override
-	public RoomingBrainFrameInput processFrame(float delta) {
-		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
-				spine.isContactDespawn());
+		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
 	public FlyBallSpine getSpine() {

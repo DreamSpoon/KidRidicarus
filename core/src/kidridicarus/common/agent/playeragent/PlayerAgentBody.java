@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agentbody.MotileAgentBody;
+import kidridicarus.agency.agentbody.AgentBody;
 
-public abstract class PlayerAgentBody extends MotileAgentBody {
+public abstract class PlayerAgentBody extends AgentBody {
 	private Vector2 prevPosition;
 	private Vector2 prevVelocity;
 

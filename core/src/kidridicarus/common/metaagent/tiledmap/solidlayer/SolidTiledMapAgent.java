@@ -11,14 +11,14 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agent.corpusagent.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.QQ;
 
-public class SolidTiledMapAgent extends PlacedBoundsAgent implements Disposable {
+public class SolidTiledMapAgent extends CorpusAgent implements Disposable {
 	private SolidTiledMap solidMap;
 	private SolidTiledMapBody body;
 	private LinkedBlockingQueue<SolidTileChange> tileChangeQ;
@@ -96,16 +96,6 @@ public class SolidTiledMapAgent extends PlacedBoundsAgent implements Disposable 
 		if(solidMap.isTileOutOfBounds(position))
 			return false;
 		return solidMap.isTileExist((int) tileCoords.x, (int) tileCoords.y);
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return body.getBounds();
 	}
 
 	@Override

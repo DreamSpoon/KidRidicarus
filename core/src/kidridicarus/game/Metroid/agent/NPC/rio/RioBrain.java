@@ -4,20 +4,17 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.Metroid.agent.item.energy.Energy;
 import kidridicarus.game.Metroid.agent.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
 
-public class RioBrain extends FullActorBrain {
+public class RioBrain {
 	private static final float MAX_HEALTH = 4f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -63,29 +60,16 @@ public class RioBrain extends FullActorBrain {
 		lastKnownRoom = null;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
-	}
-
-	@Override
-	public RioSpriteFrameInput processFrame(BrainFrameInput frameInput) {
-		processContacts((RoomingBrainFrameInput) frameInput);
-		processMove(frameInput.timeDelta);
-		return new RioSpriteFrameInput(!despawnMe && !isDead, body.getPosition(), false, frameInput.timeDelta,
-				moveState);
-	}
-
-	private void processContacts(RoomingBrainFrameInput frameInput) {
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if((!isDead && !frameInput.isContactKeepAlive) || frameInput.isContactDespawn)
+		if(!isDead && (!cFrameInput.isKeepAlive || cFrameInput.isDespawn))
 			despawnMe = true;
-		// update last known room if not dead
-		if(moveState != MoveState.DEAD && frameInput.roomBox != null)
-			lastKnownRoom = frameInput.roomBox;
-
+		// if not dead and not despawned and room is known then update last known room
+		if(!isDead && !despawnMe && cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 		// if no target yet then check for new target
 		if(target == null) {
 			target = body.getSpine().getPlayerContact();
@@ -99,11 +83,11 @@ public class RioBrain extends FullActorBrain {
 		}
 	}
 
-	private void processMove(float delta) {
+	public RioSpriteFrameInput processFrame(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return;
+			return new RioSpriteFrameInput();
 		}
 
 		MoveState nextMoveState = getNextMoveState();
@@ -196,6 +180,8 @@ public class RioBrain extends FullActorBrain {
 
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
+
+		return new RioSpriteFrameInput(!isDead, body.getPosition(), false, delta, moveState);
 	}
 
 	private MoveState getNextMoveState() {

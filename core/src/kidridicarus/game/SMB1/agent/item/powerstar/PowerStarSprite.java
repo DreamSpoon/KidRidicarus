@@ -32,8 +32,7 @@ public class PowerStarSprite extends AgentSprite {
 		animTimer = 0f;
 		setRegion(anim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
-
+		postFrameInput(new SpriteFrameInput(position));
 		final PowerStarSprite self = this;
 		myDrawListener = new AgentDrawListener() {
 				@Override
@@ -44,21 +43,20 @@ public class PowerStarSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		setRegion(anim.getKeyFrame(animTimer));
-		if(((SproutSpriteFrameInput) frameInput).finishSprout)
-			finishSprout();
-		applyFrameInput(frameInput);
-	}
-
-	private void finishSprout() {
-		final PowerStarSprite self = this;
-		// change from bottom to middle sprite draw order
-		parent.getAgency().removeAgentDrawListener(parent, myDrawListener);
-		myDrawListener = new AgentDrawListener() {
-				@Override
-				public void draw(Eye eye) { eye.draw(self); }
-			};
-		parent.getAgency().addAgentDrawListener(parent, CommonInfo.DrawOrder.SPRITE_MIDDLE, myDrawListener);
+		// if finished sprouting then change from bottom draw order to middle draw order
+		if(((SproutSpriteFrameInput) frameInput).finishSprout) {
+			final PowerStarSprite self = this;
+			parent.getAgency().removeAgentDrawListener(parent, myDrawListener);
+			myDrawListener = new AgentDrawListener() {
+					@Override
+					public void draw(Eye eye) { eye.draw(self); }
+				};
+			parent.getAgency().addAgentDrawListener(parent, CommonInfo.DrawOrder.SPRITE_MIDDLE, myDrawListener);
+		}
+		postFrameInput(frameInput);
 	}
 }

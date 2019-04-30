@@ -35,11 +35,13 @@ public class SkreeSprite extends AgentSprite {
 		animTimer = 0f;
 		setRegion(spinAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position.cpy().add(SPECIAL_OFFSET)));
+		postFrameInput(new SpriteFrameInput(position.cpy().add(SPECIAL_OFFSET)));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		switch(((SkreeSpriteFrameInput) frameInput).moveState) {
 			case SLEEP:
@@ -56,7 +58,7 @@ public class SkreeSprite extends AgentSprite {
 			case DEAD:
 				break;
 		}
-		applyFrameInput(new SpriteFrameInput(frameInput.visible, frameInput.position.cpy().add(SPECIAL_OFFSET),
+		postFrameInput(new SpriteFrameInput(frameInput.visible, frameInput.position.cpy().add(SPECIAL_OFFSET),
 				false, frameInput.flipX, false));
 	}
 }

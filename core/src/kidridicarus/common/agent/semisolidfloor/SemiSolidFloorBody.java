@@ -21,12 +21,13 @@ public class SemiSolidFloorBody extends AgentBody {
 		defineBody(bounds);
 	}
 
+	// Velocity is ignored. TODO mouse joint needed to implement velocity (properly).
 	@Override
-	protected void defineBody(Rectangle bounds) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
-
+		// set body size info and create new body
 		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
 		AgentBodyFilter abf = new AgentBodyFilter(CFCAT_BITS, CFMASK_BITS, this);

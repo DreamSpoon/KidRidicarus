@@ -21,12 +21,14 @@ public class KidIcarusDoorSprite extends AgentSprite {
 		openedTex = atlas.findRegion(KidIcarusGfx.General.DOOR_BROWN_OPENED);
 		setRegion(isOpened ? openedTex : closedTex);
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		setRegion(((KidIcarusDoorSpriteFrameInput) frameInput).isOpened ? openedTex : closedTex);
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 }

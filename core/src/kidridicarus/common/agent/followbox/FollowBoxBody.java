@@ -32,7 +32,7 @@ public abstract class FollowBoxBody extends AgentBody {
 	}
 
 	@Override
-	protected void defineBody(Rectangle bounds) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// destroy the old bodies if necessary
 		if(mj != null && mj.getBodyA() != null) {
 			// destroy the temp bodyA used by mouse joint, and the mouse joint
@@ -40,14 +40,14 @@ public abstract class FollowBoxBody extends AgentBody {
 		}
 		if(b2body != null)
 			world.destroyBody(b2body);
-
+		// set body size info and create new body
 		setBoundsSize(bounds.width, bounds.height);
-		createRegBody(world, bounds, getCatBits(), getMaskBits());
+		createRegBody(world, bounds, velocity, getCatBits(), getMaskBits());
 		createMouseJoint(world, bounds.getCenter(new Vector2()));
 	}
 
-	private void createRegBody(World world, Rectangle bounds, CFBitSeq catBits, CFBitSeq maskBits) {
-		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
+	private void createRegBody(World world, Rectangle bounds, Vector2 velocity, CFBitSeq catBits, CFBitSeq maskBits) {
+		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(0f);
 		if(isSensor) {
 			B2DFactory.makeSensorBoxFixture(b2body, catBits, maskBits, getSensorBoxUserData(),

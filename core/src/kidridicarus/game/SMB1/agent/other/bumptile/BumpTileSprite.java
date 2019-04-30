@@ -33,11 +33,13 @@ public class BumpTileSprite extends AgentSprite {
 			setRegion(prebumpTex);
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		// tile is visible if it has a pre-bump texture
-		applyFrameInput(new SpriteFrameInput(prebumpTex != null, position, false, false, false));
+		postFrameInput(new SpriteFrameInput(prebumpTex != null, position, false, false, false));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		// empty block?
 		if(((BumpTileSpriteFrameInput) frameInput).isEmpty)
 			setRegion(emptyblockTex);
@@ -47,6 +49,6 @@ public class BumpTileSprite extends AgentSprite {
 		// block has texture?
 		else if(prebumpTex != null)
 			setRegion(prebumpTex);
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 }

@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.halfactor.HalfActor;
+import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.agent.optional.SolidAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -17,13 +17,17 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
 // note: solid when closed, non-solid when open
-public class KidIcarusDoor extends HalfActor implements TriggerTakeAgent, SolidAgent, DisposableAgent {
+public class KidIcarusDoor extends PlacedBoundsAgent implements TriggerTakeAgent, SolidAgent, DisposableAgent {
+	private KidIcarusDoorBody body;
+	private KidIcarusDoorBrain brain;
+	private KidIcarusDoorSprite sprite;
+
 	public KidIcarusDoor(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		// start in the "is open" state if the agent is not supposed to expire (i.e. close) immediately
 		boolean isOpened = !properties.containsKV(CommonKV.Spawn.KEY_EXPIRE, true);
 		body = new KidIcarusDoorBody(this, agency.getWorld(), AP_Tool.getCenter(properties), isOpened);
-		brain = new KidIcarusDoorBrain(this, (KidIcarusDoorBody) body, isOpened,
+		brain = new KidIcarusDoorBrain(this, body, isOpened,
 				properties.get(CommonKV.Script.KEY_TARGET_NAME, "", String.class));
 		sprite = new KidIcarusDoorSprite(agency.getAtlas(), body.getPosition(), isOpened);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {

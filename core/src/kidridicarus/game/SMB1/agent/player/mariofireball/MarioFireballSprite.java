@@ -23,7 +23,7 @@ public class MarioFireballSprite extends AgentSprite {
 	private Animation<TextureRegion> ballAnim;
 	private Animation<TextureRegion> explodeAnim;
 	private float animTimer;
-	private MoveState prevParentMoveState;
+	private MoveState parentPrevMoveState;
 
 	public MarioFireballSprite(TextureAtlas atlas, Vector2 position) {
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED_FLY,
@@ -31,16 +31,18 @@ public class MarioFireballSprite extends AgentSprite {
 		explodeAnim = new Animation<TextureRegion>(ANIM_SPEED_EXP,
 				atlas.findRegions(SMB1_Gfx.Player.MarioFireball.FIREBALL_EXP), PlayMode.NORMAL);
 		animTimer = 0f;
-		prevParentMoveState = null;
+		parentPrevMoveState = null;
 		setRegion(ballAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), BALL_WIDTH, BALL_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		MarioFireballSpriteFrame myFrameInput = (MarioFireballSpriteFrame) frameInput;
-		boolean isMoveStateChange = myFrameInput.moveState != prevParentMoveState;
+		boolean isMoveStateChange = myFrameInput.moveState != parentPrevMoveState;
 		animTimer = isMoveStateChange ? 0f : animTimer+myFrameInput.timeDelta;
 		switch(myFrameInput.moveState) {
 			case FLY:
@@ -55,7 +57,7 @@ public class MarioFireballSprite extends AgentSprite {
 			case END:
 				break;
 		}
-		prevParentMoveState = myFrameInput.moveState;
-		applyFrameInput(frameInput);
+		parentPrevMoveState = myFrameInput.moveState;
+		postFrameInput(frameInput);
 	}
 }

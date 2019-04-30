@@ -9,30 +9,35 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
 public abstract class SpawnController {
-	protected AgentSpawner spawner;
+	protected AgentSpawner parent;
 	private String spawnAgentClassAlias;
 	private Boolean isRandomPos;
 
 	public abstract void update(float delta, boolean isEnabled);
 
-	public SpawnController(AgentSpawner spawner, ObjectProperties properties) {
-		this.spawner = spawner;
+	public SpawnController(AgentSpawner parent, ObjectProperties properties) {
+		this.parent = parent;
 		this.spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWN_AGENTCLASS, "", String.class);
 		// spawn in random position within spawn body boundaries?
 		isRandomPos = properties.get(CommonKV.Spawn.KEY_SPAWN_RAND_POS, false, Boolean.class);
 	}
 
 	protected Agent doSpawn(Vector2 position) {
-		return spawner.getAgency().createAgent(AP_Tool.createPointAP(spawnAgentClassAlias, position));
+		return parent.getAgency().createAgent(AP_Tool.createPointAP(spawnAgentClassAlias, position));
 	}
 
 	protected Agent doSpawn() {
-		Vector2 spawnPos = spawner.getPosition().cpy();
-		// apply random positioning if needed
+		// get spawn position and exit if unavailable
+		Vector2 spawnPos = AP_Tool.getCenter(parent);
+		if(spawnPos == null)
+			return null;
+		// apply random positioning if needed and available
 		if(isRandomPos) {
-			Rectangle bounds = spawner.getBounds();
-			spawnPos.set((float) (bounds.x + bounds.width * Math.random()),
-					(float) (bounds.y + bounds.height * Math.random()));
+			Rectangle spawnBounds = AP_Tool.getBounds(parent);
+			if(spawnBounds != null) {
+				spawnPos = new Vector2((float) (spawnBounds.x + spawnBounds.width * Math.random()),
+						(float) (spawnBounds.y + spawnBounds.height * Math.random()));
+			}
 		}
 		return doSpawn(spawnPos);
 	}

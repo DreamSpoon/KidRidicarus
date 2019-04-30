@@ -31,7 +31,7 @@ public class FireFlowerSprite extends AgentSprite {
 		animTimer = 0f;
 		setRegion(anim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 
 		final FireFlowerSprite self = this;
 		myDrawListener = new AgentDrawListener() {
@@ -43,11 +43,13 @@ public class FireFlowerSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		setRegion(anim.getKeyFrame(animTimer));
 		if(((SproutSpriteFrameInput) frameInput).finishSprout)
 			finishSprout();
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 
 	private void finishSprout() {

@@ -1,6 +1,5 @@
 package kidridicarus.game.KidIcarus.agent.NPC.monoeye;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
@@ -10,7 +9,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.fullactor.FullActor;
+import kidridicarus.common.agent.corpusagent.CorpusAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
@@ -20,7 +19,10 @@ import kidridicarus.common.tool.AP_Tool;
  * ogle them in a downward direction.
  * QQ
  */
-public class Monoeye extends FullActor implements ContactDmgTakeAgent, DisposableAgent {
+public class Monoeye extends CorpusAgent implements ContactDmgTakeAgent, DisposableAgent {
+	private MonoeyeBrain brain;
+	private MonoeyeSprite sprite;
+
 	public Monoeye(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new MonoeyeBody(
@@ -28,14 +30,14 @@ public class Monoeye extends FullActor implements ContactDmgTakeAgent, Disposabl
 		brain = new MonoeyeBrain(this, (MonoeyeBody) body);
 		sprite = new MonoeyeSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
-		});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) {
-					sprite.processFrame(brain.processFrame(body.processFrame(delta)));
+					brain.processContactFrame(((MonoeyeBody) body).processContactFrame());
 				}
+			});
+		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
@@ -46,21 +48,6 @@ public class Monoeye extends FullActor implements ContactDmgTakeAgent, Disposabl
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
 		return ((MonoeyeBrain) brain).onTakeDamage(agent);
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return body.getBounds();
-	}
-
-	@Override
-	protected Vector2 getVelocity() {
-		return body.getVelocity();
 	}
 
 	@Override

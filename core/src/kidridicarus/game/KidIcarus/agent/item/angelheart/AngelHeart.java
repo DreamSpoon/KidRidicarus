@@ -1,6 +1,5 @@
 package kidridicarus.game.KidIcarus.agent.item.angelheart;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
@@ -9,13 +8,16 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.halfactor.HalfActor;
+import kidridicarus.common.agent.corpusagent.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeartBrain.AngelHeartSize;
 import kidridicarus.game.info.KidIcarusKV;
 
-public class AngelHeart extends HalfActor implements DisposableAgent {
+public class AngelHeart extends CorpusAgent implements DisposableAgent {
+	private AngelHeartBrain brain;
+	private AngelHeartSprite sprite;
+
 	public AngelHeart(Agency agency, ObjectProperties agentProps) {
 		super(agency, agentProps);
 		body = new AngelHeartBody(this, agency.getWorld(), AP_Tool.getCenter(agentProps));
@@ -25,7 +27,9 @@ public class AngelHeart extends HalfActor implements DisposableAgent {
 				((AngelHeartBrain) brain).getHeartSize());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
+				public void update(float delta) {
+					brain.processContactFrame(((AngelHeartBody) body).processContactFrame());
+				}
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
@@ -35,16 +39,6 @@ public class AngelHeart extends HalfActor implements DisposableAgent {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return body.getBounds();
 	}
 
 	@Override

@@ -1,11 +1,11 @@
 package kidridicarus.common.agent.fullactor;
-
+/*
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentsprite.AgentSprite;
-import kidridicarus.common.agent.general.MotileBoundsAgent;
+import kidridicarus.common.agent.general.MobileBoundsAgent;
 
-public abstract class FullActor extends MotileBoundsAgent {
+public abstract class FullActor extends MobileBoundsAgent {
 	protected FullActorBody body;
 	protected FullActorBrain brain;
 	protected AgentSprite sprite;
@@ -17,3 +17,4 @@ public abstract class FullActor extends MotileBoundsAgent {
 		sprite = null;
 	}
 }
+*/

@@ -26,13 +26,15 @@ public class SpinCoinSprite extends AgentSprite {
 		animTimer = 0f;
 		setRegion(anim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		setRegion(anim.getKeyFrame(animTimer));
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 }

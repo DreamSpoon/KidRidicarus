@@ -21,21 +21,13 @@ public class LevelEndTriggerBody extends AgentBody {
 	}
 
 	@Override
-	protected void defineBody(Rectangle bounds) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
-
+		// set body size info and create new body
 		setBoundsSize(bounds.width, bounds.height);
-		createBody(world, bounds);
-		createFixtures();
-	}
-
-	private void createBody(World world, Rectangle bounds) {
 		b2body = B2DFactory.makeStaticBody(world, bounds.getCenter(new Vector2()));
-	}
-
-	private void createFixtures() {
 		playerSensor = new OneWayContactSensor(this, true);
 		B2DFactory.makeBoxFixture(b2body, CommonCF.AGENT_SENSOR_CFCAT, CommonCF.AGENT_SENSOR_CFMASK, playerSensor,
 				getBounds().width, getBounds().height);

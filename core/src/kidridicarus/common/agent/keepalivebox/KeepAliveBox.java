@@ -7,21 +7,13 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBox;
-import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
 public class KeepAliveBox extends FollowBox implements Disposable {
-	private KeepAliveBoxBody body;
-
 	public KeepAliveBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new KeepAliveBoxBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
-	}
-
-	@Override
-	protected FollowBoxBody getFollowBoxBody() {
-		return body;
 	}
 
 	@Override

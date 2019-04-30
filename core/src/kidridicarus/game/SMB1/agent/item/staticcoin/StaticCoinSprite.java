@@ -23,14 +23,16 @@ public class StaticCoinSprite extends AgentSprite {
 		anim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMB1_Gfx.Item.COIN_STATIC), PlayMode.LOOP);
 		setRegion(anim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		// use the "delta time" as an "absolute time" because this is a special sprite
 		setRegion(anim.getKeyFrame(((AnimSpriteFrameInput) frameInput).timeDelta));
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 }
 

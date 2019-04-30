@@ -3,19 +3,17 @@ package kidridicarus.game.KidIcarus.agent.NPC.monoeye;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine.AxisGoState;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class MonoeyeBrain extends FullActorBrain {
+public class MonoeyeBrain {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 5;
 
@@ -49,32 +47,20 @@ public class MonoeyeBrain extends FullActorBrain {
 		isTargetRemoved = false;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
-	}
-
-	@Override
-	public SpriteFrameInput processFrame(BrainFrameInput bodyFrame) {
-		processContacts((RoomingBrainFrameInput) bodyFrame);
-		processMove(bodyFrame.timeDelta);
-		// visible if not despawned and not dead
-		return new SpriteFrameInput(!despawnMe & !isDead, body.getPosition(), false, !isFacingRight, false);
-	}
-
-	private void processContacts(RoomingBrainFrameInput bodyFrame) {
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if((!isDead && !bodyFrame.isContactKeepAlive) || bodyFrame.isContactDespawn)
+		if(!isDead && (!cFrameInput.isKeepAlive || cFrameInput.isDespawn))
 			despawnMe = true;
 	}
 
-	private void processMove(float delta) {
+	public SpriteFrameInput processFrame(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return;
+			return null;
 		}
 
 		processGawkers();
@@ -120,7 +106,7 @@ public class MonoeyeBrain extends FullActorBrain {
 				parent.getAgency().createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
 				parent.getAgency().removeAgent(parent);
 				parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
-				break;
+				return null;
 		}
 
 		horizGoState = nextHorizGoState;
@@ -129,6 +115,8 @@ public class MonoeyeBrain extends FullActorBrain {
 
 		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
+
+		return SprFrameTool.placeFaceR(isFacingRight, body.getPosition());
 	}
 
 	private AxisGoState getNextHorizontalOgleState() {
@@ -221,7 +209,6 @@ public class MonoeyeBrain extends FullActorBrain {
 			return MoveState.FLY;
 	}
 
-	// assume any amount of damage kills, for now...
 	public boolean onTakeDamage(Agent agent) {
 		// if dead already or the damage is from the same team then return no damage taken
 		if(isDead || !(agent instanceof PlayerAgent))
@@ -230,5 +217,4 @@ public class MonoeyeBrain extends FullActorBrain {
 		isDead = true;
 		return true;
 	}
-
 }

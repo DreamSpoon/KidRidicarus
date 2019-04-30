@@ -30,11 +30,13 @@ public class ZoomerSprite extends AgentSprite {
 		setRegion(walkAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		setOrigin(SPRITE_WIDTH/2f, SPRITE_HEIGHT/2f);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
 		// set region according to move state
 		switch(((ZoomerSpriteFrameInput) frameInput).moveState) {
@@ -63,6 +65,6 @@ public class ZoomerSprite extends AgentSprite {
 				setRotation(180);
 				break;
 		}
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 }

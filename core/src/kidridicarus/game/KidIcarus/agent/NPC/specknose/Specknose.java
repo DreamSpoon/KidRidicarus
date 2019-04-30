@@ -10,32 +10,34 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.fullactor.FullActor;
+import kidridicarus.common.agent.general.MobileBoundsAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 
-public class Specknose extends FullActor implements ContactDmgTakeAgent, DisposableAgent {
+public class Specknose extends MobileBoundsAgent implements ContactDmgTakeAgent, DisposableAgent {
+	private SpecknoseBody body;
+	private SpecknoseBrain brain;
+	private SpecknoseSprite sprite;
+
 	public Specknose(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new SpecknoseBody(
 				this, agency.getWorld(), AP_Tool.getCenter(properties), AP_Tool.getVelocity(properties));
-		brain = new SpecknoseBrain(this, (SpecknoseBody) body);
+		brain = new SpecknoseBrain(this, body);
 		sprite = new SpecknoseSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
-		});
+				@Override
+				public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
+			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
-					sprite.processFrame(brain.processFrame(body.processFrame(delta)));
-				}
+				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
-			@Override
-			public void draw(Eye eye) { eye.draw(sprite); }
-		});
+				@Override
+				public void draw(Eye eye) { eye.draw(sprite); }
+			});
 	}
 
 	// assume any amount of damage kills, for now...

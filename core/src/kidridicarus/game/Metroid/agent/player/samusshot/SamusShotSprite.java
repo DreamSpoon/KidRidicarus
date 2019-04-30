@@ -31,13 +31,15 @@ public class SamusShotSprite extends AgentSprite {
 		parentPrevMoveState = null;
 		setRegion(liveAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput.visible))
+			return;
 		SamusShotSpriteFrameInput myFrameInput = (SamusShotSpriteFrameInput) frameInput;
-		animTimer = myFrameInput.moveState == parentPrevMoveState ? animTimer+myFrameInput.timeDelta : 0f;
+		animTimer = myFrameInput.moveState != parentPrevMoveState ? 0f : animTimer+myFrameInput.timeDelta;
 		parentPrevMoveState = myFrameInput.moveState;
 		switch(myFrameInput.moveState) {
 			case LIVE:
@@ -48,6 +50,6 @@ public class SamusShotSprite extends AgentSprite {
 				setRegion(explodeAnim.getKeyFrame(animTimer));
 				break;
 		}
-		applyFrameInput(frameInput);
+		postFrameInput(frameInput);
 	}
 }

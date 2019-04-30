@@ -1,15 +1,12 @@
 package kidridicarus.common.agent.followbox;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agent.corpusagent.CorpusAgent;
 
-public abstract class FollowBox extends PlacedBoundsAgent {
-	protected abstract FollowBoxBody getFollowBoxBody();
-
+public abstract class FollowBox extends CorpusAgent {
 	public FollowBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 	}
@@ -18,16 +15,6 @@ public abstract class FollowBox extends PlacedBoundsAgent {
 	 * Set the target center position of the follow box, and the box will move on update (mouse joint).
 	 */
 	public void setTarget(Vector2 position) {
-		getFollowBoxBody().setPosition(position);
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return getFollowBoxBody().getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return getFollowBoxBody().getBounds();
+		((FollowBoxBody) body).setPosition(position);
 	}
 }

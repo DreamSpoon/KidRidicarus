@@ -15,6 +15,6 @@ public class SkreeShotSprite extends AgentSprite {
 	public SkreeShotSprite(TextureAtlas atlas, Vector2 position) {
 		setRegion(atlas.findRegion(MetroidGfx.NPC.SKREE_EXP));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		applyFrameInput(new SpriteFrameInput(position));
+		postFrameInput(new SpriteFrameInput(position));
 	}
 }

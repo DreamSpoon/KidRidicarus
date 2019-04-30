@@ -1,5 +1,5 @@
 package kidridicarus.common.agent.halfactor;
-
+/*
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.agent.Agent;
@@ -13,3 +13,4 @@ public abstract class HalfActorBody extends AgentBody {
 		super(parent, world);
 	}
 }
+*/

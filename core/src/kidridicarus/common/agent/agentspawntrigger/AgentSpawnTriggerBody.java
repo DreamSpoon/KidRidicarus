@@ -1,7 +1,5 @@
 package kidridicarus.common.agent.agentspawntrigger;
 
-import java.util.List;
-
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -25,6 +23,11 @@ public class AgentSpawnTriggerBody extends FollowBoxBody {
 		beginContactSensor.chainTo(endContactSensor);
 	}
 
+	public SpawnTriggerFrameInput processFrame() {
+		return new SpawnTriggerFrameInput(beginContactSensor.getOnlyAndResetContacts(EnableTakeAgent.class),
+				endContactSensor.getOnlyAndResetContacts(EnableTakeAgent.class));
+	}
+
 	@Override
 	protected CFBitSeq getCatBits() {
 		return CFCAT_BITS;
@@ -38,13 +41,5 @@ public class AgentSpawnTriggerBody extends FollowBoxBody {
 	@Override
 	protected Object getSensorBoxUserData() {
 		return beginContactSensor;
-	}
-
-	public List<EnableTakeAgent> getAndResetBeginContacts() {
-		return beginContactSensor.getOnlyAndResetContacts(EnableTakeAgent.class);
-	}
-
-	public List<EnableTakeAgent> getAndResetEndContacts() {
-		return endContactSensor.getOnlyAndResetContacts(EnableTakeAgent.class);
 	}
 }
