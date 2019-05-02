@@ -70,8 +70,8 @@ public class TurtleBrain {
 	}
 
 	private void processHeadBounceContacts(List<Agent> headBounceBeginContacts) {
-		HitType hitCheck = HitType.NONE;
 		for(Agent agent : headBounceBeginContacts) {
+			HitType hitCheck;
 			if(moveState == MoveState.SLIDE)
 				hitCheck = slideContact(agent);
 			else if(moveState.isKickable())

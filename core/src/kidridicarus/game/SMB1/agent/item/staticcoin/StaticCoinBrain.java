@@ -34,7 +34,7 @@ public class StaticCoinBrain {
 			despawnMe = true;
 	}
 
-	public SpriteFrameInput processFrame(float delta) {
+	public SpriteFrameInput processFrame() {
 		if(isUsed) {
 			parent.getAgency().getEar().playSound(SMB1_Audio.Sound.COIN);
 			parent.getAgency().removeAgent(parent);

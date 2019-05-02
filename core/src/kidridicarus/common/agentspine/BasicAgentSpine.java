@@ -78,13 +78,11 @@ public class BasicAgentSpine {
 		if(!curRoom.getProperty(CommonKV.Room.KEY_SPACEWRAP_X, false, Boolean.class))
 			return;
 		// if body position is outside room on left...
-		if(body.getPosition().x < roomBounds.x) {
-			((AgentBody) body).checkDoDefineBody(new Vector2(roomBounds.x+roomBounds.width, body.getPosition().y),
-					true);
-		}
+		if(body.getPosition().x < roomBounds.x)
+			body.checkDoDefineBody(new Vector2(roomBounds.x+roomBounds.width, body.getPosition().y), true);
 		// if body position is outside room on right...
 		else if(body.getPosition().x > roomBounds.x+roomBounds.width)
-			((AgentBody) body).checkDoDefineBody(new Vector2(roomBounds.x, body.getPosition().y), true);
+			body.checkDoDefineBody(new Vector2(roomBounds.x, body.getPosition().y), true);
 	}
 
 	public boolean isMovingInDir(Direction4 dir) {

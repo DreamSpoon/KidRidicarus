@@ -38,9 +38,6 @@ public abstract class AgentBody implements Disposable {
 	}
 
 	public void checkDoDefineBody(Vector2 position, boolean keepVelocity) {
-//		// exit if the new position is the same as current position and velocity can be maintained
-//		if(position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON) && !keepVelocity)
-//			return;
 		// exit if the new position is the same as current position
 		if(position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON)) {
 			// zero velocity if needed

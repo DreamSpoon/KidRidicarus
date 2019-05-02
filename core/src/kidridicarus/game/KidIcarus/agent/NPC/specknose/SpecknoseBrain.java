@@ -1,7 +1,5 @@
 package kidridicarus.game.KidIcarus.agent.NPC.specknose;
 
-import com.badlogic.gdx.math.Vector2;
-
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -119,8 +117,7 @@ public class SpecknoseBrain {
 			return MoveState.FLY;
 	}
 
-	// assume any amount of damage kills, for now...
-	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
+	public boolean onTakeDamage(Agent agent) {
 		// if dead already or the damage is from the same team then return no damage taken
 		if(isDead || !(agent instanceof PlayerAgent))
 			return false;

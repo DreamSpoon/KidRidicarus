@@ -17,7 +17,7 @@ public class PowerStarBody extends AgentBody {
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float GRAVITY_SCALE = 0.5f;
 
-	protected SolidContactSpine spine;
+	private SolidContactSpine spine;
 
 	public PowerStarBody(PowerStar parent, World world) {
 		super(parent, world);

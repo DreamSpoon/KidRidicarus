@@ -22,9 +22,4 @@ public class FrameTime {
 		this.abs = frameTime.abs;
 		this.time = frameTime.time;
 	}
-
-	public FrameTime(float time) {
-		this.abs = false;
-		this.time = time;
-	}
 }

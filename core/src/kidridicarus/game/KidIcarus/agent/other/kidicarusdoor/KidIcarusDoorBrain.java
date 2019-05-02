@@ -34,7 +34,7 @@ public class KidIcarusDoorBrain {
 			agent.getSupervisor().startScript(new KidIcarusDoorScript(parent, exitSpawner));
 	}
 
-	public KidIcarusDoorSpriteFrameInput processFrame(float delta) {
+	public KidIcarusDoorSpriteFrameInput processFrame() {
 		body.setOpened(isOpened);
 		return new KidIcarusDoorSpriteFrameInput(body.getPosition(), isOpened);
 	}

@@ -27,7 +27,7 @@ public class PitArrowSprite extends AgentSprite {
 			postFrameInput((PitArrowSpriteFrameInput) frameInput);
 	}
 
-	protected void postFrameInput(PitArrowSpriteFrameInput frameInput) {
+	private void postFrameInput(PitArrowSpriteFrameInput frameInput) {
 		boolean arrowFlipX = frameInput.arrowDir == Direction4.LEFT;
 		boolean arrowFlipY = frameInput.arrowDir == Direction4.DOWN;
 		flip(arrowFlipX ^ isFlipX(), arrowFlipY ^ isFlipY());

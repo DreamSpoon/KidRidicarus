@@ -14,9 +14,8 @@ public class PitSpriteFrameInput extends SpriteFrameInput {
 	public boolean isJumpUp;
 	public Direction4 climbDir;
 
-	public PitSpriteFrameInput(boolean visible, Vector2 position, boolean isFacingRight, float timeDelta,
-			MoveState moveState, boolean isDmgFrame, boolean isShooting, boolean isHeadInTile, boolean isJumpUp,
-			Direction4 climbDir) {
+	public PitSpriteFrameInput(Vector2 position, boolean isFacingRight, float timeDelta, MoveState moveState,
+			boolean isDmgFrame, boolean isShooting, boolean isHeadInTile, boolean isJumpUp, Direction4 climbDir) {
 		super(false, timeDelta, !isFacingRight, false, 0f, position);
 		this.moveState = moveState;
 		this.isDmgFrame = isDmgFrame;

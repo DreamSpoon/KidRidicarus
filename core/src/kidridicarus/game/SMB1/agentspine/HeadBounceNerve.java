@@ -1,5 +1,6 @@
 package kidridicarus.game.SMB1.agentspine;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import kidridicarus.agency.agent.Agent;
@@ -16,7 +17,7 @@ public class HeadBounceNerve {
 
 	public List<Agent> getHeadBounceBeginContacts() {
 		if(headBounceSensor == null)
-			return null;
+			return new LinkedList<Agent>();
 		return headBounceSensor.getAndResetContacts();
 	}
 }

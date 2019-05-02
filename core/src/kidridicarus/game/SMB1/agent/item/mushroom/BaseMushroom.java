@@ -35,8 +35,7 @@ public abstract class BaseMushroom extends CorpusAgent implements BumpTakeAgent,
 			});
 		body = new BaseMushroomBody(this, agency.getWorld());
 		brain = new BaseMushroomBrain(this, (BaseMushroomBody) body, AP_Tool.getCenter(properties), getPowerupPow());
-		sprite = new BaseMushroomSprite(this, getMushroomTexture(agency.getAtlas()),
-				((BaseMushroomBrain) brain).getSproutStartPos());
+		sprite = new BaseMushroomSprite(this, getMushroomTexture(agency.getAtlas()), brain.getSproutStartPos());
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class FireFlower extends CorpusAgent implements DisposableAgent {
 		super(agency, properties);
 		body = new FireFlowerBody(this, agency.getWorld());
 		brain = new FireFlowerBrain(this, (FireFlowerBody) body, AP_Tool.getCenter(properties));
-		sprite = new FireFlowerSprite(this, agency.getAtlas(), ((FireFlowerBrain) brain).getSproutStartPos());
+		sprite = new FireFlowerSprite(this, agency.getAtlas(), brain.getSproutStartPos());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(float delta) {

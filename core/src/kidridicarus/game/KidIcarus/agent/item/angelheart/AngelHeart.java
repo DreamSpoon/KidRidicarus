@@ -23,8 +23,7 @@ public class AngelHeart extends CorpusAgent implements DisposableAgent {
 		body = new AngelHeartBody(this, agency.getWorld(), AP_Tool.getCenter(agentProps));
 		brain = new AngelHeartBrain(this, (AngelHeartBody) body,
 				agentProps.get(KidIcarusKV.KEY_HEART_COUNT, 1, Integer.class));
-		sprite = new AngelHeartSprite(agency.getAtlas(), AP_Tool.getCenter(agentProps),
-				((AngelHeartBrain) brain).getHeartSize());
+		sprite = new AngelHeartSprite(agency.getAtlas(), AP_Tool.getCenter(agentProps), brain.getHeartSize());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) {

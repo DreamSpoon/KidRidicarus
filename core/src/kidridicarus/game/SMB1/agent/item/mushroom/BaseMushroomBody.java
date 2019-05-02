@@ -19,7 +19,7 @@ public class BaseMushroomBody extends AgentBody {
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
 	private static final float FOOT_HEIGHT = UInfo.P2M(4f);
 
-	protected SolidContactSpine spine;
+	private SolidContactSpine spine;
 
 	public BaseMushroomBody(BaseMushroom parent, World world) {
 		super(parent, world);

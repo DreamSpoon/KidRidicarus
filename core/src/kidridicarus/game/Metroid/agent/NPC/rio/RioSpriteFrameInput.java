@@ -14,7 +14,6 @@ public class RioSpriteFrameInput extends SpriteFrameInput {
 	}
 
 	public RioSpriteFrameInput(Vector2 position, float timeDelta, MoveState moveState) {
-		//position, flipX, timeDelta;
 		super(false, timeDelta, false, false, 0f, position);
 		this.moveState = moveState;
 	}

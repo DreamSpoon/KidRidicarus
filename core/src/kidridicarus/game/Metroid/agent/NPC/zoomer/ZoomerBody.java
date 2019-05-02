@@ -72,21 +72,7 @@ public class ZoomerBody extends AgentBody {
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, sensor,
 				sizeX, sizeY, new Vector2(posX, posY));
 	}
-/*	@Override
-	public void resetPosition(Vector2 position, boolean keepVelocity) {
-		// exit if the new position is the same as current position and velocity can be maintained
-		if(position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON) && !keepVelocity)
-			return;
-		if(keepVelocity) {
-			defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
-					b2body.getLinearVelocity());
-		}
-		else {
-			defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
-					new Vector2(0f, 0f));
-		}
-	}
-*/
+
 	public ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());

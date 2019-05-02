@@ -143,7 +143,7 @@ public class ShemumBrain {
 		return true;
 	}
 
-	public void onTakeBump(Agent agent) {
+	public void onTakeBump() {
 		isAlive = false;
 	}
 }

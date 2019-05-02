@@ -42,7 +42,7 @@ public class Specknose extends CorpusAgent implements ContactDmgTakeAgent, Dispo
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
-		return brain.onTakeDamage(agent, amount, dmgOrigin);
+		return brain.onTakeDamage(agent);
 	}
 
 	@Override

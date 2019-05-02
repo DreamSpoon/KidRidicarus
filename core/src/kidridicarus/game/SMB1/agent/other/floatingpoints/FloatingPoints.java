@@ -60,16 +60,6 @@ public class FloatingPoints extends Agent {
 			agency.removeAgent(this);
 	}
 
-/*	@Override
-	protected Vector2 getPosition() {
-		return originalPosition;
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return new Rectangle(originalPosition.x, originalPosition.y, 0f, 0f);
-	}
-*/
 	public static ObjectProperties makeAP(int amount, boolean relative, Vector2 position, Agent parentAgent) {
 		// Create agent 1 tile above given position; for convenience since points usually start 1 tile above
 		// thing that caused points.

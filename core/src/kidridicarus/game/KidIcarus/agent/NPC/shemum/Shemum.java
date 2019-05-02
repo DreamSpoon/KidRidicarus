@@ -47,7 +47,7 @@ public class Shemum extends CorpusAgent implements ContactDmgTakeAgent, BumpTake
 
 	@Override
 	public void onTakeBump(Agent agent) {
-		brain.onTakeBump(agent);
+		brain.onTakeBump();
 	}
 
 	@Override

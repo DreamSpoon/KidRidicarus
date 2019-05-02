@@ -15,7 +15,7 @@ public class FireFlowerBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 
-	protected SolidContactSpine spine;
+	private SolidContactSpine spine;
 
 	public FireFlowerBody(FireFlower parent, World world) {
 		super(parent, world);

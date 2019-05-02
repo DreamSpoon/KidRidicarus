@@ -34,7 +34,7 @@ public class PowerStar extends CorpusAgent implements BumpTakeAgent, DisposableA
 			});
 		body = new PowerStarBody(this, agency.getWorld());
 		brain = new PowerStarBrain(this, (PowerStarBody) body, AP_Tool.getCenter(properties));
-		sprite = new PowerStarSprite(this, agency.getAtlas(), ((PowerStarBrain) brain).getSproutStartPos());
+		sprite = new PowerStarSprite(this, agency.getAtlas(), brain.getSproutStartPos());
 	}
 
 	@Override
