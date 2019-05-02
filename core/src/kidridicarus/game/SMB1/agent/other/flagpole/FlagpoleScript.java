@@ -1,5 +1,6 @@
 package kidridicarus.game.SMB1.agent.other.flagpole;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
@@ -28,13 +29,15 @@ public class FlagpoleScript implements AgentScript {
 	private ScriptedAgentState beginScriptedState;
 	private ScriptedAgentState scriptedState;
 	private Flagpole parent;
+	private Rectangle poleBounds;
 	private Vector2 playerAgentSize;
 
 	private boolean isSlideFinished;
 	private float slideDuration;
 
-	public FlagpoleScript(Flagpole parent, Vector2 incomingAgentSize) {
+	public FlagpoleScript(Flagpole parent, Rectangle poleBounds, Vector2 incomingAgentSize) {
 		this.parent = parent;
+		this.poleBounds = poleBounds;
 		this.playerAgentSize = incomingAgentSize.cpy();
 		beginScriptedState = null;
 		scriptedState = null;
@@ -143,14 +146,14 @@ public class FlagpoleScript implements AgentScript {
 
 	private Vector2 getSpriteSlidePosition(float time) {
 		// position sprite just to the left of the flagpole
-		return new Vector2(parent.getBounds().x+parent.getBounds().width/2f - playerAgentSize.x/2f,
+		return new Vector2(poleBounds.x+poleBounds.width/2f - playerAgentSize.x/2f,
 				getAgentYforTime(time));
 	}
 
 	private float getAgentYforTime(float time) {
 		// start Y is equal to beginning Y clamped to flagpole vertical bounds
-		float startY = clamp(beginScriptedState.scriptedBodyState.position.y, parent.getBounds().y,
-				parent.getBounds().y+parent.getBounds().height);
+		float startY = clamp(beginScriptedState.scriptedBodyState.position.y, poleBounds.y,
+				poleBounds.y+poleBounds.height);
 
 		float currentY = startY - SLIDE_SPEED*time;
 		// clamp min Y value to the end position at bottom of flagpole
@@ -161,7 +164,7 @@ public class FlagpoleScript implements AgentScript {
 	}
 
 	private float getAgentYforSlideEnd() {
-		return parent.getBounds().y + playerAgentSize.y/2f;
+		return poleBounds.y + playerAgentSize.y/2f;
 	}
 
 	private float clamp(float x, float min, float max) {
@@ -173,8 +176,8 @@ public class FlagpoleScript implements AgentScript {
 	}
 
 	private Vector2 getBodyExitPosition() {
-		return new Vector2(parent.getBounds().x + parent.getBounds().width + playerAgentSize.x,
-				parent.getBounds().y + playerAgentSize.y/2f);
+		return new Vector2(poleBounds.x + poleBounds.width + playerAgentSize.x,
+				poleBounds.y + playerAgentSize.y/2f);
 	}
 
 	private boolean isAgentAtBottom(float time) {
@@ -182,7 +185,7 @@ public class FlagpoleScript implements AgentScript {
 	}
 
 	private Vector2 getSlideEndRightPosition() {
-		return new Vector2(parent.getBounds().x+parent.getBounds().width/2f + playerAgentSize.x/2f,
+		return new Vector2(poleBounds.x+poleBounds.width/2f + playerAgentSize.x/2f,
 				getAgentYforSlideEnd());
 	}
 

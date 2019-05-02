@@ -112,6 +112,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		createGetPropertyListeners();
 		body = new PitBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
 				properties.get(CommonKV.KEY_VELOCITY, new Vector2(0f, 0f), Vector2.class), false);
+		sprite = new PitSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(float delta) { doContactUpdate(); }
@@ -124,7 +125,6 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				@Override
 				public void update(float delta) { doPostUpdate(); }
 			});
-		sprite = new PitSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
 				public void draw(Eye adBatch) { doDraw(adBatch); }
@@ -654,7 +654,7 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		body.dispose();
 	}
 }

@@ -6,15 +6,15 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.agentbody.CFBitSeq;
-import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SkreeBody extends MobileAgentBody {
+public class SkreeBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(16);
 	private static final float BODY_HEIGHT = UInfo.P2M(18);
 	private static final float FOOT_WIDTH = UInfo.P2M(18);
@@ -42,7 +42,7 @@ public class SkreeBody extends MobileAgentBody {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
-
+		// set body size info and create new body
 		setBoundsSize(bounds.getWidth(), bounds.getHeight());
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(0f);
@@ -77,7 +77,7 @@ public class SkreeBody extends MobileAgentBody {
 	}
 
 	public ContactDmgBrainContactFrameInput processContactFrame() {
-		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 

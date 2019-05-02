@@ -4,15 +4,15 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentbody.CFBitSeq;
-import kidridicarus.common.agentbody.MobileAgentBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class ShemumBody extends MobileAgentBody {
+public class ShemumBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(6f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = BODY_WIDTH;
@@ -39,14 +39,10 @@ public class ShemumBody extends MobileAgentBody {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
-
+		// set body size info and create new body
 		setBoundsSize(BODY_WIDTH, BODY_HEIGHT);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		spine = new ShemumSpine(this);
-		createFixtures();
-	}
-
-	private void createFixtures() {
 		// main body fixture
 		SolidContactSensor solidSensor = spine.createSolidContactSensor();
 		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, solidSensor, getBounds().width,
@@ -63,7 +59,7 @@ public class ShemumBody extends MobileAgentBody {
 	}
 
 	public ContactDmgBrainContactFrameInput processContactFrame() {
-		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 

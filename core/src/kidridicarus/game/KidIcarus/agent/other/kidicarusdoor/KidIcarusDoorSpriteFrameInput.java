@@ -8,7 +8,8 @@ public class KidIcarusDoorSpriteFrameInput extends SpriteFrameInput {
 	public boolean isOpened;
 
 	public KidIcarusDoorSpriteFrameInput(Vector2 position, boolean isOpened) {
-		super(position);
+		super();
+		this.position = position;
 		this.isOpened = isOpened;
 	}
 }

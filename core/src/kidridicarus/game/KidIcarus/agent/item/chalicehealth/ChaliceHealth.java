@@ -6,7 +6,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 
@@ -37,6 +37,6 @@ public class ChaliceHealth extends CorpusAgent implements DisposableAgent {
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

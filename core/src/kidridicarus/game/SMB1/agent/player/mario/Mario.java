@@ -773,7 +773,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		body.dispose();
 	}
 }

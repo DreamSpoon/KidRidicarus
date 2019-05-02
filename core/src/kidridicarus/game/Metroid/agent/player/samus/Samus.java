@@ -744,7 +744,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	@Override
-	public void dispose() {
+	public void disposeAgent() {
 		body.dispose();
 	}
 }

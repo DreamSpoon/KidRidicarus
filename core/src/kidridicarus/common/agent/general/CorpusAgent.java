@@ -1,7 +1,8 @@
-package kidridicarus.common.agent.corpusagent;
+package kidridicarus.common.agent.general;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
@@ -11,10 +12,10 @@ import kidridicarus.common.agentproperties.GetPropertyListenerRectangle;
 import kidridicarus.common.agentproperties.GetPropertyListenerVector2;
 import kidridicarus.common.info.CommonKV;
 
-public abstract class CorpusAgent extends Agent {
+public abstract class CorpusAgent extends Agent implements Disposable {
 	protected AgentBody body;
 
-	public CorpusAgent(Agency agency, ObjectProperties properties) {
+	protected CorpusAgent(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = null;
 		addGetPropertyListener(CommonKV.KEY_POSITION, new GetPropertyListenerVector2() {
@@ -44,4 +45,11 @@ public abstract class CorpusAgent extends Agent {
 	}
 
 	// TODO Should body.dispose(); be included here? Implement using interface Disposable or DisposableAgent ?
+	@Override
+	public void dispose() {
+		if(body != null) {
+			body.dispose();
+			body = null;
+		}
+	}
 }

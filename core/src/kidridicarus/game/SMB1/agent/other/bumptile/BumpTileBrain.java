@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBodyFilter;
-import kidridicarus.common.agent.quarteractor.QuarterActorBrain;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.powerup.Powerup;
@@ -26,7 +25,7 @@ import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class BumpTileBrain extends QuarterActorBrain {
+public class BumpTileBrain {
 	private static final float BOUNCE_TIME = 0.175f;
 	private static final float BOUNCE_HEIGHT_FRAC = 0.225f;	// bounce up about 1/5 of tile height
 
@@ -86,14 +85,7 @@ public class BumpTileBrain extends QuarterActorBrain {
 			blockItem = BlockItem.UP1_MUSHROOM;
 	}
 
-	@Override
 	public BumpTileSpriteFrameInput processFrame(float delta) {
-		processMove(delta);
-		return new BumpTileSpriteFrameInput(!isSecret | isEmpty, body.getPosition().add(0f, getCurrentBounceHeight()),
-				parent.getAgency().getGlobalTimer(), isEmpty);
-	}
-
-	private void processMove(float delta) {
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case PRESOLID:
@@ -128,6 +120,9 @@ public class BumpTileBrain extends QuarterActorBrain {
 
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
+
+		return new BumpTileSpriteFrameInput(body.getPosition().cpy().add(0f, getCurrentBounceHeight()),
+				parent.getAgency().getGlobalTimer(), isEmpty);
 	}
 
 	private MoveState getNextMoveState() {

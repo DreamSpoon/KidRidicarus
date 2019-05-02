@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.SMB1_Gfx;
 
 public class TurtleSprite extends AgentSprite {
@@ -31,15 +31,15 @@ public class TurtleSprite extends AgentSprite {
 		animTimer = 0f;
 		setRegion(walkAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		postFrameInput(new SpriteFrameInput(position));
+		postFrameInput(SprFrameTool.place(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		if(!preFrameInput(frameInput.visible))
+		if(!preFrameInput(frameInput))
 			return;
 		SpriteFrameInput frameOut = new SpriteFrameInput(frameInput);
-		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
+		animTimer += frameInput.frameTime.time;
 		switch(((TurtleSpriteFrameInput) frameInput).moveState) {
 			case WALK:
 			case FALL:

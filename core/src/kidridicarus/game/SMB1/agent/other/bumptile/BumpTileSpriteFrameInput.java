@@ -2,13 +2,13 @@ package kidridicarus.game.SMB1.agent.other.bumptile;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 
-public class BumpTileSpriteFrameInput extends AnimSpriteFrameInput {
+public class BumpTileSpriteFrameInput extends SpriteFrameInput {
 	public boolean isEmpty;
 
-	public BumpTileSpriteFrameInput(boolean visible, Vector2 position, float timeDelta, boolean isEmpty) {
-		super(visible, position, true, timeDelta);
+	public BumpTileSpriteFrameInput(Vector2 position, float timeDelta, boolean isEmpty) {
+		super(false, timeDelta, false, false, 0f, position);
 		this.isEmpty = isEmpty;
 	}
 }

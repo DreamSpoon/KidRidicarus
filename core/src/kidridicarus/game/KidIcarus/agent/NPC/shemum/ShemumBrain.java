@@ -1,13 +1,14 @@
 package kidridicarus.game.KidIcarus.agent.NPC.shemum;
 
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.info.KidIcarusAudio;
@@ -25,7 +26,7 @@ public class ShemumBrain {
 	private float moveStateTimer;
 	private MoveState moveState;
 	private boolean isFacingRight;
-	private boolean isDead;
+	private boolean isAlive;
 	private boolean despawnMe;
 	private RoomBox lastKnownRoom;
 
@@ -35,7 +36,7 @@ public class ShemumBrain {
 		moveStateTimer = 0f;
 		moveState = MoveState.WALK;
 		isFacingRight = false;
-		isDead = false;
+		isAlive = true;
 		despawnMe = false;
 		lastKnownRoom = null;
 	}
@@ -44,19 +45,19 @@ public class ShemumBrain {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
-		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if(!isDead && (!cFrameInput.isKeepAlive || cFrameInput.isDespawn))
+		// if alive and not touching keep alive box, or if touching despawn, then despawn
+		if(isAlive && (!cFrameInput.isKeepAlive || cFrameInput.isDespawn))
 			despawnMe = true;
 		// if not dead or despawning, and if room is known, then update last known room
 		if(moveState != MoveState.DEAD && !despawnMe && cFrameInput.room != null)
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public AnimSpriteFrameInput processFrame(float delta) {
+	public SpriteFrameInput processFrame(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return new AnimSpriteFrameInput();
+			return null;
 		}
 
 		// if move is blocked by solid then change facing dir
@@ -99,11 +100,11 @@ public class ShemumBrain {
 		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
 
-		return new AnimSpriteFrameInput(body.getPosition(), !isFacingRight, delta);
+		return SprFrameTool.placeAnimFaceR(body.getPosition(), delta, isFacingRight);
 	}
 
 	private MoveState getNextMoveState() {
-		if(isDead || moveState == MoveState.DEAD)
+		if(!isAlive || moveState == MoveState.DEAD)
 			return MoveState.DEAD;
 		else if(moveState == MoveState.WALK) {
 			// if not on ground and moving down then start fall...
@@ -135,14 +136,14 @@ public class ShemumBrain {
 	// assume any amount of damage kills, for now...
 	public boolean onTakeDamage(Agent agent) {
 		// if dead already or the damage is from the same team then return no damage taken
-		if(isDead || !(agent instanceof PlayerAgent))
+		if(!isAlive || !(agent instanceof PlayerAgent))
 			return false;
 
-		isDead = true;
+		isAlive = false;
 		return true;
 	}
 
 	public void onTakeBump(Agent agent) {
-		isDead = true;
+		isAlive = false;
 	}
 }

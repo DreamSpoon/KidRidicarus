@@ -6,13 +6,15 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.general.PlacedAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidKV;
 
-public class DeathPop extends PlacedAgent {
+public class DeathPop extends CorpusAgent {
 	private static final float POP_TIME = 3f/60f;
 
 	private DeathPopSprite sprite;
@@ -26,28 +28,21 @@ public class DeathPop extends PlacedAgent {
 		sprite = new DeathPopSprite(agency.getAtlas(), position);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(delta); }
+				public void update(float delta) { sprite.processFrame(processFrame(delta)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
-				public void draw(Eye adBatch) { doDraw(adBatch); }
+				public void draw(Eye eye) { eye.draw(sprite); }
 			});
 	}
 
-	private void doUpdate(float delta) {
-		if(stateTimer > POP_TIME)
+	private SpriteFrameInput processFrame(float timeDelta) {
+		if(stateTimer > POP_TIME) {
 			agency.removeAgent(this);
-		sprite.update(delta);
-		stateTimer += delta;
-	}
-
-	private void doDraw(Eye adBatch) {
-		adBatch.draw(sprite);
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return position;
+			return null;
+		}
+		stateTimer += timeDelta;
+		return SprFrameTool.placeAnim(position, timeDelta);
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {

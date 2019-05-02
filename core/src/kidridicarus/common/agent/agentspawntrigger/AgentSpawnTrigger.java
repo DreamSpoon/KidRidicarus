@@ -2,7 +2,6 @@ package kidridicarus.common.agent.agentspawntrigger;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -13,7 +12,8 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
-public class AgentSpawnTrigger extends FollowBox implements Disposable {
+// this class does not implement DisposableAgent because this is a sub-Agent related to player Agents
+public class AgentSpawnTrigger extends FollowBox {
 	public AgentSpawnTrigger(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new AgentSpawnTriggerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
@@ -28,11 +28,6 @@ public class AgentSpawnTrigger extends FollowBox implements Disposable {
 			agent.onTakeEnable(true);
 		for(EnableTakeAgent agent : frameInput.endContacts)
 			agent.onTakeEnable(false);
-	}
-
-	@Override
-	public void dispose() {
-		body.dispose();
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, float width, float height) {

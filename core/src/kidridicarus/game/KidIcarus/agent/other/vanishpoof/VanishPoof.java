@@ -7,61 +7,56 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.KidIcarusKV;
 
-public class VanishPoof extends PlacedBoundsAgent {
+public class VanishPoof extends CorpusAgent {
 	private static final float POOF_TIME = 2/5f;
 
-	private Vector2 position;
 	private VanishPoofSprite sprite;
 	private float stateTimer;
 
 	public VanishPoof(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
-		position = AP_Tool.getCenter(properties);
 		stateTimer = 0f;
-
+		sprite = new VanishPoofSprite(agency.getAtlas(), AP_Tool.getCenter(properties),
+				properties.get(KidIcarusKV.KEY_IS_BIG, false, Boolean.class));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(delta); }
+				public void update(float delta) { sprite.processFrame(doUpdate(delta)); }
 			});
-		sprite = new VanishPoofSprite(agency.getAtlas(), position,
-				properties.get(KidIcarusKV.KEY_IS_BIG, false, Boolean.class));
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
-				public void draw(Eye adBatch) { doDraw(adBatch); }
+				public void draw(Eye eye) { eye.draw(sprite); }
 			});
 	}
 
-	private void doUpdate(float delta) {
-		if(stateTimer > POOF_TIME)
-			agency.removeAgent(this);
-		sprite.update(delta);
+	private SpriteFrameInput doUpdate(float delta) {
 		stateTimer += delta;
-	}
-
-	private void doDraw(Eye adBatch) {
-		adBatch.draw(sprite);
+		if(stateTimer > POOF_TIME) {
+			agency.removeAgent(this);
+			return null;
+		}
+		return SprFrameTool.placeAnim(getPosition(), delta);
 	}
 
 	@Override
 	protected Vector2 getPosition() {
-		return position;
+		return new Vector2(sprite.getX()+sprite.getWidth()/2f, sprite.getY()+sprite.getHeight()/2f);
 	}
 
 	@Override
 	protected Rectangle getBounds() {
-		return new Rectangle(position.x, position.y, 0f, 0f);
+		return new Rectangle(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, boolean isBig) {
-		ObjectProperties props =
-				AP_Tool.createPointAP(KidIcarusKV.AgentClassAlias.VAL_VANISH_POOF, position);
+		ObjectProperties props = AP_Tool.createPointAP(KidIcarusKV.AgentClassAlias.VAL_VANISH_POOF, position);
 		props.put(KidIcarusKV.KEY_IS_BIG, isBig);
 		return props;
 	}

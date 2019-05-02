@@ -116,7 +116,7 @@ public class MonoeyeBrain {
 		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
 
-		return SprFrameTool.placeFaceR(isFacingRight, body.getPosition());
+		return SprFrameTool.placeFaceR(body.getPosition(), isFacingRight);
 	}
 
 	private AxisGoState getNextHorizontalOgleState() {

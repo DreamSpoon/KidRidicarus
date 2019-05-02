@@ -4,7 +4,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -16,16 +16,13 @@ public class AgentSpawner extends CorpusAgent implements EnableTakeAgent, Dispos
 
 	public AgentSpawner(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
 		// verify that the class of the Agent to be spawned is a valid Agent class
 		String spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWN_AGENTCLASS, "", String.class);
 		if(!agency.isValidAgentClassAlias(spawnAgentClassAlias)) {
 			throw new IllegalStateException(
 					"Cannot create AgentSpawner with non-valid agent class alias =" + spawnAgentClassAlias);
 		}
-
 		isEnabled = false;
-
 		body = new AgentSpawnerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
@@ -34,7 +31,6 @@ public class AgentSpawner extends CorpusAgent implements EnableTakeAgent, Dispos
 						spawnController.update(delta, isEnabled);
 				}
 			});
-
 		String spawnerType = properties.get(CommonKV.Spawn.KEY_SPAWNER_TYPE, "", String.class);
 		if(spawnerType.equals(CommonKV.Spawn.VAL_SPAWNER_TYPE_MULTI))
 			spawnController = new MultiSpawnController(this, (AgentSpawnerBody) body, properties);
@@ -51,6 +47,6 @@ public class AgentSpawner extends CorpusAgent implements EnableTakeAgent, Dispos
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

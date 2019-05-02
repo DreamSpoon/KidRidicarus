@@ -3,7 +3,7 @@ package kidridicarus.common.agent.playerspawner;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
@@ -42,6 +42,6 @@ public class PlayerSpawner extends CorpusAgent implements DisposableAgent {
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

@@ -11,6 +11,7 @@ import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.KidIcarus.agent.player.pit.Pit.MoveState;
 import kidridicarus.game.info.KidIcarusGfx;
 
@@ -84,21 +85,19 @@ public class PitSprite extends AgentSprite {
 
 		setRegion(standAnim[ANIM_GRP_REG][ANIM_HOLD].getKeyFrame(0f));
 		setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
-		postFrameInput(new SpriteFrameInput(position));
+		postFrameInput(SprFrameTool.place(position));
 	}
 
-//	public void update(float delta, Vector2 position, MoveState nextParentState, boolean isFacingRight,
-//			boolean isDmgFrame, boolean isShooting, boolean isHeadInTile, boolean isJumpUp, Direction4 climbDir) {
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		if(!preFrameInput(frameInput.visible))
+		if(!preFrameInput(frameInput))
 			return;
 
 		PitSpriteFrameInput myFrameInput = (PitSpriteFrameInput) frameInput;
 		if(!myFrameInput.isDmgFrame)
 			dmgFrameTimer = -1f;
 		else
-			dmgFrameTimer = dmgFrameTimer == -1 ? 0f : dmgFrameTimer+myFrameInput.timeDelta;
+			dmgFrameTimer = dmgFrameTimer == -1 ? 0f : dmgFrameTimer+frameInput.frameTime.time;
 
 		Animation<TextureRegion> nextAnim = null;
 		boolean isBigSprite = true;
@@ -152,10 +151,10 @@ public class PitSprite extends AgentSprite {
 					climbAnimTimer = 0f;
 				// if climbing up then forward the animation
 				if(myFrameInput.climbDir == Direction4.UP)
-					climbAnimTimer += myFrameInput.timeDelta;
+					climbAnimTimer += frameInput.frameTime.time;
 				// if climbing down then reverse the animation
 				else if(myFrameInput.climbDir == Direction4.DOWN) {
-					climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - myFrameInput.timeDelta,
+					climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - frameInput.frameTime.time,
 							climbAnim[getGrpForDmgTimer()].getAnimationDuration());
 				}
 				setRegion(climbAnim[getGrpForDmgTimer()].getKeyFrame(climbAnimTimer));
@@ -168,26 +167,28 @@ public class PitSprite extends AgentSprite {
 		if(nextAnim != null)
 			setRegion(nextAnim.getKeyFrame(generalAnimTimer));
 		// check sprite size, set bounds and position
-		Vector2 offset = new Vector2(0f, 0f);
 		if(isBigSprite) {
 			if(myFrameInput.isHeadInTile)
-				offset.set(BIG_SPRITE_STUCK_OFFSET);
+				frameInput.position.add(BIG_SPRITE_STUCK_OFFSET);
 			else
-				offset.set(BIG_SPRITE_OFFSET);
+				frameInput.position.add(BIG_SPRITE_OFFSET);
 			setBounds(getX(), getY(), BIG_SPRITE_WIDTH, BIG_SPRITE_HEIGHT);
 		}
 		else {
-			offset.set(SML_SPRITE_OFFSET);
+			frameInput.position.add(SML_SPRITE_OFFSET);
 			setBounds(getX(), getY(), SML_SPRITE_WIDTH, SML_SPRITE_HEIGHT);
 		}
 
 		if(parentPrevState != null && parentPrevState.isJump() && myFrameInput.moveState.isJump())
-			generalAnimTimer += myFrameInput.timeDelta;
+			generalAnimTimer += frameInput.frameTime.time;
+		else if(parentPrevState == myFrameInput.moveState)
+			generalAnimTimer = generalAnimTimer+frameInput.frameTime.time;
 		else
-			generalAnimTimer = parentPrevState == myFrameInput.moveState ? generalAnimTimer+myFrameInput.timeDelta : 0f;
+			generalAnimTimer = 0f;
+
 		parentPrevState = myFrameInput.moveState;
 
-		postFrameInput(new SpriteFrameInput(myFrameInput.position.cpy().add(offset), !myFrameInput.flipX));
+		postFrameInput(frameInput);
 	}
 
 	private int getGrpForDmgTimer() {

@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.SMB1_Gfx;
 
 public class StaticCoinSprite extends AgentSprite {
@@ -23,15 +23,15 @@ public class StaticCoinSprite extends AgentSprite {
 		anim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMB1_Gfx.Item.COIN_STATIC), PlayMode.LOOP);
 		setRegion(anim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		postFrameInput(new SpriteFrameInput(position));
+		postFrameInput(SprFrameTool.place(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		if(!preFrameInput(frameInput.visible))
+		if(!preFrameInput(frameInput))
 			return;
 		// use the "delta time" as an "absolute time" because this is a special sprite
-		setRegion(anim.getKeyFrame(((AnimSpriteFrameInput) frameInput).timeDelta));
+		setRegion(anim.getKeyFrame(frameInput.frameTime.time));
 		postFrameInput(frameInput);
 	}
 }

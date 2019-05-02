@@ -4,17 +4,16 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentbody.CFBitSeq;
-import kidridicarus.common.agent.fullactor.FullActorBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.DiagonalDir4;
 
-public class ZoomerBody extends FullActorBody {
+public class ZoomerBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float SENSOR_SIZEFACTOR = 1.2f;
@@ -38,16 +37,12 @@ public class ZoomerBody extends FullActorBody {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
-
+		// set body size info and create new body
 		setBoundsSize(bounds.getWidth(), bounds.getHeight());
 		prevPosition = bounds.getCenter(new Vector2());
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		spine = new ZoomerSpine(this);
-		createFixtures();
-	}
-
-	private void createFixtures() {
 		// main fixture
 		B2DFactory.makeBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, this,
 				getBounds().width, getBounds().height);
@@ -77,8 +72,7 @@ public class ZoomerBody extends FullActorBody {
 		B2DFactory.makeSensorBoxFixture(b2body, CommonCF.SOLID_BODY_CFCAT, CommonCF.SOLID_BODY_CFMASK, sensor,
 				sizeX, sizeY, new Vector2(posX, posY));
 	}
-
-	@Override
+/*	@Override
 	public void resetPosition(Vector2 position, boolean keepVelocity) {
 		// exit if the new position is the same as current position and velocity can be maintained
 		if(position.epsilonEquals(b2body.getPosition(), UInfo.POS_EPSILON) && !keepVelocity)
@@ -92,20 +86,14 @@ public class ZoomerBody extends FullActorBody {
 					new Vector2(0f, 0f));
 		}
 	}
+*/
+	public ContactDmgBrainContactFrameInput processContactFrame() {
+		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
+				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
+	}
 
 	public Vector2 getPrevPosition() {
 		return prevPosition;
-	}
-
-	@Override
-	public ContactDmgBrainContactFrameInput processContactFrame() {
-		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
-	}
-
-	@Override
-	public RoomingBrainFrameInput processFrame(float delta) {
-		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
-				spine.isContactDespawn());
 	}
 
 	public void postUpdate() {

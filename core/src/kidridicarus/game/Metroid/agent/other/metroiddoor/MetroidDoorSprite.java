@@ -37,22 +37,21 @@ public class MetroidDoorSprite extends AgentSprite {
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		if(!preFrameInput(frameInput.visible))
+		if(!preFrameInput(frameInput))
 			return;
-		MetroidDoorSpriteFrameInput myFrameInput = (MetroidDoorSpriteFrameInput) frameInput;
-		switch((myFrameInput).moveState) {
+		switch(((MetroidDoorSpriteFrameInput) frameInput).moveState) {
 			case CLOSED:	// this must be funny to someone
 			case OPENING_WAIT1:
-				setRegion(closedAnim.getKeyFrame(myFrameInput.timeDelta));
+				setRegion(closedAnim.getKeyFrame(frameInput.frameTime.time));
 				break;
 			case OPENING_WAIT2:
-				setRegion(openingAnim.getKeyFrame(myFrameInput.timeDelta));
+				setRegion(openingAnim.getKeyFrame(frameInput.frameTime.time));
 				break;
 			case OPEN:
-				setRegion(openedAnim.getKeyFrame(myFrameInput.timeDelta));
+				setRegion(openedAnim.getKeyFrame(frameInput.frameTime.time));
 				break;
 			case CLOSING:
-				setRegion(closingAnim.getKeyFrame(myFrameInput.timeDelta));
+				setRegion(closingAnim.getKeyFrame(frameInput.frameTime.time));
 				break;
 		}
 		postFrameInput(frameInput);

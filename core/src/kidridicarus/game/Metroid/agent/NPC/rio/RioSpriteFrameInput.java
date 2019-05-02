@@ -2,10 +2,10 @@ package kidridicarus.game.Metroid.agent.NPC.rio;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.game.Metroid.agent.NPC.rio.RioBrain.MoveState;
 
-public class RioSpriteFrameInput extends AnimSpriteFrameInput {
+public class RioSpriteFrameInput extends SpriteFrameInput {
 	public MoveState moveState;
 
 	public RioSpriteFrameInput() {
@@ -13,9 +13,9 @@ public class RioSpriteFrameInput extends AnimSpriteFrameInput {
 		moveState = null;
 	}
 
-	public RioSpriteFrameInput(boolean visible, Vector2 position, boolean flipX, float timeDelta,
-			MoveState moveState) {
-		super(visible, position, flipX, timeDelta);
+	public RioSpriteFrameInput(Vector2 position, float timeDelta, MoveState moveState) {
+		//position, flipX, timeDelta;
+		super(false, timeDelta, false, false, 0f, position);
 		this.moveState = moveState;
 	}
 }

@@ -4,12 +4,10 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.Metroid.agent.NPC.skreeshot.SkreeShot;
@@ -17,7 +15,7 @@ import kidridicarus.game.Metroid.agent.item.energy.Energy;
 import kidridicarus.game.Metroid.agent.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
 
-public class SkreeBrain extends FullActorBrain {
+public class SkreeBrain {
 	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -62,7 +60,6 @@ public class SkreeBrain extends FullActorBrain {
 		lastKnownRoom = null;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
@@ -86,8 +83,7 @@ public class SkreeBrain extends FullActorBrain {
 		}
 	}
 
-	@Override
-	public SkreeSpriteFrameInput processFrame(BrainFrameInput frameInput) {
+	public SkreeSpriteFrameInput processFrame(float timeDelta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
@@ -134,16 +130,16 @@ public class SkreeBrain extends FullActorBrain {
 				parent.getAgency().createAgent(DeathPop.makeAP(body.getPosition()));
 				doPowerupDrop();
 				parent.getAgency().getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
-				break;
+				return null;
 		}
 
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameInput.timeDelta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+timeDelta;
 		moveState = nextMoveState;
 
-		return new SkreeSpriteFrameInput(!isDead, body.getPosition(), false, frameInput.timeDelta, moveState);
+		return new SkreeSpriteFrameInput(body.getPosition(), timeDelta, moveState);
 	}
 
 	private MoveState getNextMoveState() {

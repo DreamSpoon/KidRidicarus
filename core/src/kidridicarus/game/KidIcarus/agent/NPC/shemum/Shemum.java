@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
@@ -22,11 +22,13 @@ public class Shemum extends CorpusAgent implements ContactDmgTakeAgent, BumpTake
 	public Shemum(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new ShemumBody(this, agency.getWorld(), AP_Tool.getCenter(properties), AP_Tool.getVelocity(properties));
-		brain = new ShemumBrain(this, body);
+		brain = new ShemumBrain(this, (ShemumBody) body);
 		sprite = new ShemumSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
+				public void update(float delta) {
+					brain.processContactFrame(((ShemumBody) body).processContactFrame());
+				}
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
@@ -40,16 +42,16 @@ public class Shemum extends CorpusAgent implements ContactDmgTakeAgent, BumpTake
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
-		return ((ShemumBrain) brain).onTakeDamage(agent);
+		return brain.onTakeDamage(agent);
 	}
 
 	@Override
 	public void onTakeBump(Agent agent) {
-		((ShemumBrain) brain).onTakeBump(agent);
+		brain.onTakeBump(agent);
 	}
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

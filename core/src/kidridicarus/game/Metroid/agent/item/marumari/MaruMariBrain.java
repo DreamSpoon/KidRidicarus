@@ -1,14 +1,14 @@
 package kidridicarus.game.Metroid.agent.item.marumari;
 
-import kidridicarus.common.agent.halfactor.HalfActorBrain;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidPow;
 
-public class MaruMariBrain extends HalfActorBrain {
+public class MaruMariBrain {
 	private MaruMari parent;
 	private MaruMariBody body;
 	private boolean isUsed;
@@ -19,7 +19,6 @@ public class MaruMariBrain extends HalfActorBrain {
 		isUsed = false;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// exit if not used
 		if(isUsed)
@@ -32,12 +31,12 @@ public class MaruMariBrain extends HalfActorBrain {
 			isUsed = true;
 	}
 
-	@Override
-	public AnimSpriteFrameInput processFrame(float delta) {
+	public SpriteFrameInput processFrame(float delta) {
 		if(isUsed) {
 			parent.getAgency().getEar().startSinglePlayMusic(MetroidAudio.Music.GET_ITEM);
 			parent.getAgency().removeAgent(parent);
+			return null;
 		}
-		return new AnimSpriteFrameInput(true, body.getPosition(), false, delta);
+		return SprFrameTool.placeAnim(body.getPosition(), delta);
 	}
 }

@@ -1,15 +1,12 @@
 package kidridicarus.game.KidIcarus.agent.other.kidicarusdoor;
 
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.SolidAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -17,8 +14,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
 // note: solid when closed, non-solid when open
-public class KidIcarusDoor extends PlacedBoundsAgent implements TriggerTakeAgent, SolidAgent, DisposableAgent {
-	private KidIcarusDoorBody body;
+public class KidIcarusDoor extends CorpusAgent implements TriggerTakeAgent, SolidAgent, DisposableAgent {
 	private KidIcarusDoorBrain brain;
 	private KidIcarusDoorSprite sprite;
 
@@ -27,12 +23,14 @@ public class KidIcarusDoor extends PlacedBoundsAgent implements TriggerTakeAgent
 		// start in the "is open" state if the agent is not supposed to expire (i.e. close) immediately
 		boolean isOpened = !properties.containsKV(CommonKV.Spawn.KEY_EXPIRE, true);
 		body = new KidIcarusDoorBody(this, agency.getWorld(), AP_Tool.getCenter(properties), isOpened);
-		brain = new KidIcarusDoorBrain(this, body, isOpened,
+		brain = new KidIcarusDoorBrain(this, (KidIcarusDoorBody) body, isOpened,
 				properties.get(CommonKV.Script.KEY_TARGET_NAME, "", String.class));
 		sprite = new KidIcarusDoorSprite(agency.getAtlas(), body.getPosition(), isOpened);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
+				public void update(float delta) {
+					brain.processContactFrame(((KidIcarusDoorBody) body).processContactFrame());
+				}
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
@@ -46,21 +44,11 @@ public class KidIcarusDoor extends PlacedBoundsAgent implements TriggerTakeAgent
 
 	@Override
 	public void onTakeTrigger() {
-		((KidIcarusDoorBrain) brain).setOpened(false);
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return body.getBounds();
+		brain.setOpened(false);
 	}
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

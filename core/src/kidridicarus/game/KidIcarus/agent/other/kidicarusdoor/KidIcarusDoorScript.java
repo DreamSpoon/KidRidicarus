@@ -68,9 +68,9 @@ public class KidIcarusDoorScript implements AgentScript {
 					currentScriptAgentState.scriptedSpriteState.position.set(exitPos);
 
 					// set player facing direction if the exit spawner has direction property
-					if(exitDir.isRight())
+					if(exitDir == Direction4.RIGHT)
 						currentScriptAgentState.scriptedSpriteState.isFacingRight = true;
-					else if(exitDir.isLeft())
+					else if(exitDir == Direction4.LEFT)
 						currentScriptAgentState.scriptedSpriteState.isFacingRight = false;
 				}
 				break;

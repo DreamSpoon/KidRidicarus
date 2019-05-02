@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.KidIcarusGfx;
 
 public class KidIcarusDoorSprite extends AgentSprite {
@@ -21,12 +22,12 @@ public class KidIcarusDoorSprite extends AgentSprite {
 		openedTex = atlas.findRegion(KidIcarusGfx.General.DOOR_BROWN_OPENED);
 		setRegion(isOpened ? openedTex : closedTex);
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		postFrameInput(new SpriteFrameInput(position));
+		postFrameInput(SprFrameTool.place(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		if(!preFrameInput(frameInput.visible))
+		if(!preFrameInput(frameInput))
 			return;
 		setRegion(((KidIcarusDoorSpriteFrameInput) frameInput).isOpened ? openedTex : closedTex);
 		postFrameInput(frameInput);

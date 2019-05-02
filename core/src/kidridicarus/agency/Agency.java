@@ -345,6 +345,7 @@ public class Agency implements Disposable {
 
 	/*
 	 * Dispose and remove all Agents and dispose Agency.
+	 * Note: Agency must not be disposed during a frame.
 	 */
 	@Override
 	public void dispose() {

@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
@@ -47,11 +47,11 @@ public class Monoeye extends CorpusAgent implements ContactDmgTakeAgent, Disposa
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
-		return ((MonoeyeBrain) brain).onTakeDamage(agent);
+		return brain.onTakeDamage(agent);
 	}
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

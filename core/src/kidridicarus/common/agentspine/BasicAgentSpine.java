@@ -46,7 +46,7 @@ public class BasicAgentSpine {
 		return agentSensor.getFirstContactByClass(DespawnBox.class) != null;
 	}
 
-	public boolean isTouchingKeepAlive() {
+	public boolean isContactKeepAlive() {
 		return agentSensor.getFirstContactByClass(KeepAliveBox.class) != null;
 	}
 

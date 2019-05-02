@@ -5,11 +5,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.agentbody.CFBitSeq;
-import kidridicarus.common.agent.fullactor.FullActorBody;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
@@ -17,7 +16,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
 
-public class GoombaBody extends FullActorBody {
+public class GoombaBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
@@ -84,15 +83,9 @@ public class GoombaBody extends FullActorBody {
 		agentSensorFixture.refilter();
 	}
 
-	@Override
 	public BrainContactFrameInput processContactFrame() {
-		return new HeadBounceBrainContactFrameInput(spine.getHeadBounceBeginContacts());
-	}
-
-	@Override
-	public RoomingBrainFrameInput processFrame(float delta) {
-		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
-				spine.isContactDespawn());
+		return new HeadBounceBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
+				spine.isContactDespawn(), spine.getHeadBounceBeginContacts());
 	}
 
 	public GoombaSpine getSpine() {

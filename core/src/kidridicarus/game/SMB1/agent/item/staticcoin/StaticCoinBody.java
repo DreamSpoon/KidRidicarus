@@ -4,14 +4,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.common.agent.halfactor.HalfActorBody;
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
 import kidridicarus.common.agentspine.BasicAgentSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class StaticCoinBody extends HalfActorBody {
+public class StaticCoinBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(16f);
 	private static final float BODY_HEIGHT = UInfo.P2M(16f);
 
@@ -23,7 +23,7 @@ public class StaticCoinBody extends HalfActorBody {
 	}
 
 	@Override
-	protected void defineBody(Rectangle bounds) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
@@ -37,9 +37,9 @@ public class StaticCoinBody extends HalfActorBody {
 				spine.createAgentSensor(), getBounds().width, getBounds().height);
 	}
 
-	@Override
 	public PowerupBrainContactFrameInput processContactFrame() {
-		return new PowerupBrainContactFrameInput(spine.getTouchingPowerupTaker());
+		return new PowerupBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
+				spine.isContactDespawn(), spine.getTouchingPowerupTaker());
 	}
 
 	public BasicAgentSpine getSpine() {

@@ -8,27 +8,36 @@ import com.badlogic.gdx.math.Vector2;
  * If a secondary visibility flag is required then implement this functionality in a separate class/subclass.
  */
 public class SpriteFrameInput {
+//	public class FrameSpot {
 	public Vector2 position;
 	public float rotation;
 	public boolean flipX;	// flipX = !isFacingRight;
 	public boolean flipY;	// flipY = !isFacingUp;
-	public float time;
+//	}
+	public FrameTime frameTime;
 
 	public SpriteFrameInput() {
 		position = new Vector2();
 		rotation = 0f;
 		flipX = false;
 		flipY = false;
-		time = 0f;
+		frameTime = new FrameTime();
 	}
 
-	// AnimFlipXYSpinPlace
-	public SpriteFrameInput(float time, boolean flipX, boolean flipY, float rotation, Vector2 position) {
+	public SpriteFrameInput(FrameTime frameTime, boolean flipX, boolean flipY, float rotation, Vector2 position) {
 		this.position = position;
 		this.rotation = rotation;
 		this.flipX = flipX;
 		this.flipY = flipY;
-		this.time = time;
+		this.frameTime = frameTime;
+	}
+
+	public SpriteFrameInput(boolean absTime, float time, boolean flipX, boolean flipY, float rotation, Vector2 position) {
+		this.position = position;
+		this.rotation = rotation;
+		this.flipX = flipX;
+		this.flipY = flipY;
+		this.frameTime = new FrameTime(absTime, time);
 	}
 
 	public SpriteFrameInput(SpriteFrameInput frameInput) {
@@ -36,6 +45,6 @@ public class SpriteFrameInput {
 		this.rotation = frameInput.rotation;
 		this.flipX = frameInput.flipX;
 		this.flipY = frameInput.flipY;
-		this.time = frameInput.time;
+		this.frameTime = new FrameTime(frameInput.frameTime);
 	}
 }

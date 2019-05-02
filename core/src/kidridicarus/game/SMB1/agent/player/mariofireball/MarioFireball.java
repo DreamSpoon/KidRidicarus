@@ -1,6 +1,5 @@
 package kidridicarus.game.SMB1.agent.player.mariofireball;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
@@ -9,14 +8,17 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.fullactor.FullActor;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.player.mario.Mario;
 import kidridicarus.game.info.SMB1_KV;
 
-public class MarioFireball extends FullActor implements DisposableAgent {
+public class MarioFireball extends CorpusAgent implements DisposableAgent {
+	private MarioFireballBrain brain;
+	private MarioFireballSprite sprite;
+
 	public MarioFireball(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		boolean isFacingRight;
@@ -37,11 +39,13 @@ public class MarioFireball extends FullActor implements DisposableAgent {
 		sprite = new MarioFireballSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
+				public void update(float delta) {
+					brain.processContactFrame(((MarioFireballBody) body).processContactFrame());
+				}
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(body.processFrame(delta))); }
+				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
@@ -50,23 +54,8 @@ public class MarioFireball extends FullActor implements DisposableAgent {
 	}
 
 	@Override
-	protected Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return body.getBounds();
-	}
-
-	@Override
-	protected Vector2 getVelocity() {
-		return body.getVelocity();
-	}
-
-	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, boolean right, Mario parentAgent) {

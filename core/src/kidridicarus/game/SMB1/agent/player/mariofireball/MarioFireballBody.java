@@ -5,15 +5,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentbody.CFBitSeq;
-import kidridicarus.common.agent.fullactor.FullActorBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class MarioFireballBody extends FullActorBody {
+public class MarioFireballBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(5f);
 	private static final float BODY_HEIGHT = UInfo.P2M(5f);
 	private static final float AGENT_SENSOR_WIDTH = UInfo.P2M(8f);
@@ -43,31 +42,17 @@ public class MarioFireballBody extends FullActorBody {
 			world.destroyBody(b2body);
 
 		setBoundsSize(BODY_WIDTH, BODY_HEIGHT);
-		createBody(world, bounds.getCenter(new Vector2()), velocity);
-		createFixtures();
-	}
-
-	private void createBody(World world, Vector2 position, Vector2 velocity) {
-		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
+		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		b2body.setBullet(true);
 		spine = new MarioFireballSpine(this);
 		prevVelocity = velocity.cpy();
-	}
-
-	private void createFixtures() {
-		createMainFixture();
-		createAgentSensorFixture();
-	}
-
-	private void createMainFixture() {
+		// main fixture
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = 0f;		// slippery
 		B2DFactory.makeBoxFixture(b2body, fdef, MAIN_CFCAT, MAIN_CFMASK, spine.createSolidContactSensor(),
 				getBounds().width, getBounds().height);
-	}
-
-	private void createAgentSensorFixture() {
+		// agent sensor
 		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				AGENT_SENSOR_WIDTH, AGENT_SENSOR_HEIGHT);
 	}
@@ -88,14 +73,8 @@ public class MarioFireballBody extends FullActorBody {
 		return prevVelocity;
 	}
 
-	@Override
 	public ContactDmgBrainContactFrameInput processContactFrame() {
-		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
-	}
-
-	@Override
-	public RoomingBrainFrameInput processFrame(float delta) {
-		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
-				spine.isContactDespawn());
+		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
+				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 }

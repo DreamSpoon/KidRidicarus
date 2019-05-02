@@ -8,7 +8,7 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeartBrain.AngelHeartSize;
@@ -43,7 +43,7 @@ public class AngelHeart extends CorpusAgent implements DisposableAgent {
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, int heartCount) {

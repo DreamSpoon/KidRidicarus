@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -20,7 +20,6 @@ import kidridicarus.common.tool.QQ;
 
 public class SolidTiledMapAgent extends CorpusAgent implements Disposable {
 	private SolidTiledMap solidMap;
-	private SolidTiledMapBody body;
 	private LinkedBlockingQueue<SolidTileChange> tileChangeQ;
 
 	@SuppressWarnings("unchecked")
@@ -100,8 +99,11 @@ public class SolidTiledMapAgent extends CorpusAgent implements Disposable {
 
 	@Override
 	public void dispose() {
-		solidMap.dispose();
-		body.dispose();
+		if(solidMap != null) {
+			solidMap.dispose();
+			solidMap = null;
+		}
+		super.dispose();
 	}
 
 	public static ObjectProperties makeAP(Rectangle bounds, List<TiledMapTileLayer> solidLayers) {

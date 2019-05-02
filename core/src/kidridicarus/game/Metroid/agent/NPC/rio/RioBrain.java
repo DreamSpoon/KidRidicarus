@@ -87,7 +87,7 @@ public class RioBrain {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return new RioSpriteFrameInput();
+			return null;
 		}
 
 		MoveState nextMoveState = getNextMoveState();
@@ -181,7 +181,7 @@ public class RioBrain {
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
 		moveState = nextMoveState;
 
-		return new RioSpriteFrameInput(!isDead, body.getPosition(), false, delta, moveState);
+		return new RioSpriteFrameInput(body.getPosition(), delta, moveState);
 	}
 
 	private MoveState getNextMoveState() {

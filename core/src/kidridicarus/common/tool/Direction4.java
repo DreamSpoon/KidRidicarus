@@ -77,7 +77,7 @@ public enum Direction4 {
 		return this == Direction4.RIGHT;
 	}
 
-	public boolean isLeft() {
-		return this == Direction4.LEFT;
+	public boolean isUp() {
+		return this == Direction4.UP;
 	}
 }

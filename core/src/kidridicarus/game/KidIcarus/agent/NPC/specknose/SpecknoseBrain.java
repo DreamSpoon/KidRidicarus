@@ -8,7 +8,7 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine.AxisGoState;
@@ -60,7 +60,7 @@ public class SpecknoseBrain {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return new SpriteFrameInput();
+			return null;
 		}
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
@@ -73,15 +73,15 @@ public class SpecknoseBrain {
 					body.getSpine().applyAxisMoves(horizGoState, vertGoState);
 				break;
 			case DEAD:
-				parent.getAgency().createAgent(VanishPoof.makeAP(body.getPosition(), true));
-				parent.getAgency().createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
 				parent.getAgency().removeAgent(parent);
 				parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
-				break;
+				parent.getAgency().createAgent(VanishPoof.makeAP(body.getPosition(), true));
+				parent.getAgency().createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
+				return null;
 		}
 		moveStateTimer = nextMoveState != moveState ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
-		return new AnimSpriteFrameInput(!isDead, body.getPosition(), false, delta);
+		return SprFrameTool.placeAnim(body.getPosition(), delta);
 	}
 
 	private AxisGoState getNextAxisGoState(boolean isHorizontal, AxisGoState currentGoState) {

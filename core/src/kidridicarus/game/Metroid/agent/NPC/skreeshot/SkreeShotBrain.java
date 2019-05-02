@@ -1,15 +1,13 @@
 package kidridicarus.game.Metroid.agent.NPC.skreeshot;
 
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
+import kidridicarus.common.tool.SprFrameTool;
 
-public class SkreeShotBrain extends FullActorBrain {
+public class SkreeShotBrain {
 	private static final float LIVE_TIME = 0.167f;
 	private static final float GIVE_DAMAGE = 5f;
 
@@ -27,37 +25,27 @@ public class SkreeShotBrain extends FullActorBrain {
 		despawnMe = false;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
-	}
-
-	@Override
-	public SpriteFrameInput processFrame(BrainFrameInput frameInput) {
-		processContacts((RoomingBrainFrameInput) frameInput);
-		processMove(frameInput.timeDelta);
-		return new SpriteFrameInput(!despawnMe, body.getPosition(), false, false, false);
-	}
-
-	private void processContacts(RoomingBrainFrameInput frameInput) {
 		// if not touching keep alive box, or if touching despawn, then set despawn flag
-		if(!frameInput.isContactKeepAlive || frameInput.isContactDespawn)
+		if(!cFrameInput.isKeepAlive || cFrameInput.isDespawn)
 			despawnMe = true;
 		// update last known room
-		if(frameInput.roomBox != null)
-			lastKnownRoom = frameInput.roomBox;
+		if(cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 	}
 
-	private void processMove(float delta) {
+	public SpriteFrameInput processFrame(float timeDelta) {
 		// if despawning or live time finished then dispose and exit
+		moveStateTimer += timeDelta;
 		if(despawnMe || moveStateTimer > LIVE_TIME) {
 			parent.getAgency().removeAgent(parent);
-			return;
+			return null;
 		}
-		moveStateTimer += delta;
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
+		return SprFrameTool.place(body.getPosition());
 	}
 }

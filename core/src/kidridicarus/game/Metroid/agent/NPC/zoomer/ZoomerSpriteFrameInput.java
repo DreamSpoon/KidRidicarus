@@ -2,18 +2,29 @@ package kidridicarus.game.Metroid.agent.NPC.zoomer;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.Metroid.agent.NPC.zoomer.ZoomerBrain.MoveState;
 
-public class ZoomerSpriteFrameInput extends AnimSpriteFrameInput {
+public class ZoomerSpriteFrameInput extends SpriteFrameInput {
 	public MoveState moveState;
-	public Direction4 upDir;
 
-	public ZoomerSpriteFrameInput(boolean visible, Vector2 position, boolean flipX, float timeDelta,
-			MoveState moveState, Direction4 upDir) {
-		super(visible, position, flipX, timeDelta);
+	public ZoomerSpriteFrameInput(Vector2 position, float timeDelta, MoveState moveState, Direction4 upDir) {
+		super(false, timeDelta, false, false, getRotationForUpDir(upDir), position);
 		this.moveState = moveState;
-		this.upDir = upDir;
+	}
+
+	private static float getRotationForUpDir(Direction4 upDir) {
+		switch(upDir) {
+			case RIGHT:
+				return 270f;
+			case UP:
+			default:
+				return 0f;
+			case LEFT:
+				return 90f;
+			case DOWN:
+				return 180f;
+		}
 	}
 }

@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 
 public abstract class FollowBox extends CorpusAgent {
 	public FollowBox(Agency agency, ObjectProperties properties) {

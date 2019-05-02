@@ -7,7 +7,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playerspawner.PlayerSpawner;
 import kidridicarus.common.info.CommonKV;
@@ -15,7 +15,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
-public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
+public class PipeWarp extends CorpusAgent implements DisposableAgent {
 	class PipeWarpHorizon {
 		Direction4 direction;
 		Rectangle bounds; 
@@ -26,12 +26,10 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 		}
 	}
 
-	private PipeWarpBody pwBody;
 	private Direction4 direction;
 
 	public PipeWarp(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
 		direction = Direction4.NONE;
 		if(properties.containsKey(CommonKV.KEY_DIRECTION)) {
 			String dir = properties.get(CommonKV.KEY_DIRECTION, "", String.class);
@@ -44,7 +42,7 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 			else if(dir.equals("down"))
 				direction = Direction4.DOWN;
 		}
-		pwBody = new PipeWarpBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
+		body = new PipeWarpBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 	}
 
 	public boolean canBodyEnterPipe(Rectangle otherBounds, Direction4 moveDir) {
@@ -55,15 +53,15 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 		// check position for up/down warp
 		if(direction.isVertical()) {
 			// check player body to see if it is close enough to center, based on the width of the pipe entrance
-			float pipeWidth = pwBody.getBounds().getWidth();
+			float pipeWidth = body.getBounds().getWidth();
 			float entryWidth = pipeWidth * 0.3f;
-			float pipeMid = pwBody.getBounds().x + pwBody.getBounds().getWidth()/2f;
+			float pipeMid = body.getBounds().x + body.getBounds().getWidth()/2f;
 			Vector2 otherPos = otherBounds.getCenter(new Vector2());
 			if(pipeMid - entryWidth/2f <= otherPos.x && otherPos.x < pipeMid + entryWidth/2f)
 				return true;
 		}
 		// if bottom of other bounds are within +/- 2 pixels of bottom of this pipe's bounds then allow entry
-		else if(direction.isHorizontal() && UInfo.epsCheck(pwBody.getBounds().y, otherBounds.y, UInfo.P2M(2f)))
+		else if(direction.isHorizontal() && UInfo.epsCheck(body.getBounds().y, otherBounds.y, UInfo.P2M(2f)))
 			return true;
 		return false;
 	}
@@ -98,23 +96,23 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 		switch(direction) {
 			// sprite moves right to enter pipe
 			case RIGHT:
-				entryBounds = new Rectangle(pwBody.getBounds().x, pwBody.getBounds().y,
-						0f, pwBody.getBounds().height);
+				entryBounds = new Rectangle(body.getBounds().x, body.getBounds().y,
+						0f, body.getBounds().height);
 				break;
 			// sprite moves left to enter pipe
 			case LEFT:
-				entryBounds = new Rectangle(pwBody.getBounds().x + pwBody.getBounds().width, pwBody.getBounds().y,
-						0f, pwBody.getBounds().height);
+				entryBounds = new Rectangle(body.getBounds().x + body.getBounds().width, body.getBounds().y,
+						0f, body.getBounds().height);
 				break;
 			// sprite moves up to enter pipe
 			case UP:
-				entryBounds = new Rectangle(pwBody.getBounds().x, pwBody.getBounds().y,
-						pwBody.getBounds().width, 0f);
+				entryBounds = new Rectangle(body.getBounds().x, body.getBounds().y,
+						body.getBounds().width, 0f);
 				break;
 			// sprite moves down to enter pipe
 			default:
-				entryBounds = new Rectangle(pwBody.getBounds().x, pwBody.getBounds().y + pwBody.getBounds().height,
-						pwBody.getBounds().width, 0f);
+				entryBounds = new Rectangle(body.getBounds().x, body.getBounds().y + body.getBounds().height,
+						body.getBounds().width, 0f);
 				break;
 		}
 		return new PipeWarpHorizon(direction, entryBounds);
@@ -163,17 +161,7 @@ public class PipeWarp extends PlacedBoundsAgent implements DisposableAgent {
 	}
 
 	@Override
-	protected Vector2 getPosition() {
-		return pwBody.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return pwBody.getBounds();
-	}
-
-	@Override
 	public void disposeAgent() {
-		pwBody.dispose();
+		dispose();
 	}
 }

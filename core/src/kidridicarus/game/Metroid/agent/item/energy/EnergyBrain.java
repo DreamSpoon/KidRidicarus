@@ -1,14 +1,14 @@
 package kidridicarus.game.Metroid.agent.item.energy;
 
-import kidridicarus.common.agent.halfactor.HalfActorBrain;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidPow;
 
-public class EnergyBrain extends HalfActorBrain {
+public class EnergyBrain {
 	private static final float LIVE_TIME = 6.35f;
 
 	private Energy parent;
@@ -23,7 +23,6 @@ public class EnergyBrain extends HalfActorBrain {
 		moveStateTimer = 0f;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// exit if not used
 		if(isUsed)
@@ -36,15 +35,17 @@ public class EnergyBrain extends HalfActorBrain {
 			isUsed = true;
 	}
 
-	@Override
-	public AnimSpriteFrameInput processFrame(float delta) {
+	public SpriteFrameInput processFrame(float delta) {
 		if(isUsed) {
 			parent.getAgency().getEar().playSound(MetroidAudio.Sound.ENERGY_PICKUP);
 			parent.getAgency().removeAgent(parent);
+			return null;
 		}
-		else if(moveStateTimer > LIVE_TIME)
-			parent.getAgency().removeAgent(parent);
 		moveStateTimer += delta;
-		return new AnimSpriteFrameInput(true, body.getPosition(), false, delta);
+		if(moveStateTimer > LIVE_TIME) {
+			parent.getAgency().removeAgent(parent);
+			return null;
+		}
+		return SprFrameTool.placeAnim(body.getPosition(), delta);
 	}
 }

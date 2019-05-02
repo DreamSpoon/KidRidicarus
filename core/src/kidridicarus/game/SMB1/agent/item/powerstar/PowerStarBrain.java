@@ -3,13 +3,10 @@ package kidridicarus.game.SMB1.agent.item.powerstar;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.item.fireflower.SproutSpriteFrameInput;
@@ -17,7 +14,7 @@ import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class PowerStarBrain extends FullActorBrain {
+public class PowerStarBrain {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private static final Vector2 MAX_BOUNCE_VEL = new Vector2(0.5f, 2f); 
@@ -56,7 +53,6 @@ public class PowerStarBrain extends FullActorBrain {
 		return initSpawnPosition.cpy().add(0f, SPROUT_OFFSET);
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// exit if not finished sprouting or if used
 		if(moveState == MoveState.SPROUT || powerupTaker != null)
@@ -67,27 +63,16 @@ public class PowerStarBrain extends FullActorBrain {
 			return;
 		if(taker.onTakePowerup(new SMB1_Pow.PowerStarPow()))
 			powerupTaker = taker;
+
+		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
+		if(moveState != MoveState.END && (!cFrameInput.isKeepAlive || cFrameInput.isDespawn))
+			despawnMe = true;
+		// update last known room if not used
+		if(moveState != MoveState.END && cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 	}
 
-	@Override
-	public SproutSpriteFrameInput processFrame(BrainFrameInput frameInput) {
-		processContacts(frameInput);
-		return processMove(frameInput.timeDelta);
-	}
-
-	private void processContacts(BrainFrameInput frameInput) {
-		if(frameInput instanceof RoomingBrainFrameInput) {
-			RoomingBrainFrameInput myFrameInput = (RoomingBrainFrameInput) frameInput;
-			// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-			if((moveState != MoveState.END && !myFrameInput.isContactKeepAlive) || myFrameInput.isContactDespawn)
-				despawnMe = true;
-			// update last known room if not used
-			if(moveState != MoveState.END && myFrameInput.roomBox != null)
-				lastKnownRoom = myFrameInput.roomBox;
-		}
-	}
-
-	private SproutSpriteFrameInput processMove(float timeDelta) {
+	public SproutSpriteFrameInput processFrame(float timeDelta) {
 		Vector2 spritePos = new Vector2();
 		boolean finishSprout = false;
 		MoveState nextMoveState = getNextMoveState();
@@ -123,7 +108,7 @@ public class PowerStarBrain extends FullActorBrain {
 		}
 		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+timeDelta;
 		moveState = nextMoveState;
-		return new SproutSpriteFrameInput(true, spritePos, false, timeDelta, finishSprout);
+		return new SproutSpriteFrameInput(spritePos, timeDelta, finishSprout);
 	}
 
 	private MoveState getNextMoveState() {

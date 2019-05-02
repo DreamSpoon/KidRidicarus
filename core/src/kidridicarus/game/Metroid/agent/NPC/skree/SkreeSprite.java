@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
-import kidridicarus.common.agentsprite.AnimSpriteFrameInput;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidGfx;
 
 public class SkreeSprite extends AgentSprite {
@@ -35,14 +35,14 @@ public class SkreeSprite extends AgentSprite {
 		animTimer = 0f;
 		setRegion(spinAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		postFrameInput(new SpriteFrameInput(position.cpy().add(SPECIAL_OFFSET)));
+		postFrameInput(SprFrameTool.place(position.cpy().add(SPECIAL_OFFSET)));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		if(!preFrameInput(frameInput.visible))
+		if(!preFrameInput(frameInput))
 			return;
-		animTimer += ((AnimSpriteFrameInput) frameInput).timeDelta;
+		animTimer += frameInput.frameTime.time;
 		switch(((SkreeSpriteFrameInput) frameInput).moveState) {
 			case SLEEP:
 			default:
@@ -58,7 +58,8 @@ public class SkreeSprite extends AgentSprite {
 			case DEAD:
 				break;
 		}
-		postFrameInput(new SpriteFrameInput(frameInput.visible, frameInput.position.cpy().add(SPECIAL_OFFSET),
-				false, frameInput.flipX, false));
+		SpriteFrameInput frameOut = new SpriteFrameInput(frameInput);
+		frameOut.position.add(SPECIAL_OFFSET);
+		postFrameInput(frameOut);
 	}
 }

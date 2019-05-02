@@ -1,6 +1,5 @@
 package kidridicarus.game.KidIcarus.agent.NPC.specknose;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
@@ -10,13 +9,12 @@ import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.general.MobileBoundsAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 
-public class Specknose extends MobileBoundsAgent implements ContactDmgTakeAgent, DisposableAgent {
-	private SpecknoseBody body;
+public class Specknose extends CorpusAgent implements ContactDmgTakeAgent, DisposableAgent {
 	private SpecknoseBrain brain;
 	private SpecknoseSprite sprite;
 
@@ -24,11 +22,13 @@ public class Specknose extends MobileBoundsAgent implements ContactDmgTakeAgent,
 		super(agency, properties);
 		body = new SpecknoseBody(
 				this, agency.getWorld(), AP_Tool.getCenter(properties), AP_Tool.getVelocity(properties));
-		brain = new SpecknoseBrain(this, body);
+		brain = new SpecknoseBrain(this, (SpecknoseBody) body);
 		sprite = new SpecknoseSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { brain.processContactFrame(body.processContactFrame()); }
+				public void update(float delta) {
+					brain.processContactFrame(((SpecknoseBody) body).processContactFrame());
+				}
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
@@ -40,29 +40,13 @@ public class Specknose extends MobileBoundsAgent implements ContactDmgTakeAgent,
 			});
 	}
 
-	// assume any amount of damage kills, for now...
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
-		return ((SpecknoseBrain) brain).onTakeDamage(agent, amount, dmgOrigin);
-	}
-
-	@Override
-	protected Vector2 getPosition() {
-		return body.getPosition();
-	}
-
-	@Override
-	protected Rectangle getBounds() {
-		return body.getBounds();
-	}
-
-	@Override
-	protected Vector2 getVelocity() {
-		return body.getVelocity();
+		return brain.onTakeDamage(agent, amount, dmgOrigin);
 	}
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

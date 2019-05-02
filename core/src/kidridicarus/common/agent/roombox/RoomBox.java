@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -30,9 +30,7 @@ public class RoomBox extends CorpusAgent implements DisposableAgent {
 
 	public RoomBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
 		body = new RoomBoxBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
-
 		roomType = RoomType.CENTER;
 		String roomTypeStr = properties.get(CommonKV.Room.KEY_TYPE, "", String.class);
 		if(roomTypeStr.equals(CommonKV.Room.VAL_TYPE_SCROLL_X))
@@ -43,7 +41,6 @@ public class RoomBox extends CorpusAgent implements DisposableAgent {
 			roomType = RoomType.CENTER;
 		roomMusicStr = properties.get(CommonKV.Room.KEY_MUSIC, "", String.class);
 		agency.getEar().registerMusic(roomMusicStr);
-
 		viewVerticalOffset = UInfo.P2M(properties.get(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
 		viewScrollDir = Direction4.fromString(properties.get(CommonKV.Room.KEY_SCROLL_DIR, "", String.class));
 		scrollVelocity = properties.get(CommonKV.Room.KEY_SCROLL_VEL, null, Float.class);
@@ -59,7 +56,6 @@ public class RoomBox extends CorpusAgent implements DisposableAgent {
 			prevCenter = playerPosition.cpy();
 		else
 			prevCenter = incomingPrevCenter;
-
 		Vector2 center;
 		switch(roomType) {
 			case HSCROLL:
@@ -160,6 +156,6 @@ public class RoomBox extends CorpusAgent implements DisposableAgent {
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

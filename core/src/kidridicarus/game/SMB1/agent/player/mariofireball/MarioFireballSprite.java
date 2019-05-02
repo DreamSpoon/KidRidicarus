@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireballBrain.MoveState;
 import kidridicarus.game.info.SMB1_Gfx;
 
@@ -34,16 +35,16 @@ public class MarioFireballSprite extends AgentSprite {
 		parentPrevMoveState = null;
 		setRegion(ballAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), BALL_WIDTH, BALL_HEIGHT);
-		postFrameInput(new SpriteFrameInput(position));
+		postFrameInput(SprFrameTool.place(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		if(!preFrameInput(frameInput.visible))
+		if(!preFrameInput(frameInput))
 			return;
 		MarioFireballSpriteFrame myFrameInput = (MarioFireballSpriteFrame) frameInput;
 		boolean isMoveStateChange = myFrameInput.moveState != parentPrevMoveState;
-		animTimer = isMoveStateChange ? 0f : animTimer+myFrameInput.timeDelta;
+		animTimer = isMoveStateChange ? 0f : animTimer+frameInput.frameTime.time;
 		switch(myFrameInput.moveState) {
 			case FLY:
 				setRegion(ballAnim.getKeyFrame(animTimer));

@@ -22,8 +22,9 @@ public class BumpTileBody extends AgentBody {
 		defineBody(bounds);
 	}
 
+	// velocity is ignored
 	@Override
-	protected void defineBody(Rectangle bounds) {
+	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
@@ -33,7 +34,7 @@ public class BumpTileBody extends AgentBody {
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()));
 		b2body.setGravityScale(0f);
 		spine = new BasicAgentSpine(this);
-		// sensor detects solid tile maps, and agents that can contact bump tiles
+		// sensor contacts solid tile maps, and Agents that can contact bump tiles
 		B2DFactory.makeSensorBoxFixture(b2body, MAINSENSOR_CFCAT, MAINSENSOR_CFMASK, spine.createAgentSensor(),
 				bounds.width, bounds.height);
 	}

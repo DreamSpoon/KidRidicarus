@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.Metroid.agent.player.samusshot.SamusShotBrain.MoveState;
 import kidridicarus.game.info.MetroidGfx;
 
@@ -31,17 +32,17 @@ public class SamusShotSprite extends AgentSprite {
 		parentPrevMoveState = null;
 		setRegion(liveAnim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
-		postFrameInput(new SpriteFrameInput(position));
+		postFrameInput(SprFrameTool.place(position));
 	}
 
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
-		if(!preFrameInput(frameInput.visible))
+		if(!preFrameInput(frameInput))
 			return;
-		SamusShotSpriteFrameInput myFrameInput = (SamusShotSpriteFrameInput) frameInput;
-		animTimer = myFrameInput.moveState != parentPrevMoveState ? 0f : animTimer+myFrameInput.timeDelta;
-		parentPrevMoveState = myFrameInput.moveState;
-		switch(myFrameInput.moveState) {
+		MoveState parentMoveState = ((SamusShotSpriteFrameInput) frameInput).moveState;
+		animTimer = parentMoveState != parentPrevMoveState ? 0f : animTimer+frameInput.frameTime.time;
+		parentPrevMoveState = parentMoveState;
+		switch(parentMoveState) {
 			case LIVE:
 			case DEAD:
 				setRegion(liveAnim.getKeyFrame(animTimer));

@@ -28,7 +28,7 @@ public class ChaliceHealthBody extends AgentBody {
 		// dispose the old body if it exists
 		if(b2body != null)
 			world.destroyBody(b2body);
-		// define new body
+		// set body size info and create new body
 		setBoundsSize(bounds.width, bounds.height);
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
@@ -39,7 +39,7 @@ public class ChaliceHealthBody extends AgentBody {
 	}
 
 	public PowerupBrainContactFrameInput processContactFrame() {
-		return new PowerupBrainContactFrameInput(spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
+		return new PowerupBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getTouchingPowerupTaker());
 	}
 

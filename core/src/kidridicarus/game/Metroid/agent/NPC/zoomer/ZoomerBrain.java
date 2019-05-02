@@ -1,20 +1,17 @@
 package kidridicarus.game.Metroid.agent.NPC.zoomer;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.Metroid.agent.item.energy.Energy;
 import kidridicarus.game.Metroid.agent.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
 
-public class ZoomerBrain extends FullActorBrain {
+public class ZoomerBrain {
 	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 3/7f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -52,52 +49,40 @@ public class ZoomerBrain extends FullActorBrain {
 		lastKnownRoom = null;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
-	}
 
-	@Override
-	public ZoomerSpriteFrameInput processFrame(BrainFrameInput frameInput) {
-		processContacts((RoomingBrainFrameInput) frameInput);
-		processMove(frameInput.timeDelta);
-		return new ZoomerSpriteFrameInput(!despawnMe && !isDead, body.getPosition(), false, frameInput.timeDelta,
-				moveState, upDir);
-	}
-
-	private void processContacts(RoomingBrainFrameInput frameInput) {
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if((!isDead && !frameInput.isContactKeepAlive) || frameInput.isContactDespawn)
+		if((!isDead && !cFrameInput.isKeepAlive) || cFrameInput.isDespawn)
 			despawnMe = true;
 		// update last known room if not dead
-		if(moveState != MoveState.DEAD && frameInput.roomBox != null)
-			lastKnownRoom = frameInput.roomBox;
-
-		// don't change up direction during injury
-		if(isInjured) {
-			upDirChangeTimer = 0f;
-			return;
-		}
-
-		Direction4 newUpDir = upDir;
-		// need to get initial up direction?
-		if(upDir == Direction4.NONE)
-			newUpDir = body.getSpine().getInitialUpDir(isWalkingRight);
-		// check for change in up direction if enough time has elapsed
-		else if(upDirChangeTimer > UPDIR_CHANGE_MINTIME)
-			newUpDir = body.getSpine().checkUp(upDir, isWalkingRight, body.getPrevPosition());
-
-		upDirChangeTimer = upDir == newUpDir ? upDirChangeTimer+frameInput.timeDelta : 0f;
-		upDir = newUpDir;
+		if(moveState != MoveState.DEAD && cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 	}
 
-	private void processMove(float delta) {
+	public ZoomerSpriteFrameInput processFrame(float timeDelta) {
 		// if despawning then dispose self and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return;
+			return null;
+		}
+
+		// don't change up direction during injury
+		if(isInjured)
+			upDirChangeTimer = 0f;
+		else {
+			Direction4 newUpDir = upDir;
+			// need to get initial up direction?
+			if(upDir == Direction4.NONE)
+				newUpDir = body.getSpine().getInitialUpDir(isWalkingRight);
+			// check for change in up direction if enough time has elapsed
+			else if(upDirChangeTimer > UPDIR_CHANGE_MINTIME)
+				newUpDir = body.getSpine().checkUp(upDir, isWalkingRight, body.getPrevPosition());
+
+			upDirChangeTimer = upDir == newUpDir ? upDirChangeTimer+timeDelta : 0f;
+			upDir = newUpDir;
 		}
 
 		MoveState nextMoveState = getNextMoveState();
@@ -124,8 +109,10 @@ public class ZoomerBrain extends FullActorBrain {
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
-		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+timeDelta : 0f;
 		moveState = nextMoveState;
+
+		return new ZoomerSpriteFrameInput(body.getPosition(), timeDelta, moveState, upDir);
 	}
 
 	private MoveState getNextMoveState() {

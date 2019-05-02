@@ -8,6 +8,8 @@ import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
+import kidridicarus.common.tool.AP_Tool;
+import kidridicarus.common.tool.SprFrameTool;
 
 public class FlagpoleBrain {
 	static final float FLAGDROP_TIME = 1.35f;
@@ -35,7 +37,7 @@ public class FlagpoleBrain {
 	public void processContactFrame(List<PlayerAgent> cFrameInput) {
 		for(PlayerAgent agent : cFrameInput) {
 			// give flagpole script to the player and the script, if used, will trigger flag drop
-			agent.getSupervisor().startScript(new FlagpoleScript(parent,
+			agent.getSupervisor().startScript(new FlagpoleScript(parent, AP_Tool.getBounds(parent),
 					agent.getProperty(CommonKV.Script.KEY_SPRITE_SIZE, null, Vector2.class)));
 		}
 	}
@@ -63,7 +65,7 @@ public class FlagpoleBrain {
 		}
 		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
-		return new SpriteFrameInput(pos);
+		return SprFrameTool.place(pos);
 	}
 
 	private MoveState getNextMoveState() {

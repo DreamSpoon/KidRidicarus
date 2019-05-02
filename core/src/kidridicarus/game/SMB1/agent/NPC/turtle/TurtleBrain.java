@@ -1,22 +1,21 @@
 package kidridicarus.game.SMB1.agent.NPC.turtle;
 
+import java.util.List;
+
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.HeadBounceGiveAgent;
 import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class TurtleBrain extends FullActorBrain {
+public class TurtleBrain {
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float DIE_FALL_TIME = 6f;
 	private static final float HIDE_DELAY = 1.7f;
@@ -57,22 +56,33 @@ public class TurtleBrain extends FullActorBrain {
 		lastKnownRoom = null;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+		if(isDead)
+			return;
+		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
+		if(!cFrameInput.isKeepAlive || cFrameInput.isDespawn)
+			despawnMe = true;
+		else {
+			// update last known room if available
+			lastKnownRoom = cFrameInput.room != null ? cFrameInput.room : lastKnownRoom;
+			processHeadBounceContacts(((HeadBounceBrainContactFrameInput) cFrameInput).headBounceBeginContacts);
+		}
+	}
+
+	private void processHeadBounceContacts(List<Agent> headBounceBeginContacts) {
 		HitType hitCheck = HitType.NONE;
-		for(Agent agent : ((HeadBounceBrainContactFrameInput) cFrameInput).headBounceBeginContacts) {
+		for(Agent agent : headBounceBeginContacts) {
 			if(moveState == MoveState.SLIDE)
 				hitCheck = slideContact(agent);
 			else if(moveState.isKickable())
 				hitCheck = kickableContact(agent);
 			else
 				hitCheck = walkContact(agent);
-
-			if(hitCheck != HitType.NONE)
+			if(hitCheck != HitType.NONE) {
+				this.currentHit = hitCheck;
 				break;
+			}
 		}
-		if(hitCheck != HitType.NONE)
-			currentHit = hitCheck;
 	}
 
 	private HitType slideContact(Agent agent) {
@@ -133,27 +143,10 @@ public class TurtleBrain extends FullActorBrain {
 		return HitType.NONE;
 	}
 
-	@Override
-	public TurtleSpriteFrameInput processFrame(BrainFrameInput frameInput) {
-		processContacts((RoomingBrainFrameInput) frameInput);
-		processMove(((RoomingBrainFrameInput) frameInput).timeDelta);
-		return new TurtleSpriteFrameInput(!despawnMe, body.getPosition(), isFacingRight, frameInput.timeDelta,
-				moveState);
-	}
-
-	private void processContacts(RoomingBrainFrameInput frameInput) {
-		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
-		if((moveState != MoveState.DEAD && !frameInput.isContactKeepAlive) || frameInput.isContactDespawn)
-			despawnMe = true;
-		// update last known room if not dead
-		if(moveState != MoveState.DEAD && frameInput.roomBox != null)
-			lastKnownRoom = frameInput.roomBox;
-	}
-
-	private void processMove(float delta) {
+	public TurtleSpriteFrameInput processFrame(float delta) {
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
-			return;
+			return null;
 		}
 
 		boolean isSliding = moveState == MoveState.SLIDE;
@@ -164,7 +157,7 @@ public class TurtleBrain extends FullActorBrain {
 		}
 
 		MoveState nextMoveState = getNextMoveState();
-		boolean moveStateChanged = nextMoveState != moveState;
+		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
 			case WALK:
 				body.getSpine().doWalkMove(isFacingRight);
@@ -172,7 +165,7 @@ public class TurtleBrain extends FullActorBrain {
 			case FALL:
 				break;
 			case HIDE:
-				if(moveStateChanged) {
+				if(isMoveStateChange) {
 					parent.getAgency().createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
 					body.zeroVelocity(true, true);
 					parent.getAgency().getEar().playSound(SMB1_Audio.Sound.STOMP);
@@ -182,7 +175,7 @@ public class TurtleBrain extends FullActorBrain {
 				break;
 			case SLIDE:
 				// if in first frame of slide then check if facing direction should change because of perp's position
-				if(moveStateChanged) {
+				if(isMoveStateChange) {
 					if(isFacingRight && body.getSpine().isOtherAgentOnRight(perp))
 						isFacingRight = false;
 					else if(!isFacingRight && !body.getSpine().isOtherAgentOnRight(perp))
@@ -194,13 +187,15 @@ public class TurtleBrain extends FullActorBrain {
 				break;
 			case DEAD:
 				// newly deceased?
-				if(moveStateChanged) {
+				if(isMoveStateChange) {
 					doStartDeath();
 					parent.getAgency().createAgent(FloatingPoints.makeAP(500, true, body.getPosition(), perp));
 				}
 				// check the old deceased for timeout
-				else if(moveStateTimer > DIE_FALL_TIME)
+				else if(moveStateTimer > DIE_FALL_TIME) {
 					parent.getAgency().removeAgent(parent);
+					return null;
+				}
 				break;
 		}
 
@@ -211,8 +206,10 @@ public class TurtleBrain extends FullActorBrain {
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
 		// increment state timer if state stayed the same, otherwise reset timer
-		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
+
+		return new TurtleSpriteFrameInput(body.getPosition(), isFacingRight, delta, moveState);
 	}
 
 	private MoveState getNextMoveState() {

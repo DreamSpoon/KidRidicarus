@@ -3,7 +3,6 @@ package kidridicarus.common.agent.scrollbox;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agentproperties.ObjectProperties;
@@ -14,20 +13,18 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
-public abstract class ScrollBox extends FollowBox implements Disposable {
+public abstract class ScrollBox extends FollowBox {
 	private static final float SHORT_DIM = UInfo.P2M(4f);
 	private static final float LONG_DIM = UInfo.P2M(32f);
 	private static final float OFFSET = UInfo.P2M(10f);
 
-	private FollowBoxBody body;
-	private Direction4 scrollDir;
-
 	public abstract FollowBoxBody createScrollBoxBody(ScrollBox parent, World world, Rectangle bounds);
+
+	private Direction4 scrollDir;
 
 	public ScrollBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		scrollDir = properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
-
 		// the position is used, but the bounds width and height will be ignored
 		float width;
 		float height;
@@ -46,8 +43,7 @@ public abstract class ScrollBox extends FollowBox implements Disposable {
 				throw new IllegalStateException("Cannot create scroll push box with scrollDir = " + scrollDir);
 		}
 		Vector2 pos = AP_Tool.getCenter(properties);
-		Rectangle bounds = new Rectangle(pos.x, pos.y, width, height);
-		body = createScrollBoxBody(this, agency.getWorld(), bounds);
+		body = createScrollBoxBody(this, agency.getWorld(), new Rectangle(pos.x, pos.y, width, height));
 	}
 
 	/*
@@ -76,10 +72,5 @@ public abstract class ScrollBox extends FollowBox implements Disposable {
 				break;
 		}
 		super.setTarget(offsetCenter);
-	}
-
-	@Override
-	public void dispose() {
-		body.dispose();
 	}
 }

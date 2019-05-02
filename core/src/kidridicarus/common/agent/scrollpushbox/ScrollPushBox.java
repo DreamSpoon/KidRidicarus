@@ -12,6 +12,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
+// this class does not implement DisposableAgent because this is a sub-Agent related to player Agents
 public class ScrollPushBox extends ScrollBox {
 	public ScrollPushBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);

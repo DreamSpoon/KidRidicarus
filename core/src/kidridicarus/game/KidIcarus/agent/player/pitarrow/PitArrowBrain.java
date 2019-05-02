@@ -10,6 +10,7 @@ import kidridicarus.game.KidIcarus.agent.player.pit.Pit;
 
 public class PitArrowBrain {
 	private static final float LIVE_TIME = 0.217f;
+	private static final float IMMEDIATE_EXPIRE_TIME = 1/30f;
 	private static final float GIVE_DAMAGE = 1f;
 
 	private PitArrow parent;
@@ -52,16 +53,15 @@ public class PitArrowBrain {
 	}
 
 	public SpriteFrameInput processFrame(float delta) {
-		// if this isn't the first frame of an expire immediate Agent...
-		if(!(isExpireImmediate && moveStateTimer == 0f)) {
-			if(moveStateTimer > LIVE_TIME)
-				despawnMe = true;
-			if(despawnMe)
-				parent.getAgency().removeAgent(parent);
+		moveStateTimer += delta;
+		if(moveStateTimer > LIVE_TIME || (isExpireImmediate && moveStateTimer > IMMEDIATE_EXPIRE_TIME))
+			despawnMe = true;
+		if(despawnMe) {
+			parent.getAgency().removeAgent(parent);
+			return null;
 		}
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-		moveStateTimer += delta;
-		return new SpriteFrameInput(!despawnMe, body.getPosition(), false, arrowDir == Direction4.LEFT, false);
+		return new PitArrowSpriteFrameInput(body.getPosition(), arrowDir);
 	}
 }

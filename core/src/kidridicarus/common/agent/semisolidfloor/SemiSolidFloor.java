@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.SolidAgent;
 import kidridicarus.common.tool.AP_Tool;
 
@@ -24,6 +24,6 @@ public class SemiSolidFloor extends CorpusAgent implements SolidAgent, Disposabl
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

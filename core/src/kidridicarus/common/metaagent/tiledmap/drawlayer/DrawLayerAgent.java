@@ -9,7 +9,7 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;

@@ -4,23 +4,20 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
+import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.agency.agentbody.CFBitSeq;
-import kidridicarus.common.agent.fullactor.FullActorBody;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SamusShotBody extends FullActorBody {
+public class SamusShotBody extends AgentBody {
+	private static final float GRAVITY_SCALE = 0f;
 	private static final float BODY_WIDTH = UInfo.P2M(1);
 	private static final float BODY_HEIGHT = UInfo.P2M(1);
 	private static final float SENSOR_WIDTH = UInfo.P2M(3);
 	private static final float SENSOR_HEIGHT = UInfo.P2M(3);
-
-	private static final float GRAVITY_SCALE = 0f;
-
 	private static final CFBitSeq MAIN_CFCAT = CommonCF.SOLID_BODY_CFCAT;
 	private static final CFBitSeq MAIN_CFMASK = CommonCF.SOLID_BODY_CFMASK;
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
@@ -45,26 +42,18 @@ public class SamusShotBody extends FullActorBody {
 		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
 		b2body.setBullet(true);
-
 		spine = new SolidContactSpine(this);
-
-		// create main fixture
+		// main fixture
 		B2DFactory.makeBoxFixture(b2body, MAIN_CFCAT, MAIN_CFMASK, spine.createSolidContactSensor(),
 				bounds.width, bounds.height);
-		// create agent contact sensor fixture
+		// agent contact sensor fixture
 		B2DFactory.makeSensorBoxFixture(b2body, AS_CFCAT, AS_CFMASK, spine.createAgentSensor(),
 				SENSOR_WIDTH, SENSOR_HEIGHT);
 	}
 
-	@Override
 	public ContactDmgBrainContactFrameInput processContactFrame() {
-		return new ContactDmgBrainContactFrameInput(spine.getContactDmgTakeAgents());
-	}
-
-	@Override
-	public RoomingBrainFrameInput processFrame(float delta) {
-		return new RoomingBrainFrameInput(delta, spine.getCurrentRoom(), spine.isTouchingKeepAlive(),
-				spine.isContactDespawn());
+		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
+				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
 	public SolidContactSpine getSpine() {

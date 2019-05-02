@@ -1,6 +1,5 @@
 package kidridicarus.game.SMB1.agent.other.floatingpoints;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
@@ -9,7 +8,6 @@ import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.agent.general.PlacedBoundsAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -27,7 +25,7 @@ import kidridicarus.game.info.SMB1_Pow;
  * 
  * The sliding turtle shell awards only absolute points, and head bounces award only relative points.
  */
-public class FloatingPoints extends PlacedBoundsAgent {
+public class FloatingPoints extends Agent {
 	private static final float FLOAT_TIME = 1f;
 	private static final float FLOAT_HEIGHT = UInfo.P2M(48);
 
@@ -37,27 +35,24 @@ public class FloatingPoints extends PlacedBoundsAgent {
 
 	public FloatingPoints(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
 		originalPosition = AP_Tool.getCenter(properties);
-
 		// default to zero points
 		int amount = properties.get(SMB1_KV.KEY_POINTAMOUNT, 0, Integer.class);
 		Powerup.tryPushPowerup(properties.get(CommonKV.KEY_PARENT_AGENT, null, Agent.class),
 				new SMB1_Pow.PointsPow(amount));
-
 		stateTimer = 0f;
+		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount, false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(delta); }
+				public void update(float delta) { processFrame(delta); }
 			});
-		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount, false);
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
-				public void draw(Eye adBatch) { doDraw(adBatch); }
+				public void draw(Eye eye) { eye.draw(pointsSprite); }
 			});
 	}
 
-	private void doUpdate(float delta) {
+	private void processFrame(float delta) {
 		float yOffset = stateTimer <= FLOAT_TIME ? FLOAT_HEIGHT * stateTimer / FLOAT_TIME : FLOAT_HEIGHT;
 		pointsSprite.update(originalPosition.cpy().add(0f, yOffset));
 		stateTimer += delta;
@@ -65,11 +60,7 @@ public class FloatingPoints extends PlacedBoundsAgent {
 			agency.removeAgent(this);
 	}
 
-	private void doDraw(Eye adBatch){
-		adBatch.draw(pointsSprite);
-	}
-
-	@Override
+/*	@Override
 	protected Vector2 getPosition() {
 		return originalPosition;
 	}
@@ -78,7 +69,7 @@ public class FloatingPoints extends PlacedBoundsAgent {
 	protected Rectangle getBounds() {
 		return new Rectangle(originalPosition.x, originalPosition.y, 0f, 0f);
 	}
-
+*/
 	public static ObjectProperties makeAP(int amount, boolean relative, Vector2 position, Agent parentAgent) {
 		// Create agent 1 tile above given position; for convenience since points usually start 1 tile above
 		// thing that caused points.

@@ -2,16 +2,13 @@ package kidridicarus.game.Metroid.agent.player.samusshot;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.game.Metroid.agent.player.samus.Samus;
 
-public class SamusShotBrain extends FullActorBrain {
+public class SamusShotBrain {
 	private static final float LIVE_TIME = 0.217f;
 	private static final float EXPLODE_TIME = 3f/60f;
 	private static final float GIVE_DAMAGE = 1f;
@@ -38,7 +35,6 @@ public class SamusShotBrain extends FullActorBrain {
 		lastKnownRoom = null;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents) {
@@ -48,28 +44,18 @@ public class SamusShotBrain extends FullActorBrain {
 			if(agent.onTakeDamage(superParent, GIVE_DAMAGE, body.getPosition()))
 				isExploding = true;
 		}
-	}
-
-	@Override
-	public SamusShotSpriteFrameInput processFrame(BrainFrameInput frameInput) {
-		processContacts((RoomingBrainFrameInput) frameInput);
-		processMove(frameInput.timeDelta);
-		return new SamusShotSpriteFrameInput(true, body.getPosition(), false, frameInput.timeDelta, moveState);
-	}
-
-	private void processContacts(RoomingBrainFrameInput frameInput) {
 		// if alive and not touching keep alive box, or if touching despawn, or if hit a solid, then explode
-		if(!frameInput.isContactKeepAlive || frameInput.isContactDespawn ||
-				body.getSpine().isMoveBlocked(startVelocity)) {
+		if(!cFrameInput.isKeepAlive || cFrameInput.isDespawn || body.getSpine().isMoveBlocked(startVelocity))
 			isExploding = true;
-		}
 		// otherwise update last known room if possible
-		else if(frameInput.roomBox != null)
-			lastKnownRoom = frameInput.roomBox;
+		else if(cFrameInput.room != null && moveState != MoveState.DEAD)
+			lastKnownRoom = cFrameInput.room;
 	}
 
-	private void processMove(float delta) {
+	public SamusShotSpriteFrameInput processFrame(float timeDelta) {
 		MoveState nextMoveState = getNextMoveState();
+		moveStateTimer = moveState != nextMoveState ? 0f : moveStateTimer+timeDelta;
+		moveState = nextMoveState;
 		switch(nextMoveState) {
 			case LIVE:
 				break;
@@ -79,14 +65,11 @@ public class SamusShotBrain extends FullActorBrain {
 				break;
 			case DEAD:
 				parent.getAgency().removeAgent(parent);
-				break;
+				return null;
 		}
-
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-
-		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
-		moveState = nextMoveState;
+		return new SamusShotSpriteFrameInput(body.getPosition(), timeDelta, moveState);
 	}
 
 	private MoveState getNextMoveState() {

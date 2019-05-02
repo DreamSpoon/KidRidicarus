@@ -1,16 +1,13 @@
 package kidridicarus.game.SMB1.agent.player.mariofireball;
 
-import kidridicarus.common.agent.fullactor.FullActorBrain;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
-import kidridicarus.common.agentbrain.BrainFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
-import kidridicarus.common.agentbrain.RoomingBrainFrameInput;
 import kidridicarus.game.SMB1.agent.player.mario.Mario;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class MarioFireballBrain extends FullActorBrain {
+public class MarioFireballBrain {
 	private static final float DAMAGE = 1f;
 	private static final float EXPLODE_TIME = 1/10f;
 
@@ -38,7 +35,6 @@ public class MarioFireballBrain extends FullActorBrain {
 		lastKnownRoom = null;
 	}
 
-	@Override
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// check do agents needing damage
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents) {
@@ -48,30 +44,20 @@ public class MarioFireballBrain extends FullActorBrain {
 				break;
 			}
 		}
-	}
 
-	@Override
-	public MarioFireballSpriteFrame processFrame(BrainFrameInput frameInput) {
-		processContacts((RoomingBrainFrameInput) frameInput);
-		processMove(frameInput.timeDelta);
-		body.postUpdate();
-		return new MarioFireballSpriteFrame(true, body.getPosition(), !isFacingRight, frameInput.timeDelta, moveState);
-	}
-
-	private void processContacts(RoomingBrainFrameInput frameInput) {
 		// if alive and not touching keep alive box, or if touching despawn, or if hit a solid, then explode
-		if(!frameInput.isContactKeepAlive || frameInput.isContactDespawn)
+		if(!cFrameInput.isKeepAlive || cFrameInput.isDespawn)
 			hitType = HitType.BOUNDARY;
 		// otherwise update last known room if possible
-		else if(frameInput.roomBox != null)
-			lastKnownRoom = frameInput.roomBox;
+		else if(cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 
 		// check for hits against solids
 		if(hitType == HitType.NONE && body.getSpine().isHitBoundary(isFacingRight))
 			hitType = HitType.BOUNDARY;
 	}
 
-	private void processMove(float delta) {
+	public MarioFireballSpriteFrame processFrame(float timeDelta) {
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
@@ -95,8 +81,12 @@ public class MarioFireballBrain extends FullActorBrain {
 		}
 		// do space wrap last so that contacts are maintained (e.g. keep alive box contact)
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+timeDelta;
 		moveState = nextMoveState;
+
+		body.postUpdate();
+
+		return new MarioFireballSpriteFrame(body.getPosition(), isFacingRight, timeDelta, moveState);
 	}
 
 	private MoveState getNextMoveState() {

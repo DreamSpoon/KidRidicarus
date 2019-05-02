@@ -5,7 +5,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
-import kidridicarus.common.agent.corpusagent.CorpusAgent;
+import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -13,11 +13,8 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
 public class LevelEndTrigger extends CorpusAgent implements TriggerTakeAgent, DisposableAgent {
-	private LevelEndTriggerBody body;
-
 	public LevelEndTrigger(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-
 		body = new LevelEndTriggerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
@@ -26,7 +23,7 @@ public class LevelEndTrigger extends CorpusAgent implements TriggerTakeAgent, Di
 	}
 
 	private void doContactUpdate() {
-		for(PlayerAgent agent : body.getPlayerBeginContacts()) {
+		for(PlayerAgent agent : ((LevelEndTriggerBody) body).getPlayerBeginContacts()) {
 			agent.getSupervisor().startScript(
 					new LevelEndScript(this, getProperty(CommonKV.Level.VAL_NEXTLEVEL_FILENAME, "", String.class)));
 		}
@@ -45,6 +42,6 @@ public class LevelEndTrigger extends CorpusAgent implements TriggerTakeAgent, Di
 
 	@Override
 	public void disposeAgent() {
-		body.dispose();
+		dispose();
 	}
 }

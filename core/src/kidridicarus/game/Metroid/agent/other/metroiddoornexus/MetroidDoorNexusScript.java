@@ -25,6 +25,12 @@ public class MetroidDoorNexusScript implements AgentScript {
 
 	public MetroidDoorNexusScript(MetroidDoorNexus parent, boolean isTransitRight, MetroidDoor leftDoor,
 			MetroidDoor rightDoor, Vector2 incomingAgentSize) {
+		Rectangle parentBounds = AP_Tool.getBounds(parent);
+		if(parentBounds == null) {
+			throw new IllegalArgumentException(
+					"Parent Agent of Metroid door nexus script did not have bounds, parent="+parent);
+		}
+
 		if(isTransitRight)
 			triggerDoor = rightDoor;
 		else
@@ -37,7 +43,7 @@ public class MetroidDoorNexusScript implements AgentScript {
 			if(doorBounds != null)
 				exitPositionX = doorBounds.x + doorBounds.width + incomingAgentSize.x/4f;
 			else
-				exitPositionX = parent.getBounds().x + parent.getBounds().width + incomingAgentSize.x/4f;
+				exitPositionX = parentBounds.x + parentBounds.width + incomingAgentSize.x/4f;
 		}
 		// otherwise get left door exit position
 		else {
@@ -46,7 +52,7 @@ public class MetroidDoorNexusScript implements AgentScript {
 			if(doorBounds != null)
 				exitPositionX = doorBounds.x - incomingAgentSize.x/4f;
 			else
-				exitPositionX = parent.getBounds().x - incomingAgentSize.x/4f;
+				exitPositionX = parentBounds.x - incomingAgentSize.x/4f;
 		}
 		// exit position Y is dependent upon player position Y, so it is set in startScript method
 		exitPositionY = 0f;

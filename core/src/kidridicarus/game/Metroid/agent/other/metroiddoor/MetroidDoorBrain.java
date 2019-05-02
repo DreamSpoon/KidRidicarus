@@ -2,10 +2,9 @@ package kidridicarus.game.Metroid.agent.other.metroiddoor;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.common.agent.quarteractor.QuarterActorBrain;
 import kidridicarus.game.info.MetroidAudio;
 
-public class MetroidDoorBrain extends QuarterActorBrain {
+public class MetroidDoorBrain {
 	private static final float LONG_OPEN_DELAY = 77/30f;
 	private static final float SHORT_OPEN_DELAY = 0.75f;
 	private static final float OPENCLOSE_DELAY1 = 1/5f;
@@ -33,7 +32,6 @@ public class MetroidDoorBrain extends QuarterActorBrain {
 		isQuickOpenClose = false;
 	}
 
-	@Override
 	public MetroidDoorSpriteFrameInput processFrame(float delta) {
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
@@ -62,7 +60,7 @@ public class MetroidDoorBrain extends QuarterActorBrain {
 		}
 		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
 		moveState = nextMoveState;
-		return new MetroidDoorSpriteFrameInput(true, body.getPosition(), isFacingRight, moveStateTimer, moveState);
+		return new MetroidDoorSpriteFrameInput(body.getPosition(), isFacingRight, moveStateTimer, moveState);
 	}
 
 	/*
