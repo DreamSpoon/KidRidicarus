@@ -3,6 +3,7 @@ package kidridicarus.game.KidIcarus.agent.NPC.monoeye;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -31,13 +32,15 @@ public class Monoeye extends CorpusAgent implements ContactDmgTakeAgent, Disposa
 		sprite = new MonoeyeSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
+				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((MonoeyeBody) body).processContactFrame());
 				}
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+				public void update(FrameTime frameTime) {
+					sprite.processFrame(brain.processFrame(frameTime.timeDelta));
+				}
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override

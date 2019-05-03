@@ -1,6 +1,7 @@
 package kidridicarus.game.SMB1.agent.other.bumptile;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -28,7 +29,7 @@ public class BumpTile extends CorpusAgent implements TileBumpTakeAgent, Disposab
 				properties.containsKV(SMB1_KV.KEY_QBLOCK, CommonKV.VAL_TRUE));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override

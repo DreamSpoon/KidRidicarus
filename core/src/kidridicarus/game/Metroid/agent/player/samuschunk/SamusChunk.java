@@ -3,6 +3,7 @@ package kidridicarus.game.Metroid.agent.player.samuschunk;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -32,7 +33,7 @@ public class SamusChunk extends CorpusAgent implements DisposableAgent {
 		sprite = new SamusChunkSprite(agency.getAtlas(), body.getPosition(), AP_Tool.getDirection8(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(processFrame(frameTime)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
@@ -40,15 +41,15 @@ public class SamusChunk extends CorpusAgent implements DisposableAgent {
 			});
 	}
 
-	private SpriteFrameInput processFrame(float deltaTime) {
-		stateTimer += deltaTime;
+	private SpriteFrameInput processFrame(FrameTime frameTime) {
+		stateTimer += frameTime.timeDelta;
 		if(stateTimer > MAX_DROP_TIME) {
 			agency.removeAgent(this);
 			return null;
 		}
 		isDrawAllowed = !isDrawAllowed;	// flicker the sprite
 		if(isDrawAllowed)
-			return SprFrameTool.placeAnim(body.getPosition(), deltaTime);
+			return SprFrameTool.placeAnim(body.getPosition(), frameTime);
 		else
 			return null;
 	}

@@ -10,6 +10,7 @@ import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.common.agent.playeragent.PlayerAgentBody;
+import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.CommonCF.Alias;
@@ -32,7 +33,6 @@ public class PitBody extends PlayerAgentBody {
 	private static final float TOPBOT_PW_SENSOR_HEIGHT = UInfo.P2M(2f);
 	private static final float SIDE_PW_SENSOR_WIDTH = UInfo.P2M(2f);
 	private static final float SIDE_PW_SENSOR_HEIGHT = UInfo.P2M(5f);
-
 	// main body
 	private static final CFBitSeq MAINBODY_CFCAT = new CFBitSeq(Alias.AGENT_BIT);
 	private static final CFBitSeq MAINBODY_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
@@ -49,7 +49,6 @@ public class PitBody extends PlayerAgentBody {
 	private static final CFBitSeq TILEBUMP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 	private static final CFBitSeq PIPEWARP_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq PIPEWARP_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.PIPEWARP_BIT);
-
 	private static final CFBitSeq GROUND_SENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 	private static final CFBitSeq GROUND_SENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_BOUND_BIT,
 			CommonCF.Alias.SEMISOLID_FLOOR_FOOT_BIT);
@@ -61,9 +60,14 @@ public class PitBody extends PlayerAgentBody {
 
 	public PitBody(Pit parent, World world, Vector2 position, Vector2 velocity, boolean isDuckingForm) {
 		super(parent, world, position, velocity);
-		isAgentSensorEnabled = true;
 		this.isDuckingForm = isDuckingForm;
+		isAgentSensorEnabled = true;
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f), velocity);
+	}
+
+	public BrainContactFrameInput processContactFrame() {
+		return new BrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
+				spine.isContactDespawn());
 	}
 
 	@Override
@@ -76,15 +80,10 @@ public class PitBody extends PlayerAgentBody {
 			setBoundsSize(DUCKING_BODY_WIDTH, DUCKING_BODY_HEIGHT);
 		else
 			setBoundsSize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
-		createBody(bounds.getCenter(new Vector2()), velocity);
-		createFixtures();
-	}
-
-	private void createBody(Vector2 position, Vector2 velocity) {
-		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
+		b2body = B2DFactory.makeDynamicBody(world, bounds.getCenter(new Vector2()), velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
-		resetPrevValues(position, velocity);
 		spine = new PitSpine(this);
+		createFixtures();
 	}
 
 	private void createFixtures() {

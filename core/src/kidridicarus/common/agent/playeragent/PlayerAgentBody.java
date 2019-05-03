@@ -7,7 +7,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 
 public abstract class PlayerAgentBody extends AgentBody {
-	private Vector2 prevPosition;
+	protected Vector2 prevPosition;
 	private Vector2 prevVelocity;
 
 	public PlayerAgentBody(Agent parent, World world, Vector2 position, Vector2 velocity) {

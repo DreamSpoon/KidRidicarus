@@ -31,7 +31,7 @@ public class StaticCoinSprite extends AgentSprite {
 		if(!preFrameInput(frameInput))
 			return;
 		// use the "delta time" as an "absolute time" because this is a special sprite
-		setRegion(anim.getKeyFrame(frameInput.frameTime.time));
+		setRegion(anim.getKeyFrame(frameInput.frameTime.timeAbs));
 		postFrameInput(frameInput);
 	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonKV;
@@ -42,7 +43,7 @@ public class FlagpoleBrain {
 		}
 	}
 
-	public SpriteFrameInput processFrame(float delta) {
+	public SpriteFrameInput processFrame(FrameTime frameTime) {
 		Vector2 pos;
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
@@ -63,7 +64,7 @@ public class FlagpoleBrain {
 				pos = getFlagPosAtBottom();
 				break;
 		}
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 		return SprFrameTool.place(pos);
 	}

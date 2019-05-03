@@ -3,6 +3,7 @@ package kidridicarus.game.Metroid.agent.NPC.zoomer;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -32,17 +33,17 @@ public class Zoomer extends CorpusAgent implements ContactDmgTakeAgent, Disposab
 		sprite = new ZoomerSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
-			public void update(float delta) {
+			public void update(FrameTime frameTime) {
 				brain.processContactFrame(((ZoomerBody) body).processContactFrame());
 			}
 		});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
-			public void update(float delta) { ((ZoomerBody) body).postUpdate(); }
+			public void update(FrameTime frameTime) { ((ZoomerBody) body).postUpdate(); }
 		});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 			@Override

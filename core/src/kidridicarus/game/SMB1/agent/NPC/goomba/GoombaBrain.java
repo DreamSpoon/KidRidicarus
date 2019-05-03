@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -93,7 +94,7 @@ public class GoombaBrain {
 			nextDeadState = DeadState.SQUISH;
 	}
 
-	public GoombaSpriteFrameInput processFrame(float timeDelta) {
+	public GoombaSpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
@@ -133,10 +134,10 @@ public class GoombaBrain {
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
-		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+timeDelta;
+		moveStateTimer = moveStateChanged ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 
-		return new GoombaSpriteFrameInput(body.getPosition(), isFacingRight, timeDelta, moveState);
+		return new GoombaSpriteFrameInput(body.getPosition(), isFacingRight, frameTime, moveState);
 	}
 
 	private MoveState getNextMoveState() {

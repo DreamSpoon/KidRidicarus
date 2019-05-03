@@ -3,6 +3,7 @@ package kidridicarus.game.KidIcarus.agent.other.kidicarusdoor;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
@@ -53,7 +54,7 @@ public class KidIcarusDoorScript implements AgentScript {
 	}
 
 	@Override
-	public boolean update(float delta) {
+	public boolean update(FrameTime frameTime) {
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
@@ -83,7 +84,7 @@ public class KidIcarusDoorScript implements AgentScript {
 				return false;
 		}
 
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 		return true;
 	}

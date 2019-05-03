@@ -3,6 +3,7 @@ package kidridicarus.game.SMB1.agent.item.fireflower;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
@@ -22,13 +23,13 @@ public class FireFlower extends CorpusAgent implements DisposableAgent {
 		sprite = new FireFlowerSprite(this, agency.getAtlas(), brain.getSproutStartPos());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
-			public void update(float delta) {
+			public void update(FrameTime frameTime) {
 				brain.processContactFrame(((FireFlowerBody) body).processContactFrame());
 			}
 		});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
 	}
 

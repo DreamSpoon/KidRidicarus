@@ -1,5 +1,6 @@
 package kidridicarus.game.Metroid.agent.NPC.skreeshot;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -37,9 +38,9 @@ public class SkreeShotBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public SpriteFrameInput processFrame(float timeDelta) {
+	public SpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning or live time finished then dispose and exit
-		moveStateTimer += timeDelta;
+		moveStateTimer += frameTime.timeDelta;
 		if(despawnMe || moveStateTimer > LIVE_TIME) {
 			parent.getAgency().removeAgent(parent);
 			return null;

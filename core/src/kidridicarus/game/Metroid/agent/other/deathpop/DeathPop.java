@@ -3,6 +3,7 @@ package kidridicarus.game.Metroid.agent.other.deathpop;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
@@ -28,7 +29,7 @@ public class DeathPop extends CorpusAgent {
 		sprite = new DeathPopSprite(agency.getAtlas(), position);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(processFrame(frameTime)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
@@ -36,13 +37,13 @@ public class DeathPop extends CorpusAgent {
 			});
 	}
 
-	private SpriteFrameInput processFrame(float timeDelta) {
+	private SpriteFrameInput processFrame(FrameTime frameTime) {
 		if(stateTimer > POP_TIME) {
 			agency.removeAgent(this);
 			return null;
 		}
-		stateTimer += timeDelta;
-		return SprFrameTool.placeAnim(position, timeDelta);
+		stateTimer += frameTime.timeDelta;
+		return SprFrameTool.placeAnim(position, frameTime);
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {

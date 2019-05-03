@@ -1,5 +1,6 @@
 package kidridicarus.game.Metroid.agent.item.energy;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -35,17 +36,17 @@ public class EnergyBrain {
 			isUsed = true;
 	}
 
-	public SpriteFrameInput processFrame(float delta) {
+	public SpriteFrameInput processFrame(FrameTime frameTime) {
 		if(isUsed) {
 			parent.getAgency().getEar().playSound(MetroidAudio.Sound.ENERGY_PICKUP);
 			parent.getAgency().removeAgent(parent);
 			return null;
 		}
-		moveStateTimer += delta;
+		moveStateTimer += frameTime.timeDelta;
 		if(moveStateTimer > LIVE_TIME) {
 			parent.getAgency().removeAgent(parent);
 			return null;
 		}
-		return SprFrameTool.placeAnim(body.getPosition(), delta);
+		return SprFrameTool.placeAnim(body.getPosition(), frameTime);
 	}
 }

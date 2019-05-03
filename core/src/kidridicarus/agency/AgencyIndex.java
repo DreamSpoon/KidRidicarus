@@ -16,10 +16,8 @@ import kidridicarus.agency.tool.AllowOrderList;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 
 /*
- * A list of all agents in the agency, with sub-lists available for:
- *   -agents receiving updates, by update order
- *   -agents to be drawn, by draw order
- *   -agents which, when removed, will also be disposed
+ * A list of all Agents in the Agency, with their associated update listeners and draw listeners, and
+ * a sub-list of Agents that require special dispose method to be called upon their removal from Agency.
  */
 class AgencyIndex {
 	private HashMap<Agent, AgentWrapper> allAgents;

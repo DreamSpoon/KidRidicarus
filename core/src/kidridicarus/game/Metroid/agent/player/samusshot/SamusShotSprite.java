@@ -40,7 +40,7 @@ public class SamusShotSprite extends AgentSprite {
 		if(!preFrameInput(frameInput))
 			return;
 		MoveState parentMoveState = ((SamusShotSpriteFrameInput) frameInput).moveState;
-		animTimer = parentMoveState != parentPrevMoveState ? 0f : animTimer+frameInput.frameTime.time;
+		animTimer = parentMoveState != parentPrevMoveState ? 0f : animTimer+frameInput.frameTime.timeDelta;
 		parentPrevMoveState = parentMoveState;
 		switch(parentMoveState) {
 			case LIVE:

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -113,15 +114,15 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 				properties.get(CommonKV.KEY_VELOCITY, new Vector2(0f, 0f), Vector2.class), false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doContactUpdate(); }
+				public void update(FrameTime frameTime) { doContactUpdate(); }
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(delta); }
+				public void update(FrameTime frameTime) { doUpdate(frameTime); }
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doPostUpdate(); }
+				public void update(FrameTime frameTime) { doPostUpdate(); }
 			});
 		sprite = new SamusSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
@@ -194,14 +195,14 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			isHeadBumped = body.getSpine().checkDoHeadBump(TileBumpStrength.SOFT);
 	}
 
-	private void doUpdate(float delta) {
+	private void doUpdate(FrameTime frameTime) {
 		MoveAdvice4x4 moveAdvice = supervisor.pollMoveAdvice();
-		processContacts(delta, moveAdvice);
-		processMove(delta, moveAdvice);
-		processSprite(delta);
+		processContacts(frameTime, moveAdvice);
+		processMove(frameTime, moveAdvice);
+		processSprite(frameTime);
 	}
 
-	private void processContacts(float delta, MoveAdvice4x4 moveAdvice) {
+	private void processContacts(FrameTime frameTime, MoveAdvice4x4 moveAdvice) {
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
 
@@ -210,12 +211,12 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			body.getSpine().doBounceCheck();
 
 		processPowerupsReceived();
-		processDamageTaken(delta);
+		processDamageTaken(frameTime);
 		processHeadBouncesGiven();
 		processPipeWarps(moveAdvice);
 	}
 
-	private void processMove(float delta, MoveAdvice4x4 moveAdvice) {
+	private void processMove(FrameTime frameTime, MoveAdvice4x4 moveAdvice) {
 		// if a script is running with no move advice then switch to scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
 			ScriptedAgentState scriptedState = supervisor.getScriptAgentState();
@@ -230,15 +231,15 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			processDeadMove(moveStateChanged);
 		else {
 			if(nextMoveState.isGround())
-				processGroundMove(delta, moveAdvice, nextMoveState);
+				processGroundMove(frameTime, moveAdvice, nextMoveState);
 			else
-				processAirMove(delta, moveAdvice, nextMoveState);
-			processShoot(delta, moveAdvice);
+				processAirMove(frameTime, moveAdvice, nextMoveState);
+			processShoot(frameTime, moveAdvice);
 			// do space wrap last so that contacts are maintained
 			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 		}
 
-		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+frameTime.timeDelta : 0f;
 		moveState = nextMoveState;
 	}
 
@@ -256,7 +257,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		powerupsReceived.clear();
 	}
 
-	private void processDamageTaken(float delta) {
+	private void processDamageTaken(FrameTime frameTime) {
 		// check for contact with scroll kill box (insta-kill)
 		if(body.getSpine().isContactScrollKillBox()) {
 			energySupply = 0;
@@ -264,7 +265,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 		// if invulnerable to damage then exit
 		else if(noDamageCooldown > 0f) {
-			noDamageCooldown -= delta;
+			noDamageCooldown -= frameTime.timeDelta;
 			takeDamageAmount = 0;
 			takeDmgOrigin.set(0f, 0f);
 			return;
@@ -459,7 +460,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 				new Vector2(-TOP_VEL_X, TOP_VEL_Y), Direction8.UP_LEFT));
 	}
 
-	private void processGroundMove(float delta, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
+	private void processGroundMove(FrameTime frameTime, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
 		// next jump changes to allowed when on ground and not advising jump move 
 		if(!moveAdvice.action1)
 			isNextJumpAllowed = true;
@@ -523,10 +524,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		if(body.getVelocity().y < UInfo.VEL_EPSILON)
 			isHeadBumped = false;
 
-		runStateTimer = nextMoveState.isRun() ? runStateTimer+delta : 0f;
+		runStateTimer = nextMoveState.isRun() ? runStateTimer+frameTime.timeDelta : 0f;
 	}
 
-	private void processAirMove(float delta, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
+	private void processAirMove(FrameTime frameTime, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
 		// check for change of facing direction
 		if(moveAdvice.moveRight^moveAdvice.moveLeft) {
 			if(isFacingRight && moveAdvice.moveLeft)
@@ -608,14 +609,14 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 
 		// decrement jump force timer
-		jumpForceTimer = jumpForceTimer > delta ? jumpForceTimer-delta : 0f;
+		jumpForceTimer = jumpForceTimer > frameTime.timeDelta ? jumpForceTimer-frameTime.timeDelta : 0f;
 	}
 
-	private void processShoot(float delta, MoveAdvice4x4 moveAdvice) {
+	private void processShoot(FrameTime frameTime, MoveAdvice4x4 moveAdvice) {
 		if(moveAdvice.action0 && shootCooldownTimer <= 0f && !moveState.isBall())
 			doShoot();
 		// decrememnt shoot cooldown timer
-		shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
+		shootCooldownTimer = shootCooldownTimer > frameTime.timeDelta ? shootCooldownTimer-frameTime.timeDelta : 0f;
 	}
 
 	private void doShoot() {
@@ -656,7 +657,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		}
 	}
 
-	private void processSprite(float delta) {
+	private void processSprite(FrameTime frameTime) {
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
 			MoveState scriptedMoveState;
 			ScriptedSpriteState sss = supervisor.getScriptAgentState().scriptedSpriteState;
@@ -672,10 +673,10 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 					scriptedMoveState = MoveState.STAND;
 					break;
 			}
-			sprite.update(delta, sss.position, scriptedMoveState, sss.isFacingRight, false, false, sss.moveDir);
+			sprite.update(frameTime, sss.position, scriptedMoveState, sss.isFacingRight, false, false, sss.moveDir);
 		}
 		else {
-			sprite.update(delta, body.getPosition(), moveState, isFacingRight, isFacingUp,
+			sprite.update(frameTime, body.getPosition(), moveState, isFacingRight, isFacingUp,
 					(noDamageCooldown > 0f), Direction4.NONE);
 		}
 	}

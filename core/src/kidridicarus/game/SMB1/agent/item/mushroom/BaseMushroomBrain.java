@@ -2,6 +2,7 @@ package kidridicarus.game.SMB1.agent.item.mushroom;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -74,7 +75,7 @@ public class BaseMushroomBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public SproutSpriteFrameInput processFrame(float timeDelta) {
+	public SproutSpriteFrameInput processFrame(FrameTime frameTime) {
 		SproutSpriteFrameInput frameOut = new SproutSpriteFrameInput();
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
@@ -111,7 +112,7 @@ public class BaseMushroomBrain {
 				parent.getAgency().removeAgent(parent);
 				return null;
 		}
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+timeDelta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 		return frameOut;
 	}

@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -41,7 +42,7 @@ public class SolidTiledMapAgent extends CorpusAgent implements Disposable {
 		//   -it will process these requests in batch format during post-update
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(); }
+				public void update(FrameTime frameTime) { doUpdate(); }
 			});
 	}
 

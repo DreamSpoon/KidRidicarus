@@ -35,7 +35,7 @@ public class GoombaSprite extends AgentSprite {
 	public void processFrame(SpriteFrameInput frameInput) {
 		if(!preFrameInput(frameInput))
 			return;
-		stateTimer += frameInput.frameTime.time;
+		stateTimer += frameInput.frameTime.timeDelta;
 		switch(((GoombaSpriteFrameInput) frameInput).moveState) {
 			case DEAD_SQUISH:
 				setRegion(squish);

@@ -1,5 +1,6 @@
 package kidridicarus.game.KidIcarus.agent.NPC.shemum;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -53,7 +54,7 @@ public class ShemumBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public SpriteFrameInput processFrame(float delta) {
+	public SpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
@@ -97,10 +98,10 @@ public class ShemumBrain {
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 
-		return SprFrameTool.placeAnimFaceR(body.getPosition(), delta, isFacingRight);
+		return SprFrameTool.placeAnimFaceR(body.getPosition(), frameTime, isFacingRight);
 	}
 
 	private MoveState getNextMoveState() {

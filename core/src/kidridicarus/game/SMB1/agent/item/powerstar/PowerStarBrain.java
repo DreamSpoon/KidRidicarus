@@ -2,6 +2,7 @@ package kidridicarus.game.SMB1.agent.item.powerstar;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -72,7 +73,7 @@ public class PowerStarBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public SproutSpriteFrameInput processFrame(float timeDelta) {
+	public SproutSpriteFrameInput processFrame(FrameTime frameTime) {
 		Vector2 spritePos = new Vector2();
 		boolean finishSprout = false;
 		MoveState nextMoveState = getNextMoveState();
@@ -106,9 +107,9 @@ public class PowerStarBrain {
 				spritePos.set(body.getPosition());
 				break;
 		}
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+timeDelta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
-		return new SproutSpriteFrameInput(spritePos, timeDelta, finishSprout);
+		return new SproutSpriteFrameInput(spritePos, frameTime, finishSprout);
 	}
 
 	private MoveState getNextMoveState() {

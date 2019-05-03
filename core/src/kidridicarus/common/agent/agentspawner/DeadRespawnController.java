@@ -1,5 +1,6 @@
 package kidridicarus.common.agent.agentspawner;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
@@ -17,7 +18,7 @@ public class DeadRespawnController extends SpawnController {
 	}
 
 	@Override
-	public void update(float delta, boolean isEnabled) {
+	public void update(FrameTime frameTime, boolean isEnabled) {
 		if(!isEnabled) {
 			// if all spawns have died, and the spawner is not enabled, then reset so another spawn can occur 
 			if(numSpawns == numSpawnsDisposed)

@@ -3,6 +3,7 @@ package kidridicarus.game.SMB1.agent.item.powerstar;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -26,11 +27,13 @@ public class PowerStar extends CorpusAgent implements BumpTakeAgent, DisposableA
 		super(agency, properties);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
-			public void update(float delta) { brain.processContactFrame(((PowerStarBody) body).processContactFrame()); }
+			public void update(FrameTime frameTime) {
+				brain.processContactFrame(((PowerStarBody) body).processContactFrame());
+			}
 		});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
 		body = new PowerStarBody(this, agency.getWorld());
 		brain = new PowerStarBrain(this, (PowerStarBody) body, AP_Tool.getCenter(properties));

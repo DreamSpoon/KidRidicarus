@@ -1,6 +1,7 @@
 package kidridicarus.common.agent.agentspawner;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
@@ -26,9 +27,9 @@ public class AgentSpawner extends CorpusAgent implements EnableTakeAgent, Dispos
 		body = new AgentSpawnerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
+				public void update(FrameTime frameTime) {
 					if(spawnController != null)
-						spawnController.update(delta, isEnabled);
+						spawnController.update(frameTime, isEnabled);
 				}
 			});
 		String spawnerType = properties.get(CommonKV.Spawn.KEY_SPAWNER_TYPE, "", String.class);

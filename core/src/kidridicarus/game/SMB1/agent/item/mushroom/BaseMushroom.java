@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -25,13 +26,13 @@ public abstract class BaseMushroom extends CorpusAgent implements BumpTakeAgent,
 		super(agency, properties);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
-			public void update(float delta) {
+			public void update(FrameTime frameTime) {
 				brain.processContactFrame(((BaseMushroomBody) body).processContactFrame());
 			}
 		});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
 		body = new BaseMushroomBody(this, agency.getWorld());
 		brain = new BaseMushroomBrain(this, (BaseMushroomBody) body, AP_Tool.getCenter(properties), getPowerupPow());

@@ -2,6 +2,7 @@ package kidridicarus.game.Metroid.agent.NPC.rio;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -83,7 +84,7 @@ public class RioBrain {
 		}
 	}
 
-	public RioSpriteFrameInput processFrame(float delta) {
+	public RioSpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
@@ -178,10 +179,10 @@ public class RioBrain {
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
-		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
+		moveStateTimer = nextMoveState == moveState ? moveStateTimer+frameTime.timeDelta : 0f;
 		moveState = nextMoveState;
 
-		return new RioSpriteFrameInput(body.getPosition(), delta, moveState);
+		return new RioSpriteFrameInput(body.getPosition(), frameTime, moveState);
 	}
 
 	private MoveState getNextMoveState() {

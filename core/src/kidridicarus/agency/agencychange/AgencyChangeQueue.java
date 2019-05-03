@@ -16,22 +16,20 @@ public class AgencyChangeQueue {
 		changeQ = new LinkedBlockingQueue<Object>();
 	}
 
+	// iterate through each Agent change in queue until queue is empty
+	public void process(AgencyChangeCallback accb) {
+		while(!changeQ.isEmpty()) {
+			Object change = changeQ.poll();
+			accb.change(change);
+		}
+	}
+
 	public void addAgent(AgentPlaceholder ap) {
 		changeQ.add(new AllAgentListChange(ap, true));
 	}
 
 	public void removeAgent(AgentPlaceholder ap) {
 		changeQ.add(new AllAgentListChange(ap, false));
-	}
-
-	/*
-	 * Iterate through each agent change in queue until queue is empty, invoking callback for each agent.
-	 */
-	public void process(AgencyChangeCallback accb) {
-		while(!changeQ.isEmpty()) {
-			Object change = changeQ.poll();
-			accb.change(change);
-		}
 	}
 
 	public void addAgentUpdateListener(AgentPlaceholder ap, AllowOrder newUpdOrder, AgentUpdateListener auListener) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -143,7 +144,7 @@ public class TurtleBrain {
 		return HitType.NONE;
 	}
 
-	public TurtleSpriteFrameInput processFrame(float delta) {
+	public TurtleSpriteFrameInput processFrame(FrameTime frameTime) {
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
 			return null;
@@ -206,10 +207,10 @@ public class TurtleBrain {
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
 		// increment state timer if state stayed the same, otherwise reset timer
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 
-		return new TurtleSpriteFrameInput(body.getPosition(), isFacingRight, delta, moveState);
+		return new TurtleSpriteFrameInput(body.getPosition(), isFacingRight, frameTime, moveState);
 	}
 
 	private MoveState getNextMoveState() {

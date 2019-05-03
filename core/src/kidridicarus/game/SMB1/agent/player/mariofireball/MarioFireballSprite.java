@@ -44,7 +44,7 @@ public class MarioFireballSprite extends AgentSprite {
 			return;
 		MarioFireballSpriteFrame myFrameInput = (MarioFireballSpriteFrame) frameInput;
 		boolean isMoveStateChange = myFrameInput.moveState != parentPrevMoveState;
-		animTimer = isMoveStateChange ? 0f : animTimer+frameInput.frameTime.time;
+		animTimer = isMoveStateChange ? 0f : animTimer+frameInput.frameTime.timeDelta;
 		switch(myFrameInput.moveState) {
 			case FLY:
 				setRegion(ballAnim.getKeyFrame(animTimer));

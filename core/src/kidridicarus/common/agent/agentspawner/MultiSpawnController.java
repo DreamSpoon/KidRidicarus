@@ -3,6 +3,7 @@ package kidridicarus.common.agent.agentspawner;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
@@ -37,7 +38,7 @@ public class MultiSpawnController extends SpawnController {
 	}
 
 	@Override
-	public void update(float delta, boolean isEnabled) {
+	public void update(FrameTime frameTime, boolean isEnabled) {
 		// DEBUG: error state check
 		if(numSpawnsDisposed > numSpawns)
 			throw new IllegalStateException("numSpawnsDisposed ("+numSpawnsDisposed+" > numSpawns ("+numSpawns+")");
@@ -68,7 +69,7 @@ public class MultiSpawnController extends SpawnController {
 			}
 		}
 
-		spawnTimer += delta;
+		spawnTimer += frameTime.timeDelta;
 	}
 
 	private Vector2 getScrollSpawnPos() {

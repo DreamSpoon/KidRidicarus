@@ -1,5 +1,6 @@
 package kidridicarus.common.agent.agentspawner;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 
 public class SingleSpawnController extends SpawnController {
@@ -11,7 +12,7 @@ public class SingleSpawnController extends SpawnController {
 	}
 
 	@Override
-	public void update(float delta, boolean isEnabled) {
+	public void update(FrameTime frameTime, boolean isEnabled) {
 		if(isEnabled && !isSpawned) {
 			isSpawned = true;
 			doSpawn();

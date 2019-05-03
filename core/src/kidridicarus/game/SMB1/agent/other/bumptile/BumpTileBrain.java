@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.common.info.UInfo;
@@ -85,7 +86,7 @@ public class BumpTileBrain {
 			blockItem = BlockItem.UP1_MUSHROOM;
 	}
 
-	public BumpTileSpriteFrameInput processFrame(float delta) {
+	public BumpTileSpriteFrameInput processFrame(FrameTime frameTime) {
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case PRESOLID:
@@ -109,20 +110,20 @@ public class BumpTileBrain {
 		}
 
 		if(blockItem == BlockItem.COIN10) {
-			if(coin10BumpResetTimer >= delta)
-				coin10BumpResetTimer -= delta;
+			if(coin10BumpResetTimer >= frameTime.timeDelta)
+				coin10BumpResetTimer -= frameTime.timeDelta;
 			else
 				coin10BumpResetTimer = 0f;
 
 			if(coin10EndTimer > 0f)
-				coin10EndTimer -= delta;
+				coin10EndTimer -= frameTime.timeDelta;
 		}
 
-		moveStateTimer = nextMoveState == moveState ? moveStateTimer+delta : 0f;
+		moveStateTimer = nextMoveState == moveState ? moveStateTimer+frameTime.timeDelta : 0f;
 		moveState = nextMoveState;
 
-		return new BumpTileSpriteFrameInput(body.getPosition().cpy().add(0f, getCurrentBounceHeight()),
-				parent.getAgency().getGlobalTimer(), isEmpty);
+		return new BumpTileSpriteFrameInput(
+				body.getPosition().cpy().add(0f, getCurrentBounceHeight()), frameTime, isEmpty);
 	}
 
 	private MoveState getNextMoveState() {

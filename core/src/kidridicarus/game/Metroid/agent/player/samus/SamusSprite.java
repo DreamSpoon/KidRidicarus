@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
@@ -80,7 +81,7 @@ public class SamusSprite extends Sprite {
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
 	}
 
-	public void update(float delta, Vector2 position, MoveState nextParentState, boolean isFacingRight,
+	public void update(FrameTime frameTime, Vector2 position, MoveState nextParentState, boolean isFacingRight,
 			boolean isFacingUp, boolean isBlinking, Direction4 climbDir) {
 		Vector2 offset = new Vector2(0f, 0f);
 
@@ -143,10 +144,10 @@ public class SamusSprite extends Sprite {
 					climbAnimTimer = 0f;
 				// if climbing up then forward the animation
 				if(climbDir == Direction4.UP)
-					climbAnimTimer += delta;
+					climbAnimTimer += frameTime.timeDelta;
 				// if climbing down then reverse the animation
 				else if(climbDir == Direction4.DOWN) {
-					climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - delta,
+					climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - frameTime.timeDelta,
 							climbAnim.getAnimationDuration());
 				}
 				setRegion(climbAnim.getKeyFrame(climbAnimTimer));
@@ -170,7 +171,7 @@ public class SamusSprite extends Sprite {
 		// update sprite position
 		setPosition(position.x - getWidth()/2 + offset.x, position.y - getHeight()/2 + offset.y);
 
-		stateTimer = curParentState == nextParentState ? stateTimer+delta : 0f;
+		stateTimer = curParentState == nextParentState ? stateTimer+frameTime.timeDelta : 0f;
 		curParentState = nextParentState;
 	}
 

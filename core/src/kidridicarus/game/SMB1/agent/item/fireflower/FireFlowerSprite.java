@@ -46,7 +46,7 @@ public class FireFlowerSprite extends AgentSprite {
 			return;
 		if(((SproutSpriteFrameInput) frameInput).finishSprout)
 			finishSprout();
-		animTimer += frameInput.frameTime.time;
+		animTimer += frameInput.frameTime.timeDelta;
 		setRegion(anim.getKeyFrame(animTimer));
 		postFrameInput(frameInput);
 	}

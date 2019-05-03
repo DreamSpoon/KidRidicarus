@@ -1,5 +1,6 @@
 package kidridicarus.game.Metroid.agent.item.marumari;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -31,12 +32,12 @@ public class MaruMariBrain {
 			isUsed = true;
 	}
 
-	public SpriteFrameInput processFrame(float delta) {
+	public SpriteFrameInput processFrame(FrameTime frameTime) {
 		if(isUsed) {
 			parent.getAgency().getEar().startSinglePlayMusic(MetroidAudio.Music.GET_ITEM);
 			parent.getAgency().removeAgent(parent);
 			return null;
 		}
-		return SprFrameTool.placeAnim(body.getPosition(), delta);
+		return SprFrameTool.placeAnim(body.getPosition(), frameTime);
 	}
 }

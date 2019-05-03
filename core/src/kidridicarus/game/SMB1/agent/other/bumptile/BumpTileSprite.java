@@ -40,6 +40,7 @@ public class BumpTileSprite extends AgentSprite {
 			postFrameInput(SprFrameTool.place(position));
 	}
 
+	// Q block uses absolute time to set animation key frame
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
 		if(!preFrameInput(frameInput))
@@ -49,7 +50,7 @@ public class BumpTileSprite extends AgentSprite {
 			setRegion(emptyblockTex);
 		// q block?
 		else if(isQblock)
-			setRegion(qbAnim.getKeyFrame(frameInput.frameTime.time));
+			setRegion(qbAnim.getKeyFrame(frameInput.frameTime.timeAbs));
 		// block has texture?
 		else if(prebumpTex != null)
 			setRegion(prebumpTex);

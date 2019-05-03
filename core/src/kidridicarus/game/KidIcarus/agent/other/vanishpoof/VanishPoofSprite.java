@@ -42,7 +42,7 @@ public class VanishPoofSprite extends AgentSprite {
 	public void processFrame(SpriteFrameInput frameInput) {
 		if(!preFrameInput(frameInput))
 			return;
-		animTimer += frameInput.frameTime.time;
+		animTimer += frameInput.frameTime.timeDelta;
 		setRegion(poofAnim.getKeyFrame(animTimer));
 		postFrameInput(frameInput);
 	}

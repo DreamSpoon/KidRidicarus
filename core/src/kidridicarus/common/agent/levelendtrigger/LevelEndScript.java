@@ -1,6 +1,7 @@
 package kidridicarus.common.agent.levelendtrigger;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 
@@ -36,13 +37,13 @@ public class LevelEndScript implements AgentScript {
 	}
 
 	@Override
-	public boolean update(float delta) {
+	public boolean update(FrameTime frameTime) {
 		if(stateTimer > LEVELEND_WAIT) {
 			asHooks.gotoNextLevel(nextLevelName);
 			// end script updates
 			return false;
 		}
-		stateTimer += delta;
+		stateTimer += frameTime.timeDelta;
 		return true;
 	}
 

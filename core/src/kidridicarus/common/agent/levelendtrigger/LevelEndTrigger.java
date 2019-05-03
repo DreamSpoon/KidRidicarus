@@ -1,6 +1,7 @@
 package kidridicarus.common.agent.levelendtrigger;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -18,7 +19,7 @@ public class LevelEndTrigger extends CorpusAgent implements TriggerTakeAgent, Di
 		body = new LevelEndTriggerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
-			public void update(float delta) { doContactUpdate(); }
+			public void update(FrameTime frameTime) { doContactUpdate(); }
 		});
 	}
 

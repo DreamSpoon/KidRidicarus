@@ -35,6 +35,7 @@ public class MetroidDoorSprite extends AgentSprite {
 		postFrameInput(frameInput);
 	}
 
+	// use the absolute time to get the animation key frame
 	@Override
 	public void processFrame(SpriteFrameInput frameInput) {
 		if(!preFrameInput(frameInput))
@@ -42,16 +43,16 @@ public class MetroidDoorSprite extends AgentSprite {
 		switch(((MetroidDoorSpriteFrameInput) frameInput).moveState) {
 			case CLOSED:	// this must be funny to someone
 			case OPENING_WAIT1:
-				setRegion(closedAnim.getKeyFrame(frameInput.frameTime.time));
+				setRegion(closedAnim.getKeyFrame(frameInput.frameTime.timeAbs));
 				break;
 			case OPENING_WAIT2:
-				setRegion(openingAnim.getKeyFrame(frameInput.frameTime.time));
+				setRegion(openingAnim.getKeyFrame(frameInput.frameTime.timeAbs));
 				break;
 			case OPEN:
-				setRegion(openedAnim.getKeyFrame(frameInput.frameTime.time));
+				setRegion(openedAnim.getKeyFrame(frameInput.frameTime.timeAbs));
 				break;
 			case CLOSING:
-				setRegion(closingAnim.getKeyFrame(frameInput.frameTime.time));
+				setRegion(closingAnim.getKeyFrame(frameInput.frameTime.timeAbs));
 				break;
 		}
 		postFrameInput(frameInput);

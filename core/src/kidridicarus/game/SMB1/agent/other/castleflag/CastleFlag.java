@@ -3,6 +3,7 @@ package kidridicarus.game.SMB1.agent.other.castleflag;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -42,7 +43,7 @@ public class CastleFlag extends Agent implements TriggerTakeAgent {
 			});
 	}
 
-	private SpriteFrameInput processFrame(float timeDelta) {
+	private SpriteFrameInput processFrame(FrameTime frameTime) {
 		float yOffset;
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
@@ -64,7 +65,7 @@ public class CastleFlag extends Agent implements TriggerTakeAgent {
 				agency.removeAgentUpdateListener(this, myUpdateListener);
 				break;
 		}
-		stateTimer = curMoveState != nextMoveState ? 0f : stateTimer+timeDelta;
+		stateTimer = curMoveState != nextMoveState ? 0f : stateTimer+frameTime.timeDelta;
 		curMoveState = nextMoveState;
 		return SprFrameTool.place(startPosition.cpy().add(0f, yOffset));
 	}
@@ -91,7 +92,7 @@ public class CastleFlag extends Agent implements TriggerTakeAgent {
 		// enable updates
 		myUpdateListener = new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(processFrame(frameTime)); }
 			};
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, myUpdateListener);
 	}

@@ -3,6 +3,7 @@ package kidridicarus.game.SMB1.agent.other.floatingpoints;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -44,7 +45,7 @@ public class FloatingPoints extends Agent {
 		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount, false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { processFrame(delta); }
+				public void update(FrameTime frameTime) { processFrame(frameTime); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
@@ -52,10 +53,10 @@ public class FloatingPoints extends Agent {
 			});
 	}
 
-	private void processFrame(float delta) {
+	private void processFrame(FrameTime frameTime) {
 		float yOffset = stateTimer <= FLOAT_TIME ? FLOAT_HEIGHT * stateTimer / FLOAT_TIME : FLOAT_HEIGHT;
 		pointsSprite.update(originalPosition.cpy().add(0f, yOffset));
-		stateTimer += delta;
+		stateTimer += frameTime.timeDelta;
 		if(stateTimer > FLOAT_TIME)
 			agency.removeAgent(this);
 	}

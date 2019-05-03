@@ -17,6 +17,11 @@ import kidridicarus.common.info.UInfo;
  * Body is brute and dumb - any movements, forces, etc. can be accomplished simply by calling the body's methods,
  * but the methods tend to the simple: setPosition, applyForce, applyImpulse, etc.
  * However, for more organized/coordinated movements, use a spine instead (e.g. SamusSpine.applyDamageKick method).
+ * TODO
+ *   -use applyForce, applyImpulse, setVelocity paradigm as much as possible, instead of manually modifying
+ *    body position
+ *   -caller should explicitly invoke the create/destroy methods when manually modifying the position of AgentBody
+ *   -remove the defineBody/dispose paradigm, replace with the above described create/destroy method paradigm
  */
 public abstract class AgentBody implements Disposable {
 	private Agent parent;

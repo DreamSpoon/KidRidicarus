@@ -3,6 +3,7 @@ package kidridicarus.common.agent.agentspawner;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.info.CommonKV;
@@ -13,7 +14,7 @@ public abstract class SpawnController {
 	private String spawnAgentClassAlias;
 	private Boolean isRandomPos;
 
-	public abstract void update(float delta, boolean isEnabled);
+	public abstract void update(FrameTime frameTime, boolean isEnabled);
 
 	public SpawnController(AgentSpawner parent, ObjectProperties properties) {
 		this.parent = parent;

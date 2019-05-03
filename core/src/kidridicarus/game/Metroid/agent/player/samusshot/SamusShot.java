@@ -3,6 +3,7 @@ package kidridicarus.game.Metroid.agent.player.samusshot;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -29,13 +30,13 @@ public class SamusShot extends CorpusAgent implements DisposableAgent {
 		sprite = new SamusShotSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
+				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((SamusShotBody) body).processContactFrame());
 				}
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override

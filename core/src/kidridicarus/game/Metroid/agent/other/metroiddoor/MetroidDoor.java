@@ -3,6 +3,7 @@ package kidridicarus.game.Metroid.agent.other.metroiddoor;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -31,7 +32,7 @@ public class MetroidDoor extends CorpusAgent implements SolidAgent, TriggerTakeA
 		sprite = new MetroidDoorSprite(agency.getAtlas(), SprFrameTool.placeFaceR(body.getPosition(), isFacingRight));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override

@@ -1,5 +1,6 @@
 package kidridicarus.game.Metroid.agent.NPC.zoomer;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -62,7 +63,7 @@ public class ZoomerBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public ZoomerSpriteFrameInput processFrame(float timeDelta) {
+	public ZoomerSpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose self and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
@@ -81,7 +82,7 @@ public class ZoomerBrain {
 			else if(upDirChangeTimer > UPDIR_CHANGE_MINTIME)
 				newUpDir = body.getSpine().checkUp(upDir, isWalkingRight, body.getPrevPosition());
 
-			upDirChangeTimer = upDir == newUpDir ? upDirChangeTimer+timeDelta : 0f;
+			upDirChangeTimer = upDir == newUpDir ? upDirChangeTimer+frameTime.timeDelta : 0f;
 			upDir = newUpDir;
 		}
 
@@ -109,10 +110,10 @@ public class ZoomerBrain {
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
-		moveStateTimer = moveState == nextMoveState ? moveStateTimer+timeDelta : 0f;
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+frameTime.timeDelta : 0f;
 		moveState = nextMoveState;
 
-		return new ZoomerSpriteFrameInput(body.getPosition(), timeDelta, moveState, upDir);
+		return new ZoomerSpriteFrameInput(body.getPosition(), frameTime, moveState, upDir);
 	}
 
 	private MoveState getNextMoveState() {

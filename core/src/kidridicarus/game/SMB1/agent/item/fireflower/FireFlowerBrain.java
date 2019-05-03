@@ -2,6 +2,7 @@ package kidridicarus.game.SMB1.agent.item.fireflower;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -54,7 +55,7 @@ public class FireFlowerBrain {
 			despawnMe = true;
 	}
 
-	public SproutSpriteFrameInput processFrame(float delta) {
+	public SproutSpriteFrameInput processFrame(FrameTime frameTime) {
 		Vector2 spritePos = new Vector2();
 		boolean finishSprout = false;
 		MoveState nextMoveState = getNextMoveState();
@@ -80,9 +81,9 @@ public class FireFlowerBrain {
 				parent.getAgency().removeAgent(parent);
 				return null;
 		}
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
-		return new SproutSpriteFrameInput(spritePos, delta, finishSprout);
+		return new SproutSpriteFrameInput(spritePos, frameTime, finishSprout);
 	}
 
 	private MoveState getNextMoveState() {

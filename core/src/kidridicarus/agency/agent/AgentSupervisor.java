@@ -1,6 +1,7 @@
 package kidridicarus.agency.agent;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.AgentScriptRunner;
@@ -38,8 +39,8 @@ public abstract class AgentSupervisor {
 		this.supervisedAgent = supervisedAgent;
 	}
 
-	public void preUpdateAgency(float delta) {
-		scriptRunner.preUpdateAgency(delta);
+	public void preUpdateAgency(FrameTime frameTime) {
+		scriptRunner.preUpdateAgency(frameTime);
 	}
 
 	/*

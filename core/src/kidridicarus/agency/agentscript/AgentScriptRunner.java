@@ -1,5 +1,6 @@
 package kidridicarus.agency.agentscript;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 
@@ -46,10 +47,10 @@ public class AgentScriptRunner {
 		return true;
 	}
 
-	public void preUpdateAgency(float delta) {
+	public void preUpdateAgency(FrameTime frameTime) {
 		if(!isRunning)
 			return;
-		continueRunning = currentScript.update(delta); 
+		continueRunning = currentScript.update(frameTime);
 	}
 
 	public void postUpdateAgency() {

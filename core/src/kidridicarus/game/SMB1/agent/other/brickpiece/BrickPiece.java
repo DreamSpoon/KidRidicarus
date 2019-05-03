@@ -3,6 +3,7 @@ package kidridicarus.game.SMB1.agent.other.brickpiece;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -32,7 +33,7 @@ public class BrickPiece extends CorpusAgent implements DisposableAgent {
 				properties.get(CommonKV.Sprite.KEY_START_FRAME, 0, Integer.class));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(processFrame(frameTime)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
@@ -40,13 +41,13 @@ public class BrickPiece extends CorpusAgent implements DisposableAgent {
 			});
 	}
 
-	private SpriteFrameInput processFrame(float timeDelta) {
-		stateTimer += timeDelta;
+	private SpriteFrameInput processFrame(FrameTime frameTime) {
+		stateTimer += frameTime.timeDelta;
 		if(stateTimer > BRICK_DIE_TIME) {
 			agency.removeAgent(this);
 			return null;
 		}
-		return SprFrameTool.placeAnim(body.getPosition(), timeDelta);
+		return SprFrameTool.placeAnim(body.getPosition(), frameTime);
 	}
 
 	@Override

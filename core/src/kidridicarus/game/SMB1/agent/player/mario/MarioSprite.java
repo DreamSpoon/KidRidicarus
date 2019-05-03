@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
@@ -195,14 +196,14 @@ public class MarioSprite extends Sprite {
 					PlayMode.LOOP);
 	}
 
-	public void update(float delta, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
+	public void update(FrameTime frameTime, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
 			boolean facingRight, boolean didShootFireball, boolean isBlinking, boolean isStarPowered,
 			Direction4 moveDir) {
 		SpriteState nextSpriteState = getNextSpriteState(parentPowerState);
 		boolean spriteStateChanged = nextSpriteState != spriteState;
 		switch(nextSpriteState) {
 			case NORMAL:
-				processPowerState(delta, position, parentMoveState, parentPowerState, didShootFireball,
+				processPowerState(frameTime, position, parentMoveState, parentPowerState, didShootFireball,
 						isStarPowered, moveDir);
 				break;
 			case GROW:
@@ -227,10 +228,10 @@ public class MarioSprite extends Sprite {
 
 		parentPrevPowerState = parentPowerState;
 
-		parentMoveStateTimer = parentMoveState == parentPrevMoveState ? parentMoveStateTimer+delta : 0f;
+		parentMoveStateTimer = parentMoveState == parentPrevMoveState ? parentMoveStateTimer+frameTime.timeDelta : 0f;
 		parentPrevMoveState = parentMoveState;
 
-		spriteStateTimer = nextSpriteState == spriteState ? spriteStateTimer+delta : 0f;
+		spriteStateTimer = nextSpriteState == spriteState ? spriteStateTimer+frameTime.timeDelta : 0f;
 		spriteState = nextSpriteState;
 	}
 
@@ -257,7 +258,7 @@ public class MarioSprite extends Sprite {
 			return SpriteState.NORMAL;
 	}
 
-	private void processPowerState(float delta, Vector2 position, MoveState parentMoveState,
+	private void processPowerState(FrameTime frameTime, Vector2 position, MoveState parentMoveState,
 			PowerState parentPowerState, boolean didShootFireball, boolean isStarPowered, Direction4 moveDir) {
 		int group = SML_REG_GRP;
 
@@ -277,7 +278,7 @@ public class MarioSprite extends Sprite {
 		}
 		if(isStarPowered) {
 			group = getStarPowerFrameGroup(parentPowerState);
-			starPowerTimer += delta;
+			starPowerTimer += frameTime.timeDelta;
 		}
 
 		// choose correct size anim category
@@ -337,10 +338,10 @@ public class MarioSprite extends Sprite {
 						climbAnimTimer = 0f;
 					// if climbing up then forward the animation
 					if(moveDir == Direction4.UP)
-						climbAnimTimer += delta;
+						climbAnimTimer += frameTime.timeDelta;
 					// if climbing down then reverse the animation
 					else if(moveDir == Direction4.DOWN) {
-						climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - delta,
+						climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - frameTime.timeDelta,
 								sizeAnim[pose][group].getAnimationDuration());
 					}
 					timer = climbAnimTimer;
@@ -349,7 +350,7 @@ public class MarioSprite extends Sprite {
 		}
 
 		// reduce throw pose cooldown
-		throwPoseCooldown = throwPoseCooldown < delta ? 0f : throwPoseCooldown-delta;
+		throwPoseCooldown = throwPoseCooldown < frameTime.timeDelta ? 0f : throwPoseCooldown-frameTime.timeDelta;
 
 		setRegion(sizeAnim[pose][group].getKeyFrame(timer));
 		setPosition(position.x - getWidth()/2f + offset.x, position.y - getHeight()/2f + offset.y);

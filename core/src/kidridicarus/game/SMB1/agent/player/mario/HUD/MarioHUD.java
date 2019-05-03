@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.playeragent.playerHUD.AnimationActor;
 import kidridicarus.common.agent.playeragent.playerHUD.PlayerHUD;
@@ -29,12 +30,12 @@ public class MarioHUD extends PlayerHUD {
 	private Label coinVarLabel;
 	private AnimationActor animatingCoin;
 
-	private float globalTimer;
+	private FrameTime frameTime;
 
 	public MarioHUD(Agent playerAgent, TextureAtlas atlas) {
 		this.playerAgent = playerAgent;
 		this.atlas = atlas;
-		globalTimer = 0f;
+		frameTime = new FrameTime();
 	}
 
 	@Override
@@ -68,8 +69,8 @@ public class MarioHUD extends PlayerHUD {
 		stage.addActor(table);
 	}
 
-	public void update(float globalTimer) {
-		this.globalTimer = globalTimer;
+	public void update(FrameTime frameTime) {
+		this.frameTime = frameTime;
 	}
 
 	@Override
@@ -78,6 +79,6 @@ public class MarioHUD extends PlayerHUD {
 				playerAgent.getProperty(SMB1_KV.KEY_POINTAMOUNT, 0, Integer.class)));
 		coinVarLabel.setText(String.format("×%02d",
 				playerAgent.getProperty(SMB1_KV.KEY_COINAMOUNT, 0, Integer.class)));
-		animatingCoin.setStateTimer(globalTimer);
+		animatingCoin.setStateTimer(frameTime.timeAbs);
 	}
 }

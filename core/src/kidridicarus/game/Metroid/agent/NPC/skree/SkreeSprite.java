@@ -42,7 +42,7 @@ public class SkreeSprite extends AgentSprite {
 	public void processFrame(SpriteFrameInput frameInput) {
 		if(!preFrameInput(frameInput))
 			return;
-		animTimer += frameInput.frameTime.time;
+		animTimer += frameInput.frameTime.timeDelta;
 		switch(((SkreeSpriteFrameInput) frameInput).moveState) {
 			case SLEEP:
 			default:

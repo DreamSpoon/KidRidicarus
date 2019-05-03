@@ -1,6 +1,7 @@
 package kidridicarus.game.Metroid.agent.other.metroiddoornexus;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
@@ -20,7 +21,7 @@ public class MetroidDoorNexus extends CorpusAgent implements DisposableAgent {
 				getProperty(CommonKV.Script.KEY_TARGET_RIGHT, null, String.class));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
+				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((MetroidDoorNexusBody) body).processContactFrame());
 				}
 			});

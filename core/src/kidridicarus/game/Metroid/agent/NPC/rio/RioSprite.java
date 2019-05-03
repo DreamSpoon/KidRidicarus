@@ -41,7 +41,7 @@ public class RioSprite extends AgentSprite {
 	public void processFrame(SpriteFrameInput frameInput) {
 		if(!preFrameInput(frameInput))
 			return;
-		animTimer += frameInput.frameTime.time;
+		animTimer += frameInput.frameTime.timeDelta;
 		switch(((RioSpriteFrameInput) frameInput).moveState) {
 			case FLAP:
 			default:

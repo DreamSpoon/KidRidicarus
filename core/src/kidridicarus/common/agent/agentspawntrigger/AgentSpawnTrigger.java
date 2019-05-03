@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBox;
@@ -19,7 +20,9 @@ public class AgentSpawnTrigger extends FollowBox {
 		body = new AgentSpawnTriggerBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { processFrame(((AgentSpawnTriggerBody) body).processFrame()); }
+				public void update(FrameTime frameTime) {
+					processFrame(((AgentSpawnTriggerBody) body).processFrame());
+				}
 			});
 	}
 

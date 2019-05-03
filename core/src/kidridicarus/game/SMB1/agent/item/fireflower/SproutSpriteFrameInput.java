@@ -2,6 +2,7 @@ package kidridicarus.game.SMB1.agent.item.fireflower;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 
 public class SproutSpriteFrameInput extends SpriteFrameInput {
@@ -12,8 +13,8 @@ public class SproutSpriteFrameInput extends SpriteFrameInput {
 		finishSprout = false;
 	}
 
-	public SproutSpriteFrameInput(Vector2 position, float timeDelta, boolean finishSprout) {
-		super(false, timeDelta, false, false, 0f, position);
+	public SproutSpriteFrameInput(Vector2 position, FrameTime frameTime, boolean finishSprout) {
+		super(frameTime, false, false, 0f, position);
 		this.finishSprout = finishSprout;
 	}
 }

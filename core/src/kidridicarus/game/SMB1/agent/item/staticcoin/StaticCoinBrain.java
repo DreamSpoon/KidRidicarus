@@ -1,5 +1,6 @@
 package kidridicarus.game.SMB1.agent.item.staticcoin;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -34,7 +35,7 @@ public class StaticCoinBrain {
 			despawnMe = true;
 	}
 
-	public SpriteFrameInput processFrame() {
+	public SpriteFrameInput processFrame(FrameTime frameTime) {
 		if(isUsed) {
 			parent.getAgency().getEar().playSound(SMB1_Audio.Sound.COIN);
 			parent.getAgency().removeAgent(parent);
@@ -43,6 +44,6 @@ public class StaticCoinBrain {
 		else if(despawnMe)
 			return null;
 		// override the usual delta time with an absolute time from getGlobalTimer
-		return new SpriteFrameInput(true, parent.getAgency().getGlobalTimer(), false, false, 0f, body.getPosition());
+		return new SpriteFrameInput(frameTime, false, false, 0f, body.getPosition());
 	}
 }

@@ -1,6 +1,7 @@
 package kidridicarus.game.SMB1.agent.other.flagpole;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -22,13 +23,13 @@ public class Flagpole extends CorpusAgent implements TriggerTakeAgent, Disposabl
 		sprite = new PoleFlagSprite(agency.getAtlas(), brain.getFlagPosAtTop());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
+				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((FlagpoleBody) body).processContactFrame());
 				}
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame(delta)); }
+				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override

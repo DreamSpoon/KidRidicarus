@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -65,11 +66,11 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_AGENCY_UPDATE, new AgentUpdateListener() {
 			@Override
-			public void update(float delta) { doPreAgencyUpdate(delta); }
+			public void update(FrameTime frameTime) { doPreAgencyUpdate(frameTime); }
 		});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_AGENCY_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doPostAgencyUpdate(); }
+				public void update(FrameTime frameTime) { doPostAgencyUpdate(); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.UPDATE_CAMERA, new AgentDrawListener() {
 			@Override
@@ -93,14 +94,14 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 	}
 
 	// get user input
-	private void doPreAgencyUpdate(float delta) {
+	private void doPreAgencyUpdate(FrameTime frameTime) {
 		// ensure spawn trigger and keep alive box follow view center
 		spawnTrigger.setTarget(getViewCenter());
 		keepAliveBox.setTarget(getViewCenter());
 		if(scrollBox != null)
 			scrollBox.setTarget(getViewCenter());
 		handleInput();
-		playerAgent.getSupervisor().preUpdateAgency(delta);
+		playerAgent.getSupervisor().preUpdateAgency(frameTime);
 	}
 
 	private void handleInput() {

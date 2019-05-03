@@ -1,6 +1,7 @@
 package kidridicarus.game.KidIcarus.agent.other.kidicarusdoor;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -28,13 +29,13 @@ public class KidIcarusDoor extends CorpusAgent implements TriggerTakeAgent, Soli
 		sprite = new KidIcarusDoorSprite(agency.getAtlas(), body.getPosition(), isOpened);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) {
+				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((KidIcarusDoorBody) body).processContactFrame());
 				}
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { sprite.processFrame(brain.processFrame()); }
+				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame()); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
@@ -108,15 +109,15 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 				powerState.isBigBody(), false);
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doContactUpdate(); }
+				public void update(FrameTime frameTime) { doContactUpdate(); }
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(delta); }
+				public void update(FrameTime frameTime) { doUpdate(frameTime); }
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doPostUpdate(); }
+				public void update(FrameTime frameTime) { doPostUpdate(); }
 			});
 		sprite = new MarioSprite(agency.getAtlas(), body.getPosition(), powerState, isFacingRight);
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
@@ -218,16 +219,17 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		}
 	}
 
-	private void doUpdate(float delta) {
-		processMove(delta, supervisor.pollMoveAdvice());
-		processSprite(delta);
+	private void doUpdate(FrameTime frameTime) {
+		processMove(frameTime, supervisor.pollMoveAdvice());
+		processSprite(frameTime);
+		playerHUD.update(frameTime);
 	}
 
-	private void processMove(float delta, MoveAdvice4x4 moveAdvice) {
+	private void processMove(FrameTime frameTime, MoveAdvice4x4 moveAdvice) {
 		if(!moveState.isDead() && !supervisor.isRunningScriptNoMoveAdvice()) {
 			processPowerupsReceived();
 			processFireball(moveAdvice);
-			processDamageTaken(delta);
+			processDamageTaken(frameTime);
 			processHeadBouncesGiven();
 			processPipeWarps(moveAdvice);
 
@@ -264,11 +266,11 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		}
 
 		// decrement fireball shoot cooldown timer
-		shootCooldown = shootCooldown < delta ? 0f : shootCooldown-delta;
+		shootCooldown = shootCooldown < frameTime.timeDelta ? 0f : shootCooldown-frameTime.timeDelta;
 		// decrement starpower cooldown timer
-		starPowerCooldown = starPowerCooldown < delta ? 0f : starPowerCooldown-delta;
+		starPowerCooldown = starPowerCooldown < frameTime.timeDelta ? 0f : starPowerCooldown-frameTime.timeDelta;
 
-		moveStateTimer = moveState == nextMoveState ? moveStateTimer+delta : 0f;
+		moveStateTimer = moveState == nextMoveState ? moveStateTimer+frameTime.timeDelta : 0f;
 		moveState = nextMoveState;
 	}
 
@@ -391,10 +393,10 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		agency.getEar().playSound(SMB1_Audio.Sound.FIREBALL);
 	}
 
-	private void processDamageTaken(float delta) {
+	private void processDamageTaken(FrameTime frameTime) {
 		// exit if invulnerable to next damage
 		if(noDamageCooldown > 0f) {
-			noDamageCooldown -= delta;
+			noDamageCooldown -= frameTime.timeDelta;
 			didTakeDamage = false;
 			return;
 		}
@@ -677,7 +679,7 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		}
 	}
 
-	private void processSprite(float delta) {
+	private void processSprite(FrameTime frameTime) {
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
 			MoveState scriptedMoveState;
 			ScriptedSpriteState sss = supervisor.getScriptAgentState().scriptedSpriteState;
@@ -693,11 +695,11 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 					scriptedMoveState = MoveState.STAND;
 					break;
 			}
-			sprite.update(delta, sss.position, scriptedMoveState, powerState, sss.isFacingRight, false, false,
+			sprite.update(frameTime, sss.position, scriptedMoveState, powerState, sss.isFacingRight, false, false,
 					(starPowerCooldown > 0f), sss.moveDir);
 		}
 		else {
-			sprite.update(delta, body.getPosition(), moveState, powerState, isFacingRight,
+			sprite.update(frameTime, body.getPosition(), moveState, powerState, isFacingRight,
 					didShootFireballThisFrame, (noDamageCooldown > 0f), (starPowerCooldown > 0f),
 					Direction4.NONE);
 		}
@@ -712,7 +714,6 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	private void doDrawHUD(Eye adBatch) {
-		playerHUD.update(agency.getGlobalTimer());
 		playerHUD.draw(adBatch);
 	}
 

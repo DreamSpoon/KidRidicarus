@@ -2,6 +2,7 @@ package kidridicarus.game.Metroid.agent.player.samusshot;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -52,9 +53,9 @@ public class SamusShotBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public SamusShotSpriteFrameInput processFrame(float timeDelta) {
+	public SamusShotSpriteFrameInput processFrame(FrameTime frameTime) {
 		MoveState nextMoveState = getNextMoveState();
-		moveStateTimer = moveState != nextMoveState ? 0f : moveStateTimer+timeDelta;
+		moveStateTimer = moveState != nextMoveState ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 		switch(nextMoveState) {
 			case LIVE:
@@ -69,7 +70,7 @@ public class SamusShotBrain {
 		}
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-		return new SamusShotSpriteFrameInput(body.getPosition(), timeDelta, moveState);
+		return new SamusShotSpriteFrameInput(body.getPosition(), frameTime, moveState);
 	}
 
 	private MoveState getNextMoveState() {

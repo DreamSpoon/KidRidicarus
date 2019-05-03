@@ -1,5 +1,6 @@
 package kidridicarus.game.SMB1.agent.player.mariofireball;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -57,7 +58,7 @@ public class MarioFireballBrain {
 			hitType = HitType.BOUNDARY;
 	}
 
-	public MarioFireballSpriteFrame processFrame(float timeDelta) {
+	public MarioFireballSpriteFrame processFrame(FrameTime frameTime) {
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
@@ -81,12 +82,12 @@ public class MarioFireballBrain {
 		}
 		// do space wrap last so that contacts are maintained (e.g. keep alive box contact)
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+timeDelta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 
 		body.postUpdate();
 
-		return new MarioFireballSpriteFrame(body.getPosition(), isFacingRight, timeDelta, moveState);
+		return new MarioFireballSpriteFrame(body.getPosition(), isFacingRight, frameTime, moveState);
 	}
 
 	private MoveState getNextMoveState() {

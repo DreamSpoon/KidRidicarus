@@ -3,6 +3,7 @@ package kidridicarus.game.SMB1.agent.other.spincoin;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -29,7 +30,7 @@ public class SpinCoin extends CorpusAgent implements DisposableAgent {
 		coinSprite = new SpinCoinSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { coinSprite.processFrame(processFrame(delta)); }
+				public void update(FrameTime frameTime) { coinSprite.processFrame(processFrame(frameTime)); }
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
@@ -37,13 +38,13 @@ public class SpinCoin extends CorpusAgent implements DisposableAgent {
 			});
 	}
 
-	private SpriteFrameInput processFrame(float timeDelta) {
-		stateTimer += timeDelta;
+	private SpriteFrameInput processFrame(FrameTime frameTime) {
+		stateTimer += frameTime.timeDelta;
 		if(stateTimer > COIN_SPIN_TIME) {
 			agency.removeAgent(this);
 			return null;
 		}
-		return SprFrameTool.placeAnim(body.getPosition(), timeDelta);
+		return SprFrameTool.placeAnim(body.getPosition(), frameTime);
 	}
 
 	@Override

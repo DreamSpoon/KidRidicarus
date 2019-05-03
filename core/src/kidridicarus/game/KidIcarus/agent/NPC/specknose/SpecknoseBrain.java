@@ -1,5 +1,6 @@
 package kidridicarus.game.KidIcarus.agent.NPC.specknose;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -50,11 +51,12 @@ public class SpecknoseBrain {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
+		// check for despawn
 		if(!isDead && (!cFrameInput.isKeepAlive || cFrameInput.isDespawn))
 			despawnMe = true;
 	}
 
-	public SpriteFrameInput processFrame(float delta) {
+	public SpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
@@ -77,9 +79,9 @@ public class SpecknoseBrain {
 				parent.getAgency().createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
 				return null;
 		}
-		moveStateTimer = nextMoveState != moveState ? 0f : moveStateTimer+delta;
+		moveStateTimer = nextMoveState != moveState ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
-		return SprFrameTool.placeAnim(body.getPosition(), delta);
+		return SprFrameTool.placeAnim(body.getPosition(), frameTime);
 	}
 
 	private AxisGoState getNextAxisGoState(boolean isHorizontal, AxisGoState currentGoState) {

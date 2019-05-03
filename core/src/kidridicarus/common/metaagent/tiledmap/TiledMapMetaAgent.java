@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agent.DisposableAgent;
@@ -49,7 +50,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 		// keep ref to update listener for removal
 		myUpdateListener = new AgentUpdateListener() {
 				@Override
-				public void update(float delta) { doUpdate(); }
+				public void update(FrameTime frameTime) { doUpdate(); }
 			};
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, myUpdateListener);
 	}

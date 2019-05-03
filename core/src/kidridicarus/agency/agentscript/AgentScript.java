@@ -1,6 +1,7 @@
 package kidridicarus.agency.agentscript;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 
 public interface AgentScript {
 	/*
@@ -14,7 +15,7 @@ public interface AgentScript {
 	}
 
 	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState);
-	public boolean update(float delta);	// return true to continue running script, return false to stop
+	public boolean update(FrameTime frameTime);	// return true to continue running script, return false to stop
 	public ScriptedAgentState getScriptAgentState();
 	// The next script (the script which is requesting the override) is passed so current script can
 	// check type of next script (or even call methods of the next script!), to verify/prioritize overrides.

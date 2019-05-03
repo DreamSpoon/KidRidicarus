@@ -1,5 +1,6 @@
 package kidridicarus.game.Metroid.agent.other.metroiddoor;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.game.info.MetroidAudio;
@@ -32,7 +33,7 @@ public class MetroidDoorBrain {
 		isQuickOpenClose = false;
 	}
 
-	public MetroidDoorSpriteFrameInput processFrame(float delta) {
+	public MetroidDoorSpriteFrameInput processFrame(FrameTime frameTime) {
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
@@ -58,9 +59,11 @@ public class MetroidDoorBrain {
 				}
 				break;
 		}
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+delta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
-		return new MetroidDoorSpriteFrameInput(body.getPosition(), isFacingRight, moveStateTimer, moveState);
+		// pass an absolute time to the door sprite
+		return new MetroidDoorSpriteFrameInput(body.getPosition(), isFacingRight, new FrameTime(0f, moveStateTimer),
+				moveState);
 	}
 
 	/*

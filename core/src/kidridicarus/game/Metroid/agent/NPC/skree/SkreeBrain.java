@@ -2,6 +2,7 @@ package kidridicarus.game.Metroid.agent.NPC.skree;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -83,7 +84,7 @@ public class SkreeBrain {
 		}
 	}
 
-	public SkreeSpriteFrameInput processFrame(float timeDelta) {
+	public SkreeSpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
 			parent.getAgency().removeAgent(parent);
@@ -136,10 +137,10 @@ public class SkreeBrain {
 		// do space wrap last so that contacts are maintained
 		body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 
-		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+timeDelta;
+		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 
-		return new SkreeSpriteFrameInput(body.getPosition(), timeDelta, moveState);
+		return new SkreeSpriteFrameInput(body.getPosition(), frameTime, moveState);
 	}
 
 	private MoveState getNextMoveState() {

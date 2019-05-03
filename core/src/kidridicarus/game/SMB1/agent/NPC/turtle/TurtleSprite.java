@@ -39,7 +39,7 @@ public class TurtleSprite extends AgentSprite {
 		if(!preFrameInput(frameInput))
 			return;
 		SpriteFrameInput frameOut = new SpriteFrameInput(frameInput);
-		animTimer += frameInput.frameTime.time;
+		animTimer += frameInput.frameTime.timeDelta;
 		switch(((TurtleSpriteFrameInput) frameInput).moveState) {
 			case WALK:
 			case FALL:

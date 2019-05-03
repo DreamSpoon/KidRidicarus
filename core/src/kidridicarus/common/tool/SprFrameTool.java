@@ -2,6 +2,7 @@ package kidridicarus.common.tool;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 
 /*
@@ -12,18 +13,18 @@ import kidridicarus.agency.agentsprite.SpriteFrameInput;
  */
 public class SprFrameTool {
 	public static SpriteFrameInput place(Vector2 position) {
-		return new SpriteFrameInput(false, 0f, false, false, 0f, position);
+		return new SpriteFrameInput(new FrameTime(0f, 0f), false, false, 0f, position);
 	}
 
 	public static SpriteFrameInput placeFaceR(Vector2 position, boolean isFacingRight) {
-		return new SpriteFrameInput(false, 0f, !isFacingRight, false, 0f, position);
+		return new SpriteFrameInput(new FrameTime(0f, 0f), !isFacingRight, false, 0f, position);
 	}
 
-	public static SpriteFrameInput placeAnimFaceR(Vector2 position, float time, boolean isFacingRight) {
-		return new SpriteFrameInput(false, time, !isFacingRight, false, 0f, position);
+	public static SpriteFrameInput placeAnimFaceR(Vector2 position, FrameTime frameTime, boolean isFacingRight) {
+		return new SpriteFrameInput(frameTime, !isFacingRight, false, 0f, position);
 	}
 
-	public static SpriteFrameInput placeAnim(Vector2 position, float time) {
-		return new SpriteFrameInput(false, time, false, false, 0f, position);
+	public static SpriteFrameInput placeAnim(Vector2 position, FrameTime frameTime) {
+		return new SpriteFrameInput(frameTime, false, false, 0f, position);
 	}
 }

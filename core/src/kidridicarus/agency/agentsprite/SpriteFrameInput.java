@@ -2,6 +2,8 @@ package kidridicarus.agency.agentsprite;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
+
 /*
  * Does not include flag for visible, because a null SpriteFrameInput signals non-visibility status.
  * If the sprite is non-visible then the other information about the sprite is unnecessary.
@@ -30,14 +32,6 @@ public class SpriteFrameInput {
 		this.flipX = flipX;
 		this.flipY = flipY;
 		this.frameTime = frameTime;
-	}
-
-	public SpriteFrameInput(boolean absTime, float time, boolean flipX, boolean flipY, float rotation, Vector2 position) {
-		this.position = position;
-		this.rotation = rotation;
-		this.flipX = flipX;
-		this.flipY = flipY;
-		this.frameTime = new FrameTime(absTime, time);
 	}
 
 	public SpriteFrameInput(SpriteFrameInput frameInput) {

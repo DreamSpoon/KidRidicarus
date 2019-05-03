@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -70,7 +71,7 @@ public class FlagpoleScript implements AgentScript {
 	}
 
 	@Override
-	public boolean update(float delta) {
+	public boolean update(FrameTime frameTime) {
 		ScriptState nextScriptState = getNextScriptState();
 		boolean scriptStateChanged = nextScriptState != curScriptState;
 		switch(nextScriptState) {
@@ -111,7 +112,7 @@ public class FlagpoleScript implements AgentScript {
 				return false;
 		}
 
-		stateTimer = curScriptState == nextScriptState ? stateTimer+delta : 0f;
+		stateTimer = curScriptState == nextScriptState ? stateTimer+frameTime.timeDelta : 0f;
 		curScriptState = nextScriptState;
 		return true;
 	}

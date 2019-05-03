@@ -10,12 +10,14 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 /*
  * Use a custom filtering (AgentBodyFilter) method to determine contact. When contact occurs, invoke the
- * sensor contact methods. Also use contact.isTouching() for more precise contact detection.
- * From debugging experience, I've learned that the same Contact object is used for every call to
- * beginContact and endContact. So a workaround was necessary...
+ * sensor contact methods. Also use contact.isTouching() for more precise contact detection. To implement this,
+ * it is necessary to keep a list of all active contacts based on their (fixtureA, fixtureB) pair - note that the
+ * pair (fixtureA, fixtureB) is equivalent to the pair (fixtureB, fixtureA).
+ * From debugging experience, I've learned that the same Contact object is passed as a parameter for every call
+ * to beginContact and endContact. So a workaround was necessary...
  * Treating each pair of fixtures in the contact as a single meta-object (by using the Objects.hash method)
  * allows use of a HashMap to keep a list of current contacts with their isTouching states (since each contact
- * is unique to it's { fixtureA, fixtureB } pair, but the pairs may be given in reverse order).
+ * is unique to it's (fixtureA, fixtureB) pair, but the pairs may be given in reverse order).
  * For info on Objects.hash see:
  *   https://stackoverflow.com/questions/11597386/objects-hash-vs-objects-hashcode-clarification-needed
  *
