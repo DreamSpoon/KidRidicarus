@@ -10,6 +10,7 @@ import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.common.agent.playeragent.PlayerAgentBody;
+import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentsensor.SolidContactSensor;
 import kidridicarus.common.info.CommonCF;
@@ -67,6 +68,11 @@ public class SamusBody extends PlayerAgentBody {
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f), velocity);
 	}
 
+	public BrainContactFrameInput processContactFrame() {
+		return new BrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
+				spine.isContactDespawn());
+	}
+
 	@Override
 	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists
@@ -79,6 +85,7 @@ public class SamusBody extends PlayerAgentBody {
 			setBoundsSize(STAND_BODY_WIDTH, STAND_BODY_HEIGHT);
 		createBody(bounds.getCenter(new Vector2()), velocity);
 		createFixtures();
+		resetPrevValues();
 	}
 
 	/*
@@ -89,8 +96,6 @@ public class SamusBody extends PlayerAgentBody {
 	private void createBody(Vector2 position, Vector2 velocity) {
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
-		resetPrevValues(position, velocity);
-
 		spine = new SamusSpine(this);
 	}
 

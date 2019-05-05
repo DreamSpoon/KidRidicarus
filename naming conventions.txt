@@ -1,0 +1,19 @@
+Work in progress, general notes collected so far:
+
+Choose one of these:
+	prevParentMoveState
+	parentPrevMoveState
+
+While refactoring MarioSprite class at about commit SHA1 ID: 0c8a2d78231c81b6565e168bf23a0090669526f8
+Re: To name a varaible for the previous move state of the parent (class Mario)
+Result: parentPrevMoveState
+Because:
+	If the class has a variable named "parent", then
+	To group things together it would make sense to
+	Name variables as such:
+		Object parent;
+		MoveState parentPrevMoveState;
+		MoveState parentMoveState;
+		Object child;
+		MoveState childPrevMoveState;
+		MoveState childMoveState;

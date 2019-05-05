@@ -99,7 +99,7 @@ public class PitSprite extends AgentSprite {
 		else
 			dmgFrameTimer = dmgFrameTimer == -1 ? 0f : dmgFrameTimer+frameInput.frameTime.timeDelta;
 
-		SpriteFrameInput frameOut = new SpriteFrameInput(frameInput);
+		SpriteFrameInput frameOut = frameInput.cpy();
 		Animation<TextureRegion> nextAnim = null;
 		boolean isBigSprite = true;
 		switch(myFrameInput.moveState) {

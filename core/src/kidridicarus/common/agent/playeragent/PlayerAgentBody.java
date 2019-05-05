@@ -7,7 +7,7 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 
 public abstract class PlayerAgentBody extends AgentBody {
-	protected Vector2 prevPosition;
+	private Vector2 prevPosition;
 	private Vector2 prevVelocity;
 
 	public PlayerAgentBody(Agent parent, World world, Vector2 position, Vector2 velocity) {
@@ -16,12 +16,7 @@ public abstract class PlayerAgentBody extends AgentBody {
 		prevVelocity = velocity.cpy();
 	}
 
-	protected void resetPrevValues(Vector2 position, Vector2 velocity) {
-		prevPosition.set(position);
-		prevVelocity.set(velocity);
-	}
-
-	public void postUpdate() {
+	public void resetPrevValues() {
 		prevPosition.set(b2body.getPosition());
 		prevVelocity.set(b2body.getLinearVelocity());
 	}

@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
-import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent;
@@ -34,11 +33,9 @@ public class TileBumpContactNerve {
 	 * Returns true if tile bump is applied. Otherwise returns false.
 	 */
 	public boolean checkDoHeadBump(final AgentBody body, TileBumpStrength bumpStrength) {
-		// exit if not moving up fast enough in this frame or previous frame
-		if(body.getVelocity().y < MIN_HEADBANG_VEL ||
-				((PlayerAgentBody) body).getPrevVelocity().y < MIN_HEADBANG_VEL) {
+		// exit if not moving up fast enough in this frame
+		if(body.getVelocity().y < MIN_HEADBANG_VEL)
 			return false;
-		}
 		// create list of bumptiles, in order from closest to mario to farthest from mario
 		TreeSet<TileBumpTakeAgent> closestTilesList = 
 				new TreeSet<TileBumpTakeAgent>(new Comparator<TileBumpTakeAgent>() {

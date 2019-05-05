@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
@@ -99,18 +100,17 @@ public class PitBrain {
 
 	/*
 	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
-	 * by way of regular update. Also apply star power damage if needed.
+	 * by way of regular update.
 	 */
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
-		if(supervisor.isRunningScriptNoMoveAdvice())
-			return;
 		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
 		if(moveState != MoveState.DEAD) {
 			RoomBox nextRoom = body.getSpine().getCurrentRoom();
 			if(nextRoom != null)
 				lastKnownRoom = nextRoom;
 		}
-		// exit if head bump flag hasn't reset
+		if(supervisor.isRunningScriptNoMoveAdvice())
+			return;
 		if(!isHeadBumped) {
 			// if ducking then hit soft
 			if(moveState.isDuck())
@@ -121,7 +121,7 @@ public class PitBrain {
 		}
 	}
 
-	public SpriteFrameInput processFrame(float timeDelta) {
+	public SpriteFrameInput processFrame(FrameTime frameTime) {
 		// if a script is running with no move advice then apply scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
 			ScriptedAgentState scriptedState = supervisor.getScriptAgentState();
@@ -130,14 +130,14 @@ public class PitBrain {
 			// return null if scripted sprite is not visible
 			if(!supervisor.getScriptAgentState().scriptedSpriteState.visible)
 				return null;
-			return getScriptedSpriteFrameInput(supervisor.getScriptAgentState().scriptedSpriteState, timeDelta);
+			return getScriptedSpriteFrameInput(supervisor.getScriptAgentState().scriptedSpriteState, frameTime);
 		}
 
 		MoveAdvice4x4 moveAdvice = supervisor.pollMoveAdvice();
 
 		processHeadBouncesGiven();
 		processPowerupsReceived();
-		processDamageTaken(timeDelta);
+		processDamageTaken(frameTime);
 		processPipeWarps(moveAdvice);
 
 		MoveState nextMoveState = getNextMoveState(moveAdvice);
@@ -150,7 +150,7 @@ public class PitBrain {
 			if(nextMoveState.isGround())
 				processGroundMove(moveAdvice, nextMoveState);
 			else
-				processAirMove(timeDelta, moveAdvice, nextMoveState);
+				processAirMove(frameTime, moveAdvice, nextMoveState);
 
 			// check/do facing direction change
 			if(body.getSpine().isWalkingRight())
@@ -158,24 +158,24 @@ public class PitBrain {
 			else if(body.getSpine().isWalkingLeft())
 				isFacingRight = false;
 
-			processShoot(timeDelta, moveAdvice);
+			processShoot(frameTime, moveAdvice);
 
 			// do space wrap last so that contacts are maintained
 			body.getSpine().checkDoSpaceWrap(lastKnownRoom);
 		}
 
 		if((moveState.isPreJump() && nextMoveState.isPreJump()) || (moveState.isJump() && nextMoveState.isJump()))
-			moveStateTimer += timeDelta;
+			moveStateTimer += frameTime.timeDelta;
 		else
-			moveStateTimer = moveState != nextMoveState ? 0f : moveStateTimer+timeDelta;
+			moveStateTimer = moveState != nextMoveState ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
 
-		return new PitSpriteFrameInput(body.getPosition(), isFacingRight, timeDelta, moveState,
+		return new PitSpriteFrameInput(body.getPosition(), isFacingRight, frameTime, moveState,
 				(noDamageCooldown > 0f), (shootCooldownTimer > 0f), isOnGroundHeadInTile,
 				body.getSpine().isMovingInDir(Direction4.UP), Direction4.NONE);
 	}
 
-	private SpriteFrameInput getScriptedSpriteFrameInput(ScriptedSpriteState sss, float timeDelta) {
+	private SpriteFrameInput getScriptedSpriteFrameInput(ScriptedSpriteState sss, FrameTime frameTime) {
 		MoveState scriptedMoveState;
 		switch(sss.spriteState) {
 			case MOVE:
@@ -189,8 +189,8 @@ public class PitBrain {
 				scriptedMoveState = MoveState.STAND;
 				break;
 		}
-		return new PitSpriteFrameInput(sss.position, sss.isFacingRight, timeDelta,
-				scriptedMoveState, false, false, false, false, sss.moveDir);
+		return new PitSpriteFrameInput(sss.position, sss.isFacingRight, frameTime, scriptedMoveState, false, false,
+				false, false, sss.moveDir);
 	}
 
 	private void addHealth(int healAmt) {
@@ -198,7 +198,7 @@ public class PitBrain {
 		health = health+healAmt > MAX_HEALTH ? MAX_HEALTH : health+healAmt;
 	}
 
-	private void processDamageTaken(float delta) {
+	private void processDamageTaken(FrameTime frameTime) {
 		// check for contact with scroll kill box (insta-kill)
 		if(body.getSpine().isContactScrollKillBox()) {
 			health = 0;
@@ -206,7 +206,7 @@ public class PitBrain {
 		}
 		// if invulnerable to damage then exit
 		else if(noDamageCooldown > 0f) {
-			noDamageCooldown -= delta;
+			noDamageCooldown -= frameTime.timeDelta;
 			takeDamageThisFrame = false;
 			return;
 		}
@@ -382,7 +382,7 @@ public class PitBrain {
 			isHeadBumped = false;
 	}
 
-	private void processAirMove(float delta, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
+	private void processAirMove(FrameTime frameTime, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
 		isOnGroundHeadInTile = false;
 		switch(nextMoveState) {
 			case PRE_JUMP:
@@ -430,10 +430,10 @@ public class PitBrain {
 		}
 
 		// decrement jump force timer
-		jumpForceTimer = jumpForceTimer > delta ? jumpForceTimer-delta : 0f;
+		jumpForceTimer = jumpForceTimer > frameTime.timeDelta ? jumpForceTimer-frameTime.timeDelta : 0f;
 	}
 
-	private void processShoot(float delta, MoveAdvice4x4 moveAdvice) {
+	private void processShoot(FrameTime frameTime, MoveAdvice4x4 moveAdvice) {
 		if(moveAdvice.action0 && isNextShotAllowed && shootCooldownTimer <= 0f && !moveState.isDuck())
 			doShoot();
 		else if(!moveAdvice.action0)
@@ -442,8 +442,10 @@ public class PitBrain {
 		// GLITCH when Pit ducks, the shoot cooldown timer resets and Pit can shoot again immediately
 		if(moveState.isDuck())
 			shootCooldownTimer = 0f;
-		else
-			shootCooldownTimer = shootCooldownTimer > delta ? shootCooldownTimer-delta : 0f;
+		else {
+			shootCooldownTimer =
+					shootCooldownTimer > frameTime.timeDelta ? shootCooldownTimer-frameTime.timeDelta : 0f;
+		}
 	}
 
 	private void doShoot() {

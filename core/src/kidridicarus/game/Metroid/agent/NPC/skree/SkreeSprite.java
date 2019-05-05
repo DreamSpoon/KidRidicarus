@@ -58,7 +58,7 @@ public class SkreeSprite extends AgentSprite {
 			case DEAD:
 				break;
 		}
-		SpriteFrameInput frameOut = new SpriteFrameInput(frameInput);
+		SpriteFrameInput frameOut = frameInput.cpy();
 		frameOut.position.add(SPECIAL_OFFSET);
 		postFrameInput(frameOut);
 	}

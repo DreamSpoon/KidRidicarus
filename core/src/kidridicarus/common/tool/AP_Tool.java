@@ -107,6 +107,10 @@ public class AP_Tool {
 		return agentProps.get(CommonKV.KEY_VELOCITY, null, Vector2.class);
 	}
 
+	public static Vector2 safeGetVelocity(ObjectProperties agentProps) {
+		return agentProps.get(CommonKV.KEY_VELOCITY, new Vector2(0f, 0f), Vector2.class);
+	}
+
 	public static Vector2 getVelocity(Agent agent) {
 		return agent.getProperty(CommonKV.KEY_VELOCITY, null, Vector2.class);
 	}

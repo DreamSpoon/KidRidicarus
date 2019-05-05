@@ -84,6 +84,7 @@ public class PitBody extends PlayerAgentBody {
 		b2body.setGravityScale(GRAVITY_SCALE);
 		spine = new PitSpine(this);
 		createFixtures();
+		resetPrevValues();
 	}
 
 	private void createFixtures() {

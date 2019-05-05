@@ -12,6 +12,7 @@ import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
+import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentproperties.GetPropertyListenerDirection4;
@@ -49,13 +50,14 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	public Pit(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new PitBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
-				properties.get(CommonKV.KEY_VELOCITY, new Vector2(0f, 0f), Vector2.class), false);
+				AP_Tool.safeGetVelocity(properties), false);
 		brain = new PitBrain(this, (PitBody) body,
 				properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT,
 				properties.get(KidIcarusKV.KEY_HEALTH, null, Integer.class),
 				properties.get(KidIcarusKV.KEY_HEART_COUNT, null, Integer.class));
 		sprite = new PitSprite(agency.getAtlas(), body.getPosition());
 		playerHUD = new PitHUD(this, agency.getAtlas());
+		createGetPropertyListeners();
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
@@ -65,7 +67,8 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
-					sprite.processFrame(brain.processFrame(frameTime.timeDelta));
+					sprite.processFrame(brain.processFrame(frameTime));
+					((PlayerAgentBody) body).resetPrevValues();
 				}
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
@@ -74,9 +77,8 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
 				@Override
-				public void draw(Eye adBatch) { playerHUD.draw(adBatch); }
+				public void draw(Eye eye) { playerHUD.draw(eye); }
 			});
-		createGetPropertyListeners();
 	}
 
 	private void createGetPropertyListeners() {

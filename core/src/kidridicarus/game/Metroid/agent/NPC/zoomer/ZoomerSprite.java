@@ -37,7 +37,7 @@ public class ZoomerSprite extends AgentSprite {
 		if(!preFrameInput(frameInput))
 			return;
 		animTimer += frameInput.frameTime.timeDelta;
-		SpriteFrameInput frameOut = new SpriteFrameInput(frameInput);
+		SpriteFrameInput frameOut = frameInput.cpy();
 		// set region according to move state
 		switch(((ZoomerSpriteFrameInput) frameInput).moveState) {
 			case WALK:

@@ -74,7 +74,7 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.UPDATE_CAMERA, new AgentDrawListener() {
 			@Override
-			public void draw(Eye adBatch) { updateCamera(); }
+			public void draw(Eye eye) { updateCamera(); }
 		});
 	}
 

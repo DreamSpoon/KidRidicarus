@@ -11,21 +11,21 @@ public abstract class PlayerHUD implements Disposable {
 	protected abstract void setupStage(Stage stage);
 	protected abstract void preDrawStage();
 
-	public void draw(Eye adBatch) {
+	public void draw(Eye eye) {
 		if(hudStage == null) {
-			hudStage = adBatch.createStage();
+			hudStage = eye.createStage();
 			setupStage(hudStage);
 		}
 		hudStage.getBatch().setProjectionMatrix(hudStage.getCamera().combined);
 		// stage is special, so end previous draw batch and let stage start a new one
-		boolean isDrawing = adBatch.isDrawing();
+		boolean isDrawing = eye.isDrawing();
 		if(isDrawing)
-			adBatch.end();
+			eye.end();
 		preDrawStage();
 		hudStage.act();
 		hudStage.draw();
 		if(isDrawing)
-			adBatch.begin();
+			eye.begin();
 	}
 
 	@Override

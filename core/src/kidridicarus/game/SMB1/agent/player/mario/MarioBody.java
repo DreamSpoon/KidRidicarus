@@ -10,6 +10,7 @@ import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.agency.agentscript.ScriptedBodyState;
 import kidridicarus.common.agent.playeragent.PlayerAgentBody;
+import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.CommonCF.Alias;
@@ -67,6 +68,11 @@ public class MarioBody extends PlayerAgentBody {
 		setMarioBodyStuff(position, velocity, isBigBody, isDucking);
 	}
 
+	public BrainContactFrameInput processContactFrame() {
+		return new BrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
+				spine.isContactDespawn());
+	}
+
 	public void setMarioBodyStuff(Vector2 position, Vector2 velocity, boolean isBigBody, boolean isDucking) {
 		this.isBigBody = isBigBody;
 		this.isDucking = isDucking;
@@ -83,15 +89,14 @@ public class MarioBody extends PlayerAgentBody {
 			setBoundsSize(BIG_BODY_SIZE.x, BIG_BODY_SIZE.y);
 		else
 			setBoundsSize(SML_BODY_SIZE.x, SML_BODY_SIZE.y);
-
 		createBody(bounds.getCenter(new Vector2()), velocity);
 		createFixtures();
+		resetPrevValues();
 	}
 
 	private void createBody(Vector2 position, Vector2 velocity) {
 		b2body = B2DFactory.makeDynamicBody(world, position, velocity);
 		b2body.setGravityScale(GRAVITY_SCALE);
-		resetPrevValues(position, velocity);
 
 		FixtureDef fdef = new FixtureDef();
 		fdef.friction = FRICTION;

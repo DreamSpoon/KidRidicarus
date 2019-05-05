@@ -1,22 +1,22 @@
 package kidridicarus.game.SMB1.agent.player.mario;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
+import kidridicarus.agency.agentsprite.AgentSprite;
+import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.SMB1.agent.player.mario.Mario.MoveState;
-import kidridicarus.game.SMB1.agent.player.mario.Mario.PowerState;
+import kidridicarus.common.tool.SprFrameTool;
+import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.MoveState;
+import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.PowerState;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class MarioSprite extends Sprite {
+public class MarioSprite extends AgentSprite {
 	private static final float SMLSPR_WIDTH = UInfo.P2M(16);
 	private static final float SMLSPR_HEIGHT = UInfo.P2M(16);
 	private static final float BIGSPR_WIDTH = UInfo.P2M(16);
@@ -76,20 +76,17 @@ public class MarioSprite extends Sprite {
 	private float starPowerTimer;
 	private float climbAnimTimer;
 
-	public MarioSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean facingRight) {
+	public MarioSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean isFacingRight) {
 		createAnimations(atlas);
-
 		parentPrevMoveState = MoveState.STAND;
 		parentPrevPowerState = parentPowerState;
 		parentMoveStateTimer = 0f;
 		throwPoseCooldown = 0f;
 		isDrawAllowed = true;
-
 		spriteState = SpriteState.NORMAL;
 		spriteStateTimer = 0f;
 		starPowerTimer = 0f;
 		climbAnimTimer = 0f;
-
 		// set the initial texture region and bounds
 		switch(parentPowerState) {
 			case SMALL:
@@ -105,10 +102,7 @@ public class MarioSprite extends Sprite {
 				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 				break;
 		}
-		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f);
-		// flip to face left if necessary
-		if(!facingRight && !isFlipX())
-			flip(true, false);
+		postFrameInput(SprFrameTool.placeFaceR(position, isFacingRight));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -196,43 +190,48 @@ public class MarioSprite extends Sprite {
 					PlayMode.LOOP);
 	}
 
-	public void update(FrameTime frameTime, Vector2 position, MoveState parentMoveState, PowerState parentPowerState,
-			boolean facingRight, boolean didShootFireball, boolean isBlinking, boolean isStarPowered,
-			Direction4 moveDir) {
-		SpriteState nextSpriteState = getNextSpriteState(parentPowerState);
+	@Override
+	public void processFrame(SpriteFrameInput frameInput) {
+		if(!preFrameInput(frameInput))
+			return;
+
+		MarioSpriteFrameInput myFrameInput = (MarioSpriteFrameInput) frameInput;
+		SpriteFrameInput frameOut = frameInput.cpy();
+
+		SpriteState nextSpriteState = getNextSpriteState(myFrameInput.powerState);
 		boolean spriteStateChanged = nextSpriteState != spriteState;
 		switch(nextSpriteState) {
 			case NORMAL:
-				processPowerState(frameTime, position, parentMoveState, parentPowerState, didShootFireball,
-						isStarPowered, moveDir);
+				frameOut = processPowerState(myFrameInput);
 				break;
 			case GROW:
 				if(spriteStateChanged)
 					setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
-				processGrowState(position);
+				processGrowState(frameInput.position);
 				break;
 			case SHRINK:
-				processShrinkState(position);
+				processShrinkState(frameInput.position);
 				break;
 		}
 
-		// flip to face left if needed
-		if(!facingRight && !isFlipX())
-			flip(true, false);
-
 		// if blinking due to damage invulnerability, then flicker the sprite
-		if(isBlinking && isDrawAllowed)
+		if(myFrameInput.isDmgFrame && isDrawAllowed) {
 			isDrawAllowed = false;
+			frameOut = null;
+		}
 		else
 			isDrawAllowed = true;
 
-		parentPrevPowerState = parentPowerState;
+		parentPrevPowerState = myFrameInput.powerState;
 
-		parentMoveStateTimer = parentMoveState == parentPrevMoveState ? parentMoveStateTimer+frameTime.timeDelta : 0f;
-		parentPrevMoveState = parentMoveState;
+		parentMoveStateTimer = myFrameInput.moveState == parentPrevMoveState ?
+				parentMoveStateTimer+frameInput.frameTime.timeDelta : 0f;
+		parentPrevMoveState = myFrameInput.moveState;
 
-		spriteStateTimer = nextSpriteState == spriteState ? spriteStateTimer+frameTime.timeDelta : 0f;
+		spriteStateTimer = nextSpriteState == spriteState ? spriteStateTimer+frameInput.frameTime.timeDelta : 0f;
 		spriteState = nextSpriteState;
+
+		postFrameInput(frameOut);
 	}
 
 	private SpriteState getNextSpriteState(PowerState parentPowerState) {
@@ -258,11 +257,11 @@ public class MarioSprite extends Sprite {
 			return SpriteState.NORMAL;
 	}
 
-	private void processPowerState(FrameTime frameTime, Vector2 position, MoveState parentMoveState,
-			PowerState parentPowerState, boolean didShootFireball, boolean isStarPowered, Direction4 moveDir) {
+	private SpriteFrameInput processPowerState(MarioSpriteFrameInput frameInput) {
+		SpriteFrameInput frameOut = frameInput.cpy();
 		int group = SML_REG_GRP;
 
-		switch(parentPowerState) {
+		switch(frameInput.powerState) {
 			case SMALL:
 				group = SML_REG_GRP;
 				setBounds(getX(), getY(), SMLSPR_WIDTH, SMLSPR_HEIGHT);
@@ -276,39 +275,38 @@ public class MarioSprite extends Sprite {
 				setBounds(getX(), getY(), BIGSPR_WIDTH, BIGSPR_HEIGHT);
 				break;
 		}
-		if(isStarPowered) {
-			group = getStarPowerFrameGroup(parentPowerState);
-			starPowerTimer += frameTime.timeDelta;
+		if(frameInput.isStarPowered) {
+			group = getStarPowerFrameGroup(frameInput.powerState);
+			starPowerTimer += frameInput.frameTime.timeDelta;
 		}
 
 		// choose correct size anim category
 		Animation<TextureRegion>[][] sizeAnim;
-		if(parentPowerState.isBigBody() && !parentMoveState.isDead())
+		if(frameInput.powerState.isBigBody() && !frameInput.moveState.isDead())
 			sizeAnim = bigAnim;
 		else
 			sizeAnim = smlAnim;
 
 		float timer = parentMoveStateTimer;
 		int pose = STAND_POSE;
-		Vector2 offset = new Vector2(0f, 0f);
-		if(didShootFireball)
+		if(frameInput.didShootFireball)
 			throwPoseCooldown = THROW_POSE_TIME;
 		// check for fireball pose
-		if(throwPoseCooldown > 0f && parentPowerState.isBigBody()) {
+		if(!frameInput.moveState.isDead() && throwPoseCooldown > 0f && frameInput.powerState.isBigBody()) {
 			pose = THROW_POSE;
-			if(parentMoveState.isDuck())
-				offset.set(SPRITE_DUCK_OFFSET);
+			if(frameInput.moveState.isDuck())
+				frameOut.position.add(SPRITE_DUCK_OFFSET);
 		}
 		// other poses...
 		else {
-			switch(parentMoveState) {
+			switch(frameInput.moveState) {
 				case STAND:
 				case FALL:
 					pose = STAND_POSE;
 					break;
 				case DUCKSLIDE:
 					pose = STAND_POSE;
-					offset.set(SPRITE_DUCK_OFFSET);
+					frameOut.position.add(SPRITE_DUCK_OFFSET);
 					break;
 				case RUN:
 					pose = RUN_POSE;
@@ -320,7 +318,7 @@ public class MarioSprite extends Sprite {
 				case DUCKFALL:
 				case DUCKJUMP:
 					pose = DUCK_POSE;
-					offset.set(SPRITE_DUCK_OFFSET);
+					frameOut.position.add(SPRITE_DUCK_OFFSET);
 					break;
 				case JUMP:
 					pose = JUMP_POSE;
@@ -337,11 +335,11 @@ public class MarioSprite extends Sprite {
 					if(parentPrevMoveState != MoveState.CLIMB)
 						climbAnimTimer = 0f;
 					// if climbing up then forward the animation
-					if(moveDir == Direction4.UP)
-						climbAnimTimer += frameTime.timeDelta;
+					if(frameInput.climbDir == Direction4.UP)
+						climbAnimTimer += frameInput.frameTime.timeDelta;
 					// if climbing down then reverse the animation
-					else if(moveDir == Direction4.DOWN) {
-						climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - frameTime.timeDelta,
+					else if(frameInput.climbDir == Direction4.DOWN) {
+						climbAnimTimer = CommonInfo.ensurePositive(climbAnimTimer - frameInput.frameTime.timeDelta,
 								sizeAnim[pose][group].getAnimationDuration());
 					}
 					timer = climbAnimTimer;
@@ -350,10 +348,10 @@ public class MarioSprite extends Sprite {
 		}
 
 		// reduce throw pose cooldown
-		throwPoseCooldown = throwPoseCooldown < frameTime.timeDelta ? 0f : throwPoseCooldown-frameTime.timeDelta;
-
+		throwPoseCooldown = throwPoseCooldown < frameInput.frameTime.timeDelta ?
+				0f : throwPoseCooldown-frameInput.frameTime.timeDelta;
 		setRegion(sizeAnim[pose][group].getKeyFrame(timer));
-		setPosition(position.x - getWidth()/2f + offset.x, position.y - getHeight()/2f + offset.y);
+		return frameOut;
 	}
 
 	private int getStarPowerFrameGroup(PowerState powerState) {
@@ -394,11 +392,5 @@ public class MarioSprite extends Sprite {
 	private void processShrinkState(Vector2 position) {
 		setRegion(bigAnim[SHRINK_POSE][BIG_REG_GRP].getKeyFrame(spriteStateTimer));
 		setPosition(position.x - getWidth()/2f, position.y - getHeight()/2f + SHRINK_OFFSET_Y);
-	}
-
-	@Override
-	public void draw(Batch batch) {
-		if(isDrawAllowed)
-			super.draw(batch);
 	}
 }

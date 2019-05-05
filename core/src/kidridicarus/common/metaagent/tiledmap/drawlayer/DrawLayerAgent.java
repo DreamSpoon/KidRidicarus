@@ -28,7 +28,7 @@ public class DrawLayerAgent extends CorpusAgent {
 		agency.addAgentDrawListener(this, getDrawOrderForLayer(drawLayer, CommonInfo.KIDRID_DRAWORDER_ALIAS),
 				new AgentDrawListener() {
 				@Override
-				public void draw(Eye adBatch) { adBatch.draw(drawLayer); }
+				public void draw(Eye eye) { eye.draw(drawLayer); }
 			});
 	}
 

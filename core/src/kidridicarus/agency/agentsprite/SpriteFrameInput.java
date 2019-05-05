@@ -34,11 +34,13 @@ public class SpriteFrameInput {
 		this.frameTime = frameTime;
 	}
 
-	public SpriteFrameInput(SpriteFrameInput frameInput) {
-		this.position = frameInput.position.cpy();
-		this.rotation = frameInput.rotation;
-		this.flipX = frameInput.flipX;
-		this.flipY = frameInput.flipY;
-		this.frameTime = new FrameTime(frameInput.frameTime);
+	public SpriteFrameInput cpy() {
+		SpriteFrameInput frameOut = new SpriteFrameInput();
+		frameOut.position = this.position.cpy();
+		frameOut.rotation = this.rotation;
+		frameOut.flipX = this.flipX;
+		frameOut.flipY = this.flipY;
+		frameOut.frameTime = new FrameTime(this.frameTime.timeDelta, this.frameTime.timeAbs);
+		return frameOut;
 	}
 }
