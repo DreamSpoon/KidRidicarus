@@ -396,10 +396,10 @@ public class Agency implements Disposable {
 	}
 
 	/*
-	 * Dispose and remove all Agents but do not dispose Agency.
+	 * Remove all Agents but do not dispose Agency.
 	 */
-	public void disposeAndRemoveAllAgents() {
-		agencyIndex.disposeAndRemoveAllAgents();
+	public void removeAllAgents() {
+		agencyIndex.removeAllAgents();
 	}
 
 	/*
@@ -408,7 +408,7 @@ public class Agency implements Disposable {
 	 */
 	@Override
 	public void dispose() {
-		disposeAndRemoveAllAgents();
+		removeAllAgents();
 		world.dispose();
 	}
 

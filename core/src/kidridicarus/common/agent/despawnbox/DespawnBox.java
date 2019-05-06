@@ -1,19 +1,18 @@
 package kidridicarus.common.agent.despawnbox;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.tool.AP_Tool;
 
-public class DespawnBox extends CorpusAgent implements DisposableAgent {
+public class DespawnBox extends CorpusAgent {
 	public DespawnBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new DespawnBoxBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+			@Override
+			public void preRemoveAgent() { dispose(); }
+		});
 	}
 }

@@ -331,7 +331,7 @@ public class MarioBrain {
 				MarioFireball.makeAP(offset, isFacingRight, parent));
 		parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, fireball) {
 				@Override
-				public void removedAgent() { activeFireballCount--; }
+				public void preRemoveAgent() { activeFireballCount--; }
 			});
 		// boom goes the dynamite
 		parent.getAgency().getEar().playSound(SMB1_Audio.Sound.FIREBALL);

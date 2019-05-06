@@ -3,15 +3,15 @@ package kidridicarus.game.SMB1.agent.item.staticcoin;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 
-public class StaticCoin extends CorpusAgent implements DisposableAgent {
+public class StaticCoin extends CorpusAgent {
 	private StaticCoinBrain brain;
 	private StaticCoinSprite sprite;
 
@@ -34,10 +34,9 @@ public class StaticCoin extends CorpusAgent implements DisposableAgent {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 }

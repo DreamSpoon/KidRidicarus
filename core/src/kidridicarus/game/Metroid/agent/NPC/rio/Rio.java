@@ -6,8 +6,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -18,7 +18,7 @@ import kidridicarus.common.tool.AP_Tool;
 /*
  * TODO Check that Rio can re-target: as in, lose a target, then wait a bit, then gain a new target successfully.
  */
-public class Rio extends CorpusAgent implements ContactDmgTakeAgent, DisposableAgent {
+public class Rio extends CorpusAgent implements ContactDmgTakeAgent {
 	private RioBrain brain;
 	private RioSprite sprite;
 
@@ -41,15 +41,14 @@ public class Rio extends CorpusAgent implements ContactDmgTakeAgent, DisposableA
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
 		return brain.onTakeDamage(agent, amount);
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

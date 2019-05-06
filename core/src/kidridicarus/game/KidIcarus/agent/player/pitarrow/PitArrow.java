@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -17,7 +17,7 @@ import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.KidIcarus.agent.player.pit.Pit;
 import kidridicarus.game.info.KidIcarusKV;
 
-public class PitArrow extends CorpusAgent implements DisposableAgent {
+public class PitArrow extends CorpusAgent {
 	private PitArrowBrain brain;
 	private PitArrowSprite sprite;
 
@@ -45,11 +45,10 @@ public class PitArrow extends CorpusAgent implements DisposableAgent {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	// make the AgentProperties (AP) for this class of Agent

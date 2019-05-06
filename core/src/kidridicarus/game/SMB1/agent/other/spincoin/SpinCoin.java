@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.Eye;
@@ -16,7 +16,7 @@ import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.SMB1_KV;
 
-public class SpinCoin extends CorpusAgent implements DisposableAgent {
+public class SpinCoin extends CorpusAgent {
 	private static final float COIN_SPIN_TIME = 0.54f;
 	private static final Vector2 START_VELOCITY = new Vector2(0f, 3.1f);
 
@@ -36,6 +36,10 @@ public class SpinCoin extends CorpusAgent implements DisposableAgent {
 				@Override
 				public void draw(Eye eye) { eye.draw(coinSprite); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	private SpriteFrameInput processFrame(FrameTime frameTime) {
@@ -45,11 +49,6 @@ public class SpinCoin extends CorpusAgent implements DisposableAgent {
 			return null;
 		}
 		return SprFrameTool.placeAnim(body.getPosition(), frameTime);
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {

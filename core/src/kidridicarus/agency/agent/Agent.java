@@ -11,6 +11,31 @@ import kidridicarus.agency.agentproperties.ObjectProperties;
  * TODO: ensure the following is correct:
  * Agents have a key-value list of properties that can be queried.
  * The list can be queried for info such as current position, facing direction, initial velocity, etc.
+ *
+ * TODO
+ * Agents will have observable 2x2 perspective: (inward, outward) x (audio, video)
+ * where
+ * Outward perspective:
+ *   Sprite - e.g. Mario fireball sprite in explode animation state
+ *   Speaker (sound) - e.g. Goomba playing it's head bopped sound
+ * Inward perspective:
+ *   Screen center
+ *   Music being "heard" - e.g. Mario's Power star Music is heard more loudly than the room music
+ *
+ * Screen center can be used to determine which Agents will be "observed" for sight output (video, sprites, etc.),
+ * and for speaker output (audio, music, etc.).
+ * When a "draw" pass is run, it should be run in parts:
+ *   1) Find the player with the "inward perspective" that you want to use.
+ *   2) Get the screen center from the "inward perspective".
+ *   3) Get the music / audio data from "inward perspective" and set music/audio accordingly.
+ *   4) Get the sprite/speaker data from Agents within "sight"/"earshot" based on the "inward perspective".
+ * How to divide up these parts between the caller and the Agent/Agency is a work in progress.
+ *
+ * Player Agents will probably have fields for all four classes (working names):
+ *    class AgentSprite { ... }		// show visual
+ *    class AgentSpeaker { ... }	// play sounds
+ *    class AgentEye { ... }		// screen center
+ *    class AgentEar { ... }		// music changes
  */
 public abstract class Agent {
 	protected Agency agency;

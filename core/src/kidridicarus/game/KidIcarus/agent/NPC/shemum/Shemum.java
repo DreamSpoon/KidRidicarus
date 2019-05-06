@@ -6,8 +6,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -16,7 +16,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.BumpTakeAgent;
 
-public class Shemum extends CorpusAgent implements ContactDmgTakeAgent, BumpTakeAgent, DisposableAgent {
+public class Shemum extends CorpusAgent implements ContactDmgTakeAgent, BumpTakeAgent {
 	private ShemumBrain brain;
 	private ShemumSprite sprite;
 
@@ -41,6 +41,10 @@ public class Shemum extends CorpusAgent implements ContactDmgTakeAgent, BumpTake
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	@Override
@@ -51,10 +55,5 @@ public class Shemum extends CorpusAgent implements ContactDmgTakeAgent, BumpTake
 	@Override
 	public void onTakeBump(Agent agent) {
 		brain.onTakeBump();
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

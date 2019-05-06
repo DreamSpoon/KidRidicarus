@@ -6,8 +6,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -19,8 +19,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.SprFrameTool;
 
-public class MetroidDoor extends CorpusAgent implements SolidAgent, TriggerTakeAgent, ContactDmgTakeAgent,
-		DisposableAgent {
+public class MetroidDoor extends CorpusAgent implements SolidAgent, TriggerTakeAgent, ContactDmgTakeAgent {
 	private MetroidDoorBrain brain;
 	private MetroidDoorSprite sprite;
 
@@ -38,6 +37,10 @@ public class MetroidDoor extends CorpusAgent implements SolidAgent, TriggerTakeA
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	@Override
@@ -48,10 +51,5 @@ public class MetroidDoor extends CorpusAgent implements SolidAgent, TriggerTakeA
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
 		return brain.onTakeDamage(agent);
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

@@ -6,6 +6,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
@@ -79,6 +80,10 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 				@Override
 				public void draw(Eye eye) { playerHUD.draw(eye); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	private void createGetPropertyListeners() {
@@ -128,10 +133,5 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	@Override
 	protected Vector2 getPosition() {
 		return brain.getPosition();
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

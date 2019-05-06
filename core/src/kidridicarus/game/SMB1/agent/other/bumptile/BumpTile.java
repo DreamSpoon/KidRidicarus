@@ -4,8 +4,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -15,7 +15,7 @@ import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent;
 import kidridicarus.game.info.SMB1_KV;
 
-public class BumpTile extends CorpusAgent implements TileBumpTakeAgent, DisposableAgent {
+public class BumpTile extends CorpusAgent implements TileBumpTakeAgent {
 	private BumpTileBrain brain;
 	private BumpTileSprite sprite;
 
@@ -35,6 +35,10 @@ public class BumpTile extends CorpusAgent implements TileBumpTakeAgent, Disposab
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+			@Override
+			public void preRemoveAgent() { dispose(); }
+		});
 	}
 
 	/*
@@ -44,10 +48,5 @@ public class BumpTile extends CorpusAgent implements TileBumpTakeAgent, Disposab
 	@Override
 	public boolean onTakeTileBump(Agent agent, TileBumpStrength strength) {
 		return brain.onTakeTileBump(agent, strength);
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

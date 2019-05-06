@@ -1,7 +1,6 @@
 package kidridicarus.agency;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -10,14 +9,20 @@ import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.AllowOrderList;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 
+
+
 /*
- * A list of all Agents in the Agency, with their associated update listeners and draw listeners, and
- * a sub-list of Agents that require special dispose method to be called upon their removal from Agency.
+ * TODO
+ * Implement the Agent.getProperties method through a listener paradigm, just like updateListener, drawListener, etc.
+ * The Agent can Agency.addPropertiesListener(agentSelf, new ProperiesListener() { ... } );
+ * So the get properties functionality is implemented more in Agency, less in Agent.
+ *
+ * A list of all Agents in the Agency, and their associated update listeners and draw listeners. Agents can have
+ * remove listeners via their AgentWrapper, which receive callback when the Agent is removed from Agency.
  */
 class AgencyIndex {
 	private HashMap<Agent, AgentWrapper> allAgents;
@@ -25,7 +30,6 @@ class AgencyIndex {
 	private HashMap<AgentUpdateListener, AllowOrder> allUpdateListeners;
 	private AllowOrderList orderedDrawListeners;
 	private HashMap<AgentDrawListener, AllowOrder> allDrawListeners;
-	private HashSet<DisposableAgent> disposeAgents;
 
 	AgencyIndex() {
 		allAgents = new HashMap<Agent, AgentWrapper>();
@@ -33,7 +37,6 @@ class AgencyIndex {
 		allUpdateListeners = new HashMap<AgentUpdateListener, AllowOrder>();
 		orderedDrawListeners = new AllowOrderList();
 		allDrawListeners = new HashMap<AgentDrawListener, AllowOrder>();
-		disposeAgents = new HashSet<DisposableAgent>();
 	}
 
 	/*
@@ -41,33 +44,20 @@ class AgencyIndex {
 	 */
 	public void addAgent(Agent agent) {
 		allAgents.put(agent, new AgentWrapper());
-		// if disposable, then save to list for disposal on agent remove
-		if(agent instanceof DisposableAgent)
-			disposeAgents.add((DisposableAgent) agent);
 	}
 
 	/*
-	 * Remove an Agent from the index, calling disposeAgent if needed.
+	 * Remove an Agent from the index, calling remove listeners if needed.
 	 */
-	// ignore unlikely arg type because arg type is checked by instanceof
-	@SuppressWarnings("unlikely-arg-type")
 	public void removeAgent(Agent agent) {
+		// if other agents are listening for remove callback then do it, and garbage collect remove listeners
+		removeAllAgentRemoveListeners(agent);
 		// remove agent from updates list
 		removeAllUpdateListeners(agent);
 		// remove agent from draw order list
 		removeAllDrawListeners(agent);
-		// if other agents are listening for remove callback then do it, and garbage collect remove listeners
-		removeAllAgentRemoveListeners(agent);
-
 		// remove agent from all agents list
 		allAgents.remove(agent);
-		// Dispose agent if needed. Call this last because it removes ambiguity re:
-		//   Should agent set its draw order to none and disable its updates on disposal?
-		//     No, it should not. That functionality will be handed here.
-		if(agent instanceof DisposableAgent && disposeAgents.contains(agent)) {
-			((DisposableAgent) agent).disposeAgent();
-			disposeAgents.remove(agent);
-		}
 	}
 
 	private AgentWrapper safeGetAgentWrapper(Agent agent) {
@@ -186,9 +176,9 @@ class AgencyIndex {
 	}
 
 	/*
-	 * Associate a single listener with the given agent and other Agent.
-	 * Note: AgencyIndex doesn't directly keep a list of remove listeners, the AgentWrapper keeps a small list,
-	 *   thus a full list is shared amongst the AgentWrappers in allAgents list.
+	 * Associate a single listener with the given agent and other Agent. An Agent is allowed to add a remove
+	 * listener to itself. This is a good way to handle "dispose" functionality.
+	 * Note: AgencyIndex doesn't directly keep a list of remove listeners, each AgentWrapper keeps a its own list.
 	 */
 	public void addAgentRemoveListener(Agent agent, AgentRemoveListener arListener) {
 		// This Agent keeps a ref to the listener, so that this Agent can delete the listener when this Agent
@@ -223,7 +213,7 @@ class AgencyIndex {
 
 		// first, do all Agent removal callbacks (the other Agents are listening for this Agent's removal)
 		for(AgentRemoveListener otherListener : myWrapper.otherAgentRemoveListeners) {
-			otherListener.removedAgent();
+			otherListener.preRemoveAgent();
 			// since the move listener has been called, the listener itself must now be disassociated from other Agent
 			AgentWrapper otherWrapper = safeGetAgentWrapper(otherListener.getListeningAgent());
 			otherWrapper.myAgentRemoveListeners.remove(otherListener);
@@ -266,15 +256,16 @@ class AgencyIndex {
 		orderedDrawListeners.iterateList(doli);
 	}
 
-	public void disposeAndRemoveAllAgents() {
-		for(DisposableAgent agent : disposeAgents)
-			agent.disposeAgent();
-		// clear agent and agent related lists, reseting this object back to constructor finish state
+	/*
+	 * Batch remove all Agents from Agency, calling Agent remove listeners as needed.
+	 */
+	public void removeAllAgents() {
+		for(Agent agent : allAgents.keySet())
+			removeAllAgentRemoveListeners(agent);
 		allAgents.clear();
 		orderedUpdateListeners.clear();
 		allUpdateListeners.clear();
 		orderedDrawListeners.clear();
 		allDrawListeners.clear();
-		disposeAgents.clear();
 	}
 }

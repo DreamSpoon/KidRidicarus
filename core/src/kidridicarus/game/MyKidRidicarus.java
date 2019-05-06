@@ -72,7 +72,7 @@ public class MyKidRidicarus extends Game {
 				MetroidAgentClassList.METROID_AGENT_CLASSLIST,
 				KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST), atlas);
 		// show intro/instructions screen
-		setScreen(new InstructionsScreen(this, CommonInfo.GAMEMAP_FILENAME1));
+		setScreen(new InstructionsScreen(this, CommonInfo.GAMEMAP_FILENAME2));
 	}
 
 	@Override

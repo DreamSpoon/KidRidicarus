@@ -6,8 +6,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -21,7 +21,7 @@ import kidridicarus.common.tool.AP_Tool;
  * collapsed down to one type of movement. Just rotate your thinking and maybe flip left/right, then
  * check the sensors.
  */
-public class Zoomer extends CorpusAgent implements ContactDmgTakeAgent, DisposableAgent {
+public class Zoomer extends CorpusAgent implements ContactDmgTakeAgent {
 	private ZoomerBrain brain;
 	private ZoomerSprite sprite;
 
@@ -32,32 +32,31 @@ public class Zoomer extends CorpusAgent implements ContactDmgTakeAgent, Disposab
 		brain = new ZoomerBrain(this, (ZoomerBody) body);
 		sprite = new ZoomerSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(FrameTime frameTime) {
-				brain.processContactFrame(((ZoomerBody) body).processContactFrame());
-			}
-		});
+				@Override
+				public void update(FrameTime frameTime) {
+					brain.processContactFrame(((ZoomerBody) body).processContactFrame());
+				}
+			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(FrameTime frameTime) { ((ZoomerBody) body).postUpdate(); }
-		});
+				@Override
+				public void update(FrameTime frameTime) { ((ZoomerBody) body).postUpdate(); }
+			});
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
-			@Override
-			public void draw(Eye eye) { eye.draw(sprite); }
-		});
+				@Override
+				public void draw(Eye eye) { eye.draw(sprite); }
+			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
 		return brain.onTakeDamage(agent, amount);
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

@@ -11,8 +11,8 @@ public class CommonInfo {
 
 	public static final String INSTRO_FILENAME = "Instro/map/Instro.tmx";
 	public static final String GAMEMAP_FILENAME1 = "SMB1/map/SMB1-1.tmx";
-	public static final String GAMEMAP_FILENAME2 = "Metroid/map/Metroid1-1.tmx";
-	public static final String GAMEMAP_FILENAME3 = "KidIcarus/map/KidIcarus1-1.tmx";
+	public static final String GAMEMAP_FILENAME2 = "KidIcarus/map/KidIcarus1-1.tmx";
+	public static final String GAMEMAP_FILENAME3 = "Metroid/map/Metroid1-1.tmx";
 
 	public static final String TA_MAIN_FILENAME = "sprite/KidRidicarusSprites.pack";
 

@@ -195,7 +195,7 @@ public class MonoeyeBrain {
 			// add an AgentRemoveListener to allow de-targeting on death of target
 			parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, ogleTarget) {
 					@Override
-					public void removedAgent() { isTargetRemoved = true; }
+					public void preRemoveAgent() { isTargetRemoved = true; }
 				});
 		}
 	}

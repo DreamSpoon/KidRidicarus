@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -15,7 +15,7 @@ import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeartBrain.AngelHeartSize;
 import kidridicarus.game.info.KidIcarusKV;
 
-public class AngelHeart extends CorpusAgent implements DisposableAgent {
+public class AngelHeart extends CorpusAgent {
 	private AngelHeartBrain brain;
 	private AngelHeartSprite sprite;
 
@@ -41,11 +41,10 @@ public class AngelHeart extends CorpusAgent implements DisposableAgent {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, int heartCount) {

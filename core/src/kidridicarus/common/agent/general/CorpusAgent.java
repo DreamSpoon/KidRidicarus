@@ -44,7 +44,6 @@ public abstract class CorpusAgent extends Agent implements Disposable {
 		return body != null ? body.getVelocity() : null;
 	}
 
-	// TODO Should body.dispose(); be included here? Implement using interface Disposable or DisposableAgent ?
 	@Override
 	public void dispose() {
 		if(body != null) {

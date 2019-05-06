@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -14,7 +14,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.info.MetroidKV;
 
-public class Energy extends CorpusAgent implements DisposableAgent {
+public class Energy extends CorpusAgent {
 	private EnergyBrain brain;
 	private EnergySprite sprite;
 
@@ -39,11 +39,10 @@ public class Energy extends CorpusAgent implements DisposableAgent {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	public static ObjectProperties makeAP(Vector2 position) {

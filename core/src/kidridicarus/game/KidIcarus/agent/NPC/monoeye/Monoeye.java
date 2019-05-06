@@ -6,8 +6,8 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -20,7 +20,7 @@ import kidridicarus.common.tool.AP_Tool;
  * ogle them in a downward direction.
  * QQ
  */
-public class Monoeye extends CorpusAgent implements ContactDmgTakeAgent, DisposableAgent {
+public class Monoeye extends CorpusAgent implements ContactDmgTakeAgent {
 	private MonoeyeBrain brain;
 	private MonoeyeSprite sprite;
 
@@ -46,15 +46,14 @@ public class Monoeye extends CorpusAgent implements ContactDmgTakeAgent, Disposa
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
 		return brain.onTakeDamage(agent);
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

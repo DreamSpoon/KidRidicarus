@@ -204,6 +204,6 @@ public class PlayScreen implements Screen {
 	public void dispose() {
 		guide.dispose();
 		b2dr.dispose();
-		game.agency.disposeAndRemoveAllAgents();
+		game.agency.removeAllAgents();
 	}
 }

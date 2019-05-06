@@ -3,7 +3,7 @@ package kidridicarus.common.agent.roombox;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -18,7 +18,7 @@ import kidridicarus.common.tool.Direction4;
  * current room music. Also applicable to viewpoint, since the room can specify which way the screen scrolls
  * and if the view should be offset.
  */
-public class RoomBox extends CorpusAgent implements DisposableAgent {
+public class RoomBox extends CorpusAgent {
 	private enum RoomType { CENTER, HSCROLL, VSCROLL }
 	private RoomType roomType;
 	private String roomMusicStr;
@@ -48,6 +48,10 @@ public class RoomBox extends CorpusAgent implements DisposableAgent {
 			scrollVelocity = UInfo.P2M(scrollVelocity);
 		isScrollBoundX = properties.get(CommonKV.Room.KEY_SCROLL_BOUND_X, false, Boolean.class);
 		isScrollBoundY = properties.get(CommonKV.Room.KEY_SCROLL_BOUND_Y, false, Boolean.class);
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+			@Override
+			public void preRemoveAgent() { dispose(); }
+		});
 	}
 
 	public Vector2 getViewCenterForPos(Vector2 playerPosition, Vector2 incomingPrevCenter) {
@@ -152,10 +156,5 @@ public class RoomBox extends CorpusAgent implements DisposableAgent {
 
 	public String getRoommusic() {
 		return roomMusicStr;
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

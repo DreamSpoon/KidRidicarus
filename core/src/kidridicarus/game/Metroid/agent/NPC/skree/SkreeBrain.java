@@ -78,7 +78,7 @@ public class SkreeBrain {
 			if(target != null) {
 				parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, target) {
 						@Override
-						public void removedAgent() { isTargetRemoved = true; }
+						public void preRemoveAgent() { isTargetRemoved = true; }
 					});
 			}
 		}

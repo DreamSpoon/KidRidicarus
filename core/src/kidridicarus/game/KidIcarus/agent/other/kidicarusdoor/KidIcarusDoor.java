@@ -3,8 +3,8 @@ package kidridicarus.game.KidIcarus.agent.other.kidicarusdoor;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -15,7 +15,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
 // note: solid when closed, non-solid when open
-public class KidIcarusDoor extends CorpusAgent implements TriggerTakeAgent, SolidAgent, DisposableAgent {
+public class KidIcarusDoor extends CorpusAgent implements TriggerTakeAgent, SolidAgent {
 	private KidIcarusDoorBrain brain;
 	private KidIcarusDoorSprite sprite;
 
@@ -41,15 +41,14 @@ public class KidIcarusDoor extends CorpusAgent implements TriggerTakeAgent, Soli
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	@Override
 	public void onTakeTrigger() {
 		brain.setOpened(false);
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

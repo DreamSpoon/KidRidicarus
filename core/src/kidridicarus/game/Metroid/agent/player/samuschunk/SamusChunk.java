@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.Eye;
@@ -18,7 +18,7 @@ import kidridicarus.common.tool.Direction8;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidKV;
 
-public class SamusChunk extends CorpusAgent implements DisposableAgent {
+public class SamusChunk extends CorpusAgent {
 	private static final float MAX_DROP_TIME = 0.75f;
 
 	private SamusChunkSprite sprite;
@@ -39,6 +39,10 @@ public class SamusChunk extends CorpusAgent implements DisposableAgent {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	private SpriteFrameInput processFrame(FrameTime frameTime) {
@@ -52,11 +56,6 @@ public class SamusChunk extends CorpusAgent implements DisposableAgent {
 			return SprFrameTool.placeAnim(body.getPosition(), frameTime);
 		else
 			return null;
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 
 	public static ObjectProperties makeAP(Vector2 position, Vector2 velocity, Direction8 startDir) {

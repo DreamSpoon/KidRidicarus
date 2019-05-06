@@ -2,8 +2,8 @@ package kidridicarus.common.agent.agentspawner;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.EnableTakeAgent;
@@ -11,7 +11,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
-public class AgentSpawner extends CorpusAgent implements EnableTakeAgent, DisposableAgent {
+public class AgentSpawner extends CorpusAgent implements EnableTakeAgent {
 	private SpawnController spawnController;
 	private boolean isEnabled;
 
@@ -39,15 +39,15 @@ public class AgentSpawner extends CorpusAgent implements EnableTakeAgent, Dispos
 			spawnController = new DeadRespawnController(this, properties);
 		else
 			spawnController = new SingleSpawnController(this, properties);
+
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+			@Override
+			public void preRemoveAgent() { dispose(); }
+		});
 	}
 
 	@Override
 	public void onTakeEnable(boolean enabled) {
 		this.isEnabled = enabled;
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

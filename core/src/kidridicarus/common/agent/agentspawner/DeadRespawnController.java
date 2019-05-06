@@ -30,7 +30,7 @@ public class DeadRespawnController extends SpawnController {
 			Agent spawnedAgent = doSpawn();
 			parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, spawnedAgent) {
 				@Override
-				public void removedAgent() { numSpawnsDisposed++; }
+				public void preRemoveAgent() { numSpawnsDisposed++; }
 			});
 		}
 	}

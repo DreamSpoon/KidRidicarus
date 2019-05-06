@@ -220,223 +220,223 @@
     </display>  
   </class>  
   <association id="23">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="24" name="ear">        
-        <position height="0" width="0" x="-277" y="-249"/>      
-      </attribute>      
-      <multiplicity id="25" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-277" y="-249"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="26">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="27" name="parent">        
-        <position height="0" width="0" x="-49" y="48"/>      
-      </attribute>      
-      <multiplicity id="28" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-49" y="48"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <generalization id="29">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="7"/>  
-  </generalization>  
-  <association id="30">    
     <end type="SOURCE" refId="15" navigable="false">      
-      <attribute id="31" name="body">        
+      <attribute id="24" name="body">        
         <position height="0" width="0" x="68" y="-43"/>      
       </attribute>      
-      <multiplicity id="32" minimum="0" maximum="1">        
+      <multiplicity id="25" minimum="0" maximum="1">        
         <position height="0" width="0" x="68" y="-43"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <generalization id="33">    
-    <end type="SOURCE" refId="22"/>    
-    <end type="TARGET" refId="15"/>  
-  </generalization>  
-  <association id="34">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="35" name="agency">        
-        <position height="0" width="0" x="-397" y="-167"/>      
-      </attribute>      
-      <multiplicity id="36" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-397" y="-167"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="37">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="38" name="eye">        
+  <association id="26">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="27" name="myEye">        
         <position height="0" width="0" x="-277" y="-249"/>      
       </attribute>      
-      <multiplicity id="39" minimum="0" maximum="1">        
+      <multiplicity id="28" minimum="0" maximum="1">        
         <position height="0" width="0" x="-277" y="-249"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="20" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <generalization id="40">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="22"/>  
-  </generalization>  
-  <association id="41">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="42" name="playerController">        
-        <position height="0" width="0" x="-285" y="-152"/>      
-      </attribute>      
-      <multiplicity id="43" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-285" y="-152"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="19" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="44">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="45" name="agencyIndex">        
-        <position height="0" width="0" x="-319" y="-125"/>      
-      </attribute>      
-      <multiplicity id="46" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-319" y="-125"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="47">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="48" name="scriptRunner">        
-        <position height="0" width="0" x="77" y="-78"/>      
-      </attribute>      
-      <multiplicity id="49" minimum="0" maximum="1">        
-        <position height="0" width="0" x="77" y="-78"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="50">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="51" name="game">        
-        <position height="0" width="0" x="-1758" y="-747"/>      
-      </attribute>      
-      <multiplicity id="52" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-1758" y="-747"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="53">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="54" name="currentScript">        
-        <position height="0" width="0" x="84" y="-123"/>      
-      </attribute>      
-      <multiplicity id="55" minimum="0" maximum="1">        
-        <position height="0" width="0" x="84" y="-123"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="56">    
-    <end type="SOURCE" refId="19" navigable="false">      
-      <attribute id="57" name="playerAgent">        
-        <position height="0" width="0" x="-281" y="-143"/>      
-      </attribute>      
-      <multiplicity id="58" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-281" y="-143"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <generalization id="59">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="5"/>  
-  </generalization>  
-  <association id="60">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="61" name="allAgentsClassList">        
-        <position height="0" width="0" x="-346" y="-244"/>      
-      </attribute>      
-      <multiplicity id="62" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-346" y="-244"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="false" multiplicity="false"/>  
-  </association>  
-  <association id="63">    
+  <association id="29">    
     <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="64" name="realEar">        
+      <attribute id="30" name="realEar">        
         <position height="0" width="0" x="-277" y="-249"/>      
       </attribute>      
-      <multiplicity id="65" minimum="0" maximum="1">        
+      <multiplicity id="31" minimum="0" maximum="1">        
         <position height="0" width="0" x="-277" y="-249"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="21" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="66">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="67" name="guide">        
-        <position height="0" width="0" x="-1099" y="-908"/>      
+  <association id="32">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="33" name="agencyChangeQ">        
+        <position height="0" width="0" x="-382" y="-188"/>      
       </attribute>      
-      <multiplicity id="68" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-1099" y="-908"/>      
+      <multiplicity id="34" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-382" y="-188"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
+    <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="69">    
+  <association id="35">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="70" name="earplug">        
+      <attribute id="36" name="earplug">        
         <position height="0" width="0" x="-357" y="-221"/>      
       </attribute>      
-      <multiplicity id="71" minimum="0" maximum="1">        
+      <multiplicity id="37" minimum="0" maximum="1">        
         <position height="0" width="0" x="-357" y="-221"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="72">    
+  <association id="38">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="39" name="parent">        
+        <position height="0" width="0" x="-49" y="48"/>      
+      </attribute>      
+      <multiplicity id="40" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-49" y="48"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="41">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="42" name="currentScript">        
+        <position height="0" width="0" x="84" y="-123"/>      
+      </attribute>      
+      <multiplicity id="43" minimum="0" maximum="1">        
+        <position height="0" width="0" x="84" y="-123"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="44">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="45" name="guide">        
+        <position height="0" width="0" x="-1099" y="-908"/>      
+      </attribute>      
+      <multiplicity id="46" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-1099" y="-908"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="47">    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="48" name="playerAgent">        
+        <position height="0" width="0" x="-281" y="-143"/>      
+      </attribute>      
+      <multiplicity id="49" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-281" y="-143"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="50">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="51" name="scriptRunner">        
+        <position height="0" width="0" x="77" y="-78"/>      
+      </attribute>      
+      <multiplicity id="52" minimum="0" maximum="1">        
+        <position height="0" width="0" x="77" y="-78"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="53">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="73" name="myEye">        
+      <attribute id="54" name="agencyIndex">        
+        <position height="0" width="0" x="-319" y="-125"/>      
+      </attribute>      
+      <multiplicity id="55" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-319" y="-125"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="56">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="57" name="game">        
+        <position height="0" width="0" x="-1758" y="-747"/>      
+      </attribute>      
+      <multiplicity id="58" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-1758" y="-747"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="17" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="59">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="60" name="playerController">        
+        <position height="0" width="0" x="-285" y="-152"/>      
+      </attribute>      
+      <multiplicity id="61" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-285" y="-152"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <association id="62">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="63" name="agency">        
+        <position height="0" width="0" x="-397" y="-167"/>      
+      </attribute>      
+      <multiplicity id="64" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-397" y="-167"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <generalization id="65">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="66">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="22"/>  
+  </generalization>  
+  <generalization id="67">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <association id="68">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="69" name="eye">        
         <position height="0" width="0" x="-277" y="-249"/>      
       </attribute>      
-      <multiplicity id="74" minimum="0" maximum="1">        
+      <multiplicity id="70" minimum="0" maximum="1">        
         <position height="0" width="0" x="-277" y="-249"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="20" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
-  <association id="75">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="76" name="agencyChangeQ">        
-        <position height="0" width="0" x="-382" y="-188"/>      
+  <association id="71">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="72" name="ear">        
+        <position height="0" width="0" x="-277" y="-249"/>      
       </attribute>      
-      <multiplicity id="77" minimum="0" maximum="1">        
-        <position height="0" width="0" x="-382" y="-188"/>      
+      <multiplicity id="73" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-277" y="-249"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
+    <end type="TARGET" refId="21" navigable="true"/>    
+    <display labels="false" multiplicity="false"/>  
+  </association>  
+  <generalization id="74">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <association id="75">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="76" name="allAgentsClassList">        
+        <position height="0" width="0" x="-346" y="-244"/>      
+      </attribute>      
+      <multiplicity id="77" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-346" y="-244"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="false" multiplicity="false"/>  
   </association>  
   <classifier-display autosize="false" stereotype="false" package="true" initial-value="false" signature="false" 

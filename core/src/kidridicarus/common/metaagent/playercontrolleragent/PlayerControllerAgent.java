@@ -4,13 +4,14 @@ import java.util.Collection;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.Eye;
@@ -35,7 +36,7 @@ import kidridicarus.game.info.KidIcarusPow;
 import kidridicarus.game.info.MetroidPow;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class PlayerControllerAgent extends Agent implements DisposableAgent {
+public class PlayerControllerAgent extends Agent implements Disposable {
 	private static final float SPAWN_TRIGGER_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 20);
 	private static final float SPAWN_TRIGGER_HEIGHT = UInfo.P2M(UInfo.TILEPIX_Y * 15);
 	private static final float KEEP_ALIVE_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 22);
@@ -75,6 +76,10 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.UPDATE_CAMERA, new AgentDrawListener() {
 			@Override
 			public void draw(Eye eye) { updateCamera(); }
+		});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+			@Override
+			public void preRemoveAgent() { dispose(); }
 		});
 	}
 
@@ -285,7 +290,7 @@ public class PlayerControllerAgent extends Agent implements DisposableAgent {
 	}
 
 	@Override
-	public void disposeAgent() {
+	public void dispose() {
 		if(scrollBox != null)
 			scrollBox.dispose();
 		if(keepAliveBox != null)

@@ -165,6 +165,6 @@ public class InstructionsScreen implements Screen {
 	public void dispose() {
 		Gdx.input.setInputProcessor(oldInPr);
 		stage.dispose();
-		game.agency.disposeAndRemoveAllAgents();
+		game.agency.removeAllAgents();
 	}
 }

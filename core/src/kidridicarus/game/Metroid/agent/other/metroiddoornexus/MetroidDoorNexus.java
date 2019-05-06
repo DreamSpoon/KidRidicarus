@@ -2,15 +2,15 @@ package kidridicarus.game.Metroid.agent.other.metroiddoornexus;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
-public class MetroidDoorNexus extends CorpusAgent implements DisposableAgent {
+public class MetroidDoorNexus extends CorpusAgent {
 	private MetroidDoorNexusBrain brain;
 
 	public MetroidDoorNexus(Agency agency, ObjectProperties properties) {
@@ -25,10 +25,9 @@ public class MetroidDoorNexus extends CorpusAgent implements DisposableAgent {
 					brain.processContactFrame(((MetroidDoorNexusBody) body).processContactFrame());
 				}
 			});
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 }

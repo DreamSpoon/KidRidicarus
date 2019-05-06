@@ -3,8 +3,8 @@ package kidridicarus.game.SMB1.agent.other.flagpole;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.agent.general.CorpusAgent;
@@ -12,7 +12,7 @@ import kidridicarus.common.agent.optional.TriggerTakeAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 
-public class Flagpole extends CorpusAgent implements TriggerTakeAgent, DisposableAgent {
+public class Flagpole extends CorpusAgent implements TriggerTakeAgent {
 	private FlagpoleBrain brain;
 	private PoleFlagSprite sprite;
 
@@ -35,15 +35,14 @@ public class Flagpole extends CorpusAgent implements TriggerTakeAgent, Disposabl
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	@Override
 	public void onTakeTrigger() {
 		brain.onTakeTrigger();
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

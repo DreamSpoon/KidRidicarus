@@ -15,8 +15,8 @@ import com.badlogic.gdx.utils.Disposable;
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agent.DisposableAgent;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.common.info.CommonInfo;
@@ -30,7 +30,7 @@ import kidridicarus.common.tool.AP_Tool;
  * A "parent" or "meta" agent that has a solid tile map, drawable layers, and a batch of initial spawn agents.
  * This agent does not load anything from file, rather it is given a TiledMap object that has been preloaded.
  */
-public class TiledMapMetaAgent extends Agent implements DisposableAgent {
+public class TiledMapMetaAgent extends Agent implements Disposable {
 	private TiledMap map;
 	private SolidTiledMapAgent solidTileMapAgent;
 	private LinkedList<DrawLayerAgent> drawLayerAgents;
@@ -53,6 +53,10 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 				public void update(FrameTime frameTime) { doUpdate(); }
 			};
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, myUpdateListener);
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+			@Override
+			public void preRemoveAgent() { dispose(); }
+		});
 	}
 
 	// create the Agents for the solid tile map and the drawable layers
@@ -171,7 +175,7 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 	}
 
 	@Override
-	public void disposeAgent() {
+	public void dispose() {
 		for(Disposable agent: manualDisposeAgents)
 			agent.dispose();
 		if(solidTileMapAgent != null)
@@ -189,11 +193,9 @@ public class TiledMapMetaAgent extends Agent implements DisposableAgent {
 			throw new IllegalArgumentException("Cannot create map agent from tiledMap when width or height" +
 					"is not positive: width = " + width + ", height = " + height);
 		}
-
 		ObjectProperties props = AP_Tool.createRectangleAP(CommonKV.AgentClassAlias.VAL_META_TILEDMAP,
 				new Rectangle(0f, 0f, UInfo.P2M(width * UInfo.TILEPIX_X), UInfo.P2M(height * UInfo.TILEPIX_Y)));
 		props.put(CommonKV.AgentMapParams.KEY_TILEDMAP, tiledMap);
-
 		return props;
 	}
 }

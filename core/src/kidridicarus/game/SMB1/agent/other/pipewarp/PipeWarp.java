@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agent.DisposableAgent;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -15,7 +15,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
-public class PipeWarp extends CorpusAgent implements DisposableAgent {
+public class PipeWarp extends CorpusAgent {
 	class PipeWarpHorizon {
 		Direction4 direction;
 		Rectangle bounds; 
@@ -43,6 +43,10 @@ public class PipeWarp extends CorpusAgent implements DisposableAgent {
 				direction = Direction4.DOWN;
 		}
 		body = new PipeWarpBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	public boolean canBodyEnterPipe(Rectangle otherBounds, Direction4 moveDir) {
@@ -158,10 +162,5 @@ public class PipeWarp extends CorpusAgent implements DisposableAgent {
 
 	public Direction4 getDirection() {
 		return direction;
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }

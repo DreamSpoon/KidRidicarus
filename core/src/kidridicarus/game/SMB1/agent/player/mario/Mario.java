@@ -6,6 +6,7 @@ import kidridicarus.agency.Agency;
 import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentproperties.GetPropertyListener;
 import kidridicarus.agency.agentproperties.ObjectProperties;
@@ -70,6 +71,10 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { playerHUD.draw(eye); }
+			});
+		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+				@Override
+				public void preRemoveAgent() { dispose(); }
 			});
 	}
 
@@ -149,10 +154,5 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	@Override
 	public RoomBox getCurrentRoom() {
 		return brain.getCurrentRoom();
-	}
-
-	@Override
-	public void disposeAgent() {
-		dispose();
 	}
 }
