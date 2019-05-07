@@ -72,20 +72,21 @@ import kidridicarus.common.tool.QQ;
  */
 public class Agency implements Disposable {
 	private AgentClassList allAgentsClassList;
+	private TextureAtlas atlas;
 	private AgencyChangeQueue agencyChangeQ;
 	private AgencyIndex agencyIndex;
-	private TextureAtlas atlas;
-	private World world;
 	// Agency needs an earplug because it looks cool... and lets Agents exchange audio info
 	private EarPlug earplug;
 	private Eye myEye;
 	// how much time has passed (via updates) since this Agency was constructed?
 	private float globalTimer;
+	private World world;
 
 	public Agency(AgentClassList allAgentsClassList, TextureAtlas atlas) {
 		this.allAgentsClassList = allAgentsClassList;
 		this.atlas = atlas;
-
+		agencyChangeQ = new AgencyChangeQueue();
+		agencyIndex = new AgencyIndex();
 		globalTimer = 0f;
 		earplug = new EarPlug();
 		myEye = null;
@@ -93,84 +94,8 @@ public class Agency implements Disposable {
 		world = new World(new Vector2(0, -10f), true);
 		world.setContactListener(new AgentContactListener());
 		world.setContactFilter(new AgentContactFilter());
-
-		agencyChangeQ = new AgencyChangeQueue();
-		agencyIndex = new AgencyIndex();
 	}
 
-	/*
-	 * Process all AgencyIndex change requests that occurred during Agency update.
-	 * Processing of changes to AgencyIndex is delayed until end of the update, in order to maintain as consistent a
-	 * state as possible during the update. Thus every Agent's state is kept as independent as possible from every
-	 * other Agent's state. Agents can still interact, of course, but their interactions are self-governed by way of
-	 * the update queue (and their requested update order).
-	 * This paradigm is intended to prevent undefined/unexpected results from chaotic/random updating of Agents.
-	 * If the coder desires, a chaotic/random order of updates can still be achieved by setting update order to
-	 * random values. Controlled chaos, so to speak...
-	 * An Agent can be created in two independent situations:
-	 *   1) During Agency update. Typically this occurs when an NPC spawner creates an NPC Agent.
-	 *   2) Not during Agency update. Typically this occurs when the main game class creates the initial Agents
-	 *      like map, NPC spawners, etc.
-	 *
-	 * 1) Agent created during Agency update
-	 *   To implements this scheme, the Agent (and it's sub-components, like AgentSprite) use this paradigm:
-	 *     A) Agent Constructor
-	 *        -Agent is given startup info from Agency such as it's position, etc.
-	 *        -treat this as the first "update" of the Agent, and set the Agent sprite's position, texture, etc.
-	 *        -if the Agent creates an updateListener, then the updateListener will not be called until the next
-	 *         Agency.update is run, even if the updateListener is set for "later" then "now" in the Agency update.
-	 *           e.g. if Agency.update is calling update listeners at update order = 0.5, and the Agent being
-	 *           updated creates a new updateListener with update order = 0.7, then the new updateListener is NOT
-	 *           called until after the Agency finishes the current update, and the next Agency.update is run.
-	 *        -if the Agent creates a new drawListener, then it will be added to the Agency's list of
-	 *         drawListeners at the end of the update, and the new drawListener will be run when the next
-	 *         Agency.draw is run
-	 *     B) Agent update (via updateListener)
-	 *       -process changes that occurred during update frame - e.g. body contacts, changes in position
-	 *       -update Agent sprite (if necessary) using processed information from previous step
-	 *       -this is the only opportunity to modify states, the Agent must NOT modify state during Agency.draw
-	 *     C) Agent draw (via drawListener)
-	 *       -draw the sprite
-	 *       -update the camera - the code probably should not allow for this, but it does...
-	 *         -any Agent CAN set the current position/viewing direction of the camera but,
-	 *         -only one Agent SHOULD set these values
-	 *
-	 * work in progress:
-	 * 2) Agent created not during update (e.g. game creates initial Agents)
-	 *   Agency agency = new Agency();	// Agency is constructed (zero Agents in Agency)
-	 *   // Agency update method is run (no Agents to update, so nothing is updated)
-	 *   agency.update();	// update nothing
-	 *   // Agency draw method is run (still, zero Agents in Agency - so nothing to draw yet!)
-	 *   agency.draw();		// draw nothing
-	 *   // Agent constructor is run, but Agent is technically not in Agency until first Agency.update is run
-	 *   Agent agentX = agency.createAgent(propertiesX);
-	 *   // agentX is in the changeQ of agency, but will not be drawn if agency.draw is invoked
-	 *   agency.draw();		// draw nothing
-	 *   //
-	 *   agency.update();	// agentX is added to Agency, but it's update method is NOT called
-	 *   // At this point, agentX is in the list of all Agents, so it can be drawn (and also found by way of
-	 *   // the method getAgentByProperties. It did not receive a call to its update method during Agency.update
-	 *   // because the update listener was only in the queue to be added to Agency, and not in the list of "active"
-	 *   // update listeners.
-	 *   agency.draw();	// draw agentX
-	 *   agency.update();	// agentX's update listener is called (for the first time!)
-	 *   agency.draw();	// draw agentX
-	 *   agency.update();	// agentX's update listener is called (second time...)
-	 *	 ...
-	 *
-	 * work in progress:
-	 * Increment globalTimer before or after running each Agent's update method?
-	 * Note: Sprite animation timers are updated "before" calling setRegion because of this order of operations:
-	 *   Sprite is constructed, and can set it's position/size/texture at constructor time.
-	 *   Sprite is drawn.
-	 *   Sprite is updated.
-	 *   Sprite is drawn.
-	 *   Sprite is updated.
-	 *   Sprite is ...
-	 *   ...
-	 * Sprite is drawn for the first time BEFORE its update method is run, therefore its first update should
-	 * increment the animation timer BEFORE setting the texture region using the animation timer.
-	 */
 	public void update(final float timeDelta) {
 		world.step(timeDelta, 6, 2);
 		globalTimer += timeDelta;
