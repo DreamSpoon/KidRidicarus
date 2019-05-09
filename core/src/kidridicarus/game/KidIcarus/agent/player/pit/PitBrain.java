@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -18,7 +18,7 @@ import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice4x4;
+import kidridicarus.common.tool.MoveAdvice4x2;
 import kidridicarus.game.KidIcarus.agent.player.pitarrow.PitArrow;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
@@ -105,9 +105,8 @@ public class PitBrain {
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
 		if(moveState != MoveState.DEAD) {
-			RoomBox nextRoom = body.getSpine().getCurrentRoom();
-			if(nextRoom != null)
-				lastKnownRoom = nextRoom;
+			if(cFrameInput.room != null)
+				lastKnownRoom = cFrameInput.room;
 		}
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
@@ -133,7 +132,7 @@ public class PitBrain {
 			return getScriptedSpriteFrameInput(supervisor.getScriptAgentState().scriptedSpriteState, frameTime);
 		}
 
-		MoveAdvice4x4 moveAdvice = supervisor.pollMoveAdvice();
+		MoveAdvice4x2 moveAdvice = supervisor.pollMoveAdvice();
 
 		processHeadBouncesGiven();
 		processPowerupsReceived();
@@ -248,13 +247,13 @@ public class PitBrain {
 		powerupsReceived.clear();
 	}
 
-	private void processPipeWarps(MoveAdvice4x4 moveAdvice) {
+	private void processPipeWarps(MoveAdvice4x2 moveAdvice) {
 		PipeWarp pw = body.getSpine().getEnterPipeWarp(moveAdvice.getMoveDir4());
 		if(pw != null)
 			pw.use(parent);
 	}
 
-	private MoveState getNextMoveState(MoveAdvice4x4 moveAdvice) {
+	private MoveState getNextMoveState(MoveAdvice4x2 moveAdvice) {
 		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn() || health <= 0)
 			return MoveState.DEAD;
 		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
@@ -267,7 +266,7 @@ public class PitBrain {
 			return getNextMoveStateAir(moveAdvice);
 	}
 
-	private MoveState getNextMoveStateGround(MoveAdvice4x4 moveAdvice) {
+	private MoveState getNextMoveStateGround(MoveAdvice4x2 moveAdvice) {
 		// if advised jump, and allowed to jump, and not aiming up, and not currently ducking...
 		if(moveAdvice.action1 && isNextJumpAllowed && moveState != MoveState.AIMUP && moveState != MoveState.DUCK) {
 			// Pit can start to jump and do one other thing:
@@ -292,7 +291,7 @@ public class PitBrain {
 			return MoveState.STAND;
 	}
 
-	private MoveState getNextMoveStateAir(MoveAdvice4x4 moveAdvice) {
+	private MoveState getNextMoveStateAir(MoveAdvice4x2 moveAdvice) {
 		if(moveState.isPreJump() && moveStateTimer <= PRE_JUMP_TIME) {
 			if(moveAdvice.moveDown)
 				return MoveState.PRE_JUMP_DUCK;
@@ -324,7 +323,7 @@ public class PitBrain {
 		// ... else do nothing.
 	}
 
-	private void processGroundMove(MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
+	private void processGroundMove(MoveAdvice4x2 moveAdvice, MoveState nextMoveState) {
 		// next jump changes to allowed when on ground and not advising jump move
 		if(!moveAdvice.action1)
 			isNextJumpAllowed = true;
@@ -382,7 +381,7 @@ public class PitBrain {
 			isHeadBumped = false;
 	}
 
-	private void processAirMove(FrameTime frameTime, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
+	private void processAirMove(FrameTime frameTime, MoveAdvice4x2 moveAdvice, MoveState nextMoveState) {
 		isOnGroundHeadInTile = false;
 		switch(nextMoveState) {
 			case PRE_JUMP:
@@ -433,7 +432,7 @@ public class PitBrain {
 		jumpForceTimer = jumpForceTimer > frameTime.timeDelta ? jumpForceTimer-frameTime.timeDelta : 0f;
 	}
 
-	private void processShoot(FrameTime frameTime, MoveAdvice4x4 moveAdvice) {
+	private void processShoot(FrameTime frameTime, MoveAdvice4x2 moveAdvice) {
 		if(moveAdvice.action0 && isNextShotAllowed && shootCooldownTimer <= 0f && !moveState.isDuck())
 			doShoot();
 		else if(!moveAdvice.action0)

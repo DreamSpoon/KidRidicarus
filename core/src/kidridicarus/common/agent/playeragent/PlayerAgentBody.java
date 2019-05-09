@@ -3,7 +3,7 @@ package kidridicarus.common.agent.playeragent;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 
 public abstract class PlayerAgentBody extends AgentBody {

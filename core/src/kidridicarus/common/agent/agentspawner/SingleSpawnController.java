@@ -1,7 +1,7 @@
 package kidridicarus.common.agent.agentspawner;
 
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 
 public class SingleSpawnController extends SpawnController {
 	private boolean isSpawned;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.common.agent.playeragent.PlayerSpine;
 import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.info.UInfo;

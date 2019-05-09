@@ -2,7 +2,7 @@ package kidridicarus.common.agent.optional;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 
 public interface ContactDmgTakeAgent {
 	/*

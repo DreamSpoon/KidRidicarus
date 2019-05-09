@@ -3,13 +3,13 @@ package kidridicarus.game.SMB1.agent.NPC.goomba;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -23,7 +23,8 @@ public class Goomba extends CorpusAgent implements Koopa, ContactDmgTakeAgent, B
 
 	public Goomba(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		body = new GoombaBody(this, agency.getWorld(), AP_Tool.getCenter(properties), AP_Tool.getVelocity(properties));
+		body = new GoombaBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+				AP_Tool.safeGetVelocity(properties));
 		brain = new GoombaBrain(this, (GoombaBody) body);
 		sprite = new GoombaSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {

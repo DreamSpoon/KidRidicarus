@@ -2,8 +2,8 @@ package kidridicarus.game.Metroid.agent.other.metroiddoor;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.game.Metroid.agent.other.metroiddoor.MetroidDoorBrain.MoveState;
 
 public class MetroidDoorSpriteFrameInput extends SpriteFrameInput {

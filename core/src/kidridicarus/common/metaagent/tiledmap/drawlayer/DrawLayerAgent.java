@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;

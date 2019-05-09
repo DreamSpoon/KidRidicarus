@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playerspawner.PlayerSpawner;
@@ -26,22 +26,13 @@ public class PipeWarp extends CorpusAgent {
 		}
 	}
 
+	private String targetName;
 	private Direction4 direction;
 
 	public PipeWarp(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		direction = Direction4.NONE;
-		if(properties.containsKey(CommonKV.KEY_DIRECTION)) {
-			String dir = properties.get(CommonKV.KEY_DIRECTION, "", String.class);
-			if(dir.equals("right"))
-				direction = Direction4.RIGHT;
-			else if(dir.equals("up"))
-				direction = Direction4.UP;
-			else if(dir.equals("left"))
-				direction = Direction4.LEFT;
-			else if(dir.equals("down"))
-				direction = Direction4.DOWN;
-		}
+		targetName = AP_Tool.getTargetName(properties);
+		direction = properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE);
 		body = new PipeWarpBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
 				@Override
@@ -70,11 +61,9 @@ public class PipeWarp extends CorpusAgent {
 		return false;
 	}
 
-	/*
-	 * Returns null if exit spawner is not found.
-	 */
+	// returns null if a valid exit spawner is not found
 	public PlayerSpawner getExitAgentSpawner() {
-		Agent agent = Agency.getTargetAgent(agency, properties.get(CommonKV.Script.KEY_TARGET_NAME, "", String.class));
+		Agent agent = AP_Tool.getNamedAgent(targetName, agency);
 		if(agent instanceof PlayerSpawner)
 			return (PlayerSpawner) agent;
 		return null;
@@ -132,13 +121,12 @@ public class PipeWarp extends CorpusAgent {
 		if(exitBounds == null)
 			return null;
 		// if the exit spawner doesn't have a pipe warp spawn property then quit method
-		if(!exitSpawner.getProperty(CommonKV.Spawn.KEY_SPAWN_SCRIPT, "", String.class).
-				equals(CommonKV.Spawn.VAL_SPAWN_SCRIPT_PIPEWARP))
+		if(!exitSpawner.getProperty(CommonKV.Spawn.KEY_SPAWN_TYPE, CommonKV.Spawn.VAL_SPAWN_TYPE_IMMEDIATE,
+				String.class).equals(CommonKV.Spawn.VAL_SPAWN_TYPE_PIPEWARP)) {
 			return null;
+		}
 		// if the exit spawner doesn't have a direction property then quit the method
-		Direction4 exitDir = Direction4.fromString(exitSpawner.getProperty(CommonKV.KEY_DIRECTION, "", String.class));
-		if(exitDir == null)
-			return null;
+		Direction4 exitDir = exitSpawner.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
 		// get the exit horizon offset from the exit direction
 		switch(exitDir) {
 			// sprite moves right to exit pipe

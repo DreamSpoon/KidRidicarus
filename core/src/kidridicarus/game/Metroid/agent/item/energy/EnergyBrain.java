@@ -1,7 +1,7 @@
 package kidridicarus.game.Metroid.agent.item.energy;
 
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;

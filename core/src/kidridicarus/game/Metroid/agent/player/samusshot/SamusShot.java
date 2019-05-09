@@ -3,12 +3,12 @@ package kidridicarus.game.Metroid.agent.player.samusshot;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -23,10 +23,10 @@ public class SamusShot extends CorpusAgent {
 	public SamusShot(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new SamusShotBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
-				AP_Tool.getVelocity(properties));
+				AP_Tool.safeGetVelocity(properties));
 		brain = new SamusShotBrain(this, (SamusShotBody) body,
 				properties.get(CommonKV.KEY_PARENT_AGENT, null, Samus.class),
-				properties.containsKV(CommonKV.Spawn.KEY_EXPIRE, true));
+				properties.getBoolean(CommonKV.Spawn.KEY_EXPIRE, false));
 		sprite = new SamusShotSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override

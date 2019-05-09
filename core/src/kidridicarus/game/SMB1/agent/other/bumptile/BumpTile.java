@@ -1,16 +1,15 @@
 package kidridicarus.game.SMB1.agent.other.bumptile;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
-import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent;
 import kidridicarus.game.info.SMB1_KV;
@@ -23,10 +22,10 @@ public class BumpTile extends CorpusAgent implements TileBumpTakeAgent {
 		super(agency, properties);
 		body = new BumpTileBody(agency.getWorld(), this, AP_Tool.getBounds(properties));
 		brain = new BumpTileBrain(this, (BumpTileBody) body,
-				properties.containsKV(SMB1_KV.KEY_SECRETBLOCK, CommonKV.VAL_TRUE),
-				properties.get(SMB1_KV.KEY_SPAWNITEM, "", String.class));
+				properties.getBoolean(SMB1_KV.KEY_SECRETBLOCK, false),
+				properties.getString(SMB1_KV.KEY_SPAWNITEM, ""));
 		sprite = new BumpTileSprite(agency.getAtlas(), body.getPosition(), AP_Tool.getTexRegion(properties),
-				properties.containsKV(SMB1_KV.KEY_QBLOCK, CommonKV.VAL_TRUE));
+				properties.getBoolean(SMB1_KV.KEY_QBLOCK, false));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }

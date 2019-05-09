@@ -1,6 +1,6 @@
 package kidridicarus.game.info;
 
-import kidridicarus.agency.AgentClassList;
+import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.game.KidIcarus.agent.NPC.monoeye.Monoeye;
 import kidridicarus.game.KidIcarus.agent.NPC.shemum.Shemum;
 import kidridicarus.game.KidIcarus.agent.NPC.specknose.Specknose;

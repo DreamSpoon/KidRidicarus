@@ -3,8 +3,9 @@ package kidridicarus.common.agent.roombox;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.agent.AgentPropertyListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -32,26 +33,32 @@ public class RoomBox extends CorpusAgent {
 		super(agency, properties);
 		body = new RoomBoxBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
 		roomType = RoomType.CENTER;
-		String roomTypeStr = properties.get(CommonKV.Room.KEY_TYPE, "", String.class);
+		String roomTypeStr = properties.getString(CommonKV.Room.KEY_TYPE, "");
 		if(roomTypeStr.equals(CommonKV.Room.VAL_TYPE_SCROLL_X))
 			roomType = RoomType.HSCROLL;
 		else if(roomTypeStr.equals(CommonKV.Room.VAL_TYPE_SCROLL_Y))
 			roomType = RoomType.VSCROLL;
 		else if(roomTypeStr.equals(CommonKV.Room.VAL_TYPE_CENTER))
 			roomType = RoomType.CENTER;
-		roomMusicStr = properties.get(CommonKV.Room.KEY_MUSIC, "", String.class);
+		roomMusicStr = properties.getString(CommonKV.Room.KEY_MUSIC, "");
 		agency.getEar().registerMusic(roomMusicStr);
-		viewVerticalOffset = UInfo.P2M(properties.get(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f, Float.class));
-		viewScrollDir = Direction4.fromString(properties.get(CommonKV.Room.KEY_SCROLL_DIR, "", String.class));
-		scrollVelocity = properties.get(CommonKV.Room.KEY_SCROLL_VEL, null, Float.class);
+		viewVerticalOffset = UInfo.P2M(properties.getFloat(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f));
+		viewScrollDir = Direction4.fromString(properties.getString(CommonKV.Room.KEY_SCROLL_DIR, ""));
+		scrollVelocity = properties.getFloat(CommonKV.Room.KEY_SCROLL_VEL, null);
 		if(scrollVelocity != null)
 			scrollVelocity = UInfo.P2M(scrollVelocity);
-		isScrollBoundX = properties.get(CommonKV.Room.KEY_SCROLL_BOUND_X, false, Boolean.class);
-		isScrollBoundY = properties.get(CommonKV.Room.KEY_SCROLL_BOUND_Y, false, Boolean.class);
+		isScrollBoundX = properties.getBoolean(CommonKV.Room.KEY_SCROLL_BOUND_X, false);
+		isScrollBoundY = properties.getBoolean(CommonKV.Room.KEY_SCROLL_BOUND_Y, false);
 		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
 			@Override
 			public void preRemoveAgent() { dispose(); }
 		});
+		final boolean spaceWrapX = properties.getBoolean(CommonKV.Room.KEY_SPACEWRAP_X, false);
+		agency.addAgentPropertyListener(this, CommonKV.Room.KEY_SPACEWRAP_X,
+				new AgentPropertyListener<Boolean>(Boolean.class) {
+				@Override
+				public Boolean getValue() { return spaceWrapX; }
+			});
 	}
 
 	public Vector2 getViewCenterForPos(Vector2 playerPosition, Vector2 incomingPrevCenter) {

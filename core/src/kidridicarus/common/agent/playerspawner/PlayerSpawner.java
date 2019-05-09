@@ -1,46 +1,54 @@
 package kidridicarus.common.agent.playerspawner;
 
 import kidridicarus.agency.Agency;
+import kidridicarus.agency.agent.AgentPropertyListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
 public class PlayerSpawner extends CorpusAgent {
-	private enum SpawnType { IMMEDIATE, PIPEWARP }
-
-	private boolean isMain;
-	private SpawnType spawntype;
-	private Direction4 direction;
-
 	public PlayerSpawner(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		isMain = properties.containsKey(CommonKV.Spawn.KEY_SPAWN_MAIN);
-		// immediate is the default spawn case
-		spawntype = SpawnType.IMMEDIATE;
-		String str = properties.get(CommonKV.Spawn.KEY_SPAWN_SCRIPT, "", String.class);
-		if(str.equals(CommonKV.Spawn.VAL_SPAWN_SCRIPT_PIPEWARP) && properties.containsKey(CommonKV.KEY_DIRECTION)) {
-			spawntype = SpawnType.PIPEWARP;
-			direction = Direction4.fromString(properties.get(CommonKV.KEY_DIRECTION, "", String.class));
-		}
 		body = new PlayerSpawnerBody(agency.getWorld(), this, AP_Tool.getBounds(properties));
 		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
-			@Override
-			public void preRemoveAgent() { dispose(); }
-		});
-	}
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 
-	public boolean isMainSpawn() {
-		return isMain;
-	}
-
-	public SpawnType getSpawnType() {
-		return spawntype;
-	}
-
-	public Direction4 getDirection() {
-		return direction;
+		final boolean isMainSpawner = properties.getBoolean(CommonKV.Spawn.KEY_SPAWN_MAIN, false);
+		final String strPlayerAgentClass = properties.getString(CommonKV.Spawn.KEY_PLAYER_AGENTCLASS, null);
+		final String strName = properties.getString(CommonKV.Script.KEY_NAME, null);
+		final Direction4 spawnDir = properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE);
+		// immediate is the default spawn case
+		final String spawnType = properties.getString(CommonKV.Spawn.KEY_SPAWN_TYPE,
+				CommonKV.Spawn.VAL_SPAWN_TYPE_IMMEDIATE);
+		agency.addAgentPropertyListener(this, CommonKV.Spawn.KEY_SPAWN_MAIN,
+				new AgentPropertyListener<Boolean>(Boolean.class) {
+				@Override
+				public Boolean getValue() { return isMainSpawner; }
+			});
+		agency.addAgentPropertyListener(this, CommonKV.Spawn.KEY_PLAYER_AGENTCLASS,
+				new AgentPropertyListener<String>(String.class) {
+				@Override
+				public String getValue() { return strPlayerAgentClass; }
+			});
+		agency.addAgentPropertyListener(this, CommonKV.Script.KEY_NAME,
+				new AgentPropertyListener<String>(String.class) {
+				@Override
+				public String getValue() { return strName; }
+			});
+		agency.addAgentPropertyListener(this, CommonKV.KEY_DIRECTION,
+				new AgentPropertyListener<Direction4>(Direction4.class) {
+				@Override
+				public Direction4 getValue() { return spawnDir; }
+			});
+		agency.addAgentPropertyListener(this, CommonKV.Spawn.KEY_SPAWN_TYPE,
+				new AgentPropertyListener<String>(String.class) {
+				@Override
+				public String getValue() { return spawnType; }
+			});
 	}
 }

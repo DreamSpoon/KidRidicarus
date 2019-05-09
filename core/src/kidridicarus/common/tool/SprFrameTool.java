@@ -2,8 +2,8 @@ package kidridicarus.common.tool;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 
 /*
  * Factory with convenience methods for SpriteFrameInput creation.

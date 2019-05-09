@@ -1,6 +1,6 @@
 package kidridicarus.agency.agentscript;
 
-import kidridicarus.common.tool.MoveAdvice4x4;
+import kidridicarus.common.tool.MoveAdvice4x2;
 
 /*
 /*
@@ -10,7 +10,7 @@ import kidridicarus.common.tool.MoveAdvice4x4;
  *   It can be updated on a frame by frame basis to achieve animation.
  */
 public class ScriptedAgentState {
-	public MoveAdvice4x4 scriptedMoveAdvice;
+	public MoveAdvice4x2 scriptedMoveAdvice;
 	public ScriptedBodyState scriptedBodyState;
 	public ScriptedSpriteState scriptedSpriteState;
 
@@ -22,7 +22,7 @@ public class ScriptedAgentState {
 		scriptedSpriteState = new ScriptedSpriteState();
 	}
 
-	public ScriptedAgentState(MoveAdvice4x4 scriptedMoveAdvice, ScriptedBodyState scriptedBodyState,
+	public ScriptedAgentState(MoveAdvice4x2 scriptedMoveAdvice, ScriptedBodyState scriptedBodyState,
 			ScriptedSpriteState scriptedSpriteState) {
 		this.scriptedMoveAdvice = scriptedMoveAdvice;
 		this.scriptedBodyState = scriptedBodyState;

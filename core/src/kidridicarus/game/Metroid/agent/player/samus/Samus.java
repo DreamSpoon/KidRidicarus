@@ -3,22 +3,20 @@ package kidridicarus.game.Metroid.agent.player.samus;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentPropertyListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentproperties.GetPropertyListenerDirection4;
-import kidridicarus.common.agentproperties.GetPropertyListenerInteger;
-import kidridicarus.common.agentproperties.GetPropertyListenerVector2;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.powerup.Powerup;
@@ -48,11 +46,11 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 		body = new SamusBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties), false);
 		brain = new SamusBrain(this, (SamusBody) body,
-				properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT,
-				properties.get(MetroidKV.KEY_ENERGY_SUPPLY, null, Integer.class));
+				properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE).isRight(),
+				properties.getInteger(MetroidKV.KEY_ENERGY_SUPPLY, null));
 		sprite = new SamusSprite(agency.getAtlas(), body.getPosition());
 		playerHUD = new SamusHUD(this, agency.getAtlas());
-		createGetPropertyListeners();
+		createPropertyListeners();
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
@@ -80,18 +78,21 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 			});
 	}
 
-	private void createGetPropertyListeners() {
-		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListenerVector2() {
+	private void createPropertyListeners() {
+		agency.addAgentPropertyListener(this, CommonKV.Script.KEY_SPRITE_SIZE,
+				new AgentPropertyListener<Vector2>(Vector2.class) {
 				@Override
-				public Vector2 getVector2() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
+				public Vector2 getValue() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
 			});
-		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListenerDirection4() {
+		agency.addAgentPropertyListener(this, CommonKV.KEY_DIRECTION,
+				new AgentPropertyListener<Direction4>(Direction4.class) {
 				@Override
-				public Direction4 getDirection4() { return brain.isFacingRight() ? Direction4.RIGHT : Direction4.LEFT; }
+				public Direction4 getValue() { return brain.isFacingRight() ? Direction4.RIGHT : Direction4.LEFT; }
 			});
-		addGetPropertyListener(MetroidKV.KEY_ENERGY_SUPPLY, new GetPropertyListenerInteger() {
+		agency.addAgentPropertyListener(this, MetroidKV.KEY_ENERGY_SUPPLY,
+				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
-				public Integer getInteger() { return brain.getEnergySupply(); }
+				public Integer getValue() { return brain.getEnergySupply(); }
 			});
 	}
 
@@ -102,7 +103,7 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 
 	@Override
 	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
-		return brain.onTakeDamage(agent, amount, dmgOrigin);
+		return brain.onTakeDamage(amount, dmgOrigin);
 	}
 
 	@Override

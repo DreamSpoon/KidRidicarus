@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import kidridicarus.agency.Agency;
 import kidridicarus.agency.agent.AgentRemoveListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.SolidAgent;
 import kidridicarus.common.tool.AP_Tool;

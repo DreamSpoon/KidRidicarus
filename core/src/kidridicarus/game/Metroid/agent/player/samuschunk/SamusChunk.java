@@ -3,13 +3,13 @@ package kidridicarus.game.Metroid.agent.player.samuschunk;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -30,7 +30,7 @@ public class SamusChunk extends CorpusAgent {
 		stateTimer = 0f;
 		isDrawAllowed = true;
 		body = new SamusChunkBody(this, agency.getWorld(), AP_Tool.getCenter(properties));
-		sprite = new SamusChunkSprite(agency.getAtlas(), body.getPosition(), AP_Tool.getDirection8(properties));
+		sprite = new SamusChunkSprite(agency.getAtlas(), body.getPosition(), AP_Tool.safeGetDirection8(properties));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(processFrame(frameTime)); }

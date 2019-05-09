@@ -6,7 +6,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.agentbody.AgentContactSensor;
 import kidridicarus.common.agent.optional.SolidAgent;

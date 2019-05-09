@@ -1,6 +1,6 @@
 package kidridicarus.game.KidIcarus.agent.NPC.monoeye;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;

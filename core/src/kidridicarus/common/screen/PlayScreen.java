@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.guide.Guide;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.KeyboardMapping;
@@ -56,8 +56,11 @@ public class PlayScreen implements Screen {
 		this.game = game;
 		this.currentLevelFilename = levelFilename;
 		this.initPlayerAP = null;
-		if(playerAgentProperties != null)
-			this.initPlayerAP = playerAgentProperties.cpy();
+		// save a copy of the initial player properties
+		if(playerAgentProperties != null) {
+			this.initPlayerAP = new ObjectProperties();
+			this.initPlayerAP.putAll(playerAgentProperties);
+		}
 
 		useForcedUpdateFramerate = FF_USE;
 		forcedUpdateFPS = FF_FPS;
@@ -111,7 +114,7 @@ public class PlayScreen implements Screen {
 		// (the fps may get low when user moves the screen, something loads in the background, etc.)
 		// This range of fps is needed by the game world to maintain regularity - e.g. the zoomer might
 		//  'lurch' from one place to another.
-		// TODO: Switch to constant 60 udpate fps and skip updates if render fps goes higher than 60 fps? 
+		// TODO: Switch to constant 60 update fps and skip updates if render fps goes higher than 60 fps?
 		if(delta > 1f/MIN_FPS)
 			return 1f/MIN_FPS;
 		else if(delta < 1f/MAX_FPS)

@@ -1,7 +1,7 @@
 package kidridicarus.game.Metroid.agent.other.metroiddoor;
 
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.game.info.MetroidAudio;
 

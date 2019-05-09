@@ -1,8 +1,8 @@
-package kidridicarus.agency;
+package kidridicarus.agency.tool;
 
 import java.util.HashMap;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 
 /*
  * A list of agent class name alias Strings and associated Class objects where the Class objects have,

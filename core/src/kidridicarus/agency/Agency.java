@@ -11,28 +11,25 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.AgencyIndex.AgentIter;
 import kidridicarus.agency.agencychange.AgencyChangeQueue;
+import kidridicarus.agency.agencychange.AgencyChangeQueue.AgencyChange;
 import kidridicarus.agency.agencychange.AgencyChangeQueue.AgencyChangeCallback;
-import kidridicarus.agency.agencychange.AgentDrawListenerChange;
 import kidridicarus.agency.agencychange.AgentPlaceholder;
-import kidridicarus.agency.agencychange.AgentRemoveListenerChange;
-import kidridicarus.agency.agencychange.AgentUpdateListenerChange;
-import kidridicarus.agency.agencychange.AllAgentListChange;
-import kidridicarus.agency.agent.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentPropertyListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentbody.AgentContactFilter;
 import kidridicarus.agency.agentbody.AgentContactListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.AllowOrderList.AllowOrderListIter;
 import kidridicarus.agency.tool.Ear;
 import kidridicarus.agency.tool.EarPlug;
 import kidridicarus.agency.tool.Eye;
-import kidridicarus.common.info.CommonKV;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.tool.QQ;
 
 /*
@@ -101,7 +98,7 @@ public class Agency implements Disposable {
 		globalTimer += timeDelta;
 
 		// loop through list of agents receiving updates, calling each agent's update method
-		agencyIndex.iterateThroughUpdateAgents(new AllowOrderListIter() {
+		agencyIndex.iterateThroughUpdateListeners(new AllowOrderListIter() {
 				@Override
 				public boolean iterate(Object obj) {
 					if(obj instanceof AgentUpdateListener)
@@ -113,49 +110,67 @@ public class Agency implements Disposable {
 		// apply changes
 		agencyChangeQ.process(new AgencyChangeCallback() {
 			@Override
-			public void change(Object change) {
-				if(change instanceof AllAgentListChange)
-					doAgentListChange((AllAgentListChange) change);
-				else if(change instanceof AgentUpdateListenerChange)
-					doUpdateListenerChange((AgentUpdateListenerChange) change);
-				else if(change instanceof AgentDrawListenerChange)
-					doDrawListenerChange((AgentDrawListenerChange) change);
-				else if(change instanceof AgentRemoveListenerChange)
-					doAgentRemoveListenerChange((AgentRemoveListenerChange) change);
-				else {
-					throw new IllegalArgumentException(
-							"Cannot process agency change; unknown agent change class: " + change);
+			public void change(AgencyChange change) {
+				switch(change.changeType) {
+					case AGENT_LIST:
+						doAgentListChange(change);
+						break;
+					case UPDATE_LISTENER:
+						doUpdateListenerChange(change);
+						break;
+					case DRAW_LISTENER:
+						doDrawListenerChange(change);
+						break;
+					case REMOVE_LISTENER:
+						doAgentRemoveListenerChange(change);
+						break;
+					case PROPERTY_LISTENER:
+						doAgentPropertyListenerChange(change);
+						break;
 				}
 			}
 		});
 	}
 
-	private void doAgentListChange(AllAgentListChange alc) {
-		if(alc.add)
-			agencyIndex.addAgent(alc.ap.agent);
+	private void doAgentListChange(AgencyChange change) {
+		if(change.isAdd)
+			agencyIndex.addAgent(change.ap.agent);
 		else
-			agencyIndex.removeAgent(alc.ap.agent);
+			agencyIndex.removeAgent(change.ap.agent);
 	}
 
-	private void doUpdateListenerChange(AgentUpdateListenerChange ulc) {
-		if(ulc.add)
-			agencyIndex.addUpdateListener(ulc.ap.agent, ulc.updateOrder, ulc.auListener);
+	private void doUpdateListenerChange(AgencyChange change) {
+		if(change.isAdd) {
+			agencyIndex.addUpdateListener(change.ap.agent, (AgentUpdateListener) change.otherData1,
+					(AllowOrder) change.otherData2);
+		}
 		else
-			agencyIndex.removeUpdateListener(ulc.ap.agent, ulc.auListener);
+			agencyIndex.removeUpdateListener(change.ap.agent, (AgentUpdateListener) change.otherData1);
 	}
 
-	private void doDrawListenerChange(AgentDrawListenerChange dlc) {
-		if(dlc.add)
-			agencyIndex.addDrawListener(dlc.ap.agent, dlc.drawOrder, dlc.adListener);
+	private void doDrawListenerChange(AgencyChange change) {
+		if(change.isAdd) {
+			agencyIndex.addDrawListener(change.ap.agent, (AgentDrawListener) change.otherData1,
+					(AllowOrder) change.otherData2);
+		}
 		else
-			agencyIndex.removeDrawListener(dlc.ap.agent, dlc.adListener);
+			agencyIndex.removeDrawListener(change.ap.agent, (AgentDrawListener) change.otherData1);
 	}
 
-	private void doAgentRemoveListenerChange(AgentRemoveListenerChange change) {
-		if(change.add)
-			agencyIndex.addAgentRemoveListener(change.ap.agent, change.arListener);
+	private void doAgentRemoveListenerChange(AgencyChange change) {
+		if(change.isAdd)
+			agencyIndex.addAgentRemoveListener(change.ap.agent, (AgentRemoveListener) change.otherData1);
 		else
-			agencyIndex.removeAgentRemoveListener(change.ap.agent, change.arListener);
+			agencyIndex.removeAgentRemoveListener(change.ap.agent, (AgentRemoveListener) change.otherData1);
+	}
+
+	private void doAgentPropertyListenerChange(AgencyChange change) {
+		if(change.isAdd) {
+			agencyIndex.addAgentPropertyListener(change.ap.agent, (AgentPropertyListener<?>) change.otherData1,
+					(String) change.otherData2);
+		}
+		else
+			agencyIndex.removeAgentPropertyListener(change.ap.agent, (String) change.otherData2);
 	}
 
 	/*
@@ -175,7 +190,7 @@ public class Agency implements Disposable {
 	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
 	 */
 	public Agent createAgent(ObjectProperties properties) {
-		String agentClassAlias = properties.get(AgencyKV.KEY_AGENT_CLASS, null, String.class);
+		String agentClassAlias = properties.getString(AgencyKV.KEY_AGENT_CLASS, null);
 		if(agentClassAlias == null)
 			throw new IllegalArgumentException(AgencyKV.KEY_AGENT_CLASS + " key not found in agent definition.");
 
@@ -207,16 +222,18 @@ public class Agency implements Disposable {
 		agencyChangeQ.removeAgent(new AgentPlaceholder(agent));
 	}
 
+	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
 	public void addAgentUpdateListener(Agent agent, AllowOrder updateOrder, AgentUpdateListener auListener) {
-		agencyChangeQ.addAgentUpdateListener(new AgentPlaceholder(agent), updateOrder, auListener);
+		agencyChangeQ.addAgentUpdateListener(new AgentPlaceholder(agent), auListener, updateOrder);
 	}
 
 	public void removeAgentUpdateListener(Agent agent, AgentUpdateListener auListener) {
 		agencyChangeQ.removeAgentUpdateListener(new AgentPlaceholder(agent), auListener);
 	}
 
+	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
 	public void addAgentDrawListener(Agent agent, AllowOrder drawOrder, AgentDrawListener adListener) {
-		agencyChangeQ.addAgentDrawListener(new AgentPlaceholder(agent), drawOrder, adListener);
+		agencyChangeQ.addAgentDrawListener(new AgentPlaceholder(agent), adListener, drawOrder);
 	}
 
 	public void removeAgentDrawListener(Agent agent, AgentDrawListener adListener) {
@@ -231,47 +248,14 @@ public class Agency implements Disposable {
 		agencyChangeQ.removeAgentRemoveListener(new AgentPlaceholder(arListener.getListeningAgent()), arListener);
 	}
 
-	/*
-	 * Find agents in list which contain map properties equal to the given keys/vals data.
-	 * Note: A value in the vals[] array can be set to null if the value of it's key is to be ignored (in this case,
-	 * only the key need exist in the agent's properties - the value for the key is irrelevant).
-	 */
-	public Collection<Agent> getAgentsByProperties(String[] keys, String[] vals) {
-		return getAgentsByPropertiesInt(keys, vals, false);
+	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
+	public void addAgentPropertyListener(Agent agent, String property, AgentPropertyListener<?> apListener) {
+		agencyChangeQ.addAgentPropertyListener(new AgentPlaceholder(agent), apListener, property);
 	}
 
-	/*
-	 * Same as gettAgentsByProperties, but returns only the first agent (if any) found.
-	 */
-	public Agent getFirstAgentByProperties(String[] keys, String[] vals) {
-		Collection<Agent> r = getAgentsByPropertiesInt(keys, vals, true);
-		if(r.iterator().hasNext())
-			return r.iterator().next(); 
-		return null;
-	}
-
-	/*
-	 * Never returns null. If no agent(s) are found, returns an empty collection.
-	 */
-	private Collection<Agent> getAgentsByPropertiesInt(final String[] keys, final Object[] vals,
-			final boolean firstOnly) {
-		final LinkedList<Agent> ret = new LinkedList<Agent>();
-		if(keys.length != vals.length)
-			throw new IllegalArgumentException("keys[] and vals[] arrays are not of equal length.");
-
-		// loop through list of all agents, ignoring agents that have any wrong key/value pairs 
-		agencyIndex.iterateThroughAllAgents(new AgentIter() {
-				@Override
-				public boolean iterate(Agent agent) {
-					if(agent.containsPropertyKV(keys, vals)) {
-						ret.add(agent);
-						return firstOnly;
-					}
-
-					return false;
-				}
-			});
-		return ret;
+	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
+	public void removeAgentPropertyListener(Agent agent, String property, AgentPropertyListener<?> apListener) {
+		agencyChangeQ.removeAgentPropertyListener(new AgentPlaceholder(agent), apListener, property);
 	}
 
 	public Ear getEar() {
@@ -308,6 +292,28 @@ public class Agency implements Disposable {
 		myEye.end();
 	}
 
+	public LinkedList<Agent> getAgentsByProperties(String[] keys, Object[] vals) {
+		return agencyIndex.getAgentsByProperties(keys, vals, false);
+	}
+
+	public Agent getFirstAgentByProperties(String[] keys, Object[] vals) {
+		LinkedList<Agent> aList = agencyIndex.getAgentsByProperties(keys, vals, true);
+		if(aList.isEmpty())
+			return null;
+		return aList.getFirst();
+	}
+
+	public LinkedList<Agent> getAgentsByProperty(String key, Object val) {
+		return agencyIndex.getAgentsByProperties(new String[] { key }, new Object[] { val }, false);
+	}
+
+	public Agent getFirstAgentByProperty(String key, Object val) {
+		LinkedList<Agent> aList = agencyIndex.getAgentsByProperties(new String[] { key }, new Object[] { val }, true);
+		if(aList.isEmpty())
+			return null;
+		return aList.getFirst();
+	}
+
 	public boolean isValidAgentClassAlias(String agentClassAlias) {
 		return allAgentsClassList.get(agentClassAlias) != null;
 	}
@@ -320,9 +326,7 @@ public class Agency implements Disposable {
 		return atlas;
 	}
 
-	/*
-	 * Remove all Agents but do not dispose Agency.
-	 */
+	// remove all Agents from Agency, but do not dispose Agency
 	public void removeAllAgents() {
 		agencyIndex.removeAllAgents();
 	}
@@ -336,15 +340,4 @@ public class Agency implements Disposable {
 		removeAllAgents();
 		world.dispose();
 	}
-
-	/*
-	 * Returns null if target is not found.
-	 */
-	public static Agent getTargetAgent(Agency agency, String targetName) {
-		if(targetName == null || targetName.equals(""))
-			return null;
-		return agency.getFirstAgentByProperties(
-				new String[] { CommonKV.Script.KEY_NAME }, new String[] { targetName });
-	}
-
 }

@@ -1,9 +1,9 @@
 package kidridicarus.common.agent.levelendtrigger;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
+import kidridicarus.agency.tool.FrameTime;
 
 public class LevelEndScript implements AgentScript {
 	private static final float LEVELEND_WAIT = 4f;

@@ -1,6 +1,6 @@
 package kidridicarus.game.info;
 
-import kidridicarus.agency.AgentClassList;
+import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.game.Metroid.agent.NPC.rio.Rio;
 import kidridicarus.game.Metroid.agent.NPC.skree.Skree;
 import kidridicarus.game.Metroid.agent.NPC.skreeshot.SkreeShot;

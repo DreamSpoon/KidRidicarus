@@ -3,9 +3,9 @@ package kidridicarus.common.agent.agentspawner;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.Agent;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 
@@ -18,9 +18,9 @@ public abstract class SpawnController {
 
 	public SpawnController(AgentSpawner parent, ObjectProperties properties) {
 		this.parent = parent;
-		this.spawnAgentClassAlias = properties.get(CommonKV.Spawn.KEY_SPAWN_AGENTCLASS, "", String.class);
+		this.spawnAgentClassAlias = properties.getString(CommonKV.Spawn.KEY_SPAWN_AGENTCLASS, "");
 		// spawn in random position within spawn body boundaries?
-		isRandomPos = properties.get(CommonKV.Spawn.KEY_SPAWN_RAND_POS, false, Boolean.class);
+		isRandomPos = properties.getBoolean(CommonKV.Spawn.KEY_SPAWN_RAND_POS, false);
 	}
 
 	protected Agent doSpawn(Vector2 position) {

@@ -5,13 +5,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBox;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.common.tool.QQ;
 
 public abstract class ScrollBox extends FollowBox {
 	private static final float SHORT_DIM = UInfo.P2M(4f);
@@ -24,7 +25,8 @@ public abstract class ScrollBox extends FollowBox {
 
 	public ScrollBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-		scrollDir = properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
+QQ.pr("create scrollbox");
+		scrollDir = properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE);
 		// the position is used, but the bounds width and height will be ignored
 		float width;
 		float height;

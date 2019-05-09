@@ -3,13 +3,13 @@ package kidridicarus.game.SMB1.agent.other.brickpiece;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
@@ -28,9 +28,9 @@ public class BrickPiece extends CorpusAgent {
 		super(agency, properties);
 		stateTimer = 0f;
 		body = new BrickPieceBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
-				AP_Tool.getVelocity(properties));
+				AP_Tool.safeGetVelocity(properties));
 		sprite = new BrickPieceSprite(agency.getAtlas(), body.getPosition(),
-				properties.get(CommonKV.Sprite.KEY_START_FRAME, 0, Integer.class));
+				properties.getInteger(CommonKV.Sprite.KEY_START_FRAME, 0));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(processFrame(frameTime)); }

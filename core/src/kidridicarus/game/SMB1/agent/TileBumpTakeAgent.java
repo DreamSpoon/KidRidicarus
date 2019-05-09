@@ -1,6 +1,6 @@
 package kidridicarus.game.SMB1.agent;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 
 // a tile agent that can be bumped (i.e. take bumps)
 public interface TileBumpTakeAgent {

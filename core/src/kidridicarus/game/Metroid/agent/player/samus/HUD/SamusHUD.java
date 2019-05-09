@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.common.agent.playeragent.playerHUD.PlayerHUD;
 import kidridicarus.common.agent.playeragent.playerHUD.TexRegionActor;
 import kidridicarus.game.info.MetroidGfx;

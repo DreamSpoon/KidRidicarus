@@ -1,6 +1,6 @@
 package kidridicarus.common.powerup;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 
 public abstract class Powerup {

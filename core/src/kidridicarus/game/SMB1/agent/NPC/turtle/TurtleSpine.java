@@ -2,7 +2,7 @@ package kidridicarus.game.SMB1.agent.NPC.turtle;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.SMB1.agentspine.KoopaSpine;
 

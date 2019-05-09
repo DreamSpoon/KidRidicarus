@@ -1,4 +1,4 @@
-package kidridicarus.agency;
+package kidridicarus.agency.tool;
 
 public class FrameTime {
 	public final float timeDelta;
@@ -12,10 +12,5 @@ public class FrameTime {
 	public FrameTime(float timeDelta, float timeAbs) {
 		this.timeDelta = timeDelta;
 		this.timeAbs = timeAbs;
-	}
-
-	public FrameTime(final FrameTime frameTime) {
-		this.timeDelta = frameTime.timeDelta;
-		this.timeAbs = frameTime.timeAbs;
 	}
 }

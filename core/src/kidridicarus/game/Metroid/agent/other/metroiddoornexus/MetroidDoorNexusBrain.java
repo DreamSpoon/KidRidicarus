@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
@@ -41,8 +41,7 @@ public class MetroidDoorNexusBrain {
 	private MetroidDoor getDoor(String targetNameStr) {
 		if(targetNameStr == null)
 			return null;
-		Agent agent = parent.getAgency().getFirstAgentByProperties(
-				new String[] { CommonKV.Script.KEY_NAME }, new String[] { targetNameStr });
+		Agent agent = AP_Tool.getNamedAgent(targetNameStr, parent.getAgency());
 		if(agent instanceof MetroidDoor)
 			return (MetroidDoor) agent;
 		else

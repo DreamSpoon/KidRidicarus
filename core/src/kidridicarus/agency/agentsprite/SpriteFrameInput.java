@@ -2,7 +2,7 @@ package kidridicarus.agency.agentsprite;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
+import kidridicarus.agency.tool.FrameTime;
 
 /*
  * Does not include flag for visible, because a null SpriteFrameInput signals non-visibility status.

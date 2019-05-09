@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -19,7 +19,7 @@ import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.Direction8;
-import kidridicarus.common.tool.MoveAdvice4x4;
+import kidridicarus.common.tool.MoveAdvice4x2;
 import kidridicarus.game.Metroid.agent.player.samuschunk.SamusChunk;
 import kidridicarus.game.Metroid.agent.player.samusshot.SamusShot;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
@@ -109,9 +109,8 @@ public class SamusBrain {
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
 		if(moveState != MoveState.DEAD) {
-			RoomBox nextRoom = body.getSpine().getCurrentRoom();
-			if(nextRoom != null)
-				lastKnownRoom = nextRoom;
+			if(cFrameInput.room != null)
+				lastKnownRoom = cFrameInput.room;
 		}
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
@@ -141,7 +140,7 @@ public class SamusBrain {
 		if(moveState.isBall())
 			body.getSpine().doBounceCheck();
 
-		MoveAdvice4x4 moveAdvice = supervisor.pollMoveAdvice();
+		MoveAdvice4x2 moveAdvice = supervisor.pollMoveAdvice();
 		processPowerupsReceived();
 		processDamageTaken(frameTime);
 		processHeadBouncesGiven();
@@ -220,13 +219,13 @@ public class SamusBrain {
 		}
 	}
 
-	private void processPipeWarps(MoveAdvice4x4 moveAdvice) {
+	private void processPipeWarps(MoveAdvice4x2 moveAdvice) {
 		PipeWarp pw = body.getSpine().getEnterPipeWarp(moveAdvice.getMoveDir4());
 		if(pw != null)
 			pw.use(parent);
 	}
 
-	private MoveState getNextMoveState(MoveAdvice4x4 moveAdvice) {
+	private MoveState getNextMoveState(MoveAdvice4x2 moveAdvice) {
 		if(moveState == MoveState.DEAD || body.getSpine().isContactDespawn() || energySupply <= 0)
 			return MoveState.DEAD;
 		// if [on ground flag is true] and agent isn't [moving upward while in air move state], then do ground move
@@ -239,7 +238,7 @@ public class SamusBrain {
 			return getNextMoveStateAir(moveAdvice);
 	}
 
-	private MoveState getNextMoveStateGround(MoveAdvice4x4 moveAdvice) {
+	private MoveState getNextMoveStateGround(MoveAdvice4x2 moveAdvice) {
 		if(moveState.isBall()) {
 			// if advised move up and not move down, and map tile above player is not solid, then change to stand
 			if(moveAdvice.moveUp && !moveAdvice.moveDown &&
@@ -286,7 +285,7 @@ public class SamusBrain {
 			return MoveState.RUN;
 	}
 
-	private MoveState getNextMoveStateAir(MoveAdvice4x4 moveAdvice) {
+	private MoveState getNextMoveStateAir(MoveAdvice4x2 moveAdvice) {
 		if(moveState.isBall()) {
 			// If advised to move up and not move down and tile above samus head is not solid then change to
 			// standing type state.
@@ -383,7 +382,7 @@ public class SamusBrain {
 				new Vector2(-TOP_VEL_X, TOP_VEL_Y), Direction8.UP_LEFT));
 	}
 
-	private void processGroundMove(FrameTime frameTime, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
+	private void processGroundMove(FrameTime frameTime, MoveAdvice4x2 moveAdvice, MoveState nextMoveState) {
 		// next jump changes to allowed when on ground and not advising jump move 
 		if(!moveAdvice.action1)
 			isNextJumpAllowed = true;
@@ -450,7 +449,7 @@ public class SamusBrain {
 		runStateTimer = nextMoveState.isRun() ? runStateTimer+frameTime.timeDelta : 0f;
 	}
 
-	private void processAirMove(FrameTime frameTime, MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
+	private void processAirMove(FrameTime frameTime, MoveAdvice4x2 moveAdvice, MoveState nextMoveState) {
 		// check for change of facing direction
 		if(moveAdvice.moveRight^moveAdvice.moveLeft) {
 			if(isFacingRight && moveAdvice.moveLeft)
@@ -535,7 +534,7 @@ public class SamusBrain {
 		jumpForceTimer = jumpForceTimer > frameTime.timeDelta ? jumpForceTimer-frameTime.timeDelta : 0f;
 	}
 
-	private void processShoot(FrameTime frameTime, MoveAdvice4x4 moveAdvice) {
+	private void processShoot(FrameTime frameTime, MoveAdvice4x2 moveAdvice) {
 		if(moveAdvice.action0 && shootCooldownTimer <= 0f && !moveState.isBall())
 			doShoot();
 		// decrememnt shoot cooldown timer
@@ -602,7 +601,7 @@ public class SamusBrain {
 		return true;
 	}
 
-	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
+	public boolean onTakeDamage(float amount, Vector2 dmgOrigin) {
 		// don't take more damage if dead, or if damage already taken in this frame, or if invulnerable
 		if(moveState == MoveState.DEAD || takeDamageAmount > 0f || noDamageCooldown > 0f)
 			return false;

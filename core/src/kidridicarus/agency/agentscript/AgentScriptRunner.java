@@ -1,8 +1,8 @@
 package kidridicarus.agency.agentscript;
 
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
+import kidridicarus.agency.tool.FrameTime;
 
 /*
  * *Basic* order of operations for game loop and scripts:

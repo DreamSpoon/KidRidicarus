@@ -2,7 +2,7 @@ package kidridicarus.game.Metroid.agent.NPC.skree;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.agentspine.PlayerContactNerve;

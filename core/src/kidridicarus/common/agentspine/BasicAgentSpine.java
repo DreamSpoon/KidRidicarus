@@ -5,7 +5,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.agent.despawnbox.DespawnBox;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;

@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.AgentClassList;
+import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.common.info.CommonAgentClassList;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.screen.InstructionsScreen;
@@ -72,7 +72,7 @@ public class MyKidRidicarus extends Game {
 				MetroidAgentClassList.METROID_AGENT_CLASSLIST,
 				KidIcarusAgentClassList.KIDICARUS_AGENT_CLASSLIST), atlas);
 		// show intro/instructions screen
-		setScreen(new InstructionsScreen(this, CommonInfo.GAMEMAP_FILENAME2));
+		setScreen(new InstructionsScreen(this, CommonInfo.GAMEMAP_FILENAME1));
 	}
 
 	@Override

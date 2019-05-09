@@ -2,7 +2,7 @@ package kidridicarus.game.Metroid.agent.player.samusshot;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;

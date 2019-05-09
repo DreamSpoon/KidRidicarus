@@ -2,8 +2,8 @@ package kidridicarus.game.SMB1.agent.player.mario;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.MoveState;
 import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.PowerState;

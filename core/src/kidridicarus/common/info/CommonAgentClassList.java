@@ -1,6 +1,6 @@
 package kidridicarus.common.info;
 
-import kidridicarus.agency.AgentClassList;
+import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.common.agent.agentspawner.AgentSpawner;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.despawnbox.DespawnBox;

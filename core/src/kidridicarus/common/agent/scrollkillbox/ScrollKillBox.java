@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.agent.scrollbox.ScrollBox;
 import kidridicarus.common.info.CommonKV;

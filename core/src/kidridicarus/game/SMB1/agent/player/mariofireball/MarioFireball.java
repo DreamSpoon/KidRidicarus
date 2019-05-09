@@ -3,16 +3,17 @@ package kidridicarus.game.SMB1.agent.player.mariofireball;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
+import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.SMB1.agent.player.mario.Mario;
 import kidridicarus.game.info.SMB1_KV;
 
@@ -24,7 +25,7 @@ public class MarioFireball extends CorpusAgent {
 		super(agency, properties);
 		boolean isFacingRight;
 		// fireball on right?
-		if(properties.containsKV(CommonKV.KEY_DIRECTION, CommonKV.VAL_RIGHT)) {
+		if(properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE).isRight()) {
 			isFacingRight = true;
 			body = new MarioFireballBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
 					MarioFireballSpine.MOVE_VEL.cpy().scl(1, -1));

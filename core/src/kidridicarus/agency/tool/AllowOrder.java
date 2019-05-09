@@ -7,8 +7,8 @@ package kidridicarus.agency.tool;
  */
 public class AllowOrder implements Comparable<AllowOrder> {
 	public static final AllowOrder NOT_ALLOWED = new AllowOrder(false, 0f);
-	public boolean allow;
-	float order;
+	public final boolean allow;
+	final float order;
 
 	public AllowOrder(boolean allow, float order) {
 		this.allow = allow;

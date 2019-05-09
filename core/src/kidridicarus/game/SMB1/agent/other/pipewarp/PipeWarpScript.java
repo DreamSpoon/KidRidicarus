@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp.PipeWarpHorizon;
 import kidridicarus.game.info.SMB1_Audio;
 

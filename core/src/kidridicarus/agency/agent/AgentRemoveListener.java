@@ -1,5 +1,7 @@
 package kidridicarus.agency.agent;
 
+import kidridicarus.agency.Agent;
+
 /*
  * A callback that is triggered when a specified Agent is removed from Agency.
  * listeningAgent receives the callback when otherAgent is removed.

@@ -2,7 +2,7 @@ package kidridicarus.common.agent.semisolidfloor;
 
 import com.badlogic.gdx.math.Rectangle;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.agency.agentbody.AgentContactListener.PreSolver;

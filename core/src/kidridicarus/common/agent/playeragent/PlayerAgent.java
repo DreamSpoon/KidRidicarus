@@ -1,7 +1,7 @@
 package kidridicarus.common.agent.playeragent;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 

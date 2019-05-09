@@ -1,7 +1,7 @@
 package kidridicarus.agency.agentscript;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
+import kidridicarus.agency.tool.FrameTime;
 
 public interface AgentScript {
 	/*

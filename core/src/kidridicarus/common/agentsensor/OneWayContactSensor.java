@@ -3,7 +3,7 @@ package kidridicarus.common.agentsensor;
 import java.util.LinkedList;
 import java.util.List;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.agentbody.AgentContactSensor;
 

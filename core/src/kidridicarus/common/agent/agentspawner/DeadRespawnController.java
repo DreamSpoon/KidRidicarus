@@ -1,9 +1,9 @@
 package kidridicarus.common.agent.agentspawner;
 
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 
 public class DeadRespawnController extends SpawnController {
 	private boolean isSpawnReset;

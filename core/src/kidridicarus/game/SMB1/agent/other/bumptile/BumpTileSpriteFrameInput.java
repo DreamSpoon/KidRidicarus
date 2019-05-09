@@ -2,8 +2,8 @@ package kidridicarus.game.SMB1.agent.other.bumptile;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 
 public class BumpTileSpriteFrameInput extends SpriteFrameInput {
 	public boolean isEmpty;

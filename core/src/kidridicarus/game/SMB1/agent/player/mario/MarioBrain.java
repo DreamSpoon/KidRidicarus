@@ -5,12 +5,12 @@ import java.util.LinkedList;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -20,7 +20,7 @@ import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice4x4;
+import kidridicarus.common.tool.MoveAdvice4x2;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
 import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireball;
@@ -120,9 +120,8 @@ public class MarioBrain {
 	public void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
 		if(moveState != MoveState.DEAD) {
-			RoomBox nextRoom = body.getSpine().getCurrentRoom();
-			if(nextRoom != null)
-				lastKnownRoom = nextRoom;
+			if(cFrameInput.room != null)
+				lastKnownRoom = cFrameInput.room;
 		}
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
@@ -144,7 +143,7 @@ public class MarioBrain {
 	}
 
 	public SpriteFrameInput processFrame(FrameTime frameTime) {
-		MoveAdvice4x4 moveAdvice = supervisor.pollMoveAdvice();
+		MoveAdvice4x2 moveAdvice = supervisor.pollMoveAdvice();
 
 		// if a script is running with no move advice then apply scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
@@ -154,7 +153,7 @@ public class MarioBrain {
 			// return null if scripted sprite is not visible
 			if(!supervisor.getScriptAgentState().scriptedSpriteState.visible)
 				return null;
-			return getScriptedSpriteFrameInput(supervisor.getScriptAgentState().scriptedSpriteState, frameTime);
+			return getScriptedSpriteFrameInput(frameTime);
 		}
 
 		if(!moveState.isDead()) {
@@ -200,8 +199,7 @@ public class MarioBrain {
 				(noDamageCooldown > 0f), (starPowerCooldown > 0f), didShootFireballThisFrame, Direction4.NONE);
 	}
 
-	private SpriteFrameInput getScriptedSpriteFrameInput(ScriptedSpriteState scriptedSpriteState,
-			FrameTime frameTime) {
+	private SpriteFrameInput getScriptedSpriteFrameInput(FrameTime frameTime) {
 		MoveState scriptedMoveState;
 		ScriptedSpriteState sss = supervisor.getScriptAgentState().scriptedSpriteState;
 		switch(sss.spriteState) {
@@ -228,7 +226,7 @@ public class MarioBrain {
 		}
 	}
 
-	private void processPipeWarps(MoveAdvice4x4 moveAdvice) {
+	private void processPipeWarps(MoveAdvice4x2 moveAdvice) {
 		PipeWarp pw = body.getSpine().getEnterPipeWarp(moveAdvice.getMoveDir4());
 		if(pw != null)
 			pw.use(parent);
@@ -304,7 +302,7 @@ public class MarioBrain {
 		powerState = newPowerState;
 	}
 
-	private void processFireball(MoveAdvice4x4 moveAdvice) {
+	private void processFireball(MoveAdvice4x2 moveAdvice) {
 		// check do shoot fireball
 		didShootFireballThisFrame = false;
 		if(!moveAdvice.action0) {
@@ -367,7 +365,7 @@ public class MarioBrain {
 		}
 	}
 
-	private void processGroundMove(MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
+	private void processGroundMove(MoveAdvice4x2 moveAdvice, MoveState nextMoveState) {
 		// if was not ducking and is now ducking then define ducking body
 		if(!moveState.isDuck() && nextMoveState.isDuck()) {
 			body.setMarioBodyStuff(body.getPosition().cpy().sub(DUCK_OFFSET), body.getVelocity(),
@@ -443,7 +441,7 @@ public class MarioBrain {
 			isHeadBumped = false;
 	}
 
-	private void processAirMove(MoveAdvice4x4 moveAdvice, MoveState nextMoveState) {
+	private void processAirMove(MoveAdvice4x2 moveAdvice, MoveState nextMoveState) {
 		if(!body.getSpine().isMovingInDir(Direction4.UP))
 			isJumpForceContinue = false;
 
@@ -494,7 +492,7 @@ public class MarioBrain {
 		body.getSpine().capFallVelocity();
 	}
 
-	private MoveState getNextMoveState(MoveAdvice4x4 moveAdvice) {
+	private MoveState getNextMoveState(MoveAdvice4x2 moveAdvice) {
 		if(moveState.isDead())
 			return moveState;
 		else if(body.getSpine().isContactDespawn() || body.getSpine().isContactScrollKillBox())
@@ -516,7 +514,7 @@ public class MarioBrain {
 				!moveState.isDuckNoSlide() && shootAdviceReset;
 	}
 
-	private MoveState getNextMoveStateGround(MoveAdvice4x4 moveAdvice) {
+	private MoveState getNextMoveStateGround(MoveAdvice4x2 moveAdvice) {
 		Direction4 moveDir = getMarioMoveDir(moveAdvice);
 
 		// if advised to jump and jumping is okay...
@@ -588,7 +586,7 @@ public class MarioBrain {
 		}
 	}
 
-	private Direction4 getMarioMoveDir(MoveAdvice4x4 moveAdvice) {
+	private Direction4 getMarioMoveDir(MoveAdvice4x2 moveAdvice) {
 		// if no left/right move then return unmodified direction from move advice
 		if(moveAdvice.moveLeft^moveAdvice.moveRight == false) {
 			// down takes priority over up advice
@@ -627,7 +625,7 @@ public class MarioBrain {
 		return true;
 	}
 
-	public boolean onTakeDamage(Agent agent, float amount, Vector2 dmgOrigin) {
+	public boolean onTakeDamage() {
 		// no damage taken if already took damage this frame, or if invulnerable, or if star powered, or if dead
 		if(didTakeDamage || noDamageCooldown > 0f || starPowerCooldown > 0f || moveState == MoveState.DEAD)
 			return false;

@@ -2,8 +2,8 @@ package kidridicarus.game.SMB1.agent.player.mariofireball;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireballBrain.MoveState;
 
 public class MarioFireballSpriteFrame extends SpriteFrameInput {

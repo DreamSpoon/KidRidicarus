@@ -2,8 +2,8 @@ package kidridicarus.game.KidIcarus.agent.player.pit;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.KidIcarus.agent.player.pit.PitBrain.MoveState;
 

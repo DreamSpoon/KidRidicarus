@@ -6,7 +6,7 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.agentsensor.AgentContactHoldSensor;
 import kidridicarus.common.tool.AP_Tool;

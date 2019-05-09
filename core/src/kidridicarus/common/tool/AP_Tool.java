@@ -7,9 +7,10 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.info.AgencyKV;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonKV;
 
 /*
@@ -103,10 +104,6 @@ public class AP_Tool {
 		return agent.getProperty(CommonKV.KEY_BOUNDS, null, Rectangle.class);
 	}
 
-	public static Vector2 getVelocity(ObjectProperties agentProps) {
-		return agentProps.get(CommonKV.KEY_VELOCITY, null, Vector2.class);
-	}
-
 	public static Vector2 safeGetVelocity(ObjectProperties agentProps) {
 		return agentProps.get(CommonKV.KEY_VELOCITY, new Vector2(0f, 0f), Vector2.class);
 	}
@@ -119,11 +116,26 @@ public class AP_Tool {
 		return agentProps.get(CommonKV.KEY_TEXREGION, null, TextureRegion.class);
 	}
 
-	public static Direction8 getDirection8(ObjectProperties agentProps) {
+	public static Direction4 safeGetDirection4(Agent agent) {
+		return agent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class);
+	}
+
+	public static Direction8 safeGetDirection8(ObjectProperties agentProps) {
 		return agentProps.get(CommonKV.KEY_DIRECTION, Direction8.NONE, Direction8.class);
 	}
 
-	public static boolean getFacingRight(Agent agent) {
-		return agent.getProperty(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT;
+	public static Agent getNamedAgent(String name, Agency agency) {
+		return agency.getFirstAgentByProperty(CommonKV.Script.KEY_NAME, name);
+	}
+
+	public static Agent getTargetAgent(Agent agent, Agency agency) {
+		String targetNameStr = agent.getProperty(CommonKV.Script.KEY_TARGET_NAME, null, String.class);
+		if(targetNameStr == null)
+			return null;
+		return getNamedAgent(targetNameStr, agency);
+	}
+
+	public static String getTargetName(ObjectProperties properties) {
+		return properties.getString(CommonKV.Script.KEY_TARGET_NAME, "");
 	}
 }

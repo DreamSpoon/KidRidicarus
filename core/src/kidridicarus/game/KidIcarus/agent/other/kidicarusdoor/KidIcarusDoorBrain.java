@@ -1,9 +1,9 @@
 package kidridicarus.game.KidIcarus.agent.other.kidicarusdoor;
 
-import kidridicarus.agency.Agency;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playerspawner.PlayerSpawner;
+import kidridicarus.common.tool.AP_Tool;
 
 public class KidIcarusDoorBrain {
 	private KidIcarusDoor parent;
@@ -20,16 +20,17 @@ public class KidIcarusDoorBrain {
 	}
 
 	public void processContactFrame(KidIcarusDoorBrainContactFrameInput cFrameInput) {
-		// if not opened then door cannot be used, so exit
-		if(!isOpened)
+		// exit if not opened, or if zero players contacting door
+		if(!isOpened || cFrameInput.playerContacts.isEmpty())
 			return;
-		// if the exit spawner is the wrong class then exit this method
-		Agent exitSpawner = Agency.getTargetAgent(parent.getAgency(), exitSpawnerName);
+		// exit if spawner doesn't exist or is the wrong class
+		Agent exitSpawner = AP_Tool.getNamedAgent(exitSpawnerName, parent.getAgency());
 		if(!(exitSpawner instanceof PlayerSpawner)) {
-			throw new IllegalArgumentException("Exit spawner is not instance of "+PlayerSpawner.class.getName()+
-					", exitSpawner="+exitSpawnerName);
+			throw new IllegalArgumentException("Kid Icarus Door exit spawner is not instance of "+
+					PlayerSpawner.class.getName()+", exitSpawnerName="+exitSpawnerName+
+					", exitSpawner="+exitSpawner);
 		}
-		// check for players touching door and pass them door script
+		// pass a separate door script to each player contacting this door
 		for(PlayerAgent agent : cFrameInput.playerContacts)
 			agent.getSupervisor().startScript(new KidIcarusDoorScript(parent, exitSpawner));
 	}

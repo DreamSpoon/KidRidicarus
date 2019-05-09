@@ -3,13 +3,13 @@ package kidridicarus.game.Metroid.agent.NPC.skree;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.info.CommonInfo;
@@ -25,7 +25,7 @@ public class Skree extends CorpusAgent implements ContactDmgTakeAgent {
 	public Skree(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 		body = new SkreeBody(this, agency.getWorld(), AP_Tool.getCenter(properties).cpy().add(SPECIAL_OFFSET),
-				AP_Tool.getVelocity(properties));
+				AP_Tool.safeGetVelocity(properties));
 		brain = new SkreeBrain(this, (SkreeBody) body);
 		sprite = new SkreeSprite(agency.getAtlas(), body.getPosition());
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {

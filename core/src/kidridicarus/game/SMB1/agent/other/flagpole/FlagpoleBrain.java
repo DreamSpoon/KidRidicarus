@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;

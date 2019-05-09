@@ -56,8 +56,9 @@ public class CommonKV {
 		public static final String KEY_PLAYER_AGENTCLASS = "player_agent_class";
 		// something that needs to expire immediately
 		public static final String KEY_EXPIRE = "expire";
-		public static final String KEY_SPAWN_SCRIPT = "spawn_script";
-		public static final String VAL_SPAWN_SCRIPT_PIPEWARP = "spawn_script_pipe_warp";
+		public static final String KEY_SPAWN_TYPE = "spawn_script";
+		public static final String VAL_SPAWN_TYPE_PIPEWARP = "spawn_script_pipe_warp";
+		public static final String VAL_SPAWN_TYPE_IMMEDIATE = "spawn_script_immediate";
 		public static final String KEY_SPAWN_RAND_POS = "spawn_rand_pos";
 	}
 

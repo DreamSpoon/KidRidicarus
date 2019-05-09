@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.Metroid.agent.other.metroiddoor.MetroidDoor;
 

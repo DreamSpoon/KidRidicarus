@@ -4,12 +4,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
@@ -26,7 +26,7 @@ public class VanishPoof extends CorpusAgent {
 		super(agency, properties);
 		stateTimer = 0f;
 		sprite = new VanishPoofSprite(agency.getAtlas(), AP_Tool.getCenter(properties),
-				properties.get(KidIcarusKV.KEY_IS_BIG, false, Boolean.class));
+				properties.getBoolean(KidIcarusKV.KEY_IS_BIG, false));
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(doUpdate(frameTime)); }

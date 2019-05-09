@@ -3,22 +3,20 @@ package kidridicarus.game.KidIcarus.agent.player.pit;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
+import kidridicarus.agency.agent.AgentPropertyListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agent.playeragent.PlayerAgentSupervisor;
 import kidridicarus.common.agent.roombox.RoomBox;
-import kidridicarus.common.agentproperties.GetPropertyListenerDirection4;
-import kidridicarus.common.agentproperties.GetPropertyListenerInteger;
-import kidridicarus.common.agentproperties.GetPropertyListenerVector2;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.powerup.Powerup;
@@ -53,12 +51,12 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 		body = new PitBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties), false);
 		brain = new PitBrain(this, (PitBody) body,
-				properties.get(CommonKV.KEY_DIRECTION, Direction4.NONE, Direction4.class) == Direction4.RIGHT,
-				properties.get(KidIcarusKV.KEY_HEALTH, null, Integer.class),
-				properties.get(KidIcarusKV.KEY_HEART_COUNT, null, Integer.class));
+				properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE).isRight(),
+				properties.getInteger(KidIcarusKV.KEY_HEALTH, null),
+				properties.getInteger(KidIcarusKV.KEY_HEART_COUNT, null));
 		sprite = new PitSprite(agency.getAtlas(), body.getPosition());
 		playerHUD = new PitHUD(this, agency.getAtlas());
-		createGetPropertyListeners();
+		createPropertyListeners();
 		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
@@ -86,22 +84,26 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 			});
 	}
 
-	private void createGetPropertyListeners() {
-		addGetPropertyListener(CommonKV.Script.KEY_SPRITE_SIZE, new GetPropertyListenerVector2() {
+	private void createPropertyListeners() {
+		agency.addAgentPropertyListener(this, CommonKV.Script.KEY_SPRITE_SIZE,
+				new AgentPropertyListener<Vector2>(Vector2.class) {
 				@Override
-				public Vector2 getVector2() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
+				public Vector2 getValue() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
 			});
-		addGetPropertyListener(CommonKV.KEY_DIRECTION, new GetPropertyListenerDirection4() {
+		agency.addAgentPropertyListener(this, CommonKV.KEY_DIRECTION,
+				new AgentPropertyListener<Direction4>(Direction4.class) {
 				@Override
-				public Direction4 getDirection4() { return brain.isFacingRight() ? Direction4.RIGHT : Direction4.LEFT; }
+				public Direction4 getValue() { return brain.isFacingRight() ? Direction4.RIGHT : Direction4.LEFT; }
 			});
-		addGetPropertyListener(KidIcarusKV.KEY_HEALTH, new GetPropertyListenerInteger() {
+		agency.addAgentPropertyListener(this, KidIcarusKV.KEY_HEALTH,
+				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
-				public Integer getInteger() { return brain.getHealth(); }
+				public Integer getValue() { return brain.getHealth(); }
 			});
-		addGetPropertyListener(KidIcarusKV.KEY_HEART_COUNT, new GetPropertyListenerInteger() {
+		agency.addAgentPropertyListener(this, KidIcarusKV.KEY_HEART_COUNT,
+				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
-				public Integer getInteger() { return brain.getHeartsCollected(); }
+				public Integer getValue() { return brain.getHeartsCollected(); }
 			});
 	}
 

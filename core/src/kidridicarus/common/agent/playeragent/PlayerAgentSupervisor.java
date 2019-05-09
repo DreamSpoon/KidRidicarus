@@ -2,7 +2,7 @@ package kidridicarus.common.agent.playeragent;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -13,13 +13,13 @@ import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.powerup.PowerupList;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice4x4;
+import kidridicarus.common.tool.MoveAdvice4x2;
 
 public class PlayerAgentSupervisor extends AgentSupervisor {
 	private RoomBox currentRoom;
 	private PowerupList nonCharPowerups;
 	private Vector2 lastKnownViewCenter;
-	private MoveAdvice4x4 moveAdvice;
+	private MoveAdvice4x2 moveAdvice;
 	private String nextLevelName;
 	private boolean isGameOver;
 
@@ -28,7 +28,7 @@ public class PlayerAgentSupervisor extends AgentSupervisor {
 		currentRoom = null;
 		nonCharPowerups = new PowerupList();
 		lastKnownViewCenter = null;
-		moveAdvice = new MoveAdvice4x4();
+		moveAdvice = new MoveAdvice4x2();
 		nextLevelName = null;
 		isGameOver = false;
 	}
@@ -79,13 +79,13 @@ public class PlayerAgentSupervisor extends AgentSupervisor {
 	}
 
 	@Override
-	public void setMoveAdvice(MoveAdvice4x4 moveAdvice) {
+	public void setMoveAdvice(MoveAdvice4x2 moveAdvice) {
 		this.moveAdvice.set(moveAdvice);
 	}
 
 	@Override
-	protected MoveAdvice4x4 internalPollMoveAdvice() {
-		MoveAdvice4x4 adv = moveAdvice.cpy();
+	protected MoveAdvice4x2 internalPollMoveAdvice() {
+		MoveAdvice4x2 adv = moveAdvice.cpy();
 		moveAdvice.clear();
 		return adv;
 	}

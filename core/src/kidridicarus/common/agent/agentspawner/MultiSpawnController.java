@@ -3,10 +3,10 @@ package kidridicarus.common.agent.agentspawner;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentRemoveListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -28,10 +28,10 @@ public class MultiSpawnController extends SpawnController {
 	public MultiSpawnController(AgentSpawner spawner, AgentSpawnerBody body, ObjectProperties properties) {
 		super(spawner, properties);
 		this.body = body;
-		this.multiCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_COUNT, 1, Integer.class);
-		this.multiGrpCount = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_GRP_COUNT, 1, Integer.class);
-		this.spawnRate = properties.get(CommonKV.Spawn.KEY_SPAWN_MULTI_RATE, 0f, Float.class);
-		this.scrollDir = properties.get(CommonKV.Spawn.KEY_SPAWN_SCROLL_DIR, Direction4.NONE, Direction4.class);
+		this.multiCount = properties.getInteger(CommonKV.Spawn.KEY_SPAWN_MULTI_COUNT, 1);
+		this.multiGrpCount = properties.getInteger(CommonKV.Spawn.KEY_SPAWN_MULTI_GRP_COUNT, 1);
+		this.spawnRate = properties.getFloat(CommonKV.Spawn.KEY_SPAWN_MULTI_RATE, 0f);
+		this.scrollDir = properties.getDirection4(CommonKV.Spawn.KEY_SPAWN_SCROLL_DIR, Direction4.NONE);
 		numSpawns = 0;
 		numSpawnsDisposed = 0;
 		spawnTimer = 0f;

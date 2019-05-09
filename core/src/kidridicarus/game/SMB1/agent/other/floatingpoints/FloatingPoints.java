@@ -3,12 +3,12 @@ package kidridicarus.game.SMB1.agent.other.floatingpoints;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
@@ -38,7 +38,7 @@ public class FloatingPoints extends Agent {
 		super(agency, properties);
 		originalPosition = AP_Tool.getCenter(properties);
 		// default to zero points
-		int amount = properties.get(SMB1_KV.KEY_POINTAMOUNT, 0, Integer.class);
+		int amount = properties.getInteger(SMB1_KV.KEY_POINTAMOUNT, 0);
 		Powerup.tryPushPowerup(properties.get(CommonKV.KEY_PARENT_AGENT, null, Agent.class),
 				new SMB1_Pow.PointsPow(amount));
 		stateTimer = 0f;

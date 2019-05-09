@@ -18,8 +18,7 @@ public class MonoeyeBody extends AgentBody {
 	private static final float PLAYER_SENSOR_HEIGHT = UInfo.P2M(176);
 	private static final float GRAVITY_SCALE = 0f;
 	private static final CFBitSeq AS_CFCAT = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
-	// Contact spawn trigger to detect screen scroll (TODO create a ScreenAgent that represents the player screen
-	// and allow this body to contact ScreenAgent?). 
+	// contact spawn trigger to detect screen scroll
 	private static final CFBitSeq AS_CFMASK = new CFBitSeq(CommonCF.Alias.AGENT_BIT, CommonCF.Alias.DESPAWN_BIT,
 			CommonCF.Alias.KEEP_ALIVE_BIT, CommonCF.Alias.SPAWNTRIGGER_BIT);
 

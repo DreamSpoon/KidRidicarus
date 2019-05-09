@@ -3,10 +3,10 @@ package kidridicarus.game.KidIcarus.agent.other.kidicarusdoor;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;

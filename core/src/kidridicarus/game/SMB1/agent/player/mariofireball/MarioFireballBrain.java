@@ -1,6 +1,6 @@
 package kidridicarus.game.SMB1.agent.player.mariofireball;
 
-import kidridicarus.agency.FrameTime;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;

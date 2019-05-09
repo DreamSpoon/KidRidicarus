@@ -1,20 +1,20 @@
 package kidridicarus.common.metaagent.playercontrolleragent;
 
-import java.util.Collection;
+import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import kidridicarus.agency.Agency;
-import kidridicarus.agency.FrameTime;
-import kidridicarus.agency.agent.Agent;
+import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
-import kidridicarus.agency.agentproperties.ObjectProperties;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.Eye;
+import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
 import kidridicarus.common.agent.keepalivebox.KeepAliveBox;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -30,7 +30,7 @@ import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.MoveAdvice4x4;
+import kidridicarus.common.tool.MoveAdvice4x2;
 import kidridicarus.common.tool.QQ;
 import kidridicarus.game.info.KidIcarusPow;
 import kidridicarus.game.info.MetroidPow;
@@ -42,8 +42,8 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 	private static final float KEEP_ALIVE_WIDTH = UInfo.P2M(UInfo.TILEPIX_X * 22);
 	private static final float KEEP_ALIVE_HEIGHT = UInfo.P2M(UInfo.TILEPIX_Y * 15);
 	/*
-	 * TODO Replace use of safety spawn dist (created because change from small Mario to Samus would sometimes
-	 * push Samus body out of bounds) with a check of nearby space for an empty spot to use as spawn position.
+	 * TODO Replace use of safety spawn dist - created because change from small Mario to Samus would sometimes push
+	 * new Samus body out of bounds - with a check of nearby space for an empty spot to use as safe spawn position.
 	 */
 	private static final Vector2 SAFETY_RESPAWN_OFFSET = UInfo.VectorP2M(0f, 8f);
 
@@ -51,13 +51,13 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 	private AgentSpawnTrigger spawnTrigger;
 	private KeepAliveBox keepAliveBox;
 	private ScrollBox scrollBox;
-	private MoveAdvice4x4 inputMoveAdvice;
+	private MoveAdvice4x2 inputMoveAdvice;
 	private Vector2 lastViewCenter;
 
 	public PlayerControllerAgent(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
 
-		inputMoveAdvice = new MoveAdvice4x4();
+		inputMoveAdvice = new MoveAdvice4x2();
 		lastViewCenter = new Vector2(0f, 0f);
 
 		// create the PlayerAgent that this wrapper will control
@@ -100,6 +100,8 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 
 	// get user input
 	private void doPreAgencyUpdate(FrameTime frameTime) {
+		if(playerAgent == null)
+			return;
 		// ensure spawn trigger and keep alive box follow view center
 		spawnTrigger.setTarget(getViewCenter());
 		keepAliveBox.setTarget(getViewCenter());
@@ -110,6 +112,9 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 	}
 
 	private void handleInput() {
+		if(playerAgent == null)
+			return;
+
 		inputMoveAdvice.moveRight = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_RIGHT);
 		inputMoveAdvice.moveUp = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_UP);
 		inputMoveAdvice.moveLeft = Gdx.input.isKeyPressed(KeyboardMapping.MOVE_LEFT);
@@ -131,6 +136,9 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 	}
 
 	private void doPostAgencyUpdate() {
+		if(playerAgent == null)
+			return;
+
 		// check for "out-of-character" powerup received and change to appropriate character for powerup
 		Powerup nonCharPowerup = playerAgent.getSupervisor().getNonCharPowerups().getFirst();
 		playerAgent.getSupervisor().clearNonCharPowerups();
@@ -196,7 +204,7 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 					"Current player Agent must have a position when switching power character.");
 		}
 		// save copy of facing right
-		boolean facingRight = AP_Tool.getFacingRight(playerAgent);
+		boolean facingRight = AP_Tool.safeGetDirection4(playerAgent).isRight();
 		// save copy of velocity
 		Vector2 oldVelocity = AP_Tool.getVelocity(playerAgent);
 		// remove old player character
@@ -217,6 +225,8 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 	}
 
 	private void updateCamera() {
+		if(playerAgent == null)
+			return;
 		// if player is not dead then use their current room to determine the gamecam position
 		if(!playerAgent.getSupervisor().isGameOver())
 			agency.getEye().setViewCenter(getViewCenter());
@@ -224,13 +234,12 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 
 	private Agent getMainPlayerSpawner() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
-		Collection<Agent> spawnList = agency.getAgentsByProperties(
+		LinkedList<Agent> spawnList = agency.getAgentsByProperties(
 				new String[] { AgencyKV.KEY_AGENT_CLASS, CommonKV.Spawn.KEY_SPAWN_MAIN },
-				new String[] { CommonKV.AgentClassAlias.VAL_PLAYER_SPAWNER, CommonKV.VAL_TRUE });
-		if(!spawnList.isEmpty())
-			return spawnList.iterator().next();
-		else
+				new Object[] { CommonKV.AgentClassAlias.VAL_PLAYER_SPAWNER, true });
+		if(spawnList.isEmpty())
 			return null;
+		return spawnList.getFirst();
 	}
 
 	// TODO Refactor the following two methods (spawnPlayerAgentWithProperties,
@@ -256,7 +265,7 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 		if(initPlayClass == null)
 			return null;
 		ObjectProperties playerAP = AP_Tool.createPointAP(initPlayClass, spawnPos);
-		if(spawner.getProperty(CommonKV.KEY_DIRECTION, "", String.class).equals(CommonKV.VAL_RIGHT))
+		if(AP_Tool.safeGetDirection4(spawner).isRight())
 			playerAP.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
 		return (PlayerAgent) agency.createAgent(playerAP);
 	}
@@ -274,18 +283,26 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 	}
 
 	public boolean isGameWon() {
+		if(playerAgent == null)
+			return false;
 		return playerAgent.getSupervisor().isAtLevelEnd();
 	}
 
 	public boolean isGameOver() {
+		if(playerAgent == null)
+			return false;
 		return playerAgent.getSupervisor().isGameOver();
 	}
 
 	public String getNextLevelFilename() {
+		if(playerAgent == null)
+			return null;
 		return playerAgent.getSupervisor().getNextLevelFilename();
 	}
 
 	public ObjectProperties getCopyPlayerAgentProperties() {
+		if(playerAgent == null)
+			return null;
 		return playerAgent.getAllProperties();
 	}
 

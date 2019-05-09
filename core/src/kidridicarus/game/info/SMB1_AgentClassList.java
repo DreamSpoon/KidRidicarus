@@ -1,6 +1,6 @@
 package kidridicarus.game.info;
 
-import kidridicarus.agency.AgentClassList;
+import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.game.SMB1.agent.NPC.goomba.Goomba;
 import kidridicarus.game.SMB1.agent.NPC.turtle.Turtle;
 import kidridicarus.game.SMB1.agent.item.fireflower.FireFlower;

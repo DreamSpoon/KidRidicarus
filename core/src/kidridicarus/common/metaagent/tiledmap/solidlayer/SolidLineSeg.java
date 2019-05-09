@@ -111,13 +111,10 @@ public class SolidLineSeg implements Disposable {
 	public boolean dblCheckContact(Rectangle otherBounds) {
 		Rectangle thisBounds = getBounds();
 		// if horizontal and within width bounds, or vertical and within height bounds, then return contact true
-		if((isHorizontal && thisBounds.x + thisBounds.width - UInfo.POS_EPSILON > otherBounds.x &&
+		return (isHorizontal && thisBounds.x + thisBounds.width - UInfo.POS_EPSILON > otherBounds.x &&
 				thisBounds.x + UInfo.POS_EPSILON < otherBounds.x + otherBounds.width) ||
 			(!isHorizontal && thisBounds.y + thisBounds.height - UInfo.POS_EPSILON > otherBounds.y &&
-				thisBounds.y + UInfo.POS_EPSILON < otherBounds.y + otherBounds.height)) {
-			return true;
-		}
-		return false;
+				thisBounds.y + UInfo.POS_EPSILON < otherBounds.y + otherBounds.height);
 	}
 
 	public Rectangle getBounds() {
