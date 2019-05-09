@@ -87,19 +87,19 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	private void createPropertyListeners() {
-		agency.addAgentPropertyListener(this, CommonKV.Script.KEY_SPRITE_SIZE,
+		agency.addAgentPropertyListener(this, false, CommonKV.Script.KEY_SPRITE_SIZE,
 				new AgentPropertyListener<Vector2>(Vector2.class) {
 				@Override
 				public Vector2 getValue() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
 			});
-		agency.addAgentPropertyListener(this, CommonKV.KEY_DIRECTION,
+		agency.addAgentPropertyListener(this, false, CommonKV.KEY_DIRECTION,
 				new AgentPropertyListener<Direction4>(Direction4.class) {
 				@Override
 				public Direction4 getValue() {
 					return brain.isFacingRight() ? Direction4.RIGHT : Direction4.LEFT;
 				}
 			});
-		agency.addAgentPropertyListener(this, CommonKV.Powerup.KEY_POWERUP_LIST,
+		agency.addAgentPropertyListener(this, false, CommonKV.Powerup.KEY_POWERUP_LIST,
 				new AgentPropertyListener<PowerupList>(PowerupList.class) {
 				@Override
 				public PowerupList getValue() {
@@ -117,12 +117,12 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 					return powList;
 				}
 			});
-		agency.addAgentPropertyListener(this, SMB1_KV.KEY_COINAMOUNT,
+		agency.addAgentPropertyListener(this, false, SMB1_KV.KEY_COINAMOUNT,
 				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
 				public Integer getValue() { return brain.getCoinTotal(); }
 			});
-		agency.addAgentPropertyListener(this, SMB1_KV.KEY_POINTAMOUNT,
+		agency.addAgentPropertyListener(this, false, SMB1_KV.KEY_POINTAMOUNT,
 				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
 				public Integer getValue() { return brain.getPointTotal(); }

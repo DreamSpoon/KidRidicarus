@@ -167,7 +167,7 @@ public class Agency implements Disposable {
 	private void doAgentPropertyListenerChange(AgencyChange change) {
 		if(change.isAdd) {
 			agencyIndex.addAgentPropertyListener(change.ap.agent, (AgentPropertyListener<?>) change.otherData1,
-					(String) change.otherData2);
+					(String) change.otherData2, (Boolean) change.otherData3);
 		}
 		else
 			agencyIndex.removeAgentPropertyListener(change.ap.agent, (String) change.otherData2);
@@ -249,13 +249,14 @@ public class Agency implements Disposable {
 	}
 
 	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
-	public void addAgentPropertyListener(Agent agent, String property, AgentPropertyListener<?> apListener) {
-		agencyChangeQ.addAgentPropertyListener(new AgentPlaceholder(agent), apListener, property);
+	public void addAgentPropertyListener(Agent agent, boolean isGlobal, String propertyKey,
+			AgentPropertyListener<?> apListener) {
+		agencyChangeQ.addAgentPropertyListener(new AgentPlaceholder(agent), apListener, propertyKey, isGlobal);
 	}
 
 	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
-	public void removeAgentPropertyListener(Agent agent, String property, AgentPropertyListener<?> apListener) {
-		agencyChangeQ.removeAgentPropertyListener(new AgentPlaceholder(agent), apListener, property);
+	public void removeAgentPropertyListener(Agent agent, String propertyKey, AgentPropertyListener<?> apListener) {
+		agencyChangeQ.removeAgentPropertyListener(new AgentPlaceholder(agent), apListener, propertyKey);
 	}
 
 	public Ear getEar() {

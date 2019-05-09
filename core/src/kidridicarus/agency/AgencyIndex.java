@@ -29,7 +29,7 @@ class AgencyIndex {
 	private AllowOrderList orderedDrawListeners;
 	private HashMap<AgentDrawListener, AllowOrder> allDrawListeners;
 	// sub-lists of Agents that have properties, indexed by property String
-	private HashMap<String, LinkedList<Agent>> allPropertyAgents;
+	private HashMap<String, LinkedList<Agent>> globalPropertyKeyAgents;
 
 	AgencyIndex() {
 		allAgents = new HashSet<Agent>();
@@ -37,7 +37,7 @@ class AgencyIndex {
 		allUpdateListeners = new HashMap<AgentUpdateListener, AllowOrder>();
 		orderedDrawListeners = new AllowOrderList();
 		allDrawListeners = new HashMap<AgentDrawListener, AllowOrder>();
-		allPropertyAgents = new HashMap<String, LinkedList<Agent>>();
+		globalPropertyKeyAgents = new HashMap<String, LinkedList<Agent>>();
 	}
 
 	/*
@@ -205,48 +205,62 @@ class AgencyIndex {
 		agent.myAgentRemoveListeners.clear();
 	}
 
-	public void addAgentPropertyListener(Agent agent, AgentPropertyListener<?> listener, String property) {
-		LinkedList<Agent> subList;
-		// If the property String isn't in the master list, then create an empty sub-list and add the new sub-list
-		// to the master list.
-		if(!allPropertyAgents.containsKey(property)) {
-			subList = new LinkedList<Agent>();
-			allPropertyAgents.put(property, subList);
+	public void addAgentPropertyListener(Agent agent, AgentPropertyListener<?> listener, String propertyKey,
+			Boolean isGlobal) {
+		// if the property is global then add the property key to a global list
+		if(isGlobal) {
+			LinkedList<Agent> subList;
+			// If the property String isn't in the global list, then create an empty sub-list and add the new sub-list
+			// to the global list.
+			if(!globalPropertyKeyAgents.containsKey(propertyKey)) {
+				subList = new LinkedList<Agent>();
+				globalPropertyKeyAgents.put(propertyKey, subList);
+			}
+			// otherwise get existing sub-list
+			else
+				subList = globalPropertyKeyAgents.get(propertyKey);
+			// add agent to sub-list for this property String, and associate the property listener with agent
+			subList.add(agent);
+			// keep a list of Agent property keys are global, for removal purposes
+			agent.globalPropertyKeys.add(propertyKey);
 		}
-		// otherwise get existing sub-list
-		else
-			subList = allPropertyAgents.get(property);
-		// add agent to sub-list for this property String, and associate the property listener with agent
-		subList.add(agent);
-		agent.propertyListeners.put(property, listener);
+		// add the property to the Agent locally
+		agent.propertyListeners.put(propertyKey, listener);
 	}
 
-	public void removeAgentPropertyListener(Agent agent, String property) {
-		// if the property String isn't in the master list, then throw exception
-		if(!allPropertyAgents.containsKey(property))
-			throw new IllegalArgumentException("Cannot remove listener for property=("+property+") from agent="+agent);
-		// remove agent from the property sub-list
-		LinkedList<Agent> subList = allPropertyAgents.get(property);
-		subList.remove(agent);
-		// remove the sub-list if it is empty, to prevent accumulating empty lists
-		if(subList.isEmpty())
-			allPropertyAgents.remove(property);
-		// remove property listener from agent
-		agent.propertyListeners.remove(property);
+	public void removeAgentPropertyListener(Agent agent, String propertyKey) {
+		// if the property is a global property then remove it from the global property list
+		if(agent.globalPropertyKeys.contains(propertyKey)) {
+			// if the property String isn't in the global list, then throw exception
+			if(!globalPropertyKeyAgents.containsKey(propertyKey)) {
+				throw new IllegalArgumentException("Cannot remove listener for property=("+propertyKey+
+						") from agent="+agent);
+			}
+			// remove agent from the property sub-list
+			LinkedList<Agent> subList = globalPropertyKeyAgents.get(propertyKey);
+			subList.remove(agent);
+			// remove the sub-list if it is empty, to prevent accumulating empty lists
+			if(subList.isEmpty())
+				globalPropertyKeyAgents.remove(propertyKey);
+			// remove the key from the Agent's list of global property keys
+			agent.globalPropertyKeys.remove(propertyKey);
+		}
+		// remove property listener from agent locally
+		agent.propertyListeners.remove(propertyKey);
 	}
 
 	// remove all property listeners associated with agent
 	private void removeAllAgentPropertyListeners(Agent agent) {
-		// first, remove agent from all the sub-lists that link to it via its property Strings
-		for(String str : agent.propertyListeners.keySet() ) {
-			LinkedList<Agent> subList = allPropertyAgents.get(str);
+		// first, remove agent from all the sub-lists that link to it via its global property Strings
+		for(String propertyKey : agent.globalPropertyKeys) {
+			LinkedList<Agent> subList = globalPropertyKeyAgents.get(propertyKey);
 			subList.remove(agent);
-			// If sub-list for the given property is now empty, then de-list the property to prevent accumulation
-			// of empty lists.
+			// remove the sub-list if it is empty, to prevent accumulating empty lists
 			if(subList.isEmpty())
-				allPropertyAgents.remove(str);
+				globalPropertyKeyAgents.remove(propertyKey);
 		}
-		// last, remove all property listeners from agent
+		// last, remove all property keys and listeners from agent
+		agent.globalPropertyKeys.clear();
 		agent.propertyListeners.clear();
 	}
 
@@ -263,28 +277,31 @@ class AgencyIndex {
 		LinkedList<Agent> ret = new LinkedList<Agent>();
 		if(keys.length == 0)
 			return ret;
-
-		// If a list does not yet exist for the first property, then there are zero Agents with the first property,
-		// so return an empty list.
-		if(!allPropertyAgents.containsKey(keys[0]))
+		// find the first search property key that exists in the global list
+		String matchingKey = null;
+		for(String key : keys) {
+			if(globalPropertyKeyAgents.containsKey(key)) {
+				matchingKey = key;
+				break;
+			}
+		}
+		// If a list does not yet exist for any of the search property keys, then return empty list since zero
+		// Agents have global property keys matching search criteria.
+		if(matchingKey == null)
 			return ret;
-
-		// Since the keys array might have only one property, get the first property key's sub-list by default and
-		// check the sub-list for Agents that match the given properties (test against only the given properties
+		// Check the sub-list for Agents that match the given properties (test against only the search properties
 		// for matches).
 		// TODO Iterate through shortest available sub-list, instead of defaulting to first sub-list.
-		for(Agent agent : allPropertyAgents.get(keys[0])) {
+		for(Agent agent : globalPropertyKeyAgents.get(matchingKey)) {
 			if(isPropertiesMatch(agent.propertyListeners, keys, vals)) {
 				ret.add(agent);
 				if(firstOnly)
 					return ret;
 			}
 		}
-		// Checking other sub-lists is unnecessary, because Agents found must have all the properties given - if the
-		// Agent doesn't have the first property then it doesn't match the given search criteria.
-
-		// Return list of Agents whose properties include at least all the given properties, with values that match
-		// all the given values.
+		// Return list of Agents whose properties:
+		//   -include at least all the given properties
+		//   -with values that match all the given search values
 		return ret;
 	}
 
@@ -327,20 +344,25 @@ class AgencyIndex {
 	 * https://stackoverflow.com/questions/1066589/iterate-through-a-hashmap
 	 */
 	public void removeAllAgents() {
-		for(Agent agent : allAgents)
+		for(Agent agent : allAgents) {
 			removeAllAgentRemoveListeners(agent);
+			agent.updateListeners.clear();
+			agent.drawListeners.clear();
+			agent.globalPropertyKeys.clear();
+			agent.propertyListeners.clear();
+		}
 		orderedUpdateListeners.clear();
 		allUpdateListeners.clear();
 		orderedDrawListeners.clear();
 		allDrawListeners.clear();
 		// clear all sub-lists within allPropertyAgents
-		Iterator<Entry<String, LinkedList<Agent>>> iter = allPropertyAgents.entrySet().iterator();
+		Iterator<Entry<String, LinkedList<Agent>>> iter = globalPropertyKeyAgents.entrySet().iterator();
 		while(iter.hasNext()) {
 			Entry<String, LinkedList<Agent>> pair = iter.next();
 			LinkedList<Agent> subList = pair.getValue();
 			subList.clear();
 		}
-		allPropertyAgents.clear();
+		globalPropertyKeyAgents.clear();
 		allAgents.clear();
 	}
 }

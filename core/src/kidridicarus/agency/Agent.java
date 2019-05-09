@@ -47,6 +47,7 @@ public abstract class Agent {
 	List<AgentUpdateListener> updateListeners;
 	List<AgentDrawListener> drawListeners;
 	HashMap<String, AgentPropertyListener<?>> propertyListeners;
+	List<String> globalPropertyKeys;
 	// the listeners created by this Agent, to listen for removal of other Agents
 	List<AgentRemoveListener> myAgentRemoveListeners;
 	// the listeners create by other Agents, which are listening for removal of this Agent
@@ -57,14 +58,16 @@ public abstract class Agent {
 		updateListeners = new LinkedList<AgentUpdateListener>();
 		drawListeners = new LinkedList<AgentDrawListener>();
 		propertyListeners = new HashMap<String, AgentPropertyListener<?>>();
+		globalPropertyKeys = new LinkedList<String>();
 		myAgentRemoveListeners = new LinkedList<AgentRemoveListener>();
 		otherAgentRemoveListeners = new LinkedList<AgentRemoveListener>();
 		// Agent class is set at constructor time and never changes
 		final String myAgentClass = properties.getString(AgencyKV.KEY_AGENT_CLASS, null);
-		agency.addAgentPropertyListener(this, AgencyKV.KEY_AGENT_CLASS, new AgentPropertyListener<String>(String.class) {
-				@Override
-				public String getValue() { return myAgentClass; }
-			});
+		agency.addAgentPropertyListener(this, false, AgencyKV.KEY_AGENT_CLASS,
+				new AgentPropertyListener<String>(String.class) {
+					@Override
+					public String getValue() { return myAgentClass; }
+				});
 	}
 
 	public Agency getAgency() {

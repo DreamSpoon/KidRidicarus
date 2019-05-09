@@ -44,8 +44,7 @@ public class GoombaSprite extends AgentSprite {
 				// no walking after bopping
 				setRegion(walkAnim.getKeyFrame(0f));
 				// upside down when bopped
-				if(!isFlipY())
-					flip(false,  true);
+				frameInput.flipY = true;
 				break;
 			case WALK:
 			default:

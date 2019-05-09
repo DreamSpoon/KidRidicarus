@@ -12,7 +12,6 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.common.tool.QQ;
 
 public abstract class ScrollBox extends FollowBox {
 	private static final float SHORT_DIM = UInfo.P2M(4f);
@@ -25,7 +24,6 @@ public abstract class ScrollBox extends FollowBox {
 
 	public ScrollBox(Agency agency, ObjectProperties properties) {
 		super(agency, properties);
-QQ.pr("create scrollbox");
 		scrollDir = properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE);
 		// the position is used, but the bounds width and height will be ignored
 		float width;

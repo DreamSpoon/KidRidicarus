@@ -79,17 +79,17 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	}
 
 	private void createPropertyListeners() {
-		agency.addAgentPropertyListener(this, CommonKV.Script.KEY_SPRITE_SIZE,
+		agency.addAgentPropertyListener(this, false, CommonKV.Script.KEY_SPRITE_SIZE,
 				new AgentPropertyListener<Vector2>(Vector2.class) {
 				@Override
 				public Vector2 getValue() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
 			});
-		agency.addAgentPropertyListener(this, CommonKV.KEY_DIRECTION,
+		agency.addAgentPropertyListener(this, false, CommonKV.KEY_DIRECTION,
 				new AgentPropertyListener<Direction4>(Direction4.class) {
 				@Override
 				public Direction4 getValue() { return brain.isFacingRight() ? Direction4.RIGHT : Direction4.LEFT; }
 			});
-		agency.addAgentPropertyListener(this, MetroidKV.KEY_ENERGY_SUPPLY,
+		agency.addAgentPropertyListener(this, false, MetroidKV.KEY_ENERGY_SUPPLY,
 				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
 				public Integer getValue() { return brain.getEnergySupply(); }

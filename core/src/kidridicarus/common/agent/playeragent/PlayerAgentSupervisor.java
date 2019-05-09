@@ -52,8 +52,11 @@ public class PlayerAgentSupervisor extends AgentSupervisor {
 	}
 
 	private void roomChange(RoomBox newRoom) {
-		if(newRoom != null)
-			getAgency().getEar().changeAndStartMainMusic(newRoom.getRoommusic());
+		if(newRoom != null) {
+			String strMusic = newRoom.getProperty(CommonKV.Room.KEY_MUSIC, null, String.class);
+			if(strMusic != null)
+				getAgency().getEar().changeAndStartMainMusic(strMusic);
+		}
 		// Reset the view center, so that view does not "over-scroll" if player is teleported in a one way
 		// scrolling room (e.g. using doors in Kid Icarus level 1-1).
 		lastKnownViewCenter = null;

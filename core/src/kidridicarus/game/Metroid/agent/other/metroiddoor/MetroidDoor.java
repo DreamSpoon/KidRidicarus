@@ -45,7 +45,7 @@ public class MetroidDoor extends CorpusAgent implements SolidAgent, TriggerTakeA
 			});
 
 		final String strName = properties.getString(CommonKV.Script.KEY_NAME, null);
-		agency.addAgentPropertyListener(this, CommonKV.Script.KEY_NAME,
+		agency.addAgentPropertyListener(this, true, CommonKV.Script.KEY_NAME,
 				new AgentPropertyListener<String>(String.class) {
 				@Override
 				public String getValue() { return strName; }

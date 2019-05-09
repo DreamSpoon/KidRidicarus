@@ -22,7 +22,6 @@ import kidridicarus.common.tool.Direction4;
 public class RoomBox extends CorpusAgent {
 	private enum RoomType { CENTER, HSCROLL, VSCROLL }
 	private RoomType roomType;
-	private String roomMusicStr;
 	private float viewVerticalOffset;
 	private Direction4 viewScrollDir;
 	private Float scrollVelocity;
@@ -40,8 +39,6 @@ public class RoomBox extends CorpusAgent {
 			roomType = RoomType.VSCROLL;
 		else if(roomTypeStr.equals(CommonKV.Room.VAL_TYPE_CENTER))
 			roomType = RoomType.CENTER;
-		roomMusicStr = properties.getString(CommonKV.Room.KEY_MUSIC, "");
-		agency.getEar().registerMusic(roomMusicStr);
 		viewVerticalOffset = UInfo.P2M(properties.getFloat(CommonKV.Room.KEY_VIEWOFFSET_Y, 0f));
 		viewScrollDir = Direction4.fromString(properties.getString(CommonKV.Room.KEY_SCROLL_DIR, ""));
 		scrollVelocity = properties.getFloat(CommonKV.Room.KEY_SCROLL_VEL, null);
@@ -50,11 +47,44 @@ public class RoomBox extends CorpusAgent {
 		isScrollBoundX = properties.getBoolean(CommonKV.Room.KEY_SCROLL_BOUND_X, false);
 		isScrollBoundY = properties.getBoolean(CommonKV.Room.KEY_SCROLL_BOUND_Y, false);
 		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
-			@Override
-			public void preRemoveAgent() { dispose(); }
-		});
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
+		final String roomMusicStr = properties.getString(CommonKV.Room.KEY_MUSIC, null);
+		if(roomMusicStr != null) {
+			agency.getEar().registerMusic(roomMusicStr);
+			agency.addAgentPropertyListener(this, false, CommonKV.Room.KEY_MUSIC,
+					new AgentPropertyListener<String>(String.class) {
+					@Override
+					public String getValue() { return roomMusicStr; }
+				});
+		}
+		final Direction4 scrollDir = properties.getDirection4(CommonKV.Room.KEY_SCROLL_DIR, null);
+		if(scrollDir != null) {
+			agency.addAgentPropertyListener(this, false, CommonKV.Room.KEY_SCROLL_DIR,
+					new AgentPropertyListener<Direction4>(Direction4.class) {
+					@Override
+					public Direction4 getValue() { return scrollDir; }
+				});
+		}
+		final Boolean isPushBox = properties.getBoolean(CommonKV.Room.KEY_SCROLL_PUSHBOX, null);
+		if(isPushBox != null) {
+			agency.addAgentPropertyListener(this, false, CommonKV.Room.KEY_SCROLL_PUSHBOX,
+					new AgentPropertyListener<Boolean>(Boolean.class) {
+					@Override
+					public Boolean getValue() { return isPushBox; }
+				});
+		}
+		final Boolean isKillBox = properties.getBoolean(CommonKV.Room.KEY_SCROLL_KILLBOX, null);
+		if(isKillBox != null) {
+			agency.addAgentPropertyListener(this, false, CommonKV.Room.KEY_SCROLL_KILLBOX,
+					new AgentPropertyListener<Boolean>(Boolean.class) {
+					@Override
+					public Boolean getValue() { return isKillBox; }
+				});
+		}
 		final boolean spaceWrapX = properties.getBoolean(CommonKV.Room.KEY_SPACEWRAP_X, false);
-		agency.addAgentPropertyListener(this, CommonKV.Room.KEY_SPACEWRAP_X,
+		agency.addAgentPropertyListener(this, false, CommonKV.Room.KEY_SPACEWRAP_X,
 				new AgentPropertyListener<Boolean>(Boolean.class) {
 				@Override
 				public Boolean getValue() { return spaceWrapX; }
@@ -159,9 +189,5 @@ public class RoomBox extends CorpusAgent {
 	private Vector2 getCenterViewCenter() {
 		return new Vector2(body.getBounds().x + body.getBounds().width/2f,
 				body.getBounds().y + body.getBounds().height/2f + viewVerticalOffset);
-	}
-
-	public String getRoommusic() {
-		return roomMusicStr;
 	}
 }

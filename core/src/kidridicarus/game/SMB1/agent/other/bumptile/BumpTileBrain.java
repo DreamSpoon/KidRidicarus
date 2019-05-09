@@ -122,8 +122,13 @@ public class BumpTileBrain {
 		moveStateTimer = nextMoveState == moveState ? moveStateTimer+frameTime.timeDelta : 0f;
 		moveState = nextMoveState;
 
-		return new BumpTileSpriteFrameInput(
-				body.getPosition().cpy().add(0f, getCurrentBounceHeight()), frameTime, isEmpty);
+		// not visible until solid, and not visible if secret and not bumped
+		if(moveState == MoveState.PRESOLID || (isSecret && moveState == MoveState.PREBUMP))
+			return null;
+		else {
+			return new BumpTileSpriteFrameInput(
+					body.getPosition().cpy().add(0f, getCurrentBounceHeight()), frameTime, isEmpty);
+		}
 	}
 
 	private MoveState getNextMoveState() {

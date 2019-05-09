@@ -156,9 +156,8 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 		RoomBox currentRoom = playerAgent.getCurrentRoom();
 		if(currentRoom == null)
 			return;
-
-		Direction4 scrollDir = Direction4.fromString(
-				currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_DIR, "", String.class));
+		Direction4 scrollDir =
+				currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_DIR, Direction4.NONE, Direction4.class);
 		// if current room has scroll push box property = true then create/change to scroll push box
 		if(currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_PUSHBOX, false, Boolean.class)) {
 			if(scrollBox != null && !(scrollBox instanceof ScrollPushBox)) {

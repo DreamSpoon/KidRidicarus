@@ -15,6 +15,7 @@ import kidridicarus.game.info.SMB1_Gfx;
 public class TurtleSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(24);
+	private static final Vector2 SPRITE_OFFSET = UInfo.VectorP2M(0f, 2f);
 	private static final float ANIM_SPEED = 0.25f;
 
 	private Animation<TextureRegion> walkAnim;
@@ -39,6 +40,7 @@ public class TurtleSprite extends AgentSprite {
 		if(!preFrameInput(frameInput))
 			return;
 		SpriteFrameInput frameOut = frameInput.cpy();
+		frameOut.position.add(SPRITE_OFFSET);
 		animTimer += frameInput.frameTime.timeDelta;
 		switch(((TurtleSpriteFrameInput) frameInput).moveState) {
 			case WALK:
