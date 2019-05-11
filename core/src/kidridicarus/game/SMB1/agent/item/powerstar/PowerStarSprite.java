@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
@@ -13,21 +14,21 @@ import kidridicarus.agency.tool.Eye;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.SMB1.agent.item.fireflower.SproutSpriteFrameInput;
+import kidridicarus.game.SMB1.agentsprite.SproutSpriteFrameInput;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class PowerStarSprite extends AgentSprite {
+class PowerStarSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.075f;
 
-	private PowerStar parent;
+	private AgentHooks parentHooks;
 	private AgentDrawListener myDrawListener;
 	private Animation<TextureRegion> anim;
 	private float animTimer;
 
-	public PowerStarSprite(PowerStar parent, TextureAtlas atlas, Vector2 position) {
-		this.parent = parent;
+	PowerStarSprite(AgentHooks parentHooks, TextureAtlas atlas, Vector2 position) {
+		this.parentHooks = parentHooks;
 		anim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMB1_Gfx.Item.POWER_STAR), PlayMode.LOOP);
 		animTimer = 0f;
 		final PowerStarSprite self = this;
@@ -35,7 +36,7 @@ public class PowerStarSprite extends AgentSprite {
 				@Override
 				public void draw(Eye eye) { eye.draw(self); }
 			};
-		parent.getAgency().addAgentDrawListener(parent, CommonInfo.DrawOrder.SPRITE_BOTTOM, myDrawListener);
+		parentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_BOTTOM, myDrawListener);
 		setRegion(anim.getKeyFrame(0f));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		postFrameInput(SprFrameTool.place(position));
@@ -50,12 +51,12 @@ public class PowerStarSprite extends AgentSprite {
 		// if finished sprouting then change from bottom draw order to middle draw order
 		if(((SproutSpriteFrameInput) frameInput).finishSprout) {
 			final PowerStarSprite self = this;
-			parent.getAgency().removeAgentDrawListener(parent, myDrawListener);
+			parentHooks.removeDrawListener(myDrawListener);
 			myDrawListener = new AgentDrawListener() {
 					@Override
 					public void draw(Eye eye) { eye.draw(self); }
 				};
-			parent.getAgency().addAgentDrawListener(parent, CommonInfo.DrawOrder.SPRITE_MIDDLE, myDrawListener);
+			parentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_MIDDLE, myDrawListener);
 		}
 		postFrameInput(frameInput);
 	}

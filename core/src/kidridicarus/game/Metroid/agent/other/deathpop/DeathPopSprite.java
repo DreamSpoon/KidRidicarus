@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidGfx;
 
-public class DeathPopSprite extends AgentSprite {
+class DeathPopSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(32);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(32);
 	private static final float ANIM_SPEED = 1f/60f;
@@ -20,7 +20,7 @@ public class DeathPopSprite extends AgentSprite {
 	private Animation<TextureRegion> anim;
 	private float animTimer;
 
-	public DeathPopSprite(TextureAtlas atlas, Vector2 pos) {
+	DeathPopSprite(TextureAtlas atlas, Vector2 pos) {
 		anim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(MetroidGfx.NPC.DEATH_POP),
 				PlayMode.NORMAL);
 		animTimer = 0f;

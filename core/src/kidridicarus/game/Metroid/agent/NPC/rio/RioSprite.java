@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidGfx;
 
-public class RioSprite extends AgentSprite {
+class RioSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(24);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(24);
 	private static final float ANIM_SPEED_FLAP = 2/15f;
@@ -24,7 +24,7 @@ public class RioSprite extends AgentSprite {
 	private Animation<TextureRegion> injuryAnim;
 	private float animTimer;
 
-	public RioSprite(TextureAtlas atlas, Vector2 position) {
+	RioSprite(TextureAtlas atlas, Vector2 position) {
 		flapAnim = new Animation<TextureRegion>(ANIM_SPEED_FLAP,
 				atlas.findRegions(MetroidGfx.NPC.RIO), PlayMode.LOOP);
 		swoopAnim = new Animation<TextureRegion>(ANIM_SPEED_SWOOP,

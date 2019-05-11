@@ -12,7 +12,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class MarioFireballBody extends AgentBody {
+class MarioFireballBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(5f);
 	private static final float BODY_HEIGHT = UInfo.P2M(5f);
 	private static final float AGENT_SENSOR_WIDTH = UInfo.P2M(8f);
@@ -29,7 +29,7 @@ public class MarioFireballBody extends AgentBody {
 	private MarioFireballSpine spine;
 	private Vector2 prevVelocity;
 
-	public MarioFireballBody(MarioFireball parent, World world, Vector2 position, Vector2 velocity) {
+	MarioFireballBody(MarioFireball parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -57,23 +57,23 @@ public class MarioFireballBody extends AgentBody {
 				AGENT_SENSOR_WIDTH, AGENT_SENSOR_HEIGHT);
 	}
 
-	public void postUpdate() {
+	void postUpdate() {
 		prevVelocity.set(b2body.getLinearVelocity());
 	}
 
-	public void setGravityScale(float scale) {
+	void setGravityScale(float scale) {
 		b2body.setGravityScale(scale);
 	}
 
-	public MarioFireballSpine getSpine() {
+	MarioFireballSpine getSpine() {
 		return spine;
 	}
 
-	public Vector2 getPrevVelocity() {
+	Vector2 getPrevVelocity() {
 		return prevVelocity;
 	}
 
-	public ContactDmgBrainContactFrameInput processContactFrame() {
+	ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}

@@ -16,7 +16,7 @@ import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.MoveState;
 import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.PowerState;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class MarioSprite extends AgentSprite {
+class MarioSprite extends AgentSprite {
 	private static final float SMLSPR_WIDTH = UInfo.P2M(16);
 	private static final float SMLSPR_HEIGHT = UInfo.P2M(16);
 	private static final float BIGSPR_WIDTH = UInfo.P2M(16);
@@ -76,7 +76,7 @@ public class MarioSprite extends AgentSprite {
 	private float starPowerTimer;
 	private float climbAnimTimer;
 
-	public MarioSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean isFacingRight) {
+	MarioSprite(TextureAtlas atlas, Vector2 position, PowerState parentPowerState, boolean isFacingRight) {
 		createAnimations(atlas);
 		parentPrevMoveState = MoveState.STAND;
 		parentPrevPowerState = parentPowerState;

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
@@ -13,8 +13,8 @@ import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.info.SMB1_Pow;
 
 public class MagicMushroom extends BaseMushroom {
-	public MagicMushroom(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public MagicMushroom(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 	}
 
 	@Override

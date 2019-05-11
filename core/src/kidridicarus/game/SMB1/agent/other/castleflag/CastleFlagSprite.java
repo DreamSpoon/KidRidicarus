@@ -8,11 +8,11 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class CastleFlagSprite extends AgentSprite {
+class CastleFlagSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 
-	public CastleFlagSprite(TextureAtlas atlas, Vector2 position) {
+	CastleFlagSprite(TextureAtlas atlas, Vector2 position) {
 		setRegion(atlas.findRegion(SMB1_Gfx.General.CASTLEFLAG));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		postFrameInput(SprFrameTool.place(position));

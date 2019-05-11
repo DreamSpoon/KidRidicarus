@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class FloatingPointsSprite extends Sprite {
+class FloatingPointsSprite extends Sprite {
 	private static final float DIGIT_W = UInfo.P2M(4);
 	private static final float DIGIT_H = UInfo.P2M(8);
 
@@ -21,7 +21,7 @@ public class FloatingPointsSprite extends Sprite {
 	private Sprite sprite1UP;
 	private boolean is1UP;
 
-	public FloatingPointsSprite(TextureAtlas atlas, Vector2 position, int amount, boolean is1Up) {
+	FloatingPointsSprite(TextureAtlas atlas, Vector2 position, int amount, boolean is1Up) {
 		this.position = position;
 		if(is1Up) {
 			sprite1UP = new Sprite(atlas.findRegion(SMB1_Gfx.General.DIGITS_1UP));
@@ -103,7 +103,7 @@ public class FloatingPointsSprite extends Sprite {
 		}
 	}
 
-	public void update(Vector2 position) {
+	void update(Vector2 position) {
 		this.position = position;
 	}
 

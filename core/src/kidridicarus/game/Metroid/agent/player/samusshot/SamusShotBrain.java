@@ -2,6 +2,7 @@ package kidridicarus.game.Metroid.agent.player.samusshot;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -9,26 +10,26 @@ import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.game.Metroid.agent.player.samus.Samus;
 
-public class SamusShotBrain {
+class SamusShotBrain {
 	private static final float LIVE_TIME = 0.217f;
 	private static final float EXPLODE_TIME = 3f/60f;
 	private static final float GIVE_DAMAGE = 1f;
 
 	enum MoveState { LIVE, EXPLODE, DEAD }
 
-	private SamusShot parent;
+	private Samus playerParent;
+	private AgentHooks parentHooks;
 	private SamusShotBody body;
-	private Samus superParent;
 	private MoveState moveState;
 	private float moveStateTimer;
 	private RoomBox lastKnownRoom;
 	private boolean isExploding;
 	private Vector2 startVelocity;
 
-	public SamusShotBrain(SamusShot parent, SamusShotBody body, Samus superParent, boolean isExploding) {
-		this.parent = parent;
+	SamusShotBrain(Samus playerParent, AgentHooks parentHooks, SamusShotBody body, boolean isExploding) {
+		this.playerParent = playerParent;
+		this.parentHooks = parentHooks;
 		this.body = body;
-		this.superParent = superParent;
 		this.isExploding = isExploding;
 		startVelocity = body.getVelocity().cpy();
 		moveState = isExploding ? MoveState.EXPLODE : MoveState.LIVE;
@@ -36,13 +37,13 @@ public class SamusShotBrain {
 		lastKnownRoom = null;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents) {
-			// do not damage super parent
-			if(agent == superParent)
+			// do not damage player parent
+			if(agent == playerParent)
 				continue;
-			if(agent.onTakeDamage(superParent, GIVE_DAMAGE, body.getPosition()))
+			if(agent.onTakeDamage(playerParent, GIVE_DAMAGE, body.getPosition()))
 				isExploding = true;
 		}
 		// if alive and not touching keep alive box, or if touching despawn, or if hit a solid, then explode
@@ -53,7 +54,7 @@ public class SamusShotBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public SamusShotSpriteFrameInput processFrame(FrameTime frameTime) {
+	SamusShotSpriteFrameInput processFrame(FrameTime frameTime) {
 		MoveState nextMoveState = getNextMoveState();
 		moveStateTimer = moveState != nextMoveState ? 0f : moveStateTimer+frameTime.timeDelta;
 		moveState = nextMoveState;
@@ -65,7 +66,7 @@ public class SamusShotBrain {
 				body.zeroVelocity(true, true);
 				break;
 			case DEAD:
-				parent.getAgency().removeAgent(parent);
+				parentHooks.removeThisAgent();
 				return null;
 		}
 		// do space wrap last so that contacts are maintained

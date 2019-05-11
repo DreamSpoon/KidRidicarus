@@ -9,13 +9,13 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.info.KidIcarusGfx;
 
-public class PitArrowSprite extends AgentSprite {
+class PitArrowSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(4);
 	private static final float SPRITE_OFFSET_RIGHT = UInfo.P2M(4);
 	private static final float SPRITE_OFFSET_UP = UInfo.P2M(-4);
 
-	public PitArrowSprite(TextureAtlas atlas, SpriteFrameInput frameInput) {
+	PitArrowSprite(TextureAtlas atlas, SpriteFrameInput frameInput) {
 		setRegion(atlas.findRegion(KidIcarusGfx.Player.PitArrow.ARROW));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		postFrameInput(frameInput);

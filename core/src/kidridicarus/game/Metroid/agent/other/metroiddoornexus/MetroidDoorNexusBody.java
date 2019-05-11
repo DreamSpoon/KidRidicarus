@@ -13,10 +13,10 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
 // TODO merge this body with LevelTriggerBody
-public class MetroidDoorNexusBody extends AgentBody {
+class MetroidDoorNexusBody extends AgentBody {
 	private OneWayContactSensor playerSensor;
 
-	public MetroidDoorNexusBody(MetroidDoorNexus parent, World world, Rectangle bounds) {
+	MetroidDoorNexusBody(MetroidDoorNexus parent, World world, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}
@@ -36,7 +36,7 @@ public class MetroidDoorNexusBody extends AgentBody {
 				bounds.width, bounds.height);
 	}
 
-	public List<PlayerAgent> processContactFrame() {
+	List<PlayerAgent> processContactFrame() {
 		return playerSensor.getOnlyAndResetContacts(PlayerAgent.class);
 	}
 }

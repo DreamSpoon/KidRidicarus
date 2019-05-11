@@ -2,8 +2,9 @@ package kidridicarus.game.Metroid.agent.NPC.rio;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -15,7 +16,7 @@ import kidridicarus.game.Metroid.agent.item.energy.Energy;
 import kidridicarus.game.Metroid.agent.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
 
-public class RioBrain {
+class RioBrain {
 	private static final float MAX_HEALTH = 4f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -24,6 +25,7 @@ public class RioBrain {
 	enum MoveState { FLAP, SWOOP, INJURY, DEAD }
 
 	private Rio parent;
+	private AgentHooks parentHooks;
 	private RioBody body;
 	private MoveState moveState;
 	private float moveStateTimer;
@@ -41,8 +43,9 @@ public class RioBrain {
 	private boolean despawnMe;
 	private RoomBox lastKnownRoom;
 
-	public RioBrain(Rio parent, RioBody body) {
+	RioBrain(Rio parent, AgentHooks parentHooks, RioBody body) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		moveState = MoveState.FLAP;
 		moveStateTimer = 0f;
@@ -61,7 +64,7 @@ public class RioBrain {
 		lastKnownRoom = null;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
@@ -76,7 +79,7 @@ public class RioBrain {
 			target = body.getSpine().getPlayerContact();
 			// if found a target then add an AgentRemoveListener to allow de-targeting on death of target
 			if(target != null) {
-				parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, target) {
+				parentHooks.createAgentRemoveListener(target, new AgentRemoveCallback() {
 						@Override
 						public void preRemoveAgent() { isTargetRemoved = true; }
 					});
@@ -84,10 +87,10 @@ public class RioBrain {
 		}
 	}
 
-	public RioSpriteFrameInput processFrame(FrameTime frameTime) {
+	RioSpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
-			parent.getAgency().removeAgent(parent);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 
@@ -111,7 +114,7 @@ public class RioBrain {
 					moveStateBeforeInjury = moveState;
 					velocityBeforeInjury = body.getVelocity().cpy();
 					body.zeroVelocity(true, true);
-					parent.getAgency().getEar().playSound(MetroidAudio.Sound.NPC_BIG_HIT);
+					parentHooks.getEar().playSound(MetroidAudio.Sound.NPC_BIG_HIT);
 				}
 				else if(moveStateTimer > INJURY_TIME) {
 					isInjured = false;
@@ -169,10 +172,10 @@ public class RioBrain {
 
 				break;
 			case DEAD:
-				parent.getAgency().removeAgent(parent);
-				parent.getAgency().createAgent(DeathPop.makeAP(body.getPosition()));
+				parentHooks.removeThisAgent();
+				parentHooks.createAgent(DeathPop.makeAP(body.getPosition()));
 				doPowerupDrop();
-				parent.getAgency().getEar().playSound(MetroidAudio.Sound.NPC_BIG_HIT);
+				parentHooks.getEar().playSound(MetroidAudio.Sound.NPC_BIG_HIT);
 				break;
 		}
 
@@ -206,10 +209,10 @@ public class RioBrain {
 		// exit if drop not allowed
 		if(Math.random() > ITEM_DROP_RATE)
 			return;
-		parent.getAgency().createAgent(Energy.makeAP(body.getPosition()));
+		parentHooks.createAgent(Energy.makeAP(body.getPosition()));
 	}
 
-	public boolean onTakeDamage(Agent agent, float amount) {
+	boolean onTakeDamage(Agent agent, float amount) {
 		// no damage during injury, or if dead
 		if(isInjured || isDead || !(agent instanceof PlayerAgent))
 			return false;

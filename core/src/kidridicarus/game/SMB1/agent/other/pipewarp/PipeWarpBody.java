@@ -9,11 +9,11 @@ import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class PipeWarpBody extends AgentBody {
+class PipeWarpBody extends AgentBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.PIPEWARP_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 
-	public PipeWarpBody(PipeWarp parent, World world, Rectangle bounds) {
+	PipeWarpBody(PipeWarp parent, World world, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}

@@ -1,5 +1,6 @@
 package kidridicarus.game.KidIcarus.agent.item.chalicehealth;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -8,20 +9,20 @@ import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusPow;
 
-public class ChaliceHealthBrain {
-	private ChaliceHealth parent;
+class ChaliceHealthBrain {
+	private AgentHooks parentHooks;
 	private ChaliceHealthBody body;
 	private boolean isUsed;
 	private boolean despawnMe;
 
-	public ChaliceHealthBrain(ChaliceHealth parent, ChaliceHealthBody body) {
-		this.parent = parent;
+	ChaliceHealthBrain(AgentHooks parentHooks, ChaliceHealthBody body) {
+		this.parentHooks = parentHooks;
 		this.body = body;
 		isUsed = false;
 		despawnMe = false;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// exit if used
 		if(isUsed)
 			return;
@@ -37,14 +38,14 @@ public class ChaliceHealthBrain {
 			isUsed = true;
 	}
 
-	public SpriteFrameInput processFrame() {
+	SpriteFrameInput processFrame() {
 		if(isUsed) {
-			parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.General.HEART_PICKUP);
-			parent.getAgency().removeAgent(parent);
+			parentHooks.getEar().playSound(KidIcarusAudio.Sound.General.HEART_PICKUP);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 		else if(despawnMe) {
-			parent.getAgency().removeAgent(parent);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 		return SprFrameTool.place(body.getPosition());

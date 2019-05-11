@@ -18,7 +18,7 @@ import kidridicarus.common.info.CommonCF.Alias;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SamusBody extends PlayerAgentBody {
+class SamusBody extends PlayerAgentBody {
 	private static final float STAND_BODY_WIDTH = UInfo.P2M(5f);
 	private static final float STAND_BODY_HEIGHT = UInfo.P2M(25f);
 	private static final float BALL_BODY_WIDTH = UInfo.P2M(8f);
@@ -61,14 +61,14 @@ public class SamusBody extends PlayerAgentBody {
 	private Fixture agentSensorFixture;
 	private boolean isBallForm;
 
-	public SamusBody(Samus parent, World world, Vector2 position, Vector2 velocity, boolean isBallForm) {
+	SamusBody(Samus parent, World world, Vector2 position, Vector2 velocity, boolean isBallForm) {
 		super(parent, world, position, velocity);
 		this.isBallForm = isBallForm;
 		isAgentSensorEnabled = true;
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f), velocity);
 	}
 
-	public BrainContactFrameInput processContactFrame() {
+	BrainContactFrameInput processContactFrame() {
 		return new BrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn());
 	}
@@ -137,7 +137,7 @@ public class SamusBody extends PlayerAgentBody {
 				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(getBounds().width/2f, 0f));
 	}
 
-	public void setBallForm(boolean nextIsBallForm) {
+	void setBallForm(boolean nextIsBallForm) {
 		// exit if no change in ball form
 		if(isBallForm == nextIsBallForm)
 			return;
@@ -151,7 +151,7 @@ public class SamusBody extends PlayerAgentBody {
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f), new Vector2(0f, 0f));
 	}
 
-	public void useScriptedBodyState(ScriptedBodyState sbState) {
+	void useScriptedBodyState(ScriptedBodyState sbState) {
 		if(sbState.contactEnabled && !isAgentSensorEnabled) {
 			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_ENABLED_CFCAT;
 			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_ENABLED_CFMASK;
@@ -172,11 +172,11 @@ public class SamusBody extends PlayerAgentBody {
 		b2body.setAwake(true);
 	}
 
-	public SamusSpine getSpine() {
+	SamusSpine getSpine() {
 		return spine;
 	}
 
-	public void applyDead() {
+	void applyDead() {
 		allowOnlyDeadContacts();
 		zeroVelocity(true, true);
 		b2body.setGravityScale(0f);

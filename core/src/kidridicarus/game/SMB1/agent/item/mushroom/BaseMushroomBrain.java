@@ -2,6 +2,7 @@ package kidridicarus.game.SMB1.agent.item.mushroom;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -11,11 +12,11 @@ import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
-import kidridicarus.game.SMB1.agent.item.fireflower.SproutSpriteFrameInput;
 import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.SMB1.agentsprite.SproutSpriteFrameInput;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class BaseMushroomBrain {
+class BaseMushroomBrain {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private static final float WALK_VEL = 0.6f;
@@ -23,7 +24,7 @@ public class BaseMushroomBrain {
 
 	private enum MoveState { SPROUT, WALK, END }
 
-	private BaseMushroom parent;
+	private AgentHooks parentHooks;
 	private BaseMushroomBody body;
 	private float moveStateTimer;
 	private MoveState moveState;
@@ -36,9 +37,9 @@ public class BaseMushroomBrain {
 	private boolean despawnMe;
 	private Powerup myPowerup;
 
-	public BaseMushroomBrain(BaseMushroom parent, BaseMushroomBody body, Vector2 initSpawnPosition,
+	BaseMushroomBrain(AgentHooks parentHooks, BaseMushroomBody body, Vector2 initSpawnPosition,
 			Powerup myPowerup) {
-		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		this.myPowerup = myPowerup;
 		this.initSpawnPosition = initSpawnPosition;
@@ -52,11 +53,11 @@ public class BaseMushroomBrain {
 		despawnMe = false;
 	}
 
-	public Vector2 getSproutStartPos() {
+	Vector2 getSproutStartPos() {
 		return initSpawnPosition.cpy().add(0f, SPROUT_OFFSET);
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// exit if not finished sprouting or if used
 		if(moveState == MoveState.SPROUT || powerupTaker != null)
 			return;
@@ -75,7 +76,7 @@ public class BaseMushroomBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public SproutSpriteFrameInput processFrame(FrameTime frameTime) {
+	SproutSpriteFrameInput processFrame(FrameTime frameTime) {
 		SproutSpriteFrameInput frameOut = new SproutSpriteFrameInput();
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
@@ -105,11 +106,11 @@ public class BaseMushroomBrain {
 				break;
 			case END:
 				if(powerupTaker != null) {
-					parent.getAgency().getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
-					parent.getAgency().createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(),
+					parentHooks.getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
+					parentHooks.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(),
 							(Agent) powerupTaker));
 				}
-				parent.getAgency().removeAgent(parent);
+				parentHooks.removeThisAgent();
 				return null;
 		}
 		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;
@@ -143,7 +144,7 @@ public class BaseMushroomBrain {
 			isFacingRight = !isFacingRight;
 	}
 
-	public void onTakeBump(Agent bumpingAgent) {
+	void onTakeBump(Agent bumpingAgent) {
 		// one bump per frame please
 		if(isBumped)
 			return;

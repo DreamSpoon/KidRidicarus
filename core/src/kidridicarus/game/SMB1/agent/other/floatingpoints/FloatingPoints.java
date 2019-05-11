@@ -2,7 +2,7 @@ package kidridicarus.game.SMB1.agent.other.floatingpoints;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
@@ -34,20 +34,20 @@ public class FloatingPoints extends Agent {
 	private Vector2 originalPosition;
 	private float stateTimer;
 
-	public FloatingPoints(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public FloatingPoints(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		originalPosition = AP_Tool.getCenter(properties);
 		// default to zero points
 		int amount = properties.getInteger(SMB1_KV.KEY_POINTAMOUNT, 0);
 		Powerup.tryPushPowerup(properties.get(CommonKV.KEY_PARENT_AGENT, null, Agent.class),
 				new SMB1_Pow.PointsPow(amount));
 		stateTimer = 0f;
-		pointsSprite = new FloatingPointsSprite(agency.getAtlas(), originalPosition, amount, false);
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		pointsSprite = new FloatingPointsSprite(agentHooks.getAtlas(), originalPosition, amount, false);
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { processFrame(frameTime); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(pointsSprite); }
 			});
@@ -58,7 +58,7 @@ public class FloatingPoints extends Agent {
 		pointsSprite.update(originalPosition.cpy().add(0f, yOffset));
 		stateTimer += frameTime.timeDelta;
 		if(stateTimer > FLOAT_TIME)
-			agency.removeAgent(this);
+			agentHooks.removeThisAgent();
 	}
 
 	public static ObjectProperties makeAP(int amount, boolean relative, Vector2 position, Agent parentAgent) {

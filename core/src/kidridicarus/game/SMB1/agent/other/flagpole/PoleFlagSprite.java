@@ -8,11 +8,11 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class PoleFlagSprite extends AgentSprite {
+class PoleFlagSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 
-	public PoleFlagSprite(TextureAtlas atlas, Vector2 position) {
+	PoleFlagSprite(TextureAtlas atlas, Vector2 position) {
 		setRegion(atlas.findRegion(SMB1_Gfx.General.POLEFLAG));
 		setBounds(getX(), getY(), SPRITE_WIDTH, SPRITE_HEIGHT);
 		postFrameInput(SprFrameTool.place(position));

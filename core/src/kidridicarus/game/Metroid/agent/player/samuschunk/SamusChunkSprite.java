@@ -13,7 +13,7 @@ import kidridicarus.common.tool.Direction8;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidGfx;
 
-public class SamusChunkSprite extends AgentSprite {
+class SamusChunkSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(8);
 	private static final float ANIM_SPEED = 1/30f;
@@ -21,7 +21,7 @@ public class SamusChunkSprite extends AgentSprite {
 	private Animation<TextureRegion> anim;
 	private float animTimer;
 
-	public SamusChunkSprite(TextureAtlas atlas, Vector2 position, Direction8 startDir) {
+	SamusChunkSprite(TextureAtlas atlas, Vector2 position, Direction8 startDir) {
 		animTimer = 0f;
 		switch(startDir) {
 			case DOWN_RIGHT:

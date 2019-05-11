@@ -3,7 +3,7 @@ package kidridicarus.game.SMB1.agent.other.flagpole;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -18,7 +18,7 @@ import kidridicarus.game.info.SMB1_Audio;
  * The script ends with character moving right, with expectation that level end will be triggered and
  * level end script will override this script.
  */
-public class FlagpoleScript implements AgentScript {
+class FlagpoleScript implements AgentScript {
 	private static final float SLIDE_SPEED = UInfo.P2M(96f);
 	private static final float SLIDE_WAIT_TIME = 0.4f;
 	private static final float MOVERIGHT_MAXTIME = 4f;
@@ -36,7 +36,7 @@ public class FlagpoleScript implements AgentScript {
 	private boolean isSlideFinished;
 	private float slideDuration;
 
-	public FlagpoleScript(Flagpole parent, Rectangle poleBounds, Vector2 incomingAgentSize) {
+	FlagpoleScript(Flagpole parent, Rectangle poleBounds, Vector2 incomingAgentSize) {
 		this.parent = parent;
 		this.poleBounds = poleBounds;
 		this.playerAgentSize = incomingAgentSize.cpy();
@@ -49,7 +49,8 @@ public class FlagpoleScript implements AgentScript {
 	}
 
 	@Override
-	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginAgentState) {
+	public void startScript(AgentHooks agentHooks, AgentScriptHooks scriptHooks,
+			ScriptedAgentState beginAgentState) {
 		this.beginScriptedState = beginAgentState.cpy();
 		this.scriptedState = beginAgentState.cpy();
 
@@ -66,8 +67,8 @@ public class FlagpoleScript implements AgentScript {
 		// trigger the flag drop
 		parent.onTakeTrigger();
 
-		agency.getEar().stopAllMusic();
-		agency.getEar().startSinglePlayMusic(SMB1_Audio.Music.LEVELEND);
+		agentHooks.getEar().stopAllMusic();
+		agentHooks.getEar().startSinglePlayMusic(SMB1_Audio.Music.LEVELEND);
 	}
 
 	@Override

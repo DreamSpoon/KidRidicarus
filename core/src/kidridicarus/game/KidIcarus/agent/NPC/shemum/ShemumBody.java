@@ -12,7 +12,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class ShemumBody extends AgentBody {
+class ShemumBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(6f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = BODY_WIDTH;
@@ -28,7 +28,7 @@ public class ShemumBody extends AgentBody {
 
 	private ShemumSpine spine;
 
-	public ShemumBody(Shemum parent, World world, Vector2 position, Vector2 velocity) {
+	ShemumBody(Shemum parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -58,12 +58,12 @@ public class ShemumBody extends AgentBody {
 				spine.createPlayerSensor(), PLAYER_SENSOR_WIDTH, PLAYER_SENSOR_HEIGHT, PLAYER_SENSOR_OFFSET);
 	}
 
-	public ContactDmgBrainContactFrameInput processContactFrame() {
+	ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
-	public ShemumSpine getSpine() {
+	ShemumSpine getSpine() {
 		return spine;
 	}
 }

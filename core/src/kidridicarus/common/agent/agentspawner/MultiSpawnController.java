@@ -3,8 +3,9 @@ package kidridicarus.common.agent.agentspawner;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.agentspawntrigger.AgentSpawnTrigger;
@@ -14,7 +15,7 @@ import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
-public class MultiSpawnController extends SpawnController {
+class MultiSpawnController extends SpawnController {
 	private AgentSpawnerBody body;
 	private int multiCount;
 	private int multiGrpCount;
@@ -25,8 +26,8 @@ public class MultiSpawnController extends SpawnController {
 	private int numSpawnsDisposed;
 	private float spawnTimer;
 
-	public MultiSpawnController(AgentSpawner spawner, AgentSpawnerBody body, ObjectProperties properties) {
-		super(spawner, properties);
+	MultiSpawnController(AgentSpawner parent, AgentHooks parentHooks, AgentSpawnerBody body, ObjectProperties properties) {
+		super(parent, parentHooks, properties);
 		this.body = body;
 		this.multiCount = properties.getInteger(CommonKV.Spawn.KEY_SPAWN_MULTI_COUNT, 1);
 		this.multiGrpCount = properties.getInteger(CommonKV.Spawn.KEY_SPAWN_MULTI_GRP_COUNT, 1);
@@ -38,7 +39,7 @@ public class MultiSpawnController extends SpawnController {
 	}
 
 	@Override
-	public void update(FrameTime frameTime, boolean isEnabled) {
+	void update(FrameTime frameTime, boolean isEnabled) {
 		// DEBUG: error state check
 		if(numSpawnsDisposed > numSpawns)
 			throw new IllegalStateException("numSpawnsDisposed ("+numSpawnsDisposed+" > numSpawns ("+numSpawns+")");
@@ -62,7 +63,7 @@ public class MultiSpawnController extends SpawnController {
 				else
 					spawnedAgent = doSpawn(scrollSpawnPos);
 				// track agent removal for spawn of next group
-				parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, spawnedAgent) {
+				parentHooks.createAgentRemoveListener(spawnedAgent, new AgentRemoveCallback() {
 						@Override
 						public void preRemoveAgent() { numSpawnsDisposed++; }
 					});

@@ -8,7 +8,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.DiagonalDir4;
 import kidridicarus.common.tool.Direction4;
 
-public class ZoomerSpine extends BasicAgentSpine {
+class ZoomerSpine extends BasicAgentSpine {
 	/*
 	 * MOVEVEL.x is the horizontal velocity when moving right, and
 	 * MOVEVEL.y is the vertical velocity when moving right,
@@ -27,7 +27,7 @@ public class ZoomerSpine extends BasicAgentSpine {
 	private SolidContactSensor[] crawlSense;
 	private int[] contactCounts;
 
-	public ZoomerSpine(ZoomerBody body) {
+	ZoomerSpine(ZoomerBody body) {
 		super(body);
 
 		// 4 sensors: top-right, top-left, bottom-left, bottom-right
@@ -38,7 +38,7 @@ public class ZoomerSpine extends BasicAgentSpine {
 			contactCounts[i] = 0;
 	}
 
-	public SolidContactSensor[] createCrawlSensors() {
+	SolidContactSensor[] createCrawlSensors() {
 		for(int i=0; i<crawlSense.length; i++)
 			crawlSense[i] = new SolidContactSensor(null);
 		return crawlSense;
@@ -53,7 +53,7 @@ public class ZoomerSpine extends BasicAgentSpine {
 	 * Otherwise, use info about current up direction, walk direction, body positions, to determine if the
 	 * up direction needs to rotate in order for the nerve user to 'crawl' along the current surface.
 	 */
-	public Direction4 checkUp(Direction4 curUpDir, boolean isWalkingRight, Vector2 oldBodyPosition) {
+	Direction4 checkUp(Direction4 curUpDir, boolean isWalkingRight, Vector2 oldBodyPosition) {
 		/* Get the movement delta between this frame and last frame, and apply transform according to upDir and
 		 * isWalkingRight to get movement assuming upDir is actually "UP", and isWalkingRight is true.
 		 * This transform simplifies later calculations. 
@@ -104,10 +104,8 @@ public class ZoomerSpine extends BasicAgentSpine {
 		}
 	}
 
-	/*
-	 * Based on the up direction and is walking right/left, return the movement direction.
-	 */
-	public Vector2 getMoveVec(boolean isWalkingRight, Direction4 upDir) {
+	// returns the movement direction based on the following two: [up direction], [is walking right/left]
+	Vector2 getMoveVec(boolean isWalkingRight, Direction4 upDir) {
 		if(isWalkingRight)
 			return getMoveRight(upDir);
 		else
@@ -148,7 +146,7 @@ public class ZoomerSpine extends BasicAgentSpine {
 	private static final short TOPLEFT_BIT = 2 << 1;
 	private static final short BOTTOMLEFT_BIT = 2 << 2;
 	private static final short BOTTOMRIGHT_BIT = 2 << 3;
-	public Direction4 getInitialUpDir(boolean isWalkingRight) {
+	Direction4 getInitialUpDir(boolean isWalkingRight) {
 		short totalSense = 0;
 		if(isSensorContacting(DiagonalDir4.TOPRIGHT))
 			totalSense += TOPRIGHT_BIT;

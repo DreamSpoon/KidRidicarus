@@ -1,6 +1,7 @@
 package kidridicarus.agency.agent;
 
 import kidridicarus.agency.Agent;
+import kidridicarus.agency.agencychange.AgentPlaceholder;
 
 /*
  * A callback that is triggered when a specified Agent is removed from Agency.
@@ -21,22 +22,14 @@ import kidridicarus.agency.Agent;
  *
  * TODO is postRemoveAgent a good idea?
  */
-public abstract class AgentRemoveListener {
-	public abstract void preRemoveAgent();
+public class AgentRemoveListener {
+	public final AgentPlaceholder listeningAgent;
+	public final Agent otherAgent;
+	public final AgentRemoveCallback callback;
 
-	private final Agent listeningAgent;
-	private final Agent otherAgent;
-
-	public AgentRemoveListener(Agent listeningAgent, Agent otherAgent) {
+	public AgentRemoveListener(AgentPlaceholder listeningAgent, Agent otherAgent, AgentRemoveCallback callback) {
 		this.listeningAgent = listeningAgent;
 		this.otherAgent = otherAgent;
-	}
-
-	public Agent getListeningAgent() {
-		return listeningAgent;
-	}
-
-	public Agent getOtherAgent() {
-		return otherAgent;
+		this.callback = callback;
 	}
 }

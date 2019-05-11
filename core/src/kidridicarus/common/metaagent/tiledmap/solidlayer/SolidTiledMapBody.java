@@ -9,11 +9,11 @@ import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SolidTiledMapBody extends AgentBody {
+class SolidTiledMapBody extends AgentBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SOLID_MAP_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
-	public SolidTiledMapBody(SolidTiledMapAgent parent, World world, Rectangle bounds) {
+	SolidTiledMapBody(SolidTiledMapAgent parent, World world, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}

@@ -2,11 +2,11 @@ package kidridicarus.game.Metroid.agent.player.samus;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentPropertyListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -41,55 +41,55 @@ public class Samus extends PlayerAgent implements PowerupTakeAgent, ContactDmgTa
 	private SamusSprite sprite;
 	private SamusHUD playerHUD;
 
-	public Samus(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
-		body = new SamusBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+	public Samus(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
+		body = new SamusBody(this, agentHooks.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties), false);
-		brain = new SamusBrain(this, (SamusBody) body,
+		brain = new SamusBrain(this, agentHooks, (SamusBody) body,
 				properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE).isRight(),
 				properties.getInteger(MetroidKV.KEY_ENERGY_SUPPLY, null));
-		sprite = new SamusSprite(agency.getAtlas(), body.getPosition());
-		playerHUD = new SamusHUD(this, agency.getAtlas());
+		sprite = new SamusSprite(agentHooks.getAtlas(), body.getPosition());
+		playerHUD = new SamusHUD(this, agentHooks.getAtlas());
 		createPropertyListeners();
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((SamusBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					sprite.processFrame(brain.processFrame(frameTime));
 					((PlayerAgentBody) body).resetPrevValues();
 				}
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { playerHUD.draw(eye); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});
 	}
 
 	private void createPropertyListeners() {
-		agency.addAgentPropertyListener(this, false, CommonKV.Script.KEY_SPRITE_SIZE,
+		agentHooks.addPropertyListener(false, CommonKV.Script.KEY_SPRITE_SIZE,
 				new AgentPropertyListener<Vector2>(Vector2.class) {
 				@Override
 				public Vector2 getValue() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
 			});
-		agency.addAgentPropertyListener(this, false, CommonKV.KEY_DIRECTION,
+		agentHooks.addPropertyListener(false, CommonKV.KEY_DIRECTION,
 				new AgentPropertyListener<Direction4>(Direction4.class) {
 				@Override
 				public Direction4 getValue() { return brain.isFacingRight() ? Direction4.RIGHT : Direction4.LEFT; }
 			});
-		agency.addAgentPropertyListener(this, false, MetroidKV.KEY_ENERGY_SUPPLY,
+		agentHooks.addPropertyListener(false, MetroidKV.KEY_ENERGY_SUPPLY,
 				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
 				public Integer getValue() { return brain.getEnergySupply(); }

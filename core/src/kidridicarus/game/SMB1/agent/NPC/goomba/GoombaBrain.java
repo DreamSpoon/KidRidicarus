@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -16,21 +17,22 @@ import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class GoombaBrain {
+class GoombaBrain {
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float GOOMBA_SQUISH_TIME = 2f;
 	private static final float GOOMBA_BUMP_FALL_TIME = 6f;
 
 	enum MoveState { WALK, FALL, DEAD_BUMP, DEAD_SQUISH;
-		public boolean equalsAny(MoveState ...otherStates) {
+		boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-		public boolean isDead() { return this.equalsAny(DEAD_BUMP, DEAD_SQUISH); }
+		boolean isDead() { return this.equalsAny(DEAD_BUMP, DEAD_SQUISH); }
 	}
 
 	private enum DeadState { NONE, BUMP, SQUISH }
 
 	private Goomba parent;
+	private AgentHooks parentHooks;
 	private GoombaBody body;
 	private float moveStateTimer;
 	private MoveState moveState;
@@ -41,8 +43,9 @@ public class GoombaBrain {
 	private boolean despawnMe;
 	private RoomBox lastKnownRoom;
 
-	public GoombaBrain(Goomba parent, GoombaBody body) {
+	GoombaBrain(Goomba parent, AgentHooks parentHooks, GoombaBody body) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		moveStateTimer = 0f;
 		moveState = MoveState.WALK;
@@ -54,7 +57,7 @@ public class GoombaBrain {
 		lastKnownRoom = null;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		if(moveState.isDead())
 			return;
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
@@ -94,10 +97,10 @@ public class GoombaBrain {
 			nextDeadState = DeadState.SQUISH;
 	}
 
-	public GoombaSpriteFrameInput processFrame(FrameTime frameTime) {
+	GoombaSpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
-			parent.getAgency().removeAgent(parent);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 
@@ -119,7 +122,7 @@ public class GoombaBrain {
 					startBump();
 				// wait a short time and disappear
 				else if(moveStateTimer > GOOMBA_BUMP_FALL_TIME)
-					parent.getAgency().removeAgent(parent);
+					parentHooks.removeThisAgent();
 				break;
 			case DEAD_SQUISH:
 				// new squish?
@@ -127,7 +130,7 @@ public class GoombaBrain {
 					startSquish();
 				// wait a short time and disappear
 				else if(moveStateTimer > GOOMBA_SQUISH_TIME)
-					parent.getAgency().removeAgent(parent);
+					parentHooks.removeThisAgent();
 				break;
 		}
 
@@ -154,19 +157,19 @@ public class GoombaBrain {
 	private void startSquish() {
 		body.getSpine().doDeadSquishContactsAndMove();
 		if(perp != null)
-			parent.getAgency().createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
-		parent.getAgency().getEar().playSound(SMB1_Audio.Sound.STOMP);
+			parentHooks.createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
+		parentHooks.getEar().playSound(SMB1_Audio.Sound.STOMP);
 	}
 
 	private void startBump() {
 		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
 		if(perp != null)
-			parent.getAgency().createAgent(FloatingPoints.makeAP(100, false, body.getPosition(), perp));
-		parent.getAgency().getEar().playSound(SMB1_Audio.Sound.KICK);
+			parentHooks.createAgent(FloatingPoints.makeAP(100, false, body.getPosition(), perp));
+		parentHooks.getEar().playSound(SMB1_Audio.Sound.KICK);
 	}
 
 	// assume any amount of damage kills, for now...
-	public boolean onTakeDamage(Agent agent, Vector2 dmgOrigin) {
+	boolean onTakeDamage(Agent agent, Vector2 dmgOrigin) {
 		// if dead already or the damage is from the same team then return no damage taken
 		if(nextDeadState != DeadState.NONE || !(agent instanceof PlayerAgent))
 			return false;
@@ -177,7 +180,7 @@ public class GoombaBrain {
 		return true;
 	}
 
-	public void onTakeBump(Agent agent) {
+	void onTakeBump(Agent agent) {
 		// no dead bumps
 		if(nextDeadState != DeadState.NONE)
 			return;

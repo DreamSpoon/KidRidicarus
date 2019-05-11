@@ -10,11 +10,11 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SpinCoinBody extends AgentBody {
+class SpinCoinBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(7f);
 	private static final float BODY_HEIGHT = UInfo.P2M(7f);
 
-	public SpinCoinBody(Agent parent, World world, Vector2 position, Vector2 velocity) {
+	SpinCoinBody(Agent parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f), velocity);
 	}

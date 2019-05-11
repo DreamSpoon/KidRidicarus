@@ -1,5 +1,6 @@
 package kidridicarus.game.KidIcarus.agent.NPC.shemum;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.FrameTime;
@@ -14,7 +15,7 @@ import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class ShemumBrain {
+class ShemumBrain {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 1;
 	private static final float STRIKE_DELAY = 1/6f;
@@ -23,6 +24,7 @@ public class ShemumBrain {
 	private enum MoveState { WALK, FALL1, FALL2, STRIKE_GROUND, DEAD }
 
 	private Shemum parent;
+	private AgentHooks parentHooks;
 	private ShemumBody body;
 	private float moveStateTimer;
 	private MoveState moveState;
@@ -31,8 +33,9 @@ public class ShemumBrain {
 	private boolean despawnMe;
 	private RoomBox lastKnownRoom;
 
-	public ShemumBrain(Shemum parent, ShemumBody body) {
+	ShemumBrain(Shemum parent, AgentHooks parentHooks, ShemumBody body) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		moveStateTimer = 0f;
 		moveState = MoveState.WALK;
@@ -42,7 +45,7 @@ public class ShemumBrain {
 		lastKnownRoom = null;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
@@ -54,10 +57,10 @@ public class ShemumBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public SpriteFrameInput processFrame(FrameTime frameTime) {
+	SpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
-			parent.getAgency().removeAgent(parent);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 
@@ -88,10 +91,10 @@ public class ShemumBrain {
 				}
 				break;
 			case DEAD:
-				parent.getAgency().createAgent(VanishPoof.makeAP(body.getPosition(), false));
-				parent.getAgency().createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
-				parent.getAgency().removeAgent(parent);
-				parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
+				parentHooks.createAgent(VanishPoof.makeAP(body.getPosition(), false));
+				parentHooks.createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
+				parentHooks.removeThisAgent();
+				parentHooks.getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
 				break;
 		}
 
@@ -135,7 +138,7 @@ public class ShemumBrain {
 	}
 
 	// assume any amount of damage kills, for now...
-	public boolean onTakeDamage(Agent agent) {
+	boolean onTakeDamage(Agent agent) {
 		// if dead already or the damage is from the same team then return no damage taken
 		if(!isAlive || !(agent instanceof PlayerAgent))
 			return false;
@@ -144,7 +147,7 @@ public class ShemumBrain {
 		return true;
 	}
 
-	public void onTakeBump() {
+	void onTakeBump() {
 		isAlive = false;
 	}
 }

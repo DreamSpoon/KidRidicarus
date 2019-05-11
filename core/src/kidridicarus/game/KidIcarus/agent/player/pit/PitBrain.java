@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
@@ -26,7 +27,7 @@ import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusPow;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class PitBrain {
+class PitBrain {
 	private static final int MAX_HEARTS_COLLECTED = 999;
 	private static final int MAX_HEALTH = 7;
 	private static final int START_HEALTH = 7;
@@ -44,18 +45,19 @@ public class PitBrain {
 	enum MoveState {
 		STAND, AIMUP, WALK, DUCK, PRE_JUMP, PRE_JUMP_DUCK, PRE_JUMP_AIMUP, JUMP, JUMP_DUCK, JUMP_AIMUP, CLIMB, DEAD;
 
-		public boolean equalsAny(MoveState ...otherStates) {
+		boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-		public boolean isGround() { return this.equalsAny(STAND, WALK, DUCK, AIMUP); }
-		public boolean isDuck() { return this.equalsAny(DUCK, PRE_JUMP_DUCK, JUMP_DUCK); }
-		public boolean isPreJump() { return this.equalsAny(PRE_JUMP, PRE_JUMP_DUCK, PRE_JUMP_AIMUP); }
-		public boolean isJump() { return this.equalsAny(PRE_JUMP, PRE_JUMP_DUCK, PRE_JUMP_AIMUP, JUMP,
+		boolean isGround() { return this.equalsAny(STAND, WALK, DUCK, AIMUP); }
+		boolean isDuck() { return this.equalsAny(DUCK, PRE_JUMP_DUCK, JUMP_DUCK); }
+		boolean isPreJump() { return this.equalsAny(PRE_JUMP, PRE_JUMP_DUCK, PRE_JUMP_AIMUP); }
+		boolean isJump() { return this.equalsAny(PRE_JUMP, PRE_JUMP_DUCK, PRE_JUMP_AIMUP, JUMP,
 				JUMP_AIMUP, JUMP_DUCK); }
-		public boolean isAimUp() { return this.equalsAny(AIMUP, PRE_JUMP_AIMUP, JUMP_AIMUP); }
+		boolean isAimUp() { return this.equalsAny(AIMUP, PRE_JUMP_AIMUP, JUMP_AIMUP); }
 	}
 
 	private Pit parent;
+	private AgentHooks parentHooks;
 	private PitBody body;
 	private PlayerAgentSupervisor supervisor;
 	private MoveState moveState;
@@ -76,13 +78,15 @@ public class PitBrain {
 	private int health;
 	private RoomBox lastKnownRoom;
 
-	public PitBrain(Pit parent, PitBody body, boolean isFacingRight, Integer health, Integer heartsCollected) {
+	PitBrain(Pit parent, AgentHooks parentHooks, PitBody body, boolean isFacingRight,
+			Integer health, Integer heartsCollected) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		this.isFacingRight = isFacingRight;
 		this.health = health != null ? health : START_HEALTH;
 		this.heartsCollected = heartsCollected != null ? heartsCollected :  0;
-		supervisor = new PlayerAgentSupervisor(parent);
+		supervisor = new PlayerAgentSupervisor(parent, parentHooks);
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
 		isNextJumpAllowed = false;	// false until land on solid ground
@@ -102,12 +106,10 @@ public class PitBrain {
 	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
 	 * by way of regular update.
 	 */
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
-		if(moveState != MoveState.DEAD) {
-			if(cFrameInput.room != null)
-				lastKnownRoom = cFrameInput.room;
-		}
+		if(moveState != MoveState.DEAD && cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
 		if(!isHeadBumped) {
@@ -120,7 +122,7 @@ public class PitBrain {
 		}
 	}
 
-	public SpriteFrameInput processFrame(FrameTime frameTime) {
+	SpriteFrameInput processFrame(FrameTime frameTime) {
 		// if a script is running with no move advice then apply scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
 			ScriptedAgentState scriptedState = supervisor.getScriptAgentState();
@@ -220,7 +222,7 @@ public class PitBrain {
 		// start no damage period
 		noDamageCooldown = NO_DAMAGE_TIME;
 		// ouchie sound
-		parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.Pit.HURT);
+		parentHooks.getEar().playSound(KidIcarusAudio.Sound.Pit.HURT);
 	}
 
 	private void processHeadBouncesGiven() {
@@ -314,8 +316,8 @@ public class PitBrain {
 		// if newly dead then disable contacts and start dead sound
 		if(moveStateChanged) {
 			body.getSpine().applyDead();
-			parent.getAgency().getEar().stopAllMusic();
-			parent.getAgency().getEar().startSinglePlayMusic(KidIcarusAudio.Music.PIT_DIE);
+			parentHooks.getEar().stopAllMusic();
+			parentHooks.getEar().startSinglePlayMusic(KidIcarusAudio.Music.PIT_DIE);
 		}
 		// ... and if died a long time ago then do game over
 		else if(moveStateTimer > DEAD_DELAY_TIME)
@@ -392,7 +394,7 @@ public class PitBrain {
 					isNextJumpAllowed = false;
 					jumpForceTimer = PRE_JUMP_TIME+JUMPUP_FORCE_TIME;
 					body.getSpine().applyJumpVelocity();
-					parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.Pit.JUMP);
+					parentHooks.getEar().playSound(KidIcarusAudio.Sound.Pit.JUMP);
 				}
 				else if(moveStateTimer <= PRE_JUMP_TIME)
 					body.getSpine().applyJumpVelocity();
@@ -480,12 +482,12 @@ public class PitBrain {
 		}
 
 		// create shot; if the spawn point of shot is in a solid tile then the shot must show for a short time
-		parent.getAgency().createAgent(PitArrow.makeAP(parent, position, velocity, arrowDir,
+		parentHooks.createAgent(PitArrow.makeAP(parent, position, velocity, arrowDir,
 				body.getSpine().isMapPointSolid(position)));
-		parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.Pit.SHOOT);
+		parentHooks.getEar().playSound(KidIcarusAudio.Sound.Pit.SHOOT);
 	}
 
-	public Vector2 getPosition() {
+	Vector2 getPosition() {
 		// use the "real" position of Pit, which is independent of body size, to improve smooth screen scroll
 		Vector2 offset = new Vector2(0f, 0f);
 		if(isOnGroundHeadInTile || moveState.isDuck())
@@ -493,11 +495,11 @@ public class PitBrain {
 		return body.getPosition().cpy().add(offset);
 	}
 
-	public RoomBox getCurrentRoom() {
+	RoomBox getCurrentRoom() {
 		return lastKnownRoom;
 	}
 
-	public boolean onGiveHeadBounce(Agent agent) {
+	boolean onGiveHeadBounce(Agent agent) {
 		// if other agent has bounds and head bounce is allowed then give head bounce to agent
 		Rectangle otherBounds = AP_Tool.getBounds(agent);
 		if(otherBounds != null && body.getSpine().isGiveHeadBounceAllowed(otherBounds)) {
@@ -507,7 +509,7 @@ public class PitBrain {
 		return false;
 	}
 
-	public boolean onTakeDamage() {
+	boolean onTakeDamage() {
 		// don't take more damage if damage taken already this frame, or if invulnerable
 		if(moveState == MoveState.DEAD || takeDamageThisFrame || noDamageCooldown > 0f)
 			return false;
@@ -515,26 +517,26 @@ public class PitBrain {
 		return true;
 	}
 
-	public boolean onTakePowerup(Powerup pu) {
+	boolean onTakePowerup(Powerup pu) {
 		if(moveState == MoveState.DEAD)
 			return false;
 		powerupsReceived.add(pu);
 		return true;
 	}
 
-	public PlayerAgentSupervisor getSupervisor() {
+	PlayerAgentSupervisor getSupervisor() {
 		return supervisor;
 	}
 
-	public boolean isFacingRight() {
+	boolean isFacingRight() {
 		return isFacingRight;
 	}
 
-	public Integer getHealth() {
+	Integer getHealth() {
 		return health;
 	}
 
-	public Integer getHeartsCollected() {
+	Integer getHeartsCollected() {
 		return heartsCollected;
 	}
 }

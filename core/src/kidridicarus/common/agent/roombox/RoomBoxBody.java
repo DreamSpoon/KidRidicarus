@@ -9,12 +9,12 @@ import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class RoomBoxBody extends AgentBody {
+class RoomBoxBody extends AgentBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.ROOM_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 	private static final float GRAVITY_SCALE = 0;
 
-	public RoomBoxBody(RoomBox parent, World world, Rectangle bounds) {
+	RoomBoxBody(RoomBox parent, World world, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}

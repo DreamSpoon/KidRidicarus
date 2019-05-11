@@ -10,12 +10,12 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SamusChunkBody extends AgentBody {
+class SamusChunkBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(8);
 	private static final float BODY_HEIGHT = UInfo.P2M(8);
 	private static final float GRAVITY_SCALE = 0.25f;
 
-	public SamusChunkBody(Agent parent, World world, Vector2 position) {
+	SamusChunkBody(Agent parent, World world, Vector2 position) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f));
 	}

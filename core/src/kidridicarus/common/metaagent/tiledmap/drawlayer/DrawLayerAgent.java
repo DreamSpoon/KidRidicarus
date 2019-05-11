@@ -4,7 +4,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.tool.AllowOrder;
 import kidridicarus.agency.tool.Eye;
@@ -19,13 +19,13 @@ public class DrawLayerAgent extends CorpusAgent {
 	private Rectangle bounds;
 	private TiledMapTileLayer drawLayer;
 
-	public DrawLayerAgent(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public DrawLayerAgent(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		this.bounds = AP_Tool.getBounds(properties);
 		drawLayer = properties.get(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER, null, TiledMapTileLayer.class);
 		if(drawLayer == null)
 			throw new IllegalArgumentException("Agents needs TiledMapTileLayer in its construction properties.");
-		agency.addAgentDrawListener(this, getDrawOrderForLayer(drawLayer, CommonInfo.KIDRID_DRAWORDER_ALIAS),
+		agentHooks.addDrawListener(getDrawOrderForLayer(drawLayer, CommonInfo.KIDRID_DRAWORDER_ALIAS),
 				new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(drawLayer); }

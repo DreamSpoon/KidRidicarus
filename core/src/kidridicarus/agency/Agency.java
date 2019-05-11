@@ -17,6 +17,7 @@ import kidridicarus.agency.agencychange.AgencyChangeQueue.AgencyChangeCallback;
 import kidridicarus.agency.agencychange.AgentPlaceholder;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentPropertyListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentRemoveListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentbody.AgentContactFilter;
@@ -176,12 +177,16 @@ public class Agency implements Disposable {
 	/*
 	 * Create many agents from a collection of agent properties, and return a list of the created Agents.
 	 */
-	public List<Agent> createAgents(Collection<ObjectProperties> agentProps) {
+	private List<Agent> hookCreateAgents(Collection<ObjectProperties> agentProps) {
 		LinkedList<Agent> aList = new LinkedList<Agent>();
 		Iterator<ObjectProperties> apIter = agentProps.iterator();
 		while(apIter.hasNext())
-			aList.add(createAgent(apIter.next()));
+			aList.add(hookCreateAgent(apIter.next()));
 		return aList;
+	}
+
+	public Agent externalCreateAgent(ObjectProperties properties) {
+		return hookCreateAgent(properties);
 	}
 
 	/*
@@ -189,7 +194,7 @@ public class Agency implements Disposable {
 	 * See website:
 	 * http://www.avajava.com/tutorials/lessons/how-do-i-create-an-object-via-its-multiparameter-constructor-using-reflection.html
 	 */
-	public Agent createAgent(ObjectProperties properties) {
+	private Agent hookCreateAgent(ObjectProperties properties) {
 		String agentClassAlias = properties.getString(AgencyKV.KEY_AGENT_CLASS, null);
 		if(agentClassAlias == null)
 			throw new IllegalArgumentException(AgencyKV.KEY_AGENT_CLASS + " key not found in agent definition.");
@@ -199,17 +204,23 @@ public class Agency implements Disposable {
 			return null;
 
 		Agent newlyCreatedAgent = null;
-		// When the agent object is constructed, it may invoke calls to enable agent updates or set agent draw order,
-		// so a placeholder must be inserted before creating the object - then the object's reference is put into the
-		// placeholder after the object is created.
+		// When the Agent object is constructed, it may invoke calls to enable Agent updates or set Agent draw order,
+		// so a placeholder must be inserted before creating the object. The Agent's real reference is put into the
+		// placeholder after the Agent constructor code is finished executing. All changes tied to the placeholder will
+		// not be executed until the change queue is processed.
 		AgentPlaceholder agentPlaceholder = new AgentPlaceholder(null);
 		agencyChangeQ.addAgent(agentPlaceholder);
+		// Agency hooks are unique to each Agent, for disposal coordination. e.g. Automatically disposing all
+		// bodies created by Agent when Agent is disposed. Only an AgentPlaceholder is needed for this purpose,
+		// since the hooks will only need an Agent ref when Agency enters the changeQ processing phase, which occurs
+		// after all Agent constructors are finished processing.
+		AgentHooks newInternalHooks = new AgentHooks(agentPlaceholder);
 		try {
 			Constructor<?> constructor =
-					agentClass.getConstructor(new Class[] { Agency.class, ObjectProperties.class });
-			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { this, properties });
+					agentClass.getConstructor(new Class[] { AgentHooks.class, ObjectProperties.class });
+			newlyCreatedAgent = (Agent) constructor.newInstance(new Object[] { newInternalHooks, properties });
 		}
-		catch (Exception e) {
+		catch(Exception e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Unable to create Agent.");
 		}
@@ -218,61 +229,12 @@ public class Agency implements Disposable {
 		return newlyCreatedAgent;
 	}
 
-	public void removeAgent(Agent agent) {
-		agencyChangeQ.removeAgent(new AgentPlaceholder(agent));
-	}
-
-	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
-	public void addAgentUpdateListener(Agent agent, AllowOrder updateOrder, AgentUpdateListener auListener) {
-		agencyChangeQ.addAgentUpdateListener(new AgentPlaceholder(agent), auListener, updateOrder);
-	}
-
-	public void removeAgentUpdateListener(Agent agent, AgentUpdateListener auListener) {
-		agencyChangeQ.removeAgentUpdateListener(new AgentPlaceholder(agent), auListener);
-	}
-
-	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
-	public void addAgentDrawListener(Agent agent, AllowOrder drawOrder, AgentDrawListener adListener) {
-		agencyChangeQ.addAgentDrawListener(new AgentPlaceholder(agent), adListener, drawOrder);
-	}
-
-	public void removeAgentDrawListener(Agent agent, AgentDrawListener adListener) {
-		agencyChangeQ.removeAgentDrawListener(new AgentPlaceholder(agent), adListener);
-	}
-
-	public void addAgentRemoveListener(AgentRemoveListener arListener) {
-		agencyChangeQ.addAgentRemoveListener(new AgentPlaceholder(arListener.getListeningAgent()), arListener);
-	}
-
-	public void removeAgentRemoveListener(AgentRemoveListener arListener) {
-		agencyChangeQ.removeAgentRemoveListener(new AgentPlaceholder(arListener.getListeningAgent()), arListener);
-	}
-
-	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
-	public void addAgentPropertyListener(Agent agent, boolean isGlobal, String propertyKey,
-			AgentPropertyListener<?> apListener) {
-		agencyChangeQ.addAgentPropertyListener(new AgentPlaceholder(agent), apListener, propertyKey, isGlobal);
-	}
-
-	// argument order is switched between this method and the changeQ method, for inline listener creation convenience
-	public void removeAgentPropertyListener(Agent agent, String propertyKey, AgentPropertyListener<?> apListener) {
-		agencyChangeQ.removeAgentPropertyListener(new AgentPlaceholder(agent), apListener, propertyKey);
-	}
-
-	public Ear getEar() {
-		return earplug.getEar();
-	}
-
 	public void setEar(Ear ear) {
 		this.earplug.setEar(ear);
 	}
 
 	public void setEye(Eye eye) {
 		this.myEye = eye;
-	}
-
-	public Eye getEye() {
-		return myEye;
 	}
 
 	public void draw() {
@@ -293,38 +255,30 @@ public class Agency implements Disposable {
 		myEye.end();
 	}
 
-	public LinkedList<Agent> getAgentsByProperties(String[] keys, Object[] vals) {
+	private LinkedList<Agent> hookGetAgentsByProperties(String[] keys, Object[] vals) {
 		return agencyIndex.getAgentsByProperties(keys, vals, false);
 	}
 
-	public Agent getFirstAgentByProperties(String[] keys, Object[] vals) {
-		LinkedList<Agent> aList = agencyIndex.getAgentsByProperties(keys, vals, true);
-		if(aList.isEmpty())
-			return null;
-		return aList.getFirst();
-	}
+//	private Agent hookGetFirstAgentByProperties(String[] keys, Object[] vals) {
+//		LinkedList<Agent> aList = agencyIndex.getAgentsByProperties(keys, vals, true);
+//		if(aList.isEmpty())
+//			return null;
+//		return aList.getFirst();
+//	}
 
-	public LinkedList<Agent> getAgentsByProperty(String key, Object val) {
-		return agencyIndex.getAgentsByProperties(new String[] { key }, new Object[] { val }, false);
-	}
+//	private LinkedList<Agent> hookGetAgentsByProperty(String key, Object val) {
+//		return agencyIndex.getAgentsByProperties(new String[] { key }, new Object[] { val }, false);
+//	}
 
-	public Agent getFirstAgentByProperty(String key, Object val) {
+	private Agent hookGetFirstAgentByProperty(String key, Object val) {
 		LinkedList<Agent> aList = agencyIndex.getAgentsByProperties(new String[] { key }, new Object[] { val }, true);
 		if(aList.isEmpty())
 			return null;
 		return aList.getFirst();
 	}
 
-	public boolean isValidAgentClassAlias(String agentClassAlias) {
-		return allAgentsClassList.get(agentClassAlias) != null;
-	}
-
-	public World getWorld() {
+	public World hookGetWorld() {
 		return world;
-	}
-
-	public TextureAtlas getAtlas() {
-		return atlas;
 	}
 
 	// remove all Agents from Agency, but do not dispose Agency
@@ -334,11 +288,113 @@ public class Agency implements Disposable {
 
 	/*
 	 * Dispose and remove all Agents and dispose Agency.
-	 * Note: Agency must not be disposed during a frame.
+	 * Note: Agency must not be disposed during update frame.
 	 */
 	@Override
 	public void dispose() {
 		removeAllAgents();
 		world.dispose();
+	}
+
+	/*
+	 * Even though this class is inside Agency, it is called AgentHooks and not AgencyHooks because the Object is
+	 * "bound" to each Agent, not just this Agency. In future code, an AgencyHooks class will also be created, for
+	 * external hooks usage.
+	 * Side-Note: See class AgentScriptHooks.
+	 */
+	public class AgentHooks {
+		private AgentPlaceholder ap;
+
+		private AgentHooks(AgentPlaceholder ap) {
+			this.ap = ap;
+		}
+
+		public Agent createAgent(ObjectProperties properties) {
+			return hookCreateAgent(properties);
+		}
+
+		public List<Agent> createAgents(LinkedList<ObjectProperties> propertiesList) {
+			return hookCreateAgents(propertiesList);
+		}
+
+		// Agent can only remove itself, if a sub-Agent needs removal then the sub-Agent must remove itself
+		public void removeThisAgent() {
+			agencyChangeQ.removeAgent(ap);
+		}
+
+		public void addPropertyListener(boolean isGlobal, String propertyKey,
+				AgentPropertyListener<?> propertyListener) {
+			// method order of arguments differs from the changeQ method, for inline listener creation convenience
+			agencyChangeQ.addAgentPropertyListener(ap, propertyListener, propertyKey, isGlobal);
+		}
+
+		public void removePropertyListener(String propertyKey) {
+			agencyChangeQ.removeAgentPropertyListener(ap, propertyKey);
+		}
+
+		public void addUpdateListener(AllowOrder updateOrder, AgentUpdateListener updateListener) {
+			// method order of arguments differs from the changeQ method, for inline listener creation convenience
+			agencyChangeQ.addAgentUpdateListener(ap, updateListener, updateOrder);
+		}
+
+		public void removeUpdateListener(AgentUpdateListener updateListener) {
+			agencyChangeQ.removeAgentUpdateListener(ap, updateListener);
+		}
+
+		public void addDrawListener(AllowOrder drawOrder, AgentDrawListener drawListener) {
+			// method order of arguments differs from the changeQ method, for inline listener creation convenience
+			agencyChangeQ.addAgentDrawListener(ap, drawListener, drawOrder);
+		}
+
+		public void removeDrawListener(AgentDrawListener drawListener) {
+			agencyChangeQ.removeAgentDrawListener(ap, drawListener);
+		}
+
+		/*
+		 * Returns a reference to the listener created so that the Agent can remove the listener later using the
+		 * reference.
+		 * For flexibility, each AgentRemoveListener is unique to its combination of
+		 * ( listeningAgent, otherAgent, callback ), so removal of the AgentRemoveListener requires either a
+		 * reference to the listener, or references to the 3 things mentioned above - it's just easier to return the
+		 * AgentRemoveListener, instead of requiring removeAgentRemoveListener to lookup the AgentRemoveListener
+		 * based on ( listeningAgent, otherAgent, callback ).
+		 */
+		public AgentRemoveListener createAgentRemoveListener(Agent otherAgent, AgentRemoveCallback callback) {
+			AgentRemoveListener removeListener = new AgentRemoveListener(ap, otherAgent, callback);
+			agencyChangeQ.addAgentRemoveListener(ap, removeListener);
+			return removeListener;
+		}
+
+		public void removeAgentRemoveListener(AgentRemoveListener removeListener) {
+			agencyChangeQ.removeAgentRemoveListener(ap, removeListener);
+		}
+
+		public Agent getFirstAgentByProperty(String key, Object val) {
+			return hookGetFirstAgentByProperty(key, val);
+		}
+
+		public LinkedList<Agent> getAgentsByProperties(String[] keys, Object[] vals) {
+			return hookGetAgentsByProperties(keys, vals);
+		}
+
+		public boolean isValidAgentClassAlias(String strClassAlias) {
+			return allAgentsClassList.get(strClassAlias) != null;
+		}
+
+		public World getWorld() {
+			return world;
+		}
+
+		public TextureAtlas getAtlas() {
+			return atlas;
+		}
+
+		public Ear getEar() {
+			return earplug.getEar();
+		}
+
+		public Eye getEye() {
+			return myEye;
+		}
 	}
 }

@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.SprFrameTool;
 
-public class FlagpoleBrain {
+class FlagpoleBrain {
 	static final float FLAGDROP_TIME = 1.35f;
 	// offset relative to the center of the top bound
 	private static final Vector2 FLAG_OFFSET_FROM_TOP = new Vector2(UInfo.P2M(-8), UInfo.P2M(-16));
@@ -27,7 +27,7 @@ public class FlagpoleBrain {
 	private float moveStateTimer;
 	private boolean isFlagTriggered;
 
-	public FlagpoleBrain(Flagpole parent, FlagpoleBody body) {
+	FlagpoleBrain(Flagpole parent, FlagpoleBody body) {
 		this.parent = parent;
 		this.body = body;
 		isFlagTriggered = false;
@@ -35,7 +35,7 @@ public class FlagpoleBrain {
 		moveStateTimer = 0f;
 	}
 
-	public void processContactFrame(List<PlayerAgent> cFrameInput) {
+	void processContactFrame(List<PlayerAgent> cFrameInput) {
 		for(PlayerAgent agent : cFrameInput) {
 			// give flagpole script to the player and the script, if used, will trigger flag drop
 			agent.getSupervisor().startScript(new FlagpoleScript(parent, AP_Tool.getBounds(parent),
@@ -43,7 +43,7 @@ public class FlagpoleBrain {
 		}
 	}
 
-	public SpriteFrameInput processFrame(FrameTime frameTime) {
+	SpriteFrameInput processFrame(FrameTime frameTime) {
 		Vector2 pos;
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
@@ -103,7 +103,7 @@ public class FlagpoleBrain {
 			return getFlagPosAtTop().cpy().lerp(getFlagPosAtBottom(), time / FLAGDROP_TIME);
 	}
 
-	public void onTakeTrigger() {
+	void onTakeTrigger() {
 		isFlagTriggered = true;
 	}
 }

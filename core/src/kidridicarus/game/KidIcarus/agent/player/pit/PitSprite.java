@@ -15,7 +15,7 @@ import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.KidIcarus.agent.player.pit.PitBrain.MoveState;
 import kidridicarus.game.info.KidIcarusGfx;
 
-public class PitSprite extends AgentSprite {
+class PitSprite extends AgentSprite {
 	private static final float BIG_SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float BIG_SPRITE_HEIGHT = UInfo.P2M(24);
 	private static final Vector2 BIG_SPRITE_OFFSET = UInfo.VectorP2M(0, 1);
@@ -42,7 +42,7 @@ public class PitSprite extends AgentSprite {
 	private float dmgFrameTimer;
 
 	@SuppressWarnings("unchecked")
-	public PitSprite(TextureAtlas atlas, Vector2 position) {
+	PitSprite(TextureAtlas atlas, Vector2 position) {
 		aimUpAnim = new Animation[KidIcarusGfx.Player.Pit.GRPDIR.length][2];
 		jumpAnim = new Animation[KidIcarusGfx.Player.Pit.GRPDIR.length][2];
 		standAnim = new Animation[KidIcarusGfx.Player.Pit.GRPDIR.length][2];

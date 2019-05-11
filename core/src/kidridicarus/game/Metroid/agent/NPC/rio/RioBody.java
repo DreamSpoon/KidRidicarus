@@ -15,7 +15,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class RioBody extends AgentBody {
+class RioBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(20);
 	private static final float BODY_HEIGHT = UInfo.P2M(16);
 	private static final float HEAD_WIDTH = UInfo.P2M(18);
@@ -32,7 +32,7 @@ public class RioBody extends AgentBody {
 
 	private RioSpine spine;
 
-	public RioBody(Rio parent, World world, Vector2 position, Vector2 velocity) {
+	RioBody(Rio parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -77,12 +77,12 @@ public class RioBody extends AgentBody {
 				CommonCF.AGENT_SENSOR_CFMASK, spine.createPlayerSensor()));
 	}
 
-	public ContactDmgBrainContactFrameInput processContactFrame() {
+	ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
-	public RioSpine getSpine() {
+	RioSpine getSpine() {
 		return spine;
 	}
 }

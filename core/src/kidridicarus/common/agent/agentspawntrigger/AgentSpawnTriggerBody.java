@@ -9,21 +9,21 @@ import kidridicarus.common.agent.optional.EnableTakeAgent;
 import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.info.CommonCF;
 
-public class AgentSpawnTriggerBody extends FollowBoxBody {
+class AgentSpawnTriggerBody extends FollowBoxBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SPAWNTRIGGER_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
 	private OneWayContactSensor beginContactSensor;
 	private OneWayContactSensor endContactSensor;
 
-	public AgentSpawnTriggerBody(AgentSpawnTrigger parent, World world, Rectangle bounds) {
+	AgentSpawnTriggerBody(AgentSpawnTrigger parent, World world, Rectangle bounds) {
 		super(parent, world, bounds, true);
 		beginContactSensor = new OneWayContactSensor(this, true);
 		endContactSensor = new OneWayContactSensor(this, false);
 		beginContactSensor.chainTo(endContactSensor);
 	}
 
-	public SpawnTriggerFrameInput processFrame() {
+	SpawnTriggerFrameInput processFrame() {
 		return new SpawnTriggerFrameInput(beginContactSensor.getOnlyAndResetContacts(EnableTakeAgent.class),
 				endContactSensor.getOnlyAndResetContacts(EnableTakeAgent.class));
 	}

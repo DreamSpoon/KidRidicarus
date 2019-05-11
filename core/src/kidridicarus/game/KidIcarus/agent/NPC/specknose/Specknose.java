@@ -2,10 +2,10 @@ package kidridicarus.game.KidIcarus.agent.NPC.specknose;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -19,29 +19,29 @@ public class Specknose extends CorpusAgent implements ContactDmgTakeAgent {
 	private SpecknoseBrain brain;
 	private SpecknoseSprite sprite;
 
-	public Specknose(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public Specknose(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		body = new SpecknoseBody(
-				this, agency.getWorld(), AP_Tool.getCenter(properties), AP_Tool.safeGetVelocity(properties));
-		brain = new SpecknoseBrain(this, (SpecknoseBody) body);
-		sprite = new SpecknoseSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+				this, agentHooks.getWorld(), AP_Tool.getCenter(properties), AP_Tool.safeGetVelocity(properties));
+		brain = new SpecknoseBrain(this, agentHooks, (SpecknoseBody) body);
+		sprite = new SpecknoseSprite(agentHooks.getAtlas(), body.getPosition());
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((SpecknoseBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					sprite.processFrame(brain.processFrame(frameTime));
 				}
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});

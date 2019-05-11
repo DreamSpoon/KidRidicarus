@@ -11,13 +11,13 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class FireFlowerBody extends AgentBody {
+class FireFlowerBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 
 	private SolidContactSpine spine;
 
-	public FireFlowerBody(FireFlower parent, World world) {
+	FireFlowerBody(FireFlower parent, World world) {
 		super(parent, world);
 		spine = null;
 	}
@@ -39,18 +39,18 @@ public class FireFlowerBody extends AgentBody {
 				spine.createAgentSensor(), bounds.width, bounds.height);
 	}
 
-	public void finishSprout(Vector2 position) {
+	void finishSprout(Vector2 position) {
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT));
 	}
 
-	public PowerupBrainContactFrameInput processContactFrame() {
+	PowerupBrainContactFrameInput processContactFrame() {
 		if(spine == null)
 			return null;
 		return new PowerupBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getTouchingPowerupTaker());
 	}
 
-	public SolidContactSpine getSpine() {
+	SolidContactSpine getSpine() {
 		return spine;
 	}
 }

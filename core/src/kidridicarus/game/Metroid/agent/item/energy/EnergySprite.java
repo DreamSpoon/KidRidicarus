@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidGfx;
 
-public class EnergySprite extends AgentSprite {
+class EnergySprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(8);
 	private static final float ANIM_SPEED = 1/30f;
@@ -20,7 +20,7 @@ public class EnergySprite extends AgentSprite {
 	private Animation<TextureRegion> anim;
 	private float animTimer;
 
-	public EnergySprite(TextureAtlas atlas, Vector2 position) {
+	EnergySprite(TextureAtlas atlas, Vector2 position) {
 		anim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(MetroidGfx.Item.ENERGY), PlayMode.LOOP);
 		animTimer = 0f;
 		setRegion(anim.getKeyFrame(0f));

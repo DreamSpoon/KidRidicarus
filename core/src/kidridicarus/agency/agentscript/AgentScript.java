@@ -1,6 +1,6 @@
 package kidridicarus.agency.agentscript;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.tool.FrameTime;
 
 public interface AgentScript {
@@ -14,7 +14,8 @@ public interface AgentScript {
 		// also include start music, stop music, etc.
 	}
 
-	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState);
+	public void startScript(AgentHooks agentHooks, AgentScriptHooks scriptHooks,
+			ScriptedAgentState beginScriptAgentState);
 	public boolean update(FrameTime frameTime);	// return true to continue running script, return false to stop
 	public ScriptedAgentState getScriptAgentState();
 	// The next script (the script which is requesting the override) is passed so current script can

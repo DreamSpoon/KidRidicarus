@@ -17,7 +17,7 @@ import kidridicarus.common.info.CommonCF.Alias;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class PitBody extends PlayerAgentBody {
+class PitBody extends PlayerAgentBody {
 	private static final float STAND_BODY_WIDTH = UInfo.P2M(8f);
 	private static final float STAND_BODY_HEIGHT = UInfo.P2M(16f);
 	private static final float DUCKING_BODY_WIDTH = UInfo.P2M(8f);
@@ -58,14 +58,14 @@ public class PitBody extends PlayerAgentBody {
 	private Fixture agentSensorFixture;
 	private boolean isDuckingForm;
 
-	public PitBody(Pit parent, World world, Vector2 position, Vector2 velocity, boolean isDuckingForm) {
+	PitBody(Pit parent, World world, Vector2 position, Vector2 velocity, boolean isDuckingForm) {
 		super(parent, world, position, velocity);
 		this.isDuckingForm = isDuckingForm;
 		isAgentSensorEnabled = true;
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f), velocity);
 	}
 
-	public BrainContactFrameInput processContactFrame() {
+	BrainContactFrameInput processContactFrame() {
 		return new BrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn());
 	}
@@ -125,7 +125,7 @@ public class PitBody extends PlayerAgentBody {
 				SIDE_PW_SENSOR_WIDTH, SIDE_PW_SENSOR_HEIGHT, new Vector2(getBounds().width/2f, 0f));
 	}
 
-	public void useScriptedBodyState(ScriptedBodyState sbState) {
+	void useScriptedBodyState(ScriptedBodyState sbState) {
 		if(sbState.contactEnabled && !isAgentSensorEnabled) {
 			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_ENABLED_CFCAT;
 			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_ENABLED_CFMASK;
@@ -146,7 +146,7 @@ public class PitBody extends PlayerAgentBody {
 		b2body.setAwake(true);
 	}
 
-	public void applyDead() {
+	void applyDead() {
 		allowOnlyDeadContacts();
 		b2body.setGravityScale(0f);
 	}
@@ -161,7 +161,7 @@ public class PitBody extends PlayerAgentBody {
 		isAgentSensorEnabled = false;
 	}
 
-	public void setDuckingForm(boolean isDuckingForm) {
+	void setDuckingForm(boolean isDuckingForm) {
 		Vector2 newPos = null;
 		// if currently ducking and instructed to change to standing form...
 		if(this.isDuckingForm && !isDuckingForm) {
@@ -178,11 +178,11 @@ public class PitBody extends PlayerAgentBody {
 			defineBody(new Rectangle(newPos.x, newPos.y, 0f, 0f), b2body.getLinearVelocity());
 	}
 
-	public boolean isDuckingForm() {
+	boolean isDuckingForm() {
 		return isDuckingForm;
 	}
 
-	public PitSpine getSpine() {
+	PitSpine getSpine() {
 		return spine;
 	}
 }

@@ -2,13 +2,13 @@ package kidridicarus.common.agent.followbox;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 
 public abstract class FollowBox extends CorpusAgent {
-	public FollowBox(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public FollowBox(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 	}
 
 	/*

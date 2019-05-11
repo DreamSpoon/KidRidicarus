@@ -11,12 +11,12 @@ import kidridicarus.agency.tool.AllowOrder;
 public class AgencyChangeQueue {
 	public enum AgencyChangeType { AGENT_LIST, UPDATE_LISTENER, DRAW_LISTENER, REMOVE_LISTENER, PROPERTY_LISTENER }
 	public class AgencyChange {
-		public AgencyChangeType changeType;
-		public boolean isAdd;
-		public AgentPlaceholder ap;
-		public Object otherData1;
-		public Object otherData2;
-		public Object otherData3;
+		public final AgencyChangeType changeType;
+		public final boolean isAdd;
+		public final AgentPlaceholder ap;
+		public final Object otherData1;
+		public final Object otherData2;
+		public final Object otherData3;
 
 		public AgencyChange(AgencyChangeType changeType, boolean add, AgentPlaceholder ap, Object otherData1,
 				Object otherData2, Object otherData3) {
@@ -82,8 +82,7 @@ public class AgencyChangeQueue {
 		changeQ.add(new AgencyChange(AgencyChangeType.PROPERTY_LISTENER, true, ap, apListener, propertyKey, isGlobal));
 	}
 
-	public void removeAgentPropertyListener(AgentPlaceholder ap, AgentPropertyListener<?> apListener,
-			String propertyKey) {
-		changeQ.add(new AgencyChange(AgencyChangeType.PROPERTY_LISTENER, false, ap, apListener, propertyKey, null));
+	public void removeAgentPropertyListener(AgentPlaceholder ap, String propertyKey) {
+		changeQ.add(new AgencyChange(AgencyChangeType.PROPERTY_LISTENER, false, ap, null, propertyKey, null));
 	}
 }

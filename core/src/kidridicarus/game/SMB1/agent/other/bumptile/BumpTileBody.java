@@ -10,14 +10,14 @@ import kidridicarus.common.agentspine.BasicAgentSpine;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class BumpTileBody extends AgentBody {
+class BumpTileBody extends AgentBody {
 	private static final CFBitSeq MAINSENSOR_CFCAT = new CFBitSeq(CommonCF.Alias.BUMPABLE_BIT);
 	private static final CFBitSeq MAINSENSOR_CFMASK = new CFBitSeq(CommonCF.Alias.SOLID_MAP_BIT,
 			CommonCF.Alias.AGENT_BIT);
 
 	private BasicAgentSpine spine;
 
-	public BumpTileBody(World world, BumpTile parent, Rectangle bounds) {
+	BumpTileBody(World world, BumpTile parent, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}
@@ -39,7 +39,7 @@ public class BumpTileBody extends AgentBody {
 				bounds.width, bounds.height);
 	}
 
-	public BasicAgentSpine getSpine() {
+	BasicAgentSpine getSpine() {
 		return spine;
 	}
 }

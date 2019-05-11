@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidGfx;
 
-public class SkreeSprite extends AgentSprite {
+class SkreeSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(24);
 	private static final Vector2 SPECIAL_OFFSET = UInfo.VectorP2M(0f, 2f);
@@ -25,7 +25,7 @@ public class SkreeSprite extends AgentSprite {
 	private Animation<TextureRegion> injuryAnim;
 	private float animTimer;
 
-	public SkreeSprite(TextureAtlas atlas, Vector2 position) {
+	SkreeSprite(TextureAtlas atlas, Vector2 position) {
 		spinAnim = new Animation<TextureRegion>(ANIM_SPEED_REG,
 				atlas.findRegions(MetroidGfx.NPC.SKREE), PlayMode.LOOP);
 		spinFastAnim = new Animation<TextureRegion>(ANIM_SPEED_FAST,

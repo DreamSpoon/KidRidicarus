@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.common.agent.playeragent.PlayerSpine;
 import kidridicarus.common.info.UInfo;
 
-public class PitSpine extends PlayerSpine {
+class PitSpine extends PlayerSpine {
 	private static final float MIN_WALK_VEL = 0.1f;
 	private static final float GROUNDMOVE_XIMP = 0.2f;
 	private static final float MAX_GROUNDMOVE_VEL = 0.65f;
@@ -17,21 +17,21 @@ public class PitSpine extends PlayerSpine {
 	private static final float HEADBOUNCE_VEL = 1.4f;	// up velocity
 	private static final Vector2 DEAD_VEL = UInfo.VectorP2M(0f, -120);
 
-	public PitSpine(PitBody body) {
+	PitSpine(PitBody body) {
 		super(body);
 	}
 
 	// apply walk impulse and cap horizontal velocity.
-	public void applyWalkMove(boolean moveRight) {
+	void applyWalkMove(boolean moveRight) {
 		applyHorizImpulseAndCapVel(moveRight, GROUNDMOVE_XIMP, MAX_GROUNDMOVE_VEL);
 	}
 
 	// apply air impulse and cap horizontal velocity.
-	public void applyAirMove(boolean moveRight) {
+	void applyAirMove(boolean moveRight) {
 		applyHorizImpulseAndCapVel(moveRight, AIRMOVE_XIMP, MAX_AIRMOVE_VEL);
 	}
 
-	public void applyStopMove() {
+	void applyStopMove() {
 		// if moving right...
 		if(body.getVelocity().x > MIN_WALK_VEL)
 			applyHorizontalImpulse(true, -STOPMOVE_XIMP);
@@ -43,24 +43,24 @@ public class PitSpine extends PlayerSpine {
 			body.setVelocity(0f, body.getVelocity().y);
 	}
 
-	public void applyJumpForce(float forceTimer, float jumpForceDuration) {
+	void applyJumpForce(float forceTimer, float jumpForceDuration) {
 		if(forceTimer < jumpForceDuration)
 			body.applyForce(new Vector2(0f, JUMPUP_FORCE * forceTimer / jumpForceDuration));
 	}
 
-	public void applyHeadBounce() {
+	void applyHeadBounce() {
 		applyPlayerHeadBounce(HEADBOUNCE_VEL);
 	}
 
-	public void applyJumpVelocity() {
+	void applyJumpVelocity() {
 		body.setVelocity(body.getVelocity().x, JUMPUP_CONSTVEL);
 	}
 
-	public boolean isStandingStill() {
+	boolean isStandingStill() {
 		return isStandingStill(MIN_WALK_VEL);
 	}
 
-	public void checkDoBodySizeChange(boolean isNextDucking) {
+	void checkDoBodySizeChange(boolean isNextDucking) {
 		boolean isCurrentlyDucking = ((PitBody) body).isDuckingForm();
 		boolean isSolidTileAbove = isMapTileSolid(UInfo.VectorM2T(body.getPosition()).add(0, 1));
 		if(isCurrentlyDucking && !isNextDucking && !isSolidTileAbove)
@@ -69,19 +69,19 @@ public class PitSpine extends PlayerSpine {
 			((PitBody) body).setDuckingForm(true);
 	}
 
-	public boolean isHeadInTile() {
+	boolean isHeadInTile() {
 		return isMapTileSolid(UInfo.VectorM2T(body.getPosition()).add(0, 1));
 	}
 
-	public boolean isWalkingRight() {
+	boolean isWalkingRight() {
 		return body.getVelocity().x > MIN_WALK_VEL;
 	}
 
-	public boolean isWalkingLeft() {
+	boolean isWalkingLeft() {
 		return body.getVelocity().x < -MIN_WALK_VEL;
 	}
 
-	public void applyDead() {
+	void applyDead() {
 		((PitBody) body).applyDead();
 		body.setVelocity(DEAD_VEL);
 	}

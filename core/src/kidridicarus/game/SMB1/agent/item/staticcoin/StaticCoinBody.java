@@ -11,13 +11,13 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class StaticCoinBody extends AgentBody {
+class StaticCoinBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(16f);
 	private static final float BODY_HEIGHT = UInfo.P2M(16f);
 
 	private BasicAgentSpine spine;
 
-	public StaticCoinBody(StaticCoin parent, World world, Vector2 position) {
+	StaticCoinBody(StaticCoin parent, World world, Vector2 position) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT));
 	}
@@ -37,12 +37,12 @@ public class StaticCoinBody extends AgentBody {
 				spine.createAgentSensor(), getBounds().width, getBounds().height);
 	}
 
-	public PowerupBrainContactFrameInput processContactFrame() {
+	PowerupBrainContactFrameInput processContactFrame() {
 		return new PowerupBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getTouchingPowerupTaker());
 	}
 
-	public BasicAgentSpine getSpine() {
+	BasicAgentSpine getSpine() {
 		return spine;
 	}
 }

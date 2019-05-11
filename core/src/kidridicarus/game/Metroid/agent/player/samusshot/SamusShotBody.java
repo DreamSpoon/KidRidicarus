@@ -12,7 +12,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SamusShotBody extends AgentBody {
+class SamusShotBody extends AgentBody {
 	private static final float GRAVITY_SCALE = 0f;
 	private static final float BODY_WIDTH = UInfo.P2M(1);
 	private static final float BODY_HEIGHT = UInfo.P2M(1);
@@ -26,7 +26,7 @@ public class SamusShotBody extends AgentBody {
 
 	private SolidContactSpine spine;
 
-	public SamusShotBody(SamusShot parent, World world, Vector2 position, Vector2 velocity) {
+	SamusShotBody(SamusShot parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -51,12 +51,12 @@ public class SamusShotBody extends AgentBody {
 				SENSOR_WIDTH, SENSOR_HEIGHT);
 	}
 
-	public ContactDmgBrainContactFrameInput processContactFrame() {
+	ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
-	public SolidContactSpine getSpine() {
+	SolidContactSpine getSpine() {
 		return spine;
 	}
 }

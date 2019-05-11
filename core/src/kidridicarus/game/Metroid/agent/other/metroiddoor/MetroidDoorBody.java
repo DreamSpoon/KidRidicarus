@@ -12,7 +12,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class MetroidDoorBody extends AgentBody {
+class MetroidDoorBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(8f);
 	private static final float BODY_HEIGHT = UInfo.P2M(48f);
 
@@ -24,7 +24,7 @@ public class MetroidDoorBody extends AgentBody {
 
 	private Fixture mainBodyFixture;
 
-	public MetroidDoorBody(MetroidDoor parent, World world, Vector2 position) {
+	MetroidDoorBody(MetroidDoor parent, World world, Vector2 position) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f));
 	}
@@ -42,7 +42,7 @@ public class MetroidDoorBody extends AgentBody {
 				getBounds().width, getBounds().height);
 	}
 
-	public void setMainSolid(boolean enabled) {
+	void setMainSolid(boolean enabled) {
 		if(enabled) {
 			((AgentBodyFilter) mainBodyFixture.getUserData()).categoryBits = MAIN_ENABLED_CFCAT;
 			((AgentBodyFilter) mainBodyFixture.getUserData()).maskBits = MAIN_ENABLED_CFMASK;

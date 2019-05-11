@@ -8,15 +8,15 @@ import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.MoveState;
 import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.PowerState;
 
-public class MarioSpriteFrameInput extends SpriteFrameInput {
-	public MoveState moveState;
-	public PowerState powerState;
-	public boolean isDmgFrame;
-	public boolean isStarPowered;
-	public boolean didShootFireball;
-	public Direction4 climbDir;
+class MarioSpriteFrameInput extends SpriteFrameInput {
+	MoveState moveState;
+	PowerState powerState;
+	boolean isDmgFrame;
+	boolean isStarPowered;
+	boolean didShootFireball;
+	Direction4 climbDir;
 
-	public MarioSpriteFrameInput(FrameTime frameTime, Vector2 position, MoveState moveState, PowerState powerState,
+	MarioSpriteFrameInput(FrameTime frameTime, Vector2 position, MoveState moveState, PowerState powerState,
 			boolean isFacingRight, boolean isDmgFrame, boolean isStarPowered, boolean didShootFireball,
 			Direction4 climbDir) {
 		super(frameTime, !isFacingRight, false, 0f, position);

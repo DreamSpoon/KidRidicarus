@@ -12,7 +12,7 @@ import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine;
 
-public class MonoeyeSpine extends FlyBallSpine {
+class MonoeyeSpine extends FlyBallSpine {
 	private static final float CENTER_OFFSET_X = 3f;	// offset from spawn, in tiles
 	private static final int ACCEL_X_LEFT = -5;
 	private static final int ACCEL_X_RIGHT = 4;
@@ -21,7 +21,7 @@ public class MonoeyeSpine extends FlyBallSpine {
 
 	private PlayerContactNerve pcNerve;
 
-	public MonoeyeSpine(MonoeyeBody body, int spawnTileX) {
+	MonoeyeSpine(MonoeyeBody body, int spawnTileX) {
 		super(body, getFlyWindow(spawnTileX));
 		pcNerve = new PlayerContactNerve();
 	}
@@ -34,7 +34,7 @@ public class MonoeyeSpine extends FlyBallSpine {
 		return new Rectangle(left, ACCEL_Y_BOTTOM, right-left, ACCEL_Y_TOP-ACCEL_Y_BOTTOM);
 	}
 
-	public AgentContactHoldSensor createPlayerSensor() {
+	AgentContactHoldSensor createPlayerSensor() {
 		return pcNerve.createPlayerSensor(); 
 	}
 
@@ -42,7 +42,7 @@ public class MonoeyeSpine extends FlyBallSpine {
 	 * Returns gawking PlayerAgent if a PlayerAgent is gawking this Monoeye while Monoeye is moving down.
 	 * Otherwise return null.
 	 */
-	public PlayerAgent getGawker(boolean isFacingRight) {
+	PlayerAgent getGawker(boolean isFacingRight) {
 		PlayerAgent playerAgent = pcNerve.getFirstPlayerContact();
 		if(playerAgent != null && isOtherGawking(isFacingRight, playerAgent))
 			return playerAgent;

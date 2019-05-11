@@ -1,5 +1,6 @@
 package kidridicarus.game.KidIcarus.agent.item.angelheart;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
@@ -8,7 +9,7 @@ import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.KidIcarusAudio;
 import kidridicarus.game.info.KidIcarusPow;
 
-public class AngelHeartBrain {
+class AngelHeartBrain {
 	private static final int SMALL_HEARTCOUNT = 1;
 	private static final int HALF_HEARTCOUNT = 5;
 	private static final int FULL_HEARTCOUNT = 10;
@@ -23,15 +24,15 @@ public class AngelHeartBrain {
 		}
 	}
 
-	private AngelHeart parent;
+	private AgentHooks parentHooks;
 	private AngelHeartBody body;
 	private float moveStateTimer;
 	private boolean despawnMe;
 	private boolean isUsed;
 	private AngelHeartSize heartSize;
 
-	public AngelHeartBrain(AngelHeart parent, AngelHeartBody body, int heartCount) {
-		this.parent = parent;
+	AngelHeartBrain(AgentHooks parentHooks, AngelHeartBody body, int heartCount) {
+		this.parentHooks = parentHooks;
 		this.body = body;
 		moveStateTimer = 0f;
 		despawnMe = false;
@@ -52,7 +53,7 @@ public class AngelHeartBrain {
 		}
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// exit if used
 		if(isUsed)
 			return;
@@ -68,21 +69,21 @@ public class AngelHeartBrain {
 			isUsed = true;
 	}
 
-	public SpriteFrameInput processFrame(float delta) {
+	SpriteFrameInput processFrame(float delta) {
 		if(isUsed) {
-			parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.General.HEART_PICKUP);
-			parent.getAgency().removeAgent(parent);
+			parentHooks.getEar().playSound(KidIcarusAudio.Sound.General.HEART_PICKUP);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 		else if(despawnMe || moveStateTimer > LIVE_TIME) {
-			parent.getAgency().removeAgent(parent);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 		moveStateTimer += delta;
 		return SprFrameTool.place(body.getPosition());
 	}
 
-	public AngelHeartSize getHeartSize() {
+	AngelHeartSize getHeartSize() {
 		return heartSize;
 	}
 }

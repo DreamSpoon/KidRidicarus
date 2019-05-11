@@ -2,10 +2,10 @@ package kidridicarus.game.SMB1.agent.NPC.turtle;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -26,27 +26,27 @@ public class Turtle extends CorpusAgent implements Koopa, ContactDmgTakeAgent, B
 	private TurtleBrain brain;
 	private TurtleSprite sprite;
 
-	public Turtle(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
-		body = new TurtleBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+	public Turtle(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
+		body = new TurtleBody(this, agentHooks.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties));
-		brain = new TurtleBrain(this, (TurtleBody) body);
-		sprite = new TurtleSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+		brain = new TurtleBrain(this, agentHooks, (TurtleBody) body);
+		sprite = new TurtleSprite(agentHooks.getAtlas(), body.getPosition());
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((TurtleBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});

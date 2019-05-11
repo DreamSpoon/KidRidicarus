@@ -7,7 +7,7 @@ public abstract class AgentContactSensor {
 	public abstract void onBeginSense(AgentBodyFilter abf);
 	public abstract void onEndSense(AgentBodyFilter abf);
 
-	private Object parent;
+	private final Object parent;
 	private AgentContactSensor nextInChain;
 
 	public AgentContactSensor(Object parent) {

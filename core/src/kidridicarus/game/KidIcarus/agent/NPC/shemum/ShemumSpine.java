@@ -9,28 +9,28 @@ import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
-public class ShemumSpine extends SolidContactSpine {
+class ShemumSpine extends SolidContactSpine {
 	private static final float WALK_VEL = 0.3f;
 
 	private PlayerContactNerve pcNerve;
 
-	public ShemumSpine(ShemumBody body) {
+	ShemumSpine(ShemumBody body) {
 		super(body);
 		pcNerve = new PlayerContactNerve();
 	}
 
-	public void doWalkMove(boolean isFacingRight) {
+	void doWalkMove(boolean isFacingRight) {
 		if(isFacingRight)
 			body.setVelocity(WALK_VEL, body.getVelocity().y);
 		else
 			body.setVelocity(-WALK_VEL, body.getVelocity().y);
 	}
 
-	public AgentContactHoldSensor createPlayerSensor() {
+	AgentContactHoldSensor createPlayerSensor() {
 		return pcNerve.createPlayerSensor();
 	}
 
-	public Direction4 getPlayerDir() {
+	Direction4 getPlayerDir() {
 		// if player not found then exit
 		PlayerAgent playerAgent = pcNerve.getFirstPlayerContact();
 		if(playerAgent == null)

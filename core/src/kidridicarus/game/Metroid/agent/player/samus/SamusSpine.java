@@ -6,7 +6,7 @@ import kidridicarus.common.agent.playeragent.PlayerAgentBody;
 import kidridicarus.common.agent.playeragent.PlayerSpine;
 import kidridicarus.common.info.UInfo;
 
-public class SamusSpine extends PlayerSpine {
+class SamusSpine extends PlayerSpine {
 	private static final float GROUNDMOVE_XIMP = 0.28f;
 	private static final float MAX_GROUNDMOVE_VEL = 0.85f;
 	private static final float MIN_WALK_VEL = 0.1f;
@@ -21,21 +21,21 @@ public class SamusSpine extends PlayerSpine {
 	private static final float MAX_DOWN_VELOCITY = 2.5f;
 	private static final float HEADBOUNCE_VEL = 1.4f;	// up velocity
 
-	public SamusSpine(SamusBody body) {
+	SamusSpine(SamusBody body) {
 		super(body);
 	}
 
 	// apply walk impulse and cap horizontal velocity.
-	public void applyWalkMove(boolean moveRight) {
+	void applyWalkMove(boolean moveRight) {
 		applyHorizImpulseAndCapVel(moveRight, GROUNDMOVE_XIMP, MAX_GROUNDMOVE_VEL);
 	}
 
 	// apply air impulse and cap horizontal velocity.
-	public void applyAirMove(boolean moveRight) {
+	void applyAirMove(boolean moveRight) {
 		applyHorizImpulseAndCapVel(moveRight, AIRMOVE_XIMP, MAX_AIRMOVE_VEL);
 	}
 
-	public void applyStopMove() {
+	void applyStopMove() {
 		// if moving right...
 		if(body.getVelocity().x > MIN_WALK_VEL)
 			applyHorizontalImpulse(true, -STOPMOVE_XIMP);
@@ -47,12 +47,12 @@ public class SamusSpine extends PlayerSpine {
 			body.setVelocity(0f, body.getVelocity().y);
 	}
 
-	public void applyJumpForce(float forceTimer, float jumpForceDuration) {
+	void applyJumpForce(float forceTimer, float jumpForceDuration) {
 		if(forceTimer < jumpForceDuration)
 			body.applyForce(new Vector2(0f, JUMPUP_FORCE * forceTimer / jumpForceDuration));
 	}
 
-	public void applyDamageKick(Vector2 position) {
+	void applyDamageKick(Vector2 position) {
 		// zero the y velocity
 		body.setVelocity(body.getVelocity().x, 0);
 		// apply a kick impulse to the left or right depending on other agent's position
@@ -66,20 +66,20 @@ public class SamusSpine extends PlayerSpine {
 			body.applyImpulse(DAMAGE_KICK_UP_IMP);
 	}
 
-	public void applyHeadBounce() {
+	void applyHeadBounce() {
 		applyPlayerHeadBounce(HEADBOUNCE_VEL);
 	}
 
-	public boolean isNoHorizontalVelocity() {
+	boolean isNoHorizontalVelocity() {
 		return isStandingStill(MIN_WALK_VEL);
 	}
 
-	public void applyJumpVelocity() {
+	void applyJumpVelocity() {
 		body.setVelocity(body.getVelocity().x, JUMPUP_CONSTVEL);
 	}
 
 	// check for bounce against solid floor
-	public void doBounceCheck() {
+	void doBounceCheck() {
 		// Check for bounce up (no left/right bounces, no down bounces).
 		// Since body restitution=0, bounce occurs when current velocity=0 and previous velocity > 0.
 		// Check against 0 using velocity epsilon.

@@ -2,9 +2,9 @@ package kidridicarus.game.Metroid.agent.item.energy;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -18,28 +18,28 @@ public class Energy extends CorpusAgent {
 	private EnergyBrain brain;
 	private EnergySprite sprite;
 
-	public Energy(Agency agency, ObjectProperties agentProps) {
-		super(agency, agentProps);
-		body = new EnergyBody(this, agency.getWorld(), AP_Tool.getCenter(agentProps));
-		brain = new EnergyBrain(this, (EnergyBody) body);
-		sprite = new EnergySprite(agency.getAtlas(), AP_Tool.getCenter(agentProps));
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+	public Energy(AgentHooks agentHooks, ObjectProperties agentProps) {
+		super(agentHooks, agentProps);
+		body = new EnergyBody(this, agentHooks.getWorld(), AP_Tool.getCenter(agentProps));
+		brain = new EnergyBrain(agentHooks, (EnergyBody) body);
+		sprite = new EnergySprite(agentHooks.getAtlas(), AP_Tool.getCenter(agentProps));
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((EnergyBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					sprite.processFrame(brain.processFrame(frameTime));
 				}
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});

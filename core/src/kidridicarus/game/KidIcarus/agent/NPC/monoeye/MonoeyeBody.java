@@ -11,7 +11,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class MonoeyeBody extends AgentBody {
+class MonoeyeBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float PLAYER_SENSOR_WIDTH = UInfo.P2M(128);
@@ -24,7 +24,7 @@ public class MonoeyeBody extends AgentBody {
 
 	private MonoeyeSpine spine;
 
-	public MonoeyeBody(Monoeye parent, World world, Vector2 position, Vector2 velocity) {
+	MonoeyeBody(Monoeye parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -49,12 +49,12 @@ public class MonoeyeBody extends AgentBody {
 				new Vector2(0f, bounds.height/2f - PLAYER_SENSOR_HEIGHT/2f));
 	}
 
-	public ContactDmgBrainContactFrameInput processContactFrame() {
+	ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
-	public MonoeyeSpine getSpine() {
+	MonoeyeSpine getSpine() {
 		return spine;
 	}
 }

@@ -2,9 +2,9 @@ package kidridicarus.game.SMB1.agent.other.brickpiece;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.Eye;
@@ -24,22 +24,22 @@ public class BrickPiece extends CorpusAgent {
 	private BrickPieceSprite sprite;
 	private float stateTimer;
 
-	public BrickPiece(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public BrickPiece(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		stateTimer = 0f;
-		body = new BrickPieceBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+		body = new BrickPieceBody(this, agentHooks.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties));
-		sprite = new BrickPieceSprite(agency.getAtlas(), body.getPosition(),
+		sprite = new BrickPieceSprite(agentHooks.getAtlas(), body.getPosition(),
 				properties.getInteger(CommonKV.Sprite.KEY_START_FRAME, 0));
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(processFrame(frameTime)); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});
@@ -48,7 +48,7 @@ public class BrickPiece extends CorpusAgent {
 	private SpriteFrameInput processFrame(FrameTime frameTime) {
 		stateTimer += frameTime.timeDelta;
 		if(stateTimer > BRICK_DIE_TIME) {
-			agency.removeAgent(this);
+			agentHooks.removeThisAgent();
 			return null;
 		}
 		return SprFrameTool.placeAnim(body.getPosition(), frameTime);

@@ -6,10 +6,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.Eye;
@@ -54,8 +54,8 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 	private MoveAdvice4x2 inputMoveAdvice;
 	private Vector2 lastViewCenter;
 
-	public PlayerControllerAgent(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public PlayerControllerAgent(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 
 		inputMoveAdvice = new MoveAdvice4x2();
 		lastViewCenter = new Vector2(0f, 0f);
@@ -65,22 +65,22 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 				properties.get(CommonKV.Player.KEY_AGENT_PROPERTIES, null, ObjectProperties.class);
 		createPlayerAgent(playerAgentProperties);
 
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_AGENCY_UPDATE, new AgentUpdateListener() {
-			@Override
-			public void update(FrameTime frameTime) { doPreAgencyUpdate(frameTime); }
-		});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_AGENCY_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_AGENCY_UPDATE, new AgentUpdateListener() {
+				@Override
+				public void update(FrameTime frameTime) { doPreAgencyUpdate(frameTime); }
+			});
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.POST_AGENCY_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { doPostAgencyUpdate(); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.UPDATE_CAMERA, new AgentDrawListener() {
-			@Override
-			public void draw(Eye eye) { updateCamera(); }
-		});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
-			@Override
-			public void preRemoveAgent() { dispose(); }
-		});
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.UPDATE_CAMERA, new AgentDrawListener() {
+				@Override
+				public void draw(Eye eye) { updateCamera(); }
+			});
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
+				@Override
+				public void preRemoveAgent() { dispose(); }
+			});
 	}
 
 	private void createPlayerAgent(ObjectProperties playerAgentProperties) {
@@ -92,9 +92,9 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 		// spawn player with properties at spawn location
 		playerAgent = spawnPlayerAgentWithProperties(playerAgentProperties, spawner);
 		// create player's associated agents (generally, they follow player)
-		spawnTrigger = (AgentSpawnTrigger) agency.createAgent(
+		spawnTrigger = (AgentSpawnTrigger) agentHooks.createAgent(
 				AgentSpawnTrigger.makeAP(getViewCenter(), SPAWN_TRIGGER_WIDTH, SPAWN_TRIGGER_HEIGHT));
-		keepAliveBox = (KeepAliveBox) agency.createAgent(
+		keepAliveBox = (KeepAliveBox) agentHooks.createAgent(
 				KeepAliveBox.makeAP(getViewCenter(), KEEP_ALIVE_WIDTH, KEEP_ALIVE_HEIGHT));
 	}
 
@@ -161,29 +161,26 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 		// if current room has scroll push box property = true then create/change to scroll push box
 		if(currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_PUSHBOX, false, Boolean.class)) {
 			if(scrollBox != null && !(scrollBox instanceof ScrollPushBox)) {
-				agency.removeAgent(scrollBox);
-				scrollBox.dispose();
+				scrollBox.removeSelf();
 				scrollBox = null;
 			}
 			// if scroll box needs to be created and a valid scroll direction is given then create push box
 			if(scrollBox == null && scrollDir != Direction4.NONE)
-				scrollBox = (ScrollPushBox) agency.createAgent(ScrollPushBox.makeAP(getViewCenter(), scrollDir));
+				scrollBox = (ScrollPushBox) agentHooks.createAgent(ScrollPushBox.makeAP(getViewCenter(), scrollDir));
 		}
 		// if current room has scroll kill box property = true then create/change to scroll kill box
 		else if(currentRoom.getProperty(CommonKV.Room.KEY_SCROLL_KILLBOX, false, Boolean.class)) {
 			if(scrollBox != null && !(scrollBox instanceof ScrollKillBox)) {
-				agency.removeAgent(scrollBox);
-				scrollBox.dispose();
+				scrollBox.removeSelf();
 				scrollBox = null;
 			}
 			// if scroll box needs to be created and a valid scroll direction is given then create kill box
 			if(scrollBox == null && scrollDir != Direction4.NONE)
-				scrollBox = (ScrollKillBox) agency.createAgent(ScrollKillBox.makeAP(getViewCenter(), scrollDir));
+				scrollBox = (ScrollKillBox) agentHooks.createAgent(ScrollKillBox.makeAP(getViewCenter(), scrollDir));
 		}
 		// need to remove a scroll box?
 		else if(scrollBox != null) {
-			agency.removeAgent(scrollBox);
-			scrollBox.dispose();
+			scrollBox.removeSelf();
 			scrollBox = null;
 		}
 	}
@@ -207,8 +204,7 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 		// save copy of velocity
 		Vector2 oldVelocity = AP_Tool.getVelocity(playerAgent);
 		// remove old player character
-		agency.removeAgent(playerAgent);
-		playerAgent.dispose();
+		playerAgent.removeSelf();
 		playerAgent = null;
 		// create new player character properties
 		ObjectProperties props = AP_Tool.createPointAP(pc.getAgentClassAlias(),
@@ -220,7 +216,7 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 		if(oldVelocity != null)
 			props.put(CommonKV.KEY_VELOCITY, oldVelocity);
 		// create new player power character Agent
-		playerAgent = (PlayerAgent) agency.createAgent(props);
+		playerAgent = (PlayerAgent) agentHooks.createAgent(props);
 	}
 
 	private void updateCamera() {
@@ -228,12 +224,12 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 			return;
 		// if player is not dead then use their current room to determine the gamecam position
 		if(!playerAgent.getSupervisor().isGameOver())
-			agency.getEye().setViewCenter(getViewCenter());
+			agentHooks.getEye().setViewCenter(getViewCenter());
 	}
 
 	private Agent getMainPlayerSpawner() {
 		// find main spawnpoint and spawn player there, or spawn at (0, 0) if no spawnpoint found
-		LinkedList<Agent> spawnList = agency.getAgentsByProperties(
+		LinkedList<Agent> spawnList = agentHooks.getAgentsByProperties(
 				new String[] { AgencyKV.KEY_AGENT_CLASS, CommonKV.Spawn.KEY_SPAWN_MAIN },
 				new Object[] { CommonKV.AgentClassAlias.VAL_PLAYER_SPAWNER, true });
 		if(spawnList.isEmpty())
@@ -255,7 +251,7 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 		else {
 			// otherwise insert spawn position into properties and create player Agent
 			playerAgentProperties.put(CommonKV.KEY_POSITION, spawnPos);
-			return (PlayerAgent) agency.createAgent(playerAgentProperties);
+			return (PlayerAgent) agentHooks.createAgent(playerAgentProperties);
 		}
 	}
 
@@ -266,7 +262,7 @@ public class PlayerControllerAgent extends Agent implements Disposable {
 		ObjectProperties playerAP = AP_Tool.createPointAP(initPlayClass, spawnPos);
 		if(AP_Tool.safeGetDirection4(spawner).isRight())
 			playerAP.put(CommonKV.KEY_DIRECTION, Direction4.RIGHT);
-		return (PlayerAgent) agency.createAgent(playerAP);
+		return (PlayerAgent) agentHooks.createAgent(playerAP);
 	}
 
 	// safely get the view center - cannot return null, and tries to return a correct view center

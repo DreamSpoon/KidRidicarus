@@ -5,22 +5,22 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 
-public class AnimationDrawable extends BaseDrawable {
+class AnimationDrawable extends BaseDrawable {
 	private Animation<TextureRegion> animation;
 	private float stateTimer;
 
-	public AnimationDrawable(Animation<TextureRegion> animation) {
+	AnimationDrawable(Animation<TextureRegion> animation) {
 		setAnimation(animation);
 		stateTimer = 0f;
 	}
 
-	public void setAnimation(Animation<TextureRegion> animation) {
+	void setAnimation(Animation<TextureRegion> animation) {
 		this.animation = animation;
 		setMinWidth(animation.getKeyFrame(0f).getRegionWidth());
 		setMinHeight(animation.getKeyFrame(0f).getRegionHeight());
 	}
 
-	public void setStateTimer(float stateTimer) {
+	void setStateTimer(float stateTimer) {
 		this.stateTimer = stateTimer;
 	}
 

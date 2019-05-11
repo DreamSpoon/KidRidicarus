@@ -1,30 +1,33 @@
 package kidridicarus.game.KidIcarus.agent.other.kidicarusdoor;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playerspawner.PlayerSpawner;
 import kidridicarus.common.tool.AP_Tool;
 
-public class KidIcarusDoorBrain {
+class KidIcarusDoorBrain {
 	private KidIcarusDoor parent;
+	private AgentHooks parentHooks;
 	private KidIcarusDoorBody body;
 	private boolean isOpened;
 	private String exitSpawnerName;
 
-	public KidIcarusDoorBrain(KidIcarusDoor parent, KidIcarusDoorBody body, boolean isOpened,
-			String exitSpawnerName) {
+	KidIcarusDoorBrain(KidIcarusDoor parent, AgentHooks parentHooks, KidIcarusDoorBody body,
+			boolean isOpened, String exitSpawnerName) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		this.isOpened = isOpened;
 		this.exitSpawnerName = exitSpawnerName;
 	}
 
-	public void processContactFrame(KidIcarusDoorBrainContactFrameInput cFrameInput) {
+	void processContactFrame(KidIcarusDoorBrainContactFrameInput cFrameInput) {
 		// exit if not opened, or if zero players contacting door
 		if(!isOpened || cFrameInput.playerContacts.isEmpty())
 			return;
 		// exit if spawner doesn't exist or is the wrong class
-		Agent exitSpawner = AP_Tool.getNamedAgent(exitSpawnerName, parent.getAgency());
+		Agent exitSpawner = AP_Tool.getNamedAgent(exitSpawnerName, parentHooks);
 		if(!(exitSpawner instanceof PlayerSpawner)) {
 			throw new IllegalArgumentException("Kid Icarus Door exit spawner is not instance of "+
 					PlayerSpawner.class.getName()+", exitSpawnerName="+exitSpawnerName+
@@ -35,12 +38,12 @@ public class KidIcarusDoorBrain {
 			agent.getSupervisor().startScript(new KidIcarusDoorScript(parent, exitSpawner));
 	}
 
-	public KidIcarusDoorSpriteFrameInput processFrame() {
+	KidIcarusDoorSpriteFrameInput processFrame() {
 		body.setOpened(isOpened);
 		return new KidIcarusDoorSpriteFrameInput(body.getPosition(), isOpened);
 	}
 
-	public void setOpened(boolean isOpened) {
+	void setOpened(boolean isOpened) {
 		this.isOpened = isOpened;
 	}
 }

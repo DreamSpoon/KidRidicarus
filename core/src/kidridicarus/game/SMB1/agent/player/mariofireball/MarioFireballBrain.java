@@ -1,5 +1,6 @@
 package kidridicarus.game.SMB1.agent.player.mariofireball;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
@@ -8,27 +9,27 @@ import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.game.SMB1.agent.player.mario.Mario;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class MarioFireballBrain {
+class MarioFireballBrain {
 	private static final float DAMAGE = 1f;
 	private static final float EXPLODE_TIME = 1/10f;
 
 	enum MoveState { FLY, EXPLODE, END }
 	private enum HitType { NONE, BOUNDARY, AGENT }
 
-	private MarioFireball parent;
+	private Mario playerParent;
+	private AgentHooks parentHooks;
 	private MarioFireballBody body;
-	private Mario superParent;
 	private float moveStateTimer;
 	private MoveState moveState;
 	private boolean isFacingRight;
 	private HitType hitType;
 	private RoomBox lastKnownRoom;
 
-	public MarioFireballBrain(MarioFireball parent, MarioFireballBody body, Mario superParent,
+	MarioFireballBrain(Mario playerParent, AgentHooks parentHooks, MarioFireballBody body,
 			boolean isFacingRight) {
-		this.parent = parent;
+		this.playerParent = playerParent;
+		this.parentHooks = parentHooks;
 		this.body = body;
-		this.superParent = superParent;
 		this.isFacingRight = isFacingRight;
 		moveStateTimer = 0f;
 		moveState = MoveState.FLY;
@@ -36,11 +37,11 @@ public class MarioFireballBrain {
 		lastKnownRoom = null;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// check do agents needing damage
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents) {
 			// if contact agent took damage then set hit Agent flag
-			if(agent != superParent && agent.onTakeDamage(superParent, DAMAGE, body.getPosition())) {
+			if(agent != playerParent && agent.onTakeDamage(playerParent, DAMAGE, body.getPosition())) {
 				hitType = HitType.AGENT;
 				break;
 			}
@@ -58,7 +59,7 @@ public class MarioFireballBrain {
 			hitType = HitType.BOUNDARY;
 	}
 
-	public MarioFireballSpriteFrame processFrame(FrameTime frameTime) {
+	MarioFireballSpriteFrame processFrame(FrameTime frameTime) {
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
@@ -71,13 +72,13 @@ public class MarioFireballBrain {
 					body.getSpine().startExplode();
 					// play sound for hit agent or play sound for hit boundary line
 					if(hitType == HitType.AGENT)
-						parent.getAgency().getEar().playSound(SMB1_Audio.Sound.KICK);
+						parentHooks.getEar().playSound(SMB1_Audio.Sound.KICK);
 					else
-						parent.getAgency().getEar().playSound(SMB1_Audio.Sound.BUMP);
+						parentHooks.getEar().playSound(SMB1_Audio.Sound.BUMP);
 				}
 				break;
 			case END:
-				parent.getAgency().removeAgent(parent);
+				parentHooks.removeThisAgent();
 				break;
 		}
 		// do space wrap last so that contacts are maintained (e.g. keep alive box contact)

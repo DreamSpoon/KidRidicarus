@@ -13,7 +13,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class BaseMushroomBody extends AgentBody {
+class BaseMushroomBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
@@ -21,7 +21,7 @@ public class BaseMushroomBody extends AgentBody {
 
 	private SolidContactSpine spine;
 
-	public BaseMushroomBody(BaseMushroom parent, World world) {
+	BaseMushroomBody(BaseMushroom parent, World world) {
 		super(parent, world);
 		spine = null;
 	}
@@ -48,18 +48,18 @@ public class BaseMushroomBody extends AgentBody {
 				bounds.width, bounds.height);
 	}
 
-	public void finishSprout(Vector2 position) {
+	void finishSprout(Vector2 position) {
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT));
 	}
 
-	public PowerupBrainContactFrameInput processContactFrame() {
+	PowerupBrainContactFrameInput processContactFrame() {
 		if(spine == null)
 			return null;
 		return new PowerupBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getTouchingPowerupTaker());
 	}
 
-	public SolidContactSpine getSpine() {
+	SolidContactSpine getSpine() {
 		return spine;
 	}
 }

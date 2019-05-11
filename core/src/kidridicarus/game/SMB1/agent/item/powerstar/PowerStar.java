@@ -2,9 +2,9 @@ package kidridicarus.game.SMB1.agent.item.powerstar;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -23,22 +23,22 @@ public class PowerStar extends CorpusAgent implements BumpTakeAgent {
 	private PowerStarBrain brain;
 	private PowerStarSprite sprite;
 
-	public PowerStar(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
-		body = new PowerStarBody(this, agency.getWorld());
-		brain = new PowerStarBrain(this, (PowerStarBody) body, AP_Tool.getCenter(properties));
-		sprite = new PowerStarSprite(this, agency.getAtlas(), brain.getSproutStartPos());
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+	public PowerStar(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
+		body = new PowerStarBody(this, agentHooks.getWorld());
+		brain = new PowerStarBrain(agentHooks, (PowerStarBody) body, AP_Tool.getCenter(properties));
+		sprite = new PowerStarSprite(agentHooks, agentHooks.getAtlas(), brain.getSproutStartPos());
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 			@Override
 			public void update(FrameTime frameTime) {
 				brain.processContactFrame(((PowerStarBody) body).processContactFrame());
 			}
 		});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});

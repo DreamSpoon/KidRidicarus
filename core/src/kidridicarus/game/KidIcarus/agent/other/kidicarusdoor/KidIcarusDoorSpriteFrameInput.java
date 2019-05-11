@@ -4,10 +4,10 @@ import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 
-public class KidIcarusDoorSpriteFrameInput extends SpriteFrameInput {
-	public boolean isOpened;
+class KidIcarusDoorSpriteFrameInput extends SpriteFrameInput {
+	boolean isOpened;
 
-	public KidIcarusDoorSpriteFrameInput(Vector2 position, boolean isOpened) {
+	KidIcarusDoorSpriteFrameInput(Vector2 position, boolean isOpened) {
 		super();
 		this.position = position;
 		this.isOpened = isOpened;

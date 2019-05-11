@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidGfx;
 
-public class MaruMariSprite extends AgentSprite {
+class MaruMariSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.033f;
@@ -20,7 +20,7 @@ public class MaruMariSprite extends AgentSprite {
 	private Animation<TextureRegion> anim;
 	private float animTimer;
 
-	public MaruMariSprite(TextureAtlas atlas, Vector2 position) {
+	MaruMariSprite(TextureAtlas atlas, Vector2 position) {
 		anim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(MetroidGfx.Item.MARUMARI), PlayMode.LOOP);
 		animTimer = 0f;
 		setRegion(anim.getKeyFrame(0f));

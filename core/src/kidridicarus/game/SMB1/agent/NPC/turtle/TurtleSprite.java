@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class TurtleSprite extends AgentSprite {
+class TurtleSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(24);
 	private static final Vector2 SPRITE_OFFSET = UInfo.VectorP2M(0f, 2f);
@@ -23,7 +23,7 @@ public class TurtleSprite extends AgentSprite {
 	private Animation<TextureRegion> wakeUpAnim;
 	private float animTimer;
 
-	public TurtleSprite(TextureAtlas atlas, Vector2 position) {
+	TurtleSprite(TextureAtlas atlas, Vector2 position) {
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMB1_Gfx.NPC.TURTLE_WALK), PlayMode.LOOP);
 		wakeUpAnim = new Animation<TextureRegion>(ANIM_SPEED,

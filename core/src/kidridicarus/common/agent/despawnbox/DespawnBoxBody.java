@@ -9,12 +9,12 @@ import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class DespawnBoxBody extends AgentBody {
+class DespawnBoxBody extends AgentBody {
 	private static final float GRAVITY_SCALE = 0f;
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.DESPAWN_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 
-	public DespawnBoxBody(DespawnBox parent, World world, Rectangle bounds) {
+	DespawnBoxBody(DespawnBox parent, World world, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}

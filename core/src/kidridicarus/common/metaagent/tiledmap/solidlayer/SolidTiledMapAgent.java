@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -24,8 +24,8 @@ public class SolidTiledMapAgent extends CorpusAgent implements Disposable {
 	private LinkedBlockingQueue<SolidTileChange> tileChangeQ;
 
 	@SuppressWarnings("unchecked")
-	public SolidTiledMapAgent(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public SolidTiledMapAgent(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		List<TiledMapTileLayer> solidLayers =
 				properties.get(CommonKV.AgentMapParams.KEY_TILEDMAP_TILELAYER_LIST, null, List.class);
 		if(solidLayers == null || solidLayers.isEmpty())
@@ -34,13 +34,13 @@ public class SolidTiledMapAgent extends CorpusAgent implements Disposable {
 		// changes are made in batches, so keep a queue of pending changes
 		tileChangeQ = new LinkedBlockingQueue<SolidTileChange>();
 		// The OTC map will create bodies with the World...
-		solidMap = new SolidTiledMap(agency.getWorld(), solidLayers);
+		solidMap = new SolidTiledMap(agentHooks.getWorld(), solidLayers);
 		// ... and a meta-body will be created that encompasses all the solid bound line bodies.
-		body = new SolidTiledMapBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
+		body = new SolidTiledMapBody(this, agentHooks.getWorld(), AP_Tool.getBounds(properties));
 		// Agent has post update because:
 		//   -it may receive requests to modify the solid state of tiles inside itself during the regular Agency update
 		//   -it will process these requests in batch format during post-update
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { doUpdate(); }
 			});

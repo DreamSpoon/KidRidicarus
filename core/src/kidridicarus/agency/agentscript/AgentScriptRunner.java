@@ -1,6 +1,6 @@
 package kidridicarus.agency.agentscript;
 
-import kidridicarus.agency.agent.AgentSupervisor;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
 import kidridicarus.agency.tool.FrameTime;
 
@@ -18,13 +18,13 @@ import kidridicarus.agency.tool.FrameTime;
  * might be ignored by the player agent.
  */
 public class AgentScriptRunner {
-	private AgentSupervisor agentSupervisor;
 	private AgentScript currentScript;
 	private boolean isRunning;
 	private boolean continueRunning;
+	private AgentHooks agentSupervisorHooks;
 
-	public AgentScriptRunner(AgentSupervisor agentSupervisor) {
-		this.agentSupervisor = agentSupervisor;
+	public AgentScriptRunner(AgentHooks agentSupervisorHooks) {
+		this.agentSupervisorHooks = agentSupervisorHooks;
 		currentScript = null;
 		isRunning = false;
 		continueRunning = false;
@@ -34,7 +34,7 @@ public class AgentScriptRunner {
 	 * Returns true if script was started, otherwise returns false.
 	 * Takes the beginning state of the agent.
 	 */
-	public boolean startScript(AgentScript agentScript, AgentScriptHooks asHooks,
+	public boolean startScript(AgentScript agentScript, AgentScriptHooks scriptHooks,
 			ScriptedAgentState startAgentState) {
 		// if a script is already running and cannot be overridden then return false
 		if(isRunning && !currentScript.isOverridable(agentScript))
@@ -43,7 +43,7 @@ public class AgentScriptRunner {
 		isRunning = true;
 		continueRunning = true;
 		currentScript = agentScript;
-		currentScript.startScript(agentSupervisor.getAgency(), asHooks, startAgentState);
+		currentScript.startScript(agentSupervisorHooks, scriptHooks, startAgentState);
 		return true;
 	}
 

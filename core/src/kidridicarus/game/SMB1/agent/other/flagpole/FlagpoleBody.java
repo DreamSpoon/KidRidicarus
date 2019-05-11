@@ -12,10 +12,10 @@ import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class FlagpoleBody extends AgentBody {
+class FlagpoleBody extends AgentBody {
 	private OneWayContactSensor agentBeginContactSensor;
 
-	public FlagpoleBody(Flagpole parent, World world, Rectangle bounds) {
+	FlagpoleBody(Flagpole parent, World world, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}
@@ -35,7 +35,7 @@ public class FlagpoleBody extends AgentBody {
 				agentBeginContactSensor, bounds.width, bounds.height);
 	}
 
-	public List<PlayerAgent> processContactFrame() {
+	List<PlayerAgent> processContactFrame() {
 		return agentBeginContactSensor.getOnlyAndResetContacts(PlayerAgent.class);
 	}
 }

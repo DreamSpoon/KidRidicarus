@@ -16,7 +16,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
 
-public class TurtleBody extends AgentBody {
+class TurtleBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
@@ -34,7 +34,7 @@ public class TurtleBody extends AgentBody {
 	private TurtleSpine spine;
 	private Fixture acSensorFixture;
 
-	public TurtleBody(Turtle parent, World world, Vector2 position, Vector2 velocity) {
+	TurtleBody(Turtle parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -66,7 +66,7 @@ public class TurtleBody extends AgentBody {
 				FOOT_WIDTH/2f, FOOT_HEIGHT/2f, new Vector2(0f, -getBounds().height/2f));
 	}
 
-	public void allowOnlyDeadBumpContacts() {
+	void allowOnlyDeadBumpContacts() {
 		disableAllContacts();
 		// change the needed agent contact sensor bits
 		((AgentBodyFilter) acSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
@@ -74,12 +74,12 @@ public class TurtleBody extends AgentBody {
 		acSensorFixture.refilter();
 	}
 
-	public BrainContactFrameInput processContactFrame() {
+	BrainContactFrameInput processContactFrame() {
 		return new HeadBounceBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getHeadBounceBeginContacts());
 	}
 
-	public TurtleSpine getSpine() {
+	TurtleSpine getSpine() {
 		return spine;
 	}
 }

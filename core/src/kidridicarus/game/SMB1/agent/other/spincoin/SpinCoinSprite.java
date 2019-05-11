@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class SpinCoinSprite extends AgentSprite {
+class SpinCoinSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 1f / 30f;
@@ -20,7 +20,7 @@ public class SpinCoinSprite extends AgentSprite {
 	private Animation<TextureRegion> anim;
 	private float animTimer;
 
-	public SpinCoinSprite(TextureAtlas atlas, Vector2 position) {
+	SpinCoinSprite(TextureAtlas atlas, Vector2 position) {
 		anim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMB1_Gfx.General.COIN_SPIN), PlayMode.LOOP);
 		animTimer = 0f;

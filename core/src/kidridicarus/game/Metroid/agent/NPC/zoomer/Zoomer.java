@@ -2,10 +2,10 @@ package kidridicarus.game.Metroid.agent.NPC.zoomer;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -25,31 +25,31 @@ public class Zoomer extends CorpusAgent implements ContactDmgTakeAgent {
 	private ZoomerBrain brain;
 	private ZoomerSprite sprite;
 
-	public Zoomer(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
-		body = new ZoomerBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+	public Zoomer(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
+		body = new ZoomerBody(this, agentHooks.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties));
-		brain = new ZoomerBrain(this, (ZoomerBody) body);
-		sprite = new ZoomerSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+		brain = new ZoomerBrain(this, agentHooks, (ZoomerBody) body);
+		sprite = new ZoomerSprite(agentHooks.getAtlas(), body.getPosition());
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((ZoomerBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.POST_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { ((ZoomerBody) body).postUpdate(); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_BOTTOM, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});

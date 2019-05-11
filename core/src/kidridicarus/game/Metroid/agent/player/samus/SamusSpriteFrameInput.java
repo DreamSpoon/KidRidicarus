@@ -7,13 +7,13 @@ import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.Metroid.agent.player.samus.SamusBrain.MoveState;
 
-public class SamusSpriteFrameInput extends SpriteFrameInput {
-	public MoveState moveState;
-	public boolean isDmgFrame;
-	public Direction4 climbDir;
-	public boolean isFacingUp;
+class SamusSpriteFrameInput extends SpriteFrameInput {
+	MoveState moveState;
+	boolean isDmgFrame;
+	Direction4 climbDir;
+	boolean isFacingUp;
 
-	public SamusSpriteFrameInput(FrameTime frameTime, Vector2 position, MoveState moveState, boolean isFacingRight,
+	SamusSpriteFrameInput(FrameTime frameTime, Vector2 position, MoveState moveState, boolean isFacingRight,
 			boolean isFacingUp, boolean isDmgFrame, Direction4 climbDir) {
 		super(frameTime, !isFacingRight, false, 0f, position);
 		this.moveState = moveState;

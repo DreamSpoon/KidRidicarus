@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.MetroidGfx;
 
-public class ZoomerSprite extends AgentSprite {
+class ZoomerSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.05f;
@@ -21,7 +21,7 @@ public class ZoomerSprite extends AgentSprite {
 	private Animation<TextureRegion> injuryAnim;
 	private float animTimer;
 
-	public ZoomerSprite(TextureAtlas atlas, Vector2 position) {
+	ZoomerSprite(TextureAtlas atlas, Vector2 position) {
 		walkAnim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(MetroidGfx.NPC.ZOOMER), PlayMode.LOOP);
 		injuryAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidGfx.NPC.ZOOMER_HIT), PlayMode.LOOP);

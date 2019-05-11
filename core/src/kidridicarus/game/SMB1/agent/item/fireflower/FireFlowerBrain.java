@@ -2,6 +2,7 @@ package kidridicarus.game.SMB1.agent.item.fireflower;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -9,16 +10,17 @@ import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.SMB1.agentsprite.SproutSpriteFrameInput;
 import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class FireFlowerBrain {
+class FireFlowerBrain {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 
 	private enum MoveState { SPROUT, WALK, END }
 
-	private FireFlower parent;
+	private AgentHooks parentHooks;
 	private FireFlowerBody body;
 	private float moveStateTimer;
 	private MoveState moveState;
@@ -26,8 +28,8 @@ public class FireFlowerBrain {
 	private PowerupTakeAgent powerupTaker;
 	private boolean despawnMe;
 
-	public FireFlowerBrain(FireFlower parent, FireFlowerBody body, Vector2 initSpawnPosition) {
-		this.parent = parent;
+	FireFlowerBrain(AgentHooks parentHooks, FireFlowerBody body, Vector2 initSpawnPosition) {
+		this.parentHooks = parentHooks;
 		this.body = body;
 		this.initSpawnPosition = initSpawnPosition;
 		moveStateTimer = 0f;
@@ -36,11 +38,11 @@ public class FireFlowerBrain {
 		despawnMe = false;
 	}
 
-	public Vector2 getSproutStartPos() {
+	Vector2 getSproutStartPos() {
 		return initSpawnPosition.cpy().add(0f, SPROUT_OFFSET);
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// exit if not finished sprouting or if used
 		if(moveState == MoveState.SPROUT || powerupTaker != null)
 			return;
@@ -55,7 +57,7 @@ public class FireFlowerBrain {
 			despawnMe = true;
 	}
 
-	public SproutSpriteFrameInput processFrame(FrameTime frameTime) {
+	SproutSpriteFrameInput processFrame(FrameTime frameTime) {
 		Vector2 spritePos = new Vector2();
 		boolean finishSprout = false;
 		MoveState nextMoveState = getNextMoveState();
@@ -74,11 +76,11 @@ public class FireFlowerBrain {
 				break;
 			case END:
 				if(powerupTaker != null) {
-					parent.getAgency().getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
-					parent.getAgency().createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(),
+					parentHooks.getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
+					parentHooks.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(),
 							(Agent) powerupTaker));
 				}
-				parent.getAgency().removeAgent(parent);
+				parentHooks.removeThisAgent();
 				return null;
 		}
 		moveStateTimer = isMoveStateChange ? 0f : moveStateTimer+frameTime.timeDelta;

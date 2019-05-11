@@ -8,11 +8,11 @@ import kidridicarus.common.agent.followbox.FollowBox;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.info.CommonCF;
 
-public class ScrollPushBoxBody extends FollowBoxBody {
+class ScrollPushBoxBody extends FollowBoxBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SCROLL_PUSH_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 
-	public ScrollPushBoxBody(FollowBox parent, World world, Rectangle bounds) {
+	ScrollPushBoxBody(FollowBox parent, World world, Rectangle bounds) {
 		super(parent, world, bounds, false);
 	}
 

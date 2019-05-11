@@ -1,7 +1,8 @@
 package kidridicarus.game.KidIcarus.agent.NPC.monoeye;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -13,13 +14,14 @@ import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine.AxisGoState;
 import kidridicarus.game.info.KidIcarusAudio;
 
-public class MonoeyeBrain {
+class MonoeyeBrain {
 	private static final float GIVE_DAMAGE = 1f;
 	private static final int DROP_HEART_COUNT = 5;
 
 	private enum MoveState { FLY, OGLE, DEAD }
 
 	private Monoeye parent;
+	private AgentHooks parentHooks;
 	private MonoeyeBody body;
 	private MoveState moveState;
 	private float moveStateTimer;
@@ -31,8 +33,9 @@ public class MonoeyeBrain {
 	private PlayerAgent ogleTarget;
 	private boolean isTargetRemoved;
 
-	public MonoeyeBrain(Monoeye parent, MonoeyeBody body) {
+	MonoeyeBrain(Monoeye parent, AgentHooks parentHooks, MonoeyeBody body) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		moveStateTimer = 0f;
 		moveState = MoveState.FLY;
@@ -47,7 +50,7 @@ public class MonoeyeBrain {
 		isTargetRemoved = false;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
@@ -56,10 +59,10 @@ public class MonoeyeBrain {
 			despawnMe = true;
 	}
 
-	public SpriteFrameInput processFrame(float delta) {
+	SpriteFrameInput processFrame(float delta) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
-			parent.getAgency().removeAgent(parent);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 
@@ -102,10 +105,10 @@ public class MonoeyeBrain {
 				}
 				break;
 			case DEAD:
-				parent.getAgency().createAgent(VanishPoof.makeAP(body.getPosition(), true));
-				parent.getAgency().createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
-				parent.getAgency().removeAgent(parent);
-				parent.getAgency().getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
+				parentHooks.createAgent(VanishPoof.makeAP(body.getPosition(), true));
+				parentHooks.createAgent(AngelHeart.makeAP(body.getPosition(), DROP_HEART_COUNT));
+				parentHooks.removeThisAgent();
+				parentHooks.getEar().playSound(KidIcarusAudio.Sound.General.SMALL_POOF);
 				return null;
 		}
 
@@ -193,7 +196,7 @@ public class MonoeyeBrain {
 		if(ogleTarget != null) {
 			isTargetRemoved = false;
 			// add an AgentRemoveListener to allow de-targeting on death of target
-			parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, ogleTarget) {
+			parentHooks.createAgentRemoveListener(ogleTarget, new AgentRemoveCallback() {
 					@Override
 					public void preRemoveAgent() { isTargetRemoved = true; }
 				});
@@ -209,7 +212,7 @@ public class MonoeyeBrain {
 			return MoveState.FLY;
 	}
 
-	public boolean onTakeDamage(Agent agent) {
+	boolean onTakeDamage(Agent agent) {
 		// if dead already or the damage is from the same team then return no damage taken
 		if(isDead || !(agent instanceof PlayerAgent))
 			return false;

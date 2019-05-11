@@ -7,11 +7,11 @@ import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.info.CommonCF;
 
-public class KeepAliveBoxBody extends FollowBoxBody {
+class KeepAliveBoxBody extends FollowBoxBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.KEEP_ALIVE_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
-	public KeepAliveBoxBody(KeepAliveBox parent, World world, Rectangle bounds) {
+	KeepAliveBoxBody(KeepAliveBox parent, World world, Rectangle bounds) {
 		super(parent, world, bounds, true);
 	}
 

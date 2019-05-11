@@ -7,7 +7,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.ObjectProperties;
@@ -124,15 +124,15 @@ public class AP_Tool {
 		return agentProps.get(CommonKV.KEY_DIRECTION, Direction8.NONE, Direction8.class);
 	}
 
-	public static Agent getNamedAgent(String name, Agency agency) {
-		return agency.getFirstAgentByProperty(CommonKV.Script.KEY_NAME, name);
+	public static Agent getNamedAgent(String name, AgentHooks agentHooks) {
+		return agentHooks.getFirstAgentByProperty(CommonKV.Script.KEY_NAME, name);
 	}
 
-	public static Agent getTargetAgent(Agent agent, Agency agency) {
+	public static Agent getTargetAgent(Agent agent, AgentHooks agentHooks) {
 		String targetNameStr = agent.getProperty(CommonKV.Script.KEY_TARGET_NAME, null, String.class);
 		if(targetNameStr == null)
 			return null;
-		return getNamedAgent(targetNameStr, agency);
+		return getNamedAgent(targetNameStr, agentHooks);
 	}
 
 	public static String getTargetName(ObjectProperties properties) {

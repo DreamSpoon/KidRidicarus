@@ -2,9 +2,9 @@ package kidridicarus.game.Metroid.agent.player.samusshot;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -20,29 +20,28 @@ public class SamusShot extends CorpusAgent {
 	private SamusShotBrain brain;
 	private SamusShotSprite sprite;
 
-	public SamusShot(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
-		body = new SamusShotBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+	public SamusShot(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
+		body = new SamusShotBody(this, agentHooks.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties));
-		brain = new SamusShotBrain(this, (SamusShotBody) body,
-				properties.get(CommonKV.KEY_PARENT_AGENT, null, Samus.class),
-				properties.getBoolean(CommonKV.Spawn.KEY_EXPIRE, false));
-		sprite = new SamusShotSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+		brain = new SamusShotBrain(properties.get(CommonKV.KEY_PARENT_AGENT, null, Samus.class), agentHooks,
+				(SamusShotBody) body, properties.getBoolean(CommonKV.Spawn.KEY_EXPIRE, false));
+		sprite = new SamusShotSprite(agentHooks.getAtlas(), body.getPosition());
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((SamusShotBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(brain.processFrame(frameTime)); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});

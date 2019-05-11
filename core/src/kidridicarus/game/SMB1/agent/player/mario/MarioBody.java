@@ -17,7 +17,7 @@ import kidridicarus.common.info.CommonCF.Alias;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class MarioBody extends PlayerAgentBody {
+class MarioBody extends PlayerAgentBody {
 	private static final Vector2 BIG_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(26f));
 	private static final Vector2 SML_BODY_SIZE = new Vector2(UInfo.P2M(14f), UInfo.P2M(12f));
 	private static final float FOOT_WIDTH = UInfo.P2M(5f);
@@ -61,19 +61,19 @@ public class MarioBody extends PlayerAgentBody {
 	private boolean isBigBody;
 	private boolean isDucking;
 
-	public MarioBody(Mario parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
+	MarioBody(Mario parent, World world, Vector2 position, Vector2 velocity, boolean isBigBody,
 			boolean isDucking) {
 		super(parent, world, position, velocity);
 		isAgentSensorEnabled = true;
 		setMarioBodyStuff(position, velocity, isBigBody, isDucking);
 	}
 
-	public BrainContactFrameInput processContactFrame() {
+	BrainContactFrameInput processContactFrame() {
 		return new BrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn());
 	}
 
-	public void setMarioBodyStuff(Vector2 position, Vector2 velocity, boolean isBigBody, boolean isDucking) {
+	void setMarioBodyStuff(Vector2 position, Vector2 velocity, boolean isBigBody, boolean isDucking) {
 		this.isBigBody = isBigBody;
 		this.isDucking = isDucking;
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f), velocity);
@@ -143,7 +143,7 @@ public class MarioBody extends PlayerAgentBody {
 		b2body.applyLinearImpulse(impulse, b2body.getWorldCenter(), true);
 	}
 
-	public void allowOnlyDeadContacts() {
+	void allowOnlyDeadContacts() {
 		// disable all, and...
 		disableAllContacts();
 		// ... re-enable the needed agent contact sensor bits
@@ -153,11 +153,11 @@ public class MarioBody extends PlayerAgentBody {
 		isAgentSensorEnabled = false;
 	}
 
-	public MarioSpine getSpine() {
+	MarioSpine getSpine() {
 		return spine;
 	}
 
-	public void useScriptedBodyState(ScriptedBodyState sbState, boolean bigBody) {
+	void useScriptedBodyState(ScriptedBodyState sbState, boolean bigBody) {
 		if(sbState.contactEnabled && !isAgentSensorEnabled) {
 			((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_ENABLED_CFCAT;
 			((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_ENABLED_CFMASK;

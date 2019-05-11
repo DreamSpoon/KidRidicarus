@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.KidIcarusGfx;
 
-public class ShemumSprite extends AgentSprite {
+class ShemumSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 2/15f;
@@ -20,7 +20,7 @@ public class ShemumSprite extends AgentSprite {
 	private Animation<TextureRegion> anim;
 	private float animTimer;
 
-	public ShemumSprite(TextureAtlas atlas, Vector2 position) {
+	ShemumSprite(TextureAtlas atlas, Vector2 position) {
 		anim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(KidIcarusGfx.NPC.SHEMUM), PlayMode.LOOP);
 		animTimer = 0;
 		setRegion(anim.getKeyFrame(0f));

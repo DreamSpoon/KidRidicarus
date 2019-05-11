@@ -4,27 +4,30 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.Metroid.agent.other.metroiddoor.MetroidDoor;
 
-public class MetroidDoorNexusBrain {
+class MetroidDoorNexusBrain {
 	private MetroidDoorNexus parent;
+	private AgentHooks parentHooks;
 	private MetroidDoorNexusBody body;
 	private String leftDoorName;
 	private String rightDoorName;
 
-	public MetroidDoorNexusBrain(MetroidDoorNexus parent, MetroidDoorNexusBody body, String leftDoorName,
-			String rightDoorName) {
+	MetroidDoorNexusBrain(MetroidDoorNexus parent, AgentHooks parentHooks, MetroidDoorNexusBody body,
+			String leftDoorName, String rightDoorName) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		this.leftDoorName = leftDoorName;
 		this.rightDoorName = rightDoorName;
 	}
 
-	public void processContactFrame(List<PlayerAgent> cFrameInput) {
+	void processContactFrame(List<PlayerAgent> cFrameInput) {
 		for(PlayerAgent agent : cFrameInput) {
 			// ignore player Agents that do not have position
 			Vector2 playerPos = AP_Tool.getCenter(agent);
@@ -41,7 +44,7 @@ public class MetroidDoorNexusBrain {
 	private MetroidDoor getDoor(String targetNameStr) {
 		if(targetNameStr == null)
 			return null;
-		Agent agent = AP_Tool.getNamedAgent(targetNameStr, parent.getAgency());
+		Agent agent = AP_Tool.getNamedAgent(targetNameStr, parentHooks);
 		if(agent instanceof MetroidDoor)
 			return (MetroidDoor) agent;
 		else

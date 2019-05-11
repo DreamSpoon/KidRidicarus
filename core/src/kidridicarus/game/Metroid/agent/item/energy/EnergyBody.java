@@ -11,14 +11,14 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class EnergyBody extends AgentBody {
+class EnergyBody extends AgentBody {
 	private static final float GRAVITY_SCALE = 0f;
 	private static final float BODY_WIDTH = UInfo.P2M(4f);
 	private static final float BODY_HEIGHT = UInfo.P2M(4f);
 
 	private BasicAgentSpine spine;
 
-	public EnergyBody(Energy parent, World world, Vector2 position) {
+	EnergyBody(Energy parent, World world, Vector2 position) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT));
 	}
@@ -38,12 +38,12 @@ public class EnergyBody extends AgentBody {
 				spine.createAgentSensor(), getBounds().width, getBounds().height);
 	}
 
-	public PowerupBrainContactFrameInput processContactFrame() {
+	PowerupBrainContactFrameInput processContactFrame() {
 		return new PowerupBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getTouchingPowerupTaker());
 	}
 
-	public BasicAgentSpine getSpine() {
+	BasicAgentSpine getSpine() {
 		return spine;
 	}
 }

@@ -6,10 +6,10 @@ import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.game.Metroid.agent.other.metroiddoor.MetroidDoorBrain.MoveState;
 
-public class MetroidDoorSpriteFrameInput extends SpriteFrameInput {
-	public MoveState moveState;
+class MetroidDoorSpriteFrameInput extends SpriteFrameInput {
+	MoveState moveState;
 
-	public MetroidDoorSpriteFrameInput(Vector2 position, boolean isFacingRight, FrameTime frameTime,
+	MetroidDoorSpriteFrameInput(Vector2 position, boolean isFacingRight, FrameTime frameTime,
 			MoveState moveState) {
 		super(frameTime, !isFacingRight, false, 0f, position);
 		this.moveState = moveState;

@@ -1,24 +1,25 @@
 package kidridicarus.common.agent.agentspawner;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.agency.tool.ObjectProperties;
 
-public class DeadRespawnController extends SpawnController {
+class DeadRespawnController extends SpawnController {
 	private boolean isSpawnReset;
 	private int numSpawns;
 	private int numSpawnsDisposed;
 
-	public DeadRespawnController(AgentSpawner spawner, ObjectProperties properties) {
-		super(spawner, properties);
+	DeadRespawnController(AgentSpawner spawner, AgentHooks parentHooks, ObjectProperties properties) {
+		super(spawner, parentHooks, properties);
 		isSpawnReset = true;
 		numSpawns = 0;
 		numSpawnsDisposed = 0;
 	}
 
 	@Override
-	public void update(FrameTime frameTime, boolean isEnabled) {
+	void update(FrameTime frameTime, boolean isEnabled) {
 		if(!isEnabled) {
 			// if all spawns have died, and the spawner is not enabled, then reset so another spawn can occur 
 			if(numSpawns == numSpawnsDisposed)
@@ -28,7 +29,7 @@ public class DeadRespawnController extends SpawnController {
 			isSpawnReset = false;
 			numSpawns++;
 			Agent spawnedAgent = doSpawn();
-			parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, spawnedAgent) {
+			parentHooks.createAgentRemoveListener(spawnedAgent, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { numSpawnsDisposed++; }
 			});

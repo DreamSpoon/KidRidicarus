@@ -12,19 +12,19 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class PowerStarBody extends AgentBody {
+class PowerStarBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float GRAVITY_SCALE = 0.5f;
 
 	private SolidContactSpine spine;
 
-	public PowerStarBody(PowerStar parent, World world) {
+	PowerStarBody(PowerStar parent, World world) {
 		super(parent, world);
 		spine = null;
 	}
 
-	public void finishSprout(Vector2 position, Vector2 velocity) {
+	void finishSprout(Vector2 position, Vector2 velocity) {
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
 	}
@@ -48,14 +48,14 @@ public class PowerStarBody extends AgentBody {
 				spine.createAgentSensor(), bounds.width, bounds.height);
 	}
 
-	public PowerupBrainContactFrameInput processContactFrame() {
+	PowerupBrainContactFrameInput processContactFrame() {
 		if(spine == null)
 			return null;
 		return new PowerupBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getTouchingPowerupTaker());
 	}
 
-	public SolidContactSpine getSpine() {
+	SolidContactSpine getSpine() {
 		return spine;
 	}
 }

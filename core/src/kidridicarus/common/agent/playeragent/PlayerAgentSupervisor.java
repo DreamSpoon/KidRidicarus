@@ -2,11 +2,12 @@ package kidridicarus.common.agent.playeragent;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentSupervisor;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
-import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
+import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.powerup.Powerup;
@@ -23,8 +24,8 @@ public class PlayerAgentSupervisor extends AgentSupervisor {
 	private String nextLevelName;
 	private boolean isGameOver;
 
-	public PlayerAgentSupervisor(Agent supervisedAgent) {
-		super(supervisedAgent);
+	public PlayerAgentSupervisor(Agent supervisedAgent, AgentHooks supervisedAgentHooks) {
+		super(supervisedAgent, supervisedAgentHooks);
 		currentRoom = null;
 		nonCharPowerups = new PowerupList();
 		lastKnownViewCenter = null;
@@ -55,7 +56,7 @@ public class PlayerAgentSupervisor extends AgentSupervisor {
 		if(newRoom != null) {
 			String strMusic = newRoom.getProperty(CommonKV.Room.KEY_MUSIC, null, String.class);
 			if(strMusic != null)
-				getAgency().getEar().changeAndStartMainMusic(strMusic);
+				supervisedAgentHooks.getEar().changeAndStartMainMusic(strMusic);
 		}
 		// Reset the view center, so that view does not "over-scroll" if player is teleported in a one way
 		// scrolling room (e.g. using doors in Kid Icarus level 1-1).

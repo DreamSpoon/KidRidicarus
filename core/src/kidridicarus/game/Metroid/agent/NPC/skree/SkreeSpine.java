@@ -9,7 +9,7 @@ import kidridicarus.common.agentspine.PlayerContactNerve;
 import kidridicarus.common.agentspine.SolidContactSpine;
 import kidridicarus.common.tool.AP_Tool;
 
-public class SkreeSpine extends SolidContactSpine {
+class SkreeSpine extends SolidContactSpine {
 	private static final float FALL_IMPULSE = 0.07f;
 	private static final float FALL_SPEED_MAX = 2f;
 	private static final float SIDE_IMPULSE_MAX = 0.07f;
@@ -17,16 +17,16 @@ public class SkreeSpine extends SolidContactSpine {
 
 	private PlayerContactNerve pcNerve;
 
-	public SkreeSpine(SkreeBody body) {
+	SkreeSpine(SkreeBody body) {
 		super(body);
 		pcNerve = new PlayerContactNerve();
 	}
 
-	public AgentContactHoldSensor createPlayerSensor() {
+	AgentContactHoldSensor createPlayerSensor() {
 		return pcNerve.createPlayerSensor();
 	}
 
-	public void doFall(Agent target) {
+	void doFall(Agent target) {
 		// if the target exists then follow it horizontally...
 		if(target != null)
 			doHorizontalFollow(target);
@@ -69,7 +69,7 @@ public class SkreeSpine extends SolidContactSpine {
 		}
 	}
 
-	public PlayerAgent getPlayerContact() {
+	PlayerAgent getPlayerContact() {
 		return pcNerve.getFirstPlayerContact();
 	}
 }

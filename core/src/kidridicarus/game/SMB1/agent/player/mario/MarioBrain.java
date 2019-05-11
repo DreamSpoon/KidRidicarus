@@ -5,8 +5,9 @@ import java.util.LinkedList;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
@@ -27,7 +28,7 @@ import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireball;
 import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class MarioBrain {
+class MarioBrain {
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));
 	private static final Vector2 GROW_OFFSET = DUCK_OFFSET;
 	private static final float DEAD_DELAY_TIME = 3f;
@@ -40,21 +41,22 @@ public class MarioBrain {
 
 	enum PowerState {
 		SMALL, BIG, FIRE;
-		public boolean isBigBody() { return !this.equals(SMALL); }
+		boolean isBigBody() { return !this.equals(SMALL); }
 	}
 	enum MoveState {
 		STAND, RUN, BRAKE, FALL, DUCK, DUCKSLIDE, DUCKFALL, DUCKJUMP, JUMP, DEAD, DEAD_BOUNCE, CLIMB;
-		public boolean equalsAny(MoveState ...otherStates) {
+		boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-		public boolean isDuck() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP, DUCKSLIDE); }
-		public boolean isDuckNoSlide() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP); }
-		public boolean isJump() { return this.equalsAny(JUMP, DUCKJUMP); }
-		public boolean isOnGround() { return this.equalsAny(STAND, RUN, BRAKE, DUCK, DUCKSLIDE); }
-		public boolean isDead() { return this.equalsAny(DEAD, DEAD_BOUNCE); }
+		boolean isDuck() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP, DUCKSLIDE); }
+		boolean isDuckNoSlide() { return this.equalsAny(DUCK, DUCKFALL, DUCKJUMP); }
+		boolean isJump() { return this.equalsAny(JUMP, DUCKJUMP); }
+		boolean isOnGround() { return this.equalsAny(STAND, RUN, BRAKE, DUCK, DUCKSLIDE); }
+		boolean isDead() { return this.equalsAny(DEAD, DEAD_BOUNCE); }
 	}
 
 	private Mario parent;
+	private AgentHooks parentHooks;
 	private MarioBody body;
 	private PlayerAgentSupervisor supervisor;
 	private int coinTotal;
@@ -83,13 +85,14 @@ public class MarioBrain {
 	private boolean isDuckSlideRight;
 	private RoomBox lastKnownRoom;
 
-	public MarioBrain(Mario parent, MarioBody body, boolean isFacingRight, PowerState powerState, int coinTotal,
-			int pointsTotal) {
+	MarioBrain(Mario parent, AgentHooks parentHooks, MarioBody body, boolean isFacingRight,
+			PowerState powerState, int coinTotal, int pointsTotal) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		this.coinTotal = coinTotal;
 		this.pointTotal = pointsTotal;
-		supervisor = new PlayerAgentSupervisor(parent);
+		supervisor = new PlayerAgentSupervisor(parent, parentHooks);
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
 		this.isFacingRight = isFacingRight;
@@ -117,12 +120,10 @@ public class MarioBrain {
 	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
 	 * by way of regular update. Also apply star power damage if needed.
 	 */
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
-		if(moveState != MoveState.DEAD) {
-			if(cFrameInput.room != null)
-				lastKnownRoom = cFrameInput.room;
-		}
+		if(moveState != MoveState.DEAD && cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
 		if(!isHeadBumped) {
@@ -142,7 +143,7 @@ public class MarioBrain {
 		}
 	}
 
-	public SpriteFrameInput processFrame(FrameTime frameTime) {
+	SpriteFrameInput processFrame(FrameTime frameTime) {
 		MoveAdvice4x2 moveAdvice = supervisor.pollMoveAdvice();
 
 		// if a script is running with no move advice then apply scripted body state and exit
@@ -237,8 +238,8 @@ public class MarioBrain {
 		if(moveStateChanged) {
 			body.allowOnlyDeadContacts();
 			body.zeroVelocity(true, true);
-			parent.getAgency().getEar().stopAllMusic();
-			parent.getAgency().getEar().playSound(SMB1_Audio.Sound.MARIO_DIE);
+			parentHooks.getEar().stopAllMusic();
+			parentHooks.getEar().playSound(SMB1_Audio.Sound.MARIO_DIE);
 
 			// do bounce up if needed
 			if(nextMoveState == MoveState.DEAD_BOUNCE)
@@ -266,7 +267,7 @@ public class MarioBrain {
 			// if small then power up to big
 			if(powerState == PowerState.SMALL)
 				newPowerState = PowerState.BIG;
-			parent.getAgency().getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
+			parentHooks.getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
 		}
 		else if(pu instanceof SMB1_Pow.FireFlowerPow) {
 			// if small then power up to big
@@ -275,7 +276,7 @@ public class MarioBrain {
 			// if big then power up to fire
 			else if(powerState == PowerState.BIG)
 				newPowerState = PowerState.FIRE;
-			parent.getAgency().getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
+			parentHooks.getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
 		}
 		else if(pu instanceof SMB1_Pow.Mush1UpPow) {
 			// TODO apply 1-UP mushroom
@@ -285,7 +286,7 @@ public class MarioBrain {
 			// when mario gets a powerstar.
 			body.getSpine().getPushDamageContacts();
 			starPowerCooldown = POWERSTAR_MAXTIME;
-			parent.getAgency().getEar().startSinglePlayMusic(SMB1_Audio.Music.STARPOWER);
+			parentHooks.getEar().startSinglePlayMusic(SMB1_Audio.Music.STARPOWER);
 		}
 		else if(pu instanceof SMB1_Pow.CoinPow) {
 			coinTotal++;
@@ -325,14 +326,14 @@ public class MarioBrain {
 			offset = body.getPosition().cpy().add(-FIREBALL_OFFSET, 0f);
 
 		// create fireball with remove listener attached, so new fireballs can be created when old ones expire
-		MarioFireball fireball = (MarioFireball) parent.getAgency().createAgent(
+		MarioFireball fireball = (MarioFireball) parentHooks.createAgent(
 				MarioFireball.makeAP(offset, isFacingRight, parent));
-		parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, fireball) {
+		parentHooks.createAgentRemoveListener(fireball, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { activeFireballCount--; }
 			});
 		// boom goes the dynamite
-		parent.getAgency().getEar().playSound(SMB1_Audio.Sound.FIREBALL);
+		parentHooks.getEar().playSound(SMB1_Audio.Sound.FIREBALL);
 	}
 
 	private void processDamageTaken(FrameTime frameTime) {
@@ -360,7 +361,7 @@ public class MarioBrain {
 				powerState = PowerState.SMALL;
 				noDamageCooldown = NO_DAMAGE_TIME;
 				body.setMarioBodyStuff(body.getPosition().cpy().sub(GROW_OFFSET), body.getVelocity(), false, false);
-				parent.getAgency().getEar().playSound(SMB1_Audio.Sound.POWERDOWN);
+				parentHooks.getEar().playSound(SMB1_Audio.Sound.POWERDOWN);
 				break;
 		}
 	}
@@ -455,9 +456,9 @@ public class MarioBrain {
 					body.getSpine().applyJumpImpulse();
 
 					if(powerState.isBigBody())
-						parent.getAgency().getEar().playSound(SMB1_Audio.Sound.MARIO_BIGJUMP);
+						parentHooks.getEar().playSound(SMB1_Audio.Sound.MARIO_BIGJUMP);
 					else
-						parent.getAgency().getEar().playSound(SMB1_Audio.Sound.MARIO_SMLJUMP);
+						parentHooks.getEar().playSound(SMB1_Audio.Sound.MARIO_SMLJUMP);
 				}
 				else {
 					if(!moveAdvice.action1)
@@ -610,22 +611,22 @@ public class MarioBrain {
 		}
 	}
 
-	public RoomBox getCurrentRoom() {
+	RoomBox getCurrentRoom() {
 		return lastKnownRoom;
 	}
 
-	public PlayerAgentSupervisor getSupervisor() {
+	PlayerAgentSupervisor getSupervisor() {
 		return supervisor;
 	}
 
-	public boolean onTakePowerup(Powerup pu) {
+	boolean onTakePowerup(Powerup pu) {
 		if(moveState == MoveState.DEAD)
 			return false;
 		powerupsReceived.add(pu);
 		return true;
 	}
 
-	public boolean onTakeDamage() {
+	boolean onTakeDamage() {
 		// no damage taken if already took damage this frame, or if invulnerable, or if star powered, or if dead
 		if(didTakeDamage || noDamageCooldown > 0f || starPowerCooldown > 0f || moveState == MoveState.DEAD)
 			return false;
@@ -633,7 +634,7 @@ public class MarioBrain {
 		return true;
 	}
 
-	public boolean onGiveHeadBounce(Agent agent) {
+	boolean onGiveHeadBounce(Agent agent) {
 		// no head bouncing while star powered or dead
 		if(starPowerCooldown > 0f || moveState == MoveState.DEAD)
 			return false;
@@ -646,19 +647,19 @@ public class MarioBrain {
 		return false;
 	}
 
-	public PowerState getPowerState() {
+	PowerState getPowerState() {
 		return powerState;
 	}
 
-	public boolean isFacingRight() {
+	boolean isFacingRight() {
 		return isFacingRight;
 	}
 
-	public int getCoinTotal() {
+	int getCoinTotal() {
 		return coinTotal;
 	}
 
-	public int getPointTotal() {
+	int getPointTotal() {
 		return pointTotal;
 	}
 }

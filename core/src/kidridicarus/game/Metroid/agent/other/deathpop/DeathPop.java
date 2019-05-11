@@ -2,7 +2,7 @@ package kidridicarus.game.Metroid.agent.other.deathpop;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
@@ -22,16 +22,16 @@ public class DeathPop extends CorpusAgent {
 	private float stateTimer;
 	private Vector2 position;
 
-	public DeathPop(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public DeathPop(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		stateTimer = 0f;
 		position = AP_Tool.getCenter(properties);
-		sprite = new DeathPopSprite(agency.getAtlas(), position);
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		sprite = new DeathPopSprite(agentHooks.getAtlas(), position);
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(processFrame(frameTime)); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_MIDDLE, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
@@ -39,7 +39,7 @@ public class DeathPop extends CorpusAgent {
 
 	private SpriteFrameInput processFrame(FrameTime frameTime) {
 		if(stateTimer > POP_TIME) {
-			agency.removeAgent(this);
+			agentHooks.removeThisAgent();
 			return null;
 		}
 		stateTimer += frameTime.timeDelta;

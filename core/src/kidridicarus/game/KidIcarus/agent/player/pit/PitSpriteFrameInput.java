@@ -7,15 +7,15 @@ import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.KidIcarus.agent.player.pit.PitBrain.MoveState;
 
-public class PitSpriteFrameInput extends SpriteFrameInput {
-	public MoveState moveState;
-	public boolean isDmgFrame;
-	public boolean isShooting;
-	public boolean isHeadInTile;
-	public boolean isJumpUp;
-	public Direction4 climbDir;
+class PitSpriteFrameInput extends SpriteFrameInput {
+	MoveState moveState;
+	boolean isDmgFrame;
+	boolean isShooting;
+	boolean isHeadInTile;
+	boolean isJumpUp;
+	Direction4 climbDir;
 
-	public PitSpriteFrameInput(Vector2 position, boolean isFacingRight, FrameTime frameTime, MoveState moveState,
+	PitSpriteFrameInput(Vector2 position, boolean isFacingRight, FrameTime frameTime, MoveState moveState,
 			boolean isDmgFrame, boolean isShooting, boolean isHeadInTile, boolean isJumpUp, Direction4 climbDir) {
 		super(frameTime, !isFacingRight, false, 0f, position);
 		this.moveState = moveState;

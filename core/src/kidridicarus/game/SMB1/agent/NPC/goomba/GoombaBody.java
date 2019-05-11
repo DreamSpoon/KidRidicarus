@@ -16,7 +16,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
 
-public class GoombaBody extends AgentBody {
+class GoombaBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(14f);
 	private static final float FOOT_WIDTH = UInfo.P2M(12f);
@@ -36,7 +36,7 @@ public class GoombaBody extends AgentBody {
 	private GoombaSpine spine;
 	private Fixture agentSensorFixture;
 
-	public GoombaBody(Goomba parent, World world, Vector2 position, Vector2 velocity) {
+	GoombaBody(Goomba parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -68,14 +68,14 @@ public class GoombaBody extends AgentBody {
 				FOOT_WIDTH, FOOT_HEIGHT, new Vector2(0f, -getBounds().height/2f));
 	}
 
-	public void allowOnlyDeadSquishContacts() {
+	void allowOnlyDeadSquishContacts() {
 		// change the needed agent contact sensor bits
 		((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
 		((AgentBodyFilter) agentSensorFixture.getUserData()).maskBits = AS_DISABLED_CFMASK;
 		agentSensorFixture.refilter();
 	}
 
-	public void allowOnlyDeadBumpContacts() {
+	void allowOnlyDeadBumpContacts() {
 		disableAllContacts();
 		// change the needed agent contact sensor bits
 		((AgentBodyFilter) agentSensorFixture.getUserData()).categoryBits = AS_DISABLED_CFCAT;
@@ -83,12 +83,12 @@ public class GoombaBody extends AgentBody {
 		agentSensorFixture.refilter();
 	}
 
-	public BrainContactFrameInput processContactFrame() {
+	BrainContactFrameInput processContactFrame() {
 		return new HeadBounceBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getHeadBounceBeginContacts());
 	}
 
-	public GoombaSpine getSpine() {
+	GoombaSpine getSpine() {
 		return spine;
 	}
 }

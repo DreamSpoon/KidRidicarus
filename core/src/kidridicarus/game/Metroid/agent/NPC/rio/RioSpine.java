@@ -11,7 +11,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 
-public class RioSpine extends SolidContactSpine {
+class RioSpine extends SolidContactSpine {
 	private static final float SIDE_SPEED_MAX = 0.5f;
 	private static final float SWOOP_UP_MIN_VEL = 0.6f;
 	private static final float SWOOP_DOWN_MIN_VEL = 0.1f;
@@ -22,21 +22,21 @@ public class RioSpine extends SolidContactSpine {
 
 	private PlayerContactNerve pcNerve;
 
-	public RioSpine(RioBody body) {
+	RioSpine(RioBody body) {
 		super(body);
 		pcNerve = new PlayerContactNerve();
 	}
 
-	public AgentContactHoldSensor createPlayerSensor() {
+	AgentContactHoldSensor createPlayerSensor() {
 		return pcNerve.createPlayerSensor();
 	}
 
-	public PlayerAgent getPlayerContact() {
+	PlayerAgent getPlayerContact() {
 		return pcNerve.getFirstPlayerContact();
 	}
 
 	// TODO refactor this method
-	public void setSwoopVelocity(Agent target, Direction4 swoopDir, boolean swoopUp) {
+	void setSwoopVelocity(Agent target, Direction4 swoopDir, boolean swoopUp) {
 		// default to swoop up at max speed in given swoopDir
 		Vector2 swoopVel = new Vector2(swoopDir.isRight() ? SIDE_SPEED_MAX : -SIDE_SPEED_MAX, SWOOP_MAX_VEL);
 		// if target position exists then use the position to set the swoop velocity
@@ -61,7 +61,7 @@ public class RioSpine extends SolidContactSpine {
 	}
 
 	// TODO refactor this method
-	public void setSwoopVelocity(Vector2 swoopLowPoint, Direction4 swoopDir, boolean swoopUp) {
+	void setSwoopVelocity(Vector2 swoopLowPoint, Direction4 swoopDir, boolean swoopUp) {
 		// default to swoop up at max speed in given swoopDir
 		Vector2 swoopVel = new Vector2(swoopDir.isRight() ? SIDE_SPEED_MAX : -SIDE_SPEED_MAX,
 				(swoopLowPoint.y - body.getPosition().y) * SWOOP_VEL_FACTOR);
@@ -82,7 +82,7 @@ public class RioSpine extends SolidContactSpine {
 		body.setVelocity(swoopVel);
 	}
 
-	public boolean isTargetAboveMe(Agent target) {
+	boolean isTargetAboveMe(Agent target) {
 		Vector2 targetPosition = AP_Tool.getCenter(target);
 		// if target doesn't have position then return false
 		if(targetPosition == null)

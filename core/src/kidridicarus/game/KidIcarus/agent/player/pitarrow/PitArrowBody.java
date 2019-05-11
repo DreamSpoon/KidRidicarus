@@ -13,7 +13,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.Direction4;
 
-public class PitArrowBody extends AgentBody {
+class PitArrowBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(3);
 	private static final float BODY_HEIGHT = UInfo.P2M(3);
 	private static final float GRAVITY_SCALE = 0f;
@@ -26,7 +26,7 @@ public class PitArrowBody extends AgentBody {
 	private Direction4 arrowDir;
 	private SolidContactSpine spine;
 
-	public PitArrowBody(PitArrow parent, World world, Vector2 position, Vector2 velocity, Direction4 arrowDir) {
+	PitArrowBody(PitArrow parent, World world, Vector2 position, Vector2 velocity, Direction4 arrowDir) {
 		super(parent, world);
 		this.arrowDir = arrowDir;
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
@@ -56,12 +56,12 @@ public class PitArrowBody extends AgentBody {
 				getBounds().width, getBounds().height);
 	}
 
-	public ContactDmgBrainContactFrameInput processContactFrame() {
+	ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
-	public SolidContactSpine getSpine() {
+	SolidContactSpine getSpine() {
 		return spine;
 	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -16,21 +17,24 @@ import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
 import kidridicarus.game.info.SMB1_Audio;
 
-public class TurtleBrain {
+class TurtleBrain {
 	private static final float GIVE_DAMAGE = 8f;
 	private static final float DIE_FALL_TIME = 6f;
 	private static final float HIDE_DELAY = 1.7f;
 	private static final float WAKE_DELAY = 3f;
 
 	enum MoveState { WALK, FALL, DEAD, HIDE, WAKE, SLIDE;
-			public boolean equalsAny(MoveState ...otherStates) {
+			boolean equalsAny(MoveState ...otherStates) {
 				for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 			}
-			public boolean isKickable() { return this.equalsAny(HIDE, WAKE); }
+			boolean isKickable() { return this.equalsAny(HIDE, WAKE); }
 		}
 
 	private enum HitType { NONE, BOUNCE, KICK }
 
+	private Turtle parent;
+	private AgentHooks parentHooks;
+	private TurtleBody body;
 	private float moveStateTimer;
 	private MoveState moveState;
 	private boolean isFacingRight;
@@ -40,11 +44,10 @@ public class TurtleBrain {
 	private Agent perp;
 	private boolean despawnMe;
 	private RoomBox lastKnownRoom;
-	private Turtle parent;
-	private TurtleBody body;
 
-	public TurtleBrain(Turtle parent, TurtleBody body) {
+	TurtleBrain(Turtle parent, AgentHooks parentHooks, TurtleBody body) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		moveStateTimer = 0f;
 		moveState = MoveState.WALK;
@@ -57,7 +60,7 @@ public class TurtleBrain {
 		lastKnownRoom = null;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		if(isDead)
 			return;
 		// if alive and not touching keep alive box, or if touching despawn, then set despawn flag
@@ -144,9 +147,9 @@ public class TurtleBrain {
 		return HitType.NONE;
 	}
 
-	public TurtleSpriteFrameInput processFrame(FrameTime frameTime) {
+	TurtleSpriteFrameInput processFrame(FrameTime frameTime) {
 		if(despawnMe) {
-			parent.getAgency().removeAgent(parent);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 
@@ -154,7 +157,7 @@ public class TurtleBrain {
 		if(body.getSpine().isKoopaSideMoveBlocked(isFacingRight, !isSliding)) {
 			isFacingRight = !isFacingRight;
 			if(isSliding)
-				parent.getAgency().getEar().playSound(SMB1_Audio.Sound.BUMP);
+				parentHooks.getEar().playSound(SMB1_Audio.Sound.BUMP);
 		}
 
 		MoveState nextMoveState = getNextMoveState();
@@ -167,9 +170,9 @@ public class TurtleBrain {
 				break;
 			case HIDE:
 				if(isMoveStateChange) {
-					parent.getAgency().createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
+					parentHooks.createAgent(FloatingPoints.makeAP(100, true, body.getPosition(), perp));
 					body.zeroVelocity(true, true);
-					parent.getAgency().getEar().playSound(SMB1_Audio.Sound.STOMP);
+					parentHooks.getEar().playSound(SMB1_Audio.Sound.STOMP);
 				}
 				break;
 			case WAKE:
@@ -181,8 +184,8 @@ public class TurtleBrain {
 						isFacingRight = false;
 					else if(!isFacingRight && !body.getSpine().isOtherAgentOnRight(perp))
 						isFacingRight = true;
-					parent.getAgency().getEar().playSound(SMB1_Audio.Sound.KICK);
-					parent.getAgency().createAgent(FloatingPoints.makeAP(400, true, body.getPosition(), perp));
+					parentHooks.getEar().playSound(SMB1_Audio.Sound.KICK);
+					parentHooks.createAgent(FloatingPoints.makeAP(400, true, body.getPosition(), perp));
 				}
 				body.getSpine().doSlideMove(isFacingRight);
 				break;
@@ -190,11 +193,11 @@ public class TurtleBrain {
 				// newly deceased?
 				if(isMoveStateChange) {
 					doStartDeath();
-					parent.getAgency().createAgent(FloatingPoints.makeAP(500, true, body.getPosition(), perp));
+					parentHooks.createAgent(FloatingPoints.makeAP(500, true, body.getPosition(), perp));
 				}
 				// check the old deceased for timeout
 				else if(moveStateTimer > DIE_FALL_TIME) {
-					parent.getAgency().removeAgent(parent);
+					parentHooks.removeThisAgent();
 					return null;
 				}
 				break;
@@ -248,10 +251,10 @@ public class TurtleBrain {
 
 	private void doStartDeath() {
 		body.getSpine().doDeadBumpContactsAndMove(deadBumpRight);
-		parent.getAgency().createAgent(FloatingPoints.makeAP(500, false, body.getPosition(), perp));
+		parentHooks.createAgent(FloatingPoints.makeAP(500, false, body.getPosition(), perp));
 	}
 
-	public boolean onTakeDamage(Agent agent, Vector2 dmgOrigin) {
+	boolean onTakeDamage(Agent agent, Vector2 dmgOrigin) {
 		if(isDead || !(agent instanceof PlayerAgent))
 			return false;
 
@@ -261,7 +264,7 @@ public class TurtleBrain {
 		return true;
 	}
 
-	public void onTakeBump(Agent agent) {
+	void onTakeBump(Agent agent) {
 		if(isDead)
 			return;
 

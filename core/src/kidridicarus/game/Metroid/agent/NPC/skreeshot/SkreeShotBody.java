@@ -12,7 +12,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SkreeShotBody extends AgentBody {
+class SkreeShotBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(6);
 	private static final float BODY_HEIGHT = UInfo.P2M(6);
 
@@ -22,7 +22,7 @@ public class SkreeShotBody extends AgentBody {
 
 	private BasicAgentSpine spine;
 
-	public SkreeShotBody(SkreeShot parent, World world, Vector2 position, Vector2 velocity) {
+	SkreeShotBody(SkreeShot parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -42,12 +42,12 @@ public class SkreeShotBody extends AgentBody {
 				getBounds().width, getBounds().height);
 	}
 
-	public ContactDmgBrainContactFrameInput processContactFrame() {
+	ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
-	public BasicAgentSpine getSpine() {
+	BasicAgentSpine getSpine() {
 		return spine;
 	}
 }

@@ -2,6 +2,7 @@ package kidridicarus.game.SMB1.agent.item.powerstar;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -10,19 +11,19 @@ import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.AP_Tool;
-import kidridicarus.game.SMB1.agent.item.fireflower.SproutSpriteFrameInput;
 import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
+import kidridicarus.game.SMB1.agentsprite.SproutSpriteFrameInput;
 import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class PowerStarBrain {
+class PowerStarBrain {
 	private static final float SPROUT_TIME = 1f;
 	private static final float SPROUT_OFFSET = UInfo.P2M(-13f);
 	private static final Vector2 MAX_BOUNCE_VEL = new Vector2(0.5f, 2f); 
 
 	private enum MoveState { SPROUT, WALK, END }
 
-	private PowerStar parent;
+	private AgentHooks parentHooks;
 	private PowerStarBody body;
 	private float moveStateTimer;
 	private MoveState moveState;
@@ -35,8 +36,8 @@ public class PowerStarBrain {
 	private Vector2 bumpCenter;
 	private boolean despawnMe;
 
-	public PowerStarBrain(PowerStar parent, PowerStarBody body, Vector2 initSpawnPosition) {
-		this.parent = parent;
+	PowerStarBrain(AgentHooks parentHooks, PowerStarBody body, Vector2 initSpawnPosition) {
+		this.parentHooks = parentHooks;
 		this.body = body;
 		this.initSpawnPosition = initSpawnPosition;
 		moveStateTimer = 0f;
@@ -50,11 +51,11 @@ public class PowerStarBrain {
 		despawnMe = false;
 	}
 
-	public Vector2 getSproutStartPos() {
+	Vector2 getSproutStartPos() {
 		return initSpawnPosition.cpy().add(0f, SPROUT_OFFSET);
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// exit if not finished sprouting or if used
 		if(moveState == MoveState.SPROUT || powerupTaker != null)
 			return;
@@ -73,7 +74,7 @@ public class PowerStarBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public SproutSpriteFrameInput processFrame(FrameTime frameTime) {
+	SproutSpriteFrameInput processFrame(FrameTime frameTime) {
 		Vector2 spritePos = new Vector2();
 		boolean finishSprout = false;
 		MoveState nextMoveState = getNextMoveState();
@@ -99,11 +100,11 @@ public class PowerStarBrain {
 			case END:
 				// if powerup was taken then play sound and award points
 				if(powerupTaker != null) {
-					parent.getAgency().getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
-					parent.getAgency().createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(),
+					parentHooks.getEar().playSound(SMB1_Audio.Sound.POWERUP_USE);
+					parentHooks.createAgent(FloatingPoints.makeAP(1000, true, body.getPosition(),
 							(Agent) powerupTaker));
 				}
-				parent.getAgency().removeAgent(parent);
+				parentHooks.removeThisAgent();
 				spritePos.set(body.getPosition());
 				break;
 		}
@@ -156,7 +157,7 @@ public class PowerStarBrain {
 		isZeroPrevVelY = isZeroVelY;
 	}
 
-	public void onTakeBump(Agent bumpingAgent) {
+	void onTakeBump(Agent bumpingAgent) {
 		// one bump per frame please
 		if(isBumped)
 			return;

@@ -2,10 +2,10 @@ package kidridicarus.game.KidIcarus.agent.NPC.shemum;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -20,29 +20,29 @@ public class Shemum extends CorpusAgent implements ContactDmgTakeAgent, BumpTake
 	private ShemumBrain brain;
 	private ShemumSprite sprite;
 
-	public Shemum(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public Shemum(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		body = new ShemumBody(
-				this, agency.getWorld(), AP_Tool.getCenter(properties), AP_Tool.safeGetVelocity(properties));
-		brain = new ShemumBrain(this, (ShemumBody) body);
-		sprite = new ShemumSprite(agency.getAtlas(), body.getPosition());
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+				this, agentHooks.getWorld(), AP_Tool.getCenter(properties), AP_Tool.safeGetVelocity(properties));
+		brain = new ShemumBrain(this, agentHooks, (ShemumBody) body);
+		sprite = new ShemumSprite(agentHooks.getAtlas(), body.getPosition());
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((ShemumBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					sprite.processFrame(brain.processFrame(frameTime));
 				}
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});

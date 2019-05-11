@@ -1,11 +1,12 @@
 package kidridicarus.game.Metroid.agent.other.metroiddoor;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.game.info.MetroidAudio;
 
-public class MetroidDoorBrain {
+class MetroidDoorBrain {
 	private static final float LONG_OPEN_DELAY = 77/30f;
 	private static final float SHORT_OPEN_DELAY = 0.75f;
 	private static final float OPENCLOSE_DELAY1 = 1/5f;
@@ -13,7 +14,7 @@ public class MetroidDoorBrain {
 
 	enum MoveState { CLOSED, OPENING_WAIT1, OPENING_WAIT2, OPEN, CLOSING }
 
-	private MetroidDoor parent;
+	private AgentHooks parentHooks;
 	private MetroidDoorBody body;
 	private MoveState moveState;
 	private float moveStateTimer;
@@ -23,8 +24,8 @@ public class MetroidDoorBrain {
 	private boolean isQuickOpenClose;
 	private boolean isFacingRight;
 
-	public MetroidDoorBrain(MetroidDoor parent, MetroidDoorBody body, boolean isFacingRight) {
-		this.parent = parent;
+	MetroidDoorBrain(AgentHooks parentHooks, MetroidDoorBody body, boolean isFacingRight) {
+		this.parentHooks = parentHooks;
 		this.body = body;
 		this.isFacingRight = isFacingRight;
 		moveState = MoveState.CLOSED;
@@ -33,7 +34,7 @@ public class MetroidDoorBrain {
 		isQuickOpenClose = false;
 	}
 
-	public MetroidDoorSpriteFrameInput processFrame(FrameTime frameTime) {
+	MetroidDoorSpriteFrameInput processFrame(FrameTime frameTime) {
 		MoveState nextMoveState = getNextMoveState();
 		boolean isMoveStateChange = nextMoveState != moveState;
 		switch(nextMoveState) {
@@ -43,7 +44,7 @@ public class MetroidDoorBrain {
 					isOpening = false;
 					isQuickOpenClose = false;
 					body.setMainSolid(true);
-					parent.getAgency().getEar().playSound(MetroidAudio.Sound.DOOR);
+					parentHooks.getEar().playSound(MetroidAudio.Sound.DOOR);
 				}
 				break;
 			case CLOSED:	// there must be a joke in this somewhere...
@@ -55,7 +56,7 @@ public class MetroidDoorBrain {
 				// if first frame of open then make the door non-solid
 				if(isMoveStateChange) {
 					body.setMainSolid(false);
-					parent.getAgency().getEar().playSound(MetroidAudio.Sound.DOOR);
+					parentHooks.getEar().playSound(MetroidAudio.Sound.DOOR);
 				}
 				break;
 		}
@@ -131,11 +132,11 @@ public class MetroidDoorBrain {
 		}
 	}
 
-	public void onTakeTrigger() {
+	void onTakeTrigger() {
 		isQuickOpenClose = true;
 	}
 
-	public boolean onTakeDamage(Agent agent) {
+	boolean onTakeDamage(Agent agent) {
 		if(!(agent instanceof PlayerAgent))
 			return false;
 		isOpening = true;

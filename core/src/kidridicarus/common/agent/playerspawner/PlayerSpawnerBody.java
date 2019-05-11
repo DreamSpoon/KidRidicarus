@@ -8,10 +8,10 @@ import kidridicarus.agency.agentbody.AgentBody;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class PlayerSpawnerBody extends AgentBody {
+class PlayerSpawnerBody extends AgentBody {
 	private static final float GRAVITY_SCALE = 0f;
 
-	public PlayerSpawnerBody(World world, PlayerSpawner parent, Rectangle bounds) {
+	PlayerSpawnerBody(World world, PlayerSpawner parent, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}

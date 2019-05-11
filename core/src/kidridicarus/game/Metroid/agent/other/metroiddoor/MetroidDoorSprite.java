@@ -10,7 +10,7 @@ import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.game.info.MetroidGfx;
 
-public class MetroidDoorSprite extends AgentSprite {
+class MetroidDoorSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(48);
 	private static final float ANIM_SPEED = 0.1f;
@@ -21,7 +21,7 @@ public class MetroidDoorSprite extends AgentSprite {
 	private Animation<TextureRegion> openedAnim;
 	private Animation<TextureRegion> openingAnim;
 
-	public MetroidDoorSprite(TextureAtlas atlas, SpriteFrameInput frameInput) {
+	MetroidDoorSprite(TextureAtlas atlas, SpriteFrameInput frameInput) {
 		closedAnim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(MetroidGfx.NPC.DOOR_CLOSED), PlayMode.LOOP);
 		closingAnim = new Animation<TextureRegion>(ANIM_SPEED_CLOSE,

@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class BrickPieceSprite extends AgentSprite {
+class BrickPieceSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(8);
 	private static final float ANIM_SPEED = 0.2f;
@@ -20,7 +20,7 @@ public class BrickPieceSprite extends AgentSprite {
 	private Animation<TextureRegion> anim;
 	private float animTimer;
 
-	public BrickPieceSprite(TextureAtlas atlas, Vector2 position, int startFrame) {
+	BrickPieceSprite(TextureAtlas atlas, Vector2 position, int startFrame) {
 		anim = new Animation<TextureRegion>(ANIM_SPEED,
 				atlas.findRegions(SMB1_Gfx.General.BRICKPIECE), PlayMode.LOOP);
 		animTimer = (float) startFrame * ANIM_SPEED;

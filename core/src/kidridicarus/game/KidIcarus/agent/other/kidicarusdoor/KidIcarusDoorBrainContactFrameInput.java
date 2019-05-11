@@ -4,10 +4,10 @@ import java.util.List;
 
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 
-public class KidIcarusDoorBrainContactFrameInput {
-	public List<PlayerAgent> playerContacts;
+class KidIcarusDoorBrainContactFrameInput {
+	List<PlayerAgent> playerContacts;
 
-	public KidIcarusDoorBrainContactFrameInput(List<PlayerAgent> playerContacts) {
+	KidIcarusDoorBrainContactFrameInput(List<PlayerAgent> playerContacts) {
 		this.playerContacts = playerContacts;
 	}
 }

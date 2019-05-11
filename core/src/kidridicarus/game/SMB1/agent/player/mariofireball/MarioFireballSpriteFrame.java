@@ -6,10 +6,10 @@ import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireballBrain.MoveState;
 
-public class MarioFireballSpriteFrame extends SpriteFrameInput {
-	public MoveState moveState;
+class MarioFireballSpriteFrame extends SpriteFrameInput {
+	MoveState moveState;
 
-	public MarioFireballSpriteFrame(Vector2 position, boolean isFacingRight, FrameTime frameTime, MoveState moveState) {
+	MarioFireballSpriteFrame(Vector2 position, boolean isFacingRight, FrameTime frameTime, MoveState moveState) {
 		super(frameTime, !isFacingRight, false, 0f, position);
 		this.moveState = moveState;
 	}

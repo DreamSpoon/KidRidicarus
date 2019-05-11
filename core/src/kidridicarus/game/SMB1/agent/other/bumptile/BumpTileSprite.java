@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class BumpTileSprite extends AgentSprite {
+class BumpTileSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float ANIM_SPEED = 0.133f;
@@ -23,7 +23,7 @@ public class BumpTileSprite extends AgentSprite {
 	private boolean isQblock;
 
 	// if prebumpTex is null then this tile is invisible until bumped
-	public BumpTileSprite(TextureAtlas atlas, Vector2 position, TextureRegion prebumpTex, boolean isQblock) {
+	BumpTileSprite(TextureAtlas atlas, Vector2 position, TextureRegion prebumpTex, boolean isQblock) {
 		this.prebumpTex = prebumpTex;
 		emptyblockTex = atlas.findRegion(SMB1_Gfx.General.QBLOCK_EMPTY);
 		qbAnim = new Animation<TextureRegion>(ANIM_SPEED, atlas.findRegions(SMB1_Gfx.General.QBLOCK), PlayMode.LOOP);

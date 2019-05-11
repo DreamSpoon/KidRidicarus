@@ -3,7 +3,7 @@ package kidridicarus.game.KidIcarus.agent.other.vanishpoof;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
@@ -22,16 +22,16 @@ public class VanishPoof extends CorpusAgent {
 	private VanishPoofSprite sprite;
 	private float stateTimer;
 
-	public VanishPoof(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public VanishPoof(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		stateTimer = 0f;
-		sprite = new VanishPoofSprite(agency.getAtlas(), AP_Tool.getCenter(properties),
+		sprite = new VanishPoofSprite(agentHooks.getAtlas(), AP_Tool.getCenter(properties),
 				properties.getBoolean(KidIcarusKV.KEY_IS_BIG, false));
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) { sprite.processFrame(doUpdate(frameTime)); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
@@ -40,7 +40,7 @@ public class VanishPoof extends CorpusAgent {
 	private SpriteFrameInput doUpdate(FrameTime frameTime) {
 		stateTimer += frameTime.timeDelta;
 		if(stateTimer > POOF_TIME) {
-			agency.removeAgent(this);
+			agentHooks.removeThisAgent();
 			return null;
 		}
 		return SprFrameTool.placeAnim(getPosition(), frameTime);

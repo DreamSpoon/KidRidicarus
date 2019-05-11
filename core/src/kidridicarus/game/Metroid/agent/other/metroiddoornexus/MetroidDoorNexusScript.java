@@ -3,7 +3,7 @@ package kidridicarus.game.Metroid.agent.other.metroiddoornexus;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -11,7 +11,7 @@ import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.game.Metroid.agent.other.metroiddoor.MetroidDoor;
 
-public class MetroidDoorNexusScript implements AgentScript {
+class MetroidDoorNexusScript implements AgentScript {
 	private static final float TRANSIT_TIME = 3f;
 
 	private enum ScriptState { FIRST_HALF, SECOND_HALF, COMPLETE }
@@ -24,7 +24,7 @@ public class MetroidDoorNexusScript implements AgentScript {
 	private float exitPositionX;
 	private float exitPositionY;
 
-	public MetroidDoorNexusScript(MetroidDoorNexus parent, boolean isTransitRight, MetroidDoor leftDoor,
+	MetroidDoorNexusScript(MetroidDoorNexus parent, boolean isTransitRight, MetroidDoor leftDoor,
 			MetroidDoor rightDoor, Vector2 incomingAgentSize) {
 		Rectangle parentBounds = AP_Tool.getBounds(parent);
 		if(parentBounds == null) {
@@ -65,7 +65,8 @@ public class MetroidDoorNexusScript implements AgentScript {
 	}
 
 	@Override
-	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
+	public void startScript(AgentHooks agentHooks, AgentScriptHooks scriptHooks,
+			ScriptedAgentState beginScriptAgentState) {
 		this.beginAgentState = beginScriptAgentState.cpy();
 		this.curScriptAgentState = beginScriptAgentState.cpy();
 

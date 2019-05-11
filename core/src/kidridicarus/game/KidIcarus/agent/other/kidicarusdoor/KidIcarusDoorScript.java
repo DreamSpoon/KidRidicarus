@@ -2,7 +2,7 @@ package kidridicarus.game.KidIcarus.agent.other.kidicarusdoor;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
@@ -15,7 +15,7 @@ import kidridicarus.common.tool.Direction4;
  * Name: Kid Icarus Door Script
  * Desc: Transport player from one place to another, and close the door behind them.
  */
-public class KidIcarusDoorScript implements AgentScript {
+class KidIcarusDoorScript implements AgentScript {
 	private static final float WAIT_TIME_ENTER = 1f;
 	private static final float WAIT_TIME_EXIT = 0.75f;
 
@@ -28,7 +28,7 @@ public class KidIcarusDoorScript implements AgentScript {
 	private KidIcarusDoor entranceDoor;
 	private Direction4 exitDir;
 
-	public KidIcarusDoorScript(KidIcarusDoor entranceDoor, Agent exitSpawner) {
+	KidIcarusDoorScript(KidIcarusDoor entranceDoor, Agent exitSpawner) {
 		moveStateTimer = 0f;
 		moveState = MoveState.ENTER;
 		// save ref to door so door can be "closed" after player enters door
@@ -43,7 +43,8 @@ public class KidIcarusDoorScript implements AgentScript {
 	}
 
 	@Override
-	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
+	public void startScript(AgentHooks agentHooks, AgentScriptHooks scriptHooks,
+			ScriptedAgentState beginScriptAgentState) {
 		// error if this script is used more than once - i.e. script restart not allowed
 		if(moveState != MoveState.ENTER)
 			throw new IllegalStateException("Script restart not allowed.");

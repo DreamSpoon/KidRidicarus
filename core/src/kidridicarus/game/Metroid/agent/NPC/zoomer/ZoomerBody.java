@@ -13,7 +13,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.common.tool.DiagonalDir4;
 
-public class ZoomerBody extends AgentBody {
+class ZoomerBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float SENSOR_SIZEFACTOR = 1.2f;
@@ -26,7 +26,7 @@ public class ZoomerBody extends AgentBody {
 	private ZoomerSpine spine;
 	private Vector2 prevPosition;
 
-	public ZoomerBody(Zoomer parent, World world, Vector2 position, Vector2 velocity) {
+	ZoomerBody(Zoomer parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -73,20 +73,20 @@ public class ZoomerBody extends AgentBody {
 				sizeX, sizeY, new Vector2(posX, posY));
 	}
 
-	public ContactDmgBrainContactFrameInput processContactFrame() {
+	ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
-	public Vector2 getPrevPosition() {
+	Vector2 getPrevPosition() {
 		return prevPosition;
 	}
 
-	public void postUpdate() {
+	void postUpdate() {
 		prevPosition.set(b2body.getPosition());
 	}
 
-	public ZoomerSpine getSpine() {
+	ZoomerSpine getSpine() {
 		return spine;
 	}
 }

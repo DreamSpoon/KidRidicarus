@@ -12,9 +12,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.info.AgencyKV;
 import kidridicarus.agency.tool.FrameTime;
@@ -37,8 +37,8 @@ public class TiledMapMetaAgent extends Agent implements Disposable {
 	private LinkedList<Disposable> manualDisposeAgents;
 	private AgentUpdateListener myUpdateListener;
 
-	public TiledMapMetaAgent(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public TiledMapMetaAgent(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 
 		manualDisposeAgents = new LinkedList<Disposable>();
 
@@ -52,8 +52,8 @@ public class TiledMapMetaAgent extends Agent implements Disposable {
 				@Override
 				public void update(FrameTime frameTime) { doUpdate(); }
 			};
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, myUpdateListener);
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, myUpdateListener);
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 			@Override
 			public void preRemoveAgent() { dispose(); }
 		});
@@ -86,7 +86,7 @@ public class TiledMapMetaAgent extends Agent implements Disposable {
 		if(solidLayers.isEmpty())
 			return;
 
-		solidTileMapAgent = (SolidTiledMapAgent) agency.createAgent(
+		solidTileMapAgent = (SolidTiledMapAgent) agentHooks.createAgent(
 				SolidTiledMapAgent.makeAP(bounds, solidLayers));
 	}
 
@@ -96,7 +96,7 @@ public class TiledMapMetaAgent extends Agent implements Disposable {
 		drawLayerAgents = new LinkedList<DrawLayerAgent>();
 		// loop through each draw layer in the list, adding each and passing a ref to its tiled map layer
 		for(TiledMapTileLayer layer : drawLayers) {
-			drawLayerAgents.add((DrawLayerAgent) agency.createAgent(
+			drawLayerAgents.add((DrawLayerAgent) agentHooks.createAgent(
 					DrawLayerAgent.makeAP(getProperty(CommonKV.KEY_BOUNDS, null, Rectangle.class), layer)));
 		}
 	}
@@ -110,7 +110,7 @@ public class TiledMapMetaAgent extends Agent implements Disposable {
 	 * Note: Only one update, then update listener is removed.
 	 */
 	private void doUpdate() {
-		agency.removeAgentUpdateListener(this, myUpdateListener);
+		agentHooks.removeUpdateListener(myUpdateListener);
 		createOtherAgents();
 	}
 
@@ -120,7 +120,7 @@ public class TiledMapMetaAgent extends Agent implements Disposable {
 	 */
 	private void createOtherAgents() {
 		// create the other agents (typically spawn boxes, rooms, player start, etc.)
-		List<Agent> createdAgents = agency.createAgents(makeAgentPropsFromLayers(map.getLayers()));
+		List<Agent> createdAgents = agentHooks.createAgents(makeAgentPropsFromLayers(map.getLayers()));
 		for(Agent agent : createdAgents) {
 			if(agent instanceof Disposable)
 				manualDisposeAgents.add((Disposable) agent);

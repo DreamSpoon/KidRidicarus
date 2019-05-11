@@ -1,30 +1,31 @@
 package kidridicarus.common.agent.levelendtrigger;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.tool.FrameTime;
 
-public class LevelEndScript implements AgentScript {
+class LevelEndScript implements AgentScript {
 	private static final float LEVELEND_WAIT = 4f;
 
 	private LevelEndTrigger parent;
-	private AgentScriptHooks asHooks;
+	private AgentScriptHooks scriptHooks;
 	private ScriptedAgentState curScriptAgentState;
 	private float stateTimer;
 	private String nextLevelName;
 
-	public LevelEndScript(LevelEndTrigger parent, String nextLevelName) {
+	LevelEndScript(LevelEndTrigger parent, String nextLevelName) {
 		this.parent = parent;
 		this.nextLevelName = nextLevelName;
-		asHooks = null;
+		scriptHooks = null;
 		curScriptAgentState = null;
 		stateTimer = 0f;
 	}
 
 	@Override
-	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
-		this.asHooks = asHooks;
+	public void startScript(AgentHooks agentHooks, AgentScriptHooks scriptHooks,
+			ScriptedAgentState beginScriptAgentState) {
+		this.scriptHooks = scriptHooks;
 		this.curScriptAgentState = beginScriptAgentState.cpy();
 
 		// disable character contacts and hide the sprite
@@ -39,7 +40,7 @@ public class LevelEndScript implements AgentScript {
 	@Override
 	public boolean update(FrameTime frameTime) {
 		if(stateTimer > LEVELEND_WAIT) {
-			asHooks.gotoNextLevel(nextLevelName);
+			scriptHooks.gotoNextLevel(nextLevelName);
 			// end script updates
 			return false;
 		}

@@ -3,9 +3,9 @@ package kidridicarus.game.SMB1.agent.other.pipewarp;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -29,12 +29,12 @@ public class PipeWarp extends CorpusAgent {
 	private String targetName;
 	private Direction4 direction;
 
-	public PipeWarp(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public PipeWarp(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		targetName = AP_Tool.getTargetName(properties);
 		direction = properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE);
-		body = new PipeWarpBody(this, agency.getWorld(), AP_Tool.getBounds(properties));
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		body = new PipeWarpBody(this, agentHooks.getWorld(), AP_Tool.getBounds(properties));
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});
@@ -63,7 +63,7 @@ public class PipeWarp extends CorpusAgent {
 
 	// returns null if a valid exit spawner is not found
 	public PlayerSpawner getExitAgentSpawner() {
-		Agent agent = AP_Tool.getNamedAgent(targetName, agency);
+		Agent agent = AP_Tool.getNamedAgent(targetName, agentHooks);
 		if(agent instanceof PlayerSpawner)
 			return (PlayerSpawner) agent;
 		return null;

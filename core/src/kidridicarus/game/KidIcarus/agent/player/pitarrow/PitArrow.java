@@ -2,9 +2,9 @@ package kidridicarus.game.KidIcarus.agent.player.pitarrow;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agent.AgentDrawListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -21,32 +21,32 @@ public class PitArrow extends CorpusAgent {
 	private PitArrowBrain brain;
 	private PitArrowSprite sprite;
 
-	public PitArrow(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public PitArrow(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		Direction4 arrowDir = properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE);
-		body = new PitArrowBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+		body = new PitArrowBody(this, agentHooks.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties), arrowDir);
-		brain = new PitArrowBrain(this, (PitArrowBody) body,
-				properties.get(CommonKV.KEY_PARENT_AGENT, null, Pit.class),
-				properties.getBoolean(CommonKV.Spawn.KEY_EXPIRE, false), arrowDir);
-		sprite = new PitArrowSprite(agency.getAtlas(), new PitArrowSpriteFrameInput(body.getPosition(), arrowDir));
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+		brain = new PitArrowBrain(properties.get(CommonKV.KEY_PARENT_AGENT, null, Pit.class), agentHooks,
+				(PitArrowBody) body, properties.getBoolean(CommonKV.Spawn.KEY_EXPIRE, false), arrowDir);
+		sprite = new PitArrowSprite(agentHooks.getAtlas(),
+				new PitArrowSpriteFrameInput(body.getPosition(), arrowDir));
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((PitArrowBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					sprite.processFrame(brain.processFrame(frameTime.timeDelta));
 				}
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOPFRONT, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});

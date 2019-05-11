@@ -12,10 +12,10 @@ import kidridicarus.common.agentsensor.OneWayContactSensor;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class LevelEndTriggerBody extends AgentBody {
+class LevelEndTriggerBody extends AgentBody {
 	private OneWayContactSensor playerSensor;
 
-	public LevelEndTriggerBody(LevelEndTrigger parent, World world, Rectangle bounds) {
+	LevelEndTriggerBody(LevelEndTrigger parent, World world, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}

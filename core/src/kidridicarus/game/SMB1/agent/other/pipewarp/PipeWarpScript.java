@@ -3,7 +3,7 @@ package kidridicarus.game.SMB1.agent.other.pipewarp;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
@@ -17,7 +17,7 @@ import kidridicarus.game.info.SMB1_Audio;
  * 2) Warp the agent body to pipe warp exit position.
  * 3) Animate the agent sprite exiting a pipe warp (or the agent immediately appears at the non-pipe warp exit).
  */
-public class PipeWarpScript implements AgentScript {
+class PipeWarpScript implements AgentScript {
 	private static final float ENTRY_TIME = 1f;
 	private static final float EXIT_TIME = ENTRY_TIME;
 
@@ -32,7 +32,7 @@ public class PipeWarpScript implements AgentScript {
 	private float stateTimer;
 	private ScriptState curScriptState;
 
-	public PipeWarpScript(Vector2 exitPosition, PipeWarpHorizon entryHorizon, PipeWarpHorizon exitHorizon,
+	PipeWarpScript(Vector2 exitPosition, PipeWarpHorizon entryHorizon, PipeWarpHorizon exitHorizon,
 			Vector2 incomingAgentSize) {
 		this.exitPosition = exitPosition;
 		this.entryHorizon = entryHorizon;
@@ -45,7 +45,8 @@ public class PipeWarpScript implements AgentScript {
 	}
 
 	@Override
-	public void startScript(Agency agency, AgentScriptHooks asHooks, ScriptedAgentState beginScriptAgentState) {
+	public void startScript(AgentHooks agentHooks, AgentScriptHooks scriptHooks,
+			ScriptedAgentState beginScriptAgentState) {
 		this.beginAgentState = beginScriptAgentState.cpy();
 		this.curScriptAgentState = beginScriptAgentState.cpy();
 
@@ -54,7 +55,7 @@ public class PipeWarpScript implements AgentScript {
 		curScriptAgentState.scriptedBodyState.contactEnabled = false;
 		curScriptAgentState.scriptedBodyState.gravityFactor = 0f;
 
-		agency.getEar().playSound(SMB1_Audio.Sound.POWERDOWN);
+		agentHooks.getEar().playSound(SMB1_Audio.Sound.POWERDOWN);
 	}
 
 	@Override

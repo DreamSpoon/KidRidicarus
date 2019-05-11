@@ -1,4 +1,4 @@
-package kidridicarus.game.SMB1.agent.item.fireflower;
+package kidridicarus.game.SMB1.agentsprite;
 
 import com.badlogic.gdx.math.Vector2;
 

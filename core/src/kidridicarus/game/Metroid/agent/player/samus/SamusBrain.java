@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState;
@@ -28,16 +29,16 @@ import kidridicarus.game.info.MetroidAudio;
 import kidridicarus.game.info.MetroidPow;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class SamusBrain {
+class SamusBrain {
 	enum MoveState { STAND, BALL_GRND, RUN, RUNSHOOT, PRE_JUMPSHOOT, JUMPSHOOT, JUMPSPINSHOOT,
 		PRE_JUMPSPIN, JUMPSPIN, PRE_JUMP, JUMP, BALL_AIR, CLIMB, DEAD;
-		public boolean equalsAny(MoveState ...otherStates) {
+		boolean equalsAny(MoveState ...otherStates) {
 			for(MoveState state : otherStates) { if(this.equals(state)) return true; } return false;
 		}
-		public boolean isGround() { return this.equalsAny(STAND, BALL_GRND, RUN, RUNSHOOT); }
-		public boolean isRun() { return this.equalsAny(RUN, RUNSHOOT); }
-		public boolean isJumpSpin() { return this.equalsAny(PRE_JUMPSPIN, JUMPSPIN, JUMPSPINSHOOT); }
-		public boolean isBall() { return this.equalsAny(BALL_GRND, BALL_AIR); }
+		boolean isGround() { return this.equalsAny(STAND, BALL_GRND, RUN, RUNSHOOT); }
+		boolean isRun() { return this.equalsAny(RUN, RUNSHOOT); }
+		boolean isJumpSpin() { return this.equalsAny(PRE_JUMPSPIN, JUMPSPIN, JUMPSPINSHOOT); }
+		boolean isBall() { return this.equalsAny(BALL_GRND, BALL_AIR); }
 	}
 
 	private static final float STEP_SOUND_TIME = 0.167f;
@@ -57,6 +58,7 @@ public class SamusBrain {
 	private static final int ENERGY_POW_AMOUNT = 5;
 
 	private Samus parent;
+	private AgentHooks parentHooks;
 	private SamusBody body;
 	private PlayerAgentSupervisor supervisor;
 	private MoveState moveState;
@@ -78,10 +80,12 @@ public class SamusBrain {
 	private LinkedList<Powerup> powerupsReceived;
 	private RoomBox lastKnownRoom;
 
-	public SamusBrain(Samus parent, SamusBody body, boolean isFacingRight, Integer energySupply) {
+	SamusBrain(Samus parent, AgentHooks parentHooks, SamusBody body, boolean isFacingRight,
+			Integer energySupply) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
-		supervisor = new PlayerAgentSupervisor(parent);
+		supervisor = new PlayerAgentSupervisor(parent, parentHooks);
 		moveState = MoveState.STAND;
 		moveStateTimer = 0f;
 		this.isFacingRight = isFacingRight;
@@ -106,12 +110,10 @@ public class SamusBrain {
 	 * Check for and do head bumps during contact update, so bump tiles can show results of bump immediately
 	 * by way of regular update.
 	 */
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// update last known room if not dead, so dead player moving through other RoomBoxes won't cause problems
-		if(moveState != MoveState.DEAD) {
-			if(cFrameInput.room != null)
-				lastKnownRoom = cFrameInput.room;
-		}
+		if(moveState != MoveState.DEAD && cFrameInput.room != null)
+			lastKnownRoom = cFrameInput.room;
 		if(supervisor.isRunningScriptNoMoveAdvice())
 			return;
 		if(!isHeadBumped) {
@@ -124,7 +126,7 @@ public class SamusBrain {
 		}
 	}
 
-	public SpriteFrameInput processFrame(FrameTime frameTime) {
+	SpriteFrameInput processFrame(FrameTime frameTime) {
 		// if a script is running with no move advice then apply scripted body state and exit
 		if(supervisor.isRunningScriptNoMoveAdvice()) {
 			ScriptedAgentState scriptedState = supervisor.getScriptAgentState();
@@ -208,7 +210,7 @@ public class SamusBrain {
 		// reset take damage origin
 		takeDmgOrigin.set(0f, 0f);
 		// ouchie sound
-		parent.getAgency().getEar().playSound(MetroidAudio.Sound.HURT);
+		parentHooks.getEar().playSound(MetroidAudio.Sound.HURT);
 	}
 
 	private void processHeadBouncesGiven() {
@@ -348,8 +350,8 @@ public class SamusBrain {
 		if(moveStateChanged) {
 			body.applyDead();
 			doDeathBurst();
-			parent.getAgency().getEar().stopAllMusic();
-			parent.getAgency().getEar().startSinglePlayMusic(MetroidAudio.Music.SAMUS_DIE);
+			parentHooks.getEar().stopAllMusic();
+			parentHooks.getEar().startSinglePlayMusic(MetroidAudio.Music.SAMUS_DIE);
 		}
 		// ... and if died a long time ago then do game over
 		else if(moveStateTimer > DEAD_DELAY_TIME)
@@ -368,17 +370,17 @@ public class SamusBrain {
 	// 6 pieces burst in 6 different directions
 	// 2 columns and 3 rows of 8x8 sprite animation
 	private void doDeathBurst() {
-		parent.getAgency().createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, -CHUNK_OFFSET_Y),
+		parentHooks.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, -CHUNK_OFFSET_Y),
 				new Vector2(BOT_VEL_X, BOT_VEL_Y), Direction8.DOWN_RIGHT));
-		parent.getAgency().createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, -CHUNK_OFFSET_Y),
+		parentHooks.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, -CHUNK_OFFSET_Y),
 				new Vector2(-BOT_VEL_X, BOT_VEL_Y), Direction8.DOWN_LEFT));
-		parent.getAgency().createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, 0f),
+		parentHooks.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, 0f),
 				new Vector2(MID_VEL_X, MID_VEL_Y), Direction8.RIGHT));
-		parent.getAgency().createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, 0f),
+		parentHooks.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, 0f),
 				new Vector2(-MID_VEL_X, MID_VEL_Y), Direction8.LEFT));
-		parent.getAgency().createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, CHUNK_OFFSET_Y),
+		parentHooks.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(CHUNK_OFFSET_X, CHUNK_OFFSET_Y),
 				new Vector2(TOP_VEL_X, TOP_VEL_Y), Direction8.UP_RIGHT));
-		parent.getAgency().createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, CHUNK_OFFSET_Y),
+		parentHooks.createAgent(SamusChunk.makeAP(body.getPosition().cpy().add(-CHUNK_OFFSET_X, CHUNK_OFFSET_Y),
 				new Vector2(-TOP_VEL_X, TOP_VEL_Y), Direction8.UP_LEFT));
 	}
 
@@ -409,12 +411,12 @@ public class SamusBrain {
 
 		// if previous move air move then samus just landed, so play landing sound
 		if(!moveState.isGround())
-			parent.getAgency().getEar().playSound(MetroidAudio.Sound.STEP);
+			parentHooks.getEar().playSound(MetroidAudio.Sound.STEP);
 		// if last move and this move are run moves then check/do step sound
 		else if(moveState.isRun() && nextMoveState.isRun()) {
 			if(runStateTimer - lastStepSoundTime >= STEP_SOUND_TIME) {
 				lastStepSoundTime = runStateTimer;
-				parent.getAgency().getEar().playSound(MetroidAudio.Sound.STEP);
+				parentHooks.getEar().playSound(MetroidAudio.Sound.STEP);
 			}
 		}
 		else
@@ -479,7 +481,7 @@ public class SamusBrain {
 					isNextJumpAllowed = false;
 					jumpForceTimer = PRE_JUMP_TIME+JUMPUP_FORCE_TIME;
 					body.getSpine().applyJumpVelocity();
-					parent.getAgency().getEar().playSound(MetroidAudio.Sound.JUMP);
+					parentHooks.getEar().playSound(MetroidAudio.Sound.JUMP);
 				}
 				else if(moveStateTimer <= JUMPUP_VEL_TIME)
 					body.getSpine().applyJumpVelocity();
@@ -564,8 +566,8 @@ public class SamusBrain {
 		}
 
 		// create shot; if the spawn point of shot is in a solid tile then the shot must immediately explode
-		parent.getAgency().createAgent(SamusShot.makeAP(parent, position, velocity, body.getSpine().isMapPointSolid(position)));
-		parent.getAgency().getEar().playSound(MetroidAudio.Sound.SHOOT);
+		parentHooks.createAgent(SamusShot.makeAP(parent, position, velocity, body.getSpine().isMapPointSolid(position)));
+		parentHooks.getEar().playSound(MetroidAudio.Sound.SHOOT);
 	}
 
 	private SpriteFrameInput getScriptedSpriteFrameInput(ScriptedSpriteState sss, FrameTime frameTime) {
@@ -586,22 +588,22 @@ public class SamusBrain {
 				frameTime, sss.position, scriptedMoveState, sss.isFacingRight, false, false,  sss.moveDir);
 	}
 
-	public boolean isFacingRight() {
+	boolean isFacingRight() {
 		return isFacingRight;
 	}
 
-	public Integer getEnergySupply() {
+	Integer getEnergySupply() {
 		return energySupply;
 	}
 
-	public boolean onTakePowerup(Powerup pu) {
+	boolean onTakePowerup(Powerup pu) {
 		if(moveState == MoveState.DEAD)
 			return false;
 		powerupsReceived.add(pu);
 		return true;
 	}
 
-	public boolean onTakeDamage(float amount, Vector2 dmgOrigin) {
+	boolean onTakeDamage(float amount, Vector2 dmgOrigin) {
 		// don't take more damage if dead, or if damage already taken in this frame, or if invulnerable
 		if(moveState == MoveState.DEAD || takeDamageAmount > 0f || noDamageCooldown > 0f)
 			return false;
@@ -611,7 +613,7 @@ public class SamusBrain {
 		return true;
 	}
 
-	public boolean onGiveHeadBounce(Agent agent) {
+	boolean onGiveHeadBounce(Agent agent) {
 		// if other agent has bounds and head bounce is allowed then give head bounce to agent
 		Rectangle otherBounds = AP_Tool.getBounds(agent);
 		if(otherBounds != null && body.getSpine().isGiveHeadBounceAllowed(otherBounds)) {
@@ -621,11 +623,11 @@ public class SamusBrain {
 		return false;
 	}
 
-	public PlayerAgentSupervisor getSupervisor() {
+	PlayerAgentSupervisor getSupervisor() {
 		return supervisor;
 	}
 
-	public RoomBox getCurrentRoom() {
+	RoomBox getCurrentRoom() {
 		return lastKnownRoom;
 	}
 }

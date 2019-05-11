@@ -2,11 +2,11 @@ package kidridicarus.game.SMB1.agent.player.mario;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentPropertyListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -34,26 +34,26 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	private MarioSprite sprite;
 	private MarioHUD playerHUD;
 
-	public Mario(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
+	public Mario(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
 		PowerState powerState =
 				getPowerState(properties.get(CommonKV.Powerup.KEY_POWERUP_LIST, null, PowerupList.class));
-		body = new MarioBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+		body = new MarioBody(this, agentHooks.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties), powerState.isBigBody(), false);
-		brain = new MarioBrain(this, (MarioBody) body,
+		brain = new MarioBrain(this, agentHooks, (MarioBody) body,
 				properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE).isRight(), powerState,
 				properties.getInteger(SMB1_KV.KEY_COINAMOUNT, 0),
 				properties.getInteger(SMB1_KV.KEY_POINTAMOUNT, 0));
-		sprite = new MarioSprite(agency.getAtlas(), body.getPosition(), powerState, brain.isFacingRight());
-		playerHUD = new MarioHUD(this, agency.getAtlas());
+		sprite = new MarioSprite(agentHooks.getAtlas(), body.getPosition(), powerState, brain.isFacingRight());
+		playerHUD = new MarioHUD(this, agentHooks.getAtlas());
 		createPropertyListeners();
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((MarioBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					sprite.processFrame(brain.processFrame(frameTime));
@@ -61,15 +61,15 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 					playerHUD.update(frameTime);
 				}
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { playerHUD.draw(eye); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});
@@ -87,19 +87,19 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 	}
 
 	private void createPropertyListeners() {
-		agency.addAgentPropertyListener(this, false, CommonKV.Script.KEY_SPRITE_SIZE,
+		agentHooks.addPropertyListener(false, CommonKV.Script.KEY_SPRITE_SIZE,
 				new AgentPropertyListener<Vector2>(Vector2.class) {
 				@Override
 				public Vector2 getValue() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
 			});
-		agency.addAgentPropertyListener(this, false, CommonKV.KEY_DIRECTION,
+		agentHooks.addPropertyListener(false, CommonKV.KEY_DIRECTION,
 				new AgentPropertyListener<Direction4>(Direction4.class) {
 				@Override
 				public Direction4 getValue() {
 					return brain.isFacingRight() ? Direction4.RIGHT : Direction4.LEFT;
 				}
 			});
-		agency.addAgentPropertyListener(this, false, CommonKV.Powerup.KEY_POWERUP_LIST,
+		agentHooks.addPropertyListener(false, CommonKV.Powerup.KEY_POWERUP_LIST,
 				new AgentPropertyListener<PowerupList>(PowerupList.class) {
 				@Override
 				public PowerupList getValue() {
@@ -117,12 +117,12 @@ public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounc
 					return powList;
 				}
 			});
-		agency.addAgentPropertyListener(this, false, SMB1_KV.KEY_COINAMOUNT,
+		agentHooks.addPropertyListener(false, SMB1_KV.KEY_COINAMOUNT,
 				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
 				public Integer getValue() { return brain.getCoinTotal(); }
 			});
-		agency.addAgentPropertyListener(this, false, SMB1_KV.KEY_POINTAMOUNT,
+		agentHooks.addPropertyListener(false, SMB1_KV.KEY_POINTAMOUNT,
 				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
 				public Integer getValue() { return brain.getPointTotal(); }

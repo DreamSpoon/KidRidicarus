@@ -2,8 +2,9 @@ package kidridicarus.game.Metroid.agent.NPC.skree;
 
 import com.badlogic.gdx.math.Vector2;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
@@ -16,7 +17,7 @@ import kidridicarus.game.Metroid.agent.item.energy.Energy;
 import kidridicarus.game.Metroid.agent.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
 
-public class SkreeBrain {
+class SkreeBrain {
 	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 1/3f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -32,6 +33,7 @@ public class SkreeBrain {
 	enum MoveState { SLEEP, FALL, ONGROUND, INJURY, EXPLODE, DEAD }
 
 	private Skree parent;
+	private AgentHooks parentHooks;
 	private SkreeBody body;
 	private MoveState moveState;
 	private float moveStateTimer;
@@ -45,8 +47,9 @@ public class SkreeBrain {
 	private boolean isTargetRemoved;
 	private RoomBox lastKnownRoom;
 
-	public SkreeBrain(Skree parent, SkreeBody body) {
+	SkreeBrain(Skree parent, AgentHooks parentHooks, SkreeBody body) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		moveState = MoveState.SLEEP;
 		moveStateTimer = 0f;
@@ -61,7 +64,7 @@ public class SkreeBrain {
 		lastKnownRoom = null;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
@@ -76,7 +79,7 @@ public class SkreeBrain {
 			target = body.getSpine().getPlayerContact();
 			// if found a target then add an AgentRemoveListener to allow de-targeting on death of target
 			if(target != null) {
-				parent.getAgency().addAgentRemoveListener(new AgentRemoveListener(parent, target) {
+				parentHooks.createAgentRemoveListener(target, new AgentRemoveCallback() {
 						@Override
 						public void preRemoveAgent() { isTargetRemoved = true; }
 					});
@@ -84,10 +87,10 @@ public class SkreeBrain {
 		}
 	}
 
-	public SkreeSpriteFrameInput processFrame(FrameTime frameTime) {
+	SkreeSpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose and exit
 		if(despawnMe) {
-			parent.getAgency().removeAgent(parent);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 
@@ -111,7 +114,7 @@ public class SkreeBrain {
 					moveStateBeforeInjury = moveState;
 					velocityBeforeInjury = body.getVelocity().cpy();
 					body.zeroVelocity(true, true);
-					parent.getAgency().getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
+					parentHooks.getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
 				}
 				else if(moveStateTimer > INJURY_TIME) {
 					isInjured = false;
@@ -127,10 +130,10 @@ public class SkreeBrain {
 				doExplode();
 				break;
 			case DEAD:
-				parent.getAgency().removeAgent(parent);
-				parent.getAgency().createAgent(DeathPop.makeAP(body.getPosition()));
+				parentHooks.removeThisAgent();
+				parentHooks.createAgent(DeathPop.makeAP(body.getPosition()));
 				doPowerupDrop();
-				parent.getAgency().getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
+				parentHooks.getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
 				return null;
 		}
 
@@ -165,18 +168,18 @@ public class SkreeBrain {
 			throw new IllegalStateException("The Skree explosion offset array length does not equal the " +
 					"explode velocity array length.");
 		for(int i=0; i<EXPLODE_OFFSET.length; i++)
-			parent.getAgency().createAgent(SkreeShot.makeAP(body.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
-		parent.getAgency().removeAgent(parent);
+			parentHooks.createAgent(SkreeShot.makeAP(body.getPosition().cpy().add(EXPLODE_OFFSET[i]), EXPLODE_VEL[i]));
+		parentHooks.removeThisAgent();
 	}
 
 	private void doPowerupDrop() {
 		// exit if drop not allowed
 		if(Math.random() > ITEM_DROP_RATE)
 			return;
-		parent.getAgency().createAgent(Energy.makeAP(body.getPosition()));
+		parentHooks.createAgent(Energy.makeAP(body.getPosition()));
 	}
 
-	public boolean onTakeDamage(Agent agent, float amount) {
+	boolean onTakeDamage(Agent agent, float amount) {
 		// no damage during injury, or if dead
 		if(isInjured || isDead || !(agent instanceof PlayerAgent))
 			return false;

@@ -11,17 +11,17 @@ import kidridicarus.agency.agentbody.CFBitSeq;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.B2DFactory;
 
-public class SemiSolidFloorBody extends AgentBody {
+class SemiSolidFloorBody extends AgentBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SEMISOLID_FLOOR_BIT,
 			CommonCF.Alias.SEMISOLID_FLOOR_FOOT_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(true);
 
-	public SemiSolidFloorBody(Agent parent, World world, Rectangle bounds) {
+	SemiSolidFloorBody(Agent parent, World world, Rectangle bounds) {
 		super(parent, world);
 		defineBody(bounds);
 	}
 
-	// Velocity is ignored. TODO mouse joint needed to implement velocity (properly).
+	// velocity is ignored. TODO mouse joint needed to implement velocity (properly)
 	@Override
 	protected void defineBody(Rectangle bounds, Vector2 velocity) {
 		// dispose the old body if it exists

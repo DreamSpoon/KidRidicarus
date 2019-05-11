@@ -2,11 +2,11 @@ package kidridicarus.game.KidIcarus.agent.player.pit;
 
 import com.badlogic.gdx.math.Vector2;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agent.AgentDrawListener;
 import kidridicarus.agency.agent.AgentPropertyListener;
-import kidridicarus.agency.agent.AgentRemoveListener;
+import kidridicarus.agency.agent.AgentRemoveCallback;
 import kidridicarus.agency.agent.AgentUpdateListener;
 import kidridicarus.agency.tool.Eye;
 import kidridicarus.agency.tool.FrameTime;
@@ -46,61 +46,61 @@ public class Pit extends PlayerAgent implements PowerupTakeAgent, ContactDmgTake
 	private PitBrain brain;
 	private PitSprite sprite;
 
-	public Pit(Agency agency, ObjectProperties properties) {
-		super(agency, properties);
-		body = new PitBody(this, agency.getWorld(), AP_Tool.getCenter(properties),
+	public Pit(AgentHooks agentHooks, ObjectProperties properties) {
+		super(agentHooks, properties);
+		body = new PitBody(this, agentHooks.getWorld(), AP_Tool.getCenter(properties),
 				AP_Tool.safeGetVelocity(properties), false);
-		brain = new PitBrain(this, (PitBody) body,
+		brain = new PitBrain(this, agentHooks, (PitBody) body,
 				properties.getDirection4(CommonKV.KEY_DIRECTION, Direction4.NONE).isRight(),
 				properties.getInteger(KidIcarusKV.KEY_HEALTH, null),
 				properties.getInteger(KidIcarusKV.KEY_HEART_COUNT, null));
-		sprite = new PitSprite(agency.getAtlas(), body.getPosition());
-		playerHUD = new PitHUD(this, agency.getAtlas());
+		sprite = new PitSprite(agentHooks.getAtlas(), body.getPosition());
+		playerHUD = new PitHUD(this, agentHooks.getAtlas());
 		createPropertyListeners();
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.PRE_MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					brain.processContactFrame(((PitBody) body).processContactFrame());
 				}
 			});
-		agency.addAgentUpdateListener(this, CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
+		agentHooks.addUpdateListener(CommonInfo.UpdateOrder.MOVE_UPDATE, new AgentUpdateListener() {
 				@Override
 				public void update(FrameTime frameTime) {
 					sprite.processFrame(brain.processFrame(frameTime));
 					((PlayerAgentBody) body).resetPrevValues();
 				}
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.SPRITE_TOP, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { eye.draw(sprite); }
 			});
-		agency.addAgentDrawListener(this, CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
+		agentHooks.addDrawListener(CommonInfo.DrawOrder.PLAYER_HUD, new AgentDrawListener() {
 				@Override
 				public void draw(Eye eye) { playerHUD.draw(eye); }
 			});
-		agency.addAgentRemoveListener(new AgentRemoveListener(this, this) {
+		agentHooks.createAgentRemoveListener(this, new AgentRemoveCallback() {
 				@Override
 				public void preRemoveAgent() { dispose(); }
 			});
 	}
 
 	private void createPropertyListeners() {
-		agency.addAgentPropertyListener(this, false, CommonKV.Script.KEY_SPRITE_SIZE,
+		agentHooks.addPropertyListener(false, CommonKV.Script.KEY_SPRITE_SIZE,
 				new AgentPropertyListener<Vector2>(Vector2.class) {
 				@Override
 				public Vector2 getValue() { return new Vector2(sprite.getWidth(), sprite.getHeight()); }
 			});
-		agency.addAgentPropertyListener(this, false, CommonKV.KEY_DIRECTION,
+		agentHooks.addPropertyListener(false, CommonKV.KEY_DIRECTION,
 				new AgentPropertyListener<Direction4>(Direction4.class) {
 				@Override
 				public Direction4 getValue() { return brain.isFacingRight() ? Direction4.RIGHT : Direction4.LEFT; }
 			});
-		agency.addAgentPropertyListener(this, false, KidIcarusKV.KEY_HEALTH,
+		agentHooks.addPropertyListener(false, KidIcarusKV.KEY_HEALTH,
 				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
 				public Integer getValue() { return brain.getHealth(); }
 			});
-		agency.addAgentPropertyListener(this, false, KidIcarusKV.KEY_HEART_COUNT,
+		agentHooks.addPropertyListener(false, KidIcarusKV.KEY_HEART_COUNT,
 				new AgentPropertyListener<Integer>(Integer.class) {
 				@Override
 				public Integer getValue() { return brain.getHeartsCollected(); }

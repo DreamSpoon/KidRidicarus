@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentbody.AgentBodyFilter;
 import kidridicarus.agency.tool.FrameTime;
@@ -26,7 +27,7 @@ import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_KV;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class BumpTileBrain {
+class BumpTileBrain {
 	private static final float BOUNCE_TIME = 0.175f;
 	private static final float BOUNCE_HEIGHT_FRAC = 0.225f;	// bounce up about 1/5 of tile height
 
@@ -42,7 +43,7 @@ public class BumpTileBrain {
 	private enum MoveState { PRESOLID, PREBUMP, MIDBUMP, EMPTY }
 	private enum BlockItem { NONE, COIN, COIN10, MAGIC_MUSHROOM, UP1_MUSHROOM, STAR }
 
-	private BumpTile parent;
+	private AgentHooks parentHooks;
 	private BumpTileBody body;
 	private MoveState moveState;
 	private float moveStateTimer;
@@ -56,8 +57,8 @@ public class BumpTileBrain {
 	private float coin10BumpResetTimer;
 	private float coin10EndTimer;
 
-	public BumpTileBrain(BumpTile parent, BumpTileBody body, boolean isSecret, String spawnItem) {
-		this.parent = parent;
+	BumpTileBrain(AgentHooks parentHooks, BumpTileBody body, boolean isSecret, String spawnItem) {
+		this.parentHooks = parentHooks;
 		this.body = body;
 		this.isSecret = isSecret;
 		bumpingAgent = null;
@@ -86,7 +87,7 @@ public class BumpTileBrain {
 			blockItem = BlockItem.UP1_MUSHROOM;
 	}
 
-	public BumpTileSpriteFrameInput processFrame(FrameTime frameTime) {
+	BumpTileSpriteFrameInput processFrame(FrameTime frameTime) {
 		MoveState nextMoveState = getNextMoveState();
 		switch(nextMoveState) {
 			case PRESOLID:
@@ -201,8 +202,7 @@ public class BumpTileBrain {
 		// check for agents in an area slightly thinner than the tile, and only as tall as the tile bounces
 		// (shrink the box a bit so we don't get enemies on adjacent tiles -
 		// TODO: find a more accurate QueryAABB method)
-		parent.getAgency().getWorld().QueryAABB(
-				new QueryCallback() {
+		parentHooks.getWorld().QueryAABB(new QueryCallback() {
 					@Override
 					public boolean reportFixture(Fixture fixture) {
 						if(fixture.getUserData() instanceof AgentBodyFilter) {
@@ -229,20 +229,20 @@ public class BumpTileBrain {
 		Vector2 pos = body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y));
 		switch(blockItem) {
 			case UP1_MUSHROOM:
-				parent.getAgency().createAgent(Up1Mushroom.makeAP(pos));
-				parent.getAgency().getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
+				parentHooks.createAgent(Up1Mushroom.makeAP(pos));
+				parentHooks.getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
 				break;
 			case MAGIC_MUSHROOM:
 				// hard bump gives a fireflower, soft bump gives mushroom
 				if(bumpStrength == TileBumpStrength.HARD)
-					parent.getAgency().createAgent(FireFlower.makeAP(pos));
+					parentHooks.createAgent(FireFlower.makeAP(pos));
 				else
-					parent.getAgency().createAgent(MagicMushroom.makeAP(pos));
-				parent.getAgency().getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
+					parentHooks.createAgent(MagicMushroom.makeAP(pos));
+				parentHooks.getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
 				break;
 			case STAR:
-				parent.getAgency().createAgent(PowerStar.makeAP(pos));
-				parent.getAgency().getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
+				parentHooks.createAgent(PowerStar.makeAP(pos));
+				parentHooks.getEar().playSound(SMB1_Audio.Sound.POWERUP_SPAWN);
 				break;
 			default:
 				break;
@@ -260,26 +260,26 @@ public class BumpTileBrain {
 		float right = body.getBounds().width / 4f;
 		float up = body.getBounds().height / 4f;
 		// replace the tile with 4 brick pieces shooting upward and outward
-		parent.getAgency().createAgent(BrickPiece.makeAP(body.getPosition().cpy().add(right, up),
+		parentHooks.createAgent(BrickPiece.makeAP(body.getPosition().cpy().add(right, up),
 				new Vector2(BREAKRIGHT_VEL1_X, BREAKRIGHT_VEL1_Y), 0));
-		parent.getAgency().createAgent(BrickPiece.makeAP(body.getPosition().cpy().add(right, -up),
+		parentHooks.createAgent(BrickPiece.makeAP(body.getPosition().cpy().add(right, -up),
 				new Vector2(BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0));
-		parent.getAgency().createAgent(BrickPiece.makeAP(body.getPosition().cpy().add(-right, up),
+		parentHooks.createAgent(BrickPiece.makeAP(body.getPosition().cpy().add(-right, up),
 				new Vector2(-BREAKRIGHT_VEL1_X, BREAKRIGHT_VEL1_Y), 0));
-		parent.getAgency().createAgent(BrickPiece.makeAP(body.getPosition().cpy().add(-right, -up),
+		parentHooks.createAgent(BrickPiece.makeAP(body.getPosition().cpy().add(-right, -up),
 				new Vector2(-BREAKRIGHT_VEL2_X, BREAKRIGHT_VEL2_Y), 0));
 
-		parent.getAgency().getEar().playSound(SMB1_Audio.Sound.BREAK);
-		parent.getAgency().removeAgent(parent);
+		parentHooks.getEar().playSound(SMB1_Audio.Sound.BREAK);
+		parentHooks.removeThisAgent();
 
 		Powerup.tryPushPowerup(bumpingAgent, new SMB1_Pow.PointsPow(100));
 	}
 
 	private void startSpinningCoin() {
-		parent.getAgency().createAgent(FloatingPoints.makeAP(200, false, body.getPosition(), bumpingAgent));
+		parentHooks.createAgent(FloatingPoints.makeAP(200, false, body.getPosition(), bumpingAgent));
 		// spawn a coin one tile's height above the current tile position
-		parent.getAgency().createAgent(SpinCoin.makeAP(body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y))));
-		parent.getAgency().getEar().playSound(SMB1_Audio.Sound.COIN);
+		parentHooks.createAgent(SpinCoin.makeAP(body.getPosition().cpy().add(0f, UInfo.P2M(UInfo.TILEPIX_Y))));
+		parentHooks.getEar().playSound(SMB1_Audio.Sound.COIN);
 		// push coin powerup to powerup take Agent if Agent exists
 		Powerup.tryPushPowerup(bumpingAgent, new SMB1_Pow.CoinPow());
 	}
@@ -294,7 +294,7 @@ public class BumpTileBrain {
 			return (BOUNCE_TIME-moveStateTimer) / (BOUNCE_TIME/2) * BOUNCE_HEIGHT_FRAC * body.getBounds().height;
 	}
 
-	public boolean onTakeTileBump(Agent agent, TileBumpStrength strength) {
+	boolean onTakeTileBump(Agent agent, TileBumpStrength strength) {
 		// If tile did contain an item, but the item was used, then no bump allowed.
 		// If this tile is not in pre-bump state then no bump allowed.
 		// If bumped already or if new bump strength is NONE then no bump allowed.

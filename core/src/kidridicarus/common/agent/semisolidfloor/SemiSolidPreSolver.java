@@ -9,10 +9,10 @@ import kidridicarus.agency.agentbody.AgentContactListener.PreSolver;
 import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.tool.AP_Tool;
 
-public class SemiSolidPreSolver implements PreSolver {
+class SemiSolidPreSolver implements PreSolver {
 	private AgentBodyFilter myFilter;
 
-	public SemiSolidPreSolver(AgentBodyFilter myFilter) {
+	SemiSolidPreSolver(AgentBodyFilter myFilter) {
 		this.myFilter = myFilter;
 	}
 

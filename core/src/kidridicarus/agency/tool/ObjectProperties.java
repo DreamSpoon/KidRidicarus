@@ -40,7 +40,7 @@ public class ObjectProperties {
 		// safety null check
 		if(returnVal == null)
 			return null;
-		// the class of the value of the property must be equal to, or a superclass of, cls - if not then throw error
+		// the class of the property value must be equal to, or a superclass of, cls - if not then throw error
 		if(!cls.isAssignableFrom(returnVal.getClass())) {
 			throw new IllegalStateException("Cannot get object property because class to get is not assignable "+
 					"from class of property found, where key="+key+", class to get="+cls.getName()+

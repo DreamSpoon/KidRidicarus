@@ -10,14 +10,14 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.KidIcarusGfx;
 
-public class KidIcarusDoorSprite extends AgentSprite {
+class KidIcarusDoorSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);
 	private static final float SPRITE_HEIGHT = UInfo.P2M(32);
 
 	private TextureRegion closedTex;
 	private TextureRegion openedTex;
 
-	public KidIcarusDoorSprite(TextureAtlas atlas, Vector2 position, boolean isOpened) {
+	KidIcarusDoorSprite(TextureAtlas atlas, Vector2 position, boolean isOpened) {
 		closedTex = atlas.findRegion(KidIcarusGfx.General.DOOR_BROWN_CLOSED);
 		openedTex = atlas.findRegion(KidIcarusGfx.General.DOOR_BROWN_OPENED);
 		setRegion(isOpened ? openedTex : closedTex);

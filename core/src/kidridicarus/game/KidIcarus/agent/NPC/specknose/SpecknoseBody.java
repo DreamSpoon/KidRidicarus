@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 import kidridicarus.game.KidIcarus.agentspine.FlyBallSpine;
 
-public class SpecknoseBody extends AgentBody {
+class SpecknoseBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(12f);
 	private static final float BODY_HEIGHT = UInfo.P2M(12f);
 	private static final float GRAVITY_SCALE = 0f;
@@ -26,7 +26,7 @@ public class SpecknoseBody extends AgentBody {
 
 	private FlyBallSpine spine;
 
-	public SpecknoseBody(Specknose parent, World world, Vector2 position, Vector2 velocity) {
+	SpecknoseBody(Specknose parent, World world, Vector2 position, Vector2 velocity) {
 		super(parent, world);
 		defineBody(new Rectangle(position.x-BODY_WIDTH/2f, position.y-BODY_HEIGHT/2f, BODY_WIDTH, BODY_HEIGHT),
 				velocity);
@@ -48,12 +48,12 @@ public class SpecknoseBody extends AgentBody {
 				getBounds().width, getBounds().height);
 	}
 
-	public ContactDmgBrainContactFrameInput processContactFrame() {
+	ContactDmgBrainContactFrameInput processContactFrame() {
 		return new ContactDmgBrainContactFrameInput(spine.getCurrentRoom(), spine.isContactKeepAlive(),
 				spine.isContactDespawn(), spine.getContactDmgTakeAgents());
 	}
 
-	public FlyBallSpine getSpine() {
+	FlyBallSpine getSpine() {
 		return spine;
 	}
 }

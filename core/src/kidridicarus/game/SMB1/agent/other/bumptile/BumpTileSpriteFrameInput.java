@@ -5,10 +5,10 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.FrameTime;
 
-public class BumpTileSpriteFrameInput extends SpriteFrameInput {
-	public boolean isEmpty;
+class BumpTileSpriteFrameInput extends SpriteFrameInput {
+	boolean isEmpty;
 
-	public BumpTileSpriteFrameInput(Vector2 position, FrameTime frameTime, boolean isEmpty) {
+	BumpTileSpriteFrameInput(Vector2 position, FrameTime frameTime, boolean isEmpty) {
 		super(frameTime, false, false, 0f, position);
 		this.isEmpty = isEmpty;
 	}

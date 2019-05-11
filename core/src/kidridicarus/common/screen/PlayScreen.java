@@ -74,7 +74,7 @@ public class PlayScreen implements Screen {
 		b2dr = new Box2DDebugRenderer();
 
 		// load the game map
-		game.agency.createAgent(TiledMapMetaAgent.makeAP((new TmxMapLoader()).load(levelFilename)));
+		game.agency.externalCreateAgent(TiledMapMetaAgent.makeAP((new TmxMapLoader()).load(levelFilename)));
 		// run one update to let the map create the solid tile map and draw layer agents
 		game.agency.update(1f/60f);
 		// run a second update for the map to create the other agents (e.g. player spawner, rooms)
@@ -165,7 +165,7 @@ public class PlayScreen implements Screen {
 
 		// DEBUG: draw outlines of Box2D fixtures
 		if(QQ.isOn())
-			b2dr.render(game.agency.getWorld(), camera.combined);
+			b2dr.render(game.agency.hookGetWorld(), camera.combined);
 
 		// change to next level?
 		if(guide.isGameWon()) {

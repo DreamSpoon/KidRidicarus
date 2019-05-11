@@ -1,5 +1,6 @@
 package kidridicarus.game.Metroid.agent.NPC.zoomer;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
@@ -12,7 +13,7 @@ import kidridicarus.game.Metroid.agent.item.energy.Energy;
 import kidridicarus.game.Metroid.agent.other.deathpop.DeathPop;
 import kidridicarus.game.info.MetroidAudio;
 
-public class ZoomerBrain {
+class ZoomerBrain {
 	private static final float MAX_HEALTH = 2f;
 	private static final float ITEM_DROP_RATE = 3/7f;
 	private static final float GIVE_DAMAGE = 8f;
@@ -22,6 +23,7 @@ public class ZoomerBrain {
 	enum MoveState { WALK, INJURY, DEAD }
 
 	private Zoomer parent;
+	private AgentHooks parentHooks;
 	private ZoomerBody body;
 	private MoveState moveState;
 	private float moveStateTimer;
@@ -36,8 +38,9 @@ public class ZoomerBrain {
 	private boolean despawnMe;
 	private RoomBox lastKnownRoom;
 
-	public ZoomerBrain(Zoomer parent, ZoomerBody body) {
+	ZoomerBrain(Zoomer parent, AgentHooks parentHooks, ZoomerBody body) {
 		this.parent = parent;
+		this.parentHooks = parentHooks;
 		this.body = body;
 		isWalkingRight = false;
 		upDir = Direction4.NONE;
@@ -50,7 +53,7 @@ public class ZoomerBrain {
 		lastKnownRoom = null;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// push damage to contact damage agents
 		for(ContactDmgTakeAgent agent : ((ContactDmgBrainContactFrameInput) cFrameInput).contactDmgTakeAgents)
 			agent.onTakeDamage(parent, GIVE_DAMAGE, body.getPosition());
@@ -63,10 +66,10 @@ public class ZoomerBrain {
 			lastKnownRoom = cFrameInput.room;
 	}
 
-	public ZoomerSpriteFrameInput processFrame(FrameTime frameTime) {
+	ZoomerSpriteFrameInput processFrame(FrameTime frameTime) {
 		// if despawning then dispose self and exit
 		if(despawnMe) {
-			parent.getAgency().removeAgent(parent);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 
@@ -96,14 +99,14 @@ public class ZoomerBrain {
 				body.zeroVelocity(true, true);
 				// if first frame of injury then play sound
 				if(isMoveStateChanged)
-					parent.getAgency().getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
+					parentHooks.getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
 				else if(moveStateTimer > INJURY_TIME)
 					isInjured = false;
 				break;
 			case DEAD:
 				doPowerupDrop();
 				doDeathPop();
-				parent.getAgency().getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
+				parentHooks.getEar().playSound(MetroidAudio.Sound.NPC_SMALL_HIT);
 				break;
 		}
 
@@ -129,15 +132,15 @@ public class ZoomerBrain {
 		// exit if drop not allowed
 		if(Math.random() > ITEM_DROP_RATE)
 			return;
-		parent.getAgency().createAgent(Energy.makeAP(body.getPosition()));
+		parentHooks.createAgent(Energy.makeAP(body.getPosition()));
 	}
 
 	private void doDeathPop() {
-		parent.getAgency().createAgent(DeathPop.makeAP(body.getPosition()));
-		parent.getAgency().removeAgent(parent);
+		parentHooks.createAgent(DeathPop.makeAP(body.getPosition()));
+		parentHooks.removeThisAgent();
 	}
 
-	public boolean onTakeDamage(Agent agent, float amount) {
+	boolean onTakeDamage(Agent agent, float amount) {
 		if(isInjured || isDead || !(agent instanceof PlayerAgent))
 			return false;
 

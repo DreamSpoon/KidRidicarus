@@ -12,7 +12,7 @@ import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.info.KidIcarusGfx;
 
-public class VanishPoofSprite extends AgentSprite {
+class VanishPoofSprite extends AgentSprite {
 	private static final float SML_SPRITE_WIDTH = UInfo.P2M(8);
 	private static final float SML_SPRITE_HEIGHT = UInfo.P2M(16);
 	private static final float BIG_SPRITE_WIDTH = UInfo.P2M(16);
@@ -22,7 +22,7 @@ public class VanishPoofSprite extends AgentSprite {
 	private Animation<TextureRegion> poofAnim;
 	private float animTimer;
 
-	public VanishPoofSprite(TextureAtlas atlas, Vector2 pos, Boolean isBig) {
+	VanishPoofSprite(TextureAtlas atlas, Vector2 pos, Boolean isBig) {
 		if(isBig) {
 			poofAnim = new Animation<TextureRegion>(ANIM_SPEED,
 					atlas.findRegions(KidIcarusGfx.General.BIG_POOF), PlayMode.NORMAL);

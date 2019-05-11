@@ -13,7 +13,7 @@ import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireballBrain.MoveState;
 import kidridicarus.game.info.SMB1_Gfx;
 
-public class MarioFireballSprite extends AgentSprite {
+class MarioFireballSprite extends AgentSprite {
 	private static final float BALL_WIDTH = UInfo.P2M(8);
 	private static final float BALL_HEIGHT = UInfo.P2M(8);
 	private static final float EXPLODE_WIDTH = UInfo.P2M(16);
@@ -26,7 +26,7 @@ public class MarioFireballSprite extends AgentSprite {
 	private float animTimer;
 	private MoveState parentPrevMoveState;
 
-	public MarioFireballSprite(TextureAtlas atlas, Vector2 position) {
+	MarioFireballSprite(TextureAtlas atlas, Vector2 position) {
 		ballAnim = new Animation<TextureRegion>(ANIM_SPEED_FLY,
 				atlas.findRegions(SMB1_Gfx.Player.MarioFireball.FIREBALL), PlayMode.LOOP);
 		explodeAnim = new Animation<TextureRegion>(ANIM_SPEED_EXP,

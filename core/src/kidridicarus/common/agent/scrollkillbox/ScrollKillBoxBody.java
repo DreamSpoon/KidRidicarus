@@ -8,11 +8,11 @@ import kidridicarus.common.agent.followbox.FollowBox;
 import kidridicarus.common.agent.followbox.FollowBoxBody;
 import kidridicarus.common.info.CommonCF;
 
-public class ScrollKillBoxBody extends FollowBoxBody {
+class ScrollKillBoxBody extends FollowBoxBody {
 	private static final CFBitSeq CFCAT_BITS = new CFBitSeq(CommonCF.Alias.SCROLL_KILL_BIT);
 	private static final CFBitSeq CFMASK_BITS = new CFBitSeq(CommonCF.Alias.AGENT_BIT);
 
-	public ScrollKillBoxBody(FollowBox parent, World world, Rectangle bounds) {
+	ScrollKillBoxBody(FollowBox parent, World world, Rectangle bounds) {
 		super(parent, world, bounds, false);
 	}
 

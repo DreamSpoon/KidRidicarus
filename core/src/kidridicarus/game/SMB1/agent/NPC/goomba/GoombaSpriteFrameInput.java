@@ -6,10 +6,10 @@ import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.game.SMB1.agent.NPC.goomba.GoombaBrain.MoveState;
 
-public class GoombaSpriteFrameInput extends SpriteFrameInput {
-	public MoveState moveState;
+class GoombaSpriteFrameInput extends SpriteFrameInput {
+	MoveState moveState;
 
-	public GoombaSpriteFrameInput(Vector2 position, boolean isFacingRight, FrameTime frameTime, MoveState moveState) {
+	GoombaSpriteFrameInput(Vector2 position, boolean isFacingRight, FrameTime frameTime, MoveState moveState) {
 		super(frameTime, !isFacingRight, false, 0f, position);
 		this.moveState = moveState;
 	}

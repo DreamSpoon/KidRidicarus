@@ -7,10 +7,10 @@ import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.game.Metroid.agent.NPC.zoomer.ZoomerBrain.MoveState;
 
-public class ZoomerSpriteFrameInput extends SpriteFrameInput {
-	public MoveState moveState;
+class ZoomerSpriteFrameInput extends SpriteFrameInput {
+	MoveState moveState;
 
-	public ZoomerSpriteFrameInput(Vector2 position, FrameTime frameTime, MoveState moveState, Direction4 upDir) {
+	ZoomerSpriteFrameInput(Vector2 position, FrameTime frameTime, MoveState moveState, Direction4 upDir) {
 		super(frameTime, false, false, getRotationForUpDir(upDir), position);
 		this.moveState = moveState;
 	}

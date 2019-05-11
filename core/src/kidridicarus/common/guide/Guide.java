@@ -147,7 +147,8 @@ public class Guide implements Disposable {
 	}
 
 	public void createPlayerAgent(ObjectProperties playerAgentProperties) {
-		playerController = (PlayerControllerAgent) agency.createAgent(PlayerControllerAgent.makeAP(playerAgentProperties));
+		playerController = (PlayerControllerAgent)
+				agency.externalCreateAgent(PlayerControllerAgent.makeAP(playerAgentProperties));
 	}
 
 	public boolean isGameWon() {

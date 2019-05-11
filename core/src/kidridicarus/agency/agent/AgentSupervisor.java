@@ -1,12 +1,12 @@
 package kidridicarus.agency.agent;
 
-import kidridicarus.agency.Agency;
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.AgentScript.AgentScriptHooks;
-import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.agency.agentscript.AgentScriptRunner;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
+import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.tool.MoveAdvice4x2;
 
 /*
@@ -16,8 +16,9 @@ import kidridicarus.common.tool.MoveAdvice4x2;
  *   -...
  */
 public abstract class AgentSupervisor {
-	protected Agent supervisedAgent;
-	private AgentScriptRunner scriptRunner;
+	protected final Agent supervisedAgent;
+	protected final AgentHooks supervisedAgentHooks;
+	private final AgentScriptRunner scriptRunner;
 
 	public abstract void setMoveAdvice(MoveAdvice4x2 moveAdvice);
 	// internalPollMoveAdvice method to be implemented by superclass, for use by this class only.
@@ -35,9 +36,10 @@ public abstract class AgentSupervisor {
 
 	protected abstract AgentScriptHooks getAgentScriptHooks();
 
-	public AgentSupervisor(Agent supervisedAgent) {
-		scriptRunner = new AgentScriptRunner(this);
+	public AgentSupervisor(Agent supervisedAgent, AgentHooks supervisedAgentHooks) {
+		scriptRunner = new AgentScriptRunner(supervisedAgentHooks);
 		this.supervisedAgent = supervisedAgent;
+		this.supervisedAgentHooks = supervisedAgentHooks;
 	}
 
 	public void preUpdateAgency(FrameTime frameTime) {
@@ -81,9 +83,5 @@ public abstract class AgentSupervisor {
 			return scriptRunner.getScriptAgentState().scriptedMoveAdvice;
 		else
 			return internalPollMoveAdvice();
-	}
-
-	public Agency getAgency() {
-		return supervisedAgent.getAgency();
 	}
 }

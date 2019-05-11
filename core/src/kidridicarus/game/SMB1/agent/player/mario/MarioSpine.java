@@ -17,7 +17,7 @@ import kidridicarus.common.info.UInfo;
  *   3) Take blocks of information and translate into body impulses, and apply those body impulses
  *     (e.g. move up, move left, apply jump).
  */
-public class MarioSpine extends PlayerSpine {
+class MarioSpine extends PlayerSpine {
 	private static final float WALKMOVE_XIMP = 0.025f;
 	private static final float MIN_WALKVEL = WALKMOVE_XIMP * 2f;
 	private static final float MAX_WALKVEL = WALKMOVE_XIMP * 42f;
@@ -39,13 +39,13 @@ public class MarioSpine extends PlayerSpine {
 	// TODO refactor damagePushSensor into a Nerve class
 	private OneWayContactSensor damagePushSensor;
 
-	public MarioSpine(MarioBody body) {
+	MarioSpine(MarioBody body) {
 		super(body);
 		damagePushSensor = null;
 	}
 
 	// sensor for detecting damage push begin contacts
-	public OneWayContactSensor createDamagePushSensor() {
+	OneWayContactSensor createDamagePushSensor() {
 		damagePushSensor = new OneWayContactSensor(body, true);
 		return damagePushSensor;
 	}
@@ -53,7 +53,7 @@ public class MarioSpine extends PlayerSpine {
 	/*
 	 * Apply walk impulse and cap horizontal velocity.
 	 */
-	public void applyWalkMove(boolean moveRight, boolean run) {
+	void applyWalkMove(boolean moveRight, boolean run) {
 		// run impulse or walk impulse?
 		float impulse = run ? RUNMOVE_XIMP : WALKMOVE_XIMP;
 		// max run velocity or max walk velocity?
@@ -64,7 +64,7 @@ public class MarioSpine extends PlayerSpine {
 	/*
 	 * Apply decel impulse and check for min velocity.
 	 */
-	public void applyDecelMove(boolean facingRight, boolean ducking) {
+	void applyDecelMove(boolean facingRight, boolean ducking) {
 		// if moving right...
 		if(body.getVelocity().x > MIN_WALKVEL) {
 			// ... and facing right or ducking, then decelerate with soft impulse to the left
@@ -94,7 +94,7 @@ public class MarioSpine extends PlayerSpine {
 			body.setVelocity(0f, body.getVelocity().y);
 	}
 
-	public void applyJumpImpulse() {
+	void applyJumpImpulse() {
 		// the faster mario is moving, the higher he jumps, up to a max
 		float mult = Math.abs(body.getVelocity().x) / MAX_RUNJUMPVEL;
 		// cap the multiplier
@@ -106,7 +106,7 @@ public class MarioSpine extends PlayerSpine {
 		body.applyImpulse(new Vector2 (0f, JUMP_IMPULSE * mult));
 	}
 
-	public void applyJumpForce(float jumpForceTimer) {
+	void applyJumpForce(float jumpForceTimer) {
 		float t = jumpForceTimer;
 		if(t < 0)
 			t = 0;
@@ -115,33 +115,33 @@ public class MarioSpine extends PlayerSpine {
 		body.applyForce(new Vector2(0, JUMP_FORCE * (JUMPFORCE_MAXTIME - t) / JUMPFORCE_MAXTIME));
 	}
 
-	public void applyAirMove(boolean moveRight) {
+	void applyAirMove(boolean moveRight) {
 		applyHorizImpulseAndCapVel(moveRight, AIRMOVE_XIMP, MAX_RUNVEL);
 	}
 
-	public void applyDuckSlideMove(boolean moveRight) {
+	void applyDuckSlideMove(boolean moveRight) {
 		applyHorizImpulseAndCapVel(moveRight, DUCKSLIDE_XIMP, MAX_DUCKSLIDE_VEL);
 	}
 
-	public void applyHeadBounce() {
+	void applyHeadBounce() {
 		applyPlayerHeadBounce(HEADBOUNCE_VEL);
 	}
 
-	public boolean isBraking(boolean facingRight) {
+	boolean isBraking(boolean facingRight) {
 		// if facing right and body is moving left, or if facing left and body is moving right then return true
 		return (facingRight && body.getVelocity().x < -MIN_WALKVEL) ||
 				(!facingRight && body.getVelocity().x > MIN_WALKVEL);
 	}
 
-	public List<Agent> getPushDamageContacts() {
+	List<Agent> getPushDamageContacts() {
 		return damagePushSensor.getAndResetContacts();
 	}
 
-	public void capFallVelocity() {
+	void capFallVelocity() {
 		capFallVelocity(MAX_FALL_VELOCITY);
 	}
 
-	public boolean isStandingStill() {
+	boolean isStandingStill() {
 		return isStandingStill(MIN_WALKVEL);
 	}
 }

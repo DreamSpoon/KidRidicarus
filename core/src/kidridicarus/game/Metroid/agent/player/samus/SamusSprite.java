@@ -15,7 +15,7 @@ import kidridicarus.common.tool.SprFrameTool;
 import kidridicarus.game.Metroid.agent.player.samus.SamusBrain.MoveState;
 import kidridicarus.game.info.MetroidGfx;
 
-public class SamusSprite extends AgentSprite {
+class SamusSprite extends AgentSprite {
 	private static final float BIG_SPRITE_WIDTH = UInfo.P2M(32);
 	private static final float BIG_SPRITE_HEIGHT = UInfo.P2M(40);
 	private static final Vector2 BIG_SPRITE_OFFSET = UInfo.VectorP2M(0, 5);
@@ -43,7 +43,7 @@ public class SamusSprite extends AgentSprite {
 	private float stateTimer;
 	private boolean isDrawAllowed;
 
-	public SamusSprite(TextureAtlas atlas, Vector2 position) {
+	SamusSprite(TextureAtlas atlas, Vector2 position) {
 		aimRightAnim = new Animation<TextureRegion>
 				(ANIM_SPEED, atlas.findRegions(MetroidGfx.Player.Samus.AIMRIGHT), PlayMode.LOOP);
 		aimUpAnim = new Animation<TextureRegion>

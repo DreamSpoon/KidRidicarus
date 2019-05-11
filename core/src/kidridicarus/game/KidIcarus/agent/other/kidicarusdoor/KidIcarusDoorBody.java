@@ -14,7 +14,7 @@ import kidridicarus.common.info.CommonCF;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.B2DFactory;
 
-public class KidIcarusDoorBody extends AgentBody {
+class KidIcarusDoorBody extends AgentBody {
 	private static final float BODY_WIDTH = UInfo.P2M(14f);
 	private static final float BODY_HEIGHT = UInfo.P2M(27f);
 	private static final Vector2 BODY_OFFSET = UInfo.VectorP2M(0f, -2.5f);
@@ -33,7 +33,7 @@ public class KidIcarusDoorBody extends AgentBody {
 	private Fixture mainBodyFixture;
 	private boolean isOpened;
 
-	public KidIcarusDoorBody(KidIcarusDoor parent, World world, Vector2 position, boolean isOpened) {
+	KidIcarusDoorBody(KidIcarusDoor parent, World world, Vector2 position, boolean isOpened) {
 		super(parent, world);
 		this.isOpened = isOpened;
 		defineBody(new Rectangle(position.x, position.y, 0f, 0f));
@@ -58,7 +58,7 @@ public class KidIcarusDoorBody extends AgentBody {
 				new Vector2(0f, (BODY_HEIGHT+ROOF_HEIGHT)/2f));
 	}
 
-	public void setOpened(boolean isOpened) {
+	void setOpened(boolean isOpened) {
 		if(this.isOpened != isOpened) {
 			this.isOpened = isOpened;
 			mainBodyFixture.setUserData(new AgentBodyFilter(isOpened ? OPENED_CFCAT : CLOSED_CFCAT,
@@ -67,11 +67,11 @@ public class KidIcarusDoorBody extends AgentBody {
 		}
 	}
 
-	public KidIcarusDoorBrainContactFrameInput processContactFrame() {
+	KidIcarusDoorBrainContactFrameInput processContactFrame() {
 		return new KidIcarusDoorBrainContactFrameInput(spine.getPlayerContacts());
 	}
 
-	public BasicAgentSpine getSpine() {
+	BasicAgentSpine getSpine() {
 		return spine;
 	}
 }

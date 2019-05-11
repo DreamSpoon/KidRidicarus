@@ -1,5 +1,6 @@
 package kidridicarus.game.SMB1.agent.item.staticcoin;
 
+import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
@@ -8,20 +9,20 @@ import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
 import kidridicarus.game.info.SMB1_Audio;
 import kidridicarus.game.info.SMB1_Pow;
 
-public class StaticCoinBrain {
-	private StaticCoin parent;
+class StaticCoinBrain {
+	private AgentHooks parentHooks;
 	private StaticCoinBody body;
 	private boolean isUsed;
 	private boolean despawnMe;
 
-	public StaticCoinBrain(StaticCoin parent, StaticCoinBody body) {
-		this.parent = parent;
+	StaticCoinBrain(AgentHooks parentHooks, StaticCoinBody body) {
+		this.parentHooks = parentHooks;
 		this.body = body;
 		isUsed = false;
 		despawnMe = false;
 	}
 
-	public void processContactFrame(BrainContactFrameInput cFrameInput) {
+	void processContactFrame(BrainContactFrameInput cFrameInput) {
 		// exit if not used
 		if(isUsed)
 			return;
@@ -35,10 +36,10 @@ public class StaticCoinBrain {
 			despawnMe = true;
 	}
 
-	public SpriteFrameInput processFrame(FrameTime frameTime) {
+	SpriteFrameInput processFrame(FrameTime frameTime) {
 		if(isUsed) {
-			parent.getAgency().getEar().playSound(SMB1_Audio.Sound.COIN);
-			parent.getAgency().removeAgent(parent);
+			parentHooks.getEar().playSound(SMB1_Audio.Sound.COIN);
+			parentHooks.removeThisAgent();
 			return null;
 		}
 		else if(despawnMe)
