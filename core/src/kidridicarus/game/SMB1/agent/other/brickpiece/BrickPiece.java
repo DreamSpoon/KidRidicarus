@@ -15,7 +15,7 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.SMB1_KV;
+import kidridicarus.game.SMB1.SMB1_KV;
 
 public class BrickPiece extends CorpusAgent {
 	// bricks should be auto-removed when off screen, use this timeout for other cases

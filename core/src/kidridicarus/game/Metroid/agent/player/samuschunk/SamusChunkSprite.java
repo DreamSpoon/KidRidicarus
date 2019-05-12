@@ -11,7 +11,7 @@ import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction8;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.MetroidGfx;
+import kidridicarus.game.Metroid.MetroidGfx;
 
 class SamusChunkSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);

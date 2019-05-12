@@ -14,6 +14,9 @@ import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.metaagent.tiledmap.solidlayer.SolidTiledMapAgent;
 import kidridicarus.common.powerup.Powerup;
+import kidridicarus.game.SMB1.SMB1_Audio;
+import kidridicarus.game.SMB1.SMB1_KV;
+import kidridicarus.game.SMB1.SMB1_Pow;
 import kidridicarus.game.SMB1.agent.BumpTakeAgent;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 import kidridicarus.game.SMB1.agent.item.fireflower.FireFlower;
@@ -23,9 +26,6 @@ import kidridicarus.game.SMB1.agent.item.powerstar.PowerStar;
 import kidridicarus.game.SMB1.agent.other.brickpiece.BrickPiece;
 import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.SMB1.agent.other.spincoin.SpinCoin;
-import kidridicarus.game.info.SMB1_Audio;
-import kidridicarus.game.info.SMB1_KV;
-import kidridicarus.game.info.SMB1_Pow;
 
 class BumpTileBrain {
 	private static final float BOUNCE_TIME = 0.175f;

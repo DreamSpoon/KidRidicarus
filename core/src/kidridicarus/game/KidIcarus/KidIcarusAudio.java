@@ -1,4 +1,4 @@
-package kidridicarus.game.info;
+package kidridicarus.game.KidIcarus;
 
 public class KidIcarusAudio {
 	public class Sound {

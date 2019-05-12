@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.MetroidGfx;
+import kidridicarus.game.Metroid.MetroidGfx;
 
 class SkreeShotSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);

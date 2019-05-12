@@ -7,8 +7,8 @@ import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.MetroidAudio;
-import kidridicarus.game.info.MetroidPow;
+import kidridicarus.game.Metroid.MetroidAudio;
+import kidridicarus.game.Metroid.MetroidPow;
 
 class MaruMariBrain {
 	private AgentHooks parentHooks;

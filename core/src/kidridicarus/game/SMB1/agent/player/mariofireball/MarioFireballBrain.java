@@ -6,8 +6,8 @@ import kidridicarus.common.agent.optional.ContactDmgTakeAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
+import kidridicarus.game.SMB1.SMB1_Audio;
 import kidridicarus.game.SMB1.agent.player.mario.Mario;
-import kidridicarus.game.info.SMB1_Audio;
 
 class MarioFireballBrain {
 	private static final float DAMAGE = 1f;

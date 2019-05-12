@@ -12,12 +12,12 @@ import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.common.info.CommonAgentClassList;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.screen.InstructionsScreen;
-import kidridicarus.game.info.KidIcarusAgentClassList;
-import kidridicarus.game.info.KidIcarusAudio;
-import kidridicarus.game.info.MetroidAgentClassList;
-import kidridicarus.game.info.MetroidAudio;
-import kidridicarus.game.info.SMB1_AgentClassList;
-import kidridicarus.game.info.SMB1_Audio;
+import kidridicarus.game.KidIcarus.KidIcarusAgentClassList;
+import kidridicarus.game.KidIcarus.KidIcarusAudio;
+import kidridicarus.game.Metroid.MetroidAgentClassList;
+import kidridicarus.game.Metroid.MetroidAudio;
+import kidridicarus.game.SMB1.SMB1_AgentClassList;
+import kidridicarus.game.SMB1.SMB1_Audio;
 
 /*
  * Main game asset loader class.

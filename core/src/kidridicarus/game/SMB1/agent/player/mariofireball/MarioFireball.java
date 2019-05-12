@@ -14,8 +14,8 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.SMB1.SMB1_KV;
 import kidridicarus.game.SMB1.agent.player.mario.Mario;
-import kidridicarus.game.info.SMB1_KV;
 
 public class MarioFireball extends CorpusAgent {
 	private MarioFireballBrain brain;

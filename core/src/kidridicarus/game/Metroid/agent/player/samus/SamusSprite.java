@@ -12,8 +12,8 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.SprFrameTool;
+import kidridicarus.game.Metroid.MetroidGfx;
 import kidridicarus.game.Metroid.agent.player.samus.SamusBrain.MoveState;
-import kidridicarus.game.info.MetroidGfx;
 
 class SamusSprite extends AgentSprite {
 	private static final float BIG_SPRITE_WIDTH = UInfo.P2M(32);

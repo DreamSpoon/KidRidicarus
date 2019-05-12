@@ -14,8 +14,8 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
-import kidridicarus.game.info.SMB1_KV;
-import kidridicarus.game.info.SMB1_Pow;
+import kidridicarus.game.SMB1.SMB1_KV;
+import kidridicarus.game.SMB1.SMB1_Pow;
 
 /*
  * SMB 1 floating points, and 1-up.

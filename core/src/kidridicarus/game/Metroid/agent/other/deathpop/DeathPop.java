@@ -13,7 +13,7 @@ import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.MetroidKV;
+import kidridicarus.game.Metroid.MetroidKV;
 
 public class DeathPop extends CorpusAgent {
 	private static final float POP_TIME = 3f/60f;

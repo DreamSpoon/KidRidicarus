@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.info.SMB1_Gfx;
+import kidridicarus.game.SMB1.SMB1_Gfx;
 
 class FloatingPointsSprite extends Sprite {
 	private static final float DIGIT_W = UInfo.P2M(4);

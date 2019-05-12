@@ -6,8 +6,8 @@ import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.KidIcarusAudio;
-import kidridicarus.game.info.KidIcarusPow;
+import kidridicarus.game.KidIcarus.KidIcarusAudio;
+import kidridicarus.game.KidIcarus.KidIcarusPow;
 
 class AngelHeartBrain {
 	private static final int SMALL_HEARTCOUNT = 1;

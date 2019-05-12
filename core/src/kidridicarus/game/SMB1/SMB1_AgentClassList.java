@@ -1,4 +1,4 @@
-package kidridicarus.game.info;
+package kidridicarus.game.SMB1;
 
 import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.game.SMB1.agent.NPC.goomba.Goomba;

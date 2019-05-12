@@ -17,8 +17,8 @@ import kidridicarus.agency.Agent;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.playeragent.playerHUD.AnimationActor;
 import kidridicarus.common.agent.playeragent.playerHUD.PlayerHUD;
-import kidridicarus.game.info.SMB1_Gfx;
-import kidridicarus.game.info.SMB1_KV;
+import kidridicarus.game.SMB1.SMB1_Gfx;
+import kidridicarus.game.SMB1.SMB1_KV;
 
 public class MarioHUD extends PlayerHUD {
 	private static final float COIN_ANIM_SPEED = 0.133f;

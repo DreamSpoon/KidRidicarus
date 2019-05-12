@@ -11,7 +11,7 @@ import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice4x2;
-import kidridicarus.game.info.SMB1_Audio;
+import kidridicarus.game.SMB1.SMB1_Audio;
 
 /*
  * SMB end of level flagpole script.

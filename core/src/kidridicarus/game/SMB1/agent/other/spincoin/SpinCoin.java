@@ -14,7 +14,7 @@ import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.SMB1_KV;
+import kidridicarus.game.SMB1.SMB1_KV;
 
 public class SpinCoin extends CorpusAgent {
 	private static final float COIN_SPIN_TIME = 0.54f;

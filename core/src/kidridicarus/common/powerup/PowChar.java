@@ -1,8 +1,8 @@
 package kidridicarus.common.powerup;
 
-import kidridicarus.game.info.KidIcarusKV;
-import kidridicarus.game.info.MetroidKV;
-import kidridicarus.game.info.SMB1_KV;
+import kidridicarus.game.KidIcarus.KidIcarusKV;
+import kidridicarus.game.Metroid.MetroidKV;
+import kidridicarus.game.SMB1.SMB1_KV;
 
 public enum PowChar {
 	NONE(""),

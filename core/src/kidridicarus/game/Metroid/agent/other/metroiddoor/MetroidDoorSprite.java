@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
-import kidridicarus.game.info.MetroidGfx;
+import kidridicarus.game.Metroid.MetroidGfx;
 
 class MetroidDoorSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);

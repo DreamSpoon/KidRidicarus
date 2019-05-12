@@ -22,11 +22,11 @@ import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.MoveAdvice4x2;
+import kidridicarus.game.SMB1.SMB1_Audio;
+import kidridicarus.game.SMB1.SMB1_Pow;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
 import kidridicarus.game.SMB1.agent.player.mariofireball.MarioFireball;
-import kidridicarus.game.info.SMB1_Audio;
-import kidridicarus.game.info.SMB1_Pow;
 
 class MarioBrain {
 	private static final Vector2 DUCK_OFFSET = new Vector2(0f, UInfo.P2M(7f));

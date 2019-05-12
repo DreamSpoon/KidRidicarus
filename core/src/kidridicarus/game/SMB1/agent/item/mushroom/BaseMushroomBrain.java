@@ -12,9 +12,9 @@ import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
+import kidridicarus.game.SMB1.SMB1_Audio;
 import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.SMB1.agentsprite.SproutSpriteFrameInput;
-import kidridicarus.game.info.SMB1_Audio;
 
 class BaseMushroomBrain {
 	private static final float SPROUT_TIME = 1f;

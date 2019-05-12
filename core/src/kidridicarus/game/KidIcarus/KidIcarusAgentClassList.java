@@ -1,4 +1,4 @@
-package kidridicarus.game.info;
+package kidridicarus.game.KidIcarus;
 
 import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.game.KidIcarus.agent.NPC.monoeye.Monoeye;

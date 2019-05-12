@@ -12,10 +12,10 @@ import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.tool.AP_Tool;
+import kidridicarus.game.SMB1.SMB1_Audio;
 import kidridicarus.game.SMB1.agent.HeadBounceGiveAgent;
 import kidridicarus.game.SMB1.agent.other.floatingpoints.FloatingPoints;
 import kidridicarus.game.SMB1.agentbrain.HeadBounceBrainContactFrameInput;
-import kidridicarus.game.info.SMB1_Audio;
 
 class GoombaBrain {
 	private static final float GIVE_DAMAGE = 8f;

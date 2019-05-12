@@ -1,4 +1,4 @@
-package kidridicarus.game.info;
+package kidridicarus.game.KidIcarus;
 
 public class KidIcarusGfx {
 	private static final String BASEDIR = "KidIcarus/";

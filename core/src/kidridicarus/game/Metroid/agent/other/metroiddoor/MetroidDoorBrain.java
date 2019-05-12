@@ -4,7 +4,7 @@ import kidridicarus.agency.Agency.AgentHooks;
 import kidridicarus.agency.Agent;
 import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
-import kidridicarus.game.info.MetroidAudio;
+import kidridicarus.game.Metroid.MetroidAudio;
 
 class MetroidDoorBrain {
 	private static final float LONG_OPEN_DELAY = 77/30f;

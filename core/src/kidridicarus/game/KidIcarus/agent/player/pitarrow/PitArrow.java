@@ -14,8 +14,8 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.KidIcarus.KidIcarusKV;
 import kidridicarus.game.KidIcarus.agent.player.pit.Pit;
-import kidridicarus.game.info.KidIcarusKV;
 
 public class PitArrow extends CorpusAgent {
 	private PitArrowBrain brain;

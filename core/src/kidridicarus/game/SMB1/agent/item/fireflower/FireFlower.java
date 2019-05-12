@@ -10,7 +10,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
-import kidridicarus.game.info.SMB1_KV;
+import kidridicarus.game.SMB1.SMB1_KV;
 
 public class FireFlower extends CorpusAgent {
 	private FireFlowerBrain brain;

@@ -22,9 +22,9 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.KidIcarus.KidIcarusKV;
 import kidridicarus.game.KidIcarus.agent.player.pit.HUD.PitHUD;
 import kidridicarus.game.SMB1.agent.HeadBounceGiveAgent;
-import kidridicarus.game.info.KidIcarusKV;
 
 /*
  * Notes:

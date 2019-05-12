@@ -6,8 +6,8 @@ import kidridicarus.agency.tool.FrameTime;
 import kidridicarus.common.agent.optional.PowerupTakeAgent;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.PowerupBrainContactFrameInput;
-import kidridicarus.game.info.SMB1_Audio;
-import kidridicarus.game.info.SMB1_Pow;
+import kidridicarus.game.SMB1.SMB1_Audio;
+import kidridicarus.game.SMB1.SMB1_Pow;
 
 class StaticCoinBrain {
 	private AgentHooks parentHooks;

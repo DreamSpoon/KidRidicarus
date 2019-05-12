@@ -11,9 +11,9 @@ import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.SprFrameTool;
+import kidridicarus.game.KidIcarus.KidIcarusAudio;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeart;
 import kidridicarus.game.KidIcarus.agent.other.vanishpoof.VanishPoof;
-import kidridicarus.game.info.KidIcarusAudio;
 
 class ShemumBrain {
 	private static final float GIVE_DAMAGE = 1f;

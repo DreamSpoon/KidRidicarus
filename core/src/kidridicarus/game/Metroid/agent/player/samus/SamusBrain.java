@@ -21,13 +21,13 @@ import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.Direction8;
 import kidridicarus.common.tool.MoveAdvice4x2;
+import kidridicarus.game.Metroid.MetroidAudio;
+import kidridicarus.game.Metroid.MetroidPow;
 import kidridicarus.game.Metroid.agent.player.samuschunk.SamusChunk;
 import kidridicarus.game.Metroid.agent.player.samusshot.SamusShot;
+import kidridicarus.game.SMB1.SMB1_Pow;
 import kidridicarus.game.SMB1.agent.TileBumpTakeAgent.TileBumpStrength;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp;
-import kidridicarus.game.info.MetroidAudio;
-import kidridicarus.game.info.MetroidPow;
-import kidridicarus.game.info.SMB1_Pow;
 
 class SamusBrain {
 	enum MoveState { STAND, BALL_GRND, RUN, RUNSHOOT, PRE_JUMPSHOOT, JUMPSHOOT, JUMPSPINSHOOT,

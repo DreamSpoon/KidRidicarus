@@ -7,7 +7,7 @@ import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
-import kidridicarus.game.info.KidIcarusGfx;
+import kidridicarus.game.KidIcarus.KidIcarusGfx;
 
 class PitArrowSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);

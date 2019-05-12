@@ -12,8 +12,8 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.SprFrameTool;
+import kidridicarus.game.KidIcarus.KidIcarusGfx;
 import kidridicarus.game.KidIcarus.agent.player.pit.PitBrain.MoveState;
-import kidridicarus.game.info.KidIcarusGfx;
 
 class PitSprite extends AgentSprite {
 	private static final float BIG_SPRITE_WIDTH = UInfo.P2M(16);

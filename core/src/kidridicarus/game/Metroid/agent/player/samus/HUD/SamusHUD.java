@@ -13,9 +13,9 @@ import com.badlogic.gdx.utils.Align;
 import kidridicarus.agency.Agent;
 import kidridicarus.common.agent.playeragent.playerHUD.PlayerHUD;
 import kidridicarus.common.agent.playeragent.playerHUD.TexRegionActor;
-import kidridicarus.game.info.MetroidGfx;
-import kidridicarus.game.info.MetroidKV;
-import kidridicarus.game.info.SMB1_Gfx;
+import kidridicarus.game.Metroid.MetroidGfx;
+import kidridicarus.game.Metroid.MetroidKV;
+import kidridicarus.game.SMB1.SMB1_Gfx;
 
 public class SamusHUD extends PlayerHUD {
 	private Agent playerAgent;

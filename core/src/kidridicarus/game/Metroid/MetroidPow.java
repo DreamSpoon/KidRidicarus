@@ -1,4 +1,4 @@
-package kidridicarus.game.info;
+package kidridicarus.game.Metroid;
 
 import kidridicarus.common.powerup.PowChar;
 import kidridicarus.common.powerup.Powerup;

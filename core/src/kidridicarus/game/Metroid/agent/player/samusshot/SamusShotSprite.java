@@ -10,8 +10,8 @@ import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
+import kidridicarus.game.Metroid.MetroidGfx;
 import kidridicarus.game.Metroid.agent.player.samusshot.SamusShotBrain.MoveState;
-import kidridicarus.game.info.MetroidGfx;
 
 class SamusShotSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(8);

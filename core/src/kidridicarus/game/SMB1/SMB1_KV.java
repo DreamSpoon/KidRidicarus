@@ -1,4 +1,4 @@
-package kidridicarus.game.info;
+package kidridicarus.game.SMB1;
 
 public class SMB1_KV {
 	public class AgentClassAlias {

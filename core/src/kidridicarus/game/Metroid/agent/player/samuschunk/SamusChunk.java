@@ -16,7 +16,7 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction8;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.MetroidKV;
+import kidridicarus.game.Metroid.MetroidKV;
 
 public class SamusChunk extends CorpusAgent {
 	private static final float MAX_DROP_TIME = 0.75f;

@@ -10,7 +10,7 @@ import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.agency.agentsprite.SpriteFrameInput;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.KidIcarusGfx;
+import kidridicarus.game.KidIcarus.KidIcarusGfx;
 
 class SpecknoseSprite extends AgentSprite {
 	private static final float SPRITE_WIDTH = UInfo.P2M(16);

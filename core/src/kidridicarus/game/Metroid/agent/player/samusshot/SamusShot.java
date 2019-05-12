@@ -13,8 +13,8 @@ import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.tool.AP_Tool;
+import kidridicarus.game.Metroid.MetroidKV;
 import kidridicarus.game.Metroid.agent.player.samus.Samus;
-import kidridicarus.game.info.MetroidKV;
 
 public class SamusShot extends CorpusAgent {
 	private SamusShotBrain brain;

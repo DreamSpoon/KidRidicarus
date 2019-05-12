@@ -9,9 +9,9 @@ import kidridicarus.common.agent.roombox.RoomBox;
 import kidridicarus.common.agentbrain.BrainContactFrameInput;
 import kidridicarus.common.agentbrain.ContactDmgBrainContactFrameInput;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.Metroid.MetroidAudio;
 import kidridicarus.game.Metroid.agent.item.energy.Energy;
 import kidridicarus.game.Metroid.agent.other.deathpop.DeathPop;
-import kidridicarus.game.info.MetroidAudio;
 
 class ZoomerBrain {
 	private static final float MAX_HEALTH = 2f;

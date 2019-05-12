@@ -12,9 +12,9 @@ import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.Direction4;
 import kidridicarus.common.tool.SprFrameTool;
+import kidridicarus.game.SMB1.SMB1_Gfx;
 import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.MoveState;
 import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.PowerState;
-import kidridicarus.game.info.SMB1_Gfx;
 
 class MarioSprite extends AgentSprite {
 	private static final float SMLSPR_WIDTH = UInfo.P2M(16);

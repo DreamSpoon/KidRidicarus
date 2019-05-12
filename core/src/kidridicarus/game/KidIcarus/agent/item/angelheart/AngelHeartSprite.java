@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import kidridicarus.agency.agentsprite.AgentSprite;
 import kidridicarus.common.info.UInfo;
 import kidridicarus.common.tool.SprFrameTool;
+import kidridicarus.game.KidIcarus.KidIcarusGfx;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeartBrain.AngelHeartSize;
-import kidridicarus.game.info.KidIcarusGfx;
 
 class AngelHeartSprite extends AgentSprite {
 	private static final float SML_SPRITE_WIDTH = UInfo.P2M(8);

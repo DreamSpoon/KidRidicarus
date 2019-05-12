@@ -1,4 +1,4 @@
-package kidridicarus.game.info;
+package kidridicarus.game.Metroid;
 
 public class MetroidGfx {
 	private static final String BASEDIR = "Metroid/";

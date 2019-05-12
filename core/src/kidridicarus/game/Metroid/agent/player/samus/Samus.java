@@ -22,9 +22,9 @@ import kidridicarus.common.info.CommonKV;
 import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.Metroid.MetroidKV;
 import kidridicarus.game.Metroid.agent.player.samus.HUD.SamusHUD;
 import kidridicarus.game.SMB1.agent.HeadBounceGiveAgent;
-import kidridicarus.game.info.MetroidKV;
 
 /*
  * TODO

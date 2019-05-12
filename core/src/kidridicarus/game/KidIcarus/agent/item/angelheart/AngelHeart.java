@@ -12,8 +12,8 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
+import kidridicarus.game.KidIcarus.KidIcarusKV;
 import kidridicarus.game.KidIcarus.agent.item.angelheart.AngelHeartBrain.AngelHeartSize;
-import kidridicarus.game.info.KidIcarusKV;
 
 public class AngelHeart extends CorpusAgent {
 	private AngelHeartBrain brain;

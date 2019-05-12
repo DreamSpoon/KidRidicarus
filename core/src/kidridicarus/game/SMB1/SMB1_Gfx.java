@@ -1,4 +1,4 @@
-package kidridicarus.game.info;
+package kidridicarus.game.SMB1;
 
 public class SMB1_Gfx {
 	public static final String SMB1_FONT = "font/prstart.fnt";

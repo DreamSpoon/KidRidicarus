@@ -12,7 +12,7 @@ import kidridicarus.agency.tool.ObjectProperties;
 import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
-import kidridicarus.game.info.MetroidKV;
+import kidridicarus.game.Metroid.MetroidKV;
 
 public class Energy extends CorpusAgent {
 	private EnergyBrain brain;

@@ -1,4 +1,4 @@
-package kidridicarus.game.info;
+package kidridicarus.game.Metroid;
 
 import kidridicarus.agency.tool.AgentClassList;
 import kidridicarus.game.Metroid.agent.NPC.rio.Rio;

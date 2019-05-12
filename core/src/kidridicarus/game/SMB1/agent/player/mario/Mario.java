@@ -23,11 +23,11 @@ import kidridicarus.common.powerup.Powerup;
 import kidridicarus.common.powerup.PowerupList;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.Direction4;
+import kidridicarus.game.SMB1.SMB1_KV;
+import kidridicarus.game.SMB1.SMB1_Pow;
 import kidridicarus.game.SMB1.agent.HeadBounceGiveAgent;
 import kidridicarus.game.SMB1.agent.player.mario.MarioBrain.PowerState;
 import kidridicarus.game.SMB1.agent.player.mario.HUD.MarioHUD;
-import kidridicarus.game.info.SMB1_KV;
-import kidridicarus.game.info.SMB1_Pow;
 
 public class Mario extends PlayerAgent implements ContactDmgTakeAgent, HeadBounceGiveAgent, PowerupTakeAgent {
 	private MarioBrain brain;

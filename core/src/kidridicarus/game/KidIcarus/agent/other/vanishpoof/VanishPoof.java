@@ -14,7 +14,7 @@ import kidridicarus.common.agent.general.CorpusAgent;
 import kidridicarus.common.info.CommonInfo;
 import kidridicarus.common.tool.AP_Tool;
 import kidridicarus.common.tool.SprFrameTool;
-import kidridicarus.game.info.KidIcarusKV;
+import kidridicarus.game.KidIcarus.KidIcarusKV;
 
 public class VanishPoof extends CorpusAgent {
 	private static final float POOF_TIME = 2/5f;

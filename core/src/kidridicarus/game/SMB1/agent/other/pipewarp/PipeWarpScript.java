@@ -8,8 +8,8 @@ import kidridicarus.agency.agentscript.AgentScript;
 import kidridicarus.agency.agentscript.ScriptedAgentState;
 import kidridicarus.agency.agentscript.ScriptedSpriteState.SpriteState;
 import kidridicarus.agency.tool.FrameTime;
+import kidridicarus.game.SMB1.SMB1_Audio;
 import kidridicarus.game.SMB1.agent.other.pipewarp.PipeWarp.PipeWarpHorizon;
-import kidridicarus.game.info.SMB1_Audio;
 
 /*
  * Pipe Warp Script:

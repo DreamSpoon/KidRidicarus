@@ -13,9 +13,9 @@ import com.badlogic.gdx.utils.Align;
 import kidridicarus.common.agent.playeragent.PlayerAgent;
 import kidridicarus.common.agent.playeragent.playerHUD.PlayerHUD;
 import kidridicarus.common.agent.playeragent.playerHUD.TexRegionActor;
-import kidridicarus.game.info.KidIcarusGfx;
-import kidridicarus.game.info.KidIcarusKV;
-import kidridicarus.game.info.SMB1_Gfx;
+import kidridicarus.game.KidIcarus.KidIcarusGfx;
+import kidridicarus.game.KidIcarus.KidIcarusKV;
+import kidridicarus.game.SMB1.SMB1_Gfx;
 
 public class PitHUD extends PlayerHUD {
 	private PlayerAgent playerAgent;
